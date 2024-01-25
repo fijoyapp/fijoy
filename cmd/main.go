@@ -1,8 +1,11 @@
 package main
 
 import (
+	. "fijoy/.gen/neondb/public/table"
 	"fijoy/config"
 	"fmt"
+
+	. "github.com/go-jet/jet/v2/postgres"
 )
 
 func main() {
