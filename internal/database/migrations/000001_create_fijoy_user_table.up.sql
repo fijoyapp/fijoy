@@ -1,0 +1,1 @@
+CREATE TABLE fijoy_user (id TEXT PRIMARY KEY);
