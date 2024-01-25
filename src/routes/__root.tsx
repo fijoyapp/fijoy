@@ -1,3 +1,4 @@
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
@@ -15,6 +16,7 @@ export const Route = createRootRoute({
       <hr />
       <Outlet />
       <TanStackRouterDevtools />
+      <ReactQueryDevtools />
     </>
   ),
 });
