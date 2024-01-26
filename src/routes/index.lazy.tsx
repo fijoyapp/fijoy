@@ -9,7 +9,7 @@ export const Route = createLazyFileRoute("/")({
 function Index() {
   const user = useUser();
   return (
-    <div className="p-2">
+    <div className="container max-w-screen-2xl">
       <h3>Welcome Home!</h3>
       <a href={env.VITE_BACKEND_URL + "/auth/google/login"}>Google Login</a>
       <div>{JSON.stringify(user.data)}</div>

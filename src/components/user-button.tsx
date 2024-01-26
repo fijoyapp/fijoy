@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { env } from "@/env";
 // import { useUser } from "@/hooks/use-user";
 // import { useRouter } from "@tanstack/react-router";
 
@@ -49,17 +50,10 @@ function UserButton() {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onSelect={async () => {
-            const response = await fetch("/api/logout", {
-              method: "POST",
-              redirect: "manual",
-            });
-
-            if (response.status === 0) {
-              // redirected
-              // when using `redirect: "manual"`, response status 0 is returned
-              // return router.refresh();
-            }
+          onSelect={() => {
+            window.location.replace(
+              env.VITE_BACKEND_URL + "/auth/google/logout",
+            );
           }}
         >
           Logout
