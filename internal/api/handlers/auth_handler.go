@@ -15,6 +15,7 @@ import (
 	. "fijoy/.gen/neondb/public/table"
 
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/nrednav/cuid2"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
@@ -96,11 +97,11 @@ func (ah *authHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Failed to query user data", http.StatusInternalServerError)
 	}
-	fmt.Println(dest.Email)
 
 	if dest.Email == "" {
+		userId := "user_" + cuid2.Generate()
 		user := model.FijoyUser{
-			ID:    "itsjoeoui",
+			ID:    userId,
 			Email: googleUserInfo.Email,
 		}
 		insertStmt := FijoyUser.INSERT(FijoyUser.AllColumns).MODEL(user)
@@ -110,7 +111,14 @@ func (ah *authHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(dest.ID)
+
+		userKey := model.FijoyUserKey{
+			ID:     "google:" + googleUserInfo.ID,
+			UserID: userId,
+		}
+
+		insert := FijoyUserKey.INSERT(FijoyUserKey.ID, FijoyUserKey.UserID).MODEL(userKey)
+		insert.Exec(ah.db)
 	}
 
 	_, tokenString, _ := ah.tokenAuth.Encode(map[string]interface{}{"email": googleUserInfo.Email})
