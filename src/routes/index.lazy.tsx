@@ -1,3 +1,4 @@
+import { env } from "@/env";
 import { useUser } from "@/hooks/use-user";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
@@ -10,9 +11,9 @@ function Index() {
   return (
     <div className="p-2">
       <h3>Welcome Home!</h3>
-      <a href="http://localhost:3000/auth/google/login">Google Login</a>
+      <a href={env.VITE_BACKEND_URL + "/auth/google/login"}>Google Login</a>
       <div>{JSON.stringify(user.data)}</div>
-      <a href="http://localhost:3000/auth/google/logout">Google Logout</a>
+      <a href={env.VITE_BACKEND_URL + "/auth/google/logout"}>Google Logout</a>
     </div>
   );
 }
