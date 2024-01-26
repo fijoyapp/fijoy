@@ -1,11 +1,12 @@
 import { ArrowRightIcon } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
+import { siteConfig } from "@/config/site";
 
 export function Announcement() {
   return (
     <a
-      href="https://discord.gg/xcEs33PpTR"
+      href={siteConfig.links.discord}
       target="_blank"
       className="inline-flex items-center rounded-lg bg-muted px-3 py-1 text-sm font-medium"
     >

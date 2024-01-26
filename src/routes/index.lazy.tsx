@@ -8,7 +8,7 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { siteConfig } from "@/config/site";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -27,8 +27,9 @@ function Index() {
         </PageHeaderDescription>
         <PageActions>
           <div className="flex gap-2">
-            <Input placeholder="Enter your email" />
-            <Button>Join the waitlist :)</Button>
+            <a href={siteConfig.links.discord} target="_blank">
+              <Button>Join the waitlist :)</Button>
+            </a>
           </div>
         </PageActions>
       </PageHeader>
