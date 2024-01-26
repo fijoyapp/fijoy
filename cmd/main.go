@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fijoy/config"
 	"fijoy/internal/api/handlers"
-	"fmt"
 	"net/http"
 
 	_ "github.com/lib/pq"
@@ -26,7 +25,6 @@ func main() {
 	}
 
 	tokenAuth = jwtauth.New("HS256", []byte(cfg.JWT_SECRET), nil)
-	_, tokenString, _ := tokenAuth.Encode(map[string]interface{}{"user_id": 123})
 
 	// Setup Postgres
 	db, err := setupDB("postgres", cfg.DB_URL)
@@ -34,8 +32,6 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
-
-	fmt.Println(tokenString)
 
 	googleOAuthConfig := &oauth2.Config{
 		RedirectURL:  cfg.GOOGLE_REDIRECT_URL,
@@ -57,20 +53,6 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
-
-	r.Group(func(r chi.Router) {
-		r.Use(jwtauth.Verifier(tokenAuth))
-		r.Use(jwtauth.Authenticator(tokenAuth))
-
-		r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
-			_, claims, _ := jwtauth.FromContext(r.Context())
-			w.Write([]byte(fmt.Sprintf("protected area. hi %v", claims["user_id"])))
-		})
-	})
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("welcome"))
-	})
 
 	handlers.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db)
 	handlers.NewUserHandler(r, tokenAuth, db)

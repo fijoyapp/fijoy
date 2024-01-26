@@ -35,7 +35,8 @@ func NewUserHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 
 func (uh *userHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
-	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).WHERE(FijoyUser.Email.EQ(String(claims["email"].(string))))
+	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).
+		WHERE(FijoyUser.Email.EQ(String(claims["email"].(string))))
 
 	var dest struct {
 		model.FijoyUser
