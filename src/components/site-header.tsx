@@ -23,37 +23,33 @@ export function SiteHeader() {
             <UserButton />
           ) : (
             <>
-              <Link href="/login">
+              <Link to="/login">
                 <Button size="sm" variant="secondary">
                   Log In
                 </Button>
               </Link>
-              <Link href="/signup">
+              <Link to="/signup">
                 <Button size="sm">Sign Up</Button>
               </Link>
             </>
           )}
 
-          <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
+          <a to={siteConfig.links.github} target="_blank" rel="noreferrer">
             <div
               className={cn(buttonVariants({ variant: "ghost" }), "w-9 px-0")}
             >
               <Icons.gitHub className="h-4 w-4" />
               <span className="sr-only">GitHub</span>
             </div>
-          </Link>
-          <Link
-            href={siteConfig.links.discord}
-            target="_blank"
-            rel="noreferrer"
-          >
+          </a>
+          <a href={siteConfig.links.discord} target="_blank" rel="noreferrer">
             <div
               className={cn(buttonVariants({ variant: "ghost" }), "w-9 px-0")}
             >
               <Icons.discord className="h-4 w-4" />
               <span className="sr-only">Discord</span>
             </div>
-          </Link>
+          </a>
 
           <ModeToggle />
         </nav>
