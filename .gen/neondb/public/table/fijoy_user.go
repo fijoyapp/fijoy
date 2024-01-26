@@ -17,8 +17,9 @@ type fijoyUserTable struct {
 	postgres.Table
 
 	// Columns
-	ID    postgres.ColumnString
-	Email postgres.ColumnString
+	ID        postgres.ColumnString
+	Email     postgres.ColumnString
+	CreatedAt postgres.ColumnTimestamp
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -59,18 +60,20 @@ func newFijoyUserTable(schemaName, tableName, alias string) *FijoyUserTable {
 
 func newFijoyUserTableImpl(schemaName, tableName, alias string) fijoyUserTable {
 	var (
-		IDColumn       = postgres.StringColumn("id")
-		EmailColumn    = postgres.StringColumn("email")
-		allColumns     = postgres.ColumnList{IDColumn, EmailColumn}
-		mutableColumns = postgres.ColumnList{EmailColumn}
+		IDColumn        = postgres.StringColumn("id")
+		EmailColumn     = postgres.StringColumn("email")
+		CreatedAtColumn = postgres.TimestampColumn("created_at")
+		allColumns      = postgres.ColumnList{IDColumn, EmailColumn, CreatedAtColumn}
+		mutableColumns  = postgres.ColumnList{EmailColumn, CreatedAtColumn}
 	)
 
 	return fijoyUserTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:    IDColumn,
-		Email: EmailColumn,
+		ID:        IDColumn,
+		Email:     EmailColumn,
+		CreatedAt: CreatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

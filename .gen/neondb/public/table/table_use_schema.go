@@ -10,6 +10,12 @@ package table
 // UseSchema sets a new schema name for all generated table SQL builder types. It is recommended to invoke
 // this method only once at the beginning of the program.
 func UseSchema(schema string) {
+	FijoyAccount = FijoyAccount.FromSchema(schema)
+	FijoyCategory = FijoyCategory.FromSchema(schema)
+	FijoyPayee = FijoyPayee.FromSchema(schema)
+	FijoyTransaction = FijoyTransaction.FromSchema(schema)
 	FijoyUser = FijoyUser.FromSchema(schema)
+	FijoyWorkspace = FijoyWorkspace.FromSchema(schema)
+	FijoyWorkspaceUser = FijoyWorkspaceUser.FromSchema(schema)
 	SchemaMigrations = SchemaMigrations.FromSchema(schema)
 }

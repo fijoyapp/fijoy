@@ -7,12 +7,8 @@
 
 package model
 
-import (
-	"time"
-)
-
-type FijoyUser struct {
-	ID        string `sql:"primary_key"`
-	Email     string
-	CreatedAt time.Time
+type FijoyWorkspaceUser struct {
+	WorkspaceID string `sql:"primary_key"`
+	UserID      string `sql:"primary_key"`
+	Role        string
 }

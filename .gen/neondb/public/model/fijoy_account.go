@@ -11,8 +11,12 @@ import (
 	"time"
 )
 
-type FijoyUser struct {
-	ID        string `sql:"primary_key"`
-	Email     string
-	CreatedAt time.Time
+type FijoyAccount struct {
+	ID          string `sql:"primary_key"`
+	Name        string
+	AccountType string
+	Institution string
+	WorkspaceID string
+	Balance     float64
+	CreatedAt   time.Time
 }
