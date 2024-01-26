@@ -12,12 +12,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
-// import { useUser } from "@/hooks/use-user";
+import { useUser } from "@/hooks/use-user";
 // import { useRouter } from "@tanstack/react-router";
 
 function UserButton() {
-  // const user = useUser();
-  // const router = useRouter();
+  const { data: user, isSuccess } = useUser();
+
+  if (!isSuccess) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -28,14 +32,14 @@ function UserButton() {
           )}
         >
           <Avatar className="h-5 w-5">
-            {/* <AvatarImage */}
-            {/*   src={`https://avatar.vercel.sh/${session.user.email}.png`} */}
-            {/*   alt={session.user.email} */}
-            {/*   className="grayscale" */}
-            {/* /> */}
+            <AvatarImage
+              src={`https://avatar.vercel.sh/${user.Email}.png`}
+              alt={user.Email}
+              className="grayscale"
+            />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
-          <div>{/* {session.user.email} / {workspace} */}</div>
+          <div>{user.Email}</div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

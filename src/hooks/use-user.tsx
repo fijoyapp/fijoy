@@ -1,4 +1,5 @@
 import { env } from "@/env";
+import { User } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 
 export const useUser = () => {
@@ -8,10 +9,8 @@ export const useUser = () => {
       const response = await fetch(env.VITE_BACKEND_URL + "/user", {
         credentials: "include",
       });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
+      return User.parse(await response.json());
     },
+    retry: false,
   });
 };

@@ -9,9 +9,10 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import UserButton from "@/components/user-button";
 import { Link } from "@tanstack/react-router";
 import { useUser } from "@/hooks/use-user";
+import { Skeleton } from "./ui/skeleton";
 
 export function SiteHeader() {
-  const user = useUser();
+  const { data: user } = useUser();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -19,22 +20,8 @@ export function SiteHeader() {
         {user ? <WorkspaceNav /> : <PublicNav />}
         {/* <MobileNav /> */}
         <nav className="flex items-center gap-2 justify-end flex-1">
-          {user.data ? (
-            <UserButton />
-          ) : (
-            <>
-              <Link to="/login">
-                <Button size="sm" variant="secondary">
-                  Log In
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button size="sm">Sign Up</Button>
-              </Link>
-            </>
-          )}
-
-          <a to={siteConfig.links.github} target="_blank" rel="noreferrer">
+          <AuthControl />
+          <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
             <div
               className={cn(buttonVariants({ variant: "ghost" }), "w-9 px-0")}
             >
@@ -55,5 +42,32 @@ export function SiteHeader() {
         </nav>
       </div>
     </header>
+  );
+}
+
+function AuthControl() {
+  const { data: user, isLoading } = useUser();
+
+  if (isLoading) {
+    return <Skeleton className="h-8 w-32" />;
+  }
+
+  return (
+    <>
+      {user ? (
+        <UserButton />
+      ) : (
+        <>
+          <Link to="/login">
+            <Button size="sm" variant="secondary">
+              Log In
+            </Button>
+          </Link>
+          <Link to="/signup">
+            <Button size="sm">Sign Up</Button>
+          </Link>
+        </>
+      )}
+    </>
   );
 }
