@@ -15,6 +15,7 @@ func UseSchema(schema string) {
 	FijoyPayee = FijoyPayee.FromSchema(schema)
 	FijoyTransaction = FijoyTransaction.FromSchema(schema)
 	FijoyUser = FijoyUser.FromSchema(schema)
+	FijoyUserKey = FijoyUserKey.FromSchema(schema)
 	FijoyWorkspace = FijoyWorkspace.FromSchema(schema)
 	FijoyWorkspaceUser = FijoyWorkspaceUser.FromSchema(schema)
 	SchemaMigrations = SchemaMigrations.FromSchema(schema)
