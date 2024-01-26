@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fijoy/.gen/neondb/public/model"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -24,8 +24,8 @@ import (
 type googleUserInfo struct {
 	ID            string `json:"id"`
 	Email         string `json:"email"`
-	VerifiedEmail bool   `json:"verified_email"`
 	Picture       string `json:"picture"`
+	VerifiedEmail bool   `json:"verified_email"`
 }
 
 type authHandler struct {
@@ -93,6 +93,9 @@ func (ah *authHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = stmt.Query(ah.db, &dest)
+	if err != nil {
+		http.Error(w, "Failed to query user data", http.StatusInternalServerError)
+	}
 	fmt.Println(dest.Email)
 
 	if dest.Email == "" {
@@ -149,7 +152,7 @@ func (ah *authHandler) getUserDataFromGoogle(code string) ([]byte, error) {
 		return nil, fmt.Errorf("failed getting user info: %s", err.Error())
 	}
 	defer response.Body.Close()
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed read response: %s", err.Error())
 	}
