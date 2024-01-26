@@ -1,19 +1,37 @@
-import { env } from "@/env";
-import { useUser } from "@/hooks/use-user";
 import { createLazyFileRoute } from "@tanstack/react-router";
+
+import { Announcement } from "@/components/announcement";
+import {
+  PageActions,
+  PageHeader,
+  PageHeaderDescription,
+  PageHeaderHeading,
+} from "@/components/page-header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
 });
 
 function Index() {
-  const user = useUser();
   return (
-    <div className="container max-w-screen-2xl">
-      <h3>Welcome Home!</h3>
-      <a href={env.VITE_BACKEND_URL + "/auth/google/login"}>Google Login</a>
-      <div>{JSON.stringify(user.data)}</div>
-      <a href={env.VITE_BACKEND_URL + "/auth/google/logout"}>Google Logout</a>
+    <div className="container">
+      <PageHeader>
+        <Announcement />
+        <PageHeaderHeading className="">
+          Joyful personal finance management for everyone.
+        </PageHeaderHeading>
+        <PageHeaderDescription>
+          Free forever, open source, and easy to use.
+        </PageHeaderDescription>
+        <PageActions>
+          <div className="flex gap-2">
+            <Input placeholder="Enter your email" />
+            <Button>Join the waitlist :)</Button>
+          </div>
+        </PageActions>
+      </PageHeader>
     </div>
   );
 }
