@@ -1,1 +1,1 @@
-CREATE TABLE fijoy_user (id TEXT PRIMARY KEY);
+CREATE TABLE fijoy_user (id TEXT PRIMARY KEY, email TEXT NOT NULL);

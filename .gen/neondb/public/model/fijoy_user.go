@@ -8,5 +8,6 @@
 package model
 
 type FijoyUser struct {
-	ID string `sql:"primary_key"`
+	ID    string `sql:"primary_key"`
+	Email string
 }
