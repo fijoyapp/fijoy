@@ -17,3 +17,5 @@ ALTER TABLE "fijoy_transaction" ADD CONSTRAINT "workspace_user_reference" FOREIG
 ALTER TABLE "fijoy_workspace_user" ADD CONSTRAINT "fijoy_workspace_user_workspace_id_fijoy_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "fijoy_workspace" ("id") ON DELETE cascade ON UPDATE no action;
 
 ALTER TABLE "fijoy_workspace_user" ADD CONSTRAINT "fijoy_workspace_user_user_id_fijoy_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "fijoy_user" ("id") ON DELETE cascade ON UPDATE no action;
+
+ALTER TABLE "fijoy_user_key" ADD CONSTRAINT "fijoy_user_key_user_id_fijoy_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "fijoy_user" ("id") ON DELETE cascade ON UPDATE no action;

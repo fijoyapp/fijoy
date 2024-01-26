@@ -27,3 +27,6 @@ DROP CONSTRAINT "fijoy_workspace_user_workspace_id_fijoy_workspace_id_fk";
 
 ALTER TABLE "fijoy_workspace_user"
 DROP CONSTRAINT "fijoy_workspace_user_user_id_fijoy_user_id_fk";
+
+ALTER TABLE "fijoy_user_key"
+DROP CONSTRAINT "fijoy_user_key_user_id_fijoy_user_id_fk";
