@@ -12,8 +12,8 @@ import (
 )
 
 type FijoyWorkspace struct {
-	ID        string `sql:"primary_key"`
-	Name      string
-	Namespace string
-	CreatedAt time.Time
+	ID        string    `sql:"primary_key" json:"ID"`
+	Name      string    `json:"Name"`
+	Namespace string    `json:"Namespace"`
+	CreatedAt time.Time `json:"CreatedAt"`
 }

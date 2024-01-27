@@ -12,7 +12,7 @@ import (
 )
 
 type FijoyUser struct {
-	ID        string `sql:"primary_key"`
-	Email     string
-	CreatedAt time.Time
+	ID        string    `sql:"primary_key" json:"ID"`
+	Email     string    `json:"Email"`
+	CreatedAt time.Time `json:"CreatedAt"`
 }

@@ -8,8 +8,8 @@
 package model
 
 type FijoyCategory struct {
-	ID           string `sql:"primary_key"`
-	WorkspaceID  string
-	Name         string
-	CategoryType string
+	ID           string `sql:"primary_key" json:"ID"`
+	WorkspaceID  string `json:"WorkspaceID"`
+	Name         string `json:"Name"`
+	CategoryType string `json:"CategoryType"`
 }

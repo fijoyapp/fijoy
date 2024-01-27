@@ -8,6 +8,6 @@
 package model
 
 type SchemaMigrations struct {
-	Version int64 `sql:"primary_key"`
-	Dirty   bool
+	Version int64 `sql:"primary_key" json:"Version"`
+	Dirty   bool  `json:"Dirty"`
 }

@@ -12,15 +12,15 @@ import (
 )
 
 type FijoyTransaction struct {
-	ID              string `sql:"primary_key"`
-	TransactionType string
-	Amount          float64
-	FromAccountID   *string
-	ToAccountID     *string
-	UserID          string
-	WorkspaceID     string
-	Datetime        time.Time
-	Note            *string
-	CategoryID      *string
-	PayeeID         *string
+	ID              string    `sql:"primary_key" json:"ID"`
+	TransactionType string    `json:"TransactionType"`
+	Amount          float64   `json:"Amount"`
+	FromAccountID   *string   `json:"FromAccountID"`
+	ToAccountID     *string   `json:"ToAccountID"`
+	UserID          string    `json:"UserID"`
+	WorkspaceID     string    `json:"WorkspaceID"`
+	Datetime        time.Time `json:"Datetime"`
+	Note            *string   `json:"Note"`
+	CategoryID      *string   `json:"CategoryID"`
+	PayeeID         *string   `json:"PayeeID"`
 }

@@ -8,7 +8,7 @@
 package model
 
 type FijoyPayee struct {
-	ID          string `sql:"primary_key"`
-	Name        string
-	WorkspaceID string
+	ID          string `sql:"primary_key" json:"ID"`
+	Name        string `json:"Name"`
+	WorkspaceID string `json:"WorkspaceID"`
 }

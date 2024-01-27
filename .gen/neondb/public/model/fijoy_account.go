@@ -12,11 +12,11 @@ import (
 )
 
 type FijoyAccount struct {
-	ID          string `sql:"primary_key"`
-	Name        string
-	AccountType string
-	Institution string
-	WorkspaceID string
-	Balance     float64
-	CreatedAt   time.Time
+	ID          string    `sql:"primary_key" json:"ID"`
+	Name        string    `json:"Name"`
+	AccountType string    `json:"AccountType"`
+	Institution string    `json:"Institution"`
+	WorkspaceID string    `json:"WorkspaceID"`
+	Balance     float64   `json:"Balance"`
+	CreatedAt   time.Time `json:"CreatedAt"`
 }

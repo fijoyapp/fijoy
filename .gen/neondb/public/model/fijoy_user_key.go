@@ -8,7 +8,7 @@
 package model
 
 type FijoyUserKey struct {
-	ID             string `sql:"primary_key"`
-	UserID         string
-	HashedPassword *string
+	ID             string  `sql:"primary_key" json:"ID"`
+	UserID         string  `json:"UserID"`
+	HashedPassword *string `json:"HashedPassword"`
 }
