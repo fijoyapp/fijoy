@@ -1,6 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/caarlos0/env/v10"
 	"github.com/joho/godotenv"
 )
@@ -15,16 +18,17 @@ type AppConfig struct {
 }
 
 func LoadAppConfig() (AppConfig, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return AppConfig{}, err
+	if os.Getenv("RENDER") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			return AppConfig{}, fmt.Errorf("error loading .env file: %w", err)
+		}
 	}
 
 	cfg := AppConfig{}
 
-	err = env.Parse(&cfg)
-	if err != nil {
-		return AppConfig{}, err
+	if err := env.Parse(&cfg); err != nil {
+		return AppConfig{}, fmt.Errorf("%+v", err)
 	}
 
 	return cfg, nil
