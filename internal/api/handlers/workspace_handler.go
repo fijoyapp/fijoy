@@ -37,7 +37,7 @@ func NewWorkspaceHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
 	return router
 }
 
-type CreateFijoyWorkspace struct {
+type createFijoyWorkspace struct {
 	Name      string `json:"Name" validate:"required,min=1"`
 	Namespace string `json:"Namespace" validate:"required,min=1"`
 }
@@ -46,7 +46,7 @@ func (wh workspaceHandler) createWorkspace(w http.ResponseWriter, r *http.Reques
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	userId := claims["user_id"].(string)
 
-	var createWorkspace CreateFijoyWorkspace
+	var createWorkspace createFijoyWorkspace
 
 	err := json.NewDecoder(r.Body).Decode(&createWorkspace)
 	if err != nil {

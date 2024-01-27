@@ -28,11 +28,11 @@ func NewAccountHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
 	router.Use(jwtauth.Verifier(tokenAuth))
 	router.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Get("/", handler.GetAccount)
+	router.Get("/", handler.getAccount)
 	return router
 }
 
-func (ah *accountHandler) GetAccount(w http.ResponseWriter, r *http.Request) {
+func (ah *accountHandler) getAccount(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).
 		WHERE(FijoyUser.ID.EQ(String(claims["user_id"].(string))))

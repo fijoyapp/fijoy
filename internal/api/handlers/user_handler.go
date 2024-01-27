@@ -26,11 +26,11 @@ func NewUserHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
 	router.Use(jwtauth.Verifier(tokenAuth))
 	router.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Get("/", handler.GetUserData)
+	router.Get("/", handler.getUserData)
 	return router
 }
 
-func (uh userHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
+func (uh userHandler) getUserData(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 
 	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).
