@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 
 import {
   PageHeader,
@@ -8,7 +8,7 @@ import {
 import CreateWorkspace from "@/components/setup/create-workspace";
 import { useUser } from "@/auth";
 
-export const Route = createFileRoute("/_protected/setup")({
+export const Route = createLazyFileRoute("/_protected/setup")({
   component: Setup,
 });
 

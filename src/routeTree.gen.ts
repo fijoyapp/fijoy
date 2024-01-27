@@ -6,7 +6,6 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as ProtectedImport } from './routes/_protected'
-import { Route as ProtectedSetupImport } from './routes/_protected/setup'
 import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/workspace/index'
 
 // Create Virtual Routes
@@ -14,6 +13,7 @@ import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/work
 const SignupLazyImport = createFileRoute('/signup')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
+const ProtectedSetupLazyImport = createFileRoute('/_protected/setup')()
 const ProtectedWorkspaceNamespaceIndexLazyImport = createFileRoute(
   '/_protected/workspace/$namespace/',
 )()
@@ -46,10 +46,12 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const ProtectedSetupRoute = ProtectedSetupImport.update({
+const ProtectedSetupLazyRoute = ProtectedSetupLazyImport.update({
   path: '/setup',
   getParentRoute: () => ProtectedRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/_protected/setup.lazy').then((d) => d.Route),
+)
 
 const ProtectedWorkspaceIndexRoute = ProtectedWorkspaceIndexImport.update({
   path: '/workspace/',
@@ -107,7 +109,7 @@ declare module '@tanstack/react-router' {
       parentRoute: typeof rootRoute
     }
     '/_protected/setup': {
-      preLoaderRoute: typeof ProtectedSetupImport
+      preLoaderRoute: typeof ProtectedSetupLazyImport
       parentRoute: typeof ProtectedImport
     }
     '/_protected/workspace/': {
@@ -134,7 +136,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   ProtectedRoute.addChildren([
-    ProtectedSetupRoute,
+    ProtectedSetupLazyRoute,
     ProtectedWorkspaceIndexRoute,
     ProtectedWorkspaceNamespaceAccountsLazyRoute,
     ProtectedWorkspaceNamespaceTransactionsLazyRoute,
