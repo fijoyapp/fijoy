@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { CheckIcon, ChevronsUpDown, Wallet } from "lucide-react";
-import { Account } from "@/types/account";
+import { SelectAccount } from "@/types/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
@@ -50,7 +50,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation } from "@tanstack/react-query";
 
-const formSchema = Account;
+const formSchema = SelectAccount;
 
 const AddAccount = () => {
   const [open, setOpen] = useState(false);

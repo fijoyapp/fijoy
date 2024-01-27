@@ -1,4 +1,4 @@
-import { type Account } from "@/types/account";
+import { type SelectAccount } from "@/types/account";
 
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,7 +8,7 @@ import { getPrettyTime } from "@/lib/time";
 import { Link, useParams } from "@tanstack/react-router";
 
 type Props = {
-  account: Account;
+  account: SelectAccount;
 };
 
 const AccountCard = ({ account }: Props) => {

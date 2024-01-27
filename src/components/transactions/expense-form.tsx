@@ -25,7 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { type Account } from "@/types/account";
+import { type SelectAccount } from "@/types/account";
 import { CheckIcon, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,7 +34,7 @@ import { institutionConfig } from "@/config/account";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
-  accounts: Account[];
+  accounts: SelectAccount[];
 };
 
 const ExpenseForm = ({ form, accounts }: Props) => {

@@ -3,7 +3,7 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
-import { Account } from "@/types/account";
+import { SelectAccount } from "@/types/account";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 import {
@@ -31,7 +31,7 @@ export const Route = createLazyFileRoute(
 });
 
 function Page() {
-  const accounts: Account[] = [];
+  const accounts: SelectAccount[] = [];
   return (
     <div className="container max-w-screen-2xl">
       <div className="items-end gap-4 lg:flex">
@@ -92,7 +92,7 @@ function Page() {
 }
 
 type CardProps = {
-  accounts: Account[];
+  accounts: SelectAccount[];
 };
 
 const NetWorthCard = ({ accounts }: CardProps) => {

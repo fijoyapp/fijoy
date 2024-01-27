@@ -1,4 +1,4 @@
-import { type Account } from "@/types/account";
+import { type SelectAccount } from "@/types/account";
 import AccountCard from "./account-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getMoneyDisplay } from "@/lib/money";
@@ -6,7 +6,7 @@ import { accountTypeConfig } from "@/config/account";
 
 type Props = {
   name: string;
-  accounts: Account[];
+  accounts: SelectAccount[];
 };
 
 const AccountSection = ({ name, accounts }: Props) => {

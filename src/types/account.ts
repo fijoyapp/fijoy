@@ -1,7 +1,7 @@
 import { accountTypes, institutions } from "@/config/account";
 import { z } from "zod";
 
-export const Account = z.object({
+export const SelectAccount = z.object({
   ID: z.string(),
   Name: z.string(),
   AccountType: z.enum(accountTypes),
@@ -11,4 +11,4 @@ export const Account = z.object({
   UpdatedAt: z.coerce.date(),
 });
 
-export type Account = z.infer<typeof Account>;
+export type SelectAccount = z.infer<typeof SelectAccount>;

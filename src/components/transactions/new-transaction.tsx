@@ -33,16 +33,16 @@ import _ from "lodash";
 import IncomeForm from "./income-form";
 import TransferForm from "./transfer-form";
 import ExpenseForm from "./expense-form";
-import { Account } from "@/types/account";
+import { SelectAccount } from "@/types/account";
 import { useMutation } from "@tanstack/react-query";
 import { env } from "@/env";
 import axios from "axios";
-import { Transaction } from "@/types/transaction";
+import { SelectTransaction } from "@/types/transaction";
 
-export const formSchema = Transaction;
+export const formSchema = SelectTransaction;
 
 type Props = {
-  accounts: Account[];
+  accounts: SelectAccount[];
 };
 
 const NewTransaction = ({ accounts }: Props) => {
@@ -54,11 +54,11 @@ const NewTransaction = ({ accounts }: Props) => {
   });
 
   const createTransaction = useMutation({
-    mutationFn: async (values: Transaction) => {
+    mutationFn: async (values: SelectTransaction) => {
       const result = await axios.post(env + "/transaction", values, {
         withCredentials: true,
       });
-      return Account.parse(result.data);
+      return SelectAccount.parse(result.data);
     },
     onSuccess: () => {
       form.reset();

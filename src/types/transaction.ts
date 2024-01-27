@@ -1,7 +1,7 @@
 import { transactionTypes } from "@/config/transaction";
 import { z } from "zod";
 
-export const Transaction = z.object({
+export const SelectTransaction = z.object({
   Id: z.string(),
   TransactionType: z.enum(transactionTypes),
   Amount: z.number(),
@@ -15,4 +15,4 @@ export const Transaction = z.object({
   PayeeID: z.string(),
 });
 
-export type Transaction = z.infer<typeof Transaction>;
+export type SelectTransaction = z.infer<typeof SelectTransaction>;
