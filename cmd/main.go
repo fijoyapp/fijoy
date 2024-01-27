@@ -56,6 +56,8 @@ func main() {
 
 	handlers.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db)
 	handlers.NewUserHandler(r, tokenAuth, db)
+	handlers.NewWorkspaceHandler(r, tokenAuth, db)
+	// handlers.NewAccountHandler(r, tokenAuth, db)
 
 	http.ListenAndServe(":3000", r)
 }
