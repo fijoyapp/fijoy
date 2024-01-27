@@ -3,6 +3,7 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
+import NewTransaction from "@/components/transactions/new-transaction";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/_protected/workspace/$namespace/")({
@@ -10,7 +11,6 @@ export const Route = createLazyFileRoute("/_protected/workspace/$namespace/")({
 });
 
 function Page() {
-  const { namespace } = Route.useParams();
   return (
     <div className="container max-w-screen-2xl">
       <PageHeader>
@@ -20,8 +20,7 @@ function Page() {
         </PageHeaderDescription>
       </PageHeader>
       <div className="py-2 lg:py-4" />
-      <div>{namespace}</div>
-      {/* <NewTransaction accounts={accounts} /> */}
+      <NewTransaction accounts={[]} />
     </div>
   );
 }

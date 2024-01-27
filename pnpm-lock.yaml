@@ -110,6 +110,9 @@ dependencies:
   js-cookie:
     specifier: ^3.0.5
     version: 3.0.5
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   lucide-react:
     specifier: ^0.315.0
     version: 0.315.0(react@18.2.0)
@@ -119,6 +122,9 @@ dependencies:
   react:
     specifier: ^18.2.0
     version: 18.2.0
+  react-currency-input-field:
+    specifier: ^3.6.14
+    version: 3.6.14(react@18.2.0)
   react-day-picker:
     specifier: ^8.10.0
     version: 8.10.0(date-fns@3.3.1)(react@18.2.0)
@@ -154,6 +160,9 @@ devDependencies:
   '@types/js-cookie':
     specifier: ^3.0.6
     version: 3.0.6
+  '@types/lodash':
+    specifier: ^4.14.202
+    version: 4.14.202
   '@types/node':
     specifier: ^20.11.7
     version: 20.11.7
@@ -2286,6 +2295,10 @@ packages:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: true
 
+  /@types/lodash@4.14.202:
+    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
+    dev: true
+
   /@types/node@20.11.7:
     resolution: {integrity: sha512-GPmeN1C3XAyV5uybAf4cMLWT9fDWcmQhZVtMFu7OR32WjrqGG+Wnk2V1d0bmtUyE/Zy1QJ9BxyiTih9z8Oks8A==}
     dependencies:
@@ -3311,6 +3324,10 @@ packages:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
     dev: true
 
+  /lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: false
+
   /loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
@@ -3691,6 +3708,14 @@ packages:
       discontinuous-range: 1.0.0
       ret: 0.1.15
     dev: true
+
+  /react-currency-input-field@3.6.14(react@18.2.0):
+    resolution: {integrity: sha512-pUM4oK1KkUjjcFH7t6GksbuYwGpNhX3We2l41V9PIyJjm1HVlJGbKNksr0PNXGsQZqXDIKBJxL3TAbTS4cbKgg==}
+    peerDependencies:
+      react: ^16.9.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-day-picker@8.10.0(date-fns@3.3.1)(react@18.2.0):
     resolution: {integrity: sha512-mz+qeyrOM7++1NCb1ARXmkjMkzWVh2GL9YiPbRjKe0zHccvekk4HE+0MPOZOrosn8r8zTHIIeOUXTmXRqmkRmg==}

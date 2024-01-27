@@ -21,8 +21,11 @@ const ProtectedWorkspaceNamespaceIndexLazyImport = createFileRoute(
 const ProtectedWorkspaceNamespaceTransactionsLazyImport = createFileRoute(
   '/_protected/workspace/$namespace/transactions',
 )()
-const ProtectedWorkspaceNamespaceAccountsLazyImport = createFileRoute(
-  '/_protected/workspace/$namespace/accounts',
+const ProtectedWorkspaceNamespaceAccountsIndexLazyImport = createFileRoute(
+  '/_protected/workspace/$namespace/accounts/',
+)()
+const ProtectedWorkspaceNamespaceAccountsAccountIdLazyImport = createFileRoute(
+  '/_protected/workspace/$namespace/accounts/$accountId',
 )()
 
 // Create/Update Routes
@@ -86,14 +89,24 @@ const ProtectedWorkspaceNamespaceTransactionsLazyRoute =
     ),
   )
 
-const ProtectedWorkspaceNamespaceAccountsLazyRoute =
-  ProtectedWorkspaceNamespaceAccountsLazyImport.update({
-    path: '/workspace/$namespace/accounts',
+const ProtectedWorkspaceNamespaceAccountsIndexLazyRoute =
+  ProtectedWorkspaceNamespaceAccountsIndexLazyImport.update({
+    path: '/workspace/$namespace/accounts/',
     getParentRoute: () => ProtectedRoute,
   } as any).lazy(() =>
-    import('./routes/_protected/workspace/$namespace/accounts.lazy').then(
+    import('./routes/_protected/workspace/$namespace/accounts/index.lazy').then(
       (d) => d.Route,
     ),
+  )
+
+const ProtectedWorkspaceNamespaceAccountsAccountIdLazyRoute =
+  ProtectedWorkspaceNamespaceAccountsAccountIdLazyImport.update({
+    path: '/workspace/$namespace/accounts/$accountId',
+    getParentRoute: () => ProtectedRoute,
+  } as any).lazy(() =>
+    import(
+      './routes/_protected/workspace/$namespace/accounts/$accountId.lazy'
+    ).then((d) => d.Route),
   )
 
 // Populate the FileRoutesByPath interface
@@ -128,16 +141,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceIndexImport
       parentRoute: typeof ProtectedImport
     }
-    '/_protected/workspace/$namespace/accounts': {
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsLazyImport
-      parentRoute: typeof ProtectedImport
-    }
     '/_protected/workspace/$namespace/transactions': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceTransactionsLazyImport
       parentRoute: typeof ProtectedImport
     }
     '/_protected/workspace/$namespace/': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceIndexLazyImport
+      parentRoute: typeof ProtectedImport
+    }
+    '/_protected/workspace/$namespace/accounts/$accountId': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsAccountIdLazyImport
+      parentRoute: typeof ProtectedImport
+    }
+    '/_protected/workspace/$namespace/accounts/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsIndexLazyImport
       parentRoute: typeof ProtectedImport
     }
   }
@@ -149,9 +166,10 @@ export const routeTree = rootRoute.addChildren([
   ProtectedRoute.addChildren([
     ProtectedSetupLazyRoute,
     ProtectedWorkspaceIndexRoute,
-    ProtectedWorkspaceNamespaceAccountsLazyRoute,
     ProtectedWorkspaceNamespaceTransactionsLazyRoute,
     ProtectedWorkspaceNamespaceIndexLazyRoute,
+    ProtectedWorkspaceNamespaceAccountsAccountIdLazyRoute,
+    ProtectedWorkspaceNamespaceAccountsIndexLazyRoute,
   ]),
   PublicRoute.addChildren([
     PublicLoginLazyRoute,
