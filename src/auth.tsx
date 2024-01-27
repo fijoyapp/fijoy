@@ -12,6 +12,23 @@ export interface AuthContext {
 const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // const [user, setUser] = useState<User | undefined>(undefined);
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  //
+  // useEffect(() => {
+  //   axios
+  //     .get(env.VITE_BACKEND_URL + "/user", {
+  //       withCredentials: true,
+  //     })
+  //     .then((result) => {
+  //       setUser(User.parse(result.data));
+  //       setIsLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
+
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {

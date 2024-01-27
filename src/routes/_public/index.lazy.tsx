@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 
-export const Route = createLazyFileRoute("/")({
+export const Route = createLazyFileRoute("/_public/")({
   component: Index,
 });
 

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { env } from "@/env";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute("/signup")({
+export const Route = createLazyFileRoute("/_public/signup")({
   component: Signup,
 });
 

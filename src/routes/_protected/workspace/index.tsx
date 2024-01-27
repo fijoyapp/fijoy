@@ -1,22 +1,20 @@
-import { env } from "@/env";
-import { Workspace } from "@/types/workspace";
+import { Icons } from "@/components/icons";
+import { workspacesQueryOptions } from "@/lib/queries/workspace";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
-import axios from "axios";
 import Cookies from "js-cookie";
 
 export const Route = createFileRoute("/_protected/workspace/")({
   component: Page,
-  loader: async () => {
-    const response = await axios.get(env.VITE_BACKEND_URL + "/workspace", {
-      withCredentials: true,
-    });
-
-    return Workspace.array().parse(response.data);
-  },
+  loader: (opts) =>
+    opts.context.queryClient.ensureQueryData(workspacesQueryOptions()),
+  pendingComponent: () => <Icons.spinner className="animate-spin" />,
 });
 
 function Page() {
-  const workspaces = Route.useLoaderData();
+  const workspacesQuery = useSuspenseQuery(workspacesQueryOptions());
+
+  const workspaces = workspacesQuery.data;
 
   if (workspaces.length === 0) {
     return <Navigate to="/setup" />;

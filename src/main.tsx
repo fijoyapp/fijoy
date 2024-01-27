@@ -10,16 +10,18 @@ import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { AuthProvider, useUser } from "./auth";
 
+export const queryClient = new QueryClient();
+
 // Create a new router instance
 const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   context: {
     auth: undefined!, // will be set after we wrap the app in AuthProvider
+    queryClient,
   },
+  defaultPreloadStaleTime: 0,
 });
-
-const queryClient = new QueryClient();
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {

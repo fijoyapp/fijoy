@@ -5,14 +5,15 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PublicImport } from './routes/_public'
 import { Route as ProtectedImport } from './routes/_protected'
 import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/workspace/index'
 
 // Create Virtual Routes
 
-const SignupLazyImport = createFileRoute('/signup')()
-const LoginLazyImport = createFileRoute('/login')()
-const IndexLazyImport = createFileRoute('/')()
+const PublicIndexLazyImport = createFileRoute('/_public/')()
+const PublicSignupLazyImport = createFileRoute('/_public/signup')()
+const PublicLoginLazyImport = createFileRoute('/_public/login')()
 const ProtectedSetupLazyImport = createFileRoute('/_protected/setup')()
 const ProtectedWorkspaceNamespaceIndexLazyImport = createFileRoute(
   '/_protected/workspace/$namespace/',
@@ -26,25 +27,32 @@ const ProtectedWorkspaceNamespaceAccountsLazyImport = createFileRoute(
 
 // Create/Update Routes
 
-const SignupLazyRoute = SignupLazyImport.update({
-  path: '/signup',
+const PublicRoute = PublicImport.update({
+  id: '/_public',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/signup.lazy').then((d) => d.Route))
-
-const LoginLazyRoute = LoginLazyImport.update({
-  path: '/login',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
+} as any)
 
 const ProtectedRoute = ProtectedImport.update({
   id: '/_protected',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const PublicIndexLazyRoute = PublicIndexLazyImport.update({
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() => import('./routes/_public/index.lazy').then((d) => d.Route))
+
+const PublicSignupLazyRoute = PublicSignupLazyImport.update({
+  path: '/signup',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() =>
+  import('./routes/_public/signup.lazy').then((d) => d.Route),
+)
+
+const PublicLoginLazyRoute = PublicLoginLazyImport.update({
+  path: '/login',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() => import('./routes/_public/login.lazy').then((d) => d.Route))
 
 const ProtectedSetupLazyRoute = ProtectedSetupLazyImport.update({
   path: '/setup',
@@ -92,25 +100,29 @@ const ProtectedWorkspaceNamespaceAccountsLazyRoute =
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      preLoaderRoute: typeof IndexLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/_protected': {
       preLoaderRoute: typeof ProtectedImport
       parentRoute: typeof rootRoute
     }
-    '/login': {
-      preLoaderRoute: typeof LoginLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/signup': {
-      preLoaderRoute: typeof SignupLazyImport
+    '/_public': {
+      preLoaderRoute: typeof PublicImport
       parentRoute: typeof rootRoute
     }
     '/_protected/setup': {
       preLoaderRoute: typeof ProtectedSetupLazyImport
       parentRoute: typeof ProtectedImport
+    }
+    '/_public/login': {
+      preLoaderRoute: typeof PublicLoginLazyImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/signup': {
+      preLoaderRoute: typeof PublicSignupLazyImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/': {
+      preLoaderRoute: typeof PublicIndexLazyImport
+      parentRoute: typeof PublicImport
     }
     '/_protected/workspace/': {
       preLoaderRoute: typeof ProtectedWorkspaceIndexImport
@@ -134,7 +146,6 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  IndexLazyRoute,
   ProtectedRoute.addChildren([
     ProtectedSetupLazyRoute,
     ProtectedWorkspaceIndexRoute,
@@ -142,6 +153,9 @@ export const routeTree = rootRoute.addChildren([
     ProtectedWorkspaceNamespaceTransactionsLazyRoute,
     ProtectedWorkspaceNamespaceIndexLazyRoute,
   ]),
-  LoginLazyRoute,
-  SignupLazyRoute,
+  PublicRoute.addChildren([
+    PublicLoginLazyRoute,
+    PublicSignupLazyRoute,
+    PublicIndexLazyRoute,
+  ]),
 ])
