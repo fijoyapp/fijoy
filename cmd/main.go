@@ -47,8 +47,8 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(cors.Handler(cors.Options{
-		// AllowedOrigins: []string{"http://localhost:5173"}, // Use this to allow specific origin hosts
-		AllowedOrigins: []string{"https://*", "http://*"},
+		AllowedOrigins: []string{cfg.FRONTEND_URL}, // Use this to allow specific origin hosts
+		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
@@ -58,7 +58,7 @@ func main() {
 		Debug:            false,
 	}))
 
-	r.Mount("/auth", handlers.NewAuthHandler(googleOAuthConfig, tokenAuth, db))
+	r.Mount("/auth", handlers.NewAuthHandler(googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL))
 	r.Mount("/user", handlers.NewUserHandler(tokenAuth, db))
 	r.Mount("/workspace", handlers.NewWorkspaceHandler(tokenAuth, db))
 	// handlers.NewAccountHandler(r, tokenAuth, db)

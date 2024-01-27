@@ -11,6 +11,7 @@ type AppConfig struct {
 	GOOGLE_REDIRECT_URL  string `env:"GOOGLE_REDIRECT_URL"`
 	GOOGLE_CLIENT_ID     string `env:"GOOGLE_CLIENT_ID"`
 	GOOGLE_CLIENT_SECRET string `env:"GOOGLE_CLIENT_SECRET"`
+	FRONTEND_URL         string `env:"FRONTEND_URL"`
 }
 
 func LoadAppConfig() (AppConfig, error) {

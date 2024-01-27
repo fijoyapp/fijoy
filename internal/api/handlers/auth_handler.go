@@ -34,10 +34,11 @@ type authHandler struct {
 	googleOAuthConfig *oauth2.Config
 	tokenAuth         *jwtauth.JWTAuth
 	db                *sql.DB
+	frontendUrl       string
 }
 
-func NewAuthHandler(googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
-	handler := &authHandler{googleOAuthConfig, tokenAuth, db}
+func NewAuthHandler(googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB, frontendUrl string) chi.Router {
+	handler := &authHandler{googleOAuthConfig, tokenAuth, db, frontendUrl}
 	router := chi.NewRouter()
 
 	router.Get("/google/login", handler.googleLogin)
@@ -63,7 +64,7 @@ func (ah authHandler) logout(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteNoneMode,
 	}
 	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, "http://localhost:5173", http.StatusFound)
+	http.Redirect(w, r, ah.frontendUrl, http.StatusFound)
 }
 
 func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
@@ -141,7 +142,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, "http://localhost:5173/workspace", http.StatusFound)
+	http.Redirect(w, r, ah.frontendUrl+"/workspace", http.StatusFound)
 }
 
 func generateStateOAuthCookie(w http.ResponseWriter) string {
