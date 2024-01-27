@@ -19,7 +19,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .then((r) => {
         setUser(User.parse(r.data));
-      });
+      })
+      .catch(() => setUser(null));
   }, []);
 
   return (

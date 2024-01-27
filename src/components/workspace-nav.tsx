@@ -25,7 +25,8 @@ export function WorkspaceNav() {
       {!onReservedScope && scope && (
         <nav className="flex items-center gap-6 text-sm">
           <Link
-            href={`/workspace/${scope}`}
+            to={"/workspace/$namespace"}
+            params={{ namespace: scope }}
             className={cn(
               "transition-colors hover:text-foreground/80",
               pathname === `/workspace/${scope}`
@@ -36,7 +37,8 @@ export function WorkspaceNav() {
             Dashboard
           </Link>
           <Link
-            href={`/workspace/${scope}/transactions`}
+            to={"/workspace/$namespace/transactions"}
+            params={{ namespace: scope }}
             className={cn(
               "transition-colors hover:text-foreground/80",
               pathname === `/workspace/${scope}/transactions`
@@ -47,7 +49,8 @@ export function WorkspaceNav() {
             Transactions
           </Link>
           <Link
-            href={`/workspace/${scope}/accounts`}
+            to={"/workspace/$namespace/accounts"}
+            params={{ namespace: scope }}
             className={cn(
               "transition-colors hover:text-foreground/80",
               pathname === `/workspace/${scope}/accounts`
