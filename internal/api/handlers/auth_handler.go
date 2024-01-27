@@ -77,6 +77,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	data, err := ah.getUserDataFromGoogle(r.FormValue("code"))
 	if err != nil {
 		http.Error(w, "Failed to get user data: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	var googleUserInfo googleUserInfo
@@ -105,6 +106,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		_, err := insertUserStmt.Exec(ah.db)
 		if err != nil {
 			http.Error(w, "Failed to insert user: "+err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		userKey := model.FijoyUserKey{
@@ -117,10 +119,12 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			http.Error(w, "Failed to insert user key: "+err.Error(), http.StatusInternalServerError)
+			return
 		}
 		userKeyDest.UserID = userKey.UserID
 	} else if err != nil {
 		http.Error(w, "Failed to query user data: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	_, tokenString, _ := ah.tokenAuth.Encode(map[string]interface{}{"user_id": userKeyDest.UserID})
