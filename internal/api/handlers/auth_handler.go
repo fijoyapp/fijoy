@@ -85,7 +85,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to unmarshal user data: "+err.Error(), http.StatusInternalServerError)
 	}
 
-	stmt := SELECT(FijoyUserKey.ID).FROM(FijoyUserKey).
+	stmt := SELECT(FijoyUserKey.AllColumns).FROM(FijoyUserKey).
 		WHERE(FijoyUserKey.ID.EQ(String("google:" + googleUserInfo.ID)))
 
 	var userKeyDest struct {
