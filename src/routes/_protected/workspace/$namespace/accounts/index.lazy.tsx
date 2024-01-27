@@ -22,6 +22,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import AccountSection from "@/components/accounts/account-section";
+import AddAccount from "@/components/accounts/add-account";
 
 export const Route = createLazyFileRoute(
   "/_protected/workspace/$namespace/accounts/",
@@ -65,7 +66,7 @@ function Page() {
 
       <div className="py-2 lg:py-4" />
 
-      {/* <AddAccount /> */}
+      <AddAccount />
 
       <div className="py-2 lg:py-4" />
 
