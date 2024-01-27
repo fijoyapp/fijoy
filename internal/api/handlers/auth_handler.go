@@ -15,6 +15,7 @@ import (
 	. "fijoy/.gen/neondb/public/table"
 
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nrednav/cuid2"
 
 	"github.com/go-chi/chi/v5"
@@ -37,20 +38,21 @@ type authHandler struct {
 
 func NewAuthHandler(r *chi.Mux, googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	handler := &authHandler{googleOAuthConfig, tokenAuth, db}
+
 	r.Route("/auth", func(r chi.Router) {
-		r.Get("/google/login", handler.GoogleLogin)
-		r.Get("/google/logout", handler.GoogleLogout)
-		r.Get("/google/callback", handler.GoogleCallback)
+		r.Get("/google/login", handler.googleLogin)
+		r.Get("/google/callback", handler.googleCallback)
+		r.Get("/logout", handler.logout)
 	})
 }
 
-func (ah *authHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
+func (ah *authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
 	googleOAuthState := generateStateOAuthCookie(w)
 	url := ah.googleOAuthConfig.AuthCodeURL(googleOAuthState)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func (ah *authHandler) GoogleLogout(w http.ResponseWriter, r *http.Request) {
+func (ah *authHandler) logout(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     "jwt",
 		Value:    "",
@@ -64,7 +66,7 @@ func (ah *authHandler) GoogleLogout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "http://localhost:5173", http.StatusFound)
 }
 
-func (ah *authHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
+func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	googleOAuthState, _ := r.Cookie("google_oauth_state")
 
 	if r.FormValue("state") != googleOAuthState.Value {
@@ -74,42 +76,35 @@ func (ah *authHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 
 	data, err := ah.getUserDataFromGoogle(r.FormValue("code"))
 	if err != nil {
-		http.Error(w, "Failed to get user data", http.StatusInternalServerError)
+		http.Error(w, "Failed to get user data: "+err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Printf("UserInfo %s \n", data)
 
 	var googleUserInfo googleUserInfo
 	err = json.Unmarshal(data, &googleUserInfo)
 	if err != nil {
-		http.Error(w, "Failed to unmarshal user data", http.StatusInternalServerError)
+		http.Error(w, "Failed to unmarshal user data: "+err.Error(), http.StatusInternalServerError)
 	}
 
-	fmt.Println(googleUserInfo.Email)
+	stmt := SELECT(FijoyUserKey.ID).FROM(FijoyUserKey).
+		WHERE(FijoyUserKey.ID.EQ(String("google:" + googleUserInfo.ID)))
 
-	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).
-		WHERE(FijoyUser.Email.EQ(String(googleUserInfo.Email)))
-
-	var dest struct {
-		model.FijoyUser
+	var userKeyDest struct {
+		model.FijoyUserKey
 	}
 
-	err = stmt.Query(ah.db, &dest)
-	if err != nil {
-		http.Error(w, "Failed to query user data", http.StatusInternalServerError)
-	}
+	err = stmt.Query(ah.db, &userKeyDest)
 
-	if dest.Email == "" {
+	if err == qrm.ErrNoRows {
 		userId := "user_" + cuid2.Generate()
 		user := model.FijoyUser{
 			ID:    userId,
 			Email: googleUserInfo.Email,
 		}
-		insertStmt := FijoyUser.INSERT(FijoyUser.AllColumns).MODEL(user)
+		insertUserStmt := FijoyUser.INSERT(FijoyUser.AllColumns).MODEL(user)
 
-		dest := model.FijoyUser{}
-		err = insertStmt.Query(ah.db, &dest)
+		_, err := insertUserStmt.Exec(ah.db)
 		if err != nil {
-			fmt.Println(err)
+			http.Error(w, "Failed to insert user: "+err.Error(), http.StatusInternalServerError)
 		}
 
 		userKey := model.FijoyUserKey{
@@ -118,10 +113,17 @@ func (ah *authHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		insert := FijoyUserKey.INSERT(FijoyUserKey.ID, FijoyUserKey.UserID).MODEL(userKey)
-		insert.Exec(ah.db)
+		_, err = insert.Exec(ah.db)
+
+		if err != nil {
+			http.Error(w, "Failed to insert user key: "+err.Error(), http.StatusInternalServerError)
+		}
+		userKeyDest.UserID = userKey.UserID
+	} else if err != nil {
+		http.Error(w, "Failed to query user data: "+err.Error(), http.StatusInternalServerError)
 	}
 
-	_, tokenString, _ := ah.tokenAuth.Encode(map[string]interface{}{"email": googleUserInfo.Email})
+	_, tokenString, _ := ah.tokenAuth.Encode(map[string]interface{}{"user_id": userKeyDest.UserID})
 
 	cookie := &http.Cookie{
 		Name:     "jwt",

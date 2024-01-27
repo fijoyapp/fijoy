@@ -55,9 +55,7 @@ function UserButton() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {
-            window.location.replace(
-              env.VITE_BACKEND_URL + "/auth/google/logout",
-            );
+            window.location.replace(env.VITE_BACKEND_URL + "/auth/logout");
           }}
         >
           Logout
