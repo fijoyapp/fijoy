@@ -6,6 +6,7 @@ import (
 	"fijoy/.gen/neondb/public/model"
 	"fmt"
 	"net/http"
+	"time"
 
 	. "fijoy/.gen/neondb/public/table"
 
@@ -23,19 +24,17 @@ type workspaceHandler struct {
 	db        *sql.DB
 }
 
-func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
-	handler := &workspaceHandler{tokenAuth, db}
+func NewWorkspaceHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
+	handler := workspaceHandler{tokenAuth, db}
+	router := chi.NewRouter()
 
-	r.Group(func(r chi.Router) {
-		r.Route("/workspace", func(r chi.Router) {
-			r.Use(jwtauth.Verifier(tokenAuth))
-			r.Use(jwtauth.Authenticator(tokenAuth))
+	router.Use(jwtauth.Verifier(tokenAuth))
+	router.Use(jwtauth.Authenticator(tokenAuth))
 
-			r.Post("/", handler.CreateWorkspace)
-			r.Get("/", handler.getWorkspaces)
-			r.Get("/{workspaceId}", handler.getWorkspace)
-		})
-	})
+	router.Post("/", handler.createWorkspace)
+	router.Get("/", handler.getWorkspaces)
+	router.Get("/{workspaceId}", handler.getWorkspace)
+	return router
 }
 
 type CreateFijoyWorkspace struct {
@@ -43,7 +42,7 @@ type CreateFijoyWorkspace struct {
 	Namespace string `json:"Namespace" validate:"required,min=1"`
 }
 
-func (wh *workspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Request) {
+func (wh workspaceHandler) createWorkspace(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	userId := claims["user_id"].(string)
 
@@ -73,6 +72,7 @@ func (wh *workspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Reque
 		Name:      createWorkspace.Name,
 		Namespace: createWorkspace.Namespace,
 		ID:        "workspace_" + cuid2.Generate(),
+		CreatedAt: time.Now(),
 	}
 
 	insertWorkspaceStmt := FijoyWorkspace.INSERT(FijoyWorkspace.AllColumns).MODEL(workspace)
@@ -102,13 +102,10 @@ func (wh *workspaceHandler) CreateWorkspace(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	jsonText, _ := json.MarshalIndent(workspace, "", "\t")
-
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(jsonText))
+	json.NewEncoder(w).Encode(workspace)
 }
 
-func (wh *workspaceHandler) getWorkspaces(w http.ResponseWriter, r *http.Request) {
+func (wh workspaceHandler) getWorkspaces(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	userId := claims["user_id"].(string)
 
@@ -117,23 +114,19 @@ func (wh *workspaceHandler) getWorkspaces(w http.ResponseWriter, r *http.Request
 			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
 			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).WHERE(FijoyUser.ID.EQ(String(userId)))
 
-	var dest []struct {
-		model.FijoyWorkspace
-	}
+	dest := []*model.FijoyWorkspace{}
 
-	err := stmt.Query(wh.db, &dest)
+	err := stmt.QueryContext(r.Context(), wh.db, &dest)
 	if err != nil {
+		fmt.Println(err.Error())
 		http.Error(w, "Failed to get workspaces: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	jsonText, _ := json.MarshalIndent(dest, "", "\t")
-
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(jsonText))
+	json.NewEncoder(w).Encode(dest)
 }
 
-func (wh *workspaceHandler) getWorkspace(w http.ResponseWriter, r *http.Request) {
+func (wh workspaceHandler) getWorkspace(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 	userId := claims["user_id"].(string)
 	workspaceId := chi.URLParam(r, "workspaceId")
@@ -148,14 +141,11 @@ func (wh *workspaceHandler) getWorkspace(w http.ResponseWriter, r *http.Request)
 		model.FijoyWorkspace
 	}
 
-	err := stmt.Query(wh.db, &dest)
+	err := stmt.QueryContext(r.Context(), wh.db, &dest)
 	if err != nil {
 		http.Error(w, "Failed to get workspace: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	jsonText, _ := json.MarshalIndent(dest, "", "\t")
-
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(jsonText))
+	json.NewEncoder(w).Encode(dest)
 }

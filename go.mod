@@ -33,6 +33,7 @@ require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.2 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.2 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
@@ -43,6 +44,7 @@ require (
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.31.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
@@ -50,6 +52,7 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

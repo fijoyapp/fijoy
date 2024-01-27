@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
+
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -43,8 +44,10 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
 	r.Use(cors.Handler(cors.Options{
-		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
+		// AllowedOrigins: []string{"http://localhost:5173"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -52,11 +55,12 @@ func main() {
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
+		Debug:            false,
 	}))
 
-	handlers.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db)
-	handlers.NewUserHandler(r, tokenAuth, db)
-	handlers.NewWorkspaceHandler(r, tokenAuth, db)
+	r.Mount("/auth", handlers.NewAuthHandler(googleOAuthConfig, tokenAuth, db))
+	r.Mount("/user", handlers.NewUserHandler(tokenAuth, db))
+	r.Mount("/workspace", handlers.NewWorkspaceHandler(tokenAuth, db))
 	// handlers.NewAccountHandler(r, tokenAuth, db)
 
 	http.ListenAndServe(":3000", r)

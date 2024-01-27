@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fijoy/.gen/neondb/public/model"
+	"fmt"
 	"net/http"
 
 	. "fijoy/.gen/neondb/public/table"
@@ -14,34 +15,36 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-type userHandler struct {
+type accountHandler struct {
 	tokenAuth *jwtauth.JWTAuth
 	db        *sql.DB
 }
 
-func NewUserHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
-	handler := userHandler{tokenAuth, db}
+func NewAccountHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
+	handler := &accountHandler{tokenAuth, db}
 
 	router := chi.NewRouter()
+
 	router.Use(jwtauth.Verifier(tokenAuth))
 	router.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Get("/", handler.GetUserData)
+	router.Get("/", handler.GetAccount)
 	return router
 }
 
-func (uh userHandler) GetUserData(w http.ResponseWriter, r *http.Request) {
+func (ah *accountHandler) GetAccount(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
-
 	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).
 		WHERE(FijoyUser.ID.EQ(String(claims["user_id"].(string))))
+	dest := &model.FijoyUser{}
 
-	dest := model.FijoyUser{}
-
-	err := stmt.QueryContext(r.Context(), uh.db, &dest)
+	err := stmt.Query(ah.db, &dest)
 	if err != nil {
-		http.Error(w, "Failed to get user: "+err.Error(), http.StatusInternalServerError)
+		panic(err)
 	}
 
-	json.NewEncoder(w).Encode(dest)
+	jsonText, _ := json.MarshalIndent(dest, "", "\t")
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(jsonText))
 }

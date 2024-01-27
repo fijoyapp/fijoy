@@ -5,10 +5,12 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as WorkspaceIndexImport } from './routes/workspace/index'
 
 // Create Virtual Routes
 
 const SignupLazyImport = createFileRoute('/signup')()
+const SetupLazyImport = createFileRoute('/setup')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
 const WorkspaceNamespaceIndexLazyImport = createFileRoute(
@@ -28,6 +30,11 @@ const SignupLazyRoute = SignupLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/signup.lazy').then((d) => d.Route))
 
+const SetupLazyRoute = SetupLazyImport.update({
+  path: '/setup',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/setup.lazy').then((d) => d.Route))
+
 const LoginLazyRoute = LoginLazyImport.update({
   path: '/login',
   getParentRoute: () => rootRoute,
@@ -37,6 +44,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const WorkspaceIndexRoute = WorkspaceIndexImport.update({
+  path: '/workspace/',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const WorkspaceNamespaceIndexLazyRoute =
   WorkspaceNamespaceIndexLazyImport.update({
@@ -76,8 +88,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginLazyImport
       parentRoute: typeof rootRoute
     }
+    '/setup': {
+      preLoaderRoute: typeof SetupLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/signup': {
       preLoaderRoute: typeof SignupLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/workspace/': {
+      preLoaderRoute: typeof WorkspaceIndexImport
       parentRoute: typeof rootRoute
     }
     '/workspace/$namespace/accounts': {
@@ -100,7 +120,9 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   LoginLazyRoute,
+  SetupLazyRoute,
   SignupLazyRoute,
+  WorkspaceIndexRoute,
   WorkspaceNamespaceAccountsLazyRoute,
   WorkspaceNamespaceTransactionsLazyRoute,
   WorkspaceNamespaceIndexLazyRoute,

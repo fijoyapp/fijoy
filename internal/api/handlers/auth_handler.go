@@ -36,23 +36,23 @@ type authHandler struct {
 	db                *sql.DB
 }
 
-func NewAuthHandler(r *chi.Mux, googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
+func NewAuthHandler(googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
 	handler := &authHandler{googleOAuthConfig, tokenAuth, db}
+	router := chi.NewRouter()
 
-	r.Route("/auth", func(r chi.Router) {
-		r.Get("/google/login", handler.googleLogin)
-		r.Get("/google/callback", handler.googleCallback)
-		r.Get("/logout", handler.logout)
-	})
+	router.Get("/google/login", handler.googleLogin)
+	router.Get("/google/callback", handler.googleCallback)
+	router.Get("/logout", handler.logout)
+	return router
 }
 
-func (ah *authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
+func (ah authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
 	googleOAuthState := generateStateOAuthCookie(w)
 	url := ah.googleOAuthConfig.AuthCodeURL(googleOAuthState)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func (ah *authHandler) logout(w http.ResponseWriter, r *http.Request) {
+func (ah authHandler) logout(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     "jwt",
 		Value:    "",
@@ -98,8 +98,9 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	if err == qrm.ErrNoRows {
 		userId := "user_" + cuid2.Generate()
 		user := model.FijoyUser{
-			ID:    userId,
-			Email: googleUserInfo.Email,
+			ID:        userId,
+			Email:     googleUserInfo.Email,
+			CreatedAt: time.Now(),
 		}
 		insertUserStmt := FijoyUser.INSERT(FijoyUser.AllColumns).MODEL(user)
 
@@ -136,7 +137,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	http.SetCookie(w, cookie)

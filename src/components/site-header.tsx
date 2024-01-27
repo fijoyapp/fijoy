@@ -8,11 +8,10 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import UserButton from "@/components/user-button";
 import { Link } from "@tanstack/react-router";
-import { useUser } from "@/hooks/use-user";
-import { Skeleton } from "./ui/skeleton";
+import { useUser } from "@/auth";
 
 export function SiteHeader() {
-  const { data: user } = useUser();
+  const { user } = useUser();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -46,11 +45,7 @@ export function SiteHeader() {
 }
 
 function AuthControl() {
-  const { data: user, isLoading } = useUser();
-
-  if (isLoading) {
-    return <Skeleton className="h-8 w-32" />;
-  }
+  const { user } = useUser();
 
   return (
     <>

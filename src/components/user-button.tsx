@@ -12,13 +12,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
-import { useUser } from "@/hooks/use-user";
+import { useUser } from "@/auth";
 // import { useRouter } from "@tanstack/react-router";
 
 function UserButton() {
-  const { data: user, isSuccess } = useUser();
+  const { user } = useUser();
 
-  if (!isSuccess) {
+  if (!user) {
     return null;
   }
 

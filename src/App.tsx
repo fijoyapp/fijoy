@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
+import { AuthProvider } from "./auth";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -27,11 +28,13 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </AuthProvider>
     </StrictMode>,
   );
 }
