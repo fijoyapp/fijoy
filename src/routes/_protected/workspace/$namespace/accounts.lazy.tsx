@@ -5,7 +5,9 @@ import {
 } from "@/components/small-header";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute("/workspace/$namespace/")({
+export const Route = createLazyFileRoute(
+  "/_protected/workspace/$namespace/accounts",
+)({
   component: Page,
 });
 

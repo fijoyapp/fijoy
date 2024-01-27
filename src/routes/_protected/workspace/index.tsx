@@ -4,7 +4,7 @@ import { Navigate, createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-export const Route = createFileRoute("/workspace/")({
+export const Route = createFileRoute("/_protected/workspace/")({
   component: Page,
   loader: async () => {
     const response = await axios.get(env.VITE_BACKEND_URL + "/workspace", {
