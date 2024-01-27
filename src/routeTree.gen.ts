@@ -11,6 +11,15 @@ import { Route as rootRoute } from './routes/__root'
 const SignupLazyImport = createFileRoute('/signup')()
 const LoginLazyImport = createFileRoute('/login')()
 const IndexLazyImport = createFileRoute('/')()
+const WorkspaceNamespaceIndexLazyImport = createFileRoute(
+  '/workspace/$namespace/',
+)()
+const WorkspaceNamespaceTransactionsLazyImport = createFileRoute(
+  '/workspace/$namespace/transactions',
+)()
+const WorkspaceNamespaceAccountsLazyImport = createFileRoute(
+  '/workspace/$namespace/accounts',
+)()
 
 // Create/Update Routes
 
@@ -29,6 +38,32 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const WorkspaceNamespaceIndexLazyRoute =
+  WorkspaceNamespaceIndexLazyImport.update({
+    path: '/workspace/$namespace/',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/workspace/$namespace/index.lazy').then((d) => d.Route),
+  )
+
+const WorkspaceNamespaceTransactionsLazyRoute =
+  WorkspaceNamespaceTransactionsLazyImport.update({
+    path: '/workspace/$namespace/transactions',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/workspace/$namespace/transactions.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const WorkspaceNamespaceAccountsLazyRoute =
+  WorkspaceNamespaceAccountsLazyImport.update({
+    path: '/workspace/$namespace/accounts',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/workspace/$namespace/accounts.lazy').then((d) => d.Route),
+  )
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -45,6 +80,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupLazyImport
       parentRoute: typeof rootRoute
     }
+    '/workspace/$namespace/accounts': {
+      preLoaderRoute: typeof WorkspaceNamespaceAccountsLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/workspace/$namespace/transactions': {
+      preLoaderRoute: typeof WorkspaceNamespaceTransactionsLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/workspace/$namespace/': {
+      preLoaderRoute: typeof WorkspaceNamespaceIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,4 +101,7 @@ export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   LoginLazyRoute,
   SignupLazyRoute,
+  WorkspaceNamespaceAccountsLazyRoute,
+  WorkspaceNamespaceTransactionsLazyRoute,
+  WorkspaceNamespaceIndexLazyRoute,
 ])
