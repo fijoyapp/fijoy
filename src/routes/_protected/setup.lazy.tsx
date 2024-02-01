@@ -6,14 +6,12 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header";
 import CreateWorkspace from "@/components/setup/create-workspace";
-import { useAuth } from "@/auth";
 
 export const Route = createLazyFileRoute("/_protected/setup")({
   component: Setup,
 });
 
 function Setup() {
-  const { user } = useAuth();
   return (
     <div className="container max-w-screen-2xl">
       <PageHeader>
