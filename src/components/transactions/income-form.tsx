@@ -7,6 +7,7 @@ type Props = {
 };
 
 const IncomeForm = ({ form }: Props) => {
+  console.log(form);
   return <div>IncomeForm</div>;
 };
 
