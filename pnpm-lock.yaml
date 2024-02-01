@@ -78,17 +78,17 @@ dependencies:
     specifier: ^0.8.0
     version: 0.8.0(typescript@5.3.3)(zod@3.22.4)
   '@tanstack/react-query':
-    specifier: ^5.17.19
-    version: 5.17.19(react@18.2.0)
+    specifier: ^5.18.0
+    version: 5.18.0(react@18.2.0)
   '@tanstack/react-query-devtools':
-    specifier: ^5.17.21
-    version: 5.17.21(@tanstack/react-query@5.17.19)(react@18.2.0)
+    specifier: ^5.18.0
+    version: 5.18.0(@tanstack/react-query@5.18.0)(react@18.2.0)
   '@tanstack/react-router':
-    specifier: ^1.15.2
-    version: 1.15.2(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^1.15.7
+    version: 1.15.7(react-dom@18.2.0)(react@18.2.0)
   '@tanstack/router-devtools':
-    specifier: ^1.15.2
-    version: 1.15.2(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^1.15.7
+    version: 1.15.7(react-dom@18.2.0)(react@18.2.0)
   axios:
     specifier: ^1.6.7
     version: 1.6.7
@@ -99,14 +99,14 @@ dependencies:
     specifier: ^2.1.0
     version: 2.1.0
   cmdk:
-    specifier: ^0.2.0
-    version: 0.2.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^0.2.1
+    version: 0.2.1(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
   date-fns:
     specifier: ^3.3.1
     version: 3.3.1
   embla-carousel-react:
-    specifier: 8.0.0-rc21
-    version: 8.0.0-rc21(react@18.2.0)
+    specifier: 8.0.0-rc22
+    version: 8.0.0-rc22(react@18.2.0)
   js-cookie:
     specifier: ^3.0.5
     version: 3.0.5
@@ -114,8 +114,8 @@ dependencies:
     specifier: ^4.17.21
     version: 4.17.21
   lucide-react:
-    specifier: ^0.317.0
-    version: 0.317.0(react@18.2.0)
+    specifier: ^0.320.0
+    version: 0.320.0(react@18.2.0)
   next-themes:
     specifier: ^0.2.1
     version: 0.2.1(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
@@ -155,8 +155,8 @@ dependencies:
 
 devDependencies:
   '@tanstack/router-vite-plugin':
-    specifier: ^1.14.1
-    version: 1.14.1
+    specifier: ^1.15.4
+    version: 1.15.4
   '@types/js-cookie':
     specifier: ^3.0.6
     version: 3.0.6
@@ -164,8 +164,8 @@ devDependencies:
     specifier: ^4.14.202
     version: 4.14.202
   '@types/node':
-    specifier: ^20.11.10
-    version: 20.11.10
+    specifier: ^20.11.14
+    version: 20.11.14
   '@types/react':
     specifier: ^18.2.48
     version: 18.2.48
@@ -179,8 +179,8 @@ devDependencies:
     specifier: ^6.20.0
     version: 6.20.0(eslint@8.56.0)(typescript@5.3.3)
   '@vitejs/plugin-react-swc':
-    specifier: ^3.5.0
-    version: 3.5.0(vite@5.0.12)
+    specifier: ^3.6.0
+    version: 3.6.0(vite@5.0.12)
   autoprefixer:
     specifier: ^10.4.17
     version: 10.4.17(postcss@8.4.33)
@@ -210,7 +210,7 @@ devDependencies:
     version: 5.3.3
   vite:
     specifier: ^5.0.12
-    version: 5.0.12(@types/node@20.11.10)
+    version: 5.0.12(@types/node@20.11.14)
 
 packages:
 
@@ -460,7 +460,7 @@ packages:
       debug: 4.3.4
       espree: 9.6.1
       globals: 13.24.0
-      ignore: 5.3.0
+      ignore: 5.3.1
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       minimatch: 3.1.2
@@ -2196,36 +2196,36 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /@tanstack/query-core@5.17.19:
-    resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
+  /@tanstack/query-core@5.18.0:
+    resolution: {integrity: sha512-8c6nxeAnGHxIDZIyDmHdmgFt4D+LprAQaJmjsnM4szcIjsWOyFlzxdqQUuQ/XuQRvUgqYaqlJTtDADlSS7pTPQ==}
     dev: false
 
-  /@tanstack/query-devtools@5.17.21:
-    resolution: {integrity: sha512-WWfcnNjTEqcuAS5GyKkVGkseuES6yd197MJWGImBu+MoCjWPqxSXKCCfm+utSXJauJUGm7xoMmhqCphiQdjf8w==}
+  /@tanstack/query-devtools@5.18.0:
+    resolution: {integrity: sha512-h0KuF8CboNB7z6+Y6psTwK56JwHD1pNB28gDbc1PaaQ9Q5uD837egYH3qOEEireO/1P3j2s3jVPsbB0+bqdthw==}
     dev: false
 
-  /@tanstack/react-query-devtools@5.17.21(@tanstack/react-query@5.17.19)(react@18.2.0):
-    resolution: {integrity: sha512-Ri1AuWpN67eyPdMTlPxx1TMGNUaxTHrGv0ll0S20ZObz/Xms5wfANV3c6OX0HZTY0igudP1k5jpRLXNkd249mg==}
+  /@tanstack/react-query-devtools@5.18.0(@tanstack/react-query@5.18.0)(react@18.2.0):
+    resolution: {integrity: sha512-zjDOYexc8dvDyaRvrbsjdUD8tjaUTIwOyQxM2Go+rOF+HgAIyn4dLFh/6s+sszRjqDn74oBkUNUeYNnh6zmIOw==}
     peerDependencies:
-      '@tanstack/react-query': ^5.17.19
+      '@tanstack/react-query': ^5.18.0
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-devtools': 5.17.21
-      '@tanstack/react-query': 5.17.19(react@18.2.0)
+      '@tanstack/query-devtools': 5.18.0
+      '@tanstack/react-query': 5.18.0(react@18.2.0)
       react: 18.2.0
     dev: false
 
-  /@tanstack/react-query@5.17.19(react@18.2.0):
-    resolution: {integrity: sha512-qaQENB6/03Gj3dFZGvdmUoqeUGlGm7P1p0RmaR04Bf1Ib1T9lLGimcC9T3oCFbrx0b2ZF21ngjFZNjj9uPJMcg==}
+  /@tanstack/react-query@5.18.0(react@18.2.0):
+    resolution: {integrity: sha512-7FKxNfxxKEL7n3ADpwp81Fy4FX85hNkYVzQQVQsF0JAPl93c3d1gmNZMIbEtOqgYfom1/ontGh3FiZGYj3xyWA==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.17.19
+      '@tanstack/query-core': 5.18.0
       react: 18.2.0
     dev: false
 
-  /@tanstack/react-router@1.15.2(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-wI+G6A2Eue8BwVC76xUSEhOrUfHLrYFzpNZIJT18Msfe+xX5xh1VnsjrAJGcOkmCuJPCdKQK+l9S97Z31YivfA==}
+  /@tanstack/react-router@1.15.7(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-4b5ia1HG1iQhdRQ67NDjzDkA0tLm2aeoE07DqIXSWTY8xrrNBgYUjfCKKNy2l/qIE5/gFmsoaqab3ZJxohOFmQ==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
@@ -2251,32 +2251,32 @@ packages:
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/router-devtools@1.15.2(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-cfWOz0kg+3NXQJ2kmugUk7WkrezGHfKFcqM1Oqm5S3BCPvvPj0oCRncjAhi6dXZCVo5LokAEPvSW+hhpMTWuuA==}
+  /@tanstack/router-devtools@1.15.7(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-XuDmyxOzjnx7br6ln6Kwa4DZmufnjiF/Rly5RTGbYpevtCX1xUY82lgch0QAu8emX6WhfPzX0tM0vNAvPN309A==}
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/react-router': 1.15.2(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-router': 1.15.7(react-dom@18.2.0)(react@18.2.0)
       date-fns: 2.30.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@tanstack/router-generator@1.14.1:
-    resolution: {integrity: sha512-BCXveyGwaDjdNPzRu9loB6EWrF8G/rnhKG90639QxrnT8UFmtks59q7OoYf3jO7+Kx1asxgKoEsfbdq7OmmMcg==}
+  /@tanstack/router-generator@1.15.4:
+    resolution: {integrity: sha512-DG+ZAKQlRu2bK0jxbzq63B1k5srCtlbHuYqKVOyzjsIUWu75VVt0byNKhnkJxU3cnXzTb2y3io8Fsf7DMIHXLA==}
     engines: {node: '>=12'}
     dependencies:
       prettier: 3.2.4
       zod: 3.22.4
     dev: true
 
-  /@tanstack/router-vite-plugin@1.14.1:
-    resolution: {integrity: sha512-Hg4EoQ7eeDsW9WA3JTRadj5ftPt1IMtzeXv2CMcFKm72qJT6jta9LjNPHcM+yjjYzcHiuMfBQ6DxyPtUMwYj2Q==}
+  /@tanstack/router-vite-plugin@1.15.4:
+    resolution: {integrity: sha512-SvVm0pIy15yU7bFRuq4ZWAIi/067xxhvutL2gcepfUkEv5q2v4VM9pGsYIjUCt15jBJlnCRT3wdjwJuBFUqh9g==}
     engines: {node: '>=12'}
     dependencies:
-      '@tanstack/router-generator': 1.14.1
+      '@tanstack/router-generator': 1.15.4
     dev: true
 
   /@tanstack/store@0.1.3:
@@ -2299,8 +2299,8 @@ packages:
     resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
     dev: true
 
-  /@types/node@20.11.10:
-    resolution: {integrity: sha512-rZEfe/hJSGYmdfX9tvcPMYeYPW2sNl50nsw4jZmRcaG0HIAb0WYEpsB05GOb53vjqpyE9GUhlDQ4jLSoB5q9kg==}
+  /@types/node@20.11.14:
+    resolution: {integrity: sha512-w3yWCcwULefjP9DmDDsgUskrMoOy5Z8MiwKHr1FvqGPtx7CvJzQvxD7eKpxNtklQxLruxSXWddyeRtyud0RcXQ==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -2347,7 +2347,7 @@ packages:
       debug: 4.3.4
       eslint: 8.56.0
       graphemer: 1.4.0
-      ignore: 5.3.0
+      ignore: 5.3.1
       natural-compare: 1.4.0
       semver: 7.5.4
       ts-api-utils: 1.0.3(typescript@5.3.3)
@@ -2463,13 +2463,13 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@vitejs/plugin-react-swc@3.5.0(vite@5.0.12):
-    resolution: {integrity: sha512-1PrOvAaDpqlCV+Up8RkAh9qaiUjoDUcjtttyhXDKw53XA6Ve16SOp6cCOpRs8Dj8DqUQs6eTW5YkLcLJjrXAig==}
+  /@vitejs/plugin-react-swc@3.6.0(vite@5.0.12):
+    resolution: {integrity: sha512-XFRbsGgpGxGzEV5i5+vRiro1bwcIaZDIdBRP16qwm+jP68ue/S8FJTBEgOeojtVDYrbSua3XFp71kC8VJE6v+g==}
     peerDependencies:
       vite: ^4 || ^5
     dependencies:
       '@swc/core': 1.3.107
-      vite: 5.0.12(@types/node@20.11.10)
+      vite: 5.0.12(@types/node@20.11.14)
     transitivePeerDependencies:
       - '@swc/helpers'
     dev: true
@@ -2610,7 +2610,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001581
-      electron-to-chromium: 1.4.649
+      electron-to-chromium: 1.4.653
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.3)
     dev: true
@@ -2676,14 +2676,13 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /cmdk@0.2.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-JQpKvEOb86SnvMZbYaFKYhvzFntWBeSZdyii0rZPhKJj9uwJBxu4DaVYDrRN7r3mPop56oPhRw+JYWTKs66TYw==}
+  /cmdk@0.2.1(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-U6//9lQ6JvT47+6OF6Gi8BvkxYQ8SCRRSKIJkthIMsFsLZRG0cKvTtuTaefyIKMQb8rvvXy0wGdpTNq/jPtm+g==}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
     dependencies:
       '@radix-ui/react-dialog': 1.0.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
-      command-score: 0.1.2
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:
@@ -2704,10 +2703,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: false
-
-  /command-score@0.1.2:
-    resolution: {integrity: sha512-VtDvQpIJBvBatnONUsPzXYFVKQQAhuf3XTNOAsdBxCNO/QCtUUd8LSgjn0GVarBkCad6aJCZfXgrjYbl/KRr7w==}
     dev: false
 
   /commander@2.20.3:
@@ -2801,30 +2796,30 @@ packages:
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  /electron-to-chromium@1.4.649:
-    resolution: {integrity: sha512-dq/owIaALxZGqWm5RXpKQ4baX6aDC19e2Z16c8SXYN+I71PyEKjbVqQUgm7kcuk8CRqljTKXbolo0XXDjxnh2w==}
+  /electron-to-chromium@1.4.653:
+    resolution: {integrity: sha512-wA2A2LQCqnEwQAvwADQq3KpMpNwgAUBnRmrFgRzHnPhbQUFArTR32Ab46f4p0MovDLcg4uqd4nCsN2hTltslpA==}
     dev: true
 
-  /embla-carousel-react@8.0.0-rc21(react@18.2.0):
-    resolution: {integrity: sha512-DOa9hgF/T1fwb8D3rZ8FFMceY3aDXtbluZwzZYMLnN2Dqn0IBLN0l97o3obkMxI9Zzog0u1WMM6HE7AGF9SjEg==}
+  /embla-carousel-react@8.0.0-rc22(react@18.2.0):
+    resolution: {integrity: sha512-NwmISV0Cw9XVo76Vquz3hJaeZe7qoCRtrzStxlEY7qfZD8WR/f4JlQAso35URTs1BeYVhcuClflelioo+Zmidg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.1 || ^18.0.0
     dependencies:
-      embla-carousel: 8.0.0-rc21
-      embla-carousel-reactive-utils: 8.0.0-rc21(embla-carousel@8.0.0-rc21)
+      embla-carousel: 8.0.0-rc22
+      embla-carousel-reactive-utils: 8.0.0-rc22(embla-carousel@8.0.0-rc22)
       react: 18.2.0
     dev: false
 
-  /embla-carousel-reactive-utils@8.0.0-rc21(embla-carousel@8.0.0-rc21):
-    resolution: {integrity: sha512-TnV49hoTdwfcKr2vgQHQ3zcCqJSkvLJ5rR/pGzmEx5GeO07CV/e755lkSD7No0C6cz+JFB8dcHV7uS+5Gnc7Lg==}
+  /embla-carousel-reactive-utils@8.0.0-rc22(embla-carousel@8.0.0-rc22):
+    resolution: {integrity: sha512-K4b8QhQGXYW5wr4l+U6XryhafsFV5c/IyohDnZN3MGoYIB9xY7qpjUWAcs5bTDjAD+qCZPOuXre0D3IVa28mqw==}
     peerDependencies:
-      embla-carousel: 8.0.0-rc21
+      embla-carousel: 8.0.0-rc22
     dependencies:
-      embla-carousel: 8.0.0-rc21
+      embla-carousel: 8.0.0-rc22
     dev: false
 
-  /embla-carousel@8.0.0-rc21:
-    resolution: {integrity: sha512-rK//vyPIhmD/5QUDtjk9A5RxPoDZ5LOATYMVSFECAzwcAe7yJmqXQbdYzEZf4ASOR+ivod5msqXsKgZXypA35Q==}
+  /embla-carousel@8.0.0-rc22:
+    resolution: {integrity: sha512-MeXnPT1LShfgAu8qXj3CskayV0R6OkHx7w3cPTx+Q5ZWKyShKpIuu7qVQJ5BoFegalE4n6yxqoQaRuGFbK9pYw==}
     dev: false
 
   /emoji-regex@8.0.0:
@@ -2934,7 +2929,7 @@ packages:
       glob-parent: 6.0.2
       globals: 13.24.0
       graphemer: 1.4.0
-      ignore: 5.3.0
+      ignore: 5.3.1
       imurmurhash: 0.1.4
       is-glob: 4.0.3
       is-path-inside: 3.0.3
@@ -3147,7 +3142,7 @@ packages:
       array-union: 2.1.0
       dir-glob: 3.0.1
       fast-glob: 3.3.2
-      ignore: 5.3.0
+      ignore: 5.3.1
       merge2: 1.4.1
       slash: 3.0.0
     dev: true
@@ -3171,8 +3166,8 @@ packages:
     dependencies:
       function-bind: 1.1.2
 
-  /ignore@5.3.0:
-    resolution: {integrity: sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==}
+  /ignore@5.3.1:
+    resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
     dev: true
 
@@ -3346,8 +3341,8 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /lucide-react@0.317.0(react@18.2.0):
-    resolution: {integrity: sha512-8J8fIim0Sc+AYn8skgVau+hRGXaqjErRNzuW0vIGt4QA/f3UvY8g8o2A/OL9deCBKxZjVD1zuoidyMCiq8rfFQ==}
+  /lucide-react@0.320.0(react@18.2.0):
+    resolution: {integrity: sha512-HuMmfmFiWwctDkN27wklKVZr8UpwP2TTekLZ3xiLCEjx/STG1k0KLWMbBfIJ/lnNJQDfSjztDZSVU316xA+AQg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
@@ -3675,7 +3670,7 @@ packages:
       jsox: 1.2.119
       node-sql-parser: 4.18.0
       prettier: 3.2.4
-      sql-formatter: 15.1.3
+      sql-formatter: 15.2.0
       tslib: 2.6.2
     dev: true
 
@@ -3951,8 +3946,8 @@ packages:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
 
-  /sql-formatter@15.1.3:
-    resolution: {integrity: sha512-PPY3UPQ+3B2ZNHlKF+c55HaxXBjrlxQlBddnfYJ1iC9I7LMzYFH4Rf8+OKhsYllkZuFNDpRxooXP4rG9XJ6AGA==}
+  /sql-formatter@15.2.0:
+    resolution: {integrity: sha512-k1gDOblvmtzmrBT687Y167ElwQI/8KrlhfKeIUXsi6jw7Rp5n3G8TkMFZF0Z9NG7rAzHKXUlJ8kfmcIfMf5lFg==}
     hasBin: true
     dependencies:
       argparse: 2.0.1
@@ -4221,7 +4216,7 @@ packages:
       - '@types/react-dom'
     dev: false
 
-  /vite@5.0.12(@types/node@20.11.10):
+  /vite@5.0.12(@types/node@20.11.14):
     resolution: {integrity: sha512-4hsnEkG3q0N4Tzf1+t6NdN9dg/L3BM+q8SWgbSPnJvrgH2kgdyzfVJwbR1ic69/4uMJJ/3dqDZZE5/WwqW8U1w==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -4249,7 +4244,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 20.11.10
+      '@types/node': 20.11.14
       esbuild: 0.19.12
       postcss: 8.4.33
       rollup: 4.9.6
