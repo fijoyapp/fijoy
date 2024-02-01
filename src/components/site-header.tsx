@@ -8,10 +8,10 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import UserButton from "@/components/user-button";
 import { Link } from "@tanstack/react-router";
-import { useUser } from "@/auth";
+import { useAuth } from "@/auth";
 
 export function SiteHeader() {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   console.log(user);
   return (
@@ -46,7 +46,7 @@ export function SiteHeader() {
 }
 
 function AuthControl() {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   return (
     <>

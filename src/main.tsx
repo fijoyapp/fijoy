@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
-import { AuthProvider, useUser } from "./auth";
+import { AuthProvider, useAuth } from "./auth";
 
 export const queryClient = new QueryClient();
 
@@ -31,7 +31,7 @@ declare module "@tanstack/react-router" {
 }
 
 function InnerApp() {
-  const auth = useUser();
+  const auth = useAuth();
 
   return <RouterProvider router={router} context={{ auth }} />;
 }

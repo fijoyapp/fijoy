@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { CheckIcon, ChevronsUpDown, Wallet } from "lucide-react";
-import { SelectAccount } from "@/types/account";
+import { InsertAccount } from "@/types/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { type z } from "zod";
@@ -48,37 +48,50 @@ import {
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { env } from "@/env";
+import { accountsQueryOptions } from "@/lib/queries/account";
 
-const formSchema = SelectAccount;
+const formSchema = InsertAccount;
 
-const AddAccount = () => {
+type Props = {
+  workspaceID: string;
+};
+
+const AddAccount = ({ workspaceID }: Props) => {
   const [open, setOpen] = useState(false);
   const [accountTypeOpen, setAccountTypeOpen] = useState(false);
   const [institutionOpen, setInstitutionOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
   });
+  const queryClient = useQueryClient();
 
   const createAccount = useMutation({
-    mutationFn: (values: z.infer<typeof formSchema>) => {
-      return fetch("/accounts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const result = await axios.post(
+        env.VITE_BACKEND_URL + "/account",
+        values,
+        {
+          withCredentials: true,
+          params: { workspace_id: workspaceID },
         },
-        body: JSON.stringify(values),
-      }).then((res) => res.json());
+      );
+      return result.data;
     },
     onSuccess: () => {
       form.reset();
       setOpen(false);
+      queryClient.invalidateQueries({
+        queryKey: accountsQueryOptions(workspaceID).queryKey,
+      });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     toast.promise(createAccount.mutateAsync(values), {
       success: "Account created!",
       loading: "Creating account...",

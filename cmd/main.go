@@ -61,7 +61,7 @@ func main() {
 	r.Mount("/auth", handlers.NewAuthHandler(googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL))
 	r.Mount("/user", handlers.NewUserHandler(tokenAuth, db))
 	r.Mount("/workspace", handlers.NewWorkspaceHandler(tokenAuth, db))
-	// handlers.NewAccountHandler(r, tokenAuth, db)
+	r.Mount("/account", handlers.NewAccountHandler(tokenAuth, db))
 
 	http.ListenAndServe(":3000", r)
 }

@@ -4,7 +4,7 @@ import {
   PageHeaderHeading,
 } from "@/components/small-header";
 import { SelectAccount } from "@/types/account";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 import {
   Card,
@@ -23,15 +23,23 @@ import {
 } from "@/components/ui/carousel";
 import AccountSection from "@/components/accounts/account-section";
 import AddAccount from "@/components/accounts/add-account";
+import { accountsQueryOptions } from "@/lib/queries/account";
 
-export const Route = createLazyFileRoute(
-  "/_protected/workspace/$namespace/accounts/",
+export const Route = createFileRoute(
+  "/_protected/workspace/$namespace/_namespace/accounts/",
 )({
+  loader: (opts) => {
+    // when I make the query here, I need to get the ID from the workspace context
+    return opts.context.queryClient.ensureQueryData(
+      accountsQueryOptions(opts.context.workspace.ID),
+    );
+  },
   component: Page,
 });
 
 function Page() {
-  const accounts: SelectAccount[] = [];
+  const accounts = Route.useLoaderData();
+  const { workspace } = Route.useRouteContext();
   return (
     <div className="container max-w-screen-2xl">
       <div className="items-end gap-4 lg:flex">
@@ -66,7 +74,7 @@ function Page() {
 
       <div className="py-2 lg:py-4" />
 
-      <AddAccount />
+      <AddAccount workspaceID={workspace.ID} />
 
       <div className="py-2 lg:py-4" />
 

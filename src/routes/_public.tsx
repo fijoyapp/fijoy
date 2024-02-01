@@ -1,4 +1,4 @@
-import { useUser } from "@/auth";
+import { useAuth } from "@/auth";
 import { Navigate, Outlet, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_public")({
@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_public")({
 });
 
 function Public() {
-  const auth = useUser();
+  const auth = useAuth();
 
   if (auth.user) {
     return <Navigate to="/workspace" />;

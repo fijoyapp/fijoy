@@ -12,3 +12,12 @@ export const SelectAccount = z.object({
 });
 
 export type SelectAccount = z.infer<typeof SelectAccount>;
+
+export const InsertAccount = SelectAccount.pick({
+  Name: true,
+  AccountType: true,
+  Institution: true,
+  Balance: true,
+});
+
+export type InsertAccount = z.infer<typeof InsertAccount>;

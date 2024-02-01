@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS "fijoy_account" (
   "institution" text NOT NULL,
   "workspace_id" text NOT NULL,
   "balance" double precision NOT NULL,
-  "created_at" timestamp DEFAULT now () NOT NULL,
+  "updated_at" timestamp DEFAULT now () NOT NULL,
   CONSTRAINT "fijoy_account_workspace_id_name_unique" UNIQUE ("workspace_id", "name")
 );

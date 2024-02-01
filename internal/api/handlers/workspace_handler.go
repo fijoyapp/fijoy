@@ -131,11 +131,23 @@ func (wh workspaceHandler) getWorkspace(w http.ResponseWriter, r *http.Request) 
 	userId := claims["user_id"].(string)
 	workspaceId := chi.URLParam(r, "workspaceId")
 
-	stmt := SELECT(FijoyWorkspace.AllColumns).
-		FROM(FijoyWorkspaceUser.
-			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
-			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
-		WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.ID.EQ(String(workspaceId))))
+	isNamespace := r.URL.Query().Get("namespace")
+
+	var stmt SelectStatement
+
+	if isNamespace == "true" {
+		stmt = SELECT(FijoyWorkspace.AllColumns).
+			FROM(FijoyWorkspaceUser.
+				INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
+				INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
+			WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.Namespace.EQ(String(workspaceId))))
+	} else {
+		stmt = SELECT(FijoyWorkspace.AllColumns).
+			FROM(FijoyWorkspaceUser.
+				INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
+				INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
+			WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.ID.EQ(String(workspaceId))))
+	}
 
 	var dest struct {
 		model.FijoyWorkspace

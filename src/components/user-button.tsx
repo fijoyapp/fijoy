@@ -10,11 +10,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
-import { useUser } from "@/auth";
+import { useAuth } from "@/auth";
 // import { useRouter } from "@tanstack/react-router";
 
 function UserButton() {
-  const { user } = useUser();
+  const { user } = useAuth();
 
   if (!user) {
     return null;

@@ -33,6 +33,19 @@ func NewUserHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
 func (uh userHandler) getUserData(w http.ResponseWriter, r *http.Request) {
 	_, claims, _ := jwtauth.FromContext(r.Context())
 
+	// workspaces := claims["workspaces"].([]interface{})
+	// var result []string
+	// for _, v := range workspaces {
+	// 	if str, ok := v.(string); ok {
+	// 		result = append(result, str)
+	// 	}
+	// }
+
+	// fmt.Println(result)
+	// if contains(result, "workspace_mtrusxj2r6wm2tfbnw97rb5c") {
+	// 	fmt.Println("Yoooo")
+	// }
+
 	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).
 		WHERE(FijoyUser.ID.EQ(String(claims["user_id"].(string))))
 
@@ -44,4 +57,13 @@ func (uh userHandler) getUserData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(dest)
+}
+
+func contains(slice []string, value string) bool {
+	for _, el := range slice {
+		if el == value {
+			return true
+		}
+	}
+	return false
 }

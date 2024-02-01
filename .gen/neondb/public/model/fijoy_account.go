@@ -18,5 +18,5 @@ type FijoyAccount struct {
 	Institution string    `json:"Institution"`
 	WorkspaceID string    `json:"WorkspaceID"`
 	Balance     float64   `json:"Balance"`
-	CreatedAt   time.Time `json:"CreatedAt"`
+	UpdatedAt   time.Time `json:"UpdatedAt"`
 }

@@ -4,31 +4,28 @@ import {
   PageHeaderHeading,
 } from "@/components/small-header";
 import NewTransaction from "@/components/transactions/new-transaction";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { workspacesQueryOptions } from "@/lib/queries/workspace";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute(
-  "/_protected/workspace/$namespace/transactions",
+export const Route = createFileRoute(
+  "/_protected/workspace/$namespace/_namespace/",
 )({
   component: Page,
+  loader: (opts) =>
+    opts.context.queryClient.ensureQueryData(workspacesQueryOptions()),
 });
 
 function Page() {
   return (
     <div className="container max-w-screen-2xl">
       <PageHeader>
-        <PageHeaderHeading className="">Transactions</PageHeaderHeading>
+        <PageHeaderHeading className="">Hey there!</PageHeaderHeading>
         <PageHeaderDescription className="">
-          The home for all your transactions.
+          Welcome back! How are you doing today?
         </PageHeaderDescription>
       </PageHeader>
-
       <div className="py-2 lg:py-4" />
-
       <NewTransaction accounts={[]} />
-
-      <div className="py-2 lg:py-4" />
-
-      {/* <DataTable columns={columns} data={transactions} /> */}
     </div>
   );
 }

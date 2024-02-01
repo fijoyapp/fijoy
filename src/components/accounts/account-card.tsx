@@ -12,7 +12,7 @@ type Props = {
 };
 
 const AccountCard = ({ account }: Props) => {
-  const params = useParams({ from: "/_protected/workspace/$namespace/" });
+  const params = useParams({ from: "/_protected/workspace/$namespace" });
   return (
     <Link
       to={"/workspace/$namespace/accounts/$accountId"}

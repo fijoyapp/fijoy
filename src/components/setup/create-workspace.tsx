@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Workspace } from "@/types/workspace";
+import { SelectWorkspace } from "@/types/workspace";
 import { env } from "@/env";
 
 const formSchema = z.object({
@@ -39,7 +39,7 @@ const CreateWorkspace = () => {
         workspace,
         { withCredentials: true },
       );
-      return Workspace.parse(result.data);
+      return SelectWorkspace.parse(result.data);
     },
 
     onSuccess: (data) => {

@@ -129,7 +129,28 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, tokenString, _ := ah.tokenAuth.Encode(map[string]interface{}{"user_id": userKeyDest.UserID})
+	var workspaceUserDest []struct {
+		model.FijoyWorkspaceUser
+	}
+
+	stmt = SELECT(FijoyWorkspaceUser.AllColumns).FROM(FijoyWorkspaceUser).
+		WHERE(FijoyWorkspaceUser.UserID.EQ(String(userKeyDest.UserID)))
+
+	err = stmt.Query(ah.db, &workspaceUserDest)
+	if err != nil {
+		http.Error(w, "Failed to query workspace user data: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// ids := make([]string, len(workspaceUserDest))
+	// for idx, workspaceUser := range workspaceUserDest {
+	// 	fmt.Println(workspaceUser.WorkspaceID)
+	// 	ids[idx] = workspaceUser.WorkspaceID
+	// }
+	// fmt.Println("wtf", ids)
+
+	_, tokenString, _ := ah.tokenAuth.Encode(
+		map[string]interface{}{"user_id": userKeyDest.UserID})
 
 	cookie := &http.Cookie{
 		Name:     "jwt",

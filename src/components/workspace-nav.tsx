@@ -11,7 +11,7 @@ export function WorkspaceNav() {
     fuzzy: true,
   });
 
-  const params = useParams({ from: "/_protected/workspace/$namespace/" });
+  const params = useParams({ from: "/_protected/workspace/$namespace" });
   const scope = params.namespace;
 
   return (
