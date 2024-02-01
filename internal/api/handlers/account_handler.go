@@ -6,6 +6,7 @@ import (
 	"fijoy/.gen/neondb/public/model"
 	"fmt"
 	"net/http"
+	"time"
 
 	. "fijoy/.gen/neondb/public/table"
 
@@ -94,6 +95,7 @@ func (ah *accountHandler) createAccount(w http.ResponseWriter, r *http.Request) 
 		Institution: createAccount.Institution,
 		WorkspaceID: workspaceID,
 		Balance:     createAccount.Balance.InexactFloat64(),
+		UpdatedAt:   time.Now().UTC(),
 	}
 
 	stmt := FijoyAccount.INSERT(FijoyAccount.AllColumns).MODEL(account)
