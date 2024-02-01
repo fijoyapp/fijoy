@@ -85,8 +85,9 @@ function Page() {
           const filteredAccounts = accounts.filter(
             (acc) => acc.AccountType === type,
           );
+          if (filteredAccounts.length === 0) return null;
           return (
-            <div key={type} className="break-inside-avoid-column py-2">
+            <div key={type} className="break-inside-avoid-column py-2 min-h-0">
               <AccountSection
                 name={accountTypeConfig[type].name}
                 accounts={filteredAccounts}

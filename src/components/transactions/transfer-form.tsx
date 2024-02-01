@@ -7,7 +7,6 @@ type Props = {
 };
 
 const TransferForm = ({ form }: Props) => {
-  console.log(form);
   return <div>TransferForm</div>;
 };
 

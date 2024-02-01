@@ -14,7 +14,7 @@ const AccountSection = ({ name, accounts }: Props) => {
     return null;
   }
   return (
-    <Card className="break-inside-avoid-page bg-muted">
+    <Card className="break-inside-avoid-page bg-muted ">
       <CardHeader className="p-4 sm:p-6">
         <div className="flex">
           <CardTitle className="text-xl sm:text-2xl">{name}</CardTitle>

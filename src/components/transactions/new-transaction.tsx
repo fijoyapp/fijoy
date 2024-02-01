@@ -67,7 +67,6 @@ const NewTransaction = ({ accounts }: Props) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     toast.promise(createTransaction.mutateAsync(values), {
       success: "Transaction created!",
       loading: "Creating transaction...",

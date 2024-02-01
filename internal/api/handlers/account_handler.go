@@ -33,6 +33,7 @@ func NewAccountHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
 
 	router.Get("/", handler.getAccounts)
 	router.Post("/", handler.createAccount)
+	router.Delete("/{accountID}", handler.deleteAccount)
 	return router
 }
 
@@ -100,6 +101,24 @@ func (ah *accountHandler) createAccount(w http.ResponseWriter, r *http.Request) 
 	_, err = stmt.Exec(ah.db)
 	if err != nil {
 		http.Error(w, "Failed to create account: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (ah *accountHandler) deleteAccount(w http.ResponseWriter, r *http.Request) {
+	workspaceID := r.URL.Query().Get("workspace_id")
+	if workspaceID == "" {
+		http.Error(w, "Invalid request: workspace_id is required", http.StatusBadRequest)
+		return
+	}
+
+	accountID := chi.URLParam(r, "accountID")
+
+	stmt := FijoyAccount.DELETE().WHERE(FijoyAccount.ID.EQ(String(accountID)))
+
+	_, err := stmt.Exec(ah.db)
+	if err != nil {
+		http.Error(w, "Failed to delete account: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

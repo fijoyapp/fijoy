@@ -14,7 +14,6 @@ export const Route = createLazyFileRoute("/_protected/setup")({
 
 function Setup() {
   const { user } = useAuth();
-  console.log("user", user);
   return (
     <div className="container max-w-screen-2xl">
       <PageHeader>

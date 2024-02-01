@@ -91,7 +91,6 @@ const AddAccount = ({ workspaceID }: Props) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     toast.promise(createAccount.mutateAsync(values), {
       success: "Account created!",
       loading: "Creating account...",
