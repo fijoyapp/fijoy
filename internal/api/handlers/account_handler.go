@@ -51,7 +51,6 @@ func (ah *accountHandler) getAccounts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonText, _ := json.MarshalIndent(dest, "", "\t")
-	fmt.Println(string(jsonText))
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(jsonText))

@@ -24,12 +24,12 @@ import {
 import AccountSection from "@/components/accounts/account-section";
 import AddAccount from "@/components/accounts/add-account";
 import { accountsQueryOptions } from "@/lib/queries/account";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/accounts/",
 )({
   loader: (opts) => {
-    // when I make the query here, I need to get the ID from the workspace context
     return opts.context.queryClient.ensureQueryData(
       accountsQueryOptions(opts.context.workspace.ID),
     );
@@ -38,8 +38,10 @@ export const Route = createFileRoute(
 });
 
 function Page() {
-  const accounts = Route.useLoaderData();
   const { workspace } = Route.useRouteContext();
+  const { data: accounts } = useSuspenseQuery(
+    accountsQueryOptions(workspace.ID),
+  );
   return (
     <div className="container max-w-screen-2xl">
       <div className="items-end gap-4 lg:flex">
