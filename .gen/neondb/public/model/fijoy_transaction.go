@@ -15,8 +15,8 @@ type FijoyTransaction struct {
 	ID              string    `sql:"primary_key" json:"ID"`
 	TransactionType string    `json:"TransactionType"`
 	Amount          float64   `json:"Amount"`
-	FromAccountID   *string   `json:"FromAccountID"`
-	ToAccountID     *string   `json:"ToAccountID"`
+	Currency        string    `json:"Currency"`
+	AccountID       string    `json:"AccountID"`
 	UserID          string    `json:"UserID"`
 	WorkspaceID     string    `json:"WorkspaceID"`
 	Datetime        time.Time `json:"Datetime"`
