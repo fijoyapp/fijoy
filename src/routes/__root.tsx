@@ -2,7 +2,7 @@ import { AuthContext } from "@/auth";
 import { SiteHeader } from "@/components/site-header";
 import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Outlet, rootRouteWithContext } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 interface RouterContext {
@@ -10,7 +10,7 @@ interface RouterContext {
   queryClient: QueryClient;
 }
 
-export const Route = rootRouteWithContext<RouterContext>()({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>
       <SiteHeader />
