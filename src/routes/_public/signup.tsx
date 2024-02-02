@@ -2,13 +2,13 @@ import { Icons } from "@/components/icons";
 import TermsAndPrivacy from "@/components/terms-and-privacy";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute("/_public/login")({
-  component: Login,
+export const Route = createFileRoute("/_public/signup")({
+  component: Signup,
 });
 
-function Login() {
+function Signup() {
   return (
     <div className="container max-w-screen-2xl">
       <div className="py-4"></div>
@@ -16,7 +16,7 @@ function Login() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Log in to your account
+            Create an account
           </h1>
         </div>
 
