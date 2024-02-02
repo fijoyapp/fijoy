@@ -16,6 +16,7 @@ export const Route = createFileRoute(
 });
 
 function Page() {
+  const { workspace } = Route.useRouteContext();
   return (
     <div className="container max-w-screen-2xl">
       <PageHeader>
@@ -25,7 +26,7 @@ function Page() {
         </PageHeaderDescription>
       </PageHeader>
       <div className="py-2 lg:py-4" />
-      <NewTransaction accounts={[]} />
+      <NewTransaction accounts={[]} workspace={workspace} />
     </div>
   );
 }

@@ -15,3 +15,5 @@ export const getMoneyDisplay = (
   }
   return formatter.format(money);
 };
+
+export const ALL_CURRENCIES = Intl.supportedValuesOf("currency");

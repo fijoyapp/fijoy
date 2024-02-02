@@ -52,6 +52,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { env } from "@/env";
 import { accountsQueryOptions } from "@/lib/queries/account";
+import { ALL_CURRENCIES } from "@/lib/money";
 
 const formSchema = InsertAccount;
 
@@ -98,7 +99,6 @@ const AddAccount = ({ workspaceID }: Props) => {
       error: "Failed to create account.",
     });
   }
-  const allCurrencies = Intl.supportedValuesOf("currency");
 
   return (
     <div className="">
@@ -126,7 +126,7 @@ const AddAccount = ({ workspaceID }: Props) => {
                   name="AccountType"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Account Type</FormLabel>
+                      <FormLabel>Account type</FormLabel>
                       <Popover
                         open={accountTypeOpen}
                         modal={true}
@@ -284,7 +284,7 @@ const AddAccount = ({ workspaceID }: Props) => {
                   name="Balance"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Current Balance</FormLabel>
+                      <FormLabel>Current balance</FormLabel>
                       <FormDescription>
                         {form.getValues("AccountType") &&
                           accountTypeConfig[form.getValues("AccountType")]
@@ -360,13 +360,13 @@ const AddAccount = ({ workspaceID }: Props) => {
                               />
                               <CommandEmpty>No currency found.</CommandEmpty>
                               <CommandGroup className="max-h-48 overflow-y-scroll">
-                                {allCurrencies.map((currency) => (
+                                {ALL_CURRENCIES.map((currency) => (
                                   <CommandItem
                                     value={currency}
                                     key={currency}
                                     onSelect={() => {
                                       form.setValue("Currency", currency);
-                                      setInstitutionOpen(false);
+                                      setCurrencyOpen(false);
                                     }}
                                   >
                                     {currency}
@@ -394,7 +394,7 @@ const AddAccount = ({ workspaceID }: Props) => {
                   name="Name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Display Name</FormLabel>
+                      <FormLabel>Display name</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="e.g. BMO Student Chequing"

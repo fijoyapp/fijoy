@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 import { institutionConfig } from "@/config/account";
+import CurrencyInput from "react-currency-input-field";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -50,7 +52,7 @@ const ExpenseForm = ({ form, accounts }: Props) => {
             accounts.find((v) => v.ID === field.value) ?? null;
           return (
             <FormItem className="flex flex-col">
-              <FormLabel>From Account</FormLabel>
+              <FormLabel>From account</FormLabel>
               <Popover
                 open={fromAccountOpen}
                 modal={true}
@@ -87,13 +89,13 @@ const ExpenseForm = ({ form, accounts }: Props) => {
                 </PopoverTrigger>
                 <PopoverContent className="p-0">
                   <Command>
-                    <CommandList className="max-h-48">
+                    <CommandList>
                       <CommandInput
                         placeholder="Search account..."
                         className="h-9"
                       />
                       <CommandEmpty>No account found.</CommandEmpty>
-                      <CommandGroup>
+                      <CommandGroup className="max-h-48 overflow-y-scroll">
                         <ScrollArea>
                           {accounts.map((account) => (
                             <CommandItem
@@ -134,6 +136,37 @@ const ExpenseForm = ({ form, accounts }: Props) => {
             </FormItem>
           );
         }}
+      />
+
+      <FormField
+        control={form.control}
+        name="Amount"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Amount</FormLabel>
+            <FormControl>
+              <CurrencyInput
+                step={1}
+                prefix="$"
+                // defaultValue={0}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                onValueChange={(value) => {
+                  if (!value) {
+                    field.onChange("");
+                    return;
+                  }
+
+                  field.onChange(+value);
+                }}
+                data-1p-ignore
+              />
+            </FormControl>
+            <FormDescription>
+              How much money was spent in this transaction?
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
       />
     </>
   );

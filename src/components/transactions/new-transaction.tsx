@@ -38,25 +38,33 @@ import { useMutation } from "@tanstack/react-query";
 import { env } from "@/env";
 import axios from "axios";
 import { SelectTransaction } from "@/types/transaction";
+import { SelectWorkspace } from "@/types/workspace";
 
 export const formSchema = SelectTransaction;
 
 type Props = {
   accounts: SelectAccount[];
+  workspace: SelectWorkspace;
 };
 
-const NewTransaction = ({ accounts }: Props) => {
+const NewTransaction = ({ accounts, workspace }: Props) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      Currency: "CAD", // TODO: make this the same as account's currency
+    },
   });
 
   const createTransaction = useMutation({
     mutationFn: async (values: SelectTransaction) => {
       const result = await axios.post(env + "/transaction", values, {
         withCredentials: true,
+
+        params: {
+          workspace_id: workspace.ID,
+        },
       });
       return SelectAccount.parse(result.data);
     },
@@ -102,7 +110,7 @@ const NewTransaction = ({ accounts }: Props) => {
                   name="TransactionType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Transaction Type</FormLabel>
+                      <FormLabel>Transaction type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
