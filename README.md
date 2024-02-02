@@ -6,10 +6,22 @@ Joyful personal finance management for everyone.
 
 ## Contribution
 
-To start the backend: `air`
-To start the frontend: `pnpm dev`
+### Backend
 
-Migrate up: `just db-up`
-Migrate down: `just db-down`
+```bash
+air # starts the backend
+just jet # jet codegen
+```
 
-Jet codegen: `just jet`
+### Frontend
+
+```bash
+pnpm dev # starts the frontend
+```
+
+### Database
+
+```bash
+just db-up # migrates the database
+just db-down # rollback the database
+```
