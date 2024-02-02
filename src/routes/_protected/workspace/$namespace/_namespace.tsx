@@ -5,7 +5,9 @@ import { queryOptions } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import axios from "axios";
 
-export const Route = createFileRoute("/_protected/workspace/$namespace/_namespace")({
+export const Route = createFileRoute(
+  "/_protected/workspace/$namespace/_namespace",
+)({
   beforeLoad: async ({ params }) => {
     const queryOpts = queryOptions({
       queryKey: ["workspace", params.namespace],
@@ -27,4 +29,3 @@ export const Route = createFileRoute("/_protected/workspace/$namespace/_namespac
   },
   component: () => <Outlet />,
 });
-
