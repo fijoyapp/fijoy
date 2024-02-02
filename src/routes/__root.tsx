@@ -15,8 +15,12 @@ export const Route = rootRouteWithContext<RouterContext>()({
     <>
       <SiteHeader />
       <Outlet />
-      <TanStackRouterDevtools />
-      <ReactQueryDevtools />
+      {!import.meta.env.PROD && (
+        <>
+          <TanStackRouterDevtools />
+          <ReactQueryDevtools />
+        </>
+      )}
     </>
   ),
 });
