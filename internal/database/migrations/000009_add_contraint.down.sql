@@ -4,6 +4,9 @@ DROP CONSTRAINT "fijoy_account_workspace_id_fijoy_workspace_id_fk";
 ALTER TABLE "fijoy_category"
 DROP CONSTRAINT "fijoy_category_workspace_id_fijoy_workspace_id_fk";
 
+ALTER TABLE "fijoy_tag"
+DROP CONSTRAINT "fijoy_tag_workspace_id_fijoy_workspace_id_fk";
+
 ALTER TABLE "fijoy_transaction"
 DROP CONSTRAINT "fijoy_transaction_from_account_id_fijoy_account_id_fk";
 

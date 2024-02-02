@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,6 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 import { institutionConfig } from "@/config/account";
 import CurrencyInput from "react-currency-input-field";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -161,9 +161,51 @@ const ExpenseForm = ({ form, accounts }: Props) => {
                 data-1p-ignore
               />
             </FormControl>
-            <FormDescription>
-              How much money was spent in this transaction?
-            </FormDescription>
+            {/* <FormDescription> */}
+            {/*   How much money was spent in this transaction? */}
+            {/* </FormDescription> */}
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="CategoryID"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Category</FormLabel>
+            <FormControl>
+              <Input
+                // placeholder="e.g. BMO Student Chequing"
+                {...field}
+                data-1p-ignore
+              />
+            </FormControl>
+            {/* <FormDescription> */}
+            {/*   What category does this expense fall under? */}
+            {/* </FormDescription> */}
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="PayeeName"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Payee</FormLabel>
+            <FormControl>
+              <Input
+                // placeholder="e.g. BMO Student Chequing"
+                {...field}
+                data-1p-ignore
+              />
+            </FormControl>
+            {/* <FormDescription> */}
+            {/*   This is the display name of your account. */}
+            {/* </FormDescription> */}
             <FormMessage />
           </FormItem>
         )}

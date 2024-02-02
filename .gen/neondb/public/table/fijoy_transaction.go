@@ -29,6 +29,7 @@ type fijoyTransactionTable struct {
 	Note            postgres.ColumnString
 	CategoryID      postgres.ColumnString
 	PayeeName       postgres.ColumnString
+	PayerName       postgres.ColumnString
 	TagName         postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
@@ -82,9 +83,10 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		NoteColumn            = postgres.StringColumn("note")
 		CategoryIDColumn      = postgres.StringColumn("category_id")
 		PayeeNameColumn       = postgres.StringColumn("payee_name")
+		PayerNameColumn       = postgres.StringColumn("payer_name")
 		TagNameColumn         = postgres.StringColumn("tag_name")
-		allColumns            = postgres.ColumnList{IDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeNameColumn, TagNameColumn}
-		mutableColumns        = postgres.ColumnList{TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeNameColumn, TagNameColumn}
+		allColumns            = postgres.ColumnList{IDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeNameColumn, PayerNameColumn, TagNameColumn}
+		mutableColumns        = postgres.ColumnList{TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeNameColumn, PayerNameColumn, TagNameColumn}
 	)
 
 	return fijoyTransactionTable{
@@ -103,6 +105,7 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		Note:            NoteColumn,
 		CategoryID:      CategoryIDColumn,
 		PayeeName:       PayeeNameColumn,
+		PayerName:       PayerNameColumn,
 		TagName:         TagNameColumn,
 
 		AllColumns:     allColumns,

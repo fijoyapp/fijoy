@@ -2,6 +2,8 @@ ALTER TABLE "fijoy_account" ADD CONSTRAINT "fijoy_account_workspace_id_fijoy_wor
 
 ALTER TABLE "fijoy_category" ADD CONSTRAINT "fijoy_category_workspace_id_fijoy_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "fijoy_workspace" ("id") ON DELETE cascade ON UPDATE no action;
 
+ALTER TABLE "fijoy_tag" ADD CONSTRAINT "fijoy_tag_workspace_id_fijoy_workspace_id_fk" FOREIGN KEY ("workspace_id") REFERENCES "fijoy_workspace" ("id") ON DELETE cascade ON UPDATE no action;
+
 ALTER TABLE "fijoy_transaction" ADD CONSTRAINT "fijoy_transaction_from_account_id_fijoy_account_id_fk" FOREIGN KEY ("from_account_id") REFERENCES "fijoy_account" ("id") ON DELETE cascade ON UPDATE no action;
 
 ALTER TABLE "fijoy_transaction" ADD CONSTRAINT "fijoy_transaction_to_account_id_fijoy_account_id_fk" FOREIGN KEY ("to_account_id") REFERENCES "fijoy_account" ("id") ON DELETE cascade ON UPDATE no action;

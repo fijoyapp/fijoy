@@ -13,7 +13,9 @@ export const SelectTransaction = z.object({
   Datetime: z.string(),
   Note: z.string(),
   CategoryID: z.string(),
-  PayeeID: z.string(),
+  PayeeName: z.string(),
+  PayerName: z.string(),
+  // TODO: add tags back
 });
 
 export type SelectTransaction = z.infer<typeof SelectTransaction>;

@@ -24,5 +24,6 @@ type FijoyTransaction struct {
 	Note            *string   `json:"Note"`
 	CategoryID      *string   `json:"CategoryID"`
 	PayeeName       *string   `json:"PayeeName"`
+	PayerName       *string   `json:"PayerName"`
 	TagName         *string   `json:"TagName"`
 }
