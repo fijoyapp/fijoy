@@ -28,7 +28,8 @@ type fijoyTransactionTable struct {
 	Datetime        postgres.ColumnTimestamp
 	Note            postgres.ColumnString
 	CategoryID      postgres.ColumnString
-	PayeeID         postgres.ColumnString
+	PayeeName       postgres.ColumnString
+	TagName         postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -80,9 +81,10 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		DatetimeColumn        = postgres.TimestampColumn("datetime")
 		NoteColumn            = postgres.StringColumn("note")
 		CategoryIDColumn      = postgres.StringColumn("category_id")
-		PayeeIDColumn         = postgres.StringColumn("payee_id")
-		allColumns            = postgres.ColumnList{IDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeIDColumn}
-		mutableColumns        = postgres.ColumnList{TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeIDColumn}
+		PayeeNameColumn       = postgres.StringColumn("payee_name")
+		TagNameColumn         = postgres.StringColumn("tag_name")
+		allColumns            = postgres.ColumnList{IDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeNameColumn, TagNameColumn}
+		mutableColumns        = postgres.ColumnList{TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeNameColumn, TagNameColumn}
 	)
 
 	return fijoyTransactionTable{
@@ -100,7 +102,8 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		Datetime:        DatetimeColumn,
 		Note:            NoteColumn,
 		CategoryID:      CategoryIDColumn,
-		PayeeID:         PayeeIDColumn,
+		PayeeName:       PayeeNameColumn,
+		TagName:         TagNameColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

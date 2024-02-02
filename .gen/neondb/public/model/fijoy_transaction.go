@@ -23,5 +23,6 @@ type FijoyTransaction struct {
 	Datetime        time.Time `json:"Datetime"`
 	Note            *string   `json:"Note"`
 	CategoryID      *string   `json:"CategoryID"`
-	PayeeID         *string   `json:"PayeeID"`
+	PayeeName       *string   `json:"PayeeName"`
+	TagName         *string   `json:"TagName"`
 }

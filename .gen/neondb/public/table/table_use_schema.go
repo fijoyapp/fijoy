@@ -12,7 +12,6 @@ package table
 func UseSchema(schema string) {
 	FijoyAccount = FijoyAccount.FromSchema(schema)
 	FijoyCategory = FijoyCategory.FromSchema(schema)
-	FijoyPayee = FijoyPayee.FromSchema(schema)
 	FijoyTransaction = FijoyTransaction.FromSchema(schema)
 	FijoyUser = FijoyUser.FromSchema(schema)
 	FijoyUserKey = FijoyUserKey.FromSchema(schema)

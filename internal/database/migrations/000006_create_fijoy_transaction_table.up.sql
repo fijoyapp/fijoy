@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS "fijoy_transaction" (
   "datetime" timestamp NOT NULL,
   "note" text,
   "category_id" text,
-  "payee_id" text
+  "payee_name" text,
+  "tag_name" text
 );
 
 CREATE INDEX IF NOT EXISTS "fijoy_transaction_from_account_id_index" ON "fijoy_transaction" ("from_account_id");
@@ -18,3 +19,7 @@ CREATE INDEX IF NOT EXISTS "fijoy_transaction_from_account_id_index" ON "fijoy_t
 CREATE INDEX IF NOT EXISTS "fijoy_transaction_to_account_id_index" ON "fijoy_transaction" ("to_account_id");
 
 CREATE INDEX IF NOT EXISTS "fijoy_transaction_transaction_type_index" ON "fijoy_transaction" ("transaction_type");
+
+CREATE INDEX IF NOT EXISTS "fijoy_transaction_payee_name_index" ON "fijoy_transaction" ("payee_name");
+
+CREATE INDEX IF NOT EXISTS "fijoy_transaction_tag_name_index" ON "fijoy_transaction" ("tag_name");
