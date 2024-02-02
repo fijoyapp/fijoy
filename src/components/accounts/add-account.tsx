@@ -63,6 +63,7 @@ const AddAccount = ({ workspaceID }: Props) => {
   const [open, setOpen] = useState(false);
   const [accountTypeOpen, setAccountTypeOpen] = useState(false);
   const [institutionOpen, setInstitutionOpen] = useState(false);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -97,6 +98,7 @@ const AddAccount = ({ workspaceID }: Props) => {
       error: "Failed to create account.",
     });
   }
+  const allCurrencies = Intl.supportedValuesOf("currency");
 
   return (
     <div className="">
@@ -232,47 +234,42 @@ const AddAccount = ({ workspaceID }: Props) => {
                         </PopoverTrigger>
                         <PopoverContent className="p-0">
                           <Command>
-                            <CommandList className="max-h-48">
+                            <CommandList>
                               <CommandInput
                                 placeholder="Search institution..."
                                 className="h-9"
                               />
                               <CommandEmpty>No institution found.</CommandEmpty>
-                              <CommandGroup>
-                                <ScrollArea>
-                                  {institutions.map((institution) => (
-                                    <CommandItem
-                                      value={institution}
-                                      key={institution}
-                                      onSelect={() => {
-                                        form.setValue(
-                                          "Institution",
-                                          institution,
-                                        );
-                                        setInstitutionOpen(false);
-                                      }}
-                                    >
-                                      <Avatar className="mr-2 h-6 w-6">
-                                        <AvatarImage
-                                          src={
-                                            institutionConfig[institution].logo
-                                          }
-                                          alt={institution}
-                                        />
-                                        <AvatarFallback>AC</AvatarFallback>
-                                      </Avatar>
-                                      {institutionConfig[institution].name}
-                                      <CheckIcon
-                                        className={cn(
-                                          "ml-auto h-4 w-4",
-                                          institution === field.value
-                                            ? "opacity-100"
-                                            : "opacity-0",
-                                        )}
+                              <CommandGroup className="max-h-48 overflow-y-scroll">
+                                {institutions.map((institution) => (
+                                  <CommandItem
+                                    value={institution}
+                                    key={institution}
+                                    onSelect={() => {
+                                      form.setValue("Institution", institution);
+                                      setInstitutionOpen(false);
+                                    }}
+                                  >
+                                    <Avatar className="mr-2 h-6 w-6">
+                                      <AvatarImage
+                                        src={
+                                          institutionConfig[institution].logo
+                                        }
+                                        alt={institution}
                                       />
-                                    </CommandItem>
-                                  ))}
-                                </ScrollArea>
+                                      <AvatarFallback>AC</AvatarFallback>
+                                    </Avatar>
+                                    {institutionConfig[institution].name}
+                                    <CheckIcon
+                                      className={cn(
+                                        "ml-auto h-4 w-4",
+                                        institution === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
                               </CommandGroup>
                             </CommandList>
                           </Command>
@@ -288,7 +285,6 @@ const AddAccount = ({ workspaceID }: Props) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Current Balance</FormLabel>
-
                       <FormDescription>
                         {form.getValues("AccountType") &&
                           accountTypeConfig[form.getValues("AccountType")]
@@ -324,6 +320,71 @@ const AddAccount = ({ workspaceID }: Props) => {
                       <FormDescription>
                         What is the current balance of this account?
                       </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="Currency"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Currency</FormLabel>
+                      <Popover
+                        open={currencyOpen}
+                        modal={true}
+                        onOpenChange={(open) => setCurrencyOpen(open)}
+                      >
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                " justify-start",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              {field.value ? field.value : "Select currency"}
+                              <div className="grow" />
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="p-0">
+                          <Command>
+                            <CommandList>
+                              <CommandInput
+                                placeholder="Search currency..."
+                                className="h-9"
+                              />
+                              <CommandEmpty>No currency found.</CommandEmpty>
+                              <CommandGroup className="max-h-48 overflow-y-scroll">
+                                {allCurrencies.map((currency) => (
+                                  <CommandItem
+                                    value={currency}
+                                    key={currency}
+                                    onSelect={() => {
+                                      form.setValue("Currency", currency);
+                                      setInstitutionOpen(false);
+                                    }}
+                                  >
+                                    {currency}
+                                    <CheckIcon
+                                      className={cn(
+                                        "ml-auto h-4 w-4",
+                                        currency === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0",
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}

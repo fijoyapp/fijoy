@@ -8,6 +8,7 @@ export const SelectAccount = z.object({
   Institution: z.enum(institutions),
   WorkspaceID: z.string(),
   Balance: z.number(),
+  Currency: z.string(),
   UpdatedAt: z.coerce.date(),
 });
 
@@ -18,6 +19,7 @@ export const InsertAccount = SelectAccount.pick({
   AccountType: true,
   Institution: true,
   Balance: true,
+  Currency: true,
 });
 
 export type InsertAccount = z.infer<typeof InsertAccount>;

@@ -63,6 +63,7 @@ type createAccount struct {
 	AccountType string          `json:"AccountType" validate:"required"`
 	Institution string          `json:"Institution" validate:"required"`
 	Balance     decimal.Decimal `json:"Balance" validate:"required"`
+	Currency    string          `json:"Currency" validate:"required"`
 }
 
 func (ah *accountHandler) createAccount(w http.ResponseWriter, r *http.Request) {
@@ -95,6 +96,7 @@ func (ah *accountHandler) createAccount(w http.ResponseWriter, r *http.Request) 
 		Institution: createAccount.Institution,
 		WorkspaceID: workspaceID,
 		Balance:     createAccount.Balance.InexactFloat64(),
+		Currency:    createAccount.Currency,
 		UpdatedAt:   time.Now().UTC(),
 	}
 
