@@ -8,7 +8,10 @@ ALTER TABLE "fijoy_payee"
 DROP CONSTRAINT "fijoy_payee_workspace_id_fijoy_workspace_id_fk";
 
 ALTER TABLE "fijoy_transaction"
-DROP CONSTRAINT "fijoy_transaction_account_id_fijoy_account_id_fk";
+DROP CONSTRAINT "fijoy_transaction_from_account_id_fijoy_account_id_fk";
+
+ALTER TABLE "fijoy_transaction"
+DROP CONSTRAINT "fijoy_transaction_to_account_id_fijoy_account_id_fk";
 
 ALTER TABLE "fijoy_transaction"
 DROP CONSTRAINT "fijoy_transaction_category_id_fijoy_category_id_fk";

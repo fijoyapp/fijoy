@@ -21,7 +21,8 @@ type fijoyTransactionTable struct {
 	TransactionType postgres.ColumnString
 	Amount          postgres.ColumnFloat
 	Currency        postgres.ColumnString
-	AccountID       postgres.ColumnString
+	FromAccountID   postgres.ColumnString
+	ToAccountID     postgres.ColumnString
 	UserID          postgres.ColumnString
 	WorkspaceID     postgres.ColumnString
 	Datetime        postgres.ColumnTimestamp
@@ -72,15 +73,16 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		TransactionTypeColumn = postgres.StringColumn("transaction_type")
 		AmountColumn          = postgres.FloatColumn("amount")
 		CurrencyColumn        = postgres.StringColumn("currency")
-		AccountIDColumn       = postgres.StringColumn("account_id")
+		FromAccountIDColumn   = postgres.StringColumn("from_account_id")
+		ToAccountIDColumn     = postgres.StringColumn("to_account_id")
 		UserIDColumn          = postgres.StringColumn("user_id")
 		WorkspaceIDColumn     = postgres.StringColumn("workspace_id")
 		DatetimeColumn        = postgres.TimestampColumn("datetime")
 		NoteColumn            = postgres.StringColumn("note")
 		CategoryIDColumn      = postgres.StringColumn("category_id")
 		PayeeIDColumn         = postgres.StringColumn("payee_id")
-		allColumns            = postgres.ColumnList{IDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, AccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeIDColumn}
-		mutableColumns        = postgres.ColumnList{TransactionTypeColumn, AmountColumn, CurrencyColumn, AccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeIDColumn}
+		allColumns            = postgres.ColumnList{IDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeIDColumn}
+		mutableColumns        = postgres.ColumnList{TransactionTypeColumn, AmountColumn, CurrencyColumn, FromAccountIDColumn, ToAccountIDColumn, UserIDColumn, WorkspaceIDColumn, DatetimeColumn, NoteColumn, CategoryIDColumn, PayeeIDColumn}
 	)
 
 	return fijoyTransactionTable{
@@ -91,7 +93,8 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		TransactionType: TransactionTypeColumn,
 		Amount:          AmountColumn,
 		Currency:        CurrencyColumn,
-		AccountID:       AccountIDColumn,
+		FromAccountID:   FromAccountIDColumn,
+		ToAccountID:     ToAccountIDColumn,
 		UserID:          UserIDColumn,
 		WorkspaceID:     WorkspaceIDColumn,
 		Datetime:        DatetimeColumn,
