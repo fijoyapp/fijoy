@@ -11,6 +11,7 @@ import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/work
 import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_protected/workspace/$namespace/route'
 import { Route as ProtectedWorkspaceNamespaceNamespaceImport } from './routes/_protected/workspace/$namespace/_namespace'
 import { Route as ProtectedWorkspaceNamespaceNamespaceIndexImport } from './routes/_protected/workspace/$namespace/_namespace/index'
+import { Route as ProtectedWorkspaceNamespaceNamespaceCategoriesImport } from './routes/_protected/workspace/$namespace/_namespace/categories'
 import { Route as ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport } from './routes/_protected/workspace/$namespace/_namespace/accounts/index'
 
 // Create Virtual Routes
@@ -95,6 +96,12 @@ const ProtectedWorkspaceNamespaceNamespaceTransactionsLazyRoute =
     ).then((d) => d.Route),
   )
 
+const ProtectedWorkspaceNamespaceNamespaceCategoriesRoute =
+  ProtectedWorkspaceNamespaceNamespaceCategoriesImport.update({
+    path: '/categories',
+    getParentRoute: () => ProtectedWorkspaceNamespaceNamespaceRoute,
+  } as any)
+
 const ProtectedWorkspaceNamespaceNamespaceAccountsIndexRoute =
   ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport.update({
     path: '/accounts/',
@@ -151,6 +158,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
+    '/_protected/workspace/$namespace/_namespace/categories': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceCategoriesImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
+    }
     '/_protected/workspace/$namespace/_namespace/transactions': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceTransactionsLazyImport
       parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
@@ -177,6 +188,7 @@ export const routeTree = rootRoute.addChildren([
     ProtectedSetupLazyRoute,
     ProtectedWorkspaceNamespaceRouteRoute.addChildren([
       ProtectedWorkspaceNamespaceNamespaceRoute.addChildren([
+        ProtectedWorkspaceNamespaceNamespaceCategoriesRoute,
         ProtectedWorkspaceNamespaceNamespaceTransactionsLazyRoute,
         ProtectedWorkspaceNamespaceNamespaceIndexRoute,
         ProtectedWorkspaceNamespaceNamespaceAccountsAccountIdLazyRoute,

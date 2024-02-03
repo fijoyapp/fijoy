@@ -61,6 +61,19 @@ export function WorkspaceNav() {
           >
             Accounts
           </Link>
+
+          <Link
+            to={"/workspace/$namespace/categories"}
+            params={{ namespace: scope }}
+            className={cn(
+              "transition-colors hover:text-foreground/80",
+              matchRoute({ to: "/workspace/$namespace/accounts" })
+                ? "text-foreground"
+                : "text-foreground/60",
+            )}
+          >
+            Categories
+          </Link>
         </nav>
       )}
     </div>
