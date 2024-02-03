@@ -62,6 +62,7 @@ func main() {
 	r.Mount("/user", handlers.NewUserHandler(tokenAuth, db))
 	r.Mount("/workspace", handlers.NewWorkspaceHandler(tokenAuth, db))
 	r.Mount("/account", handlers.NewAccountHandler(tokenAuth, db))
+	r.Mount("/category", handlers.NewCategoryHandler(tokenAuth, db))
 
 	http.ListenAndServe(":3000", r)
 }
