@@ -32,8 +32,8 @@ func NewCategoryHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
 
 	router.Get("/", handler.getCategories)
 	router.Post("/", handler.createCategory)
-	router.Patch("/", handler.updateCategory)
-	router.Delete("/{accountID}", handler.deleteCategory)
+	router.Patch("/{categoryID}", handler.updateCategory)
+	router.Delete("/{categoryID}", handler.deleteCategory)
 	return router
 }
 
