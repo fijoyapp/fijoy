@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const workspacesQueryOptions = () => {
   return queryOptions({
-    queryKey: ["workspaces"],
+    queryKey: ["workspace"],
     queryFn: async () => {
       const response = await axios.get(env.VITE_BACKEND_URL + "/workspace", {
         withCredentials: true,
