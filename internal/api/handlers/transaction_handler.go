@@ -43,10 +43,27 @@ func (th *transactionHandler) getTransactions(w http.ResponseWriter, r *http.Req
 	// _, claims, _ := jwtauth.FromContext(r.Context())
 	workspaceID := r.URL.Query().Get("workspace_id")
 
-	stmt := SELECT(FijoyTransaction.AllColumns).FROM(FijoyTransaction).
+	stmt := SELECT(FijoyTransaction.AllColumns, FijoyCategory.AllColumns).
+		FROM(FijoyTransaction.INNER_JOIN(FijoyCategory,
+			AND(FijoyCategory.WorkspaceID.EQ(FijoyTransaction.WorkspaceID),
+				FijoyCategory.ID.EQ(FijoyTransaction.CategoryID)))).
 		WHERE(FijoyTransaction.WorkspaceID.EQ(String(workspaceID)))
 
-	dest := []model.FijoyTransaction{}
+	var dest []struct {
+		model.FijoyTransaction
+		CategoryDetail model.FijoyCategory
+	}
+
+	// var dest []struct {
+	// 	model.Actor
+	//
+	// 	Films []struct {
+	// 		model.Film
+	//
+	// 		Language   model.Language
+	// 		Categories []model.Category
+	// 	}
+	// }
 
 	err := stmt.Query(th.db, &dest)
 	if err != nil {

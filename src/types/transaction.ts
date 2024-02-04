@@ -1,5 +1,6 @@
 import { transactionTypes } from "@/config/transaction";
 import { z } from "zod";
+import { SelectCategory } from "./category";
 
 const CommonSelect = z.object({
   ID: z.string(),
@@ -10,6 +11,7 @@ const CommonSelect = z.object({
   // Datetime: z.string().default(new Date()),
   Note: z.string().optional(),
   CategoryID: z.string().optional(),
+  CategoryDetail: SelectCategory,
 });
 
 const CommonInsert = CommonSelect.pick({

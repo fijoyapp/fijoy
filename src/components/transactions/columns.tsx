@@ -10,9 +10,11 @@ export const columns: ColumnDef<SelectTransaction>[] = [
     accessorKey: "TransactionType",
     header: "Type",
   },
-
   {
-    accessorKey: "CategoryID",
+    accessorKey: "CategoryDetail",
     header: "Category",
+    cell: ({ row }) => {
+      return <div>{row.original.CategoryDetail.Name}</div>;
+    },
   },
 ];
