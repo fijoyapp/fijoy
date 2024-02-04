@@ -54,25 +54,20 @@ func (th *transactionHandler) getTransactions(w http.ResponseWriter, r *http.Req
 		CategoryDetail model.FijoyCategory
 	}
 
-	// var dest []struct {
-	// 	model.Actor
-	//
-	// 	Films []struct {
-	// 		model.Film
-	//
-	// 		Language   model.Language
-	// 		Categories []model.Category
-	// 	}
-	// }
-
 	err := stmt.Query(th.db, &dest)
 	if err != nil {
 		panic(err)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+
+	if dest == nil {
+		fmt.Fprint(w, "[]")
+		return
+	}
+
 	jsonText, _ := json.MarshalIndent(dest, "", "\t")
 
-	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(jsonText))
 }
 
