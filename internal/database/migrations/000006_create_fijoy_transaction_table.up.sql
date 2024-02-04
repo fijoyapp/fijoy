@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "fijoy_transaction" (
   "to_account_id" text,
   "user_id" text NOT NULL,
   "workspace_id" text NOT NULL,
-  "datetime" timestamp NOT NULL,
+  "datetime" timestamptz NOT NULL,
   "note" text,
   "category_id" text,
   "payee_name" text,
