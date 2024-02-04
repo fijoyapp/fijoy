@@ -40,6 +40,8 @@ import axios from "axios";
 import { InsertTransaction } from "@/types/transaction";
 import { SelectWorkspace } from "@/types/workspace";
 import { SelectCategory } from "@/types/category";
+import { queryClient } from "@/main";
+import { transactionsQueryOptions } from "@/lib/queries/transaction";
 
 export const formSchema = InsertTransaction;
 
@@ -63,21 +65,17 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
 
   const createTransaction = useMutation({
     mutationFn: async (values: InsertTransaction) => {
-      const result = await axios.post(
-        env.VITE_BACKEND_URL + "/transaction",
-        values,
-        {
-          withCredentials: true,
-          params: {
-            workspace_id: workspace.ID,
-          },
+      await axios.post(env.VITE_BACKEND_URL + "/transaction", values, {
+        withCredentials: true,
+        params: {
+          workspace_id: workspace.ID,
         },
-      );
-      console.error(result);
+      });
     },
     onSuccess: () => {
       form.reset();
       setOpen(false);
+      queryClient.invalidateQueries(transactionsQueryOptions(workspace.ID));
     },
   });
 
