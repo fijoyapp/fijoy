@@ -26,15 +26,16 @@ export const Route = createFileRoute(
     if (!workspace) {
       throw new Error("Workspace not found");
     }
-    await context.queryClient.ensureQueryData(
-      categoriesQueryOptions(workspace.ID),
-    );
-
-    await context.queryClient.ensureQueryData(
-      accountsQueryOptions(workspace.ID),
-    );
-
     return { workspace };
+  },
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(
+      categoriesQueryOptions(context.workspace.ID),
+    );
+
+    await context.queryClient.ensureQueryData(
+      accountsQueryOptions(context.workspace.ID),
+    );
   },
   component: () => <Outlet />,
 });
