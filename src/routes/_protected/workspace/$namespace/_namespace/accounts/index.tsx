@@ -29,11 +29,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/accounts/",
 )({
-  loader: (opts) => {
-    return opts.context.queryClient.ensureQueryData(
-      accountsQueryOptions(opts.context.workspace.ID),
-    );
-  },
+  // loader: (opts) => {
+  //   return opts.context.queryClient.ensureQueryData(
+  //     accountsQueryOptions(opts.context.workspace.ID),
+  //   );
+  // },
   component: Page,
 });
 
@@ -42,6 +42,7 @@ function Page() {
   const { data: accounts } = useSuspenseQuery(
     accountsQueryOptions(workspace.ID),
   );
+
   return (
     <div className="container max-w-screen-2xl">
       <div className="items-end gap-4 lg:flex">

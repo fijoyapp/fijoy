@@ -11,6 +11,7 @@ import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/work
 import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_protected/workspace/$namespace/route'
 import { Route as ProtectedWorkspaceNamespaceNamespaceImport } from './routes/_protected/workspace/$namespace/_namespace'
 import { Route as ProtectedWorkspaceNamespaceNamespaceIndexImport } from './routes/_protected/workspace/$namespace/_namespace/index'
+import { Route as ProtectedWorkspaceNamespaceNamespaceTransactionsImport } from './routes/_protected/workspace/$namespace/_namespace/transactions'
 import { Route as ProtectedWorkspaceNamespaceNamespaceCategoriesImport } from './routes/_protected/workspace/$namespace/_namespace/categories'
 import { Route as ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport } from './routes/_protected/workspace/$namespace/_namespace/accounts/index'
 
@@ -20,8 +21,6 @@ const PublicIndexLazyImport = createFileRoute('/_public/')()
 const PublicSignupLazyImport = createFileRoute('/_public/signup')()
 const PublicLoginLazyImport = createFileRoute('/_public/login')()
 const ProtectedSetupLazyImport = createFileRoute('/_protected/setup')()
-const ProtectedWorkspaceNamespaceNamespaceTransactionsLazyImport =
-  createFileRoute('/_protected/workspace/$namespace/_namespace/transactions')()
 const ProtectedWorkspaceNamespaceNamespaceAccountsAccountIdLazyImport =
   createFileRoute(
     '/_protected/workspace/$namespace/_namespace/accounts/$accountId',
@@ -86,15 +85,11 @@ const ProtectedWorkspaceNamespaceNamespaceIndexRoute =
     getParentRoute: () => ProtectedWorkspaceNamespaceNamespaceRoute,
   } as any)
 
-const ProtectedWorkspaceNamespaceNamespaceTransactionsLazyRoute =
-  ProtectedWorkspaceNamespaceNamespaceTransactionsLazyImport.update({
+const ProtectedWorkspaceNamespaceNamespaceTransactionsRoute =
+  ProtectedWorkspaceNamespaceNamespaceTransactionsImport.update({
     path: '/transactions',
     getParentRoute: () => ProtectedWorkspaceNamespaceNamespaceRoute,
-  } as any).lazy(() =>
-    import(
-      './routes/_protected/workspace/$namespace/_namespace/transactions.lazy'
-    ).then((d) => d.Route),
-  )
+  } as any)
 
 const ProtectedWorkspaceNamespaceNamespaceCategoriesRoute =
   ProtectedWorkspaceNamespaceNamespaceCategoriesImport.update({
@@ -163,7 +158,7 @@ declare module '@tanstack/react-router' {
       parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
     }
     '/_protected/workspace/$namespace/_namespace/transactions': {
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceTransactionsLazyImport
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceTransactionsImport
       parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
     }
     '/_protected/workspace/$namespace/_namespace/': {
@@ -189,7 +184,7 @@ export const routeTree = rootRoute.addChildren([
     ProtectedWorkspaceNamespaceRouteRoute.addChildren([
       ProtectedWorkspaceNamespaceNamespaceRoute.addChildren([
         ProtectedWorkspaceNamespaceNamespaceCategoriesRoute,
-        ProtectedWorkspaceNamespaceNamespaceTransactionsLazyRoute,
+        ProtectedWorkspaceNamespaceNamespaceTransactionsRoute,
         ProtectedWorkspaceNamespaceNamespaceIndexRoute,
         ProtectedWorkspaceNamespaceNamespaceAccountsAccountIdLazyRoute,
         ProtectedWorkspaceNamespaceNamespaceAccountsIndexRoute,

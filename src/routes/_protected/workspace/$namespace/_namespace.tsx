@@ -1,5 +1,6 @@
 import { env } from "@/env";
-import { queryClient } from "@/main";
+import { accountsQueryOptions } from "@/lib/queries/account";
+import { categoriesQueryOptions } from "@/lib/queries/category";
 import { SelectWorkspace } from "@/types/workspace";
 import { queryOptions } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
@@ -8,7 +9,7 @@ import axios from "axios";
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace",
 )({
-  beforeLoad: async ({ params }) => {
+  beforeLoad: async ({ params, context }) => {
     const queryOpts = queryOptions({
       queryKey: ["workspace", params.namespace],
       queryFn: async () => {
@@ -20,11 +21,19 @@ export const Route = createFileRoute(
         return SelectWorkspace.parse(res.data);
       },
     });
-    await queryClient.ensureQueryData(queryOpts);
-    const workspace = queryClient.getQueryData(queryOpts.queryKey);
+    await context.queryClient.ensureQueryData(queryOpts);
+    const workspace = context.queryClient.getQueryData(queryOpts.queryKey);
     if (!workspace) {
       throw new Error("Workspace not found");
     }
+    await context.queryClient.ensureQueryData(
+      categoriesQueryOptions(workspace.ID),
+    );
+
+    await context.queryClient.ensureQueryData(
+      accountsQueryOptions(workspace.ID),
+    );
+
     return { workspace };
   },
   component: () => <Outlet />,

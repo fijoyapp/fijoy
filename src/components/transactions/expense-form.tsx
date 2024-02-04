@@ -33,14 +33,17 @@ import { useState } from "react";
 import { institutionConfig } from "@/config/account";
 import CurrencyInput from "react-currency-input-field";
 import { Input } from "@/components/ui/input";
+import { SelectCategory } from "@/types/category";
 
 type Props = {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   accounts: SelectAccount[];
+  categories: SelectCategory[];
 };
 
-const ExpenseForm = ({ form, accounts }: Props) => {
+const ExpenseForm = ({ form, accounts, categories }: Props) => {
   const [fromAccountOpen, setFromAccountOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
 
   return (
     <>
@@ -172,22 +175,75 @@ const ExpenseForm = ({ form, accounts }: Props) => {
       <FormField
         control={form.control}
         name="CategoryID"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Category</FormLabel>
-            <FormControl>
-              <Input
-                // placeholder="e.g. BMO Student Chequing"
-                {...field}
-                data-1p-ignore
-              />
-            </FormControl>
-            {/* <FormDescription> */}
-            {/*   What category does this expense fall under? */}
-            {/* </FormDescription> */}
-            <FormMessage />
-          </FormItem>
-        )}
+        render={({ field }) => {
+          const currentCategory =
+            categories.find((v) => v.ID === field.value) ?? null;
+          return (
+            <FormItem className="flex flex-col">
+              <FormLabel>Category</FormLabel>
+              <Popover
+                open={categoryOpen}
+                modal={true}
+                onOpenChange={(open) => setCategoryOpen(open)}
+              >
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "justify-start",
+                        !field.value && "text-muted-foreground",
+                      )}
+                    >
+                      {field.value && currentCategory
+                        ? currentCategory.Name
+                        : "Select category"}
+                      <div className="grow" />
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="p-0">
+                  <Command>
+                    <CommandList>
+                      <CommandInput
+                        placeholder="Search category..."
+                        className="h-9"
+                      />
+                      <CommandEmpty>No account found.</CommandEmpty>
+                      <CommandGroup className="max-h-48 overflow-y-scroll">
+                        <ScrollArea>
+                          {categories.map((category) => (
+                            <CommandItem
+                              value={category.ID}
+                              key={category.ID}
+                              onSelect={() => {
+                                form.setValue("CategoryID", category.ID);
+                                setCategoryOpen(false);
+                              }}
+                            >
+                              {category.Name}
+                              <CheckIcon
+                                className={cn(
+                                  "ml-auto h-4 w-4",
+                                  category.ID === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </ScrollArea>
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          );
+        }}
       />
 
       <FormField

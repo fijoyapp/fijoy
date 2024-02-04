@@ -37,36 +37,43 @@ import { SelectAccount } from "@/types/account";
 import { useMutation } from "@tanstack/react-query";
 import { env } from "@/env";
 import axios from "axios";
-import { SelectTransaction } from "@/types/transaction";
+import { InsertTransaction } from "@/types/transaction";
 import { SelectWorkspace } from "@/types/workspace";
+import { SelectCategory } from "@/types/category";
 
-export const formSchema = SelectTransaction;
+export const formSchema = InsertTransaction;
 
 type Props = {
   accounts: SelectAccount[];
   workspace: SelectWorkspace;
+  categories: SelectCategory[];
 };
 
-const NewTransaction = ({ accounts, workspace }: Props) => {
+const NewTransaction = ({ accounts, workspace, categories }: Props) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       Currency: "CAD", // TODO: make this the same as account's currency
+      TransactionType: "expense",
+      // Datetime: new Date(),
     },
   });
 
   const createTransaction = useMutation({
-    mutationFn: async (values: SelectTransaction) => {
-      const result = await axios.post(env + "/transaction", values, {
-        withCredentials: true,
-
-        params: {
-          workspace_id: workspace.ID,
+    mutationFn: async (values: InsertTransaction) => {
+      const result = await axios.post(
+        env.VITE_BACKEND_URL + "/transaction",
+        values,
+        {
+          withCredentials: true,
+          params: {
+            workspace_id: workspace.ID,
+          },
         },
-      });
-      return SelectAccount.parse(result.data);
+      );
+      console.error(result);
     },
     onSuccess: () => {
       form.reset();
@@ -75,6 +82,7 @@ const NewTransaction = ({ accounts, workspace }: Props) => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     toast.promise(createTransaction.mutateAsync(values), {
       success: "Transaction created!",
       loading: "Creating transaction...",
@@ -136,7 +144,13 @@ const NewTransaction = ({ accounts, workspace }: Props) => {
                   )}
                 />
                 {form.watch("TransactionType") === "expense" && (
-                  <ExpenseForm form={form} accounts={accounts} />
+                  <ExpenseForm
+                    form={form}
+                    accounts={accounts}
+                    categories={categories.filter(
+                      (c) => c.CategoryType === "expense",
+                    )}
+                  />
                 )}
                 {form.watch("TransactionType") === "income" && (
                   <IncomeForm form={form} />
@@ -147,6 +161,11 @@ const NewTransaction = ({ accounts, workspace }: Props) => {
 
                 <Button
                   type="submit"
+                  onClick={() => {
+                    console.log("submit");
+                    form.handleSubmit(onSubmit)();
+                    console.log(form.formState.errors);
+                  }}
                   form="create-transaction"
                   className="w-full"
                 >

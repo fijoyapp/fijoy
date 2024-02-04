@@ -96,27 +96,28 @@ func (ch *transactionHandler) createTransaction(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	category := model.FijoyTransaction{
+	transaction := model.FijoyTransaction{
 		ID:              "category_" + cuid2.Generate(),
 		TransactionType: createTransaction.TransactionType,
 		Amount:          createTransaction.Amount.InexactFloat64(),
 		Currency:        createTransaction.Currency,
 		FromAccountID:   &createTransaction.FromAccountID,
-		ToAccountID:     &createTransaction.ToAccountID,
+		ToAccountID:     nil, // FIXME: temp
 		UserID:          userId,
 		WorkspaceID:     workspaceID,
 		Datetime:        time.Now().UTC(),
 		Note:            new(string),
-		CategoryID:      new(string),
+		CategoryID:      &createTransaction.CategoryID,
 		PayeeName:       &createTransaction.PayeeName,
 		PayerName:       &createTransaction.PayerName,
-		TagName:         new(string),
+		TagName:         nil,
 	}
 
-	stmt := FijoyCategory.INSERT(FijoyCategory.AllColumns).MODEL(category)
+	stmt := FijoyTransaction.INSERT(FijoyTransaction.AllColumns).MODEL(transaction)
 
 	_, err = stmt.Exec(ch.db)
 	if err != nil {
+		fmt.Println(err.Error())
 		http.Error(w, "Failed to create transaction: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

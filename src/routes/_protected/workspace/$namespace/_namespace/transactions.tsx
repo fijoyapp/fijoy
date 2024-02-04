@@ -3,19 +3,23 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
+import { columns } from "@/components/transactions/columns";
+import { DataTable } from "@/components/transactions/data-table";
 import NewTransaction from "@/components/transactions/new-transaction";
 import { accountsQueryOptions } from "@/lib/queries/account";
 import { categoriesQueryOptions } from "@/lib/queries/category";
-import { workspacesQueryOptions } from "@/lib/queries/workspace";
+import { transactionsQueryOptions } from "@/lib/queries/transaction";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_protected/workspace/$namespace/_namespace/",
+  "/_protected/workspace/$namespace/_namespace/transactions",
 )({
-  component: Page,
   loader: (opts) =>
-    opts.context.queryClient.ensureQueryData(workspacesQueryOptions()),
+    opts.context.queryClient.ensureQueryData(
+      transactionsQueryOptions(opts.context.workspace.ID),
+    ),
+  component: Page,
 });
 
 function Page() {
@@ -25,6 +29,10 @@ function Page() {
     categoriesQueryOptions(workspace.ID),
   );
 
+  const { data: transactions } = useSuspenseQuery(
+    transactionsQueryOptions(workspace.ID),
+  );
+
   const { data: accounts } = useSuspenseQuery(
     accountsQueryOptions(workspace.ID),
   );
@@ -32,11 +40,12 @@ function Page() {
   return (
     <div className="container max-w-screen-2xl">
       <PageHeader>
-        <PageHeaderHeading className="">Hey there!</PageHeaderHeading>
+        <PageHeaderHeading className="">Transactions</PageHeaderHeading>
         <PageHeaderDescription className="">
-          Welcome back! How are you doing today?
+          The home for all your transactions.
         </PageHeaderDescription>
       </PageHeader>
+
       <div className="py-2 lg:py-4" />
 
       <NewTransaction
@@ -44,6 +53,10 @@ function Page() {
         workspace={workspace}
         categories={categories}
       />
+
+      <div className="py-2 lg:py-4" />
+
+      <DataTable columns={columns} data={transactions} />
     </div>
   );
 }
