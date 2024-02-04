@@ -2,7 +2,7 @@ import { transactionTypes } from "@/config/transaction";
 import { z } from "zod";
 
 export const SelectTransaction = z.object({
-  Id: z.string(),
+  ID: z.string(),
   TransactionType: z.enum(transactionTypes),
   Amount: z.number(),
   Currency: z.string(),
