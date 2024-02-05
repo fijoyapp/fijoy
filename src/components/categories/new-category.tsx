@@ -38,6 +38,7 @@ import { env } from "@/env";
 import { queryClient } from "@/main";
 import { categoriesQueryOptions } from "@/lib/queries/category";
 import { useState } from "react";
+import { Plus } from "lucide-react";
 
 type Props = {
   workspace: SelectWorkspace;
@@ -81,7 +82,10 @@ const NewCategory = ({ workspace }: Props) => {
   return (
     <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
       <DialogTrigger asChild>
-        <Button size="sm">Add category</Button>
+        <Button variant="default" className="w-full lg:w-48">
+          <Plus className="mr-2 h-6 w-6" />
+          New Category
+        </Button>
       </DialogTrigger>
 
       <Form {...form}>

@@ -13,9 +13,22 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { env } from "@/env";
 import { SelectCategory } from "@/types/category";
-import { columns } from "@/components/categories/columns";
-import { DataTable } from "@/components/categories/data-table";
 import { categoriesQueryOptions } from "@/lib/queries/category";
+import { Separator } from "@/components/ui/separator";
+
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/categories",
@@ -43,6 +56,50 @@ export const Route = createFileRoute(
   component: Page,
 });
 
+function CategoryColumn({
+  categories,
+  name,
+}: {
+  categories: SelectCategory[];
+  name: string;
+}) {
+  return (
+    <div className="">
+      <div className="text-lg font-bold leading-tight tracking-tighter md:text-2xl lg:leading-tight lg:px-4">
+        {name}
+      </div>
+      <div className="py-1" />
+      <Separator />
+      <div className="py-2" />
+
+      <div className="flex gap-2 lg:px-4 flex-wrap">
+        {categories.map((c) => (
+          <CategoryButton key={c.ID} category={c} />
+        ))}
+      </div>
+
+      <div className="py-2" />
+    </div>
+  );
+}
+
+function CategoryButton({ category }: { category: SelectCategory }) {
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <Button variant="secondary">{category.Name}</Button>
+      </PopoverTrigger>
+      <PopoverContent asChild className="w-fit py-1 px-2">
+        <div className="flex space-x-2 items-center text-sm">
+          <button>Rename</button>
+          <Separator orientation="vertical" className="h-4" />
+          <button className="text-destructive">Delete</button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function Page() {
   const { workspace } = Route.useRouteContext();
 
@@ -50,7 +107,7 @@ function Page() {
     categoriesQueryOptions(workspace.ID),
   );
 
-  // const [tab, setTab] = useState<(typeof transactionTypes)[number]>("expense");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   return (
     <div className="container max-w-screen-2xl">
@@ -66,37 +123,54 @@ function Page() {
       <NewCategory workspace={workspace} />
       <div className="py-2" />
 
-      <DataTable columns={columns} data={categories} />
+      {isDesktop ? (
+        <ResizablePanelGroup
+          direction="horizontal"
+          autoSaveId="categories-resizable"
+        >
+          <ResizablePanel minSize={12}>
+            <CategoryColumn
+              name="Expense"
+              categories={categories.filter(
+                (c) => c.CategoryType === "expense",
+              )}
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
 
-      {/* <span className="px-2" /> */}
+          <ResizablePanel minSize={12}>
+            <CategoryColumn
+              name="Income"
+              categories={categories.filter((c) => c.CategoryType === "income")}
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel minSize={12}>
+            <CategoryColumn
+              name="Transfer"
+              categories={categories.filter(
+                (c) => c.CategoryType === "transfer",
+              )}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      ) : (
+        <>
+          <CategoryColumn
+            name="Expense"
+            categories={categories.filter((c) => c.CategoryType === "expense")}
+          />
 
-      {/* <Tabs */}
-      {/*   defaultValue={tab} */}
-      {/*   onValueChange={(val) => */}
-      {/*     setTab(val as (typeof transactionTypes)[number]) */}
-      {/*   } */}
-      {/*   className="" */}
-      {/* > */}
-      {/*   <TabsList> */}
-      {/*     <TabsTrigger value="expense">Expense</TabsTrigger> */}
-      {/*     <TabsTrigger value="income">Income</TabsTrigger> */}
-      {/*     <TabsTrigger value="transfer">Transfer</TabsTrigger> */}
-      {/*   </TabsList> */}
-      {/*   <TabsContent value="expense"> */}
-      {/*   </TabsContent> */}
-      {/*   <TabsContent value="income"> */}
-      {/*     <DataTable */}
-      {/*       columns={columns} */}
-      {/*       data={categories.filter((c) => c.CategoryType === "income")} */}
-      {/*     /> */}
-      {/*   </TabsContent> */}
-      {/*   <TabsContent value="transfer"> */}
-      {/*     <DataTable */}
-      {/*       columns={columns} */}
-      {/*       data={categories.filter((c) => c.CategoryType === "transfer")} */}
-      {/*     /> */}
-      {/*   </TabsContent> */}
-      {/* </Tabs> */}
+          <CategoryColumn
+            name="Income"
+            categories={categories.filter((c) => c.CategoryType === "income")}
+          />
+          <CategoryColumn
+            name="Transfer"
+            categories={categories.filter((c) => c.CategoryType === "transfer")}
+          />
+        </>
+      )}
 
       <div className="py-2 lg:py-4" />
     </div>
