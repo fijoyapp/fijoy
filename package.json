@@ -66,11 +66,11 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@tanstack/router-vite-plugin": "^1.15.11",
+    "@tanstack/router-vite-plugin": "^1.15.18",
     "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.16",
-    "@types/react": "^18.2.52",
+    "@types/react": "^18.2.53",
     "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
@@ -80,7 +80,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.33",
-    "prettier": "^3.2.4",
+    "prettier": "^3.2.5",
     "prettier-plugin-sql": "^0.18.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
