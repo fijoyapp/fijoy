@@ -3,13 +3,12 @@ import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import { WorkspaceNav } from "@/components/workspace-nav";
 import { PublicNav } from "@/components/public-nav";
-// import { MobileNav } from "~/components/mobile-nav";
+import { MobileNav } from "@/components/mobile-nav";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import UserButton from "@/components/user-button";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/auth";
-import { MobileNav } from "./mobile-nav";
 
 export function SiteHeader() {
   const { user } = useAuth();
@@ -20,9 +19,7 @@ export function SiteHeader() {
         {user ? <WorkspaceNav /> : <PublicNav />}
         <MobileNav />
         <nav className="flex items-center gap-2 justify-end flex-1">
-          <div className="hidden md:flex">
-            <AuthControl />
-          </div>
+          <AuthControl />
           <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
             <div
               className={cn(buttonVariants({ variant: "ghost" }), "w-9 px-0")}
