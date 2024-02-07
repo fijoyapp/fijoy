@@ -20,7 +20,7 @@ type fijoyWorkspaceTable struct {
 	ID        postgres.ColumnString
 	Name      postgres.ColumnString
 	Namespace postgres.ColumnString
-	CreatedAt postgres.ColumnTimestamp
+	CreatedAt postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -64,7 +64,7 @@ func newFijoyWorkspaceTableImpl(schemaName, tableName, alias string) fijoyWorksp
 		IDColumn        = postgres.StringColumn("id")
 		NameColumn      = postgres.StringColumn("name")
 		NamespaceColumn = postgres.StringColumn("namespace")
-		CreatedAtColumn = postgres.TimestampColumn("created_at")
+		CreatedAtColumn = postgres.TimestampzColumn("created_at")
 		allColumns      = postgres.ColumnList{IDColumn, NameColumn, NamespaceColumn, CreatedAtColumn}
 		mutableColumns  = postgres.ColumnList{NameColumn, NamespaceColumn, CreatedAtColumn}
 	)

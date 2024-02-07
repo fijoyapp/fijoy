@@ -24,7 +24,7 @@ type fijoyAccountTable struct {
 	WorkspaceID postgres.ColumnString
 	Balance     postgres.ColumnFloat
 	Currency    postgres.ColumnString
-	UpdatedAt   postgres.ColumnTimestamp
+	UpdatedAt   postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -72,7 +72,7 @@ func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountT
 		WorkspaceIDColumn = postgres.StringColumn("workspace_id")
 		BalanceColumn     = postgres.FloatColumn("balance")
 		CurrencyColumn    = postgres.StringColumn("currency")
-		UpdatedAtColumn   = postgres.TimestampColumn("updated_at")
+		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
 		allColumns        = postgres.ColumnList{IDColumn, NameColumn, AccountTypeColumn, InstitutionColumn, WorkspaceIDColumn, BalanceColumn, CurrencyColumn, UpdatedAtColumn}
 		mutableColumns    = postgres.ColumnList{NameColumn, AccountTypeColumn, InstitutionColumn, WorkspaceIDColumn, BalanceColumn, CurrencyColumn, UpdatedAtColumn}
 	)
