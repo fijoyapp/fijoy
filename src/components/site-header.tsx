@@ -9,6 +9,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import UserButton from "@/components/user-button";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/auth";
+import { MobileNav } from "./mobile-nav";
 
 export function SiteHeader() {
   const { user } = useAuth();
@@ -17,9 +18,11 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
         {user ? <WorkspaceNav /> : <PublicNav />}
-        {/* <MobileNav /> */}
+        <MobileNav />
         <nav className="flex items-center gap-2 justify-end flex-1">
-          <AuthControl />
+          <div className="hidden md:flex">
+            <AuthControl />
+          </div>
           <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
             <div
               className={cn(buttonVariants({ variant: "ghost" }), "w-9 px-0")}

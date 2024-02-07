@@ -74,8 +74,31 @@ export function WorkspaceNav() {
           >
             Categories
           </Link>
+
+          {/* <LinkComponent */}
+          {/*   to={"/workspace/$namespace/categories"} */}
+          {/*   params={{ namespace: scope }} */}
+          {/*   highlight={matchRoute({ to: "/workspace/$namespace/transactions" })} */}
+          {/*   name={"Categories"} */}
+          {/* /> */}
         </nav>
       )}
     </div>
   );
 }
+
+// function LinkComponent(
+//   props: LinkProps & { highlight: boolean; name: string },
+// ) {
+//   return (
+//     <Link
+//       className={cn(
+//         "transition-colors hover:text-foreground/80",
+//         props.highlight ? "text-foreground" : "text-foreground/60",
+//       )}
+//       {...props}
+//     >
+//       {props.name}
+//     </Link>
+//   );
+// }

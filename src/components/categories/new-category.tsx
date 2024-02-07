@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Form,
   FormControl,
@@ -35,7 +35,6 @@ import {
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { env } from "@/env";
-import { queryClient } from "@/main";
 import { categoriesQueryOptions } from "@/lib/queries/category";
 import { useState } from "react";
 import { Plus } from "lucide-react";
@@ -50,6 +49,7 @@ const NewCategory = ({ workspace }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+  const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
 

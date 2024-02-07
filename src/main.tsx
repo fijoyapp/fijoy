@@ -11,7 +11,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import { AuthProvider, useAuth } from "./auth";
 import { Toaster } from "./components/ui/sonner";
 
-export const queryClient = new QueryClient();
+const queryClient = new QueryClient();
 
 // Create a new router instance
 const router = createRouter({

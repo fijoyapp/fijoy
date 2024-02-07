@@ -34,13 +34,12 @@ import IncomeForm from "./income-form";
 import TransferForm from "./transfer-form";
 import ExpenseForm from "./expense-form";
 import { SelectAccount } from "@/types/account";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { env } from "@/env";
 import axios from "axios";
 import { InsertTransaction } from "@/types/transaction";
 import { SelectWorkspace } from "@/types/workspace";
 import { SelectCategory } from "@/types/category";
-import { queryClient } from "@/main";
 import { transactionsQueryOptions } from "@/lib/queries/transaction";
 
 export const formSchema = InsertTransaction;
@@ -52,6 +51,7 @@ type Props = {
 };
 
 const NewTransaction = ({ accounts, workspace, categories }: Props) => {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
