@@ -15,9 +15,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { SelectWorkspace } from "@/types/workspace";
-import { env } from "@/env";
+import { api } from "@/lib/ky";
 
 const formSchema = z.object({
   Name: z.string(),
@@ -34,12 +33,12 @@ const CreateWorkspace = () => {
 
   const createWorkspace = useMutation({
     mutationFn: async (workspace: z.infer<typeof formSchema>) => {
-      const result = await axios.post(
-        env.VITE_BACKEND_URL + "/workspace",
-        workspace,
-        { withCredentials: true },
-      );
-      return SelectWorkspace.parse(result.data);
+      const result = await api
+        .post("/workspaces", {
+          json: workspace,
+        })
+        .json();
+      return SelectWorkspace.parse(result);
     },
 
     onSuccess: (data) => {

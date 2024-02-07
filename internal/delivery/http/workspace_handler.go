@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"database/sql"
@@ -24,17 +24,17 @@ type workspaceHandler struct {
 	db        *sql.DB
 }
 
-func NewWorkspaceHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
+func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	handler := workspaceHandler{tokenAuth, db}
-	router := chi.NewRouter()
 
-	router.Use(jwtauth.Verifier(tokenAuth))
-	router.Use(jwtauth.Authenticator(tokenAuth))
+	r.Route("/v1/workspaces", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Post("/", handler.createWorkspace)
-	router.Get("/", handler.getWorkspaces)
-	router.Get("/{workspaceId}", handler.getWorkspace)
-	return router
+		r.Post("/", handler.createWorkspace)
+		r.Get("/", handler.getWorkspaces)
+		r.Get("/{workspaceId}", handler.getWorkspace)
+	})
 }
 
 type createFijoyWorkspace struct {

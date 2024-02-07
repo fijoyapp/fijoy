@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"database/sql"
@@ -22,19 +22,18 @@ type categoryHandler struct {
 	db        *sql.DB
 }
 
-func NewCategoryHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
+func NewCategoryHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	handler := &categoryHandler{tokenAuth, db}
 
-	router := chi.NewRouter()
+	r.Route("/v1/categories", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Use(jwtauth.Verifier(tokenAuth))
-	router.Use(jwtauth.Authenticator(tokenAuth))
-
-	router.Get("/", handler.getCategories)
-	router.Post("/", handler.createCategory)
-	router.Patch("/{categoryID}", handler.updateCategory)
-	router.Delete("/{categoryID}", handler.deleteCategory)
-	return router
+		r.Get("/", handler.getCategories)
+		r.Post("/", handler.createCategory)
+		r.Patch("/{categoryID}", handler.updateCategory)
+		r.Delete("/{categoryID}", handler.deleteCategory)
+	})
 }
 
 func (ch *categoryHandler) getCategories(w http.ResponseWriter, r *http.Request) {

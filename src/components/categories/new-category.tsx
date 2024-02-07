@@ -33,11 +33,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
-import { env } from "@/env";
 import { categoriesQueryOptions } from "@/lib/queries/category";
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { api } from "@/lib/ky";
 
 type Props = {
   workspace: SelectWorkspace;
@@ -55,9 +54,9 @@ const NewCategory = ({ workspace }: Props) => {
 
   const insertCategory = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      await axios.post(env.VITE_BACKEND_URL + "/category", data, {
-        withCredentials: true,
-        params: {
+      await api.post("/categories", {
+        json: data,
+        searchParams: {
           workspace_id: workspace.ID,
         },
       });

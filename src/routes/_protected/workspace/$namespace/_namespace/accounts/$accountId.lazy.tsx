@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { env } from "@/env";
+import { api } from "@/lib/ky";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import axios from "axios";
 
 export const Route = createLazyFileRoute(
   "/_protected/workspace/$namespace/_namespace/accounts/$accountId",
@@ -16,9 +15,8 @@ function AccountDetail() {
   const { workspace } = Route.useRouteContext();
   const deleteAccount = useMutation({
     mutationFn: async (id: string) => {
-      axios.delete(env.VITE_BACKEND_URL + `/account/${id}`, {
-        withCredentials: true,
-        params: {
+      await api.delete(`/accounts/${id}`, {
+        searchParams: {
           workspace_id: workspace.ID,
         },
       });

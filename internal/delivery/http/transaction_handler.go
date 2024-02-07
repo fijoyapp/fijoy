@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"database/sql"
@@ -24,19 +24,18 @@ type transactionHandler struct {
 	db        *sql.DB
 }
 
-func NewTransactionHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
+func NewTransactionHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	handler := &transactionHandler{tokenAuth, db}
 
-	router := chi.NewRouter()
+	r.Route("/v1/transactions", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Use(jwtauth.Verifier(tokenAuth))
-	router.Use(jwtauth.Authenticator(tokenAuth))
-
-	router.Get("/", handler.getTransactions)
-	router.Post("/", handler.createTransaction)
-	router.Patch("/{transactionID}", handler.updateTransaction)
-	router.Delete("/{transactionID}", handler.deleteTransaction)
-	return router
+		r.Get("/", handler.getTransactions)
+		r.Post("/", handler.createTransaction)
+		r.Patch("/{transactionID}", handler.updateTransaction)
+		r.Delete("/{transactionID}", handler.deleteTransaction)
+	})
 }
 
 func (th *transactionHandler) getTransactions(w http.ResponseWriter, r *http.Request) {
@@ -72,14 +71,12 @@ func (th *transactionHandler) getTransactions(w http.ResponseWriter, r *http.Req
 }
 
 type createTransaction struct {
-	TransactionType string          `json:"TransactionType" validate:"required"`
+	TransactionType string          `json:"TransactionType" validate:"required,oneof=expense income transfer"`
 	Amount          decimal.Decimal `json:"Amount" validate:"required"`
 	Currency        string          `json:"Currency" validate:"required"`
-	FromAccountID   string          `json:"FromAccountID"`
-	ToAccountID     string          `json:"ToAccountID"`
+	AccountID       string          `json:"AccountID"`
 	CategoryID      string          `json:"CategoryID"`
-	PayeeName       string          `json:"PayeeName"`
-	PayerName       string          `json:"PayerName"`
+	Entity          string          `json:"Entity"`
 }
 
 func (ch *transactionHandler) createTransaction(w http.ResponseWriter, r *http.Request) {
@@ -110,19 +107,15 @@ func (ch *transactionHandler) createTransaction(w http.ResponseWriter, r *http.R
 
 	transaction := model.FijoyTransaction{
 		ID:              "category_" + cuid2.Generate(),
-		TransactionType: createTransaction.TransactionType,
+		TransactionType: getTransactionType(createTransaction.TransactionType),
 		Amount:          createTransaction.Amount.InexactFloat64(),
-		Currency:        createTransaction.Currency,
-		FromAccountID:   &createTransaction.FromAccountID,
-		ToAccountID:     nil, // FIXME: temp
+		AccountID:       &createTransaction.AccountID,
 		UserID:          userId,
 		WorkspaceID:     workspaceID,
 		Datetime:        time.Now().UTC(),
 		Note:            new(string),
 		CategoryID:      &createTransaction.CategoryID,
-		PayeeName:       &createTransaction.PayeeName,
-		PayerName:       &createTransaction.PayerName,
-		TagName:         nil,
+		Entity:          &createTransaction.Entity,
 	}
 
 	stmt := FijoyTransaction.INSERT(FijoyTransaction.AllColumns).MODEL(transaction)
@@ -155,13 +148,12 @@ func (ch *transactionHandler) deleteTransaction(w http.ResponseWriter, r *http.R
 }
 
 type updateTransaction struct {
-	Amount        decimal.Decimal `json:"Amount"`
-	Currency      string          `json:"Currency"`
-	FromAccountID string          `json:"FromAccountID"`
-	ToAccountID   string          `json:"ToAccountID"`
-	CategoryID    string          `json:"CategoryID"`
-	PayeeName     string          `json:"PayeeName"`
-	PayerName     string          `json:"PayerName"`
+	Amount     decimal.Decimal `json:"Amount"`
+	Currency   string          `json:"Currency"`
+	AccountID  string          `json:"AccountID"`
+	CategoryID string          `json:"CategoryID"`
+	PayeeName  string          `json:"PayeeName"`
+	PayerName  string          `json:"PayerName"`
 }
 
 func (ch *transactionHandler) updateTransaction(w http.ResponseWriter, r *http.Request) {
@@ -197,5 +189,18 @@ func (ch *transactionHandler) updateTransaction(w http.ResponseWriter, r *http.R
 	if err != nil {
 		http.Error(w, "Failed to update category: "+err.Error(), http.StatusInternalServerError)
 		return
+	}
+}
+
+func getTransactionType(transactionType string) model.FijoyTransactionType {
+	switch transactionType {
+	case "expense":
+		return model.FijoyTransactionType_Expense
+	case "income":
+		return model.FijoyTransactionType_Income
+	case "transfer":
+		return model.FijoyTransactionType_Transfer
+	default:
+		return ""
 	}
 }

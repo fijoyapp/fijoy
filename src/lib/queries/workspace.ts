@@ -1,18 +1,14 @@
-import { env } from "@/env";
 import { SelectWorkspace } from "@/types/workspace";
 import { queryOptions } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "../ky";
 
 export const workspacesQueryOptions = () => {
   return queryOptions({
-    queryKey: ["workspace"],
+    queryKey: ["workspaces"],
     queryFn: async () => {
-      const response = await axios.get(env.VITE_BACKEND_URL + "/workspace", {
-        withCredentials: true,
-        params: {},
-      });
+      const response = await api.get("/workspaces", {}).json();
 
-      return SelectWorkspace.array().parse(response.data);
+      return SelectWorkspace.array().parse(response);
     },
   });
 };

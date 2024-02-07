@@ -35,12 +35,11 @@ import TransferForm from "./transfer-form";
 import ExpenseForm from "./expense-form";
 import { SelectAccount } from "@/types/account";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { env } from "@/env";
-import axios from "axios";
 import { InsertTransaction } from "@/types/transaction";
 import { SelectWorkspace } from "@/types/workspace";
 import { SelectCategory } from "@/types/category";
 import { transactionsQueryOptions } from "@/lib/queries/transaction";
+import { api } from "@/lib/ky";
 
 export const formSchema = InsertTransaction;
 
@@ -65,9 +64,9 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
 
   const createTransaction = useMutation({
     mutationFn: async (values: InsertTransaction) => {
-      await axios.post(env.VITE_BACKEND_URL + "/transaction", values, {
-        withCredentials: true,
-        params: {
+      await api.post("/transactions", {
+        json: values,
+        searchParams: {
           workspace_id: workspace.ID,
         },
       });

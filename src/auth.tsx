@@ -1,8 +1,7 @@
 import { createContext, useContext } from "react";
 import { User } from "@/types/user";
-import axios from "axios";
-import { env } from "./env";
 import { useQuery } from "@tanstack/react-query";
+import { api } from "./lib/ky";
 
 export interface AuthContext {
   user: User | undefined;
@@ -15,10 +14,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const result = await axios.get(env.VITE_BACKEND_URL + "/user", {
-        withCredentials: true,
-      });
-      return User.parse(result.data);
+      const result = await api.get("/user", {}).json();
+      return User.parse(result);
     },
     retry: false,
   });

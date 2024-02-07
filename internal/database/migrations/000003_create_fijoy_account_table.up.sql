@@ -17,6 +17,7 @@ CREATE TABLE "fijoy_account" (
   "name" text NOT NULL,
   "account_type" fijoy_account_type NOT NULL,
   "group_type" fijoy_group_type NOT NULL,
+  "balance" double precision NOT NULL,
   "institution" text NOT NULL,
   "workspace_id" text NOT NULL,
   "currency" text NOT NULL,

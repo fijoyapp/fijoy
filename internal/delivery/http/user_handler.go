@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"database/sql"
@@ -19,15 +19,15 @@ type userHandler struct {
 	db        *sql.DB
 }
 
-func NewUserHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
+func NewUserHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	handler := userHandler{tokenAuth, db}
 
-	router := chi.NewRouter()
-	router.Use(jwtauth.Verifier(tokenAuth))
-	router.Use(jwtauth.Authenticator(tokenAuth))
+	r.Route("/v1/user", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Get("/", handler.getUserData)
-	return router
+		r.Get("/", handler.getUserData)
+	})
 }
 
 func (uh userHandler) getUserData(w http.ResponseWriter, r *http.Request) {

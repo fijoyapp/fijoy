@@ -16,6 +16,7 @@ type FijoyAccount struct {
 	Name        string           `json:"Name"`
 	AccountType FijoyAccountType `json:"AccountType"`
 	GroupType   FijoyGroupType   `json:"GroupType"`
+	Balance     float64          `json:"Balance"`
 	Institution string           `json:"Institution"`
 	WorkspaceID string           `json:"WorkspaceID"`
 	Currency    string           `json:"Currency"`

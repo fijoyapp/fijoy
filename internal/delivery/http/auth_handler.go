@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"context"
@@ -37,14 +37,14 @@ type authHandler struct {
 	frontendUrl       string
 }
 
-func NewAuthHandler(googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB, frontendUrl string) chi.Router {
+func NewAuthHandler(r *chi.Mux, googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB, frontendUrl string) {
 	handler := &authHandler{googleOAuthConfig, tokenAuth, db, frontendUrl}
-	router := chi.NewRouter()
 
-	router.Get("/google/login", handler.googleLogin)
-	router.Get("/google/callback", handler.googleCallback)
-	router.Get("/logout", handler.logout)
-	return router
+	r.Route("/v1/auth", func(r chi.Router) {
+		r.Get("/google/login", handler.googleLogin)
+		r.Get("/google/callback", handler.googleCallback)
+		r.Get("/logout", handler.logout)
+	})
 }
 
 func (ah authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
@@ -118,7 +118,6 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 
 		insert := FijoyUserKey.INSERT(FijoyUserKey.ID, FijoyUserKey.UserID).MODEL(userKey)
 		_, err = insert.Exec(ah.db)
-
 		if err != nil {
 			http.Error(w, "Failed to insert user key: "+err.Error(), http.StatusInternalServerError)
 			return

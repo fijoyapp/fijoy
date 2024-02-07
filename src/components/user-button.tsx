@@ -11,10 +11,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
 import { useAuth } from "@/auth";
+import { useQueryClient } from "@tanstack/react-query";
 // import { useRouter } from "@tanstack/react-router";
 
 function UserButton() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   if (!user) {
     return null;
@@ -53,6 +55,7 @@ function UserButton() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {
+            queryClient.clear();
             window.location.replace(env.VITE_BACKEND_URL + "/auth/logout");
           }}
         >

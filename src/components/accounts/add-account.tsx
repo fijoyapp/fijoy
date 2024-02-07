@@ -49,10 +49,9 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { env } from "@/env";
 import { accountsQueryOptions } from "@/lib/queries/account";
 import { ALL_CURRENCIES } from "@/lib/money";
+import { api } from "@/lib/ky";
 
 const formSchema = InsertAccount;
 
@@ -73,15 +72,13 @@ const AddAccount = ({ workspaceID }: Props) => {
 
   const createAccount = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      const result = await axios.post(
-        env.VITE_BACKEND_URL + "/account",
-        values,
-        {
-          withCredentials: true,
-          params: { workspace_id: workspaceID },
-        },
-      );
-      return result.data;
+      const result = await api
+        .post("/accounts", {
+          json: values,
+          searchParams: { workspace_id: workspaceID },
+        })
+        .json();
+      return result;
     },
     onSuccess: () => {
       form.reset();

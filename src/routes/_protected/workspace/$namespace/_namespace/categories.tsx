@@ -10,8 +10,6 @@ import { createFileRoute } from "@tanstack/react-router";
 // import { useState } from "react";
 // import { transactionTypes } from "@/config/transaction";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { env } from "@/env";
 import { SelectCategory } from "@/types/category";
 import { categoriesQueryOptions } from "@/lib/queries/category";
 import { Separator } from "@/components/ui/separator";
@@ -29,21 +27,23 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { api } from "@/lib/ky";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/categories",
 )({
   beforeLoad: async ({ context }) => {
     const queryOpts = queryOptions({
-      queryKey: ["category"],
+      queryKey: ["categories"],
       queryFn: async () => {
-        const res = await axios.get(env.VITE_BACKEND_URL + `/category`, {
-          withCredentials: true,
-          params: {
-            workspace_id: context.workspace.ID,
-          },
-        });
-        return SelectCategory.array().parse(res.data);
+        const res = await api
+          .get(`/categories`, {
+            searchParams: {
+              workspace_id: context.workspace.ID,
+            },
+          })
+          .json();
+        return SelectCategory.array().parse(res);
       },
     });
     await context.queryClient.ensureQueryData(queryOpts);

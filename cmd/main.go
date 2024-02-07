@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fijoy/config"
-	"fijoy/internal/api/handlers"
+	handler "fijoy/internal/delivery/http"
 	"net/http"
 
 	_ "github.com/lib/pq"
@@ -58,12 +58,12 @@ func main() {
 		Debug:            false,
 	}))
 
-	r.Mount("/auth", handlers.NewAuthHandler(googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL))
-	r.Mount("/user", handlers.NewUserHandler(tokenAuth, db))
-	r.Mount("/workspace", handlers.NewWorkspaceHandler(tokenAuth, db))
-	r.Mount("/account", handlers.NewAccountHandler(tokenAuth, db))
-	r.Mount("/category", handlers.NewCategoryHandler(tokenAuth, db))
-	r.Mount("/transaction", handlers.NewTransactionHandler(tokenAuth, db))
+	handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL)
+	handler.NewUserHandler(r, tokenAuth, db)
+	handler.NewWorkspaceHandler(r, tokenAuth, db)
+	handler.NewAccountHandler(r, tokenAuth, db)
+	handler.NewCategoryHandler(r, tokenAuth, db)
+	handler.NewTransactionHandler(r, tokenAuth, db)
 
 	http.ListenAndServe(":3000", r)
 }

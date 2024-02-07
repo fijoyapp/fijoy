@@ -1,24 +1,21 @@
-import { env } from "@/env";
+import { api } from "@/lib/ky";
 import { accountsQueryOptions } from "@/lib/queries/account";
 import { categoriesQueryOptions } from "@/lib/queries/category";
 import { SelectWorkspace } from "@/types/workspace";
 import { queryOptions } from "@tanstack/react-query";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
-import axios from "axios";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace",
 )({
   beforeLoad: async ({ params, context }) => {
     const queryOpts = queryOptions({
-      queryKey: ["workspace", params.namespace],
+      queryKey: ["workspaces", params.namespace],
       queryFn: async () => {
-        const res = await axios.get(
-          env.VITE_BACKEND_URL +
-            `/workspace/${params.namespace}?namespace=true`,
-          { withCredentials: true },
-        );
-        return SelectWorkspace.parse(res.data);
+        const res = await api
+          .get(`/workspaces/${params.namespace}?namespace=true`)
+          .json();
+        return SelectWorkspace.parse(res);
       },
     });
     await context.queryClient.ensureQueryData(queryOpts);

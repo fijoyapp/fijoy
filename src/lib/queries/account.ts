@@ -1,20 +1,20 @@
-import { env } from "@/env";
 import { SelectAccount } from "@/types/account";
 import { queryOptions } from "@tanstack/react-query";
-import axios from "axios";
+import { api } from "../ky";
 
 export const accountsQueryOptions = (workspaceID: string) => {
   return queryOptions({
     queryKey: ["accounts"],
     queryFn: async () => {
-      const response = await axios.get(env.VITE_BACKEND_URL + "/account", {
-        withCredentials: true,
-        params: {
-          workspace_id: workspaceID,
-        },
-      });
+      const response = await api
+        .get("/accounts", {
+          searchParams: {
+            workspace_id: workspaceID,
+          },
+        })
+        .json();
 
-      return SelectAccount.array().parse(response.data);
+      return SelectAccount.array().parse(response);
     },
   });
 };

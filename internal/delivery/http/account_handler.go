@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"database/sql"
@@ -24,18 +24,17 @@ type accountHandler struct {
 	db        *sql.DB
 }
 
-func NewAccountHandler(tokenAuth *jwtauth.JWTAuth, db *sql.DB) chi.Router {
+func NewAccountHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	handler := &accountHandler{tokenAuth, db}
 
-	router := chi.NewRouter()
+	r.Route("/v1/accounts", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
 
-	router.Use(jwtauth.Verifier(tokenAuth))
-	router.Use(jwtauth.Authenticator(tokenAuth))
-
-	router.Get("/", handler.getAccounts)
-	router.Post("/", handler.createAccount)
-	router.Delete("/{accountID}", handler.deleteAccount)
-	return router
+		r.Get("/", handler.getAccounts)
+		r.Post("/", handler.createAccount)
+		r.Delete("/{accountID}", handler.deleteAccount)
+	})
 }
 
 func (ah *accountHandler) getAccounts(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +91,7 @@ func (ah *accountHandler) createAccount(w http.ResponseWriter, r *http.Request) 
 	account := model.FijoyAccount{
 		ID:          "account_" + cuid2.Generate(),
 		Name:        createAccount.Name,
-		AccountType: createAccount.AccountType,
+		AccountType: getAccountType(createAccount.AccountType),
 		Institution: createAccount.Institution,
 		WorkspaceID: workspaceID,
 		Balance:     createAccount.Balance.InexactFloat64(),
@@ -124,5 +123,18 @@ func (ah *accountHandler) deleteAccount(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		http.Error(w, "Failed to delete account: "+err.Error(), http.StatusInternalServerError)
 		return
+	}
+}
+
+func getAccountType(accountType string) model.FijoyAccountType {
+	switch accountType {
+	case "checking":
+		return model.FijoyAccountType_Chequing
+	case "savings":
+		return model.FijoyAccountType_Savings
+	case "credit":
+		return model.FijoyAccountType_Credit
+	default:
+		return ""
 	}
 }
