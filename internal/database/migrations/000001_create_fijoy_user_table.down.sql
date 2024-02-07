@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS fijoy_user;
+DROP TABLE fijoy_user;

@@ -1,1 +1,3 @@
-DROP TABLE IF EXISTS fijoy_transaction;
+DROP TABLE fijoy_transaction;
+
+DROP TYPE fijoy_transaction_type;

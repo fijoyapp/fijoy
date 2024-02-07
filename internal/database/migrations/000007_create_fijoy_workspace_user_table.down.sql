@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS fijoy_workspace_user;
+DROP TABLE fijoy_workspace_user;

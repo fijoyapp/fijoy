@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "fijoy_workspace_user" (
+CREATE TABLE "fijoy_workspace_user" (
   "workspace_id" text NOT NULL,
   "user_id" text NOT NULL,
   "role" text NOT NULL,

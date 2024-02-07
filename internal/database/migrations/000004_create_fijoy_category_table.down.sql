@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS fijoy_category;
+DROP TABLE fijoy_category;

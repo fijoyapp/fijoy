@@ -20,9 +20,9 @@ type fijoyAccountTable struct {
 	ID          postgres.ColumnString
 	Name        postgres.ColumnString
 	AccountType postgres.ColumnString
+	GroupType   postgres.ColumnString
 	Institution postgres.ColumnString
 	WorkspaceID postgres.ColumnString
-	Balance     postgres.ColumnFloat
 	Currency    postgres.ColumnString
 	UpdatedAt   postgres.ColumnTimestampz
 
@@ -68,13 +68,13 @@ func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountT
 		IDColumn          = postgres.StringColumn("id")
 		NameColumn        = postgres.StringColumn("name")
 		AccountTypeColumn = postgres.StringColumn("account_type")
+		GroupTypeColumn   = postgres.StringColumn("group_type")
 		InstitutionColumn = postgres.StringColumn("institution")
 		WorkspaceIDColumn = postgres.StringColumn("workspace_id")
-		BalanceColumn     = postgres.FloatColumn("balance")
 		CurrencyColumn    = postgres.StringColumn("currency")
 		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
-		allColumns        = postgres.ColumnList{IDColumn, NameColumn, AccountTypeColumn, InstitutionColumn, WorkspaceIDColumn, BalanceColumn, CurrencyColumn, UpdatedAtColumn}
-		mutableColumns    = postgres.ColumnList{NameColumn, AccountTypeColumn, InstitutionColumn, WorkspaceIDColumn, BalanceColumn, CurrencyColumn, UpdatedAtColumn}
+		allColumns        = postgres.ColumnList{IDColumn, NameColumn, AccountTypeColumn, GroupTypeColumn, InstitutionColumn, WorkspaceIDColumn, CurrencyColumn, UpdatedAtColumn}
+		mutableColumns    = postgres.ColumnList{NameColumn, AccountTypeColumn, GroupTypeColumn, InstitutionColumn, WorkspaceIDColumn, CurrencyColumn, UpdatedAtColumn}
 	)
 
 	return fijoyAccountTable{
@@ -84,9 +84,9 @@ func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountT
 		ID:          IDColumn,
 		Name:        NameColumn,
 		AccountType: AccountTypeColumn,
+		GroupType:   GroupTypeColumn,
 		Institution: InstitutionColumn,
 		WorkspaceID: WorkspaceIDColumn,
-		Balance:     BalanceColumn,
 		Currency:    CurrencyColumn,
 		UpdatedAt:   UpdatedAtColumn,
 
