@@ -37,7 +37,7 @@ export const Route = createFileRoute(
       queryKey: ["categories"],
       queryFn: async () => {
         const res = await api
-          .get(`/categories`, {
+          .get(`categories`, {
             searchParams: {
               workspace_id: context.workspace.ID,
             },

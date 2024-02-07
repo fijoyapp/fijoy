@@ -64,7 +64,7 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
 
   const createTransaction = useMutation({
     mutationFn: async (values: InsertTransaction) => {
-      await api.post("/transactions", {
+      await api.post("transactions", {
         json: values,
         searchParams: {
           workspace_id: workspace.ID,

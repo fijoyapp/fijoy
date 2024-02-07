@@ -7,7 +7,7 @@ export const transactionsQueryOptions = (workspaceID: string) => {
     queryKey: ["transactions"],
     queryFn: async () => {
       const response = await api
-        .get("/transactions", {
+        .get("transactions", {
           searchParams: {
             workspace_id: workspaceID,
           },

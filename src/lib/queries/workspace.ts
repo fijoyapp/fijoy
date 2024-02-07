@@ -6,7 +6,7 @@ export const workspacesQueryOptions = () => {
   return queryOptions({
     queryKey: ["workspaces"],
     queryFn: async () => {
-      const response = await api.get("/workspaces", {}).json();
+      const response = await api.get("workspaces", {}).json();
 
       return SelectWorkspace.array().parse(response);
     },

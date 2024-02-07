@@ -54,7 +54,7 @@ const NewCategory = ({ workspace }: Props) => {
 
   const insertCategory = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      await api.post("/categories", {
+      await api.post("categories", {
         json: data,
         searchParams: {
           workspace_id: workspace.ID,

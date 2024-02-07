@@ -56,7 +56,7 @@ function UserButton() {
         <DropdownMenuItem
           onSelect={() => {
             queryClient.clear();
-            window.location.replace(env.VITE_BACKEND_URL + "/auth/logout");
+            window.location.replace(env.VITE_BACKEND_URL + "/v1/auth/logout");
           }}
         >
           Logout

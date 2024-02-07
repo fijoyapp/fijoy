@@ -34,7 +34,7 @@ const CreateWorkspace = () => {
   const createWorkspace = useMutation({
     mutationFn: async (workspace: z.infer<typeof formSchema>) => {
       const result = await api
-        .post("/workspaces", {
+        .post("workspaces", {
           json: workspace,
         })
         .json();

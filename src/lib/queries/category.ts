@@ -7,7 +7,7 @@ export const categoriesQueryOptions = (workspaceID: string) => {
     queryKey: ["categories"],
     queryFn: async () => {
       const res = await api
-        .get(`/categories`, {
+        .get(`categories`, {
           searchParams: {
             workspace_id: workspaceID,
           },

@@ -13,7 +13,7 @@ export const Route = createFileRoute(
       queryKey: ["workspaces", params.namespace],
       queryFn: async () => {
         const res = await api
-          .get(`/workspaces/${params.namespace}?namespace=true`)
+          .get(`workspaces/${params.namespace}?namespace=true`)
           .json();
         return SelectWorkspace.parse(res);
       },

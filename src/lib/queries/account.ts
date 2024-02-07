@@ -7,7 +7,7 @@ export const accountsQueryOptions = (workspaceID: string) => {
     queryKey: ["accounts"],
     queryFn: async () => {
       const response = await api
-        .get("/accounts", {
+        .get("accounts", {
           searchParams: {
             workspace_id: workspaceID,
           },

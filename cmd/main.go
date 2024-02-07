@@ -65,8 +65,48 @@ func main() {
 	handler.NewCategoryHandler(r, tokenAuth, db)
 	handler.NewTransactionHandler(r, tokenAuth, db)
 
-	http.ListenAndServe(":3000", r)
+	// Start our server
+	server := newServer(":3000", r)
+
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		panic(err)
+	}
+
+	// go func() {
+	// 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	// 		panic(err)
+	// 	}
+	// }()
+	//
+	// waitForShutdown(server)
 }
+
+func newServer(addr string, r *chi.Mux) *http.Server {
+	return &http.Server{
+		Addr:    addr,
+		Handler: r,
+	}
+}
+
+// func waitForShutdown(server *http.Server) {
+// 	// How does this function work?
+//
+// 	// We first deflare a Go channel named sig to receive a os.Signal
+// 	sig := make(chan os.Signal, 1)
+// 	// What Notify does is that it registers the signals to the channel
+// 	// In this case, it registers Interrupt and SIGTERM
+// 	// In this case, when one of these 2 gets triggered, it will send a signal to the channel
+// 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+// 	<-sig // this blocks the executation until the signal is received
+//
+// 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+// 	defer cancel() // making sure that we cancel the context
+//
+// 	// Very nice graceful shutdown
+// 	if err := server.Shutdown(ctx); err != nil {
+// 		panic(err)
+// 	}
+// }
 
 // setupDB initiates the database connection
 func setupDB(driver, url string) (*sql.DB, error) {

@@ -15,7 +15,7 @@ function AccountDetail() {
   const { workspace } = Route.useRouteContext();
   const deleteAccount = useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`/accounts/${id}`, {
+      await api.delete(`accounts/${id}`, {
         searchParams: {
           workspace_id: workspace.ID,
         },

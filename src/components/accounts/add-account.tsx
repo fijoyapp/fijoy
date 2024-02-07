@@ -73,7 +73,7 @@ const AddAccount = ({ workspaceID }: Props) => {
   const createAccount = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
       const result = await api
-        .post("/accounts", {
+        .post("accounts", {
           json: values,
           searchParams: { workspace_id: workspaceID },
         })
