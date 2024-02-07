@@ -114,7 +114,10 @@ const AddAccount = ({ workspaceID }: Props) => {
       <Sheet open={open} onOpenChange={(open) => setOpen(open)} modal={true}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} id="create-account">
-            <SheetContent className="max-h-screen space-y-2 overflow-y-scroll p-4">
+            <SheetContent
+              className="max-h-screen space-y-2 overflow-y-scroll p-4"
+              side={"left"}
+            >
               <SheetHeader>
                 <SheetTitle>New Account</SheetTitle>
                 <SheetDescription>Add a new account to Fijoy.</SheetDescription>

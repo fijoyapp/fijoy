@@ -102,7 +102,10 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
       <Sheet open={open} onOpenChange={(open) => setOpen(open)} modal={true}>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} id="create-transaction">
-            <SheetContent className="max-h-screen space-y-2 overflow-y-scroll p-4">
+            <SheetContent
+              className="max-h-screen space-y-2 overflow-y-scroll p-4"
+              side="left"
+            >
               <SheetHeader>
                 <SheetTitle>New Transaction</SheetTitle>
                 <SheetDescription>
