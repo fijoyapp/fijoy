@@ -24,7 +24,7 @@ var tokenAuth *jwtauth.JWTAuth
 func main() {
 	highlight.SetProjectID("ldwv3kgo")
 	highlight.Start(
-		highlight.WithServiceName("my-app"),
+		highlight.WithServiceName("fijoy-backend"),
 		highlight.WithServiceVersion("git-sha"),
 	)
 

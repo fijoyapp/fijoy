@@ -14,7 +14,7 @@ import { H } from "highlight.run";
 import { ErrorBoundary } from "@highlight-run/react";
 
 H.init("ldwv3kgo", {
-  serviceName: "frontend-app",
+  serviceName: "fijoy-frontend",
   tracingOrigins: ["localhost", "api.fijoy.app"],
   networkRecording: {
     enabled: true,
