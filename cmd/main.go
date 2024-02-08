@@ -65,6 +65,10 @@ func main() {
 	handler.NewCategoryHandler(r, tokenAuth, db)
 	handler.NewTransactionHandler(r, tokenAuth, db)
 
+	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
+		w.Write([]byte("OK"))
+	})
+
 	// Start our server
 	server := newServer(":"+cfg.PORT, r)
 
