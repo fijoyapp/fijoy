@@ -15,10 +15,11 @@ type AppConfig struct {
 	GOOGLE_CLIENT_ID     string `env:"GOOGLE_CLIENT_ID"`
 	GOOGLE_CLIENT_SECRET string `env:"GOOGLE_CLIENT_SECRET"`
 	FRONTEND_URL         string `env:"FRONTEND_URL"`
+	PORT                 string `env:"PORT"`
 }
 
 func LoadAppConfig() (AppConfig, error) {
-	if os.Getenv("RENDER") == "" {
+	if os.Getenv("RAILWAY_PUBLIC_DOMAIN") == "" {
 		err := godotenv.Load()
 		if err != nil {
 			return AppConfig{}, fmt.Errorf("error loading .env file: %w", err)
@@ -29,6 +30,10 @@ func LoadAppConfig() (AppConfig, error) {
 
 	if err := env.Parse(&cfg); err != nil {
 		return AppConfig{}, fmt.Errorf("%+v", err)
+	}
+
+	if os.Getenv("RAILWAY_PUBLIC_DOMAIN") == "" {
+		cfg.PORT = "3000"
 	}
 
 	return cfg, nil

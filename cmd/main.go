@@ -66,7 +66,7 @@ func main() {
 	handler.NewTransactionHandler(r, tokenAuth, db)
 
 	// Start our server
-	server := newServer(":3000", r)
+	server := newServer(":"+cfg.PORT, r)
 
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		panic(err)
