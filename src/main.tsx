@@ -10,6 +10,18 @@ import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { AuthProvider, useAuth } from "./auth";
 import { Toaster } from "./components/ui/sonner";
+import { H } from "highlight.run";
+import { ErrorBoundary } from "@highlight-run/react";
+
+H.init("ldwv3kgo", {
+  serviceName: "frontend-app",
+  tracingOrigins: ["localhost", "api.fijoy.app"],
+  networkRecording: {
+    enabled: true,
+    recordHeadersAndBody: true,
+    urlBlocklist: [],
+  },
+});
 
 const queryClient = new QueryClient();
 
@@ -44,14 +56,16 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-            <InnerApp />
-            <Toaster />
-          </ThemeProvider>
-        </AuthProvider>
-      </QueryClientProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+              <InnerApp />
+              <Toaster />
+            </ThemeProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
     </StrictMode>,
   );
 }

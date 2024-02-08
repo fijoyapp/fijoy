@@ -6,12 +6,14 @@ import (
 	handler "fijoy/internal/delivery/http"
 	"net/http"
 
+	highlight "github.com/highlight/highlight/sdk/highlight-go"
 	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
+	highlightChi "github.com/highlight/highlight/sdk/highlight-go/middleware/chi"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -20,6 +22,13 @@ import (
 var tokenAuth *jwtauth.JWTAuth
 
 func main() {
+	highlight.SetProjectID("ldwv3kgo")
+	highlight.Start(
+		highlight.WithServiceName("my-app"),
+		highlight.WithServiceVersion("git-sha"),
+	)
+
+	defer highlight.Stop()
 	cfg, err := config.LoadAppConfig()
 	if err != nil {
 		panic(err)
@@ -43,6 +52,7 @@ func main() {
 	}
 
 	r := chi.NewRouter()
+	r.Use(highlightChi.Middleware)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
