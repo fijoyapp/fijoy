@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fijoy.v1;
+
+message AccountRequest {
+  string name = 1;
+}
+
+message AccountResponse {
+  string greeting = 1;
+}
+
+service GreetService {
+  rpc Account(AccountRequest) returns (AccountResponse) {}
+}
+
