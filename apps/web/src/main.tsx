@@ -13,6 +13,14 @@ import { Toaster } from "./components/ui/sonner";
 
 const queryClient = new QueryClient();
 
+import { createConnectTransport } from "@connectrpc/connect-web";
+import { TransportProvider } from "@connectrpc/connect-query";
+import { env } from "./env";
+
+const finalTransport = createConnectTransport({
+  baseUrl: env.VITE_BACKEND_URL,
+});
+
 // Create a new router instance
 const router = createRouter({
   routeTree,
@@ -43,14 +51,16 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-            <InnerApp />
-            <Toaster />
-          </ThemeProvider>
-        </AuthProvider>
-      </QueryClientProvider>
+      <TransportProvider transport={finalTransport}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+              <InnerApp />
+              <Toaster />
+            </ThemeProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </TransportProvider>
     </StrictMode>,
   );
 }

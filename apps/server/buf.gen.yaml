@@ -10,3 +10,9 @@ plugins:
   - name: connect-go
     out: internal/gen
     opt: paths=source_relative
+  - name: es
+    out: ../web/src/gen
+    opt: target=ts
+  - name: connect-query
+    out: ../web/src/gen
+    opt: target=ts

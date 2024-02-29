@@ -16,4 +16,4 @@ jet:
   go run ./scripts/jet.go
 
 buf:
-  buf generate
+  pnpm buf
