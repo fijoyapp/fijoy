@@ -6,22 +6,34 @@ Joyful personal finance management for everyone.
 
 ## Contribution
 
-### Backend
+Make sure you have [Just](https://github.com/casey/just) installed to run just commands.
+
+### Server
+
+2 different code generation tools are being used on the server side:
+- [Jet](https://github.com/go-jet/jet): Used to generate DB related stuff for a type-safe query building experience.
+- [Buf](https://github.com/bufbuild/buf): A protobuf compiler used for [Connect](https://connectrpc.com/docs/go/getting-started).
 
 ```bash
-air # starts the backend
-just jet # jet codegen
+just apps/server/jet
+just apps/server/buf
 ```
 
-### Frontend
+All database migrations are in `apps/server/internal/database/migrations`. Here are all the migration commands:
 
 ```bash
-pnpm dev # starts the frontend
+just apps/server/db-up
+just apps/server/db-down
+just apps/server/db-force <version>
 ```
 
-### Database
+### Web
+
+Will setup Kanel soon for code generation.
 
 ```bash
-just db-up # migrates the database
-just db-down # rollback the database
 ```
+
+---
+
+To run the project, simply use `pnpm dev`.
