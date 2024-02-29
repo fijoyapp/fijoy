@@ -9,6 +9,7 @@
       "persistent": true
     },
     "type-check": {},
+    "lint": {},
     "format": {},
     "format:check": {}
   }

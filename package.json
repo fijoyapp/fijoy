@@ -5,6 +5,7 @@
     "type-check": "turbo run type-check",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
+    "lint": "turbo run lint",
     "commitlint": "commitlint --edit",
     "prepare": "husky"
   },
