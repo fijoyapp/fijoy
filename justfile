@@ -12,5 +12,12 @@ db-down:
 db-force version:
   migrate -database ${DB_URL} -path internal/database/migrations force {{version}}
 
+generate:
+  just jet
+  just buf
+
 jet:
   go run ./scripts/jet.go
+
+buf:
+  buf generate

@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package fijoy.v1;
 
-message AccountRequest {
+message HelloRequest {
   string name = 1;
 }
 
-message AccountResponse {
+message HelloResponse {
   string greeting = 1;
 }
 
 service GreetService {
-  rpc Account(AccountRequest) returns (AccountResponse) {}
+  rpc Hello(HelloRequest) returns (HelloResponse) {}
 }
 
