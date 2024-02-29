@@ -6,14 +6,12 @@ import (
 	handler "fijoy/internal/delivery/http"
 	"net/http"
 
-	highlight "github.com/highlight/highlight/sdk/highlight-go"
 	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
-	highlightChi "github.com/highlight/highlight/sdk/highlight-go/middleware/chi"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -22,13 +20,6 @@ import (
 var tokenAuth *jwtauth.JWTAuth
 
 func main() {
-	highlight.SetProjectID("ldwv3kgo")
-	highlight.Start(
-		highlight.WithServiceName("fijoy-backend"),
-		highlight.WithServiceVersion("git-sha"),
-	)
-
-	defer highlight.Stop()
 	cfg, err := config.LoadAppConfig()
 	if err != nil {
 		panic(err)
@@ -52,7 +43,6 @@ func main() {
 	}
 
 	r := chi.NewRouter()
-	r.Use(highlightChi.Middleware)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
@@ -61,7 +51,7 @@ func main() {
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "X-Highlight-Request"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
