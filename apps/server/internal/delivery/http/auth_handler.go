@@ -6,13 +6,13 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"encoding/json"
-	"fijoy/.gen/neondb/public/model"
+	"fijoy/internal/gen/postgres/railway/public/model"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 
-	. "fijoy/.gen/neondb/public/table"
+	. "fijoy/internal/gen/postgres/railway/public/table"
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"

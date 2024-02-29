@@ -22,7 +22,7 @@ func main() {
 	err = postgres.GenerateDSN(
 		cfg.DB_URL,
 		"public",
-		"./.gen",
+		"./internal/gen/postgres",
 		template.Default(postgres2.Dialect).
 			UseSchema(func(schemaMetaData metadata.Schema) template.Schema {
 				return template.DefaultSchema(schemaMetaData).

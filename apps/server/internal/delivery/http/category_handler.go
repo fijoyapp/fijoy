@@ -3,11 +3,11 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"fijoy/.gen/neondb/public/model"
+	"fijoy/internal/gen/postgres/railway/public/model"
 	"fmt"
 	"net/http"
 
-	. "fijoy/.gen/neondb/public/table"
+	. "fijoy/internal/gen/postgres/railway/public/table"
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-playground/validator"
