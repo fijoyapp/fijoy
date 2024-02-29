@@ -7,6 +7,7 @@ Joyful personal finance management for everyone.
 ## Contribution
 
 Make sure you have [Just](https://github.com/casey/just) installed to run just commands.
+And do a quick `pnpm install` to grab all the NPM dependencies.
 
 ### Server
 
@@ -33,10 +34,12 @@ just apps/server/db-force <version>
 
 ### Web
 
-Will setup Kanel soon for code generation.
+[Kanel](https://kristiandupont.github.io/kanel/) is used to generate all the  
+TypeScript types and [Zod](https://zod.dev/) schemas from Postgres schemas on
+a live Postgres database instance. It will use the `DB_URL` from `apps/server/.env`.
 
 ```bash
-
+just apps/web/kanel
 ```
 
 ---
