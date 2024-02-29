@@ -34,7 +34,7 @@ just apps/server/db-force <version>
 
 ### Web
 
-[Kanel](https://kristiandupont.github.io/kanel/) is used to generate all the  
+[Kanel](https://kristiandupont.github.io/kanel/) is used to generate all the
 TypeScript types and [Zod](https://zod.dev/) schemas from Postgres schemas on
 a live Postgres database instance. It will use the `DB_URL` from `apps/server/.env`.
 
