@@ -2,6 +2,12 @@
   "name": "@fijoy/server",
   "version": "0.0.0",
   "scripts": {
-    "dev": "air"
+    "dev": "air",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "prettier-plugin-sql": "^0.18.0"
   }
 }

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "start": "serve ./dist -s -n -L -p $PORT",
-    "build": "tsc && vite build",
+    "build": "vite build",
+    "type-check": "tsc",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "lint:strict": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -82,7 +83,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.35",
     "prettier": "^3.2.5",
-    "prettier-plugin-sql": "^0.18.0",
+    "prettier-plugin-tailwindcss": "^0.5.11",
     "serve": "^14.2.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",

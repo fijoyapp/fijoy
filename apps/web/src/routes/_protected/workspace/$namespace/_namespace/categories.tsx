@@ -65,14 +65,14 @@ function CategoryColumn({
 }) {
   return (
     <div className="">
-      <div className="text-lg font-bold leading-tight tracking-tighter md:text-2xl lg:leading-tight lg:px-4">
+      <div className="text-lg font-bold leading-tight tracking-tighter md:text-2xl lg:px-4 lg:leading-tight">
         {name}
       </div>
       <div className="py-1" />
       <Separator />
       <div className="py-2" />
 
-      <div className="flex gap-2 lg:px-4 flex-wrap">
+      <div className="flex flex-wrap gap-2 lg:px-4">
         {categories.map((c) => (
           <CategoryButton key={c.ID} category={c} />
         ))}
@@ -89,8 +89,8 @@ function CategoryButton({ category }: { category: SelectCategory }) {
       <PopoverTrigger>
         <Button variant="secondary">{category.Name}</Button>
       </PopoverTrigger>
-      <PopoverContent asChild className="w-fit py-1 px-2">
-        <div className="flex space-x-2 items-center text-sm">
+      <PopoverContent asChild className="w-fit px-2 py-1">
+        <div className="flex items-center space-x-2 text-sm">
           <button>Rename</button>
           <Separator orientation="vertical" className="h-4" />
           <button className="text-destructive">Delete</button>

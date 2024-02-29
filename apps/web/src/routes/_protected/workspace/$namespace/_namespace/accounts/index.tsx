@@ -88,7 +88,7 @@ function Page() {
           );
           if (filteredAccounts.length === 0) return null;
           return (
-            <div key={type} className="break-inside-avoid-column py-2 min-h-0">
+            <div key={type} className="min-h-0 break-inside-avoid-column py-2">
               <AccountSection
                 name={accountTypeConfig[type].name}
                 accounts={filteredAccounts}

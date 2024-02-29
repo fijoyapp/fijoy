@@ -18,7 +18,7 @@ export function SiteHeader() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         {user ? <WorkspaceNav /> : <PublicNav />}
         <MobileNav />
-        <nav className="flex items-center gap-2 justify-end flex-1">
+        <nav className="flex flex-1 items-center justify-end gap-2">
           <AuthControl />
           <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
             <div

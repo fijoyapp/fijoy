@@ -48,7 +48,7 @@ export function MobileNav() {
 
         <div className="py-2" />
 
-        <nav className="flex items-center gap-2 flex-1">
+        <nav className="flex flex-1 items-center gap-2">
           {user ? (
             <UserButton />
           ) : (

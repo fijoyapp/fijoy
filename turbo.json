@@ -8,6 +8,8 @@
       "cache": false,
       "persistent": true
     },
-    "type-check": {}
+    "type-check": {},
+    "format": {},
+    "format:check": {}
   }
 }
