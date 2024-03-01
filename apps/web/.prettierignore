@@ -1,4 +1,4 @@
 *.gen.ts
 pnpm-lock.yaml
 
-src/schemas/**
+src/gen/**
