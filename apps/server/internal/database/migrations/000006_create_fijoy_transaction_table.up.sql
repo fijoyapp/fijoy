@@ -3,8 +3,8 @@ CREATE TYPE fijoy_transaction_type AS ENUM ('expense', 'income', 'transfer');
 CREATE TABLE "fijoy_transaction" (
   "id" text PRIMARY KEY NOT NULL,
   "transaction_type" fijoy_transaction_type NOT NULL,
-  "amount" double precision NOT NULL,
-  "balance" double precision NOT NULL,
+  "amount" numeric(16, 8) NOT NULL,
+  "currency" text NOT NULL,
   "account_id" text,
   "user_id" text NOT NULL,
   "workspace_id" text NOT NULL,
