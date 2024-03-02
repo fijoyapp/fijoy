@@ -2,17 +2,17 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: fijoy/internal/gen
+    default: fijoy/internal/gen/proto
 plugins:
   - name: go
-    out: internal/gen
+    out: ../../apps/server/internal/gen/proto
     opt: paths=source_relative
   - name: connect-go
-    out: internal/gen
+    out: ../../apps/server/internal/gen/proto
     opt: paths=source_relative
   - name: es
-    out: ../web/src/gen
+    out: ../../apps/web/src/gen/proto
     opt: target=ts
   - name: connect-query
-    out: ../web/src/gen
+    out: ../../apps/web/src/gen/proto
     opt: target=ts

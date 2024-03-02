@@ -15,5 +15,3 @@ db-force version:
 jet:
   go run ./scripts/jet.go
 
-buf:
-  pnpm buf

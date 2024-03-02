@@ -4,12 +4,9 @@
   "scripts": {
     "dev": "air",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "buf": "pnpx @bufbuild/buf generate "
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@bufbuild/protoc-gen-es": "^1.7.2",
-    "@connectrpc/protoc-gen-connect-query": "^1.3.1",
     "prettier": "^3.2.5",
     "prettier-plugin-sql": "^0.18.0"
   }

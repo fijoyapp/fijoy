@@ -9,18 +9,24 @@ Joyful personal finance management for everyone.
 Make sure you have [Just](https://github.com/casey/just) installed to run just commands.
 And do a quick `pnpm install` to grab all the NPM dependencies.
 
+### Proto
+
+We use protobuf to define the API for the server and the web.
+To generate all the necessary code, run the following commands:
+
+```bash
+just packages/proto/gen
+```
+
 ### Server
 
 2 different code generation tools are being used on the server side:
 
 - [Jet](https://github.com/go-jet/jet): Used to generate DB related stuff for
   a type-safe query building experience.
-- [Buf](https://github.com/bufbuild/buf): A protobuf compiler used
-  for [Connect](https://connectrpc.com/docs/go/getting-started).
 
 ```bash
 just apps/server/jet
-just apps/server/buf
 ```
 
 All database migrations are in `apps/server/internal/database/migrations`.
