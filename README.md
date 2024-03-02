@@ -15,7 +15,7 @@ We use protobuf to define the API for the server and the web.
 To generate all the necessary code, run the following commands:
 
 ```bash
-just packages/proto/gen
+just packages/proto/buf
 ```
 
 ### Server
