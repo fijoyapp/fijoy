@@ -2,6 +2,8 @@
 
 Joyful personal finance management for everyone.
 
+**Looking for collaborators!** [https://discord.gg/xcEs33PpTR](https://discord.gg/xcEs33PpTR)
+
 ![Fijoy Home](./assets/readme.png)
 
 ## Contribution
