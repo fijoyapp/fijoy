@@ -17,7 +17,7 @@ We use protobuf to define the API for the server and the web.
 To generate all the necessary code, run the following commands:
 
 ```bash
-just packages/proto/buf
+just buf
 ```
 
 ### Server
@@ -28,16 +28,16 @@ just packages/proto/buf
   a type-safe query building experience.
 
 ```bash
-just apps/server/jet
+just jet
 ```
 
 All database migrations are in `apps/server/internal/database/migrations`.
 Here are all the migration commands:
 
 ```bash
-just apps/server/db-up
-just apps/server/db-down
-just apps/server/db-force <version>
+just db-up
+just db-down
+just db-force <version>
 ```
 
 ### Web
@@ -47,7 +47,7 @@ TypeScript types and [Zod](https://zod.dev/) schemas from Postgres schemas on
 a live Postgres database instance. It will use the `DB_URL` from `apps/server/.env`.
 
 ```bash
-just apps/web/kanel
+just kanel
 ```
 
 ---

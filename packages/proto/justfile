@@ -1,3 +1,5 @@
+set fallback
+
 init:
   go install github.com/bufbuild/buf/cmd/buf@latest
   go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest

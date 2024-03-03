@@ -1,2 +1,4 @@
+set fallback
+
 kanel:
   pnpm kanel
