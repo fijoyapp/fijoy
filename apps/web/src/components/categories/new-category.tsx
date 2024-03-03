@@ -1,5 +1,4 @@
 import { transactionTypes } from "@/config/transaction";
-import { SelectWorkspace } from "@/types/workspace";
 
 import {
   Dialog,
@@ -37,9 +36,10 @@ import { categoriesQueryOptions } from "@/lib/queries/category";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { api } from "@/lib/ky";
+import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 
 type Props = {
-  workspace: SelectWorkspace;
+  workspace: Workspace;
 };
 
 const formSchema = InsertCategory;
@@ -57,14 +57,14 @@ const NewCategory = ({ workspace }: Props) => {
       await api.post("categories", {
         json: data,
         searchParams: {
-          workspace_id: workspace.ID,
+          workspace_id: workspace.id,
         },
       });
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: categoriesQueryOptions(workspace.ID).queryKey,
+        queryKey: categoriesQueryOptions(workspace.id).queryKey,
       });
       setOpen(false);
     },

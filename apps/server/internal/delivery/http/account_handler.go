@@ -128,12 +128,14 @@ func (ah *accountHandler) deleteAccount(w http.ResponseWriter, r *http.Request) 
 
 func getAccountType(accountType string) model.FijoyAccountType {
 	switch accountType {
-	case "checking":
-		return model.FijoyAccountType_Chequing
-	case "savings":
-		return model.FijoyAccountType_Savings
-	case "credit":
-		return model.FijoyAccountType_Credit
+	case "cash":
+		return model.FijoyAccountType_Cash
+	case "debt":
+		return model.FijoyAccountType_Debt
+	case "investment":
+		return model.FijoyAccountType_Investment
+	case "other_assets":
+		return model.FijoyAccountType_OtherAsset
 	default:
 		return ""
 	}

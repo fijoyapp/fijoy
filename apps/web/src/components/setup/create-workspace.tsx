@@ -14,9 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
-import { SelectWorkspace } from "@/types/workspace";
-import { api } from "@/lib/ky";
+import { useMutation } from "@connectrpc/connect-query";
+import { createWorkspace } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
 
 const formSchema = z.object({
   Name: z.string(),
@@ -31,32 +30,29 @@ const CreateWorkspace = () => {
     defaultValues: {},
   });
 
-  const createWorkspace = useMutation({
-    mutationFn: async (workspace: z.infer<typeof formSchema>) => {
-      const result = await api
-        .post("workspaces", {
-          json: workspace,
-        })
-        .json();
-      return SelectWorkspace.parse(result);
-    },
-
+  const createWorkspaceMut = useMutation(createWorkspace, {
     onSuccess: (data) => {
       router.navigate({
         to: "/workspace/$namespace",
         params: {
-          namespace: data.Namespace,
+          namespace: data.namespace,
         },
       });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.promise(createWorkspace.mutateAsync(values), {
-      success: "Workspace created",
-      loading: "Creating workspace...",
-      error: (e: Error) => `Error creating workspace: ${e.toString()}`,
-    });
+    toast.promise(
+      createWorkspaceMut.mutateAsync({
+        name: values.Name,
+        namespace: values.Namespace,
+      }),
+      {
+        success: "Workspace created",
+        loading: "Creating workspace...",
+        error: (e: Error) => `Error creating workspace: ${e.toString()}`,
+      },
+    );
   }
 
   return (

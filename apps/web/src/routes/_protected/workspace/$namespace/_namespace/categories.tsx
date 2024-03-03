@@ -39,7 +39,7 @@ export const Route = createFileRoute(
         const res = await api
           .get(`categories`, {
             searchParams: {
-              workspace_id: context.workspace.ID,
+              workspace_id: context.workspace.id,
             },
           })
           .json();
@@ -104,7 +104,7 @@ function Page() {
   const { workspace } = Route.useRouteContext();
 
   const { data: categories } = useSuspenseQuery(
-    categoriesQueryOptions(workspace.ID),
+    categoriesQueryOptions(workspace.id),
   );
 
   const isDesktop = useMediaQuery("(min-width: 1024px)");

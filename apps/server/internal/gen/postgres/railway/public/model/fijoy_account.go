@@ -15,7 +15,6 @@ type FijoyAccount struct {
 	ID          string           `sql:"primary_key" json:"ID"`
 	Name        string           `json:"Name"`
 	AccountType FijoyAccountType `json:"AccountType"`
-	GroupType   FijoyGroupType   `json:"GroupType"`
 	Balance     float64          `json:"Balance"`
 	Institution string           `json:"Institution"`
 	WorkspaceID string           `json:"WorkspaceID"`

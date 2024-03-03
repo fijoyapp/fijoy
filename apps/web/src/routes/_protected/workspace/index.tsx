@@ -1,43 +1,53 @@
 import { Icons } from "@/components/icons";
-import { workspacesQueryOptions } from "@/lib/queries/workspace";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { getWorkspaces } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
+import {
+  createQueryOptions,
+  useSuspenseQuery,
+} from "@connectrpc/connect-query";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import Cookies from "js-cookie";
 
 export const Route = createFileRoute("/_protected/workspace/")({
   component: Page,
-  loader: (opts) =>
-    opts.context.queryClient.ensureQueryData(workspacesQueryOptions()),
+  loader: (opts) => {
+    opts.context.queryClient.ensureQueryData(
+      createQueryOptions(
+        getWorkspaces,
+        {},
+        { transport: opts.context.transport },
+      ),
+    );
+  },
   pendingComponent: () => <Icons.spinner className="animate-spin" />,
 });
 
 function Page() {
-  const workspacesQuery = useSuspenseQuery(workspacesQueryOptions());
+  const workspacesQuery = useSuspenseQuery(getWorkspaces);
 
-  const workspaces = workspacesQuery.data;
+  const { workspaces } = workspacesQuery.data;
 
   if (workspaces.length === 0) {
     return <Navigate to="/setup" />;
   }
 
   const workspace = workspaces.find(
-    (w) => w.Namespace === Cookies.get("namespace"),
+    (w) => w.namespace === Cookies.get("namespace"),
   );
 
   if (workspace) {
     return (
       <Navigate
         to="/workspace/$namespace"
-        params={{ namespace: workspace.Namespace }}
+        params={{ namespace: workspace.namespace }}
       />
     );
   }
 
-  Cookies.set("namespace", workspaces[0].Namespace);
+  Cookies.set("namespace", workspaces[0].namespace);
   return (
     <Navigate
       to="/workspace/$namespace"
-      params={{ namespace: workspaces[0].Namespace }}
+      params={{ namespace: workspaces[0].namespace }}
     />
   );
 }

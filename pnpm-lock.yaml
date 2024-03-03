@@ -35,6 +35,9 @@ importers:
       '@bufbuild/protobuf':
         specifier: ^1.7.2
         version: 1.7.2
+      '@connectrpc/connect':
+        specifier: ^1.4.0
+        version: 1.4.0(@bufbuild/protobuf@1.7.2)
       '@connectrpc/connect-query':
         specifier: ^1.3.1
         version: 1.3.1(@bufbuild/protobuf@1.7.2)(@connectrpc/connect@1.4.0)(@tanstack/react-query@5.24.6)(react-dom@18.2.0)(react@18.2.0)

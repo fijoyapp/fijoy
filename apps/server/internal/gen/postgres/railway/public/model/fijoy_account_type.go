@@ -12,15 +12,10 @@ import "errors"
 type FijoyAccountType string
 
 const (
-	FijoyAccountType_Chequing FijoyAccountType = "chequing"
-	FijoyAccountType_Savings  FijoyAccountType = "savings"
-	FijoyAccountType_Credit   FijoyAccountType = "credit"
-	FijoyAccountType_Mortgage FijoyAccountType = "mortgage"
-	FijoyAccountType_Gic      FijoyAccountType = "gic"
-	FijoyAccountType_Tfsa     FijoyAccountType = "tfsa"
-	FijoyAccountType_Rrsp     FijoyAccountType = "rrsp"
-	FijoyAccountType_Fhsa     FijoyAccountType = "fhsa"
-	FijoyAccountType_Cash     FijoyAccountType = "cash"
+	FijoyAccountType_Cash       FijoyAccountType = "cash"
+	FijoyAccountType_Debt       FijoyAccountType = "debt"
+	FijoyAccountType_Investment FijoyAccountType = "investment"
+	FijoyAccountType_OtherAsset FijoyAccountType = "other_asset"
 )
 
 func (e *FijoyAccountType) Scan(value interface{}) error {
@@ -35,24 +30,14 @@ func (e *FijoyAccountType) Scan(value interface{}) error {
 	}
 
 	switch enumValue {
-	case "chequing":
-		*e = FijoyAccountType_Chequing
-	case "savings":
-		*e = FijoyAccountType_Savings
-	case "credit":
-		*e = FijoyAccountType_Credit
-	case "mortgage":
-		*e = FijoyAccountType_Mortgage
-	case "gic":
-		*e = FijoyAccountType_Gic
-	case "tfsa":
-		*e = FijoyAccountType_Tfsa
-	case "rrsp":
-		*e = FijoyAccountType_Rrsp
-	case "fhsa":
-		*e = FijoyAccountType_Fhsa
 	case "cash":
 		*e = FijoyAccountType_Cash
+	case "debt":
+		*e = FijoyAccountType_Debt
+	case "investment":
+		*e = FijoyAccountType_Investment
+	case "other_asset":
+		*e = FijoyAccountType_OtherAsset
 	default:
 		return errors.New("jet: Invalid scan value '" + enumValue + "' for FijoyAccountType enum")
 	}

@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodKind } from "@bufbuild/protobuf";
-import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, Workspace } from "./workspace_pb.js";
+import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.WorkspaceService.CreateWorkspace
@@ -28,7 +28,7 @@ export const getWorkspaces = {
   name: "GetWorkspaces",
   kind: MethodKind.Unary,
   I: Empty,
-  O: Workspace,
+  O: Workspaces,
   service: {
     typeName: "fijoy.v1.WorkspaceService"
   }

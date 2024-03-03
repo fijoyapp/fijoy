@@ -17,7 +17,7 @@ export const Route = createFileRoute(
 )({
   loader: (opts) =>
     opts.context.queryClient.ensureQueryData(
-      transactionsQueryOptions(opts.context.workspace.ID),
+      transactionsQueryOptions(opts.context.workspace.id),
     ),
   component: Page,
 });
@@ -26,15 +26,15 @@ function Page() {
   const { workspace } = Route.useRouteContext();
 
   const { data: categories } = useSuspenseQuery(
-    categoriesQueryOptions(workspace.ID),
+    categoriesQueryOptions(workspace.id),
   );
 
   const { data: transactions } = useSuspenseQuery(
-    transactionsQueryOptions(workspace.ID),
+    transactionsQueryOptions(workspace.id),
   );
 
   const { data: accounts } = useSuspenseQuery(
-    accountsQueryOptions(workspace.ID),
+    accountsQueryOptions(workspace.id),
   );
 
   return (

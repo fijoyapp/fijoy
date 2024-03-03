@@ -14,11 +14,12 @@ import { Toaster } from "./components/ui/sonner";
 const queryClient = new QueryClient();
 
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { TransportProvider } from "@connectrpc/connect-query";
+import { TransportProvider, useTransport } from "@connectrpc/connect-query";
 import { env } from "./env";
 
 const finalTransport = createConnectTransport({
   baseUrl: env.VITE_BACKEND_URL,
+  credentials: "include",
 });
 
 // Create a new router instance
@@ -27,6 +28,7 @@ const router = createRouter({
   defaultPreload: "intent",
   context: {
     auth: undefined!, // will be set after we wrap the app in AuthProvider
+    transport: undefined!,
     queryClient,
   },
   defaultPreloadStaleTime: 0,
@@ -42,7 +44,9 @@ declare module "@tanstack/react-router" {
 function InnerApp() {
   const auth = useAuth();
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  const transport = useTransport();
+
+  return <RouterProvider router={router} context={{ auth, transport }} />;
 }
 
 // Render the app

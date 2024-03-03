@@ -17,7 +17,7 @@ function AccountDetail() {
     mutationFn: async (id: string) => {
       await api.delete(`accounts/${id}`, {
         searchParams: {
-          workspace_id: workspace.ID,
+          workspace_id: workspace.id,
         },
       });
     },

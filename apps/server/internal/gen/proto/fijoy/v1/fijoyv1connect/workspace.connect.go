@@ -60,7 +60,7 @@ var (
 // WorkspaceServiceClient is a client for the fijoy.v1.WorkspaceService service.
 type WorkspaceServiceClient interface {
 	CreateWorkspace(context.Context, *connect.Request[v1.CreateWorkspaceRequest]) (*connect.Response[v1.Workspace], error)
-	GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error)
+	GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspaces], error)
 	GetWorkspaceById(context.Context, *connect.Request[v1.GetWorkspaceByIdRequest]) (*connect.Response[v1.Workspace], error)
 	GetWorkspaceByNamespace(context.Context, *connect.Request[v1.GetWorkspaceByNamespaceRequest]) (*connect.Response[v1.Workspace], error)
 }
@@ -81,7 +81,7 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceCreateWorkspaceMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		getWorkspaces: connect.NewClient[emptypb.Empty, v1.Workspace](
+		getWorkspaces: connect.NewClient[emptypb.Empty, v1.Workspaces](
 			httpClient,
 			baseURL+WorkspaceServiceGetWorkspacesProcedure,
 			connect.WithSchema(workspaceServiceGetWorkspacesMethodDescriptor),
@@ -105,7 +105,7 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 // workspaceServiceClient implements WorkspaceServiceClient.
 type workspaceServiceClient struct {
 	createWorkspace         *connect.Client[v1.CreateWorkspaceRequest, v1.Workspace]
-	getWorkspaces           *connect.Client[emptypb.Empty, v1.Workspace]
+	getWorkspaces           *connect.Client[emptypb.Empty, v1.Workspaces]
 	getWorkspaceById        *connect.Client[v1.GetWorkspaceByIdRequest, v1.Workspace]
 	getWorkspaceByNamespace *connect.Client[v1.GetWorkspaceByNamespaceRequest, v1.Workspace]
 }
@@ -116,7 +116,7 @@ func (c *workspaceServiceClient) CreateWorkspace(ctx context.Context, req *conne
 }
 
 // GetWorkspaces calls fijoy.v1.WorkspaceService.GetWorkspaces.
-func (c *workspaceServiceClient) GetWorkspaces(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error) {
+func (c *workspaceServiceClient) GetWorkspaces(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspaces], error) {
 	return c.getWorkspaces.CallUnary(ctx, req)
 }
 
@@ -133,7 +133,7 @@ func (c *workspaceServiceClient) GetWorkspaceByNamespace(ctx context.Context, re
 // WorkspaceServiceHandler is an implementation of the fijoy.v1.WorkspaceService service.
 type WorkspaceServiceHandler interface {
 	CreateWorkspace(context.Context, *connect.Request[v1.CreateWorkspaceRequest]) (*connect.Response[v1.Workspace], error)
-	GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error)
+	GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspaces], error)
 	GetWorkspaceById(context.Context, *connect.Request[v1.GetWorkspaceByIdRequest]) (*connect.Response[v1.Workspace], error)
 	GetWorkspaceByNamespace(context.Context, *connect.Request[v1.GetWorkspaceByNamespaceRequest]) (*connect.Response[v1.Workspace], error)
 }
@@ -191,7 +191,7 @@ func (UnimplementedWorkspaceServiceHandler) CreateWorkspace(context.Context, *co
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.CreateWorkspace is not implemented"))
 }
 
-func (UnimplementedWorkspaceServiceHandler) GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error) {
+func (UnimplementedWorkspaceServiceHandler) GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspaces], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.GetWorkspaces is not implemented"))
 }
 

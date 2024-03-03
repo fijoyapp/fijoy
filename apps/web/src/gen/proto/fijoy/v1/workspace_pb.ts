@@ -62,6 +62,43 @@ export class Workspace extends Message<Workspace> {
 }
 
 /**
+ * @generated from message fijoy.v1.Workspaces
+ */
+export class Workspaces extends Message<Workspaces> {
+  /**
+   * @generated from field: repeated fijoy.v1.Workspace workspaces = 1;
+   */
+  workspaces: Workspace[] = [];
+
+  constructor(data?: PartialMessage<Workspaces>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.Workspaces";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "workspaces", kind: "message", T: Workspace, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Workspaces {
+    return new Workspaces().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Workspaces {
+    return new Workspaces().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Workspaces {
+    return new Workspaces().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Workspaces | PlainMessage<Workspaces> | undefined, b: Workspaces | PlainMessage<Workspaces> | undefined): boolean {
+    return proto3.util.equals(Workspaces, a, b);
+  }
+}
+
+/**
  * @generated from message fijoy.v1.CreateWorkspaceRequest
  */
 export class CreateWorkspaceRequest extends Message<CreateWorkspaceRequest> {

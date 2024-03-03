@@ -66,7 +66,6 @@ func main() {
 	handler.NewAccountHandler(r, tokenAuth, db)
 	handler.NewCategoryHandler(r, tokenAuth, db)
 	handler.NewTransactionHandler(r, tokenAuth, db)
-	handler.NewHelloHandler(r)
 
 	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("OK"))

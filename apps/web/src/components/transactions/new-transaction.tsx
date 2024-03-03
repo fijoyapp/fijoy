@@ -36,16 +36,16 @@ import ExpenseForm from "./expense-form";
 import { SelectAccount } from "@/types/account";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InsertTransaction } from "@/types/transaction";
-import { SelectWorkspace } from "@/types/workspace";
 import { SelectCategory } from "@/types/category";
 import { transactionsQueryOptions } from "@/lib/queries/transaction";
 import { api } from "@/lib/ky";
+import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 
 export const formSchema = InsertTransaction;
 
 type Props = {
   accounts: SelectAccount[];
-  workspace: SelectWorkspace;
+  workspace: Workspace;
   categories: SelectCategory[];
 };
 
@@ -67,14 +67,14 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
       await api.post("transactions", {
         json: values,
         searchParams: {
-          workspace_id: workspace.ID,
+          workspace_id: workspace.id,
         },
       });
     },
     onSuccess: () => {
       form.reset();
       setOpen(false);
-      queryClient.invalidateQueries(transactionsQueryOptions(workspace.ID));
+      queryClient.invalidateQueries(transactionsQueryOptions(workspace.id));
     },
   });
 

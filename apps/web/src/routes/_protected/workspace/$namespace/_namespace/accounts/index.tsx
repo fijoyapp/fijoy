@@ -40,7 +40,7 @@ export const Route = createFileRoute(
 function Page() {
   const { workspace } = Route.useRouteContext();
   const { data: accounts } = useSuspenseQuery(
-    accountsQueryOptions(workspace.ID),
+    accountsQueryOptions(workspace.id),
   );
 
   return (
@@ -77,7 +77,7 @@ function Page() {
 
       <div className="py-2 lg:py-4" />
 
-      <AddAccount workspaceID={workspace.ID} />
+      <AddAccount workspaceID={workspace.id} />
 
       <div className="py-2 lg:py-4" />
 

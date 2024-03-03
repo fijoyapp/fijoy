@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package fijoy.v1;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -12,22 +13,26 @@ message Workspace {
   google.protobuf.Timestamp created_at = 4;
 }
 
+message Workspaces {
+  repeated Workspace workspaces = 1;
+}
+
 message CreateWorkspaceRequest {
-  string namespace = 1;
-  string name = 2;
+  string namespace = 1 [(buf.validate.field).string.min_len = 1];
+  string name = 2 [(buf.validate.field).string.min_len = 1];
 }
 
 message GetWorkspaceByIdRequest {
-  string id = 1;
+  string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message GetWorkspaceByNamespaceRequest {
-  string namespace = 1;
+  string namespace = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 service WorkspaceService {
   rpc CreateWorkspace(CreateWorkspaceRequest) returns (Workspace);
-  rpc GetWorkspaces(google.protobuf.Empty) returns (Workspace);
+  rpc GetWorkspaces(google.protobuf.Empty) returns (Workspaces);
   rpc GetWorkspaceById(GetWorkspaceByIdRequest) returns (Workspace);
   rpc GetWorkspaceByNamespace(GetWorkspaceByNamespaceRequest) returns (Workspace);
 }
