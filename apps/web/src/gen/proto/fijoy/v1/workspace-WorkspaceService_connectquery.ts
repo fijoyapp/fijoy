@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Empty, MethodKind } from "@bufbuild/protobuf";
+import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
 
 /**
@@ -29,6 +29,7 @@ export const getWorkspaces = {
   kind: MethodKind.Unary,
   I: Empty,
   O: Workspaces,
+      idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.WorkspaceService"
   }
@@ -43,6 +44,7 @@ export const getWorkspaceById = {
   kind: MethodKind.Unary,
   I: GetWorkspaceByIdRequest,
   O: Workspace,
+      idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.WorkspaceService"
   }
@@ -57,6 +59,7 @@ export const getWorkspaceByNamespace = {
   kind: MethodKind.Unary,
   I: GetWorkspaceByNamespaceRequest,
   O: Workspace,
+      idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.WorkspaceService"
   }

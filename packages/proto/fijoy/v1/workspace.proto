@@ -32,7 +32,13 @@ message GetWorkspaceByNamespaceRequest {
 
 service WorkspaceService {
   rpc CreateWorkspace(CreateWorkspaceRequest) returns (Workspace);
-  rpc GetWorkspaces(google.protobuf.Empty) returns (Workspaces);
-  rpc GetWorkspaceById(GetWorkspaceByIdRequest) returns (Workspace);
-  rpc GetWorkspaceByNamespace(GetWorkspaceByNamespaceRequest) returns (Workspace);
+  rpc GetWorkspaces(google.protobuf.Empty) returns (Workspaces) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc GetWorkspaceById(GetWorkspaceByIdRequest) returns (Workspace) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc GetWorkspaceByNamespace(GetWorkspaceByNamespaceRequest) returns (Workspace) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
 }

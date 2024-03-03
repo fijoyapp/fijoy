@@ -85,18 +85,21 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			httpClient,
 			baseURL+WorkspaceServiceGetWorkspacesProcedure,
 			connect.WithSchema(workspaceServiceGetWorkspacesMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		getWorkspaceById: connect.NewClient[v1.GetWorkspaceByIdRequest, v1.Workspace](
 			httpClient,
 			baseURL+WorkspaceServiceGetWorkspaceByIdProcedure,
 			connect.WithSchema(workspaceServiceGetWorkspaceByIdMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		getWorkspaceByNamespace: connect.NewClient[v1.GetWorkspaceByNamespaceRequest, v1.Workspace](
 			httpClient,
 			baseURL+WorkspaceServiceGetWorkspaceByNamespaceProcedure,
 			connect.WithSchema(workspaceServiceGetWorkspaceByNamespaceMethodDescriptor),
+			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -154,18 +157,21 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		WorkspaceServiceGetWorkspacesProcedure,
 		svc.GetWorkspaces,
 		connect.WithSchema(workspaceServiceGetWorkspacesMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	workspaceServiceGetWorkspaceByIdHandler := connect.NewUnaryHandler(
 		WorkspaceServiceGetWorkspaceByIdProcedure,
 		svc.GetWorkspaceById,
 		connect.WithSchema(workspaceServiceGetWorkspaceByIdMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	workspaceServiceGetWorkspaceByNamespaceHandler := connect.NewUnaryHandler(
 		WorkspaceServiceGetWorkspaceByNamespaceProcedure,
 		svc.GetWorkspaceByNamespace,
 		connect.WithSchema(workspaceServiceGetWorkspaceByNamespaceMethodDescriptor),
+		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/fijoy.v1.WorkspaceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

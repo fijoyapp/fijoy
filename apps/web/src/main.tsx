@@ -20,6 +20,7 @@ import { env } from "./env";
 const finalTransport = createConnectTransport({
   baseUrl: env.VITE_BACKEND_URL,
   credentials: "include",
+  useHttpGet: true,
 });
 
 // Create a new router instance
