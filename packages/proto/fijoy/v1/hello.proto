@@ -13,4 +13,3 @@ message HelloResponse {
 service GreetService {
   rpc Hello(HelloRequest) returns (HelloResponse) {}
 }
-
