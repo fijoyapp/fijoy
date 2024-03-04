@@ -9,6 +9,7 @@ import { ArrowLeftRight, CreditCard, Home } from "lucide-react";
 import { Button } from "./ui/button";
 // import { useAuth } from "@/auth";
 import UserButton from "./user-button";
+import { Badge } from "./ui/badge";
 
 const PrivateSidebar = forwardRef<
   HTMLDivElement,
@@ -29,6 +30,7 @@ const PrivateSidebar = forwardRef<
       <Link to="/" className="mr-6 flex items-center space-x-2">
         <Icons.logo className="h-8 w-8" />
         <span className="text-xl font-bold">{siteConfig.name}</span>
+        <Badge>Pro</Badge>
       </Link>
 
       <div className="py-2"></div>
