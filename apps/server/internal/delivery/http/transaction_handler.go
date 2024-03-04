@@ -107,7 +107,7 @@ func (ch *transactionHandler) createTransaction(w http.ResponseWriter, r *http.R
 
 	transaction := model.FijoyTransaction{
 		ID:              "category_" + cuid2.Generate(),
-		TransactionType: getTransactionType(createTransaction.TransactionType),
+		TransactionType: GetTransactionType(createTransaction.TransactionType),
 		Amount:          createTransaction.Amount.InexactFloat64(),
 		AccountID:       &createTransaction.AccountID,
 		UserID:          userId,
@@ -192,7 +192,7 @@ func (ch *transactionHandler) updateTransaction(w http.ResponseWriter, r *http.R
 	}
 }
 
-func getTransactionType(transactionType string) model.FijoyTransactionType {
+func GetTransactionType(transactionType string) model.FijoyTransactionType {
 	switch transactionType {
 	case "expense":
 		return model.FijoyTransactionType_Expense

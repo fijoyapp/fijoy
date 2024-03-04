@@ -6,11 +6,18 @@ import "buf/validate/validate.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
+enum AccountType {
+  CASH = 0;
+  DEBT = 1;
+  INVESTMENT = 2;
+  OTHER_ASSET = 3;
+}
+
 message Account {
   string id = 1 [(buf.validate.field).string.min_len = 1];
   string workspace_id = 2 [(buf.validate.field).string.min_len = 1];
   string name = 3 [(buf.validate.field).string.min_len = 1];
-  string account_type = 4 [(buf.validate.field).string.min_len = 1];
+  AccountType account_type = 4;
   int64 balance = 5;
   string currency = 6 [(buf.validate.field).string.min_len = 1];
   string institution = 7 [(buf.validate.field).string.min_len = 1];

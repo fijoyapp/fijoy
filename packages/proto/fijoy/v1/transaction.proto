@@ -5,3 +5,9 @@ package fijoy.v1;
 import "buf/validate/validate.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+
+enum TransactionType {
+  EXPENSE = 0;
+  INCOME = 1;
+  TRANSFER = 2;
+}

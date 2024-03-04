@@ -18,11 +18,11 @@ export default interface FijoyTransaction {
   /** Database type: public.fijoy_transaction_type */
   transactionType: FijoyTransactionType;
 
-  /** Database type: pg_catalog.float8 */
-  amount: number;
+  /** Database type: pg_catalog.numeric */
+  amount: string;
 
-  /** Database type: pg_catalog.float8 */
-  balance: number;
+  /** Database type: pg_catalog.text */
+  currency: string;
 
   /** Database type: pg_catalog.text */
   accountId: FijoyAccountId | null;
@@ -54,11 +54,11 @@ export interface FijoyTransactionInitializer {
   /** Database type: public.fijoy_transaction_type */
   transactionType: FijoyTransactionType;
 
-  /** Database type: pg_catalog.float8 */
-  amount: number;
+  /** Database type: pg_catalog.numeric */
+  amount: string;
 
-  /** Database type: pg_catalog.float8 */
-  balance: number;
+  /** Database type: pg_catalog.text */
+  currency: string;
 
   /** Database type: pg_catalog.text */
   accountId?: FijoyAccountId | null;
@@ -90,11 +90,11 @@ export interface FijoyTransactionMutator {
   /** Database type: public.fijoy_transaction_type */
   transactionType?: FijoyTransactionType;
 
-  /** Database type: pg_catalog.float8 */
-  amount?: number;
+  /** Database type: pg_catalog.numeric */
+  amount?: string;
 
-  /** Database type: pg_catalog.float8 */
-  balance?: number;
+  /** Database type: pg_catalog.text */
+  currency?: string;
 
   /** Database type: pg_catalog.text */
   accountId?: FijoyAccountId | null;
@@ -123,8 +123,8 @@ export const fijoyTransactionId = z.string();
 export const fijoyTransaction = z.object({
   id: fijoyTransactionId,
   transactionType: fijoyTransactionType,
-  amount: z.number(),
-  balance: z.number(),
+  amount: z.string(),
+  currency: z.string(),
   accountId: fijoyAccountId.nullable(),
   userId: fijoyUserId,
   workspaceId: fijoyWorkspaceId,
@@ -137,8 +137,8 @@ export const fijoyTransaction = z.object({
 export const fijoyTransactionInitializer = z.object({
   id: fijoyTransactionId,
   transactionType: fijoyTransactionType,
-  amount: z.number(),
-  balance: z.number(),
+  amount: z.string(),
+  currency: z.string(),
   accountId: fijoyAccountId.optional().nullable(),
   userId: fijoyUserId,
   workspaceId: fijoyWorkspaceId,
@@ -151,8 +151,8 @@ export const fijoyTransactionInitializer = z.object({
 export const fijoyTransactionMutator = z.object({
   id: fijoyTransactionId.optional(),
   transactionType: fijoyTransactionType.optional(),
-  amount: z.number().optional(),
-  balance: z.number().optional(),
+  amount: z.string().optional(),
+  currency: z.string().optional(),
   accountId: fijoyAccountId.optional().nullable(),
   userId: fijoyUserId.optional(),
   workspaceId: fijoyWorkspaceId.optional(),

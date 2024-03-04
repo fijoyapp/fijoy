@@ -5,27 +5,17 @@ import { z } from 'zod';
 
 /** Represents the enum public.fijoy_account_type */
 type FijoyAccountType = 
-  | 'chequing'
-  | 'savings'
-  | 'credit'
-  | 'mortgage'
-  | 'gic'
-  | 'tfsa'
-  | 'rrsp'
-  | 'fhsa'
-  | 'cash';
+  | 'cash'
+  | 'debt'
+  | 'investment'
+  | 'other_asset';
 
 export default FijoyAccountType;
 
 /** Zod schema for fijoy_account_type */
 export const fijoyAccountType = z.enum([
-  'chequing',
-  'savings',
-  'credit',
-  'mortgage',
-  'gic',
-  'tfsa',
-  'rrsp',
-  'fhsa',
   'cash',
+  'debt',
+  'investment',
+  'other_asset',
 ]);;

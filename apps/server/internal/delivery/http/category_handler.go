@@ -87,7 +87,7 @@ func (ch *categoryHandler) createCategory(w http.ResponseWriter, r *http.Request
 	category := model.FijoyCategory{
 		ID:           "category_" + cuid2.Generate(),
 		Name:         createCategory.Name,
-		CategoryType: createCategory.CategoryType,
+		CategoryType: GetTransactionType(createCategory.CategoryType),
 		WorkspaceID:  workspaceID,
 	}
 

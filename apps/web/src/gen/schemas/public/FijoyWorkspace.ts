@@ -11,10 +11,10 @@ export default interface FijoyWorkspace {
   id: FijoyWorkspaceId;
 
   /** Database type: pg_catalog.text */
-  name: string;
+  namespace: string;
 
   /** Database type: pg_catalog.text */
-  namespace: string;
+  name: string;
 
   /** Database type: pg_catalog.timestamptz */
   createdAt: Date;
@@ -26,10 +26,10 @@ export interface FijoyWorkspaceInitializer {
   id: FijoyWorkspaceId;
 
   /** Database type: pg_catalog.text */
-  name: string;
+  namespace: string;
 
   /** Database type: pg_catalog.text */
-  namespace: string;
+  name: string;
 
   /**
    * Database type: pg_catalog.timestamptz
@@ -44,10 +44,10 @@ export interface FijoyWorkspaceMutator {
   id?: FijoyWorkspaceId;
 
   /** Database type: pg_catalog.text */
-  name?: string;
+  namespace?: string;
 
   /** Database type: pg_catalog.text */
-  namespace?: string;
+  name?: string;
 
   /** Database type: pg_catalog.timestamptz */
   createdAt?: Date;
@@ -57,21 +57,21 @@ export const fijoyWorkspaceId = z.string();
 
 export const fijoyWorkspace = z.object({
   id: fijoyWorkspaceId,
-  name: z.string(),
   namespace: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date(),
 });
 
 export const fijoyWorkspaceInitializer = z.object({
   id: fijoyWorkspaceId,
-  name: z.string(),
   namespace: z.string(),
+  name: z.string(),
   createdAt: z.coerce.date().optional(),
 });
 
 export const fijoyWorkspaceMutator = z.object({
   id: fijoyWorkspaceId.optional(),
-  name: z.string().optional(),
   namespace: z.string().optional(),
+  name: z.string().optional(),
   createdAt: z.coerce.date().optional(),
 });

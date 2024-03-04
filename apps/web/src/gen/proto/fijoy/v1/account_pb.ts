@@ -7,6 +7,38 @@ import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialM
 import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
 
 /**
+ * @generated from enum fijoy.v1.AccountType
+ */
+export enum AccountType {
+  /**
+   * @generated from enum value: CASH = 0;
+   */
+  CASH = 0,
+
+  /**
+   * @generated from enum value: DEBT = 1;
+   */
+  DEBT = 1,
+
+  /**
+   * @generated from enum value: INVESTMENT = 2;
+   */
+  INVESTMENT = 2,
+
+  /**
+   * @generated from enum value: OTHER_ASSET = 3;
+   */
+  OTHER_ASSET = 3,
+}
+// Retrieve enum metadata with: proto3.getEnumType(AccountType)
+proto3.util.setEnumType(AccountType, "fijoy.v1.AccountType", [
+  { no: 0, name: "CASH" },
+  { no: 1, name: "DEBT" },
+  { no: 2, name: "INVESTMENT" },
+  { no: 3, name: "OTHER_ASSET" },
+]);
+
+/**
  * @generated from message fijoy.v1.Account
  */
 export class Account extends Message<Account> {
@@ -26,9 +58,9 @@ export class Account extends Message<Account> {
   name = "";
 
   /**
-   * @generated from field: string account_type = 4;
+   * @generated from field: fijoy.v1.AccountType account_type = 4;
    */
-  accountType = "";
+  accountType = AccountType.CASH;
 
   /**
    * @generated from field: int64 balance = 5;
@@ -66,7 +98,7 @@ export class Account extends Message<Account> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "workspace_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "account_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
     { no: 5, name: "balance", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
     { no: 6, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
