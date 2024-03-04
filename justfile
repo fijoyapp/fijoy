@@ -20,5 +20,5 @@ buf:
   just packages/proto/buf
 
 init:
+  pnpm install
   just packages/proto/init
-
