@@ -3,10 +3,10 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
-import NewTransaction from "@/components/transactions/new-transaction";
-import { accountsQueryOptions } from "@/lib/queries/account";
-import { categoriesQueryOptions } from "@/lib/queries/category";
-import { useSuspenseQuery } from "@tanstack/react-query";
+// import NewTransaction from "@/components/transactions/new-transaction";
+// import { accountsQueryOptions } from "@/lib/queries/account";
+// import { categoriesQueryOptions } from "@/lib/queries/category";
+// import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { createQueryOptions } from "@connectrpc/connect-query";
@@ -29,15 +29,15 @@ export const Route = createFileRoute(
 });
 
 function Page() {
-  const { workspace } = Route.useRouteContext();
+  // const { workspace } = Route.useRouteContext();
 
-  const { data: categories } = useSuspenseQuery(
-    categoriesQueryOptions(workspace.id),
-  );
-
-  const { data: accounts } = useSuspenseQuery(
-    accountsQueryOptions(workspace.id),
-  );
+  // const { data: categories } = useSuspenseQuery(
+  //   categoriesQueryOptions(workspace.id),
+  // );
+  //
+  // const { data: accounts } = useSuspenseQuery(
+  //   accountsQueryOptions(workspace.id),
+  // );
 
   return (
     <div className="container max-w-screen-2xl">
