@@ -7,9 +7,9 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 message Workspace {
-  string id = 1;
-  string namespace = 2;
-  string name = 3;
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string namespace = 2 [(buf.validate.field).string.min_len = 1];
+  string name = 3 [(buf.validate.field).string.min_len = 1];
   google.protobuf.Timestamp created_at = 4;
 }
 

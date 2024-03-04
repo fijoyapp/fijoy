@@ -2,5 +2,52 @@ syntax = "proto3";
 
 package fijoy.v1;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+
+message Account {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string workspace_id = 2 [(buf.validate.field).string.min_len = 1];
+  string name = 3 [(buf.validate.field).string.min_len = 1];
+  string account_type = 4 [(buf.validate.field).string.min_len = 1];
+  int64 balance = 5;
+  string currency = 6 [(buf.validate.field).string.min_len = 1];
+  string institution = 7 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message Accounts {
+  repeated Account accounts = 1;
+}
+
+message CreateAccountRequest {
+  string name = 1 [(buf.validate.field).string.min_len = 1];
+  string account_type = 2 [(buf.validate.field).string.min_len = 1];
+  int64 balance = 3;
+  string currency = 4 [(buf.validate.field).string.min_len = 1];
+  string institution = 5 [(buf.validate.field).string.min_len = 1];
+}
+
+message GetAccountByIdRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message DeleteAccountByIdRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+service AccountService {
+  rpc CreateAccount(CreateAccountRequest) returns (Account);
+
+  rpc GetAccounts(google.protobuf.Empty) returns (Accounts) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  rpc GetAccountById(GetAccountByIdRequest) returns (Account) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  rpc DeleteAccountById(DeleteAccountByIdRequest) returns (Account) {}
+}

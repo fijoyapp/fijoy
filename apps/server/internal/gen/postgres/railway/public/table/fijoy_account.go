@@ -18,12 +18,13 @@ type fijoyAccountTable struct {
 
 	// Columns
 	ID          postgres.ColumnString
+	WorkspaceID postgres.ColumnString
 	Name        postgres.ColumnString
 	AccountType postgres.ColumnString
 	Balance     postgres.ColumnFloat
-	Institution postgres.ColumnString
-	WorkspaceID postgres.ColumnString
 	Currency    postgres.ColumnString
+	Institution postgres.ColumnString
+	CreatedAt   postgres.ColumnTimestampz
 	UpdatedAt   postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
@@ -66,15 +67,16 @@ func newFijoyAccountTable(schemaName, tableName, alias string) *FijoyAccountTabl
 func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountTable {
 	var (
 		IDColumn          = postgres.StringColumn("id")
+		WorkspaceIDColumn = postgres.StringColumn("workspace_id")
 		NameColumn        = postgres.StringColumn("name")
 		AccountTypeColumn = postgres.StringColumn("account_type")
 		BalanceColumn     = postgres.FloatColumn("balance")
-		InstitutionColumn = postgres.StringColumn("institution")
-		WorkspaceIDColumn = postgres.StringColumn("workspace_id")
 		CurrencyColumn    = postgres.StringColumn("currency")
+		InstitutionColumn = postgres.StringColumn("institution")
+		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
 		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
-		allColumns        = postgres.ColumnList{IDColumn, NameColumn, AccountTypeColumn, BalanceColumn, InstitutionColumn, WorkspaceIDColumn, CurrencyColumn, UpdatedAtColumn}
-		mutableColumns    = postgres.ColumnList{NameColumn, AccountTypeColumn, BalanceColumn, InstitutionColumn, WorkspaceIDColumn, CurrencyColumn, UpdatedAtColumn}
+		allColumns        = postgres.ColumnList{IDColumn, WorkspaceIDColumn, NameColumn, AccountTypeColumn, BalanceColumn, CurrencyColumn, InstitutionColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns    = postgres.ColumnList{WorkspaceIDColumn, NameColumn, AccountTypeColumn, BalanceColumn, CurrencyColumn, InstitutionColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fijoyAccountTable{
@@ -82,12 +84,13 @@ func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountT
 
 		//Columns
 		ID:          IDColumn,
+		WorkspaceID: WorkspaceIDColumn,
 		Name:        NameColumn,
 		AccountType: AccountTypeColumn,
 		Balance:     BalanceColumn,
-		Institution: InstitutionColumn,
-		WorkspaceID: WorkspaceIDColumn,
 		Currency:    CurrencyColumn,
+		Institution: InstitutionColumn,
+		CreatedAt:   CreatedAtColumn,
 		UpdatedAt:   UpdatedAtColumn,
 
 		AllColumns:     allColumns,
