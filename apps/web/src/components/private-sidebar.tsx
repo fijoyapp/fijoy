@@ -28,9 +28,7 @@ const PrivateSidebar = forwardRef<
     <div ref={ref} className={cn("flex flex-col p-4", className)} {...props}>
       <Link to="/" className="mr-6 flex items-center space-x-2">
         <Icons.logo className="h-8 w-8" />
-        <span className="hidden text-xl font-bold sm:inline-block">
-          {siteConfig.name}
-        </span>
+        <span className="text-xl font-bold">{siteConfig.name}</span>
       </Link>
 
       <div className="py-2"></div>
@@ -39,21 +37,21 @@ const PrivateSidebar = forwardRef<
         <>
           <Button
             variant="outline"
-            className="rounded-xl hover:border-primary hover:bg-background"
+            className="rounded-xl border-2 hover:border-primary hover:bg-background"
           >
             New Transaction
           </Button>
 
           <div className="py-2"></div>
 
-          <nav className="flex flex-col gap-6 text-sm font-bold">
+          <nav className="flex flex-col gap-2 text-sm font-bold">
             <Link
               to={"/workspace/$namespace"}
               params={{ namespace: scope }}
               className={cn(
-                "flex items-center gap-2 transition-colors hover:text-foreground/80",
+                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
                 matchRoute({ to: "/workspace/$namespace" })
-                  ? "text-foreground"
+                  ? "text-primary hover:text-primary"
                   : "text-foreground/60",
               )}
             >
@@ -64,9 +62,9 @@ const PrivateSidebar = forwardRef<
               to={"/workspace/$namespace/transactions"}
               params={{ namespace: scope }}
               className={cn(
-                "flex items-center gap-2 transition-colors hover:text-foreground/80",
+                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
                 matchRoute({ to: "/workspace/$namespace/transactions" })
-                  ? "text-foreground"
+                  ? "text-primary hover:text-primary"
                   : "text-foreground/60",
               )}
             >
@@ -77,9 +75,9 @@ const PrivateSidebar = forwardRef<
               to={"/workspace/$namespace/accounts"}
               params={{ namespace: scope }}
               className={cn(
-                "flex items-center gap-2 transition-colors hover:text-foreground/80",
+                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
                 matchRoute({ to: "/workspace/$namespace/accounts" })
-                  ? "text-foreground"
+                  ? "text-primary hover:text-primary"
                   : "text-foreground/60",
               )}
             >
