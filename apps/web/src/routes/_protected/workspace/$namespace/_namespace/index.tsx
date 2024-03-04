@@ -49,11 +49,11 @@ function Page() {
       </PageHeader>
       <div className="py-2 lg:py-4" />
 
-      <NewTransaction
-        accounts={accounts}
-        workspace={workspace}
-        categories={categories}
-      />
+      {/* <NewTransaction */}
+      {/*   accounts={accounts} */}
+      {/*   workspace={workspace} */}
+      {/*   categories={categories} */}
+      {/* /> */}
     </div>
   );
 }

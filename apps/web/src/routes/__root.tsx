@@ -1,5 +1,4 @@
 import { AuthContext } from "@/auth";
-import { SiteHeader } from "@/components/site-header";
 import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
@@ -15,11 +14,10 @@ interface RouterContext {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>
-      <SiteHeader />
       <Outlet />
       {!import.meta.env.PROD && (
         <>
-          <TanStackRouterDevtools />
+          <TanStackRouterDevtools position="bottom-right" />
           <ReactQueryDevtools />
         </>
       )}

@@ -28,10 +28,10 @@ function UserButton() {
         <Button
           variant="outline"
           className={cn(
-            "h-8 justify-start gap-2 rounded-[0.5rem] bg-background text-sm font-normal  shadow-none",
+            "justify-start gap-2 rounded-xl bg-background text-sm font-normal shadow-none hover:border-primary hover:bg-background",
           )}
         >
-          <Avatar className="h-5 w-5">
+          <Avatar className="h-6 w-6">
             <AvatarImage
               src={`https://avatar.vercel.sh/${user.Email}.png`}
               alt={user.Email}
@@ -39,7 +39,10 @@ function UserButton() {
             />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
-          <div>{user.Email}</div>
+          {/* TODO: Display full name instead */}
+          <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
+            {user.Email}
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

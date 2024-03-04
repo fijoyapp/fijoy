@@ -1,3 +1,4 @@
+import PrivateSidebar from "@/components/private-sidebar";
 import { getWorkspaceByNamespace } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
 import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 import { accountsQueryOptions } from "@/lib/queries/account";
@@ -33,5 +34,12 @@ export const Route = createFileRoute(
       accountsQueryOptions(context.workspace.id),
     );
   },
-  component: () => <Outlet />,
+  component: () => (
+    <div className="flex w-screen">
+      <PrivateSidebar className="m-4 w-56 rounded-xl bg-muted" />
+      <div className="h-screen grow overflow-y-scroll">
+        <Outlet />
+      </div>
+    </div>
+  ),
 });
