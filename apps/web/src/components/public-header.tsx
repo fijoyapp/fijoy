@@ -22,7 +22,7 @@ export function PublicHeader() {
           </Link>
           <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
             <div
-              className={cn(buttonVariants({ variant: "ghost" }), "w-9 px-0")}
+              className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
             >
               <Icons.gitHub className="h-4 w-4" />
               <span className="sr-only">GitHub</span>
@@ -30,7 +30,7 @@ export function PublicHeader() {
           </a>
           <a href={siteConfig.links.discord} target="_blank" rel="noreferrer">
             <div
-              className={cn(buttonVariants({ variant: "ghost" }), "w-9 px-0")}
+              className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
             >
               <Icons.discord className="h-4 w-4" />
               <span className="sr-only">Discord</span>
