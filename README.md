@@ -9,7 +9,12 @@ Joyful personal finance management for everyone.
 ## Contribution
 
 Make sure you have [Just](https://github.com/casey/just) installed to run just commands.
-And do a quick `pnpm install` to grab all the NPM dependencies.
+And do a quick `just init` to grab all the dependencies.
+
+The next step is to setup all the environment variables.
+
+You can find more details in `apps/server/.env.example` and
+`apps/web/.env.example`.
 
 ### Proto
 
