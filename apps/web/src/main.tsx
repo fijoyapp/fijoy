@@ -13,15 +13,8 @@ import { Toaster } from "./components/ui/sonner";
 
 const queryClient = new QueryClient();
 
-import { createConnectTransport } from "@connectrpc/connect-web";
 import { TransportProvider, useTransport } from "@connectrpc/connect-query";
-import { env } from "./env";
-
-const finalTransport = createConnectTransport({
-  baseUrl: env.VITE_BACKEND_URL,
-  credentials: "include",
-  useHttpGet: true,
-});
+import { finalTransport } from "./lib/connect";
 
 // Create a new router instance
 const router = createRouter({
