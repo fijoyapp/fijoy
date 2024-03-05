@@ -223,18 +223,3 @@ func (s *AccountServer) DeleteAccountById(
 		UpdatedAt:   timestamppb.New(dest.UpdatedAt),
 	}), nil
 }
-
-func getAccountType(accountType string) model.FijoyAccountType {
-	switch accountType {
-	case "cash":
-		return model.FijoyAccountType_Cash
-	case "debt":
-		return model.FijoyAccountType_Debt
-	case "investment":
-		return model.FijoyAccountType_Investment
-	case "other_assets":
-		return model.FijoyAccountType_OtherAsset
-	default:
-		return ""
-	}
-}
