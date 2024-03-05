@@ -3,7 +3,8 @@ package main
 import (
 	"database/sql"
 	"fijoy/config"
-	handler "fijoy/internal/delivery/http"
+	connect_handler "fijoy/internal/delivery/connect"
+	http_handler "fijoy/internal/delivery/http"
 	"net/http"
 
 	_ "github.com/lib/pq"
@@ -60,12 +61,12 @@ func main() {
 		Debug:            false,
 	}))
 
-	handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL)
-	handler.NewUserHandler(r, tokenAuth, db)
-	handler.NewWorkspaceHandler(r, tokenAuth, db)
-	handler.NewAccountHandler(r, tokenAuth, db)
-	handler.NewCategoryHandler(r, tokenAuth, db)
-	handler.NewTransactionHandler(r, tokenAuth, db)
+	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL)
+	http_handler.NewUserHandler(r, tokenAuth, db)
+	connect_handler.NewWorkspaceHandler(r, tokenAuth, db)
+	http_handler.NewAccountHandler(r, tokenAuth, db)
+	http_handler.NewCategoryHandler(r, tokenAuth, db)
+	http_handler.NewTransactionHandler(r, tokenAuth, db)
 
 	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("OK"))
