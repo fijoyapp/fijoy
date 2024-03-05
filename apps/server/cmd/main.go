@@ -54,7 +54,7 @@ func main() {
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   connectcors.AllowedMethods(),
-		AllowedHeaders:   connectcors.AllowedHeaders(),
+		AllowedHeaders:   append(connectcors.AllowedHeaders(), "Fijoy-Workspace-Id"),
 		ExposedHeaders:   connectcors.ExposedHeaders(),
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
@@ -64,7 +64,7 @@ func main() {
 	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL)
 	http_handler.NewUserHandler(r, tokenAuth, db)
 	connect_handler.NewWorkspaceHandler(r, tokenAuth, db)
-	http_handler.NewAccountHandler(r, tokenAuth, db)
+	connect_handler.NewAccountHandler(r, tokenAuth, db)
 	http_handler.NewCategoryHandler(r, tokenAuth, db)
 	http_handler.NewTransactionHandler(r, tokenAuth, db)
 

@@ -4,7 +4,8 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
+import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
+import { Money } from "./money_pb.js";
 
 /**
  * @generated from enum fijoy.v1.AccountType
@@ -63,9 +64,9 @@ export class Account extends Message<Account> {
   accountType = AccountType.CASH;
 
   /**
-   * @generated from field: int64 balance = 5;
+   * @generated from field: fijoy.v1.Money balance = 5;
    */
-  balance = protoInt64.zero;
+  balance?: Money;
 
   /**
    * @generated from field: string currency = 6;
@@ -99,7 +100,7 @@ export class Account extends Message<Account> {
     { no: 2, name: "workspace_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 5, name: "balance", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 5, name: "balance", kind: "message", T: Money },
     { no: 6, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "created_at", kind: "message", T: Timestamp },
@@ -170,14 +171,14 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   name = "";
 
   /**
-   * @generated from field: string account_type = 2;
+   * @generated from field: fijoy.v1.AccountType account_type = 2;
    */
-  accountType = "";
+  accountType = AccountType.CASH;
 
   /**
-   * @generated from field: int64 balance = 3;
+   * @generated from field: fijoy.v1.Money balance = 3;
    */
-  balance = protoInt64.zero;
+  balance?: Money;
 
   /**
    * @generated from field: string currency = 4;
@@ -198,8 +199,8 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   static readonly typeName = "fijoy.v1.CreateAccountRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "account_type", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "balance", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 2, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
+    { no: 3, name: "balance", kind: "message", T: Money },
     { no: 4, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);

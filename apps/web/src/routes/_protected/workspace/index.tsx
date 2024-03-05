@@ -1,9 +1,7 @@
 import { Icons } from "@/components/icons";
 import { getWorkspaces } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
-import {
-  createQueryOptions,
-  useSuspenseQuery,
-} from "@connectrpc/connect-query";
+import { getWorkspacesQueryOptions } from "@/lib/queries/workspace";
+import { useSuspenseQuery } from "@connectrpc/connect-query";
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import Cookies from "js-cookie";
 
@@ -11,14 +9,14 @@ export const Route = createFileRoute("/_protected/workspace/")({
   component: Page,
   loader: (opts) => {
     opts.context.queryClient.ensureQueryData(
-      createQueryOptions(
-        getWorkspaces,
-        {},
-        { transport: opts.context.transport },
-      ),
+      getWorkspacesQueryOptions({ context: opts.context }),
     );
   },
-  pendingComponent: () => <Icons.spinner className="animate-spin" />,
+  pendingComponent: () => (
+    <div>
+      <Icons.spinner className="animate-spin" />,
+    </div>
+  ),
 });
 
 function Page() {

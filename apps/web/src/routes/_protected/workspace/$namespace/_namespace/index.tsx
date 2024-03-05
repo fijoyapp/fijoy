@@ -9,8 +9,7 @@ import {
 // import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { createQueryOptions } from "@connectrpc/connect-query";
-import { getWorkspaces } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
+import { getWorkspacesQueryOptions } from "@/lib/queries/workspace";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/",
@@ -18,11 +17,7 @@ export const Route = createFileRoute(
   component: Page,
   loader: async (opts) => {
     const data = await opts.context.queryClient.ensureQueryData(
-      createQueryOptions(
-        getWorkspaces,
-        {},
-        { transport: opts.context.transport },
-      ),
+      getWorkspacesQueryOptions({ context: opts.context }),
     );
     return data;
   },

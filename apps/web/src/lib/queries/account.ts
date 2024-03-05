@@ -1,20 +1,56 @@
-import { SelectAccount } from "@/types/account";
-import { queryOptions } from "@tanstack/react-query";
-import { api } from "../ky";
+import { Transport } from "@connectrpc/connect";
+import { createQueryOptions } from "@connectrpc/connect-query";
+import {
+  getAccountById,
+  getAccounts,
+} from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
+import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 
-export const accountsQueryOptions = (workspaceID: string) => {
-  return queryOptions({
-    queryKey: ["accounts"],
-    queryFn: async () => {
-      const response = await api
-        .get("accounts", {
-          searchParams: {
-            workspace_id: workspaceID,
-          },
-        })
-        .json();
+type getAccountsProps = {
+  context: {
+    transport: Transport;
+    workspace: Workspace;
+  };
+};
 
-      return SelectAccount.array().parse(response);
+export const getAccountsQueryOptions = ({ context }: getAccountsProps) => {
+  return createQueryOptions(
+    getAccounts,
+    {},
+    {
+      transport: context.transport,
+      callOptions: {
+        headers: {
+          "Fijoy-Workspace-Id": context.workspace.id,
+        },
+      },
     },
-  });
+  );
+};
+
+type getAccountByIdProps = {
+  id: string;
+  context: {
+    transport: Transport;
+    workspace: Workspace;
+  };
+};
+
+export const getAccountByIdQueryOptions = ({
+  id,
+  context,
+}: getAccountByIdProps) => {
+  return createQueryOptions(
+    getAccountById,
+    { id },
+    {
+      transport: context.transport,
+
+      callOptions: {
+        headers: {
+          "Fijoy-Workspace-Id": context.workspace.id,
+        },
+      },
+    },
+  );
 };
