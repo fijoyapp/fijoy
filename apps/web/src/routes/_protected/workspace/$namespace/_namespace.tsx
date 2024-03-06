@@ -1,8 +1,6 @@
 import PrivateSidebar from "@/components/private-sidebar";
-import { Accounts } from "@/gen/proto/fijoy/v1/account_pb";
 import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
-import { categoriesQueryOptions } from "@/lib/queries/category";
 import { getWorkspaceByNamespaceQueryOptions } from "@/lib/queries/workspace";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
@@ -28,23 +26,9 @@ export const Route = createFileRoute(
     return { workspace };
   },
 
-  loader: async ({ context }) => {
+  loader: ({ context }) => {
     const accountsQueryOpts = getAccountsQueryOptions({ context });
-    await context.queryClient.ensureQueryData(accountsQueryOpts);
-
-    const accounts = context.queryClient.getQueryData<Accounts>(
-      accountsQueryOpts.queryKey,
-    );
-
-    if (!accounts) {
-      throw new Error("Accounts not found");
-    }
-
-    await context.queryClient.ensureQueryData(
-      categoriesQueryOptions(context.workspace.id),
-    );
-
-    return { accounts: accounts.accounts };
+    return context.queryClient.ensureQueryData(accountsQueryOpts);
   },
 
   component: () => (

@@ -28,7 +28,7 @@ function UserButton() {
         <Button
           variant="outline"
           className={cn(
-            "justify-start gap-2 rounded-xl border-2 bg-background text-sm font-normal shadow-none hover:border-primary hover:bg-background",
+            "justify-start gap-2 rounded-xl border-2 text-sm font-normal shadow-none hover:border-primary hover:bg-background",
           )}
         >
           <Avatar className="h-6 w-6">

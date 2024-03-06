@@ -1,8 +1,13 @@
+import { AccountTable } from "@/components/accounts/account-table";
+import AddAccount from "@/components/accounts/add-account";
+import { columns } from "@/components/accounts/columns";
 import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
+import { getAccountsQueryOptions } from "@/lib/queries/account";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 // import {
@@ -27,16 +32,20 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/accounts/",
 )({
-  // loader: (opts) => {
-  //   return opts.context.queryClient.ensureQueryData(
-  //     accountsQueryOptions(opts.context.workspace.ID),
-  //   );
-  // },
+  loader: (opts) => {
+    opts.context.queryClient.ensureQueryData(
+      getAccountsQueryOptions({
+        context: opts.context,
+      }),
+    );
+  },
   component: Page,
 });
 
 function Page() {
-  // const { workspace, accounts } = Route.useRouteContext();
+  const context = Route.useRouteContext();
+  const accountsQuery = useSuspenseQuery(getAccountsQueryOptions({ context }));
+  const accounts = accountsQuery.data.accounts;
 
   return (
     <div className="container max-w-screen-2xl">
@@ -72,9 +81,11 @@ function Page() {
 
       <div className="py-2 lg:py-4" />
 
-      {/* <AddAccount workspaceID={workspace.id} /> */}
+      <AddAccount workspace={context.workspace} />
 
       <div className="py-2 lg:py-4" />
+
+      <AccountTable columns={columns} data={accounts} />
 
       {/* <div className="lg:columns-2"> */}
       {/*   {accountTypes.map((type) => { */}

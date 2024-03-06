@@ -1,19 +1,17 @@
-export const getMoneyDisplay = (
-  money: number,
-  opts: { isDebt?: boolean; compact?: boolean } = {
-    isDebt: false,
-    compact: false,
+import { Money } from "@/gen/proto/fijoy/v1/money_pb";
+import currency from "currency.js";
+
+export const moneyToCurrency = (
+  money: Money,
+  opts: {
+    reverse?: boolean;
+  } = {
+    reverse: false,
   },
-): string => {
-  const formatter = new Intl.NumberFormat("en-CA", {
-    style: "currency",
-    currency: "CAD",
-    notation: opts.compact ? "compact" : "standard",
-  });
-  if (opts.isDebt) {
-    return formatter.format(-money);
-  }
-  return formatter.format(money);
+): currency => {
+  const total = Number(String(money.units)) + Number(String(money.nanos)) / 1e8;
+
+  return currency(opts.reverse ? -total : total);
 };
 
 export const ALL_CURRENCIES = Intl.supportedValuesOf("currency");
