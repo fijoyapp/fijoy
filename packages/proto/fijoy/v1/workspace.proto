@@ -10,11 +10,11 @@ message Workspace {
   string id = 1 [(buf.validate.field).string.min_len = 1];
   string namespace = 2 [(buf.validate.field).string.min_len = 1];
   string name = 3 [(buf.validate.field).string.min_len = 1];
-  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp created_at = 4 [(buf.validate.field).required = true];
 }
 
 message Workspaces {
-  repeated Workspace workspaces = 1;
+  repeated Workspace workspaces = 1 [(buf.validate.field).required = true];
 }
 
 message CreateWorkspaceRequest {

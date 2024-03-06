@@ -8,32 +8,33 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 enum AccountType {
-  CASH = 0;
-  DEBT = 1;
-  INVESTMENT = 2;
-  OTHER_ASSET = 3;
+  ACCOUNT_TYPE_UNSPECIFIED = 0;
+  ACCOUNT_TYPE_CASH = 1;
+  ACCOUNT_TYPE_DEBT = 2;
+  ACCOUNT_TYPE_INVESTMENT = 3;
+  ACCOUNT_TYPE_OTHER_ASSET = 4;
 }
 
 message Account {
   string id = 1 [(buf.validate.field).string.min_len = 1];
   string workspace_id = 2 [(buf.validate.field).string.min_len = 1];
   string name = 3 [(buf.validate.field).string.min_len = 1];
-  AccountType account_type = 4;
-  fijoy.v1.Money balance = 5;
+  AccountType account_type = 4 [(buf.validate.field).required = true];
+  fijoy.v1.Money balance = 5 [(buf.validate.field).required = true];
   string currency = 6 [(buf.validate.field).string.min_len = 1];
   string institution = 7 [(buf.validate.field).string.min_len = 1];
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp created_at = 8 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 9 [(buf.validate.field).required = true];
 }
 
 message Accounts {
-  repeated Account accounts = 1;
+  repeated Account accounts = 1 [(buf.validate.field).required = true];
 }
 
 message CreateAccountRequest {
   string name = 1 [(buf.validate.field).string.min_len = 1];
-  AccountType account_type = 2;
-  fijoy.v1.Money balance = 3;
+  AccountType account_type = 2 [(buf.validate.field).required = true];
+  fijoy.v1.Money balance = 3 [(buf.validate.field).required = true];
   string currency = 4 [(buf.validate.field).string.min_len = 1];
   string institution = 5 [(buf.validate.field).string.min_len = 1];
 }

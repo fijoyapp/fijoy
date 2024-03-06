@@ -29,7 +29,7 @@ export class Category extends Message<Category> {
   /**
    * @generated from field: fijoy.v1.TransactionType category_type = 4;
    */
-  categoryType = TransactionType.EXPENSE;
+  categoryType = TransactionType.UNSPECIFIED;
 
   constructor(data?: PartialMessage<Category>) {
     super();

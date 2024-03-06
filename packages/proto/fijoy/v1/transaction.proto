@@ -7,7 +7,8 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 enum TransactionType {
-  EXPENSE = 0;
-  INCOME = 1;
-  TRANSFER = 2;
+  TRANSACTION_TYPE_UNSPECIFIED = 0;
+  TRANSACTION_TYPE_EXPENSE = 1;
+  TRANSACTION_TYPE_INCOME = 2;
+  TRANSACTION_TYPE_TRANSFER = 3;
 }

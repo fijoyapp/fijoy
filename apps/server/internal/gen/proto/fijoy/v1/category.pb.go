@@ -91,7 +91,7 @@ func (x *Category) GetCategoryType() TransactionType {
 	if x != nil {
 		return x.CategoryType
 	}
-	return TransactionType_EXPENSE
+	return TransactionType_TRANSACTION_TYPE_UNSPECIFIED
 }
 
 var File_fijoy_v1_category_proto protoreflect.FileDescriptor

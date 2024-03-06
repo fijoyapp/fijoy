@@ -12,31 +12,37 @@ import { Money } from "./money_pb.js";
  */
 export enum AccountType {
   /**
-   * @generated from enum value: CASH = 0;
+   * @generated from enum value: ACCOUNT_TYPE_UNSPECIFIED = 0;
    */
-  CASH = 0,
+  UNSPECIFIED = 0,
 
   /**
-   * @generated from enum value: DEBT = 1;
+   * @generated from enum value: ACCOUNT_TYPE_CASH = 1;
    */
-  DEBT = 1,
+  CASH = 1,
 
   /**
-   * @generated from enum value: INVESTMENT = 2;
+   * @generated from enum value: ACCOUNT_TYPE_DEBT = 2;
    */
-  INVESTMENT = 2,
+  DEBT = 2,
 
   /**
-   * @generated from enum value: OTHER_ASSET = 3;
+   * @generated from enum value: ACCOUNT_TYPE_INVESTMENT = 3;
    */
-  OTHER_ASSET = 3,
+  INVESTMENT = 3,
+
+  /**
+   * @generated from enum value: ACCOUNT_TYPE_OTHER_ASSET = 4;
+   */
+  OTHER_ASSET = 4,
 }
 // Retrieve enum metadata with: proto3.getEnumType(AccountType)
 proto3.util.setEnumType(AccountType, "fijoy.v1.AccountType", [
-  { no: 0, name: "CASH" },
-  { no: 1, name: "DEBT" },
-  { no: 2, name: "INVESTMENT" },
-  { no: 3, name: "OTHER_ASSET" },
+  { no: 0, name: "ACCOUNT_TYPE_UNSPECIFIED" },
+  { no: 1, name: "ACCOUNT_TYPE_CASH" },
+  { no: 2, name: "ACCOUNT_TYPE_DEBT" },
+  { no: 3, name: "ACCOUNT_TYPE_INVESTMENT" },
+  { no: 4, name: "ACCOUNT_TYPE_OTHER_ASSET" },
 ]);
 
 /**
@@ -61,7 +67,7 @@ export class Account extends Message<Account> {
   /**
    * @generated from field: fijoy.v1.AccountType account_type = 4;
    */
-  accountType = AccountType.CASH;
+  accountType = AccountType.UNSPECIFIED;
 
   /**
    * @generated from field: fijoy.v1.Money balance = 5;
@@ -173,7 +179,7 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   /**
    * @generated from field: fijoy.v1.AccountType account_type = 2;
    */
-  accountType = AccountType.CASH;
+  accountType = AccountType.UNSPECIFIED;
 
   /**
    * @generated from field: fijoy.v1.Money balance = 3;

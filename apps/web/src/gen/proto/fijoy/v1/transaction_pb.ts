@@ -10,24 +10,30 @@ import { proto3 } from "@bufbuild/protobuf";
  */
 export enum TransactionType {
   /**
-   * @generated from enum value: EXPENSE = 0;
+   * @generated from enum value: TRANSACTION_TYPE_UNSPECIFIED = 0;
    */
-  EXPENSE = 0,
+  UNSPECIFIED = 0,
 
   /**
-   * @generated from enum value: INCOME = 1;
+   * @generated from enum value: TRANSACTION_TYPE_EXPENSE = 1;
    */
-  INCOME = 1,
+  EXPENSE = 1,
 
   /**
-   * @generated from enum value: TRANSFER = 2;
+   * @generated from enum value: TRANSACTION_TYPE_INCOME = 2;
    */
-  TRANSFER = 2,
+  INCOME = 2,
+
+  /**
+   * @generated from enum value: TRANSACTION_TYPE_TRANSFER = 3;
+   */
+  TRANSFER = 3,
 }
 // Retrieve enum metadata with: proto3.getEnumType(TransactionType)
 proto3.util.setEnumType(TransactionType, "fijoy.v1.TransactionType", [
-  { no: 0, name: "EXPENSE" },
-  { no: 1, name: "INCOME" },
-  { no: 2, name: "TRANSFER" },
+  { no: 0, name: "TRANSACTION_TYPE_UNSPECIFIED" },
+  { no: 1, name: "TRANSACTION_TYPE_EXPENSE" },
+  { no: 2, name: "TRANSACTION_TYPE_INCOME" },
+  { no: 3, name: "TRANSACTION_TYPE_TRANSFER" },
 ]);
 
