@@ -7,6 +7,7 @@ import (
 	"fijoy/internal/entity"
 	"fijoy/internal/gen/postgres/railway/public/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
+	"fijoy/internal/util"
 	"time"
 
 	. "fijoy/internal/gen/postgres/railway/public/table"
@@ -87,12 +88,9 @@ func (s *AccountServer) CreateAccount(
 		Name:        dest.Name,
 		AccountType: jetAccountTypeToConnectAccountType[dest.AccountType],
 		Institution: dest.Institution,
-		Balance: &fijoyv1.Money{
-			Units: dest.Balance.IntPart(),
-			Nanos: int32(dest.Balance.CoefficientInt64()),
-		},
-		Currency:  dest.Currency,
-		UpdatedAt: timestamppb.New(dest.UpdatedAt),
+		Balance:     util.DecimalToMoney(dest.Balance),
+		Currency:    dest.Currency,
+		UpdatedAt:   timestamppb.New(dest.UpdatedAt),
 	}), nil
 }
 
@@ -133,10 +131,7 @@ func (s *AccountServer) GetAccounts(
 			WorkspaceId: w.WorkspaceID,
 			Name:        w.Name,
 			AccountType: jetAccountTypeToConnectAccountType[w.AccountType],
-			Balance: &fijoyv1.Money{
-				Units: w.Balance.IntPart(),
-				Nanos: int32(w.Balance.Coefficient().Int64() - (w.Balance.IntPart() * 1e8)),
-			},
+			Balance:     util.DecimalToMoney(w.Balance),
 			Currency:    w.Currency,
 			Institution: w.Institution,
 			CreatedAt:   timestamppb.New(w.CreatedAt),
@@ -175,10 +170,7 @@ func (s *AccountServer) GetAccountById(
 		WorkspaceId: dest.WorkspaceID,
 		Name:        dest.Name,
 		AccountType: jetAccountTypeToConnectAccountType[dest.AccountType],
-		Balance: &fijoyv1.Money{
-			Units: dest.Balance.IntPart(),
-			Nanos: int32(dest.Balance.CoefficientInt64()),
-		},
+		Balance:     util.DecimalToMoney(dest.Balance),
 		Currency:    dest.Currency,
 		Institution: dest.Currency,
 		CreatedAt:   timestamppb.New(dest.CreatedAt),
@@ -213,10 +205,7 @@ func (s *AccountServer) DeleteAccountById(
 		WorkspaceId: dest.WorkspaceID,
 		Name:        dest.Name,
 		AccountType: jetAccountTypeToConnectAccountType[dest.AccountType],
-		Balance: &fijoyv1.Money{
-			Units: dest.Balance.IntPart(),
-			Nanos: int32(dest.Balance.CoefficientInt64()),
-		},
+		Balance:     util.DecimalToMoney(dest.Balance),
 		Currency:    dest.Currency,
 		Institution: dest.Institution,
 		CreatedAt:   timestamppb.New(dest.CreatedAt),
