@@ -1,22 +1,16 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { env } from "@/env";
 import { useAuth } from "@/auth";
-import { useQueryClient } from "@tanstack/react-query";
-// import { useRouter } from "@tanstack/react-router";
 
 function WorkspaceButton() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
 
   if (!user) {
     return null;
