@@ -3,6 +3,7 @@
 
 import { fijoyWorkspaceId, type FijoyWorkspaceId } from './FijoyWorkspace';
 import { fijoyUserId, type FijoyUserId } from './FijoyUser';
+import { fijoyWorkspaceRole, type default as FijoyWorkspaceRole } from './FijoyWorkspaceRole';
 import { z } from 'zod';
 
 /** Represents the table public.fijoy_workspace_user */
@@ -13,8 +14,8 @@ export default interface FijoyWorkspaceUser {
   /** Database type: pg_catalog.text */
   userId: FijoyUserId;
 
-  /** Database type: pg_catalog.text */
-  role: string;
+  /** Database type: public.fijoy_workspace_role */
+  role: FijoyWorkspaceRole;
 }
 
 /** Represents the initializer for the table public.fijoy_workspace_user */
@@ -25,8 +26,8 @@ export interface FijoyWorkspaceUserInitializer {
   /** Database type: pg_catalog.text */
   userId: FijoyUserId;
 
-  /** Database type: pg_catalog.text */
-  role: string;
+  /** Database type: public.fijoy_workspace_role */
+  role: FijoyWorkspaceRole;
 }
 
 /** Represents the mutator for the table public.fijoy_workspace_user */
@@ -37,24 +38,24 @@ export interface FijoyWorkspaceUserMutator {
   /** Database type: pg_catalog.text */
   userId?: FijoyUserId;
 
-  /** Database type: pg_catalog.text */
-  role?: string;
+  /** Database type: public.fijoy_workspace_role */
+  role?: FijoyWorkspaceRole;
 }
 
 export const fijoyWorkspaceUser = z.object({
   workspaceId: fijoyWorkspaceId,
   userId: fijoyUserId,
-  role: z.string(),
+  role: fijoyWorkspaceRole,
 });
 
 export const fijoyWorkspaceUserInitializer = z.object({
   workspaceId: fijoyWorkspaceId,
   userId: fijoyUserId,
-  role: z.string(),
+  role: fijoyWorkspaceRole,
 });
 
 export const fijoyWorkspaceUserMutator = z.object({
   workspaceId: fijoyWorkspaceId.optional(),
   userId: fijoyUserId.optional(),
-  role: z.string().optional(),
+  role: fijoyWorkspaceRole.optional(),
 });

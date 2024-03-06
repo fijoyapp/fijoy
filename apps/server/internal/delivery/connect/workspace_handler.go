@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
+	"fijoy/internal/util"
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
@@ -44,8 +45,10 @@ func (s *WorkspaceServer) CreateWorkspace(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.CreateWorkspaceRequest],
 ) (*connect.Response[fijoyv1.Workspace], error) {
-	_, claims, _ := jwtauth.FromContext(ctx)
-	userId := claims["user_id"].(string)
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -98,8 +101,10 @@ func (s *WorkspaceServer) GetWorkspaces(
 	ctx context.Context,
 	req *connect.Request[emptypb.Empty],
 ) (*connect.Response[fijoyv1.Workspaces], error) {
-	_, claims, _ := jwtauth.FromContext(ctx)
-	userId := claims["user_id"].(string)
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	stmt := SELECT(FijoyWorkspace.AllColumns).
 		FROM(FijoyWorkspaceUser.
@@ -108,7 +113,7 @@ func (s *WorkspaceServer) GetWorkspaces(
 
 	dest := []*model.FijoyWorkspace{}
 
-	err := stmt.QueryContext(ctx, s.db, &dest)
+	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -134,8 +139,10 @@ func (s *WorkspaceServer) GetWorkspaceById(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.GetWorkspaceByIdRequest],
 ) (*connect.Response[fijoyv1.Workspace], error) {
-	_, claims, _ := jwtauth.FromContext(ctx)
-	userId := claims["user_id"].(string)
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	stmt := SELECT(FijoyWorkspace.AllColumns).
 		FROM(FijoyWorkspaceUser.
@@ -147,7 +154,7 @@ func (s *WorkspaceServer) GetWorkspaceById(
 		model.FijoyWorkspace
 	}
 
-	err := stmt.QueryContext(ctx, s.db, &dest)
+	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -166,8 +173,10 @@ func (s *WorkspaceServer) GetWorkspaceByNamespace(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.GetWorkspaceByNamespaceRequest],
 ) (*connect.Response[fijoyv1.Workspace], error) {
-	_, claims, _ := jwtauth.FromContext(ctx)
-	userId := claims["user_id"].(string)
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	stmt := SELECT(FijoyWorkspace.AllColumns).
 		FROM(FijoyWorkspaceUser.
@@ -179,7 +188,7 @@ func (s *WorkspaceServer) GetWorkspaceByNamespace(
 		model.FijoyWorkspace
 	}
 
-	err := stmt.QueryContext(ctx, s.db, &dest)
+	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}

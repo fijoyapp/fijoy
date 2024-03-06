@@ -46,16 +46,24 @@ func (s *AccountServer) CreateAccount(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.CreateAccountRequest],
 ) (*connect.Response[fijoyv1.Account], error) {
-	workspaceId := req.Header().Get("Fijoy-Workspace-Id")
-	if workspaceId == "" {
-		err := connect.NewError(
-			connect.CodeInvalidArgument,
-			errors.New("missing Fijoy-Workspace-Id in request header"),
-		)
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
 		return nil, err
 	}
 
-	// TODO: check if this user has access to this workspace
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasEditPermission(&workspaceUser) {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	}
 
 	balance := decimal.NewFromInt(req.Msg.Balance.Units).
 		Add(decimal.New(int64(req.Msg.Balance.Nanos), -9))
@@ -78,7 +86,7 @@ func (s *AccountServer) CreateAccount(
 
 	dest := entity.FijoyAccount{}
 
-	err := stmt.Query(s.db, &dest)
+	err = stmt.Query(s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -112,14 +120,31 @@ func (s *AccountServer) GetAccounts(
 	ctx context.Context,
 	req *connect.Request[emptypb.Empty],
 ) (*connect.Response[fijoyv1.Accounts], error) {
-	workspaceId := req.Header().Get("Fijoy-Workspace-Id")
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasViewPermission(&workspaceUser) {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have view permission"))
+	}
 
 	stmt := SELECT(FijoyAccount.AllColumns).FROM(FijoyAccount).
 		WHERE(FijoyAccount.WorkspaceID.EQ(String(workspaceId)))
 
 	dest := []entity.FijoyAccount{}
 
-	err := stmt.Query(s.db, &dest)
+	err = stmt.Query(s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +175,24 @@ func (s *AccountServer) GetAccountById(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.GetAccountByIdRequest],
 ) (*connect.Response[fijoyv1.Account], error) {
-	workspaceId := req.Header().Get("Fijoy-Workspace-Id")
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasViewPermission(&workspaceUser) {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have view permission"))
+	}
 
 	stmt := SELECT(FijoyAccount.AllColumns).FROM(FijoyAccount).
 		WHERE(AND(
@@ -160,7 +202,7 @@ func (s *AccountServer) GetAccountById(
 
 	dest := entity.FijoyAccount{}
 
-	err := stmt.Query(s.db, &dest)
+	err = stmt.Query(s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -182,20 +224,30 @@ func (s *AccountServer) DeleteAccountById(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.DeleteAccountByIdRequest],
 ) (*connect.Response[fijoyv1.Account], error) {
-	workspaceId := req.Header().Get("Fijoy-Workspace-Id")
-	if workspaceId == "" {
-		err := connect.NewError(
-			connect.CodeInvalidArgument,
-			errors.New("missing Fijoy-Workspace-Id in request header"),
-		)
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
 		return nil, err
+	}
+
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasEditPermission(&workspaceUser) {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
 	}
 
 	stmt := FijoyAccount.DELETE().WHERE(FijoyAccount.ID.EQ(String(req.Msg.Id))).RETURNING(FijoyAccount.AllColumns)
 
 	dest := entity.FijoyAccount{}
 
-	err := stmt.Query(s.db, &dest)
+	err = stmt.Query(s.db, &dest)
 	if err != nil {
 		return nil, err
 	}

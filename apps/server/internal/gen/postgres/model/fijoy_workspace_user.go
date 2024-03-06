@@ -8,7 +8,7 @@
 package model
 
 type FijoyWorkspaceUser struct {
-	WorkspaceID string `sql:"primary_key" json:"WorkspaceID"`
-	UserID      string `sql:"primary_key" json:"UserID"`
-	Role        string `json:"Role"`
+	WorkspaceID string             `sql:"primary_key" json:"WorkspaceID"`
+	UserID      string             `sql:"primary_key" json:"UserID"`
+	Role        FijoyWorkspaceRole `json:"Role"`
 }
