@@ -81,10 +81,10 @@ const NetWorthCard = ({ accounts }: CardProps) => {
         <CardDescription>Net Worth</CardDescription>
         <CardTitle className="">
           {currencyToDisplay(
-            accounts.reduce(
-              (acc, cur) => acc.add(moneyToCurrency(cur.balance!)),
-              currency(0),
-            ),
+            accounts.reduce((acc, cur) => {
+              if (!cur.balance) return acc;
+              return acc.add(moneyToCurrency(cur.balance, { reverse: false }));
+            }, currency(0)),
             "CAD", // TODO: Use user's currency
             { compact: true },
           )}
@@ -107,11 +107,10 @@ const TotalDebtCard = ({ accounts }: CardProps) => {
                   a.accountType !== AccountType.UNSPECIFIED &&
                   accountTypeConfigMap[a.accountType].isDebt,
               )
-              .reduce(
-                (acc, cur) =>
-                  acc.add(moneyToCurrency(cur.balance!, { reverse: true })),
-                currency(0),
-              ),
+              .reduce((acc, cur) => {
+                if (!cur.balance) return acc;
+                return acc.add(moneyToCurrency(cur.balance, { reverse: true }));
+              }, currency(0)),
             "CAD", // TODO: Use user's currency
             { compact: true },
           )}
@@ -134,11 +133,12 @@ const TotalAssetCard = ({ accounts }: CardProps) => {
                   a.accountType !== AccountType.UNSPECIFIED &&
                   !accountTypeConfigMap[a.accountType].isDebt,
               )
-              .reduce(
-                (acc, cur) =>
-                  acc.add(moneyToCurrency(cur.balance!, { reverse: false })),
-                currency(0),
-              ),
+              .reduce((acc, cur) => {
+                if (!cur.balance) return acc;
+                return acc.add(
+                  moneyToCurrency(cur.balance, { reverse: false }),
+                );
+              }, currency(0)),
             "CAD", // TODO: Use user's currency
             { compact: true },
           )}
