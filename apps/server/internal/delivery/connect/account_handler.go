@@ -97,17 +97,17 @@ func (s *AccountServer) CreateAccount(
 }
 
 var jetAccountTypeToConnectAccountType = map[model.FijoyAccountType]fijoyv1.AccountType{
-	model.FijoyAccountType_Cash:       fijoyv1.AccountType_CASH,
-	model.FijoyAccountType_Debt:       fijoyv1.AccountType_DEBT,
-	model.FijoyAccountType_Investment: fijoyv1.AccountType_INVESTMENT,
-	model.FijoyAccountType_OtherAsset: fijoyv1.AccountType_OTHER_ASSET,
+	model.FijoyAccountType_Cash:       fijoyv1.AccountType_ACCOUNT_TYPE_CASH,
+	model.FijoyAccountType_Debt:       fijoyv1.AccountType_ACCOUNT_TYPE_DEBT,
+	model.FijoyAccountType_Investment: fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT,
+	model.FijoyAccountType_OtherAsset: fijoyv1.AccountType_ACCOUNT_TYPE_OTHER_ASSET,
 }
 
 var connectAccountTypeToJetAccountType = map[fijoyv1.AccountType]model.FijoyAccountType{
-	fijoyv1.AccountType_CASH:        model.FijoyAccountType_Cash,
-	fijoyv1.AccountType_DEBT:        model.FijoyAccountType_Debt,
-	fijoyv1.AccountType_INVESTMENT:  model.FijoyAccountType_Investment,
-	fijoyv1.AccountType_OTHER_ASSET: model.FijoyAccountType_OtherAsset,
+	fijoyv1.AccountType_ACCOUNT_TYPE_CASH:        model.FijoyAccountType_Cash,
+	fijoyv1.AccountType_ACCOUNT_TYPE_DEBT:        model.FijoyAccountType_Debt,
+	fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT:  model.FijoyAccountType_Investment,
+	fijoyv1.AccountType_ACCOUNT_TYPE_OTHER_ASSET: model.FijoyAccountType_OtherAsset,
 }
 
 func (s *AccountServer) GetAccounts(
@@ -135,7 +135,7 @@ func (s *AccountServer) GetAccounts(
 			AccountType: jetAccountTypeToConnectAccountType[w.AccountType],
 			Balance: &fijoyv1.Money{
 				Units: w.Balance.IntPart(),
-				Nanos: int32(w.Balance.CoefficientInt64()),
+				Nanos: int32(w.Balance.Coefficient().Int64() - (w.Balance.IntPart() * 1e8)),
 			},
 			Currency:    w.Currency,
 			Institution: w.Institution,
