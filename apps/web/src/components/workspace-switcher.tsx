@@ -44,24 +44,8 @@ function WorkspaceButton() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onSelect={async () => {
-            // return router.navigate("/profile");
-          }}
-        >
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onSelect={() => {
-            queryClient.clear();
-            window.location.replace(env.VITE_BACKEND_URL + "/v1/auth/logout");
-          }}
-        >
-          Logout
-        </DropdownMenuItem>
+        <DropdownMenuLabel>My Workspaces</DropdownMenuLabel>
+        {/* TODO: Add a list of workspaces here */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
