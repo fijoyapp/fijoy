@@ -33,18 +33,18 @@ import _ from "lodash";
 import IncomeForm from "./income-form";
 import TransferForm from "./transfer-form";
 import ExpenseForm from "./expense-form";
-import { SelectAccount } from "@/types/account";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InsertTransaction } from "@/types/transaction";
 import { SelectCategory } from "@/types/category";
 import { transactionsQueryOptions } from "@/lib/queries/transaction";
 import { api } from "@/lib/ky";
 import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
+import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 
 export const formSchema = InsertTransaction;
 
 type Props = {
-  accounts: SelectAccount[];
+  accounts: Account[];
   workspace: Workspace;
   categories: SelectCategory[];
 };
@@ -52,6 +52,9 @@ type Props = {
 const NewTransaction = ({ accounts, workspace, categories }: Props) => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+
+  // TODO: remove me
+  console.log(accounts, categories, workspace);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -144,13 +147,7 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
                   )}
                 />
                 {form.watch("TransactionType") === "expense" && (
-                  <ExpenseForm
-                    form={form}
-                    accounts={accounts}
-                    categories={categories.filter(
-                      (c) => c.CategoryType === "expense",
-                    )}
-                  />
+                  <ExpenseForm form={form} />
                 )}
                 {form.watch("TransactionType") === "income" && (
                   <IncomeForm form={form} />

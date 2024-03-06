@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Account } from "@/gen/proto/fijoy/v1/account_pb";
+import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
 import { accountTypeConfigMap } from "@/config/account";
 
@@ -102,7 +102,11 @@ const TotalDebtCard = ({ accounts }: CardProps) => {
         <CardTitle className="font-roboto-mono">
           {currencyToDisplay(
             accounts
-              .filter((a) => accountTypeConfigMap[a.accountType].isDebt)
+              .filter(
+                (a) =>
+                  a.accountType !== AccountType.UNSPECIFIED &&
+                  accountTypeConfigMap[a.accountType].isDebt,
+              )
               .reduce(
                 (acc, cur) =>
                   acc.add(moneyToCurrency(cur.balance!, { reverse: true })),
@@ -125,7 +129,11 @@ const TotalAssetCard = ({ accounts }: CardProps) => {
         <CardTitle className="font-roboto-mono">
           {currencyToDisplay(
             accounts
-              .filter((a) => !accountTypeConfigMap[a.accountType].isDebt)
+              .filter(
+                (a) =>
+                  a.accountType !== AccountType.UNSPECIFIED &&
+                  !accountTypeConfigMap[a.accountType].isDebt,
+              )
               .reduce(
                 (acc, cur) =>
                   acc.add(moneyToCurrency(cur.balance!, { reverse: false })),

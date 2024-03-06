@@ -1,5 +1,5 @@
 import { accountTypeConfigMap } from "@/config/account";
-import { Account } from "@/gen/proto/fijoy/v1/account_pb";
+import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -12,10 +12,10 @@ export const columns: ColumnDef<Account>[] = [
     accessorKey: "accountType",
     header: "Account Type",
     cell: ({ row }) => {
-      if (row.original.accountType in accountTypeConfigMap) {
-        return accountTypeConfigMap[row.original.accountType].name;
+      if (row.original.accountType === AccountType.UNSPECIFIED) {
+        return "Unknown";
       }
-      return "Unknown";
+      return accountTypeConfigMap[row.original.accountType].name;
     },
   },
   {
@@ -29,7 +29,7 @@ export const columns: ColumnDef<Account>[] = [
       if (!row.original.balance) {
         return "Unknown";
       }
-      if (!(row.original.accountType in accountTypeConfigMap)) {
+      if (row.original.accountType === AccountType.UNSPECIFIED) {
         return "Unknown";
       }
 

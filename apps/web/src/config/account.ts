@@ -6,7 +6,10 @@ type AccountTypeConfig = {
   description: string;
 };
 
-export const accountTypeConfigMap: Record<AccountType, AccountTypeConfig> = {
+export const accountTypeConfigMap: Record<
+  Exclude<AccountType, AccountType.UNSPECIFIED>,
+  AccountTypeConfig
+> = {
   [AccountType.CASH]: {
     isDebt: false,
     name: "Cash",
