@@ -65,8 +65,8 @@ func main() {
 	http_handler.NewUserHandler(r, tokenAuth, db)
 	connect_handler.NewWorkspaceHandler(r, tokenAuth, db)
 	connect_handler.NewAccountHandler(r, tokenAuth, db)
-	http_handler.NewCategoryHandler(r, tokenAuth, db)
-	http_handler.NewTransactionHandler(r, tokenAuth, db)
+	// http_handler.NewCategoryHandler(r, tokenAuth, db)
+	connect_handler.NewTransactionHandler(r, tokenAuth, db)
 
 	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("OK"))

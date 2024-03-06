@@ -1,25 +1,25 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+  // FormControl,
+  // FormDescription,
+  // FormField,
+  // FormItem,
+  // FormLabel,
+  // FormMessage,
 } from "@/components/ui/form";
 import { Plus } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type z } from "zod";
+import { z } from "zod";
 import {
   Sheet,
   SheetContent,
@@ -27,30 +27,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { toast } from "sonner";
-import { transactionTypes } from "@/config/transaction";
-import _ from "lodash";
-import IncomeForm from "./income-form";
-import TransferForm from "./transfer-form";
-import ExpenseForm from "./expense-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { InsertTransaction } from "@/types/transaction";
-import { SelectCategory } from "@/types/category";
-import { transactionsQueryOptions } from "@/lib/queries/transaction";
-import { api } from "@/lib/ky";
+// import _ from "lodash";
+// import IncomeForm from "./income-form";
+// import TransferForm from "./transfer-form";
+// import ExpenseForm from "./expense-form";
 import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 import { Account } from "@/gen/proto/fijoy/v1/account_pb";
+import { Category } from "@/gen/proto/fijoy/v1/category_pb";
 
-export const formSchema = InsertTransaction;
+export const formSchema = z.object({});
 
 type Props = {
   accounts: Account[];
   workspace: Workspace;
-  categories: SelectCategory[];
+  categories: Category[];
 };
 
 const NewTransaction = ({ accounts, workspace, categories }: Props) => {
-  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   // TODO: remove me
@@ -65,29 +58,28 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
     },
   });
 
-  const createTransaction = useMutation({
-    mutationFn: async (values: InsertTransaction) => {
-      await api.post("transactions", {
-        json: values,
-        searchParams: {
-          workspace_id: workspace.id,
-        },
-      });
-    },
-    onSuccess: () => {
-      form.reset();
-      setOpen(false);
-      queryClient.invalidateQueries(transactionsQueryOptions(workspace.id));
-    },
-  });
+  // const createTransaction = useMutation({
+  //   mutationFn: async (values: InsertTransaction) => {
+  //     await api.post("transactions", {
+  //       json: values,
+  //       searchParams: {
+  //         workspace_id: workspace.id,
+  //       },
+  //     });
+  //   },
+  //   onSuccess: () => {
+  //     form.reset();
+  //     setOpen(false);
+  //   },
+  // });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    toast.promise(createTransaction.mutateAsync(values), {
-      success: "Transaction created!",
-      loading: "Creating transaction...",
-      error: "Failed to create transaction.",
-    });
+    // toast.promise(createTransaction.mutateAsync(values), {
+    //   success: "Transaction created!",
+    //   loading: "Creating transaction...",
+    //   error: "Failed to create transaction.",
+    // });
   }
 
   return (
@@ -116,45 +108,45 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
               </SheetHeader>
               <div className="py-1"></div>
               <div className="space-y-4 p-1">
-                <FormField
-                  control={form.control}
-                  name="TransactionType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Transaction type</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a transaction type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {transactionTypes.map((type) => (
-                            <SelectItem value={type} key={type}>
-                              {_.capitalize(type)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        This can be expense, income, or transfer.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {form.watch("TransactionType") === "expense" && (
-                  <ExpenseForm form={form} />
-                )}
-                {form.watch("TransactionType") === "income" && (
-                  <IncomeForm form={form} />
-                )}
-                {form.watch("TransactionType") === "transfer" && (
-                  <TransferForm form={form} />
-                )}
+                {/* <FormField */}
+                {/*   control={form.control} */}
+                {/*   name="TransactionType" */}
+                {/*   render={({ field }) => ( */}
+                {/*     <FormItem> */}
+                {/*       <FormLabel>Transaction type</FormLabel> */}
+                {/*       <Select */}
+                {/*         onValueChange={field.onChange} */}
+                {/*         defaultValue={field.value} */}
+                {/*       > */}
+                {/*         <FormControl> */}
+                {/*           <SelectTrigger> */}
+                {/*             <SelectValue placeholder="Select a transaction type" /> */}
+                {/*           </SelectTrigger> */}
+                {/*         </FormControl> */}
+                {/*         <SelectContent> */}
+                {/*           {transactionTypes.map((type) => ( */}
+                {/*             <SelectItem value={type} key={type}> */}
+                {/*               {_.capitalize(type)} */}
+                {/*             </SelectItem> */}
+                {/*           ))} */}
+                {/*         </SelectContent> */}
+                {/*       </Select> */}
+                {/*       <FormDescription> */}
+                {/*         This can be expense, income, or transfer. */}
+                {/*       </FormDescription> */}
+                {/*       <FormMessage /> */}
+                {/*     </FormItem> */}
+                {/*   )} */}
+                {/* /> */}
+                {/* {form.watch("TransactionType") === "expense" && ( */}
+                {/*   <ExpenseForm form={form} /> */}
+                {/* )} */}
+                {/* {form.watch("TransactionType") === "income" && ( */}
+                {/*   <IncomeForm form={form} /> */}
+                {/* )} */}
+                {/* {form.watch("TransactionType") === "transfer" && ( */}
+                {/*   <TransferForm form={form} /> */}
+                {/* )} */}
 
                 <Button
                   type="submit"

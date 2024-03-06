@@ -182,17 +182,12 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   accountType = AccountType.UNSPECIFIED;
 
   /**
-   * @generated from field: fijoy.v1.Money balance = 3;
-   */
-  balance?: Money;
-
-  /**
-   * @generated from field: string currency = 4;
+   * @generated from field: string currency = 3;
    */
   currency = "";
 
   /**
-   * @generated from field: string institution = 5;
+   * @generated from field: string institution = 4;
    */
   institution = "";
 
@@ -206,9 +201,8 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 3, name: "balance", kind: "message", T: Money },
-    { no: 4, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {

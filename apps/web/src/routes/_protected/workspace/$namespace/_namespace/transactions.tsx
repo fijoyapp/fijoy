@@ -5,10 +5,10 @@ import {
 } from "@/components/small-header";
 import { columns } from "@/components/transactions/columns";
 import { DataTable } from "@/components/transactions/data-table";
+import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
 // import NewTransaction from "@/components/transactions/new-transaction";
 // import { accountsQueryOptions } from "@/lib/queries/account";
 // import { categoriesQueryOptions } from "@/lib/queries/category";
-import { transactionsQueryOptions } from "@/lib/queries/transaction";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -17,21 +17,23 @@ export const Route = createFileRoute(
 )({
   loader: (opts) =>
     opts.context.queryClient.ensureQueryData(
-      transactionsQueryOptions(opts.context.workspace.id),
+      getTransactionsQueryOptions({ context: opts.context }),
     ),
   component: Page,
 });
 
 function Page() {
-  const { workspace } = Route.useRouteContext();
+  const context = Route.useRouteContext();
 
   // const { data: categories } = useSuspenseQuery(
   //   categoriesQueryOptions(workspace.id),
   // );
 
-  const { data: transactions } = useSuspenseQuery(
-    transactionsQueryOptions(workspace.id),
+  const transactionsQuery = useSuspenseQuery(
+    getTransactionsQueryOptions({ context }),
   );
+
+  const transactions = transactionsQuery.data.transactions;
 
   // const { data: accounts } = useSuspenseQuery(
   //   accountsQueryOptions(workspace.id),

@@ -26,11 +26,11 @@ import { Route as ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport } from
 
 // Create Virtual Routes
 
-const PublicPricingLazyImport = createFileRoute('/_public/pricing')()
 const PublicIndexLazyImport = createFileRoute('/_public/')()
 const PublicWhyLazyImport = createFileRoute('/_public/why')()
 const PublicStackLazyImport = createFileRoute('/_public/stack')()
 const PublicSignupLazyImport = createFileRoute('/_public/signup')()
+const PublicPricingLazyImport = createFileRoute('/_public/pricing')()
 const PublicLoginLazyImport = createFileRoute('/_public/login')()
 const PublicFeaturesLazyImport = createFileRoute('/_public/features')()
 const ProtectedSetupLazyImport = createFileRoute('/_protected/setup')()
@@ -50,13 +50,6 @@ const ProtectedRoute = ProtectedImport.update({
   id: '/_protected',
   getParentRoute: () => rootRoute,
 } as any)
-
-const PublicPricingLazyRoute = PublicPricingLazyImport.update({
-  path: '/pricing',
-  getParentRoute: () => PublicRoute,
-} as any).lazy(() =>
-  import('./routes/_public/pricing.lazy').then((d) => d.Route),
-)
 
 const PublicIndexLazyRoute = PublicIndexLazyImport.update({
   path: '/',
@@ -78,6 +71,13 @@ const PublicSignupLazyRoute = PublicSignupLazyImport.update({
   getParentRoute: () => PublicRoute,
 } as any).lazy(() =>
   import('./routes/_public/signup.lazy').then((d) => d.Route),
+)
+
+const PublicPricingLazyRoute = PublicPricingLazyImport.update({
+  path: '/pricing',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() =>
+  import('./routes/_public/pricing.lazy').then((d) => d.Route),
 )
 
 const PublicLoginLazyRoute = PublicLoginLazyImport.update({
@@ -180,6 +180,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicLoginLazyImport
       parentRoute: typeof PublicImport
     }
+    '/_public/pricing': {
+      preLoaderRoute: typeof PublicPricingLazyImport
+      parentRoute: typeof PublicImport
+    }
     '/_public/signup': {
       preLoaderRoute: typeof PublicSignupLazyImport
       parentRoute: typeof PublicImport
@@ -232,10 +236,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
     }
-    '/_public/pricing': {
-      preLoaderRoute: typeof PublicPricingLazyImport
-      parentRoute: typeof PublicImport
-    }
   }
 }
 
@@ -259,11 +259,11 @@ export const routeTree = rootRoute.addChildren([
   PublicRoute.addChildren([
     PublicFeaturesLazyRoute,
     PublicLoginLazyRoute,
+    PublicPricingLazyRoute,
     PublicSignupLazyRoute,
     PublicStackLazyRoute,
     PublicWhyLazyRoute,
     PublicIndexLazyRoute,
-    PublicPricingLazyRoute,
   ]),
 ])
 

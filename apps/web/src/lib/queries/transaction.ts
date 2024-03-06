@@ -1,20 +1,28 @@
-import { SelectTransaction } from "@/types/transaction";
-import { queryOptions } from "@tanstack/react-query";
-import { api } from "../ky";
+import { Transport } from "@connectrpc/connect";
+import { createQueryOptions } from "@connectrpc/connect-query";
+import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
+import { getTransactions } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 
-export const transactionsQueryOptions = (workspaceID: string) => {
-  return queryOptions({
-    queryKey: ["transactions"],
-    queryFn: async () => {
-      const response = await api
-        .get("transactions", {
-          searchParams: {
-            workspace_id: workspaceID,
-          },
-        })
-        .json();
+type getTransactionsProps = {
+  context: {
+    transport: Transport;
+    workspace: Workspace;
+  };
+};
 
-      return SelectTransaction.array().parse(response);
+export const getTransactionsQueryOptions = ({
+  context,
+}: getTransactionsProps) => {
+  return createQueryOptions(
+    getTransactions,
+    {},
+    {
+      transport: context.transport,
+      callOptions: {
+        headers: {
+          "Fijoy-Workspace-Id": context.workspace.id,
+        },
+      },
     },
-  });
+  );
 };

@@ -7,7 +7,8 @@ import { z } from 'zod';
 type FijoyTransactionType = 
   | 'expense'
   | 'income'
-  | 'transfer';
+  | 'transfer'
+  | 'adjustment';
 
 export default FijoyTransactionType;
 
@@ -16,4 +17,5 @@ export const fijoyTransactionType = z.enum([
   'expense',
   'income',
   'transfer',
+  'adjustment',
 ]);;

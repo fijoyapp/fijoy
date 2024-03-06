@@ -3,6 +3,7 @@ syntax = "proto3";
 package fijoy.v1;
 
 import "buf/validate/validate.proto";
+import "fijoy/v1/money.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -11,4 +12,101 @@ enum TransactionType {
   TRANSACTION_TYPE_EXPENSE = 1;
   TRANSACTION_TYPE_INCOME = 2;
   TRANSACTION_TYPE_TRANSFER = 3;
+  TRANSACTION_TYPE_ADJUSTMENT = 4;
+}
+
+message Transaction {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string account_id = 2 [(buf.validate.field).string.min_len = 1];
+  string user_id = 3 [(buf.validate.field).string.min_len = 1];
+  string workspace_id = 4 [(buf.validate.field).string.min_len = 1];
+
+  TransactionType transaction_type = 5 [(buf.validate.field).required = true];
+  fijoy.v1.Money amount = 6 [(buf.validate.field).required = true];
+  string currency = 7 [(buf.validate.field).string.min_len = 1];
+
+  google.protobuf.Timestamp datetime = 8 [(buf.validate.field).required = true];
+
+  optional string category_id = 9 [(buf.validate.field).string.min_len = 1];
+  optional string entity = 10 [(buf.validate.field).string.min_len = 1];
+  optional string note = 11 [(buf.validate.field).string.min_len = 1];
+}
+
+message Transactions {
+  repeated Transaction transactions = 1 [(buf.validate.field).required = true];
+}
+
+message CreateIncomeTransactionRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+
+  fijoy.v1.Money amount = 2 [(buf.validate.field).required = true];
+
+  google.protobuf.Timestamp datetime = 3 [(buf.validate.field).required = true];
+
+  optional string category_id = 4 [(buf.validate.field).string.min_len = 1];
+  optional string entity = 5 [(buf.validate.field).string.min_len = 1];
+  optional string note = 6 [(buf.validate.field).string.min_len = 1];
+}
+
+message CreateExpenseTransactionRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+
+  fijoy.v1.Money amount = 2 [(buf.validate.field).required = true];
+
+  google.protobuf.Timestamp datetime = 3 [(buf.validate.field).required = true];
+
+  optional string category_id = 4 [(buf.validate.field).string.min_len = 1];
+  optional string entity = 5 [(buf.validate.field).string.min_len = 1];
+  optional string note = 6 [(buf.validate.field).string.min_len = 1];
+}
+
+message CreateTransferTransactionRequest {
+  string from_account_id = 1 [(buf.validate.field).string.min_len = 1];
+  string to_account_id = 2 [(buf.validate.field).string.min_len = 1];
+
+  fijoy.v1.Money from_amount = 3 [(buf.validate.field).required = true];
+  fijoy.v1.Money to_amount = 4 [(buf.validate.field).required = true];
+
+  google.protobuf.Timestamp datetime = 5 [(buf.validate.field).required = true];
+
+  optional string category_id = 6 [(buf.validate.field).string.min_len = 1];
+  optional string entity = 7 [(buf.validate.field).string.min_len = 1];
+  optional string note = 8 [(buf.validate.field).string.min_len = 1];
+}
+
+message CreateAdjustmentTransactionRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+
+  fijoy.v1.Money amount = 2 [(buf.validate.field).required = true];
+
+  google.protobuf.Timestamp datetime = 3 [(buf.validate.field).required = true];
+
+  optional string category_id = 4 [(buf.validate.field).string.min_len = 1];
+  optional string entity = 5 [(buf.validate.field).string.min_len = 1];
+  optional string note = 6 [(buf.validate.field).string.min_len = 1];
+}
+
+message GetTransactionByIdRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message DeleteTransactionByIdRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+service TransactionService {
+  rpc CreateIncomeTransaction(CreateIncomeTransactionRequest) returns (Transaction);
+  // rpc CreateExpenseTransaction(CreateExpenseTransactionRequest) returns (Transaction);
+  // rpc CreateTransferTransaction(CreateTransferTransactionRequest) returns (Transaction);
+  rpc CreateAdjustmentTransaction(CreateAdjustmentTransactionRequest) returns (Transaction);
+
+  rpc GetTransactions(google.protobuf.Empty) returns (Transactions) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  // rpc GetTransactionById(GetTransactionByIdRequest) returns (Transaction) {
+  //   option idempotency_level = NO_SIDE_EFFECTS;
+  // }
+
+  // rpc DeleteTransactionById(DeleteTransactionByIdRequest) returns (Transaction) {}
 }

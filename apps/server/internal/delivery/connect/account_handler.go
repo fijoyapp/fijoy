@@ -65,20 +65,17 @@ func (s *AccountServer) CreateAccount(
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
 	}
 
-	balance := decimal.NewFromInt(req.Msg.Balance.Units).
-		Add(decimal.New(int64(req.Msg.Balance.Nanos), -9))
-
 	account := entity.FijoyAccount{
 		FijoyAccount: model.FijoyAccount{
 			ID:          "account_" + cuid2.Generate(),
 			Name:        req.Msg.Name,
-			AccountType: connectAccountTypeToJetAccountType[req.Msg.AccountType],
+			AccountType: util.ConnectAccountTypeToJetAccountType[req.Msg.AccountType],
 			Institution: req.Msg.Institution,
 			WorkspaceID: workspaceId,
 			Currency:    req.Msg.Currency,
 			UpdatedAt:   time.Now().UTC(),
 		},
-		Balance: balance,
+		Balance: decimal.NewFromInt(0),
 	}
 
 	stmt := FijoyAccount.INSERT(FijoyAccount.AllColumns).MODEL(account).
@@ -86,7 +83,7 @@ func (s *AccountServer) CreateAccount(
 
 	dest := entity.FijoyAccount{}
 
-	err = stmt.Query(s.db, &dest)
+	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -94,26 +91,12 @@ func (s *AccountServer) CreateAccount(
 	return connect.NewResponse(&fijoyv1.Account{
 		Id:          dest.ID,
 		Name:        dest.Name,
-		AccountType: jetAccountTypeToConnectAccountType[dest.AccountType],
+		AccountType: util.JetAccountTypeToConnectAccountType[dest.AccountType],
 		Institution: dest.Institution,
 		Balance:     util.DecimalToMoney(dest.Balance),
 		Currency:    dest.Currency,
 		UpdatedAt:   timestamppb.New(dest.UpdatedAt),
 	}), nil
-}
-
-var jetAccountTypeToConnectAccountType = map[model.FijoyAccountType]fijoyv1.AccountType{
-	model.FijoyAccountType_Cash:       fijoyv1.AccountType_ACCOUNT_TYPE_CASH,
-	model.FijoyAccountType_Debt:       fijoyv1.AccountType_ACCOUNT_TYPE_DEBT,
-	model.FijoyAccountType_Investment: fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT,
-	model.FijoyAccountType_OtherAsset: fijoyv1.AccountType_ACCOUNT_TYPE_OTHER_ASSET,
-}
-
-var connectAccountTypeToJetAccountType = map[fijoyv1.AccountType]model.FijoyAccountType{
-	fijoyv1.AccountType_ACCOUNT_TYPE_CASH:        model.FijoyAccountType_Cash,
-	fijoyv1.AccountType_ACCOUNT_TYPE_DEBT:        model.FijoyAccountType_Debt,
-	fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT:  model.FijoyAccountType_Investment,
-	fijoyv1.AccountType_ACCOUNT_TYPE_OTHER_ASSET: model.FijoyAccountType_OtherAsset,
 }
 
 func (s *AccountServer) GetAccounts(
@@ -144,7 +127,7 @@ func (s *AccountServer) GetAccounts(
 
 	dest := []entity.FijoyAccount{}
 
-	err = stmt.Query(s.db, &dest)
+	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +138,7 @@ func (s *AccountServer) GetAccounts(
 			Id:          w.ID,
 			WorkspaceId: w.WorkspaceID,
 			Name:        w.Name,
-			AccountType: jetAccountTypeToConnectAccountType[w.AccountType],
+			AccountType: util.JetAccountTypeToConnectAccountType[w.AccountType],
 			Balance:     util.DecimalToMoney(w.Balance),
 			Currency:    w.Currency,
 			Institution: w.Institution,
@@ -202,7 +185,7 @@ func (s *AccountServer) GetAccountById(
 
 	dest := entity.FijoyAccount{}
 
-	err = stmt.Query(s.db, &dest)
+	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +194,7 @@ func (s *AccountServer) GetAccountById(
 		Id:          dest.ID,
 		WorkspaceId: dest.WorkspaceID,
 		Name:        dest.Name,
-		AccountType: jetAccountTypeToConnectAccountType[dest.AccountType],
+		AccountType: util.JetAccountTypeToConnectAccountType[dest.AccountType],
 		Balance:     util.DecimalToMoney(dest.Balance),
 		Currency:    dest.Currency,
 		Institution: dest.Currency,
@@ -224,6 +207,7 @@ func (s *AccountServer) DeleteAccountById(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.DeleteAccountByIdRequest],
 ) (*connect.Response[fijoyv1.Account], error) {
+	// FIXME: An account cannot be deleted if there is any transaction associated with it.
 	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
@@ -247,7 +231,7 @@ func (s *AccountServer) DeleteAccountById(
 
 	dest := entity.FijoyAccount{}
 
-	err = stmt.Query(s.db, &dest)
+	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
@@ -256,7 +240,7 @@ func (s *AccountServer) DeleteAccountById(
 		Id:          dest.ID,
 		WorkspaceId: dest.WorkspaceID,
 		Name:        dest.Name,
-		AccountType: jetAccountTypeToConnectAccountType[dest.AccountType],
+		AccountType: util.JetAccountTypeToConnectAccountType[dest.AccountType],
 		Balance:     util.DecimalToMoney(dest.Balance),
 		Currency:    dest.Currency,
 		Institution: dest.Institution,

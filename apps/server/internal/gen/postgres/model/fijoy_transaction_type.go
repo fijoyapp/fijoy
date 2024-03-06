@@ -12,9 +12,10 @@ import "errors"
 type FijoyTransactionType string
 
 const (
-	FijoyTransactionType_Expense  FijoyTransactionType = "expense"
-	FijoyTransactionType_Income   FijoyTransactionType = "income"
-	FijoyTransactionType_Transfer FijoyTransactionType = "transfer"
+	FijoyTransactionType_Expense    FijoyTransactionType = "expense"
+	FijoyTransactionType_Income     FijoyTransactionType = "income"
+	FijoyTransactionType_Transfer   FijoyTransactionType = "transfer"
+	FijoyTransactionType_Adjustment FijoyTransactionType = "adjustment"
 )
 
 func (e *FijoyTransactionType) Scan(value interface{}) error {
@@ -35,6 +36,8 @@ func (e *FijoyTransactionType) Scan(value interface{}) error {
 		*e = FijoyTransactionType_Income
 	case "transfer":
 		*e = FijoyTransactionType_Transfer
+	case "adjustment":
+		*e = FijoyTransactionType_Adjustment
 	default:
 		return errors.New("jet: Invalid scan value '" + enumValue + "' for FijoyTransactionType enum")
 	}
