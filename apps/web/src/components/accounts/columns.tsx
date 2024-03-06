@@ -1,6 +1,6 @@
 import { accountTypeConfigMap } from "@/config/account";
 import { Account } from "@/gen/proto/fijoy/v1/account_pb";
-import { moneyToCurrency } from "@/lib/money";
+import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Account>[] = [
@@ -33,9 +33,12 @@ export const columns: ColumnDef<Account>[] = [
         return "Unknown";
       }
 
-      return moneyToCurrency(row.original.balance, {
-        reverse: accountTypeConfigMap[row.original.accountType].isDebt,
-      }).toString();
+      return currencyToDisplay(
+        moneyToCurrency(row.original.balance, {
+          reverse: accountTypeConfigMap[row.original.accountType].isDebt,
+        }),
+        row.original.currency,
+      );
     },
   },
 ];

@@ -6,6 +6,7 @@ type Props = {
 };
 
 const AddAccount = ({ workspace }: Props) => {
+  console.log(workspace);
   return (
     <div>
       <Button>Add Account</Button>

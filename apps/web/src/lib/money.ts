@@ -14,4 +14,15 @@ export const moneyToCurrency = (
   return currency(opts.reverse ? -total : total);
 };
 
-export const ALL_CURRENCIES = Intl.supportedValuesOf("currency");
+export const currencyToDisplay = (
+  money: currency,
+  code: string,
+  opts: { compact: boolean } = { compact: false },
+): string => {
+  // TODO: let the user pick the locale instead
+  return Intl.NumberFormat(navigator.language, {
+    currency: code,
+    style: "currency",
+    notation: opts.compact ? "compact" : "standard",
+  }).format(money.value);
+};
