@@ -72,7 +72,7 @@ function CategoryColumn({
       <Separator />
       <div className="py-2" />
 
-      <div className="flex flex-wrap gap-2 lg:px-4">
+      <div className="flex flex-wrap gap-2 px-4">
         {categories.map((c) => (
           <CategoryButton key={c.ID} category={c} />
         ))}

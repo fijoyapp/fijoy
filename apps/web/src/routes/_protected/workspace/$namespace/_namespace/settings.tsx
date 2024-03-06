@@ -13,6 +13,7 @@ export const Route = createFileRoute(
 
 function Page() {
   const { workspace } = Route.useRouteContext();
+  console.log(workspace);
 
   // const { data: categories } = useSuspenseQuery(
   //   categoriesQueryOptions(workspace.id),
@@ -30,7 +31,7 @@ function Page() {
           Manage your workspace settings.
         </PageHeaderDescription>
       </PageHeader>
-      <div className="py-2 lg:py-4" />
+      <div className="py-4" />
     </div>
   );
 }

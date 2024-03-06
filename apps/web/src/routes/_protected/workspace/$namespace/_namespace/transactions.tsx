@@ -46,7 +46,7 @@ function Page() {
         </PageHeaderDescription>
       </PageHeader>
 
-      <div className="py-2 lg:py-4" />
+      <div className="py-4" />
 
       {/* <NewTransaction */}
       {/*   accounts={accounts} */}
@@ -54,7 +54,7 @@ function Page() {
       {/*   categories={categories} */}
       {/* /> */}
 
-      <div className="py-2 lg:py-4" />
+      <div className="py-4" />
 
       <DataTable columns={columns} data={transactions} />
     </div>

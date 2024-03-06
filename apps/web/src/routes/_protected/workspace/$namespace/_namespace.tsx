@@ -33,8 +33,8 @@ export const Route = createFileRoute(
 
   component: () => (
     <div className="flex w-screen">
-      <PrivateSidebar className="m-4 w-56 rounded-xl bg-muted" />
-      <div className="h-screen grow overflow-y-scroll">
+      <PrivateSidebar className="m-4 w-56 flex-shrink-0 rounded-xl bg-muted" />
+      <div className="h-screen min-w-[48rem] grow flex-nowrap overflow-y-scroll">
         <Outlet />
       </div>
     </div>

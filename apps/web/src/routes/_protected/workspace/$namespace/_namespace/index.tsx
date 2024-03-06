@@ -44,7 +44,7 @@ function Page() {
           Welcome back! How are you doing today?
         </PageHeaderDescription>
       </PageHeader>
-      <div className="py-2 lg:py-4" />
+      <div className="py-4" />
 
       {import.meta.env.DEV && (
         <Button

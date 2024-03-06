@@ -42,7 +42,7 @@ function Page() {
 
   return (
     <div className="container max-w-screen-2xl">
-      <div className="items-end gap-4 lg:flex">
+      <div className="flex items-end gap-4">
         <PageHeader>
           <PageHeaderHeading className="">Accounts</PageHeaderHeading>
           <PageHeaderDescription className="">
@@ -50,22 +50,22 @@ function Page() {
           </PageHeaderDescription>
         </PageHeader>
         <div className="grow" />
-        <div className="hidden items-center justify-center sm:flex">
+        <div className="flex items-center justify-center">
           <NetWorthCard accounts={accounts} />
           <TotalDebtCard accounts={accounts} />
           <TotalAssetCard accounts={accounts} />
         </div>
       </div>
 
-      <div className="py-2 lg:py-4" />
+      <div className="py-4" />
 
       <AddAccount workspace={context.workspace} />
 
-      <div className="py-2 lg:py-4" />
+      <div className="py-4" />
 
       <AccountTable columns={columns} data={accounts} />
 
-      <div className="py-2 lg:py-4" />
+      <div className="py-4" />
     </div>
   );
 }
