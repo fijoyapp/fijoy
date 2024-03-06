@@ -13,7 +13,7 @@ const transactionClient = createPromiseClient(
 );
 
 export async function populateExample(workspace: Workspace) {
-  const a1 = await accountClient.createAccount(
+  const cobalt = await accountClient.createAccount(
     {
       name: "Cobalt",
       accountType: AccountType.DEBT,
@@ -26,9 +26,9 @@ export async function populateExample(workspace: Workspace) {
       },
     },
   );
-  transactionClient.createAdjustmentTransaction(
+  await transactionClient.createAdjustmentTransaction(
     {
-      accountId: a1.id,
+      accountId: cobalt.id,
       amount: {
         units: -BigInt(2333),
         nanos: -690000000,
@@ -42,7 +42,7 @@ export async function populateExample(workspace: Workspace) {
     },
   );
 
-  const a2 = await accountClient.createAccount(
+  const wealthsimpleCash = await accountClient.createAccount(
     {
       name: "Wealthsimple Cash",
       accountType: AccountType.CASH,
@@ -55,9 +55,9 @@ export async function populateExample(workspace: Workspace) {
       },
     },
   );
-  transactionClient.createAdjustmentTransaction(
+  await transactionClient.createAdjustmentTransaction(
     {
-      accountId: a2.id,
+      accountId: wealthsimpleCash.id,
       amount: {
         units: BigInt(69420),
         nanos: 690000000,
@@ -71,12 +71,12 @@ export async function populateExample(workspace: Workspace) {
     },
   );
 
-  const a3 = await accountClient.createAccount(
+  const tangerineSavings = await accountClient.createAccount(
     {
-      name: "Wealthsimple TFSA",
-      accountType: AccountType.INVESTMENT,
+      name: "Tangerine Savings",
+      accountType: AccountType.CASH,
       currency: "CAD",
-      institution: "Wealthsimple",
+      institution: "Tangerine",
     },
     {
       headers: {
@@ -84,9 +84,9 @@ export async function populateExample(workspace: Workspace) {
       },
     },
   );
-  transactionClient.createAdjustmentTransaction(
+  await transactionClient.createAdjustmentTransaction(
     {
-      accountId: a3.id,
+      accountId: tangerineSavings.id,
       amount: {
         units: BigInt(9999),
         nanos: 990000000,
@@ -100,12 +100,12 @@ export async function populateExample(workspace: Workspace) {
     },
   );
 
-  const a4 = await accountClient.createAccount(
+  const tangerineChequing = await accountClient.createAccount(
     {
-      name: "CIBC TFSA",
-      accountType: AccountType.INVESTMENT,
+      name: "Tangerine Chequing",
+      accountType: AccountType.CASH,
       currency: "CAD",
-      institution: "CIBC",
+      institution: "Tangerine",
     },
     {
       headers: {
@@ -113,9 +113,9 @@ export async function populateExample(workspace: Workspace) {
       },
     },
   );
-  transactionClient.createAdjustmentTransaction(
+  await transactionClient.createAdjustmentTransaction(
     {
-      accountId: a4.id,
+      accountId: tangerineChequing.id,
       amount: {
         units: BigInt(6666),
         nanos: 660000000,
