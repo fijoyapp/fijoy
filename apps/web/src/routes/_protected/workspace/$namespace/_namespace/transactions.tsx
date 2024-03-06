@@ -6,11 +6,12 @@ import {
 import { columns } from "@/components/transactions/columns";
 import { DataTable } from "@/components/transactions/data-table";
 import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
-// import NewTransaction from "@/components/transactions/new-transaction";
+import NewTransaction from "@/components/transactions/new-transaction";
 // import { accountsQueryOptions } from "@/lib/queries/account";
 // import { categoriesQueryOptions } from "@/lib/queries/category";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { getAccountsQueryOptions } from "@/lib/queries/account";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/transactions",
@@ -35,6 +36,10 @@ function Page() {
 
   const transactions = transactionsQuery.data.transactions;
 
+  const accountsQuery = useSuspenseQuery(getAccountsQueryOptions({ context }));
+
+  const accounts = accountsQuery.data.accounts;
+
   // const { data: accounts } = useSuspenseQuery(
   //   accountsQueryOptions(workspace.id),
   // );
@@ -50,11 +55,11 @@ function Page() {
 
       <div className="py-4" />
 
-      {/* <NewTransaction */}
-      {/*   accounts={accounts} */}
-      {/*   workspace={workspace} */}
-      {/*   categories={categories} */}
-      {/* /> */}
+      <NewTransaction
+        accounts={accounts}
+        workspace={context.workspace}
+        categories={[]} // FIXME: load categories
+      />
 
       <div className="py-4" />
 

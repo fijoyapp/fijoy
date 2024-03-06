@@ -16,7 +16,6 @@ import {
   // FormLabel,
   // FormMessage,
 } from "@/components/ui/form";
-import { Plus } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -84,14 +83,7 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
 
   return (
     <div className="">
-      <Button
-        onClick={() => setOpen(true)}
-        variant="default"
-        className="w-full lg:w-48"
-      >
-        <Plus className="mr-2 h-6 w-6" />
-        New Transaction
-      </Button>
+      <Button onClick={() => setOpen(true)}>New Transaction</Button>
 
       <Sheet open={open} onOpenChange={(open) => setOpen(open)} modal={true}>
         <Form {...form}>
