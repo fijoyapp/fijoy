@@ -26,9 +26,13 @@ import { Route as ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport } from
 
 // Create Virtual Routes
 
+const PublicPricingLazyImport = createFileRoute('/_public/pricing')()
 const PublicIndexLazyImport = createFileRoute('/_public/')()
+const PublicWhyLazyImport = createFileRoute('/_public/why')()
+const PublicStackLazyImport = createFileRoute('/_public/stack')()
 const PublicSignupLazyImport = createFileRoute('/_public/signup')()
 const PublicLoginLazyImport = createFileRoute('/_public/login')()
+const PublicFeaturesLazyImport = createFileRoute('/_public/features')()
 const ProtectedSetupLazyImport = createFileRoute('/_protected/setup')()
 const ProtectedWorkspaceNamespaceNamespaceAccountsAccountIdLazyImport =
   createFileRoute(
@@ -47,10 +51,27 @@ const ProtectedRoute = ProtectedImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const PublicPricingLazyRoute = PublicPricingLazyImport.update({
+  path: '/pricing',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() =>
+  import('./routes/_public/pricing.lazy').then((d) => d.Route),
+)
+
 const PublicIndexLazyRoute = PublicIndexLazyImport.update({
   path: '/',
   getParentRoute: () => PublicRoute,
 } as any).lazy(() => import('./routes/_public/index.lazy').then((d) => d.Route))
+
+const PublicWhyLazyRoute = PublicWhyLazyImport.update({
+  path: '/why',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() => import('./routes/_public/why.lazy').then((d) => d.Route))
+
+const PublicStackLazyRoute = PublicStackLazyImport.update({
+  path: '/stack',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() => import('./routes/_public/stack.lazy').then((d) => d.Route))
 
 const PublicSignupLazyRoute = PublicSignupLazyImport.update({
   path: '/signup',
@@ -63,6 +84,13 @@ const PublicLoginLazyRoute = PublicLoginLazyImport.update({
   path: '/login',
   getParentRoute: () => PublicRoute,
 } as any).lazy(() => import('./routes/_public/login.lazy').then((d) => d.Route))
+
+const PublicFeaturesLazyRoute = PublicFeaturesLazyImport.update({
+  path: '/features',
+  getParentRoute: () => PublicRoute,
+} as any).lazy(() =>
+  import('./routes/_public/features.lazy').then((d) => d.Route),
+)
 
 const ProtectedSetupLazyRoute = ProtectedSetupLazyImport.update({
   path: '/setup',
@@ -144,12 +172,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedSetupLazyImport
       parentRoute: typeof ProtectedImport
     }
+    '/_public/features': {
+      preLoaderRoute: typeof PublicFeaturesLazyImport
+      parentRoute: typeof PublicImport
+    }
     '/_public/login': {
       preLoaderRoute: typeof PublicLoginLazyImport
       parentRoute: typeof PublicImport
     }
     '/_public/signup': {
       preLoaderRoute: typeof PublicSignupLazyImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/stack': {
+      preLoaderRoute: typeof PublicStackLazyImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/why': {
+      preLoaderRoute: typeof PublicWhyLazyImport
       parentRoute: typeof PublicImport
     }
     '/_public/': {
@@ -192,6 +232,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
     }
+    '/_public/pricing': {
+      preLoaderRoute: typeof PublicPricingLazyImport
+      parentRoute: typeof PublicImport
+    }
   }
 }
 
@@ -213,9 +257,13 @@ export const routeTree = rootRoute.addChildren([
     ProtectedWorkspaceIndexRoute,
   ]),
   PublicRoute.addChildren([
+    PublicFeaturesLazyRoute,
     PublicLoginLazyRoute,
     PublicSignupLazyRoute,
+    PublicStackLazyRoute,
+    PublicWhyLazyRoute,
     PublicIndexLazyRoute,
+    PublicPricingLazyRoute,
   ]),
 ])
 
