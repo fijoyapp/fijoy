@@ -162,7 +162,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, ah.frontendUrl, http.StatusFound)
+	http.Redirect(w, r, ah.frontendUrl+"/workspace", http.StatusFound)
 }
 
 func generateStateOAuthCookie(w http.ResponseWriter) string {
