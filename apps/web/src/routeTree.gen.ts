@@ -20,6 +20,7 @@ import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_prote
 import { Route as ProtectedWorkspaceNamespaceNamespaceImport } from './routes/_protected/workspace/$namespace/_namespace'
 import { Route as ProtectedWorkspaceNamespaceNamespaceIndexImport } from './routes/_protected/workspace/$namespace/_namespace/index'
 import { Route as ProtectedWorkspaceNamespaceNamespaceTransactionsImport } from './routes/_protected/workspace/$namespace/_namespace/transactions'
+import { Route as ProtectedWorkspaceNamespaceNamespaceSettingsImport } from './routes/_protected/workspace/$namespace/_namespace/settings'
 import { Route as ProtectedWorkspaceNamespaceNamespaceCategoriesImport } from './routes/_protected/workspace/$namespace/_namespace/categories'
 import { Route as ProtectedWorkspaceNamespaceNamespaceAccountsIndexImport } from './routes/_protected/workspace/$namespace/_namespace/accounts/index'
 
@@ -99,6 +100,12 @@ const ProtectedWorkspaceNamespaceNamespaceTransactionsRoute =
     getParentRoute: () => ProtectedWorkspaceNamespaceNamespaceRoute,
   } as any)
 
+const ProtectedWorkspaceNamespaceNamespaceSettingsRoute =
+  ProtectedWorkspaceNamespaceNamespaceSettingsImport.update({
+    path: '/settings',
+    getParentRoute: () => ProtectedWorkspaceNamespaceNamespaceRoute,
+  } as any)
+
 const ProtectedWorkspaceNamespaceNamespaceCategoriesRoute =
   ProtectedWorkspaceNamespaceNamespaceCategoriesImport.update({
     path: '/categories',
@@ -165,6 +172,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceCategoriesImport
       parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
     }
+    '/_protected/workspace/$namespace/_namespace/settings': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceSettingsImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
+    }
     '/_protected/workspace/$namespace/_namespace/transactions': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceNamespaceTransactionsImport
       parentRoute: typeof ProtectedWorkspaceNamespaceNamespaceImport
@@ -192,6 +203,7 @@ export const routeTree = rootRoute.addChildren([
     ProtectedWorkspaceNamespaceRouteRoute.addChildren([
       ProtectedWorkspaceNamespaceNamespaceRoute.addChildren([
         ProtectedWorkspaceNamespaceNamespaceCategoriesRoute,
+        ProtectedWorkspaceNamespaceNamespaceSettingsRoute,
         ProtectedWorkspaceNamespaceNamespaceTransactionsRoute,
         ProtectedWorkspaceNamespaceNamespaceIndexRoute,
         ProtectedWorkspaceNamespaceNamespaceAccountsAccountIdLazyRoute,

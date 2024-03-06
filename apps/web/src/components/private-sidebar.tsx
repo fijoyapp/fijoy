@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { HTMLAttributes, forwardRef } from "react";
 import { Icons } from "./icons";
 import { Link, useMatchRoute, useParams } from "@tanstack/react-router";
-import { ArrowLeftRight, CreditCard, Home } from "lucide-react";
+import { ArrowLeftRight, CreditCard, Home, Settings } from "lucide-react";
 // import { ModeToggle } from "./mode-toggle";
 // import { Button, buttonVariants } from "./ui/button";
 import { Button } from "./ui/button";
@@ -85,6 +85,20 @@ const PrivateSidebar = forwardRef<
             >
               <CreditCard size="20" />
               Accounts
+            </Link>
+
+            <Link
+              to={"/workspace/$namespace/settings"}
+              params={{ namespace: scope }}
+              className={cn(
+                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
+                matchRoute({ to: "/workspace/$namespace/settings" })
+                  ? "text-primary hover:text-primary"
+                  : "text-foreground/60",
+              )}
+            >
+              <Settings size="20" />
+              Settings
             </Link>
 
             {/* <Link */}
