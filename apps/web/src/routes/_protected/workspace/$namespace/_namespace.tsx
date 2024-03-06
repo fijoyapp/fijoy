@@ -51,9 +51,8 @@ export const Route = createFileRoute(
             target="_blank"
             className="text-primary"
           >
-            GitHub
+            GitHub ⭐
           </a>
-          !
         </div>
         <Outlet />
       </div>
