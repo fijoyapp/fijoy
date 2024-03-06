@@ -207,7 +207,6 @@ func (s *AccountServer) DeleteAccountById(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.DeleteAccountByIdRequest],
 ) (*connect.Response[fijoyv1.Account], error) {
-	// FIXME: An account cannot be deleted if there is any transaction associated with it.
 	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
