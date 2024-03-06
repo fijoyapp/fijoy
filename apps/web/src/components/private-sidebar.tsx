@@ -6,10 +6,13 @@ import { Link, useMatchRoute, useParams } from "@tanstack/react-router";
 import { ArrowLeftRight, CreditCard, Home, Settings } from "lucide-react";
 // import { ModeToggle } from "./mode-toggle";
 // import { Button, buttonVariants } from "./ui/button";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 // import { useAuth } from "@/auth";
-import UserButton from "./user-button";
 import { Badge } from "./ui/badge";
+import { useAuth } from "@/auth";
+import WorkspaceSwitcher from "./workspace-switcher";
+import UserButton from "./user-button";
+import { ModeToggle } from "./mode-toggle";
 
 const PrivateSidebar = forwardRef<
   HTMLDivElement,
@@ -24,25 +27,29 @@ const PrivateSidebar = forwardRef<
 
   const params = useParams({ from: "/_protected/workspace/$namespace" });
   const scope = params.namespace;
+  const { user } = useAuth();
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div ref={ref} className={cn("flex flex-col p-4", className)} {...props}>
-      <Link to="/" className="mr-6 flex items-center space-x-2">
-        <Icons.logo className="h-8 w-8" />
-        <span className="text-xl font-bold">{siteConfig.name}</span>
-        <Badge>Pro</Badge>
-      </Link>
+      <div className="flex items-center">
+        <Link to="/" className="mr-6 flex items-center space-x-2">
+          <Icons.logo className="h-6 w-6" />
+          <span className="text-xl font-bold">{siteConfig.name}</span>
+          <Badge>Pro</Badge>
+        </Link>
+        <div className="grow"></div>
+        <UserButton />
+      </div>
 
       <div className="py-2"></div>
 
       {inWorkspace && scope && (
         <>
-          <Button
-            variant="outline"
-            className="rounded-xl border-2 hover:border-primary hover:bg-background"
-          >
-            New Transaction
-          </Button>
+          <Button variant="outline">New Transaction</Button>
 
           <div className="py-2"></div>
 
@@ -125,31 +132,31 @@ const PrivateSidebar = forwardRef<
       )}
 
       <div className="grow"></div>
+      <div className="flex">
+        <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
+          <div
+            className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+          >
+            <Icons.gitHub className="h-[1.2rem] w-[1.2rem] transition-all hover:scale-125" />
+            <span className="sr-only">GitHub</span>
+          </div>
+        </a>
+        <a href={siteConfig.links.discord} target="_blank" rel="noreferrer">
+          <div
+            className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+          >
+            <Icons.discord className="h-[1.2rem] w-[1.2rem] transition-all hover:scale-125" />
+            <span className="sr-only">Discord</span>
+          </div>
+        </a>
 
-      <UserButton />
+        <div className="grow"></div>
 
-      {/* <div className="flex"> */}
-      {/*   <a href={siteConfig.links.github} target="_blank" rel="noreferrer"> */}
-      {/*     <div */}
-      {/*       className={cn(buttonVariants({ variant: "ghost", size: "icon" }))} */}
-      {/*     > */}
-      {/*       <Icons.gitHub className="h-[1.2rem] w-[1.2rem]" /> */}
-      {/*       <span className="sr-only">GitHub</span> */}
-      {/*     </div> */}
-      {/*   </a> */}
-      {/*   <a href={siteConfig.links.discord} target="_blank" rel="noreferrer"> */}
-      {/*     <div */}
-      {/*       className={cn(buttonVariants({ variant: "ghost", size: "icon" }))} */}
-      {/*     > */}
-      {/*       <Icons.discord className="h-[1.2rem] w-[1.2rem]" /> */}
-      {/*       <span className="sr-only">Discord</span> */}
-      {/*     </div> */}
-      {/*   </a> */}
-      {/**/}
-      {/*   <div className="grow"></div> */}
-      {/**/}
-      {/*   <ModeToggle /> */}
-      {/* </div> */}
+        <ModeToggle />
+      </div>
+      <div className="py-1"></div>
+
+      <WorkspaceSwitcher />
     </div>
   );
 });
