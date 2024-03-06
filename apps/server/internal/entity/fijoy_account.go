@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"fijoy/internal/gen/postgres/railway/public/model"
+	"fijoy/internal/gen/postgres/model"
 
 	"github.com/shopspring/decimal"
 )

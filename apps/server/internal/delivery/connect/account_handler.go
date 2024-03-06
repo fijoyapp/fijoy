@@ -5,12 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"fijoy/internal/entity"
-	"fijoy/internal/gen/postgres/railway/public/model"
+	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"fijoy/internal/util"
 	"time"
 
-	. "fijoy/internal/gen/postgres/railway/public/table"
+	. "fijoy/internal/gen/postgres/table"
 
 	"connectrpc.com/connect"
 	. "github.com/go-jet/jet/v2/postgres"

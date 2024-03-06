@@ -25,7 +25,7 @@ func main() {
 		"./internal/gen/postgres",
 		template.Default(postgres2.Dialect).
 			UseSchema(func(schemaMetaData metadata.Schema) template.Schema {
-				return template.DefaultSchema(schemaMetaData).
+				return template.DefaultSchema(schemaMetaData).UsePath("../").
 					UseModel(template.DefaultModel().
 						UseTable(func(table metadata.Table) template.TableModel {
 							return template.DefaultTableModel(table).

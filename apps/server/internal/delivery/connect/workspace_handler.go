@@ -3,11 +3,11 @@ package handler
 import (
 	"context"
 	"database/sql"
-	"fijoy/internal/gen/postgres/railway/public/model"
+	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"time"
 
-	. "fijoy/internal/gen/postgres/railway/public/table"
+	. "fijoy/internal/gen/postgres/table"
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"google.golang.org/protobuf/types/known/emptypb"
