@@ -10,6 +10,8 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getWorkspacesQueryOptions } from "@/lib/queries/workspace";
+import { Button } from "@/components/ui/button";
+import { populateExample } from "@/lib/example";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/",
@@ -24,7 +26,7 @@ export const Route = createFileRoute(
 });
 
 function Page() {
-  // const { workspace } = Route.useRouteContext();
+  const { workspace } = Route.useRouteContext();
 
   // const { data: categories } = useSuspenseQuery(
   //   categoriesQueryOptions(workspace.id),
@@ -43,6 +45,16 @@ function Page() {
         </PageHeaderDescription>
       </PageHeader>
       <div className="py-2 lg:py-4" />
+
+      {import.meta.env.DEV && (
+        <Button
+          variant="outline"
+          onClick={async () => await populateExample(workspace)}
+          className="rounded-xl border-2 hover:border-primary hover:bg-background"
+        >
+          Populate Example
+        </Button>
+      )}
 
       {/* <NewTransaction */}
       {/*   accounts={accounts} */}
