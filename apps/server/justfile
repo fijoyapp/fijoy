@@ -17,3 +17,6 @@ db-force version:
 jet:
   go run ./scripts/jet.go
 
+update:
+  go get -u all
+  go mod tidy

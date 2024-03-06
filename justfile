@@ -22,3 +22,8 @@ buf:
 init:
   pnpm install
   just packages/proto/init
+
+update:
+  pnpm update -r
+  just apps/server/update
+  pnpm outdated -r
