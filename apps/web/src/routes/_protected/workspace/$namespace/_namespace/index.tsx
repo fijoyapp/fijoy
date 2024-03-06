@@ -50,7 +50,6 @@ function Page() {
         <Button
           variant="outline"
           onClick={async () => await populateExample(workspace)}
-          className="rounded-xl border-2 hover:border-primary hover:bg-background"
         >
           Populate Example
         </Button>
