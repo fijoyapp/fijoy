@@ -8,6 +8,19 @@ import { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
+    accessorKey: "datetime",
+    header: "Date",
+    cell: ({ row }) => {
+      return row.original.datetime
+        ?.toDate()
+        .toLocaleDateString(navigator.language, {
+          day: "numeric",
+          month: "short",
+          weekday: "short",
+        });
+    },
+  },
+  {
     accessorKey: "amount",
     header: "Amount",
 
@@ -27,7 +40,7 @@ export const columns: ColumnDef<Transaction>[] = [
   },
   {
     accessorKey: "transactionType",
-    header: "Type",
+    header: "Transaction Type",
     cell: ({ row }) => {
       if (row.original.transactionType === TransactionType.UNSPECIFIED) {
         return "Unknown";
