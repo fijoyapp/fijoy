@@ -126,7 +126,10 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if ah.discordWebhook != "" {
-			http.Post(ah.discordWebhook, "application/json", strings.NewReader(fmt.Sprintf(`{"content": "New user: %s"}`, googleUserInfo.Email)))
+			resp, err := http.Post(ah.discordWebhook, "application/json", strings.NewReader(fmt.Sprintf(`{"content": "New user: %s"}`, googleUserInfo.Email)))
+			if err == nil {
+				defer resp.Body.Close()
+			}
 		}
 
 		userKeyDest.UserID = userKey.UserID
