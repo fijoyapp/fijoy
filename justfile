@@ -27,3 +27,6 @@ update:
   pnpm update -r
   just apps/server/update
   pnpm outdated -r
+
+test:
+  just apps/server/test

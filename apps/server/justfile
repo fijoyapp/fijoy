@@ -20,3 +20,6 @@ jet:
 update:
   go get -u all
   go mod tidy
+
+test:
+  go test ./...
