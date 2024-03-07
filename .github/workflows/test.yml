@@ -50,6 +50,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.21.4"
+      - run: go version
+
       - name: Go Testing
         working-directory: "./apps/server"
         run: go test ./...
