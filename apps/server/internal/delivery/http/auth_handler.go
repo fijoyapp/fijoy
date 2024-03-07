@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
@@ -35,10 +36,11 @@ type authHandler struct {
 	tokenAuth         *jwtauth.JWTAuth
 	db                *sql.DB
 	frontendUrl       string
+	discordWebhook    string
 }
 
-func NewAuthHandler(r *chi.Mux, googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB, frontendUrl string) {
-	handler := &authHandler{googleOAuthConfig, tokenAuth, db, frontendUrl}
+func NewAuthHandler(r *chi.Mux, googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB, frontendUrl string, discordWebhook string) {
+	handler := &authHandler{googleOAuthConfig, tokenAuth, db, frontendUrl, discordWebhook}
 
 	r.Route("/v1/auth", func(r chi.Router) {
 		r.Get("/google/login", handler.googleLogin)
@@ -122,6 +124,11 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to insert user key: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		if ah.discordWebhook != "" {
+			http.Post(ah.discordWebhook, "application/json", strings.NewReader(fmt.Sprintf(`{"content": "New user: %s"}`, googleUserInfo.Email)))
+		}
+
 		userKeyDest.UserID = userKey.UserID
 	} else if err != nil {
 		http.Error(w, "Failed to query user data: "+err.Error(), http.StatusInternalServerError)

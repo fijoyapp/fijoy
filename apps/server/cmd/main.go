@@ -61,7 +61,7 @@ func main() {
 		Debug:            false,
 	}))
 
-	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL)
+	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL, cfg.DISCORD_WEBHOOK)
 	http_handler.NewUserHandler(r, tokenAuth, db)
 	connect_handler.NewWorkspaceHandler(r, tokenAuth, db)
 	connect_handler.NewAccountHandler(r, tokenAuth, db)
