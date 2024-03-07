@@ -30,3 +30,4 @@ update:
 
 test:
   just apps/server/test
+  just apps/web/test
