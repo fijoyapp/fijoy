@@ -53,7 +53,7 @@ a live Postgres database instance. It will use the `DB_URL` from `apps/server/.e
 just kanel
 ```
 
-## Test
+### Test
 
 This will run all the tests for the server and the web.
 
