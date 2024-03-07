@@ -27,10 +27,8 @@ just buf
 
 ### Server
 
-2 different code generation tools are being used on the server side:
-
-- [Jet](https://github.com/go-jet/jet): Used to generate DB related stuff for
-  a type-safe query building experience.
+We are using [Jet](https://github.com/go-jet/jet) to generate DB related stuff for
+a type-safe query building experience.
 
 ```bash
 just jet
