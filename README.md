@@ -53,6 +53,14 @@ a live Postgres database instance. It will use the `DB_URL` from `apps/server/.e
 just kanel
 ```
 
+## Test
+
+This will run all the tests for the server and the web.
+
+```bash
+just test
+```
+
 ---
 
 To run the project, simply use `pnpm dev`.
