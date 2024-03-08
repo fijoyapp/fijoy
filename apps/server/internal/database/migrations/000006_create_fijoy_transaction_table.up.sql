@@ -4,9 +4,9 @@ CREATE TABLE "fijoy_transaction" (
   "user_id" TEXT NOT NULL,
   "workspace_id" TEXT NOT NULL,
   "transaction_type" fijoy_transaction_type NOT NULL,
-  "amount" numeric(16, 8) NOT NULL,
+  "amount" NUMERIC(16, 8) NOT NULL,
   "currency" TEXT NOT NULL,
-  "datetime" timestamptz NOT NULL,
+  "datetime" TIMESTAMPTZ NOT NULL,
   "category_id" TEXT,
   "entity" TEXT,
   "note" TEXT

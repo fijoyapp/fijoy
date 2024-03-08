@@ -31,3 +31,7 @@ update:
 test:
   just apps/server/test
   just apps/web/test
+
+format:
+  just apps/server/format
+  just apps/web/format

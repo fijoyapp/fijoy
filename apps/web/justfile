@@ -5,3 +5,6 @@ kanel:
 
 test:
   pnpm test
+
+format:
+  pnpm format
