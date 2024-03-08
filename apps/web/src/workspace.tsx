@@ -22,7 +22,6 @@ export function WorkspaceProvider({
   const { data: workspace, isLoading } = useSuspenseQuery(
     createQueryOptions(getWorkspaceByNamespace, { namespace }, { transport }),
   );
-  console.log(workspace);
 
   return (
     <WorkspaceContext.Provider value={{ workspace: workspace, isLoading }}>
