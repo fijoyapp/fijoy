@@ -25,15 +25,15 @@ function WorkspaceButton() {
         >
           <Avatar className="h-6 w-6">
             <AvatarImage
-              src={`https://avatar.vercel.sh/${user.Email}.png`}
-              alt={user.Email}
+              src={`https://avatar.vercel.sh/${user.email}.png`}
+              alt={user.email}
               className="grayscale"
             />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
           {/* TODO: Display full name instead */}
           <div className="overflow-hidden overflow-ellipsis whitespace-nowrap">
-            {user.Email}
+            {user.email}
           </div>
         </Button>
       </DropdownMenuTrigger>

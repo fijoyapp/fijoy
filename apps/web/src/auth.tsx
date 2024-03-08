@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
-import { User } from "@/types/user";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "./lib/ky";
+import { useQuery } from "@connectrpc/connect-query";
+import { getUser } from "./gen/proto/fijoy/v1/user-UserService_connectquery";
+import { User } from "./gen/proto/fijoy/v1/user_pb";
 
 export interface AuthContext {
   user: User | undefined;
@@ -11,14 +11,7 @@ export interface AuthContext {
 const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const result = await api.get("user", {}).json();
-      return User.parse(result);
-    },
-    retry: false,
-  });
+  const { data: user, isLoading } = useQuery(getUser, {}, { retry: false });
 
   return (
     <AuthContext.Provider value={{ user, isLoading }}>

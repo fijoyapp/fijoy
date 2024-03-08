@@ -25,8 +25,8 @@ function UserButton() {
       <DropdownMenuTrigger asChild>
         <Avatar className="h-6 w-6">
           <AvatarImage
-            src={`https://avatar.vercel.sh/${user.Email}.png`}
-            alt={user.Email}
+            src={`https://avatar.vercel.sh/${user.email}.png`}
+            alt={user.email}
             className="grayscale"
           />
           <AvatarFallback>SC</AvatarFallback>
