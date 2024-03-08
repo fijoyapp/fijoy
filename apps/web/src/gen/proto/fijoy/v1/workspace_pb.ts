@@ -30,6 +30,21 @@ export class Workspace extends Message<Workspace> {
    */
   createdAt?: Timestamp;
 
+  /**
+   * @generated from field: string primary_currency = 5;
+   */
+  primaryCurrency = "";
+
+  /**
+   * @generated from field: repeated string supported_currencies = 6;
+   */
+  supportedCurrencies: string[] = [];
+
+  /**
+   * @generated from field: string locale = 7;
+   */
+  locale = "";
+
   constructor(data?: PartialMessage<Workspace>) {
     super();
     proto3.util.initPartial(data, this);
@@ -42,6 +57,9 @@ export class Workspace extends Message<Workspace> {
     { no: 2, name: "namespace", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "created_at", kind: "message", T: Timestamp },
+    { no: 5, name: "primary_currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "supported_currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 7, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Workspace {
@@ -112,6 +130,21 @@ export class CreateWorkspaceRequest extends Message<CreateWorkspaceRequest> {
    */
   name = "";
 
+  /**
+   * @generated from field: string primary_currency = 3;
+   */
+  primaryCurrency = "";
+
+  /**
+   * @generated from field: repeated string supported_currencies = 4;
+   */
+  supportedCurrencies: string[] = [];
+
+  /**
+   * @generated from field: string locale = 5;
+   */
+  locale = "";
+
   constructor(data?: PartialMessage<CreateWorkspaceRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -122,6 +155,9 @@ export class CreateWorkspaceRequest extends Message<CreateWorkspaceRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "namespace", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "primary_currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "supported_currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 5, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateWorkspaceRequest {

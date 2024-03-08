@@ -18,6 +18,15 @@ export default interface FijoyWorkspace {
 
   /** Database type: pg_catalog.timestamptz */
   createdAt: Date;
+
+  /** Database type: pg_catalog.text */
+  primaryCurrency: string;
+
+  /** Database type: pg_catalog.text[] */
+  supportedCurrencies: string[];
+
+  /** Database type: pg_catalog.text */
+  locale: string;
 }
 
 /** Represents the initializer for the table public.fijoy_workspace */
@@ -36,6 +45,15 @@ export interface FijoyWorkspaceInitializer {
    * Default value: now()
    */
   createdAt?: Date;
+
+  /** Database type: pg_catalog.text */
+  primaryCurrency: string;
+
+  /** Database type: pg_catalog.text[] */
+  supportedCurrencies: string[];
+
+  /** Database type: pg_catalog.text */
+  locale: string;
 }
 
 /** Represents the mutator for the table public.fijoy_workspace */
@@ -51,6 +69,15 @@ export interface FijoyWorkspaceMutator {
 
   /** Database type: pg_catalog.timestamptz */
   createdAt?: Date;
+
+  /** Database type: pg_catalog.text */
+  primaryCurrency?: string;
+
+  /** Database type: pg_catalog.text[] */
+  supportedCurrencies?: string[];
+
+  /** Database type: pg_catalog.text */
+  locale?: string;
 }
 
 export const fijoyWorkspaceId = z.string();
@@ -60,6 +87,9 @@ export const fijoyWorkspace = z.object({
   namespace: z.string(),
   name: z.string(),
   createdAt: z.coerce.date(),
+  primaryCurrency: z.string(),
+  supportedCurrencies: z.string().array(),
+  locale: z.string(),
 });
 
 export const fijoyWorkspaceInitializer = z.object({
@@ -67,6 +97,9 @@ export const fijoyWorkspaceInitializer = z.object({
   namespace: z.string(),
   name: z.string(),
   createdAt: z.coerce.date().optional(),
+  primaryCurrency: z.string(),
+  supportedCurrencies: z.string().array(),
+  locale: z.string(),
 });
 
 export const fijoyWorkspaceMutator = z.object({
@@ -74,4 +107,7 @@ export const fijoyWorkspaceMutator = z.object({
   namespace: z.string().optional(),
   name: z.string().optional(),
   createdAt: z.coerce.date().optional(),
+  primaryCurrency: z.string().optional(),
+  supportedCurrencies: z.string().array().optional(),
+  locale: z.string().optional(),
 });
