@@ -145,7 +145,7 @@ const CurrencyStep = () => {
                   </div>
                 </FormControl>
                 <FormDescription>
-                  Statistics like net worth etc. will be shown in this currency
+                  Statistics like net worth etc. will be shown in this currency.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

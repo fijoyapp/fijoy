@@ -56,7 +56,7 @@ const GeneralStep = () => {
                 />
               </FormControl>
               <FormDescription>
-                This is your workspace&apos;s visible name within Fijoy
+                This is your workspace&apos;s visible name within Fijoy.
               </FormDescription>
               <FormMessage />
             </FormItem>
