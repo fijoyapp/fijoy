@@ -13,17 +13,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "@tanstack/react-router";
-import { GeneralStepData } from "@/types/setup";
+import { NameNamespaceStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
 
-const formSchema = GeneralStepData;
+const formSchema = NameNamespaceStepData;
 
-const GeneralStep = () => {
+const NameNamespaceStep = () => {
   const router = useRouter();
 
   const { generalStepData, setGeneralStepData } = useSetupStore((state) => ({
-    generalStepData: state.generalStepData,
-    setGeneralStepData: state.setGeneralStepData,
+    generalStepData: state.nameNamespaceStepData,
+    setGeneralStepData: state.setNameNamespaceStepData,
   }));
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -35,7 +35,7 @@ const GeneralStep = () => {
     setGeneralStepData(values);
     router.navigate({
       from: "/setup",
-      search: { step: "currency" },
+      search: { step: "currency-locale" },
     });
   }
 
@@ -91,4 +91,4 @@ const GeneralStep = () => {
   );
 };
 
-export default GeneralStep;
+export default NameNamespaceStep;

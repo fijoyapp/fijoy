@@ -5,20 +5,20 @@ import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation } from "@connectrpc/connect-query";
 import { createWorkspace } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
-import { CurrencyStepData, GeneralStepData } from "@/types/setup";
+import { CurrencyLocaleStepData, NameNamespaceStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-const formSchema = GeneralStepData.merge(CurrencyStepData);
+const formSchema = NameNamespaceStepData.merge(CurrencyLocaleStepData);
 
 const FinalStep = () => {
   const router = useRouter();
 
   const { generalStepData, currencyStepData, reset } = useSetupStore(
     (state) => ({
-      generalStepData: state.generalStepData,
-      currencyStepData: state.currencyStepData,
+      generalStepData: state.nameNamespaceStepData,
+      currencyStepData: state.currencyLocaleStepData,
       reset: state.reset,
     }),
   );
@@ -46,7 +46,7 @@ const FinalStep = () => {
     if (!(await form.trigger())) {
       router.navigate({
         to: "/setup",
-        search: { step: "general" },
+        search: { step: "name-namespace" },
       });
       return;
     }
@@ -69,7 +69,13 @@ const FinalStep = () => {
     );
   }
 
+  // this makes sure that the mutation only fires once in strict mode
+  const hasFired = useRef(false);
   useEffect(() => {
+    if (hasFired.current) {
+      return;
+    }
+    hasFired.current = true;
     onSubmit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

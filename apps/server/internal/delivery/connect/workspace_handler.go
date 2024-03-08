@@ -57,10 +57,12 @@ func (s *WorkspaceServer) CreateWorkspace(
 	defer tx.Rollback()
 
 	workspace := model.FijoyWorkspace{
-		Name:      req.Msg.Name,
-		Namespace: req.Msg.Namespace,
-		ID:        "workspace_" + cuid2.Generate(),
-		CreatedAt: time.Now(),
+		Name:            req.Msg.Name,
+		Namespace:       req.Msg.Namespace,
+		ID:              "workspace_" + cuid2.Generate(),
+		CreatedAt:       time.Now(),
+		PrimaryCurrency: req.Msg.PrimaryCurrency,
+		Locale:          req.Msg.Locale,
 	}
 
 	insertWorkspaceStmt := FijoyWorkspace.INSERT(FijoyWorkspace.AllColumns).MODEL(workspace)
@@ -88,10 +90,12 @@ func (s *WorkspaceServer) CreateWorkspace(
 	}
 
 	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:        workspace.ID,
-		Namespace: workspace.Namespace,
-		Name:      workspace.Name,
-		CreatedAt: timestamppb.New(workspace.CreatedAt),
+		Id:              workspace.ID,
+		Namespace:       workspace.Namespace,
+		Name:            workspace.Name,
+		CreatedAt:       timestamppb.New(workspace.CreatedAt),
+		PrimaryCurrency: workspace.PrimaryCurrency,
+		Locale:          workspace.Locale,
 	})
 
 	return res, nil
@@ -121,10 +125,12 @@ func (s *WorkspaceServer) GetWorkspaces(
 	workspaces := make([]*fijoyv1.Workspace, len(dest))
 	for i, w := range dest {
 		workspaces[i] = &fijoyv1.Workspace{
-			Id:        w.ID,
-			Namespace: w.Namespace,
-			Name:      w.Name,
-			CreatedAt: timestamppb.New(w.CreatedAt),
+			Id:              w.ID,
+			Namespace:       w.Namespace,
+			Name:            w.Name,
+			CreatedAt:       timestamppb.New(w.CreatedAt),
+			PrimaryCurrency: w.PrimaryCurrency,
+			Locale:          w.Locale,
 		}
 	}
 
@@ -160,10 +166,12 @@ func (s *WorkspaceServer) GetWorkspaceById(
 	}
 
 	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:        dest.ID,
-		Namespace: dest.Namespace,
-		Name:      dest.Name,
-		CreatedAt: timestamppb.New(dest.CreatedAt),
+		Id:              dest.ID,
+		Namespace:       dest.Namespace,
+		Name:            dest.Name,
+		CreatedAt:       timestamppb.New(dest.CreatedAt),
+		PrimaryCurrency: dest.PrimaryCurrency,
+		Locale:          dest.Locale,
 	})
 
 	return res, nil
@@ -194,10 +202,12 @@ func (s *WorkspaceServer) GetWorkspaceByNamespace(
 	}
 
 	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:        dest.ID,
-		Namespace: dest.Namespace,
-		Name:      dest.Name,
-		CreatedAt: timestamppb.New(dest.CreatedAt),
+		Id:              dest.ID,
+		Namespace:       dest.Namespace,
+		Name:            dest.Name,
+		CreatedAt:       timestamppb.New(dest.CreatedAt),
+		PrimaryCurrency: dest.PrimaryCurrency,
+		Locale:          dest.Locale,
 	})
 
 	return res, nil

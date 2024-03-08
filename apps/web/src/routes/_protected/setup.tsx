@@ -7,12 +7,12 @@ import {
 } from "@/components/page-header";
 import { SetupStep } from "@/types/setup";
 import { z } from "zod";
-import GeneralStep from "@/components/setup/general-step";
-import CurrencyStep from "@/components/setup/currency-step";
+import NameNamespaceStep from "@/components/setup/name-namespace-step";
+import CurrencyLocaleStep from "@/components/setup/currency-locale-step";
 import FinalStep from "@/components/setup/final-step";
 
 const setupSearchSchema = z.object({
-  step: SetupStep.default("general"),
+  step: SetupStep.default("name-namespace"),
 });
 
 export const Route = createFileRoute("/_protected/setup")({
@@ -33,8 +33,8 @@ function Setup() {
         </PageHeaderDescription>
       </PageHeader>
       <div className="mx-auto max-w-lg">
-        {step === "general" && <GeneralStep />}
-        {step === "currency" && <CurrencyStep />}
+        {step === "name-namespace" && <NameNamespaceStep />}
+        {step === "currency-locale" && <CurrencyLocaleStep />}
         {step === "final" && <FinalStep />}
       </div>
     </div>

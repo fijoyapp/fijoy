@@ -17,10 +17,13 @@ export const moneyToCurrency = (
 export const currencyToDisplay = (
   money: currency,
   code: string,
-  opts: { compact: boolean } = { compact: false },
+  opts: { compact: boolean; locale: string } = {
+    compact: false,
+    locale: "en-CA",
+  },
 ): string => {
   // TODO: let the user pick the locale instead
-  return Intl.NumberFormat(navigator.language, {
+  return Intl.NumberFormat(opts.locale, {
     currency: code,
     style: "currency",
     notation: opts.compact ? "compact" : "standard",

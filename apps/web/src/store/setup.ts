@@ -1,38 +1,38 @@
-import { CurrencyStepData, GeneralStepData } from "@/types/setup";
+import { CurrencyLocaleStepData, NameNamespaceStepData } from "@/types/setup";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 type State = {
-  generalStepData: GeneralStepData | undefined;
-  currencyStepData: CurrencyStepData | undefined;
+  nameNamespaceStepData: NameNamespaceStepData | undefined;
+  currencyLocaleStepData: CurrencyLocaleStepData | undefined;
 };
 
 type Actions = {
-  setGeneralStepData: (step: GeneralStepData) => void;
-  setCurrencyStepData: (step: CurrencyStepData) => void;
+  setNameNamespaceStepData: (step: NameNamespaceStepData) => void;
+  setCurrencyLocaleStepData: (step: CurrencyLocaleStepData) => void;
   reset: () => void;
 };
 
 export const useSetupStore = create<State & Actions>()(
   immer((set) => ({
-    generalStepData: undefined,
-    currencyStepData: undefined,
+    nameNamespaceStepData: undefined,
+    currencyLocaleStepData: undefined,
 
-    setGeneralStepData: (step) => {
+    setNameNamespaceStepData: (step) => {
       set((state) => {
-        state.generalStepData = step;
+        state.nameNamespaceStepData = step;
       });
     },
-    setCurrencyStepData: (step) => {
+    setCurrencyLocaleStepData: (step) => {
       set((state) => {
-        state.currencyStepData = step;
+        state.currencyLocaleStepData = step;
       });
     },
 
     reset: () => {
       set(() => ({
-        generalStepData: undefined,
-        currencyStepData: undefined,
+        NameNamespaceStepData: undefined,
+        CurrencyLocaleStepData: undefined,
       }));
     },
   })),

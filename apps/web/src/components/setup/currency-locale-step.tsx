@@ -29,28 +29,36 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CURRENCIES, currencyCodeToName } from "@/config/currency";
 import { ScrollArea } from "../ui/scroll-area";
-import { CurrencyStepData } from "@/types/setup";
+import { CurrencyLocaleStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
+import { getUserLocales, localeCodeToName } from "@/config/locale";
+import { currencyToDisplay } from "@/lib/money";
+import currency from "currency.js";
 
-const formSchema = CurrencyStepData;
+const formSchema = CurrencyLocaleStepData;
 
-const CurrencyStep = () => {
+const CurrencyLocaleStep = () => {
   const router = useRouter();
 
-  const { generalStepData, currencyStepData, setCurrencyStepData } =
-    useSetupStore((state) => ({
-      generalStepData: state.generalStepData,
-      currencyStepData: state.currencyStepData,
-      setCurrencyStepData: state.setCurrencyStepData,
-    }));
+  const {
+    nameNamespaceStepData,
+    currencyLocaleStepData,
+    setCurrencyLocaleStepData,
+  } = useSetupStore((state) => ({
+    nameNamespaceStepData: state.nameNamespaceStepData,
+    currencyLocaleStepData: state.currencyLocaleStepData,
+    setCurrencyLocaleStepData: state.setCurrencyLocaleStepData,
+  }));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: currencyStepData,
+    defaultValues: !currencyLocaleStepData
+      ? { locale: navigator.language }
+      : currencyLocaleStepData,
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setCurrencyStepData(values);
+    setCurrencyLocaleStepData(values);
     router.navigate({
       from: "/setup",
       search: { step: "final" },
@@ -58,17 +66,17 @@ const CurrencyStep = () => {
   }
 
   function onBack() {
-    setCurrencyStepData(form.getValues());
+    setCurrencyLocaleStepData(form.getValues());
     router.navigate({
       from: "/setup",
-      search: { step: "general" },
+      search: { step: "name-namespace" },
     });
   }
 
   return (
     <>
-      {!generalStepData && (
-        <Navigate to="/setup" search={{ step: "general" }} />
+      {!nameNamespaceStepData && (
+        <Navigate to="/setup" search={{ step: "name-namespace" }} />
       )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -97,15 +105,7 @@ const CurrencyStep = () => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[360px] p-0" align="start">
-                        <Command
-                        // filter={(value, search) => {
-                        //   if (
-                        //     value.toLowerCase().includes(search.toLowerCase())
-                        //   )
-                        //     return 1;
-                        //   return 0;
-                        // }}
-                        >
+                        <Command>
                           <CommandInput placeholder="Search currency..." />
                           <CommandList>
                             <CommandEmpty>No currency found.</CommandEmpty>
@@ -152,6 +152,91 @@ const CurrencyStep = () => {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="locale"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Locale</FormLabel>
+                <FormDescription>
+                  {form.watch("primaryCurrency") && field.value && (
+                    <>
+                      Preview: 420 {form.watch("primaryCurrency")} will be
+                      displayed as{" "}
+                      {currencyToDisplay(
+                        currency("420"),
+                        form.getValues("primaryCurrency"),
+                        {
+                          locale: field.value,
+                          compact: false,
+                        },
+                      )}
+                    </>
+                  )}
+                </FormDescription>
+                <FormControl>
+                  <div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value
+                            ? `${localeCodeToName(field.value).unwrapOr("Unknown")} (${field.value})`
+                            : "Select locale"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[360px] p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search locale..." />
+                          <CommandList>
+                            <CommandEmpty>No locale found.</CommandEmpty>
+                            <CommandGroup>
+                              <ScrollArea>
+                                {getUserLocales().map((lc) => {
+                                  const localeDisplay = `${localeCodeToName(lc).unwrapOr("Unknown")} (${lc})`;
+                                  return (
+                                    <CommandItem
+                                      value={localeDisplay}
+                                      key={localeDisplay}
+                                      onSelect={() => {
+                                        form.setValue("locale", lc);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          lc === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                      {localeDisplay}
+                                    </CommandItem>
+                                  );
+                                })}
+                              </ScrollArea>
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  This will have an effect on how currencies are formatted.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="grid grid-cols-3 gap-4">
             <Button className="col-span-1" variant="secondary" onClick={onBack}>
               Back
@@ -166,4 +251,4 @@ const CurrencyStep = () => {
   );
 };
 
-export default CurrencyStep;
+export default CurrencyLocaleStep;
