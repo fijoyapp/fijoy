@@ -35,3 +35,7 @@ test:
 format:
   just apps/server/format
   just apps/web/format
+
+db-gen:
+  just apps/server/jet
+  just apps/web/kenel
