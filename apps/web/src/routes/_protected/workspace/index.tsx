@@ -25,7 +25,7 @@ function Page() {
   const { workspaces } = workspacesQuery.data;
 
   if (workspaces.length === 0) {
-    return <Navigate to="/setup" />;
+    return <Navigate to="/setup" search={{ step: "general" }} />;
   }
 
   const workspace = workspaces.find(
