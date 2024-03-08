@@ -7,6 +7,7 @@ const prettierConfig = {
 const prettierPluginSqlConfig = {
   language: "postgresql",
   keywordCase: "upper",
+  dataTypeCase: "upper",
 };
 
 const config = {
