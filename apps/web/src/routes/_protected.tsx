@@ -10,8 +10,11 @@ function Protected() {
   const auth = useAuth();
 
   if (auth.isLoading) {
-    // TODO: Make this more pretty
-    return <Icons.spinner className="animate-spin" />;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <Icons.spinner className="animate-spin" />
+      </div>
+    );
   }
 
   if (!auth.user) {
