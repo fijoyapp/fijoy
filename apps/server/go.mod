@@ -6,6 +6,7 @@ require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.33.0-20240221180331-f05a6f4403ce.1
 	connectrpc.com/connect v1.15.0
 	connectrpc.com/cors v0.1.0
+	github.com/bufbuild/protovalidate-go v0.6.0
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/cors v1.2.1
@@ -19,6 +20,15 @@ require (
 	github.com/shopspring/decimal v1.3.1
 	golang.org/x/oauth2 v0.18.0
 	google.golang.org/protobuf v1.33.0
+)
+
+require (
+	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
+	github.com/google/cel-go v0.20.0 // indirect
+	github.com/stoewer/go-strcase v1.3.0 // indirect
+	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240304161311-37d4d3c04a78 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240228224816-df926f6c8641 // indirect
 )
 
 require (

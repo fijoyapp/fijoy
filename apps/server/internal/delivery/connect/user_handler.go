@@ -11,6 +11,7 @@ import (
 	. "fijoy/internal/gen/postgres/table"
 
 	"connectrpc.com/connect"
+	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -42,6 +43,15 @@ func (s *UserServer) GetUser(
 ) (*connect.Response[fijoyv1.User], error) {
 	userId, err := util.GetUserIdFromContext(ctx)
 	if err != nil {
+		return nil, err
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
 		return nil, err
 	}
 

@@ -13,6 +13,7 @@ import (
 	. "fijoy/internal/gen/postgres/table"
 
 	"connectrpc.com/connect"
+	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
@@ -63,6 +64,15 @@ func (s *AccountServer) CreateAccount(
 
 	if !util.HasEditPermission(&workspaceUser) {
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
 	}
 
 	account := entity.FijoyAccount{
@@ -122,6 +132,15 @@ func (s *AccountServer) GetAccounts(
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have view permission"))
 	}
 
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
 	stmt := SELECT(FijoyAccount.AllColumns).FROM(FijoyAccount).
 		WHERE(FijoyAccount.WorkspaceID.EQ(String(workspaceId)))
 
@@ -177,6 +196,15 @@ func (s *AccountServer) GetAccountById(
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have view permission"))
 	}
 
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
 	stmt := SELECT(FijoyAccount.AllColumns).FROM(FijoyAccount).
 		WHERE(AND(
 			FijoyAccount.ID.EQ(String(req.Msg.Id)),
@@ -224,6 +252,15 @@ func (s *AccountServer) DeleteAccountById(
 
 	if !util.HasEditPermission(&workspaceUser) {
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
 	}
 
 	stmt := FijoyAccount.DELETE().WHERE(FijoyAccount.ID.EQ(String(req.Msg.Id))).RETURNING(FijoyAccount.AllColumns)

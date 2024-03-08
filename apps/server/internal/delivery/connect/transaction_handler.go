@@ -12,6 +12,7 @@ import (
 	. "fijoy/internal/gen/postgres/table"
 
 	"connectrpc.com/connect"
+	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
@@ -64,6 +65,15 @@ func (s *TransactionServer) CreateIncomeTransaction(
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
 	}
 
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelSerializable,
 		ReadOnly:  false,
@@ -78,6 +88,9 @@ func (s *TransactionServer) CreateIncomeTransaction(
 	account := entity.FijoyAccount{}
 
 	err = stmt.QueryContext(ctx, s.db, &account)
+	if err != nil {
+		return nil, err
+	}
 
 	if account.WorkspaceID != workspaceId {
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
@@ -159,6 +172,15 @@ func (s *TransactionServer) CreateAdjustmentTransaction(
 
 	if !util.HasEditPermission(&workspaceUser) {
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
 	}
 
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{
@@ -259,6 +281,15 @@ func (s *TransactionServer) GetTransactions(
 
 	if !util.HasViewPermission(&workspaceUser) {
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have view permission"))
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
 	}
 
 	stmt := SELECT(FijoyTransaction.AllColumns).FROM(FijoyTransaction).

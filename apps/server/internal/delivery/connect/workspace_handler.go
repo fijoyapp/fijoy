@@ -10,6 +10,7 @@ import (
 
 	. "fijoy/internal/gen/postgres/table"
 
+	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -47,6 +48,15 @@ func (s *WorkspaceServer) CreateWorkspace(
 ) (*connect.Response[fijoyv1.Workspace], error) {
 	userId, err := util.GetUserIdFromContext(ctx)
 	if err != nil {
+		return nil, err
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
 		return nil, err
 	}
 
@@ -110,6 +120,15 @@ func (s *WorkspaceServer) GetWorkspaces(
 		return nil, err
 	}
 
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
 	stmt := SELECT(FijoyWorkspace.AllColumns).
 		FROM(FijoyWorkspaceUser.
 			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
@@ -150,6 +169,15 @@ func (s *WorkspaceServer) GetWorkspaceById(
 		return nil, err
 	}
 
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
 	stmt := SELECT(FijoyWorkspace.AllColumns).
 		FROM(FijoyWorkspaceUser.
 			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
@@ -183,6 +211,15 @@ func (s *WorkspaceServer) GetWorkspaceByNamespace(
 ) (*connect.Response[fijoyv1.Workspace], error) {
 	userId, err := util.GetUserIdFromContext(ctx)
 	if err != nil {
+		return nil, err
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
 		return nil, err
 	}
 
