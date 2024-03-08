@@ -17,12 +17,8 @@ export const moneyToCurrency = (
 export const currencyToDisplay = (
   money: currency,
   code: string,
-  opts: { compact: boolean; locale: string } = {
-    compact: false,
-    locale: "en-CA",
-  },
+  opts: { compact: boolean; locale: string },
 ): string => {
-  // TODO: let the user pick the locale instead
   return Intl.NumberFormat(opts.locale, {
     currency: code,
     style: "currency",

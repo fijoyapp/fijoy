@@ -4,7 +4,24 @@ import {
   TransactionType,
 } from "@/gen/proto/fijoy/v1/transaction_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
-import { ColumnDef } from "@tanstack/react-table";
+import { useWorkspace } from "@/workspace";
+import { ColumnDef, Row } from "@tanstack/react-table";
+
+function AmountCell({ row }: { row: Row<Transaction> }) {
+  const { workspace } = useWorkspace();
+  if (!row.original.amount) {
+    return "Unknown";
+  }
+  if (row.original.transactionType === TransactionType.UNSPECIFIED) {
+    return "Unknown";
+  }
+
+  return currencyToDisplay(
+    moneyToCurrency(row.original.amount, {}),
+    row.original.currency,
+    { compact: false, locale: workspace.locale },
+  );
+}
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -24,19 +41,7 @@ export const columns: ColumnDef<Transaction>[] = [
     accessorKey: "amount",
     header: "Amount",
 
-    cell: ({ row }) => {
-      if (!row.original.amount) {
-        return "Unknown";
-      }
-      if (row.original.transactionType === TransactionType.UNSPECIFIED) {
-        return "Unknown";
-      }
-
-      return currencyToDisplay(
-        moneyToCurrency(row.original.amount, {}),
-        row.original.currency,
-      );
-    },
+    cell: AmountCell,
   },
   {
     accessorKey: "transactionType",
