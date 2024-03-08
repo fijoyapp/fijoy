@@ -100,7 +100,15 @@ const CurrencyStep = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[360px] p-0" align="start">
-                      <Command>
+                      <Command
+                        filter={(value, search) => {
+                          if (
+                            value.toLowerCase().includes(search.toLowerCase())
+                          )
+                            return 1;
+                          return 0;
+                        }}
+                      >
                         <CommandInput placeholder="Search currency..." />
                         <CommandList>
                           <CommandEmpty>No currency found.</CommandEmpty>
@@ -108,8 +116,8 @@ const CurrencyStep = () => {
                             <ScrollArea>
                               {CURRENCIES.map((currency) => (
                                 <CommandItem
-                                  value={currency}
-                                  key={`${currencyCodeToName(currency)} (${currency})`}
+                                  value={`${currencyCodeToName(currency)} (${currency})`}
+                                  key={currency}
                                   onSelect={() => {
                                     form.setValue("primaryCurrency", currency);
                                   }}
