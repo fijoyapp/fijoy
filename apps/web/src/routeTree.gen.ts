@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as PublicImport } from './routes/_public'
 import { Route as ProtectedImport } from './routes/_protected'
+import { Route as ProtectedSetupImport } from './routes/_protected/setup'
 import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/workspace/index'
 import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_protected/workspace/$namespace/route'
 import { Route as ProtectedWorkspaceNamespaceNamespaceImport } from './routes/_protected/workspace/$namespace/_namespace'
@@ -33,7 +34,6 @@ const PublicSignupLazyImport = createFileRoute('/_public/signup')()
 const PublicPricingLazyImport = createFileRoute('/_public/pricing')()
 const PublicLoginLazyImport = createFileRoute('/_public/login')()
 const PublicFeaturesLazyImport = createFileRoute('/_public/features')()
-const ProtectedSetupLazyImport = createFileRoute('/_protected/setup')()
 const ProtectedWorkspaceNamespaceNamespaceAccountsAccountIdLazyImport =
   createFileRoute(
     '/_protected/workspace/$namespace/_namespace/accounts/$accountId',
@@ -92,12 +92,10 @@ const PublicFeaturesLazyRoute = PublicFeaturesLazyImport.update({
   import('./routes/_public/features.lazy').then((d) => d.Route),
 )
 
-const ProtectedSetupLazyRoute = ProtectedSetupLazyImport.update({
+const ProtectedSetupRoute = ProtectedSetupImport.update({
   path: '/setup',
   getParentRoute: () => ProtectedRoute,
-} as any).lazy(() =>
-  import('./routes/_protected/setup.lazy').then((d) => d.Route),
-)
+} as any)
 
 const ProtectedWorkspaceIndexRoute = ProtectedWorkspaceIndexImport.update({
   path: '/workspace/',
@@ -169,7 +167,7 @@ declare module '@tanstack/react-router' {
       parentRoute: typeof rootRoute
     }
     '/_protected/setup': {
-      preLoaderRoute: typeof ProtectedSetupLazyImport
+      preLoaderRoute: typeof ProtectedSetupImport
       parentRoute: typeof ProtectedImport
     }
     '/_public/features': {
@@ -243,7 +241,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   ProtectedRoute.addChildren([
-    ProtectedSetupLazyRoute,
+    ProtectedSetupRoute,
     ProtectedWorkspaceNamespaceRouteRoute.addChildren([
       ProtectedWorkspaceNamespaceNamespaceRoute.addChildren([
         ProtectedWorkspaceNamespaceNamespaceCategoriesRoute,
