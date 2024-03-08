@@ -11,7 +11,7 @@ ALTER TABLE "fijoy_transaction"
 ADD CONSTRAINT "fijoy_transaction_account_id_fijoy_account_id_fk" FOREIGN KEY ("account_id") REFERENCES "fijoy_account" ("id") ON DELETE restrict ON UPDATE no action;
 
 ALTER TABLE "fijoy_transaction"
-ADD CONSTRAINT "fijoy_transaction_category_id_fijoy_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "fijoy_category" ("id") ON DELETE set null ON UPDATE no action;
+ADD CONSTRAINT "fijoy_transaction_category_id_fijoy_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "fijoy_category" ("id") ON DELETE SET NULL ON UPDATE no action;
 
 ALTER TABLE "fijoy_transaction"
 ADD CONSTRAINT "workspace_user_reference" FOREIGN KEY ("workspace_id", "user_id") REFERENCES "fijoy_workspace_user" ("workspace_id", "user_id") ON DELETE cascade ON UPDATE no action;
