@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "@tanstack/react-router";
+import { Navigate, useRouter } from "@tanstack/react-router";
 import {
   Command,
   CommandEmpty,
@@ -49,13 +49,6 @@ const CurrencyStep = () => {
     defaultValues: currencyStepData,
   });
 
-  if (!generalStepData) {
-    router.navigate({
-      from: "/setup",
-      search: { step: "general" },
-    });
-  }
-
   function onSubmit(values: z.infer<typeof formSchema>) {
     setCurrencyStepData(values);
     router.navigate({
@@ -73,92 +66,103 @@ const CurrencyStep = () => {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="primaryCurrency"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Primary Currency</FormLabel>
-              <FormControl>
-                <div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "justify-between",
-                          !field.value && "text-muted-foreground",
-                        )}
-                      >
-                        {field.value
-                          ? `${currencyCodeToName(field.value)} (${field.value})`
-                          : "Select currency"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[360px] p-0" align="start">
-                      <Command
-                        filter={(value, search) => {
-                          if (
-                            value.toLowerCase().includes(search.toLowerCase())
-                          )
-                            return 1;
-                          return 0;
-                        }}
-                      >
-                        <CommandInput placeholder="Search currency..." />
-                        <CommandList>
-                          <CommandEmpty>No currency found.</CommandEmpty>
-                          <CommandGroup>
-                            <ScrollArea>
-                              {CURRENCIES.map((currency) => (
-                                <CommandItem
-                                  value={`${currencyCodeToName(currency)} (${currency})`}
-                                  key={currency}
-                                  onSelect={() => {
-                                    form.setValue("primaryCurrency", currency);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      currency === field.value
-                                        ? "opacity-100"
-                                        : "opacity-0",
-                                    )}
-                                  />
-                                  {`${currencyCodeToName(currency)} (${currency})`}
-                                </CommandItem>
-                              ))}
-                            </ScrollArea>
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </FormControl>
-              <FormDescription>
-                Statistics like net worth etc. will be shown in this currency
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <>
+      {!generalStepData && (
+        <Navigate to="/setup" search={{ step: "general" }} />
+      )}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="primaryCurrency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Primary Currency</FormLabel>
+                <FormControl>
+                  <div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "justify-between",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value
+                            ? `${currencyCodeToName(field.value)} (${field.value})`
+                            : "Select currency"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[360px] p-0" align="start">
+                        <Command
+                        // filter={(value, search) => {
+                        //   if (
+                        //     value.toLowerCase().includes(search.toLowerCase())
+                        //   )
+                        //     return 1;
+                        //   return 0;
+                        // }}
+                        >
+                          <CommandInput placeholder="Search currency..." />
+                          <CommandList>
+                            <CommandEmpty>No currency found.</CommandEmpty>
+                            <CommandGroup>
+                              <ScrollArea>
+                                {CURRENCIES.map((currency) => {
+                                  const currencyName = `${currencyCodeToName(currency)} (${currency})`;
+                                  return (
+                                    <CommandItem
+                                      value={currencyName}
+                                      key={currencyName}
+                                      onSelect={() => {
+                                        form.setValue(
+                                          "primaryCurrency",
+                                          currency,
+                                        );
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          currency === field.value
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                      {currencyName}
+                                    </CommandItem>
+                                  );
+                                })}
+                              </ScrollArea>
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  Statistics like net worth etc. will be shown in this currency
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <div className="grid grid-cols-3 gap-4">
-          <Button className="col-span-1" variant="secondary" onClick={onBack}>
-            Back
-          </Button>
-          <Button type="submit" className="col-span-2">
-            Create
-          </Button>
-        </div>
-      </form>
-    </Form>
+          <div className="grid grid-cols-3 gap-4">
+            <Button className="col-span-1" variant="secondary" onClick={onBack}>
+              Back
+            </Button>
+            <Button type="submit" className="col-span-2">
+              Create
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </>
   );
 };
 
