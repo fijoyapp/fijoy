@@ -4,7 +4,6 @@ CREATE TABLE fijoy_workspace (
   name TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   primary_currency TEXT NOT NULL,
-  supported_currencies TEXT [] NOT NULL,
   locale TEXT NOT NULL,
   CONSTRAINT "fijoy_workspace_namespace_unique" UNIQUE ("namespace")
 );

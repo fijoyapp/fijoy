@@ -12,8 +12,7 @@ message Workspace {
   string name = 3 [(buf.validate.field).string.min_len = 1];
   google.protobuf.Timestamp created_at = 4 [(buf.validate.field).required = true];
   string primary_currency = 5 [(buf.validate.field).string.min_len = 1];
-  repeated string supported_currencies = 6 [(buf.validate.field).string.min_len = 1];
-  string locale = 7 [(buf.validate.field).string.min_len = 1];
+  string locale = 6 [(buf.validate.field).string.min_len = 1];
 }
 
 message Workspaces {
@@ -24,8 +23,7 @@ message CreateWorkspaceRequest {
   string namespace = 1 [(buf.validate.field).string.min_len = 1];
   string name = 2 [(buf.validate.field).string.min_len = 1];
   string primary_currency = 3 [(buf.validate.field).string.min_len = 1];
-  repeated string supported_currencies = 4 [(buf.validate.field).string.min_len = 1];
-  string locale = 5 [(buf.validate.field).string.min_len = 1];
+  string locale = 4 [(buf.validate.field).string.min_len = 1];
 }
 
 message GetWorkspaceByIdRequest {
