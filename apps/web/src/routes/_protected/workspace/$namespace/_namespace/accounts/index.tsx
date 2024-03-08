@@ -21,6 +21,7 @@ import {
 import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
 import { accountTypeConfigMap } from "@/config/account";
+import { useWorkspace } from "@/workspace";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/accounts/",
@@ -75,6 +76,7 @@ type CardProps = {
 };
 
 const NetWorthCard = ({ accounts }: CardProps) => {
+  const { workspace } = useWorkspace();
   return (
     <Card className="border-none shadow-none">
       <CardHeader>
@@ -86,7 +88,7 @@ const NetWorthCard = ({ accounts }: CardProps) => {
               return acc.add(moneyToCurrency(cur.balance, { reverse: false }));
             }, currency(0)),
             "CAD", // TODO: Use user's currency
-            { compact: true },
+            { compact: true, locale: workspace.locale },
           )}
         </CardTitle>
       </CardHeader>
@@ -95,6 +97,7 @@ const NetWorthCard = ({ accounts }: CardProps) => {
 };
 
 const TotalDebtCard = ({ accounts }: CardProps) => {
+  const { workspace } = useWorkspace();
   return (
     <Card className="border-none shadow-none">
       <CardHeader>
@@ -112,7 +115,7 @@ const TotalDebtCard = ({ accounts }: CardProps) => {
                 return acc.add(moneyToCurrency(cur.balance, { reverse: true }));
               }, currency(0)),
             "CAD", // TODO: Use user's currency
-            { compact: true },
+            { compact: true, locale: workspace.locale },
           )}
         </CardTitle>
       </CardHeader>
@@ -121,6 +124,7 @@ const TotalDebtCard = ({ accounts }: CardProps) => {
 };
 
 const TotalAssetCard = ({ accounts }: CardProps) => {
+  const { workspace } = useWorkspace();
   return (
     <Card className="border-none shadow-none">
       <CardHeader>
@@ -140,7 +144,7 @@ const TotalAssetCard = ({ accounts }: CardProps) => {
                 );
               }, currency(0)),
             "CAD", // TODO: Use user's currency
-            { compact: true },
+            { compact: true, locale: workspace.locale },
           )}
         </CardTitle>
       </CardHeader>

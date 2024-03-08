@@ -57,6 +57,7 @@ const FinalStep = () => {
         name: values.name,
         namespace: values.namespace,
         primaryCurrency: values.primaryCurrency,
+        locale: values.locale,
       }),
       {
         success: () => {
