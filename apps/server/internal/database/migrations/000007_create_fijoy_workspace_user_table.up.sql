@@ -1,4 +1,4 @@
-CREATE TYPE "fijoy_workspace_role" AS ENUM ('owner', 'editor', 'viewer', 'pending');
+CREATE TYPE "fijoy_workspace_role" AS ENUM('owner', 'editor', 'viewer', 'pending');
 
 CREATE TABLE "fijoy_workspace_user" (
   "workspace_id" text NOT NULL,

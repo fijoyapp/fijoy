@@ -1,4 +1,4 @@
-CREATE TYPE fijoy_transaction_type AS ENUM ('expense', 'income', 'transfer', 'adjustment');
+CREATE TYPE fijoy_transaction_type AS ENUM('expense', 'income', 'transfer', 'adjustment');
 
 CREATE TABLE "fijoy_category" (
   "id" text PRIMARY KEY NOT NULL,
