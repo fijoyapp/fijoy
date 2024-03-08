@@ -181,7 +181,7 @@ func generateStateOAuthCookie(w http.ResponseWriter) string {
 	b := make([]byte, 16)
 	rand.Read(b)
 	state := base64.URLEncoding.EncodeToString(b)
-	cookie := http.Cookie{Name: "google_oauth_state", Value: state, Expires: expiration}
+	cookie := http.Cookie{Name: "google_oauth_state", Value: state, Expires: expiration, Secure: true, HttpOnly: true}
 
 	http.SetCookie(w, &cookie)
 	return state
