@@ -8,17 +8,23 @@ import {
 } from "@/components/ui/collapsible";
 import NewAccountForm from "./new-account-form";
 import { Card, CardContent } from "../ui/card";
+import { useAccountsStore } from "@/store/accounts";
 
 type Props = {
   workspace: Workspace;
 };
 
 const AddAccount = ({ workspace }: Props) => {
+  const { open, setOpen } = useAccountsStore((state) => ({
+    open: state.newAccountFormOpen,
+    setOpen: state.setNewAccountFormOpen,
+  }));
+
   return (
     <div>
-      <Collapsible>
+      <Collapsible open={open} onOpenChange={setOpen}>
         <CollapsibleTrigger>
-          <Button>Add Account</Button>
+          <Button>{open ? "Hide Form" : "Add Account"}</Button>
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="py-2"></div>
