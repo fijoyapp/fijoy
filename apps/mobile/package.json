@@ -8,6 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "lint": "eslint . --report-unused-disable-directives",
+    "lint:strict": "eslint . --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
+    "eslint-config-universe": "^12.0.0",
     "typescript": "^5.1.3"
   },
   "private": true
