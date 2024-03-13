@@ -1,0 +1,4 @@
+set fallback
+
+format:
+  pnpm format
