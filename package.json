@@ -15,6 +15,15 @@
     "husky": "^9.0.11",
     "turbo": "^1.12.5"
   },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/*",
+        "expo-modules-*",
+        "typescript"
+      ]
+    }
+  },
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
