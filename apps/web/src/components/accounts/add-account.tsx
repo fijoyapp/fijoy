@@ -30,7 +30,7 @@ const AddAccount = ({ workspace, step }: Props) => {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="py-2"></div>
-          <Card>
+          <Card className="bg-muted">
             <CardContent className="pt-6">
               <NewAccountForm workspace={workspace} step={step} />
             </CardContent>

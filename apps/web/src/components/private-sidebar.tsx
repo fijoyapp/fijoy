@@ -34,7 +34,11 @@ const PrivateSidebar = forwardRef<
   }
 
   return (
-    <div ref={ref} className={cn("flex flex-col p-4", className)} {...props}>
+    <div
+      ref={ref}
+      className={cn("flex flex-col border p-4", className)}
+      {...props}
+    >
       <div className="flex items-center">
         <Link to="/" className="mr-6 flex items-center space-x-2">
           <Icons.logo className="h-6 w-6" />
