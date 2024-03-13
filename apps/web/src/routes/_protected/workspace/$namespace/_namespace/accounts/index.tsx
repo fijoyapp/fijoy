@@ -32,6 +32,7 @@ const setupNewAccountSchema = z.object({
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/accounts/",
 )({
+  // loaderDeps: ({ search}) => ({ search }),
   validateSearch: (search) => {
     return setupNewAccountSchema.parse(search);
   },

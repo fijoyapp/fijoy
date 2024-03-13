@@ -27,10 +27,12 @@ const InstitutionStep = () => {
     <div className="flex items-center gap-2">
       <div>Which institution issued this account?</div>
       <Input className="w-64" placeholder="e.g. American Express" />
-      <Button onClick={handleSubmit}>Next</Button>
+
+      <div className="grow"></div>
       <Button variant="secondary" onClick={handleBack}>
         Back
       </Button>
+      <Button onClick={handleSubmit}>Next</Button>
     </div>
   );
 };

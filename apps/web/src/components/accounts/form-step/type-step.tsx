@@ -41,10 +41,12 @@ const TypeStep = () => {
           <SelectItem value="system">System</SelectItem>
         </SelectContent>
       </Select>
-      <Button onClick={handleSubmit}>Next</Button>
+
+      <div className="grow"></div>
       <Button variant="secondary" onClick={handleBack}>
         Back
       </Button>
+      <Button onClick={handleSubmit}>Next</Button>
     </div>
   );
 };

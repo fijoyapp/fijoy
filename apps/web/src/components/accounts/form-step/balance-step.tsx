@@ -27,10 +27,12 @@ const BalanceStep = () => {
     <div className="flex items-center gap-2">
       <div>What is the current balance on this account?</div>
       <Input className="w-64" placeholder="e.g. American Express" />
-      <Button onClick={handleSubmit}>Next</Button>
+
+      <div className="grow"></div>
       <Button variant="secondary" onClick={handleBack}>
-        Create
+        Back
       </Button>
+      <Button onClick={handleSubmit}>Create</Button>
     </div>
   );
 };

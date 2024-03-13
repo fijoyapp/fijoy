@@ -19,6 +19,7 @@ const NameStep = () => {
     <div className="flex items-center gap-2">
       <div>Let's get your account setup! How should we call it?</div>
       <Input className="w-64" placeholder="e.g. BMO Student Mastercard" />
+      <div className="grow"></div>
       <Button onClick={handleSubmit}>Next</Button>
     </div>
   );
