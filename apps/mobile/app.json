@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "@fijoy/mobile",
+    "slug": "fijoy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "311d90eb-de8a-4277-b12c-cd07be455e1a"
+      }
+    },
+    "owner": "itsjoeoui"
   }
 }
