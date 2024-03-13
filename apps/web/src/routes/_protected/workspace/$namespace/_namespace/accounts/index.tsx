@@ -26,7 +26,7 @@ import { NewAccountStep } from "@/types/accounts";
 import { z } from "zod";
 
 const setupNewAccountSchema = z.object({
-  step: NewAccountStep.default("name"),
+  step: NewAccountStep.default("name").optional(),
 });
 
 export const Route = createFileRoute(
@@ -70,7 +70,7 @@ function Page() {
 
       <div className="py-4" />
 
-      <AddAccount workspace={context.workspace} step={step} />
+      <AddAccount workspace={context.workspace} step={step ?? "name"} />
 
       <div className="py-4" />
 
