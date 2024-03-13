@@ -22,10 +22,19 @@ import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
 import { accountTypeConfigMap } from "@/config/account";
 import { useWorkspace } from "@/workspace";
+import { NewAccountStep } from "@/types/accounts";
+import { z } from "zod";
+
+const setupNewAccountSchema = z.object({
+  step: NewAccountStep.default("name"),
+});
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/_namespace/accounts/",
 )({
+  validateSearch: (search) => {
+    return setupNewAccountSchema.parse(search);
+  },
   loader: (opts) => {
     opts.context.queryClient.ensureQueryData(
       getAccountsQueryOptions({
@@ -40,6 +49,7 @@ function Page() {
   const context = Route.useRouteContext();
   const accountsQuery = useSuspenseQuery(getAccountsQueryOptions({ context }));
   const accounts = accountsQuery.data.accounts;
+  const { step } = Route.useSearch();
 
   return (
     <div className="container max-w-screen-2xl">
@@ -60,7 +70,7 @@ function Page() {
 
       <div className="py-4" />
 
-      <AddAccount workspace={context.workspace} />
+      <AddAccount workspace={context.workspace} step={step} />
 
       <div className="py-4" />
 

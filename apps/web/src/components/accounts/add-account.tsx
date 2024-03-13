@@ -9,12 +9,14 @@ import {
 import NewAccountForm from "./new-account-form";
 import { Card, CardContent } from "../ui/card";
 import { useAccountsStore } from "@/store/accounts";
+import { NewAccountStep } from "@/types/accounts";
 
 type Props = {
   workspace: Workspace;
+  step: NewAccountStep;
 };
 
-const AddAccount = ({ workspace }: Props) => {
+const AddAccount = ({ workspace, step }: Props) => {
   const { open, setOpen } = useAccountsStore((state) => ({
     open: state.newAccountFormOpen,
     setOpen: state.setNewAccountFormOpen,
@@ -30,7 +32,7 @@ const AddAccount = ({ workspace }: Props) => {
           <div className="py-2"></div>
           <Card>
             <CardContent className="pt-6">
-              <NewAccountForm workspace={workspace} />
+              <NewAccountForm workspace={workspace} step={step} />
             </CardContent>
           </Card>
         </CollapsibleContent>
