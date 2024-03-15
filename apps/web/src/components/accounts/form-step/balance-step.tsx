@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import CurrencyInput from "react-currency-input-field";
 import { Input } from "@/components/ui/input";
 import { useWorkspace } from "@/workspace";
 import { useRouter } from "@tanstack/react-router";
@@ -76,12 +77,15 @@ const BalanceStep = () => {
                 ))
                 .exhaustive()}
               <FormControl>
-                {/* TODO: replace with currency input */}
-                <Input
-                  className="w-64"
-                  type="number"
-                  placeholder=""
+                <CurrencyInput
+                  className="flex h-10 w-64 rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   {...field}
+                  defaultValue={0}
+                  // TODO: set this dynamically
+                  intlConfig={{ currency: "CAD", locale: "en-CA" }}
+                  onValueChange={(value) => {
+                    form.setValue("balance", Number(value));
+                  }}
                 />
               </FormControl>
               <FormMessage />
