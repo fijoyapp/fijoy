@@ -34,7 +34,9 @@ const NewAccountForm = ({ workspace, step }: Props) => {
               if (s === step) {
                 return (
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{_.capitalize(s)}</BreadcrumbPage>
+                    <BreadcrumbPage className="font-bold">
+                      {_.capitalize(s)}
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 );
               }
@@ -42,9 +44,10 @@ const NewAccountForm = ({ workspace, step }: Props) => {
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
                     <Link
-                      from={"/workspace/$namespace/accounts"}
+                      to={"/workspace/$namespace/accounts/"}
                       params={{ namespace: workspace.namespace }}
                       search={{ step: s }}
+                      className="font-bold"
                     >
                       {_.capitalize(s)}
                     </Link>
@@ -58,7 +61,9 @@ const NewAccountForm = ({ workspace, step }: Props) => {
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{_.capitalize(s)}</BreadcrumbPage>
+                    <BreadcrumbPage className="font-bold">
+                      {_.capitalize(s)}
+                    </BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
               );
@@ -69,9 +74,10 @@ const NewAccountForm = ({ workspace, step }: Props) => {
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
                     <Link
-                      from={"/workspace/$namespace/accounts"}
+                      to={"/workspace/$namespace/accounts/"}
                       params={{ namespace: workspace.namespace }}
                       search={{ step: s }}
+                      className="font-bold"
                     >
                       {_.capitalize(s)}
                     </Link>

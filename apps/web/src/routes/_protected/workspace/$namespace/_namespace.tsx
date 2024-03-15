@@ -41,9 +41,9 @@ function Page() {
   return (
     <WorkspaceProvider namespace={namespace}>
       <div className="flex w-screen">
-        <PrivateSidebar className="m-4 w-56 flex-shrink-0 rounded-xl bg-muted" />
+        <PrivateSidebar className="my-4 ml-4 w-56 flex-shrink-0 rounded-xl bg-muted" />
         <div className="h-screen min-w-[48rem] grow flex-nowrap overflow-y-scroll">
-          <div className="my-4 mr-4 overflow-hidden overflow-ellipsis whitespace-nowrap rounded-xl border bg-muted p-4 text-center">
+          <div className="m-4 overflow-hidden overflow-ellipsis whitespace-nowrap rounded-xl border bg-muted p-4 text-center">
             Fijoy is currently in development :) Join our{" "}
             <a
               href={siteConfig.links.discord}
@@ -61,7 +61,9 @@ function Page() {
               GitHub ⭐
             </a>
           </div>
-          <Outlet />
+          <div className="mx-4">
+            <Outlet />
+          </div>
         </div>
       </div>
     </WorkspaceProvider>
