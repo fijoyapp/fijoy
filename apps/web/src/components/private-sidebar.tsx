@@ -63,7 +63,7 @@ const PrivateSidebar = forwardRef<
               params={{ namespace: scope }}
               className={cn(
                 "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
-                matchRoute({ to: "/workspace/$namespace" })
+                matchRoute({ to: "/workspace/$namespace/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
               )}
@@ -76,7 +76,7 @@ const PrivateSidebar = forwardRef<
               params={{ namespace: scope }}
               className={cn(
                 "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
-                matchRoute({ to: "/workspace/$namespace/transactions" })
+                matchRoute({ to: "/workspace/$namespace/transactions/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
               )}
@@ -89,7 +89,7 @@ const PrivateSidebar = forwardRef<
               params={{ namespace: scope }}
               className={cn(
                 "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
-                matchRoute({ to: "/workspace/$namespace/accounts" })
+                matchRoute({ to: "/workspace/$namespace/accounts/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
               )}
@@ -103,7 +103,7 @@ const PrivateSidebar = forwardRef<
               params={{ namespace: scope }}
               className={cn(
                 "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
-                matchRoute({ to: "/workspace/$namespace/settings" })
+                matchRoute({ to: "/workspace/$namespace/settings/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
               )}
