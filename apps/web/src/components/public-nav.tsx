@@ -16,7 +16,7 @@ export function PublicNav() {
         {/* <Link */}
         {/*   to={"/features"} */}
         {/*   className={cn( */}
-        {/*     "flex items-center gap-2 rounded-xl p-2 transition-colors hover:text-foreground", */}
+        {/*     "flex items-center gap-2 rounded-md p-2 transition-colors hover:text-foreground", */}
         {/*     matchRoute({ to: "/features" }) */}
         {/*       ? "text-foreground" */}
         {/*       : "text-foreground/60", */}
@@ -28,7 +28,7 @@ export function PublicNav() {
         {/* <Link */}
         {/*   to={"/pricing"} */}
         {/*   className={cn( */}
-        {/*     "flex items-center gap-2 rounded-xl p-2 transition-colors hover:text-foreground", */}
+        {/*     "flex items-center gap-2 rounded-md p-2 transition-colors hover:text-foreground", */}
         {/*     matchRoute({ to: "/pricing" }) */}
         {/*       ? "text-foreground" */}
         {/*       : "text-foreground/60", */}
@@ -40,7 +40,7 @@ export function PublicNav() {
         {/* <Link */}
         {/*   to={"/why"} */}
         {/*   className={cn( */}
-        {/*     "flex items-center gap-2 rounded-xl p-2 transition-colors hover:text-foreground", */}
+        {/*     "flex items-center gap-2 rounded-md p-2 transition-colors hover:text-foreground", */}
         {/*     matchRoute({ to: "/why" }) */}
         {/*       ? "text-foreground" */}
         {/*       : "text-foreground/60", */}
@@ -52,7 +52,7 @@ export function PublicNav() {
         {/* <Link */}
         {/*   to={"/stack"} */}
         {/*   className={cn( */}
-        {/*     "flex items-center gap-2 rounded-xl p-2 transition-colors hover:text-foreground", */}
+        {/*     "flex items-center gap-2 rounded-md p-2 transition-colors hover:text-foreground", */}
         {/*     matchRoute({ to: "/stack" }) */}
         {/*       ? "text-foreground" */}
         {/*       : "text-foreground/60", */}

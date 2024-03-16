@@ -62,7 +62,7 @@ const PrivateSidebar = forwardRef<
               to={"/workspace/$namespace"}
               params={{ namespace: scope }}
               className={cn(
-                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
+                "flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-background hover:text-foreground",
                 matchRoute({ to: "/workspace/$namespace/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
@@ -75,7 +75,7 @@ const PrivateSidebar = forwardRef<
               to={"/workspace/$namespace/transactions"}
               params={{ namespace: scope }}
               className={cn(
-                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
+                "flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-background hover:text-foreground",
                 matchRoute({ to: "/workspace/$namespace/transactions/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
@@ -88,7 +88,7 @@ const PrivateSidebar = forwardRef<
               to={"/workspace/$namespace/accounts"}
               params={{ namespace: scope }}
               className={cn(
-                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
+                "flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-background hover:text-foreground",
                 matchRoute({ to: "/workspace/$namespace/accounts/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
@@ -102,7 +102,7 @@ const PrivateSidebar = forwardRef<
               to={"/workspace/$namespace/settings"}
               params={{ namespace: scope }}
               className={cn(
-                "flex items-center gap-2 rounded-xl p-2 transition-colors hover:bg-background hover:text-foreground",
+                "flex items-center gap-2 rounded-md p-2 transition-colors hover:bg-background hover:text-foreground",
                 matchRoute({ to: "/workspace/$namespace/settings/" })
                   ? "text-primary hover:text-primary"
                   : "text-foreground/60",
