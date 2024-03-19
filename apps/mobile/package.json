@@ -20,7 +20,7 @@
     "react-native": "0.73.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.0",
+    "@babel/core": "^7.24.1",
     "@types/react": "~18.2.67",
     "eslint-config-universe": "^12.0.0",
     "typescript": "^5.4.2"
