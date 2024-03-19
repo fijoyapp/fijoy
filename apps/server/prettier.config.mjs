@@ -6,6 +6,7 @@ const prettierConfig = {
 /** @type {import('prettier-plugin-sql').SqlBaseOptions} */
 const prettierPluginSqlConfig = {
   language: "postgresql",
+  database: "postgresql",
   keywordCase: "upper",
   dataTypeCase: "upper",
 };
