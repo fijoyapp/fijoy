@@ -50,7 +50,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{cfg.FRONTEND_URL}, // Use this to allow specific origin hosts
+		AllowedOrigins: []string{cfg.WEB_URL}, // Use this to allow specific origin hosts
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   connectcors.AllowedMethods(),
@@ -61,7 +61,7 @@ func main() {
 		Debug:            false,
 	}))
 
-	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.FRONTEND_URL, cfg.DISCORD_WEBHOOK)
+	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.WEB_URL, cfg.DISCORD_WEBHOOK)
 	connect_handler.NewUserHandler(r, tokenAuth, db)
 	connect_handler.NewWorkspaceHandler(r, tokenAuth, db)
 	connect_handler.NewAccountHandler(r, tokenAuth, db)

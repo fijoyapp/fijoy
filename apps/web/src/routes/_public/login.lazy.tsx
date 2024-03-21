@@ -23,7 +23,7 @@ function Login() {
         <div className="flex flex-col gap-2">
           <Button asChild>
             <a
-              href={env.VITE_BACKEND_URL + "/v1/auth/google/login"}
+              href={env.VITE_SERVER_URL + "/v1/auth/google/login"}
               className="flex gap-2"
             >
               <Icons.google className="h-4 w-4" />
