@@ -14,16 +14,16 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
-    "expo": "~50.0.13",
+    "expo": "~50.0.14",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-native": "0.73.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.1",
+    "@babel/core": "^7.24.3",
     "@types/react": "~18.2.67",
     "eslint-config-universe": "^12.0.0",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   },
   "private": true
 }
