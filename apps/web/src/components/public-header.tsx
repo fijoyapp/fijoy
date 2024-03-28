@@ -32,6 +32,7 @@ export function PublicHeader() {
               </Link>
             </>
           )}
+
           <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
             <div
               className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}

@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/ky";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
@@ -12,14 +11,15 @@ export const Route = createLazyFileRoute(
 function AccountDetail() {
   const queryClient = useQueryClient();
   const { accountId } = Route.useParams();
-  const { workspace } = Route.useRouteContext();
+  // const { workspace } = Route.useRouteContext();
   const deleteAccount = useMutation({
     mutationFn: async (id: string) => {
-      await api.delete(`accounts/${id}`, {
-        searchParams: {
-          workspace_id: workspace.id,
-        },
-      });
+      console.log(id);
+      // await api.delete(`accounts/${id}`, {
+      //   searchParams: {
+      //     workspace_id: workspace.id,
+      //   },
+      // });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
