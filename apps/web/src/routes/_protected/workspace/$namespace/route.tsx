@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { env } from "@/env";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace")({
   beforeLoad: async ({ params, context }) => {
@@ -114,6 +115,7 @@ function Page() {
   const { namespace } = Route.useParams();
   // const { workspace } = Route.useRouteContext();
   const matchRoute = useMatchRoute();
+  const { queryClient } = Route.useRouteContext();
 
   return (
     <WorkspaceProvider namespace={namespace}>
@@ -303,7 +305,16 @@ function Page() {
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    queryClient.clear();
+                    window.location.replace(
+                      env.VITE_SERVER_URL + "/v1/auth/logout",
+                    );
+                  }}
+                >
+                  Logout
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
