@@ -5,6 +5,7 @@ import { finalTransport } from "./connect";
 import { AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { TransactionService } from "@/gen/proto/fijoy/v1/transaction_connect";
 import { Timestamp } from "@bufbuild/protobuf";
+import { getWorkspaceHeader } from "./headers";
 
 const accountClient = createPromiseClient(AccountService, finalTransport);
 const transactionClient = createPromiseClient(
@@ -13,6 +14,7 @@ const transactionClient = createPromiseClient(
 );
 
 export async function populateExample(workspace: Workspace) {
+  const headers = getWorkspaceHeader(workspace.id);
   const cobalt = await accountClient.createAccount(
     {
       name: "Cobalt",
@@ -20,11 +22,7 @@ export async function populateExample(workspace: Workspace) {
       currency: "CAD",
       institution: "Amex",
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
   await transactionClient.createAdjustmentTransaction(
     {
@@ -35,11 +33,7 @@ export async function populateExample(workspace: Workspace) {
       },
       datetime: Timestamp.now(),
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
 
   const wealthsimpleCash = await accountClient.createAccount(
@@ -49,11 +43,7 @@ export async function populateExample(workspace: Workspace) {
       currency: "CAD",
       institution: "Wealthsimple",
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
   await transactionClient.createAdjustmentTransaction(
     {
@@ -64,11 +54,7 @@ export async function populateExample(workspace: Workspace) {
       },
       datetime: Timestamp.now(),
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
 
   const tangerineSavings = await accountClient.createAccount(
@@ -78,11 +64,7 @@ export async function populateExample(workspace: Workspace) {
       currency: "CAD",
       institution: "Tangerine",
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
   await transactionClient.createAdjustmentTransaction(
     {
@@ -93,11 +75,7 @@ export async function populateExample(workspace: Workspace) {
       },
       datetime: Timestamp.now(),
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
 
   const tangerineChequing = await accountClient.createAccount(
@@ -107,11 +85,7 @@ export async function populateExample(workspace: Workspace) {
       currency: "CAD",
       institution: "Tangerine",
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
   await transactionClient.createAdjustmentTransaction(
     {
@@ -122,10 +96,6 @@ export async function populateExample(workspace: Workspace) {
       },
       datetime: Timestamp.now(),
     },
-    {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
-    },
+    { headers },
   );
 }

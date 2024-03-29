@@ -37,6 +37,7 @@ import {
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
+import { getWorkspaceHeader } from "@/lib/headers";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/settings/general/",
@@ -66,9 +67,7 @@ function Page() {
       toast.success("Workspace name updated");
     },
     callOptions: {
-      headers: {
-        "Fijoy-Workspace-Id": workspace.id,
-      },
+      headers: getWorkspaceHeader(workspace.id),
     },
   });
 
@@ -100,9 +99,7 @@ function Page() {
         toast.success("Workspace URL updated");
       },
       callOptions: {
-        headers: {
-          "Fijoy-Workspace-Id": workspace.id,
-        },
+        headers: getWorkspaceHeader(workspace.id),
       },
     },
   );

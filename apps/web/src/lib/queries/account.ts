@@ -5,6 +5,7 @@ import {
   getAccounts,
 } from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
 import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
+import { getWorkspaceHeader } from "../headers";
 
 type getAccountsProps = {
   context: {
@@ -20,9 +21,7 @@ export const getAccountsQueryOptions = ({ context }: getAccountsProps) => {
     {
       transport: context.transport,
       callOptions: {
-        headers: {
-          "Fijoy-Workspace-Id": context.workspace.id,
-        },
+        headers: getWorkspaceHeader(context.workspace.id),
       },
     },
   );
@@ -45,11 +44,8 @@ export const getAccountByIdQueryOptions = ({
     { id },
     {
       transport: context.transport,
-
       callOptions: {
-        headers: {
-          "Fijoy-Workspace-Id": context.workspace.id,
-        },
+        headers: getWorkspaceHeader(context.workspace.id),
       },
     },
   );

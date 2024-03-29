@@ -2,6 +2,7 @@ import { Transport } from "@connectrpc/connect";
 import { createQueryOptions } from "@connectrpc/connect-query";
 import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 import { getTransactions } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
+import { getWorkspaceHeader } from "@/lib/headers";
 
 type getTransactionsProps = {
   context: {
@@ -19,9 +20,7 @@ export const getTransactionsQueryOptions = ({
     {
       transport: context.transport,
       callOptions: {
-        headers: {
-          "Fijoy-Workspace-Id": context.workspace.id,
-        },
+        headers: getWorkspaceHeader(context.workspace.id),
       },
     },
   );
