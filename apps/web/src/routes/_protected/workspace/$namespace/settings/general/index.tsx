@@ -9,6 +9,17 @@ import {
 } from "@/components/ui/card";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -16,7 +27,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useWorkspace } from "@/workspace";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -30,6 +41,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  deleteWorkspace,
   getWorkspaceByNamespace,
   updateWorkspaceName,
   updateWorkspaceNamespace,
@@ -71,7 +83,7 @@ function Page() {
     },
   });
 
-  function onWorkspaceNameSubmit(
+  function onUpdateWorkspaceNameSubmit(
     values: z.infer<typeof workspaceNameFormSchema>,
   ) {
     return updateWorkspaceNameMutation.mutateAsync(values);
@@ -104,10 +116,27 @@ function Page() {
     },
   );
 
-  function onWorkspaceUrlSubmit(
+  function onUpdateWorkspaceUrlSubmit(
     values: z.infer<typeof workspaceUrlFormSchema>,
   ) {
     return updateWorkspaceNamespaceMutation.mutateAsync(values);
+  }
+
+  const deleteWorkspaceMutation = useMutation(deleteWorkspace, {
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      router.navigate({
+        to: "/workspace/",
+      });
+      toast.success("Workspace deleted");
+    },
+    callOptions: {
+      headers: getWorkspaceHeader(workspace.id),
+    },
+  });
+
+  function onDeleteWorkspaceSubmit() {
+    return deleteWorkspaceMutation.mutateAsync({});
   }
 
   return (
@@ -138,7 +167,9 @@ function Page() {
       <div className="space-y-4">
         <Form {...workspaceNameForm}>
           <form
-            onSubmit={workspaceNameForm.handleSubmit(onWorkspaceNameSubmit)}
+            onSubmit={workspaceNameForm.handleSubmit(
+              onUpdateWorkspaceNameSubmit,
+            )}
             className="space-y-8"
           >
             <FormField
@@ -181,7 +212,7 @@ function Page() {
 
         <Form {...workspaceUrlForm}>
           <form
-            onSubmit={workspaceUrlForm.handleSubmit(onWorkspaceUrlSubmit)}
+            onSubmit={workspaceUrlForm.handleSubmit(onUpdateWorkspaceUrlSubmit)}
             className="space-y-8"
           >
             <FormField
@@ -222,6 +253,40 @@ function Page() {
             />
           </form>
         </Form>
+
+        <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle>Delete Workspace</CardTitle>
+            <CardDescription>
+              This will permanently delete your workspace and all its data.
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="space-x-4 border-t px-6 py-4">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">Delete</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your workspace and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={onDeleteWorkspaceSubmit}
+                    className={buttonVariants({ variant: "destructive" })}
+                  >
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

@@ -372,3 +372,51 @@ func (s *WorkspaceServer) UpdateWorkspaceNamespace(
 
 	return res, nil
 }
+
+func (s *WorkspaceServer) DeleteWorkspace(
+	ctx context.Context,
+	req *connect.Request[emptypb.Empty],
+) (*connect.Response[fijoyv1.Workspace], error) {
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasEditPermission(&workspaceUser) {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	}
+
+	stmt := FijoyWorkspace.DELETE().WHERE(
+		FijoyWorkspace.ID.EQ(String(workspaceId)),
+	).RETURNING(FijoyWorkspace.AllColumns)
+
+	var dest struct {
+		model.FijoyWorkspace
+	}
+
+	err = stmt.QueryContext(ctx, s.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	res := connect.NewResponse(&fijoyv1.Workspace{
+		Id:              dest.ID,
+		Namespace:       dest.Namespace,
+		Name:            dest.Name,
+		CreatedAt:       timestamppb.New(dest.CreatedAt),
+		PrimaryCurrency: dest.PrimaryCurrency,
+		Locale:          dest.Locale,
+	})
+
+	return res, nil
+}

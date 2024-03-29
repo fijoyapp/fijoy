@@ -69,6 +69,15 @@ export const WorkspaceService = {
       O: Workspace,
       kind: MethodKind.Unary,
     },
+    /**
+     * @generated from rpc fijoy.v1.WorkspaceService.DeleteWorkspace
+     */
+    deleteWorkspace: {
+      name: "DeleteWorkspace",
+      I: Empty,
+      O: Workspace,
+      kind: MethodKind.Unary,
+    },
   }
 } as const;
 

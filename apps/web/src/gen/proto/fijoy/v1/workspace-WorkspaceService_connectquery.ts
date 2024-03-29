@@ -92,3 +92,17 @@ export const updateWorkspaceNamespace = {
     typeName: "fijoy.v1.WorkspaceService"
   }
 } as const;
+
+/**
+ * @generated from rpc fijoy.v1.WorkspaceService.DeleteWorkspace
+ */
+export const deleteWorkspace = {
+  localName: "deleteWorkspace",
+  name: "DeleteWorkspace",
+  kind: MethodKind.Unary,
+  I: Empty,
+  O: Workspace,
+  service: {
+    typeName: "fijoy.v1.WorkspaceService"
+  }
+} as const;

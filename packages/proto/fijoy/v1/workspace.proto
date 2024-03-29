@@ -56,4 +56,6 @@ service WorkspaceService {
 
   rpc UpdateWorkspaceName(UpdateWorkspaceNameRequest) returns (Workspace);
   rpc UpdateWorkspaceNamespace(UpdateWorkspaceNamespaceRequest) returns (Workspace);
+
+  rpc DeleteWorkspace(google.protobuf.Empty) returns (Workspace) {}
 }
