@@ -53,17 +53,18 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 
   @font-face {
-    font-family: "Geist";
-    src: url(./assets/GeistVariableVF.woff2) format("woff");
+    font-family: Geist;
+    src: url("./assets/GeistVariableVF.woff2") format("woff");
   }
 
   @font-face {
-    font-family: "GeistMono";
-    src: url(./assets/GeistMonoVariableVF.woff2) format("woff");
+    font-family: GeistMono;
+    src: url("./assets/GeistMonoVariableVF.woff2") format("woff");
   }
 }
