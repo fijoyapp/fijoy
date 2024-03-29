@@ -50,19 +50,15 @@ function Page() {
       <PageHeader>
         <PageHeaderHeading>Transactions</PageHeaderHeading>
         <PageHeaderDescription>
-          You can start selling as soon as you add a product.
+          All your transactions in one place
         </PageHeaderDescription>
       </PageHeader>
-
-      <div className="py-4" />
 
       <NewTransaction
         accounts={accounts}
         workspace={context.workspace}
         categories={[]} // FIXME: load categories
       />
-
-      <div className="py-4" />
 
       <DataTable columns={columns} data={transactions} />
     </>

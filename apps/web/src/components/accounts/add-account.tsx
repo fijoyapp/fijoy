@@ -26,7 +26,7 @@ const AddAccount = ({ workspace, step }: Props) => {
     <div>
       <Collapsible open={open} onOpenChange={setOpen}>
         <CollapsibleTrigger>
-          <Button>{open ? "Hide Form" : "Add Account"}</Button>
+          <Button size="sm">{open ? "Hide Form" : "Add Account"}</Button>
         </CollapsibleTrigger>
         <CollapsibleContent>
           <div className="py-2"></div>

@@ -83,7 +83,9 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
 
   return (
     <div className="">
-      <Button onClick={() => setOpen(true)}>New Transaction</Button>
+      <Button size="sm" onClick={() => setOpen(true)}>
+        New Transaction
+      </Button>
 
       <Sheet open={open} onOpenChange={(open) => setOpen(open)} modal={true}>
         <Form {...form}>
