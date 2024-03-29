@@ -1,21 +1,12 @@
-import {
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderHeading,
-} from "@/components/small-header";
-// import NewTransaction from "@/components/transactions/new-transaction";
-// import { accountsQueryOptions } from "@/lib/queries/account";
 // import { categoriesQueryOptions } from "@/lib/queries/category";
 // import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getWorkspacesQueryOptions } from "@/lib/queries/workspace";
 import { Button } from "@/components/ui/button";
-import { populateExample } from "@/lib/example";
+// import { populateExample } from "@/lib/example";
 
-export const Route = createFileRoute(
-  "/_protected/workspace/$namespace/_namespace/",
-)({
+export const Route = createFileRoute("/_protected/workspace/$namespace/")({
   component: Page,
   loader: async (opts) => {
     const data = await opts.context.queryClient.ensureQueryData(
@@ -26,7 +17,7 @@ export const Route = createFileRoute(
 });
 
 function Page() {
-  const { workspace } = Route.useRouteContext();
+  // const { workspace } = Route.useRouteContext();
 
   // const { data: categories } = useSuspenseQuery(
   //   categoriesQueryOptions(workspace.id),

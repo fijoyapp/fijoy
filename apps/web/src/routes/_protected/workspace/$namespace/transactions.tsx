@@ -1,10 +1,3 @@
-import {
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderHeading,
-} from "@/components/small-header";
-import { columns } from "@/components/transactions/columns";
-import { DataTable } from "@/components/transactions/data-table";
 import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
 import NewTransaction from "@/components/transactions/new-transaction";
 // import { accountsQueryOptions } from "@/lib/queries/account";
@@ -12,9 +5,11 @@ import NewTransaction from "@/components/transactions/new-transaction";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
+import { DataTable } from "@/components/transactions/data-table";
+import { columns } from "@/components/transactions/columns";
 
 export const Route = createFileRoute(
-  "/_protected/workspace/$namespace/_namespace/transactions",
+  "/_protected/workspace/$namespace/transactions",
 )({
   loader: (opts) =>
     opts.context.queryClient.ensureQueryData(
@@ -46,12 +41,12 @@ function Page() {
 
   return (
     <div className="container max-w-screen-2xl">
-      <PageHeader>
-        <PageHeaderHeading className="">Transactions</PageHeaderHeading>
-        <PageHeaderDescription className="">
-          The home for all your transactions.
-        </PageHeaderDescription>
-      </PageHeader>
+      {/* <PageHeader> */}
+      {/*   <PageHeaderHeading className="">Transactions</PageHeaderHeading> */}
+      {/*   <PageHeaderDescription className=""> */}
+      {/*     The home for all your transactions. */}
+      {/*   </PageHeaderDescription> */}
+      {/* </PageHeader> */}
 
       <div className="py-4" />
 

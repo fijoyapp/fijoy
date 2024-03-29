@@ -1,15 +1,3 @@
-import { AccountTable } from "@/components/accounts/account-table";
-import AddAccount from "@/components/accounts/add-account";
-import { columns } from "@/components/accounts/columns";
-
-import currency from "currency.js";
-import {
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderHeading,
-} from "@/components/small-header";
-import { getAccountsQueryOptions } from "@/lib/queries/account";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import {
@@ -24,13 +12,19 @@ import { accountTypeConfigMap } from "@/config/account";
 import { useWorkspace } from "@/workspace";
 import { NewAccountStep } from "@/types/accounts";
 import { z } from "zod";
+import AddAccount from "@/components/accounts/add-account";
+import { AccountTable } from "@/components/accounts/account-table";
+import { columns } from "@/components/accounts/columns";
+import currency from "currency.js";
+import { getAccountsQueryOptions } from "@/lib/queries/account";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 const setupNewAccountSchema = z.object({
   step: NewAccountStep.default("name").optional(),
 });
 
 export const Route = createFileRoute(
-  "/_protected/workspace/$namespace/_namespace/accounts/",
+  "/_protected/workspace/$namespace/accounts/",
 )({
   // loaderDeps: ({ search}) => ({ search }),
   validateSearch: (search) => {
@@ -55,12 +49,12 @@ function Page() {
   return (
     <div className="container max-w-screen-2xl">
       <div className="flex items-end gap-4">
-        <PageHeader>
-          <PageHeaderHeading className="">Accounts</PageHeaderHeading>
-          <PageHeaderDescription className="">
-            View all accounts at a glance.
-          </PageHeaderDescription>
-        </PageHeader>
+        {/* <PageHeader> */}
+        {/*   <PageHeaderHeading className="">Accounts</PageHeaderHeading> */}
+        {/*   <PageHeaderDescription className=""> */}
+        {/*     View all accounts at a glance. */}
+        {/*   </PageHeaderDescription> */}
+        {/* </PageHeader> */}
         <div className="grow" />
         <div className="flex items-center justify-center">
           <NetWorthCard accounts={accounts} />
