@@ -36,6 +36,7 @@ import {
 } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
+import { Icons } from "@/components/icons";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/settings/general/",
@@ -74,7 +75,7 @@ function Page() {
   function onWorkspaceNameSubmit(
     values: z.infer<typeof workspaceNameFormSchema>,
   ) {
-    updateWorkspaceNameMutation.mutate(values);
+    return updateWorkspaceNameMutation.mutateAsync(values);
   }
 
   const workspaceUrlForm = useForm<z.infer<typeof workspaceUrlFormSchema>>({
@@ -109,7 +110,7 @@ function Page() {
   function onWorkspaceUrlSubmit(
     values: z.infer<typeof workspaceUrlFormSchema>,
   ) {
-    updateWorkspaceNamespaceMutation.mutate(values);
+    return updateWorkspaceNamespaceMutation.mutateAsync(values);
   }
 
   return (
@@ -165,7 +166,13 @@ function Page() {
                       </FormControl>
                     </CardContent>
                     <CardFooter className="space-x-4 border-t px-6 py-4">
-                      <Button>Save</Button>
+                      {workspaceNameForm.formState.isSubmitting ? (
+                        <Button disabled={true}>
+                          <Icons.spinner className="animate-spin" />
+                        </Button>
+                      ) : (
+                        <Button>Save</Button>
+                      )}
                       <FormMessage />
                     </CardFooter>
                   </Card>
@@ -203,7 +210,13 @@ function Page() {
                       </FormControl>
                     </CardContent>
                     <CardFooter className="space-x-4 border-t px-6 py-4">
-                      <Button>Save</Button>
+                      {workspaceUrlForm.formState.isSubmitting ? (
+                        <Button disabled={true}>
+                          <Icons.spinner className="animate-spin" />
+                        </Button>
+                      ) : (
+                        <Button>Save</Button>
+                      )}
                       <FormMessage />
                     </CardFooter>
                   </Card>
