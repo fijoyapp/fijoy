@@ -324,13 +324,13 @@ function Page() {
 function DiscordCard() {
   return (
     <Card>
-      <CardHeader className="">
-        <CardTitle>Join our Discord</CardTitle>
+      <CardHeader className="p-3">
+        <CardTitle className="text-xl">Join our Discord</CardTitle>
         <CardDescription>
           Keep up to date with the latest features and updates.
         </CardDescription>
       </CardHeader>
-      <CardContent className="">
+      <CardContent className="p-3 pt-0">
         <Button size="sm" className="w-full" asChild>
           <a target="_blank" href={siteConfig.links.discord}>
             Join
