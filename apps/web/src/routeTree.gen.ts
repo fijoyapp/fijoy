@@ -21,8 +21,11 @@ import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_prote
 import { Route as ProtectedWorkspaceNamespaceIndexImport } from './routes/_protected/workspace/$namespace/index'
 import { Route as ProtectedWorkspaceNamespaceTransactionsIndexImport } from './routes/_protected/workspace/$namespace/transactions/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsIndexImport } from './routes/_protected/workspace/$namespace/settings/index'
-import { Route as ProtectedWorkspaceNamespaceCategoriesIndexImport } from './routes/_protected/workspace/$namespace/categories/index'
 import { Route as ProtectedWorkspaceNamespaceAccountsIndexImport } from './routes/_protected/workspace/$namespace/accounts/index'
+import { Route as ProtectedWorkspaceNamespaceSettingsUsersIndexImport } from './routes/_protected/workspace/$namespace/settings/users/index'
+import { Route as ProtectedWorkspaceNamespaceSettingsGeneralIndexImport } from './routes/_protected/workspace/$namespace/settings/general/index'
+import { Route as ProtectedWorkspaceNamespaceSettingsCurrencyIndexImport } from './routes/_protected/workspace/$namespace/settings/currency/index'
+import { Route as ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport } from './routes/_protected/workspace/$namespace/settings/categories/index'
 
 // Create Virtual Routes
 
@@ -121,15 +124,33 @@ const ProtectedWorkspaceNamespaceSettingsIndexRoute =
     getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
   } as any)
 
-const ProtectedWorkspaceNamespaceCategoriesIndexRoute =
-  ProtectedWorkspaceNamespaceCategoriesIndexImport.update({
-    path: '/categories/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
-
 const ProtectedWorkspaceNamespaceAccountsIndexRoute =
   ProtectedWorkspaceNamespaceAccountsIndexImport.update({
     path: '/accounts/',
+    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+  } as any)
+
+const ProtectedWorkspaceNamespaceSettingsUsersIndexRoute =
+  ProtectedWorkspaceNamespaceSettingsUsersIndexImport.update({
+    path: '/settings/users/',
+    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+  } as any)
+
+const ProtectedWorkspaceNamespaceSettingsGeneralIndexRoute =
+  ProtectedWorkspaceNamespaceSettingsGeneralIndexImport.update({
+    path: '/settings/general/',
+    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+  } as any)
+
+const ProtectedWorkspaceNamespaceSettingsCurrencyIndexRoute =
+  ProtectedWorkspaceNamespaceSettingsCurrencyIndexImport.update({
+    path: '/settings/currency/',
+    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+  } as any)
+
+const ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute =
+  ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport.update({
+    path: '/settings/categories/',
     getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
   } as any)
 
@@ -193,16 +214,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
-    '/_protected/workspace/$namespace/categories/': {
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceCategoriesIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
-    }
     '/_protected/workspace/$namespace/settings/': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
     '/_protected/workspace/$namespace/transactions/': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceTransactionsIndexImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    }
+    '/_protected/workspace/$namespace/settings/categories/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    }
+    '/_protected/workspace/$namespace/settings/currency/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsCurrencyIndexImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    }
+    '/_protected/workspace/$namespace/settings/general/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsGeneralIndexImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    }
+    '/_protected/workspace/$namespace/settings/users/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsUsersIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
   }
@@ -216,9 +249,12 @@ export const routeTree = rootRoute.addChildren([
     ProtectedWorkspaceNamespaceRouteRoute.addChildren([
       ProtectedWorkspaceNamespaceIndexRoute,
       ProtectedWorkspaceNamespaceAccountsIndexRoute,
-      ProtectedWorkspaceNamespaceCategoriesIndexRoute,
       ProtectedWorkspaceNamespaceSettingsIndexRoute,
       ProtectedWorkspaceNamespaceTransactionsIndexRoute,
+      ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute,
+      ProtectedWorkspaceNamespaceSettingsCurrencyIndexRoute,
+      ProtectedWorkspaceNamespaceSettingsGeneralIndexRoute,
+      ProtectedWorkspaceNamespaceSettingsUsersIndexRoute,
     ]),
     ProtectedWorkspaceIndexRoute,
   ]),
