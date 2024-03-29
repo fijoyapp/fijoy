@@ -179,7 +179,7 @@ function Page() {
                 <FormItem>
                   <Card>
                     <CardHeader>
-                      <CardTitle>Workspace Name</CardTitle>
+                      <CardTitle className="text-xl">Workspace Name</CardTitle>
                       <CardDescription>
                         This is your workspace&apos;s visible name within Fijoy.
                       </CardDescription>
@@ -222,7 +222,7 @@ function Page() {
                 <FormItem>
                   <Card>
                     <CardHeader>
-                      <CardTitle>Workspace URL</CardTitle>
+                      <CardTitle className="text-xl">Workspace URL</CardTitle>
                       <CardDescription>
                         This is your workspace’s URL namespace on Fijoy.
                       </CardDescription>
@@ -256,7 +256,7 @@ function Page() {
 
         <Card className="border-destructive">
           <CardHeader>
-            <CardTitle>Delete Workspace</CardTitle>
+            <CardTitle className="text-xl">Delete Workspace</CardTitle>
             <CardDescription>
               This will permanently delete your workspace and all its data.
             </CardDescription>

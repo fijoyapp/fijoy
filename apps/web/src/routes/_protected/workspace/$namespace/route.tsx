@@ -333,7 +333,7 @@ function DiscordCard() {
   return (
     <Card>
       <CardHeader className="p-3">
-        <CardTitle className="text-xl">Join our Discord</CardTitle>
+        <CardTitle>Join our Discord</CardTitle>
         <CardDescription>
           Keep up to date with the latest features and updates.
         </CardDescription>

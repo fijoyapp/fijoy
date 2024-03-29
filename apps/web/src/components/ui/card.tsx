@@ -1,3 +1,4 @@
+// NOTE: changed CardTitle from text-2xl to text-xl
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -36,7 +37,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-xl font-semibold leading-none tracking-tight",
       className,
     )}
     {...props}
