@@ -21,7 +21,12 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
 import { getWorkspaceByNamespaceQueryOptions } from "@/lib/queries/workspace";
 import { WorkspaceProvider } from "@/workspace";
-import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useMatchRoute,
+} from "@tanstack/react-router";
 import {
   ArrowLeftRight,
   Bell,
@@ -32,12 +37,13 @@ import {
   List,
   Menu,
   Package,
-  Package2,
   Search,
   Settings,
   ShoppingCart,
   Users,
 } from "lucide-react";
+import { siteConfig } from "@/config/site";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace")({
   beforeLoad: async ({ params, context }) => {
@@ -58,8 +64,8 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
 
 function Page() {
   const { namespace } = Route.useParams();
-  const { workspace } = Route.useRouteContext();
-
+  // const { workspace } = Route.useRouteContext();
+  const matchRoute = useMatchRoute();
   return (
     <WorkspaceProvider namespace={namespace}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -72,7 +78,7 @@ function Page() {
                 className="flex items-center gap-2 font-semibold"
               >
                 <Icons.logo className="h-6 w-6" />
-                <span className="">{workspace.name}</span>
+                <span className="">Fijoy</span>
               </Link>
               <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
                 <Bell className="h-4 w-4" />
@@ -84,7 +90,12 @@ function Page() {
                 <Link
                   from="/workspace/$namespace"
                   to="/workspace/$namespace"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    matchRoute({ to: "/workspace/$namespace" })
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground",
+                  )}
                 >
                   <Home className="h-4 w-4" />
                   Overview
@@ -92,7 +103,12 @@ function Page() {
                 <Link
                   from="/workspace/$namespace"
                   to="/workspace/$namespace/transactions"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    matchRoute({ to: "/workspace/$namespace/transactions" })
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground",
+                  )}
                 >
                   <ArrowLeftRight className="h-4 w-4" />
                   Transactions
@@ -103,7 +119,12 @@ function Page() {
                 <Link
                   from="/workspace/$namespace"
                   to="/workspace/$namespace/accounts"
-                  className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    matchRoute({ to: "/workspace/$namespace/accounts" })
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground",
+                  )}
                 >
                   <CreditCard className="h-4 w-4" />
                   Accounts
@@ -111,7 +132,12 @@ function Page() {
                 <Link
                   from="/workspace/$namespace"
                   to="/workspace/$namespace/categories"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    matchRoute({ to: "/workspace/$namespace/categories" })
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground",
+                  )}
                 >
                   <List className="h-4 w-4" />
                   Categories
@@ -119,7 +145,12 @@ function Page() {
                 <Link
                   from="/workspace/$namespace"
                   to="/workspace/$namespace/settings"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    matchRoute({ to: "/workspace/$namespace/settings" })
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground",
+                  )}
                 >
                   <Settings className="h-4 w-4" />
                   Settings
@@ -127,20 +158,7 @@ function Page() {
               </nav>
             </div>
             <div className="mt-auto p-4">
-              <Card>
-                <CardHeader className="p-2 pt-0 md:p-4">
-                  <CardTitle>Upgrade to Pro</CardTitle>
-                  <CardDescription>
-                    Unlock all features and get unlimited access to our support
-                    team.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                  <Button size="sm" className="w-full">
-                    Upgrade
-                  </Button>
-                </CardContent>
-              </Card>
+              <DiscordCard />
             </div>
           </div>
         </div>
@@ -163,8 +181,8 @@ function Page() {
                     href="#"
                     className="flex items-center gap-2 text-lg font-semibold"
                   >
-                    <Package2 className="h-6 w-6" />
-                    <span className="sr-only">Acme Inc</span>
+                    <span className="sr-only">Fijoy</span>
+                    <Icons.logo className="h-6 w-6" />
                   </Link>
                   <Link
                     href="#"
@@ -206,20 +224,7 @@ function Page() {
                   </Link>
                 </nav>
                 <div className="mt-auto">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Upgrade to Pro</CardTitle>
-                      <CardDescription>
-                        Unlock all features and get unlimited access to our
-                        support team.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Button size="sm" className="w-full">
-                        Upgrade
-                      </Button>
-                    </CardContent>
-                  </Card>
+                  <DiscordCard />
                 </div>
               </SheetContent>
             </Sheet>
@@ -262,5 +267,25 @@ function Page() {
         </div>
       </div>
     </WorkspaceProvider>
+  );
+}
+
+function DiscordCard() {
+  return (
+    <Card>
+      <CardHeader className="">
+        <CardTitle>Join our Discord</CardTitle>
+        <CardDescription>
+          Keep up to date with the latest features and updates.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="">
+        <Button size="sm" className="w-full" asChild>
+          <a target="_blank" href={siteConfig.links.discord}>
+            Join
+          </a>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
