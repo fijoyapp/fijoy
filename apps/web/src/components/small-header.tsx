@@ -8,13 +8,7 @@ function PageHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <section
-      className={cn(
-        "flex max-w-[980px] flex-col items-start gap-2 pt-12",
-        className,
-      )}
-      {...props}
-    >
+    <section className={cn("flex flex-col", className)} {...props}>
       {children}
     </section>
   );
@@ -26,10 +20,7 @@ function PageHeaderHeading({
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
-      className={cn(
-        "text-5xl font-bold leading-[1.1] tracking-tighter",
-        className,
-      )}
+      className={cn("text-lg font-semibold md:text-2xl", className)}
       {...props}
     />
   );
@@ -41,7 +32,7 @@ function PageHeaderDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <Balance
-      className={cn("max-w-[750px] text-xl text-muted-foreground", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );

@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,21 +18,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-// import { siteConfig } from "@/config/site";
-import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
 import { getWorkspaceByNamespaceQueryOptions } from "@/lib/queries/workspace";
 import { WorkspaceProvider } from "@/workspace";
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
 import {
+  ArrowLeftRight,
   Bell,
   CircleUser,
+  CreditCard,
   Home,
   LineChart,
+  List,
   Menu,
   Package,
   Package2,
   Search,
+  Settings,
   ShoppingCart,
   Users,
 } from "lucide-react";
@@ -42,39 +45,34 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
       namespace: params.namespace,
       context,
     });
-
-    await context.queryClient.ensureQueryData(workspaceQueryOpts);
-
-    const workspace = context.queryClient.getQueryData<Workspace>(
-      workspaceQueryOpts.queryKey,
-    );
-
-    if (!workspace) {
-      throw new Error("Workspace not found");
-    }
-
+    const workspace =
+      await context.queryClient.ensureQueryData(workspaceQueryOpts);
     return { workspace };
   },
 
   loader: ({ context }) => {
-    const accountsQueryOpts = getAccountsQueryOptions({ context });
-    return context.queryClient.ensureQueryData(accountsQueryOpts);
+    context.queryClient.ensureQueryData(getAccountsQueryOptions({ context }));
   },
-
   component: Page,
 });
 
 function Page() {
   const { namespace } = Route.useParams();
+  const { workspace } = Route.useRouteContext();
+
   return (
     <WorkspaceProvider namespace={namespace}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-              <Link href="/" className="flex items-center gap-2 font-semibold">
-                <Package2 className="h-6 w-6" />
-                <span className="">Acme Inc</span>
+              <Link
+                to={"/workspace/$namespace"}
+                params={{ namespace }}
+                className="flex items-center gap-2 font-semibold"
+              >
+                <Icons.logo className="h-6 w-6" />
+                <span className="">{workspace.name}</span>
               </Link>
               <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
                 <Bell className="h-4 w-4" />
@@ -84,42 +82,47 @@ function Page() {
             <div className="flex-1">
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 <Link
-                  href="#"
+                  from="/workspace/$namespace"
+                  to="/workspace/$namespace"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
                   <Home className="h-4 w-4" />
-                  Dashboard
+                  Overview
                 </Link>
                 <Link
-                  href="#"
+                  from="/workspace/$namespace"
+                  to="/workspace/$namespace/transactions"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
-                  <ShoppingCart className="h-4 w-4" />
-                  Orders
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
+                  <ArrowLeftRight className="h-4 w-4" />
+                  Transactions
+                  {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full"> */}
+                  {/*   6 */}
+                  {/* </Badge> */}
                 </Link>
                 <Link
-                  href="#"
+                  from="/workspace/$namespace"
+                  to="/workspace/$namespace/accounts"
                   className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
                 >
-                  <Package className="h-4 w-4" />
-                  Products{" "}
+                  <CreditCard className="h-4 w-4" />
+                  Accounts
                 </Link>
                 <Link
-                  href="#"
+                  from="/workspace/$namespace"
+                  to="/workspace/$namespace/categories"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
-                  <Users className="h-4 w-4" />
-                  Customers
+                  <List className="h-4 w-4" />
+                  Categories
                 </Link>
                 <Link
-                  href="#"
+                  from="/workspace/$namespace"
+                  to="/workspace/$namespace/settings"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
-                  <LineChart className="h-4 w-4" />
-                  Analytics
+                  <Settings className="h-4 w-4" />
+                  Settings
                 </Link>
               </nav>
             </div>
@@ -226,7 +229,7 @@ function Page() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Search products..."
+                    placeholder="Search..."
                     className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                   />
                 </div>

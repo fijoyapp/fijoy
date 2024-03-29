@@ -1,5 +1,11 @@
 import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
 import NewTransaction from "@/components/transactions/new-transaction";
+
+import {
+  PageHeader,
+  PageHeaderDescription,
+  PageHeaderHeading,
+} from "@/components/small-header";
 // import { accountsQueryOptions } from "@/lib/queries/account";
 // import { categoriesQueryOptions } from "@/lib/queries/category";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -40,13 +46,13 @@ function Page() {
   // );
 
   return (
-    <div className="container max-w-screen-2xl">
-      {/* <PageHeader> */}
-      {/*   <PageHeaderHeading className="">Transactions</PageHeaderHeading> */}
-      {/*   <PageHeaderDescription className=""> */}
-      {/*     The home for all your transactions. */}
-      {/*   </PageHeaderDescription> */}
-      {/* </PageHeader> */}
+    <>
+      <PageHeader>
+        <PageHeaderHeading>Transactions</PageHeaderHeading>
+        <PageHeaderDescription>
+          You can start selling as soon as you add a product.
+        </PageHeaderDescription>
+      </PageHeader>
 
       <div className="py-4" />
 
@@ -59,7 +65,6 @@ function Page() {
       <div className="py-4" />
 
       <DataTable columns={columns} data={transactions} />
-    </div>
+    </>
   );
 }
-
