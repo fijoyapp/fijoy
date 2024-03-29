@@ -1,3 +1,5 @@
+// NOTE: eslint disable for fast refresh
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
@@ -33,4 +35,5 @@ function Badge({ className, variant, ...props }: BadgeProps) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Badge, badgeVariants };

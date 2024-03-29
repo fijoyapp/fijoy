@@ -5,8 +5,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Account } from "@/gen/proto/fijoy/v1/account_pb";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
-import { useWorkspace } from "@/workspace";
 import currency from "currency.js";
 
 type CardProps = {

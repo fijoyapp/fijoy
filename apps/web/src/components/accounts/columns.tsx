@@ -1,7 +1,8 @@
 import { accountTypeConfigMap } from "@/config/account";
 import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
-import { useWorkspace } from "@/workspace";
+
+import { useWorkspace } from "@/hooks/use-workspace";
 import { ColumnDef, Row } from "@tanstack/react-table";
 
 function BalanceCell({ row }: { row: Row<Account> }) {

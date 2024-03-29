@@ -28,7 +28,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useWorkspace } from "@/workspace";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -50,6 +49,7 @@ import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { getWorkspaceHeader } from "@/lib/headers";
+import { useWorkspace } from "@/hooks/use-workspace";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/settings/general/",

@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { createQueryOptions, useTransport } from "@connectrpc/connect-query";
 import { Workspace } from "./gen/proto/fijoy/v1/workspace_pb";
 import { getWorkspaceByNamespace } from "./gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
@@ -9,7 +9,7 @@ export interface WorkspaceContext {
   isLoading: boolean;
 }
 
-const WorkspaceContext = createContext<WorkspaceContext | null>(null);
+export const WorkspaceContext = createContext<WorkspaceContext | null>(null);
 
 export function WorkspaceProvider({
   children,
@@ -28,12 +28,4 @@ export function WorkspaceProvider({
       {children}
     </WorkspaceContext.Provider>
   );
-}
-
-export function useWorkspace() {
-  const context = useContext(WorkspaceContext);
-  if (!context) {
-    throw new Error("useWorkspace must be used within an WorkspaceProvider");
-  }
-  return context;
 }

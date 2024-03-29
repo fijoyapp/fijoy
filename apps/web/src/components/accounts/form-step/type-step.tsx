@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useWorkspace } from "@/workspace";
+import { useWorkspace } from "@/hooks/use-workspace";
 import { useRouter } from "@tanstack/react-router";
 import { useAccountsStore } from "@/store/accounts";
 import { zodResolver } from "@hookform/resolvers/zod";
