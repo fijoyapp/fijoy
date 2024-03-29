@@ -45,6 +45,7 @@ import {
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { env } from "@/env";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace")({
   beforeLoad: async ({ params, context }) => {
@@ -288,6 +289,7 @@ function Page() {
                 </div>
               </form>
             </div>
+            <ModeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
