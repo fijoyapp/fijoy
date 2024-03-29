@@ -88,7 +88,7 @@ function Page() {
           <Card className="transition-all hover:bg-secondary">
             <div className="flex items-center">
               <CardHeader>
-                <CardTitle>Currency and Display</CardTitle>
+                <CardTitle>Currency </CardTitle>
                 <CardDescription>
                   Configure how things are displayed
                 </CardDescription>
