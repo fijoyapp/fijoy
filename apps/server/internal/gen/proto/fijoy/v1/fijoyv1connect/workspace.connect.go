@@ -46,15 +46,23 @@ const (
 	// WorkspaceServiceGetWorkspaceByNamespaceProcedure is the fully-qualified name of the
 	// WorkspaceService's GetWorkspaceByNamespace RPC.
 	WorkspaceServiceGetWorkspaceByNamespaceProcedure = "/fijoy.v1.WorkspaceService/GetWorkspaceByNamespace"
+	// WorkspaceServiceUpdateWorkspaceNameProcedure is the fully-qualified name of the
+	// WorkspaceService's UpdateWorkspaceName RPC.
+	WorkspaceServiceUpdateWorkspaceNameProcedure = "/fijoy.v1.WorkspaceService/UpdateWorkspaceName"
+	// WorkspaceServiceUpdateWorkspaceNamespaceProcedure is the fully-qualified name of the
+	// WorkspaceService's UpdateWorkspaceNamespace RPC.
+	WorkspaceServiceUpdateWorkspaceNamespaceProcedure = "/fijoy.v1.WorkspaceService/UpdateWorkspaceNamespace"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	workspaceServiceServiceDescriptor                       = v1.File_fijoy_v1_workspace_proto.Services().ByName("WorkspaceService")
-	workspaceServiceCreateWorkspaceMethodDescriptor         = workspaceServiceServiceDescriptor.Methods().ByName("CreateWorkspace")
-	workspaceServiceGetWorkspacesMethodDescriptor           = workspaceServiceServiceDescriptor.Methods().ByName("GetWorkspaces")
-	workspaceServiceGetWorkspaceByIdMethodDescriptor        = workspaceServiceServiceDescriptor.Methods().ByName("GetWorkspaceById")
-	workspaceServiceGetWorkspaceByNamespaceMethodDescriptor = workspaceServiceServiceDescriptor.Methods().ByName("GetWorkspaceByNamespace")
+	workspaceServiceServiceDescriptor                        = v1.File_fijoy_v1_workspace_proto.Services().ByName("WorkspaceService")
+	workspaceServiceCreateWorkspaceMethodDescriptor          = workspaceServiceServiceDescriptor.Methods().ByName("CreateWorkspace")
+	workspaceServiceGetWorkspacesMethodDescriptor            = workspaceServiceServiceDescriptor.Methods().ByName("GetWorkspaces")
+	workspaceServiceGetWorkspaceByIdMethodDescriptor         = workspaceServiceServiceDescriptor.Methods().ByName("GetWorkspaceById")
+	workspaceServiceGetWorkspaceByNamespaceMethodDescriptor  = workspaceServiceServiceDescriptor.Methods().ByName("GetWorkspaceByNamespace")
+	workspaceServiceUpdateWorkspaceNameMethodDescriptor      = workspaceServiceServiceDescriptor.Methods().ByName("UpdateWorkspaceName")
+	workspaceServiceUpdateWorkspaceNamespaceMethodDescriptor = workspaceServiceServiceDescriptor.Methods().ByName("UpdateWorkspaceNamespace")
 )
 
 // WorkspaceServiceClient is a client for the fijoy.v1.WorkspaceService service.
@@ -63,6 +71,8 @@ type WorkspaceServiceClient interface {
 	GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspaces], error)
 	GetWorkspaceById(context.Context, *connect.Request[v1.GetWorkspaceByIdRequest]) (*connect.Response[v1.Workspace], error)
 	GetWorkspaceByNamespace(context.Context, *connect.Request[v1.GetWorkspaceByNamespaceRequest]) (*connect.Response[v1.Workspace], error)
+	UpdateWorkspaceName(context.Context, *connect.Request[v1.UpdateWorkspaceNameRequest]) (*connect.Response[v1.Workspace], error)
+	UpdateWorkspaceNamespace(context.Context, *connect.Request[v1.UpdateWorkspaceNamespaceRequest]) (*connect.Response[v1.Workspace], error)
 }
 
 // NewWorkspaceServiceClient constructs a client for the fijoy.v1.WorkspaceService service. By
@@ -102,15 +112,29 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
+		updateWorkspaceName: connect.NewClient[v1.UpdateWorkspaceNameRequest, v1.Workspace](
+			httpClient,
+			baseURL+WorkspaceServiceUpdateWorkspaceNameProcedure,
+			connect.WithSchema(workspaceServiceUpdateWorkspaceNameMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		updateWorkspaceNamespace: connect.NewClient[v1.UpdateWorkspaceNamespaceRequest, v1.Workspace](
+			httpClient,
+			baseURL+WorkspaceServiceUpdateWorkspaceNamespaceProcedure,
+			connect.WithSchema(workspaceServiceUpdateWorkspaceNamespaceMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // workspaceServiceClient implements WorkspaceServiceClient.
 type workspaceServiceClient struct {
-	createWorkspace         *connect.Client[v1.CreateWorkspaceRequest, v1.Workspace]
-	getWorkspaces           *connect.Client[emptypb.Empty, v1.Workspaces]
-	getWorkspaceById        *connect.Client[v1.GetWorkspaceByIdRequest, v1.Workspace]
-	getWorkspaceByNamespace *connect.Client[v1.GetWorkspaceByNamespaceRequest, v1.Workspace]
+	createWorkspace          *connect.Client[v1.CreateWorkspaceRequest, v1.Workspace]
+	getWorkspaces            *connect.Client[emptypb.Empty, v1.Workspaces]
+	getWorkspaceById         *connect.Client[v1.GetWorkspaceByIdRequest, v1.Workspace]
+	getWorkspaceByNamespace  *connect.Client[v1.GetWorkspaceByNamespaceRequest, v1.Workspace]
+	updateWorkspaceName      *connect.Client[v1.UpdateWorkspaceNameRequest, v1.Workspace]
+	updateWorkspaceNamespace *connect.Client[v1.UpdateWorkspaceNamespaceRequest, v1.Workspace]
 }
 
 // CreateWorkspace calls fijoy.v1.WorkspaceService.CreateWorkspace.
@@ -133,12 +157,24 @@ func (c *workspaceServiceClient) GetWorkspaceByNamespace(ctx context.Context, re
 	return c.getWorkspaceByNamespace.CallUnary(ctx, req)
 }
 
+// UpdateWorkspaceName calls fijoy.v1.WorkspaceService.UpdateWorkspaceName.
+func (c *workspaceServiceClient) UpdateWorkspaceName(ctx context.Context, req *connect.Request[v1.UpdateWorkspaceNameRequest]) (*connect.Response[v1.Workspace], error) {
+	return c.updateWorkspaceName.CallUnary(ctx, req)
+}
+
+// UpdateWorkspaceNamespace calls fijoy.v1.WorkspaceService.UpdateWorkspaceNamespace.
+func (c *workspaceServiceClient) UpdateWorkspaceNamespace(ctx context.Context, req *connect.Request[v1.UpdateWorkspaceNamespaceRequest]) (*connect.Response[v1.Workspace], error) {
+	return c.updateWorkspaceNamespace.CallUnary(ctx, req)
+}
+
 // WorkspaceServiceHandler is an implementation of the fijoy.v1.WorkspaceService service.
 type WorkspaceServiceHandler interface {
 	CreateWorkspace(context.Context, *connect.Request[v1.CreateWorkspaceRequest]) (*connect.Response[v1.Workspace], error)
 	GetWorkspaces(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspaces], error)
 	GetWorkspaceById(context.Context, *connect.Request[v1.GetWorkspaceByIdRequest]) (*connect.Response[v1.Workspace], error)
 	GetWorkspaceByNamespace(context.Context, *connect.Request[v1.GetWorkspaceByNamespaceRequest]) (*connect.Response[v1.Workspace], error)
+	UpdateWorkspaceName(context.Context, *connect.Request[v1.UpdateWorkspaceNameRequest]) (*connect.Response[v1.Workspace], error)
+	UpdateWorkspaceNamespace(context.Context, *connect.Request[v1.UpdateWorkspaceNamespaceRequest]) (*connect.Response[v1.Workspace], error)
 }
 
 // NewWorkspaceServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -174,6 +210,18 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceUpdateWorkspaceNameHandler := connect.NewUnaryHandler(
+		WorkspaceServiceUpdateWorkspaceNameProcedure,
+		svc.UpdateWorkspaceName,
+		connect.WithSchema(workspaceServiceUpdateWorkspaceNameMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceUpdateWorkspaceNamespaceHandler := connect.NewUnaryHandler(
+		WorkspaceServiceUpdateWorkspaceNamespaceProcedure,
+		svc.UpdateWorkspaceNamespace,
+		connect.WithSchema(workspaceServiceUpdateWorkspaceNamespaceMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/fijoy.v1.WorkspaceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case WorkspaceServiceCreateWorkspaceProcedure:
@@ -184,6 +232,10 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceGetWorkspaceByIdHandler.ServeHTTP(w, r)
 		case WorkspaceServiceGetWorkspaceByNamespaceProcedure:
 			workspaceServiceGetWorkspaceByNamespaceHandler.ServeHTTP(w, r)
+		case WorkspaceServiceUpdateWorkspaceNameProcedure:
+			workspaceServiceUpdateWorkspaceNameHandler.ServeHTTP(w, r)
+		case WorkspaceServiceUpdateWorkspaceNamespaceProcedure:
+			workspaceServiceUpdateWorkspaceNamespaceHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -207,4 +259,12 @@ func (UnimplementedWorkspaceServiceHandler) GetWorkspaceById(context.Context, *c
 
 func (UnimplementedWorkspaceServiceHandler) GetWorkspaceByNamespace(context.Context, *connect.Request[v1.GetWorkspaceByNamespaceRequest]) (*connect.Response[v1.Workspace], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.GetWorkspaceByNamespace is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) UpdateWorkspaceName(context.Context, *connect.Request[v1.UpdateWorkspaceNameRequest]) (*connect.Response[v1.Workspace], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.UpdateWorkspaceName is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) UpdateWorkspaceNamespace(context.Context, *connect.Request[v1.UpdateWorkspaceNamespaceRequest]) (*connect.Response[v1.Workspace], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.UpdateWorkspaceNamespace is not implemented"))
 }

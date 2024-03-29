@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
+import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, UpdateWorkspaceNameRequest, UpdateWorkspaceNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.WorkspaceService.CreateWorkspace
@@ -60,6 +60,34 @@ export const getWorkspaceByNamespace = {
   I: GetWorkspaceByNamespaceRequest,
   O: Workspace,
       idempotency: MethodIdempotency.NoSideEffects,
+  service: {
+    typeName: "fijoy.v1.WorkspaceService"
+  }
+} as const;
+
+/**
+ * @generated from rpc fijoy.v1.WorkspaceService.UpdateWorkspaceName
+ */
+export const updateWorkspaceName = {
+  localName: "updateWorkspaceName",
+  name: "UpdateWorkspaceName",
+  kind: MethodKind.Unary,
+  I: UpdateWorkspaceNameRequest,
+  O: Workspace,
+  service: {
+    typeName: "fijoy.v1.WorkspaceService"
+  }
+} as const;
+
+/**
+ * @generated from rpc fijoy.v1.WorkspaceService.UpdateWorkspaceNamespace
+ */
+export const updateWorkspaceNamespace = {
+  localName: "updateWorkspaceNamespace",
+  name: "UpdateWorkspaceNamespace",
+  kind: MethodKind.Unary,
+  I: UpdateWorkspaceNamespaceRequest,
+  O: Workspace,
   service: {
     typeName: "fijoy.v1.WorkspaceService"
   }

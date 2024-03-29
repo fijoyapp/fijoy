@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"fijoy/internal/util"
@@ -228,6 +229,128 @@ func (s *WorkspaceServer) GetWorkspaceByNamespace(
 			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
 			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
 		WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.Namespace.EQ(String(req.Msg.Namespace))))
+
+	var dest struct {
+		model.FijoyWorkspace
+	}
+
+	err = stmt.QueryContext(ctx, s.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	res := connect.NewResponse(&fijoyv1.Workspace{
+		Id:              dest.ID,
+		Namespace:       dest.Namespace,
+		Name:            dest.Name,
+		CreatedAt:       timestamppb.New(dest.CreatedAt),
+		PrimaryCurrency: dest.PrimaryCurrency,
+		Locale:          dest.Locale,
+	})
+
+	return res, nil
+}
+
+func (s *WorkspaceServer) UpdateWorkspaceName(
+	ctx context.Context,
+	req *connect.Request[fijoyv1.UpdateWorkspaceNameRequest],
+) (*connect.Response[fijoyv1.Workspace], error) {
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasEditPermission(&workspaceUser) {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
+	workspace := model.FijoyWorkspace{
+		Name: req.Msg.Name,
+	}
+
+	stmt := FijoyWorkspace.UPDATE(FijoyWorkspace.Name).MODEL(workspace).WHERE(
+		FijoyWorkspace.ID.EQ(String(workspaceId)),
+	).RETURNING(FijoyWorkspace.AllColumns)
+
+	var dest struct {
+		model.FijoyWorkspace
+	}
+
+	err = stmt.QueryContext(ctx, s.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	res := connect.NewResponse(&fijoyv1.Workspace{
+		Id:              dest.ID,
+		Namespace:       dest.Namespace,
+		Name:            dest.Name,
+		CreatedAt:       timestamppb.New(dest.CreatedAt),
+		PrimaryCurrency: dest.PrimaryCurrency,
+		Locale:          dest.Locale,
+	})
+
+	return res, nil
+}
+
+func (s *WorkspaceServer) UpdateWorkspaceNamespace(
+	ctx context.Context,
+	req *connect.Request[fijoyv1.UpdateWorkspaceNamespaceRequest],
+) (*connect.Response[fijoyv1.Workspace], error) {
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasEditPermission(&workspaceUser) {
+		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	}
+
+	v, err := protovalidate.New()
+	if err != nil {
+		return nil, err
+	}
+
+	if err = v.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
+	workspace := model.FijoyWorkspace{
+		Namespace: req.Msg.Namespace,
+	}
+
+	stmt := FijoyWorkspace.UPDATE(FijoyWorkspace.Namespace).MODEL(workspace).WHERE(
+		FijoyWorkspace.ID.EQ(String(workspaceId)),
+	).RETURNING(FijoyWorkspace.AllColumns)
 
 	var dest struct {
 		model.FijoyWorkspace

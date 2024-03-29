@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
+import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, UpdateWorkspaceNameRequest, UpdateWorkspaceNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -50,6 +50,24 @@ export const WorkspaceService = {
       O: Workspace,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc fijoy.v1.WorkspaceService.UpdateWorkspaceName
+     */
+    updateWorkspaceName: {
+      name: "UpdateWorkspaceName",
+      I: UpdateWorkspaceNameRequest,
+      O: Workspace,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc fijoy.v1.WorkspaceService.UpdateWorkspaceNamespace
+     */
+    updateWorkspaceNamespace: {
+      name: "UpdateWorkspaceNamespace",
+      I: UpdateWorkspaceNamespaceRequest,
+      O: Workspace,
+      kind: MethodKind.Unary,
     },
   }
 } as const;

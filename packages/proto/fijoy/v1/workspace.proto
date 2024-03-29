@@ -34,6 +34,14 @@ message GetWorkspaceByNamespaceRequest {
   string namespace = 1 [(buf.validate.field).string.min_len = 1];
 }
 
+message UpdateWorkspaceNameRequest {
+  string name = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message UpdateWorkspaceNamespaceRequest {
+  string namespace = 1 [(buf.validate.field).string.min_len = 1];
+}
+
 service WorkspaceService {
   rpc CreateWorkspace(CreateWorkspaceRequest) returns (Workspace);
   rpc GetWorkspaces(google.protobuf.Empty) returns (Workspaces) {
@@ -45,4 +53,7 @@ service WorkspaceService {
   rpc GetWorkspaceByNamespace(GetWorkspaceByNamespaceRequest) returns (Workspace) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
+
+  rpc UpdateWorkspaceName(UpdateWorkspaceNameRequest) returns (Workspace);
+  rpc UpdateWorkspaceNamespace(UpdateWorkspaceNamespaceRequest) returns (Workspace);
 }
