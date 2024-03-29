@@ -1,4 +1,4 @@
-import { useAuth } from "@/auth";
+import { useAuth } from "@/hooks/use-auth";
 import { Icons } from "@/components/icons";
 import { Navigate, Outlet, createFileRoute } from "@tanstack/react-router";
 

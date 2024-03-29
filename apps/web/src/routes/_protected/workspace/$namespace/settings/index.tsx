@@ -43,7 +43,7 @@ function Page() {
                 </CardDescription>
               </CardHeader>
               <div className="grow"></div>
-              <Settings />
+              <Settings className="h-4 w-4" />
               <div className="px-4"></div>
             </div>
           </Card>

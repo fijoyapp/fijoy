@@ -5,7 +5,7 @@ import { PublicNav } from "@/components/public-nav";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { useAuth } from "@/auth";
+import { useAuth } from "@/hooks/use-auth";
 
 export function PublicHeader() {
   const { user } = useAuth();

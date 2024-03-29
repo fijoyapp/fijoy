@@ -7,7 +7,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/auth";
+import { useAuth } from "@/hooks/use-auth";
 
 function WorkspaceButton() {
   const { user } = useAuth();
