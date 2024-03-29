@@ -9,7 +9,7 @@ import { DataTable } from "@/components/transactions/data-table";
 import { columns } from "@/components/transactions/columns";
 
 export const Route = createFileRoute(
-  "/_protected/workspace/$namespace/transactions",
+  "/_protected/workspace/$namespace/transactions/",
 )({
   loader: (opts) =>
     opts.context.queryClient.ensureQueryData(
@@ -63,4 +63,3 @@ function Page() {
   );
 }
 
-export default Page;
