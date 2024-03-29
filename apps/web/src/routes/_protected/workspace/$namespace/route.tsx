@@ -23,7 +23,7 @@ import { getWorkspaceByNamespaceQueryOptions } from "@/lib/queries/workspace";
 import { WorkspaceProvider } from "@/workspace";
 import {
   Link,
-  LinkProps,
+  // LinkProps,
   Outlet,
   createFileRoute,
   useMatchRoute,
@@ -63,54 +63,54 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
   component: Page,
 });
 
-type NavLink = {
-  link: LinkProps;
-  name: string;
-  icon: React.ReactNode;
-};
+// type NavLink = {
+//   link: LinkProps;
+//   name: string;
+//   icon: React.ReactNode;
+// };
 
 // FIXME: https://github.com/TanStack/router/issues/1271#
 // waiting for this issue to be resolved
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const navLinks: NavLink[] = [
-  {
-    name: "Overview",
-    link: { from: "/workspace/$namespace", to: "/workspace/$namespace" },
-    icon: <Home className="h-4 w-4" />,
-  },
-  {
-    name: "Transactions",
-    link: {
-      from: "/workspace/$namespace",
-      to: "/workspace/$namespace/transactions",
-    },
-    icon: <ArrowLeftRight className="h-4 w-4" />,
-  },
-  {
-    name: "Accounts",
-    link: {
-      from: "/workspace/$namespace",
-      to: "/workspace/$namespace/accounts",
-    },
-    icon: <CreditCard className="h-4 w-4" />,
-  },
-  {
-    name: "Categories",
-    link: {
-      from: "/workspace/$namespace",
-      to: "/workspace/$namespace/categories",
-    },
-    icon: <List className="h-4 w-4" />,
-  },
-  {
-    name: "Settings",
-    link: {
-      from: "/workspace/$namespace",
-      to: "/workspace/$namespace/settings",
-    },
-    icon: <Settings className="h-4 w-4" />,
-  },
-];
+// const navLinks: NavLink[] = [
+//   {
+//     name: "Overview",
+//     link: { from: "/workspace/$namespace", to: "/workspace/$namespace" },
+//     icon: <Home className="h-4 w-4" />,
+//   },
+//   {
+//     name: "Transactions",
+//     link: {
+//       from: "/workspace/$namespace",
+//       to: "/workspace/$namespace/transactions",
+//     },
+//     icon: <ArrowLeftRight className="h-4 w-4" />,
+//   },
+//   {
+//     name: "Accounts",
+//     link: {
+//       from: "/workspace/$namespace",
+//       to: "/workspace/$namespace/accounts",
+//     },
+//     icon: <CreditCard className="h-4 w-4" />,
+//   },
+//   {
+//     name: "Categories",
+//     link: {
+//       from: "/workspace/$namespace",
+//       to: "/workspace/$namespace/categories",
+//     },
+//     icon: <List className="h-4 w-4" />,
+//   },
+//   {
+//     name: "Settings",
+//     link: {
+//       from: "/workspace/$namespace",
+//       to: "/workspace/$namespace/settings",
+//     },
+//     icon: <Settings className="h-4 w-4" />,
+//   },
+// ];
 
 function Page() {
   const { namespace } = Route.useParams();

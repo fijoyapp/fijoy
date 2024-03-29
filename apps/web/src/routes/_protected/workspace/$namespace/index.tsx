@@ -3,7 +3,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getWorkspacesQueryOptions } from "@/lib/queries/workspace";
-import { Button } from "@/components/ui/button";
 import {
   PageHeader,
   PageHeaderDescription,
