@@ -71,7 +71,6 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
 
 // FIXME: https://github.com/TanStack/router/issues/1271#
 // waiting for this issue to be resolved
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 // const navLinks: NavLink[] = [
 //   {
 //     name: "Overview",

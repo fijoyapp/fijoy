@@ -76,7 +76,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Prettier Check
+      - name: Eslint Check
         run: pnpm lint
 
   tsc-check:
@@ -113,5 +113,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Prettier Check
+      - name: Type Check
         run: pnpm type-check
