@@ -23,6 +23,7 @@ import { getWorkspaceByNamespaceQueryOptions } from "@/lib/queries/workspace";
 import { WorkspaceProvider } from "@/workspace";
 import {
   Link,
+  LinkProps,
   Outlet,
   createFileRoute,
   useMatchRoute,
@@ -62,10 +63,60 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
   component: Page,
 });
 
+type NavLink = {
+  link: LinkProps;
+  name: string;
+  icon: React.ReactNode;
+};
+
+// FIXME: https://github.com/TanStack/router/issues/1271#
+// waiting for this issue to be resolved
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const navLinks: NavLink[] = [
+  {
+    name: "Overview",
+    link: { from: "/workspace/$namespace", to: "/workspace/$namespace" },
+    icon: <Home className="h-4 w-4" />,
+  },
+  {
+    name: "Transactions",
+    link: {
+      from: "/workspace/$namespace",
+      to: "/workspace/$namespace/transactions",
+    },
+    icon: <ArrowLeftRight className="h-4 w-4" />,
+  },
+  {
+    name: "Accounts",
+    link: {
+      from: "/workspace/$namespace",
+      to: "/workspace/$namespace/accounts",
+    },
+    icon: <CreditCard className="h-4 w-4" />,
+  },
+  {
+    name: "Categories",
+    link: {
+      from: "/workspace/$namespace",
+      to: "/workspace/$namespace/categories",
+    },
+    icon: <List className="h-4 w-4" />,
+  },
+  {
+    name: "Settings",
+    link: {
+      from: "/workspace/$namespace",
+      to: "/workspace/$namespace/settings",
+    },
+    icon: <Settings className="h-4 w-4" />,
+  },
+];
+
 function Page() {
   const { namespace } = Route.useParams();
   // const { workspace } = Route.useRouteContext();
   const matchRoute = useMatchRoute();
+
   return (
     <WorkspaceProvider namespace={namespace}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -177,6 +228,7 @@ function Page() {
               </SheetTrigger>
               <SheetContent side="left" className="flex flex-col">
                 <nav className="grid gap-2 text-lg font-medium">
+                  {/* FIXME: update all these once the link issue above gets resolved */}
                   <Link
                     href="#"
                     className="flex items-center gap-2 text-lg font-semibold"
