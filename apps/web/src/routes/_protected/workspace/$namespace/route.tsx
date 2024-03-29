@@ -154,7 +154,10 @@ function Page() {
                   to="/workspace/$namespace/transactions"
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
-                    matchRoute({ to: "/workspace/$namespace/transactions" })
+                    matchRoute({
+                      to: "/workspace/$namespace/transactions",
+                      fuzzy: true,
+                    })
                       ? "bg-muted text-primary"
                       : "text-muted-foreground",
                   )}
@@ -170,7 +173,10 @@ function Page() {
                   to="/workspace/$namespace/accounts"
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
-                    matchRoute({ to: "/workspace/$namespace/accounts" })
+                    matchRoute({
+                      to: "/workspace/$namespace/accounts",
+                      fuzzy: true,
+                    })
                       ? "bg-muted text-primary"
                       : "text-muted-foreground",
                   )}
@@ -183,7 +189,10 @@ function Page() {
                   to="/workspace/$namespace/settings"
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
-                    matchRoute({ to: "/workspace/$namespace/settings" })
+                    matchRoute({
+                      to: "/workspace/$namespace/settings",
+                      fuzzy: true,
+                    })
                       ? "bg-muted text-primary"
                       : "text-muted-foreground",
                   )}
