@@ -1,5 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/_protected/workspace/$namespace/settings/')({
-  component: () => <div>Hello /_protected/workspace/$namespace/settings/!</div>
-})
+export const Route = createFileRoute(
+  "/_protected/workspace/$namespace/settings/",
+)({
+  component: () => <div>Hello /_protected/workspace/$namespace/settings/!</div>,
+});
