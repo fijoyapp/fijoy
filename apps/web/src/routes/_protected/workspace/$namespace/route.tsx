@@ -46,6 +46,11 @@ import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { env } from "@/env";
 import { ModeToggle } from "@/components/mode-toggle";
+import {
+  PageHeader,
+  PageHeaderDescription,
+  PageHeaderHeading,
+} from "@/components/page-header";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace")({
   beforeLoad: async ({ params, context }) => {
@@ -57,6 +62,18 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
       await context.queryClient.ensureQueryData(workspaceQueryOpts);
     return { workspace };
   },
+  errorComponent: () => (
+    <PageHeader>
+      <PageHeaderHeading>Oops!</PageHeaderHeading>
+      <PageHeaderDescription>
+        You do not have access to this workspace :(
+      </PageHeaderDescription>
+      <div className="py-2"></div>
+      <Button asChild>
+        <Link to={"/workspace"}>Go Back</Link>
+      </Button>
+    </PageHeader>
+  ),
 
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(getAccountsQueryOptions({ context }));
