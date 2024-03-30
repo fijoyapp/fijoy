@@ -87,7 +87,8 @@ func (s *WorkspaceServer) CreateWorkspace(
 		Locale:          req.Msg.Locale,
 	}
 
-	insertWorkspaceStmt := FijoyWorkspace.INSERT(FijoyWorkspace.AllColumns).MODEL(workspace)
+	insertWorkspaceStmt := FijoyWorkspace.
+		INSERT(FijoyWorkspace.AllColumns).MODEL(workspace)
 
 	_, err = insertWorkspaceStmt.ExecContext(ctx, tx)
 	if err != nil {
@@ -100,7 +101,8 @@ func (s *WorkspaceServer) CreateWorkspace(
 		Role:        "owner",
 	}
 
-	insertWorkspaceUserStmt := FijoyWorkspaceUser.INSERT(FijoyWorkspaceUser.AllColumns).MODEL(workspaceUser)
+	insertWorkspaceUserStmt := FijoyWorkspaceUser.
+		INSERT(FijoyWorkspaceUser.AllColumns).MODEL(workspaceUser)
 
 	_, err = insertWorkspaceUserStmt.ExecContext(ctx, tx)
 	if err != nil {
@@ -137,7 +139,8 @@ func (s *WorkspaceServer) GetWorkspaces(
 	stmt := SELECT(FijoyWorkspace.AllColumns).
 		FROM(FijoyWorkspaceUser.
 			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
-			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).WHERE(FijoyUser.ID.EQ(String(userId)))
+			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
+		WHERE(FijoyUser.ID.EQ(String(userId)))
 
 	dest := []*model.FijoyWorkspace{}
 
@@ -180,7 +183,12 @@ func (s *WorkspaceServer) GetWorkspaceById(
 		FROM(FijoyWorkspaceUser.
 			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
 			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
-		WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.ID.EQ(String(req.Msg.Id))))
+		WHERE(
+			AND(
+				FijoyUser.ID.EQ(String(userId)),
+				FijoyWorkspace.ID.EQ(String(req.Msg.Id)),
+			),
+		)
 
 	var dest model.FijoyWorkspace
 
@@ -216,7 +224,12 @@ func (s *WorkspaceServer) GetWorkspaceByNamespace(
 		FROM(FijoyWorkspaceUser.
 			INNER_JOIN(FijoyUser, FijoyWorkspaceUser.UserID.EQ(FijoyUser.ID)).
 			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
-		WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.Namespace.EQ(String(req.Msg.Namespace))))
+		WHERE(
+			AND(
+				FijoyUser.ID.EQ(String(userId)),
+				FijoyWorkspace.Namespace.EQ(String(req.Msg.Namespace)),
+			),
+		)
 
 	var dest model.FijoyWorkspace
 
@@ -250,7 +263,9 @@ func (s *WorkspaceServer) UpdateWorkspaceName(
 	}
 
 	if !util.HasEditPermission(&workspaceUser) {
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+		return nil, connect.NewError(
+			connect.CodePermissionDenied, errors.New("user does not have edit permission"),
+		)
 	}
 
 	v, err := protovalidate.New()
@@ -302,7 +317,9 @@ func (s *WorkspaceServer) UpdateWorkspaceNamespace(
 	}
 
 	if !util.HasEditPermission(&workspaceUser) {
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+		return nil, connect.NewError(
+			connect.CodePermissionDenied, errors.New("user does not have edit permission"),
+		)
 	}
 
 	v, err := protovalidate.New()
@@ -352,8 +369,10 @@ func (s *WorkspaceServer) DeleteWorkspace(
 		return nil, err
 	}
 
-	if !util.HasEditPermission(&workspaceUser) {
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+	if !util.HasAdminPermission(&workspaceUser) {
+		return nil, connect.NewError(
+			connect.CodePermissionDenied, errors.New("user does not have admin permission"),
+		)
 	}
 
 	stmt := FijoyWorkspace.DELETE().WHERE(

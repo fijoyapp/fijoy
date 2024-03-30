@@ -41,6 +41,15 @@ func GetWorkspaceUserPermission(db *sql.DB, userId string, worksapceId string) (
 	return dest, nil
 }
 
+func HasAdminPermission(wu *model.FijoyWorkspaceUser) bool {
+	switch wu.Role {
+	case model.FijoyWorkspaceRole_Owner:
+		return true
+	default:
+		return false
+	}
+}
+
 func HasEditPermission(wu *model.FijoyWorkspaceUser) bool {
 	switch wu.Role {
 	case model.FijoyWorkspaceRole_Owner, model.FijoyWorkspaceRole_Editor:
