@@ -34,8 +34,8 @@ function Page() {
           from={Route.fullPath}
           to={"/workspace/$namespace/settings/general"}
         >
-          <Card className="transition-all hover:bg-secondary">
-            <div className="flex items-center">
+          <Card className="h-full transition-all hover:bg-secondary">
+            <div className="flex h-full items-center">
               <CardHeader>
                 <CardTitle>General</CardTitle>
                 <CardDescription>
@@ -49,8 +49,8 @@ function Page() {
           </Card>
         </Link>
         <Link from={Route.fullPath} to={"/workspace/$namespace/settings/users"}>
-          <Card className="transition-all hover:bg-secondary">
-            <div className="flex items-center">
+          <Card className="h-full transition-all hover:bg-secondary">
+            <div className="flex h-full items-center">
               <CardHeader>
                 <CardTitle>Users</CardTitle>
                 <CardDescription>
@@ -67,8 +67,8 @@ function Page() {
           from={Route.fullPath}
           to={"/workspace/$namespace/settings/categories"}
         >
-          <Card className="transition-all hover:bg-secondary">
-            <div className="flex items-center">
+          <Card className="h-full transition-all hover:bg-secondary">
+            <div className="flex h-full items-center">
               <CardHeader>
                 <CardTitle>Categories</CardTitle>
                 <CardDescription>
@@ -85,8 +85,8 @@ function Page() {
           from={Route.fullPath}
           to={"/workspace/$namespace/settings/currency"}
         >
-          <Card className="transition-all hover:bg-secondary">
-            <div className="flex items-center">
+          <Card className="h-full transition-all hover:bg-secondary">
+            <div className="flex h-full items-center">
               <CardHeader>
                 <CardTitle>Currency </CardTitle>
                 <CardDescription>
