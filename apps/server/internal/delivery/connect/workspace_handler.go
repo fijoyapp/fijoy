@@ -43,6 +43,17 @@ func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	})
 }
 
+func jetWorkspaceToConnectWorkspace(w *model.FijoyWorkspace) *fijoyv1.Workspace {
+	return &fijoyv1.Workspace{
+		Id:              w.ID,
+		Namespace:       w.Namespace,
+		Name:            w.Name,
+		CreatedAt:       timestamppb.New(w.CreatedAt),
+		PrimaryCurrency: w.PrimaryCurrency,
+		Locale:          w.Locale,
+	}
+}
+
 func (s *WorkspaceServer) CreateWorkspace(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.CreateWorkspaceRequest],
@@ -100,14 +111,7 @@ func (s *WorkspaceServer) CreateWorkspace(
 		return nil, err
 	}
 
-	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:              workspace.ID,
-		Namespace:       workspace.Namespace,
-		Name:            workspace.Name,
-		CreatedAt:       timestamppb.New(workspace.CreatedAt),
-		PrimaryCurrency: workspace.PrimaryCurrency,
-		Locale:          workspace.Locale,
-	})
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&workspace))
 
 	return res, nil
 }
@@ -144,14 +148,7 @@ func (s *WorkspaceServer) GetWorkspaces(
 
 	workspaces := make([]*fijoyv1.Workspace, len(dest))
 	for i, w := range dest {
-		workspaces[i] = &fijoyv1.Workspace{
-			Id:              w.ID,
-			Namespace:       w.Namespace,
-			Name:            w.Name,
-			CreatedAt:       timestamppb.New(w.CreatedAt),
-			PrimaryCurrency: w.PrimaryCurrency,
-			Locale:          w.Locale,
-		}
+		workspaces[i] = jetWorkspaceToConnectWorkspace(w)
 	}
 
 	res := connect.NewResponse(&fijoyv1.Workspaces{
@@ -185,23 +182,14 @@ func (s *WorkspaceServer) GetWorkspaceById(
 			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
 		WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.ID.EQ(String(req.Msg.Id))))
 
-	var dest struct {
-		model.FijoyWorkspace
-	}
+	var dest model.FijoyWorkspace
 
 	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
 
-	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:              dest.ID,
-		Namespace:       dest.Namespace,
-		Name:            dest.Name,
-		CreatedAt:       timestamppb.New(dest.CreatedAt),
-		PrimaryCurrency: dest.PrimaryCurrency,
-		Locale:          dest.Locale,
-	})
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&dest))
 
 	return res, nil
 }
@@ -230,23 +218,14 @@ func (s *WorkspaceServer) GetWorkspaceByNamespace(
 			INNER_JOIN(FijoyWorkspace, FijoyWorkspaceUser.WorkspaceID.EQ(FijoyWorkspace.ID))).
 		WHERE(AND(FijoyUser.ID.EQ(String(userId)), FijoyWorkspace.Namespace.EQ(String(req.Msg.Namespace))))
 
-	var dest struct {
-		model.FijoyWorkspace
-	}
+	var dest model.FijoyWorkspace
 
 	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
 
-	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:              dest.ID,
-		Namespace:       dest.Namespace,
-		Name:            dest.Name,
-		CreatedAt:       timestamppb.New(dest.CreatedAt),
-		PrimaryCurrency: dest.PrimaryCurrency,
-		Locale:          dest.Locale,
-	})
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&dest))
 
 	return res, nil
 }
@@ -291,23 +270,14 @@ func (s *WorkspaceServer) UpdateWorkspaceName(
 		FijoyWorkspace.ID.EQ(String(workspaceId)),
 	).RETURNING(FijoyWorkspace.AllColumns)
 
-	var dest struct {
-		model.FijoyWorkspace
-	}
+	var dest model.FijoyWorkspace
 
 	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
 
-	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:              dest.ID,
-		Namespace:       dest.Namespace,
-		Name:            dest.Name,
-		CreatedAt:       timestamppb.New(dest.CreatedAt),
-		PrimaryCurrency: dest.PrimaryCurrency,
-		Locale:          dest.Locale,
-	})
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&dest))
 
 	return res, nil
 }
@@ -352,23 +322,13 @@ func (s *WorkspaceServer) UpdateWorkspaceNamespace(
 		FijoyWorkspace.ID.EQ(String(workspaceId)),
 	).RETURNING(FijoyWorkspace.AllColumns)
 
-	var dest struct {
-		model.FijoyWorkspace
-	}
+	var dest model.FijoyWorkspace
 
 	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
-
-	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:              dest.ID,
-		Namespace:       dest.Namespace,
-		Name:            dest.Name,
-		CreatedAt:       timestamppb.New(dest.CreatedAt),
-		PrimaryCurrency: dest.PrimaryCurrency,
-		Locale:          dest.Locale,
-	})
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&dest))
 
 	return res, nil
 }
@@ -400,23 +360,13 @@ func (s *WorkspaceServer) DeleteWorkspace(
 		FijoyWorkspace.ID.EQ(String(workspaceId)),
 	).RETURNING(FijoyWorkspace.AllColumns)
 
-	var dest struct {
-		model.FijoyWorkspace
-	}
+	var dest model.FijoyWorkspace
 
 	err = stmt.QueryContext(ctx, s.db, &dest)
 	if err != nil {
 		return nil, err
 	}
-
-	res := connect.NewResponse(&fijoyv1.Workspace{
-		Id:              dest.ID,
-		Namespace:       dest.Namespace,
-		Name:            dest.Name,
-		CreatedAt:       timestamppb.New(dest.CreatedAt),
-		PrimaryCurrency: dest.PrimaryCurrency,
-		Locale:          dest.Locale,
-	})
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&dest))
 
 	return res, nil
 }
