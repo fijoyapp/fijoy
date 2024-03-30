@@ -43,6 +43,20 @@ func NewAccountHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
 	})
 }
 
+func jetAccountToConnectAccount(a *entity.FijoyAccount) *fijoyv1.Account {
+	return &fijoyv1.Account{
+		Id:          a.ID,
+		WorkspaceId: a.WorkspaceID,
+		Name:        a.Name,
+		AccountType: util.JetAccountTypeToConnectAccountType[a.AccountType],
+		Balance:     util.DecimalToMoney(a.Balance),
+		Currency:    a.Currency,
+		Institution: a.Institution,
+		CreatedAt:   timestamppb.New(a.CreatedAt),
+		UpdatedAt:   timestamppb.New(a.UpdatedAt),
+	}
+}
+
 func (s *AccountServer) CreateAccount(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.CreateAccountRequest],
@@ -98,15 +112,9 @@ func (s *AccountServer) CreateAccount(
 		return nil, err
 	}
 
-	return connect.NewResponse(&fijoyv1.Account{
-		Id:          dest.ID,
-		Name:        dest.Name,
-		AccountType: util.JetAccountTypeToConnectAccountType[dest.AccountType],
-		Institution: dest.Institution,
-		Balance:     util.DecimalToMoney(dest.Balance),
-		Currency:    dest.Currency,
-		UpdatedAt:   timestamppb.New(dest.UpdatedAt),
-	}), nil
+	res := connect.NewResponse(jetAccountToConnectAccount(&dest))
+
+	return res, nil
 }
 
 func (s *AccountServer) GetAccounts(
@@ -153,17 +161,7 @@ func (s *AccountServer) GetAccounts(
 
 	accounts := make([]*fijoyv1.Account, len(dest))
 	for i, w := range dest {
-		accounts[i] = &fijoyv1.Account{
-			Id:          w.ID,
-			WorkspaceId: w.WorkspaceID,
-			Name:        w.Name,
-			AccountType: util.JetAccountTypeToConnectAccountType[w.AccountType],
-			Balance:     util.DecimalToMoney(w.Balance),
-			Currency:    w.Currency,
-			Institution: w.Institution,
-			CreatedAt:   timestamppb.New(w.CreatedAt),
-			UpdatedAt:   timestamppb.New(w.UpdatedAt),
-		}
+		accounts[i] = jetAccountToConnectAccount(&w)
 	}
 
 	res := connect.NewResponse(&fijoyv1.Accounts{
@@ -218,17 +216,9 @@ func (s *AccountServer) GetAccountById(
 		return nil, err
 	}
 
-	return connect.NewResponse(&fijoyv1.Account{
-		Id:          dest.ID,
-		WorkspaceId: dest.WorkspaceID,
-		Name:        dest.Name,
-		AccountType: util.JetAccountTypeToConnectAccountType[dest.AccountType],
-		Balance:     util.DecimalToMoney(dest.Balance),
-		Currency:    dest.Currency,
-		Institution: dest.Currency,
-		CreatedAt:   timestamppb.New(dest.CreatedAt),
-		UpdatedAt:   timestamppb.New(dest.UpdatedAt),
-	}), nil
+	res := connect.NewResponse(jetAccountToConnectAccount(&dest))
+
+	return res, nil
 }
 
 func (s *AccountServer) DeleteAccountById(
@@ -272,15 +262,7 @@ func (s *AccountServer) DeleteAccountById(
 		return nil, err
 	}
 
-	return connect.NewResponse(&fijoyv1.Account{
-		Id:          dest.ID,
-		WorkspaceId: dest.WorkspaceID,
-		Name:        dest.Name,
-		AccountType: util.JetAccountTypeToConnectAccountType[dest.AccountType],
-		Balance:     util.DecimalToMoney(dest.Balance),
-		Currency:    dest.Currency,
-		Institution: dest.Institution,
-		CreatedAt:   timestamppb.New(dest.CreatedAt),
-		UpdatedAt:   timestamppb.New(dest.UpdatedAt),
-	}), nil
+	res := connect.NewResponse(jetAccountToConnectAccount(&dest))
+
+	return res, nil
 }
