@@ -88,9 +88,10 @@ func (s *WorkspaceServer) CreateWorkspace(
 	}
 
 	insertWorkspaceStmt := FijoyWorkspace.
-		INSERT(FijoyWorkspace.AllColumns).MODEL(workspace)
+		INSERT(FijoyWorkspace.AllColumns).MODEL(workspace).
+		RETURNING(FijoyWorkspace.AllColumns)
 
-	_, err = insertWorkspaceStmt.ExecContext(ctx, tx)
+	err = insertWorkspaceStmt.QueryContext(ctx, tx, &workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -102,9 +103,10 @@ func (s *WorkspaceServer) CreateWorkspace(
 	}
 
 	insertWorkspaceUserStmt := FijoyWorkspaceUser.
-		INSERT(FijoyWorkspaceUser.AllColumns).MODEL(workspaceUser)
+		INSERT(FijoyWorkspaceUser.AllColumns).MODEL(workspaceUser).
+		RETURNING(FijoyWorkspaceUser.AllColumns)
 
-	_, err = insertWorkspaceUserStmt.ExecContext(ctx, tx)
+	err = insertWorkspaceUserStmt.QueryContext(ctx, tx, &workspaceUser)
 	if err != nil {
 		return nil, err
 	}
