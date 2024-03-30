@@ -13,7 +13,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
 import { DataTable } from "@/components/transactions/data-table";
 import { columns } from "@/components/transactions/columns";
-import { Icons } from "@/components/icons";
+import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/transactions/",
@@ -22,11 +22,7 @@ export const Route = createFileRoute(
     opts.context.queryClient.ensureQueryData(
       getTransactionsQueryOptions({ context: opts.context }),
     ),
-  pendingComponent: () => (
-    <div>
-      <Icons.spinner />,
-    </div>
-  ),
+  pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
 

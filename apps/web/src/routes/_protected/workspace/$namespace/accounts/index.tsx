@@ -12,7 +12,7 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
-import { Icons } from "@/components/icons";
+import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
 const setupNewAccountSchema = z.object({
   step: NewAccountStep.default("name").optional(),
@@ -32,11 +32,7 @@ export const Route = createFileRoute(
       }),
     );
   },
-  pendingComponent: () => (
-    <div>
-      <Icons.spinner />,
-    </div>
-  ),
+  pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
 

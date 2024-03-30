@@ -1,4 +1,4 @@
-import { Icons } from "@/components/icons";
+import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { getWorkspaces } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
 import { getWorkspacesQueryOptions } from "@/lib/queries/workspace";
 import { useSuspenseQuery } from "@connectrpc/connect-query";
@@ -12,11 +12,7 @@ export const Route = createFileRoute("/_protected/workspace/")({
       getWorkspacesQueryOptions({ context: opts.context }),
     );
   },
-  pendingComponent: () => (
-    <div>
-      <Icons.spinner />,
-    </div>
-  ),
+  pendingComponent: CenterLoadingSpinner,
 });
 
 function Page() {
