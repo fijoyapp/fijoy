@@ -196,7 +196,7 @@ function Page() {
                     <CardFooter className="space-x-4 border-t px-6 py-4">
                       {workspaceNameForm.formState.isSubmitting ? (
                         <Button disabled={true}>
-                          <Icons.spinner className="animate-spin" />
+                          <Icons.spinner />
                         </Button>
                       ) : (
                         <Button>Save</Button>
@@ -240,7 +240,7 @@ function Page() {
                     <CardFooter className="space-x-4 border-t px-6 py-4">
                       {workspaceUrlForm.formState.isSubmitting ? (
                         <Button disabled={true}>
-                          <Icons.spinner className="animate-spin" />
+                          <Icons.spinner />
                         </Button>
                       ) : (
                         <Button>Save</Button>

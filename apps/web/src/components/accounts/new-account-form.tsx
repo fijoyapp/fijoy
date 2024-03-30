@@ -97,7 +97,7 @@ const NewAccountForm = ({ workspace, step }: Props) => {
       {step === "balance" && <BalanceStep />}
       {step === "final" && (
         <div className="flex h-10 items-center gap-2">
-          <Icons.spinner className="animate-spin" />
+          <Icons.spinner />
           <div>Creating your account...</div>
         </div>
       )}

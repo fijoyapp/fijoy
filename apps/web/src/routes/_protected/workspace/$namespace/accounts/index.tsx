@@ -34,7 +34,7 @@ export const Route = createFileRoute(
   },
   pendingComponent: () => (
     <div>
-      <Icons.spinner className="animate-spin" />,
+      <Icons.spinner />,
     </div>
   ),
   component: Page,

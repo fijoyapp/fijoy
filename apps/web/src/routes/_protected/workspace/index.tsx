@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_protected/workspace/")({
   },
   pendingComponent: () => (
     <div>
-      <Icons.spinner className="animate-spin" />,
+      <Icons.spinner />,
     </div>
   ),
 });

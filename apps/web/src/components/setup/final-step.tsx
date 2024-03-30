@@ -83,7 +83,7 @@ const FinalStep = () => {
 
   return (
     <div className="flex items-center justify-center gap-2">
-      <Icons.spinner className="animate-spin" />
+      <Icons.spinner />
       <div>Working on it...</div>
     </div>
   );

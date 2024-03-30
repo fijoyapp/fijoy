@@ -12,7 +12,7 @@ function Protected() {
   if (auth.isLoading) {
     return (
       <div className="flex h-screen flex-col items-center justify-center">
-        <Icons.spinner className="animate-spin" />
+        <Icons.spinner />
       </div>
     );
   }
