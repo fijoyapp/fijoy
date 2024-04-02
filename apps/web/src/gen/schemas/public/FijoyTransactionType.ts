@@ -18,4 +18,4 @@ export const fijoyTransactionType = z.enum([
   'income',
   'transfer',
   'adjustment',
-]);;
+]);

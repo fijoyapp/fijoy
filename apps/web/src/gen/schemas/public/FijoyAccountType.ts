@@ -18,4 +18,4 @@ export const fijoyAccountType = z.enum([
   'debt',
   'investment',
   'other_asset',
-]);;
+]);

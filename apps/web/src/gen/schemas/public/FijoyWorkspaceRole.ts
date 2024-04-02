@@ -18,4 +18,4 @@ export const fijoyWorkspaceRole = z.enum([
   'editor',
   'viewer',
   'pending',
-]);;
+]);
