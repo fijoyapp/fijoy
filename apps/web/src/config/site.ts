@@ -4,7 +4,7 @@ export const siteConfig = {
   // ogImage: "https://ui.shadcn.com/og.jpg",
   description: "Joyful personal finance management for everyone.",
   links: {
-    discord: "https://discord.gg/xcEs33PpTR",
+    discord: "https://discord.gg/HwZarY9Aas",
     github: "https://github.com/itsjoeoui/fijoy",
   },
 };
