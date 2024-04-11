@@ -23,13 +23,12 @@ message Transaction {
 
   TransactionType transaction_type = 5 [(buf.validate.field).required = true];
   fijoy.v1.Money amount = 6 [(buf.validate.field).required = true];
-  string currency = 7 [(buf.validate.field).string.min_len = 1];
 
-  google.protobuf.Timestamp datetime = 8 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp datetime = 7 [(buf.validate.field).required = true];
 
-  optional string category_id = 9 [(buf.validate.field).string.min_len = 1];
-  optional string entity = 10 [(buf.validate.field).string.min_len = 1];
-  optional string note = 11 [(buf.validate.field).string.min_len = 1];
+  optional string category_id = 8 [(buf.validate.field).string.min_len = 1];
+  optional string entity = 9 [(buf.validate.field).string.min_len = 1];
+  optional string note = 10 [(buf.validate.field).string.min_len = 1];
 }
 
 message Transactions {

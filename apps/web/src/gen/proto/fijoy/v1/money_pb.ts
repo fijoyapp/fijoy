@@ -13,10 +13,17 @@ import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
  */
 export class Money extends Message<Money> {
   /**
+   * The three-letter currency code defined in ISO 4217.
+   *
+   * @generated from field: string currency_code = 1;
+   */
+  currencyCode = "";
+
+  /**
    * The whole units of the amount.
    * For example if `currencyCode` is `"USD"`, then 1 unit is one US dollar.
    *
-   * @generated from field: int64 units = 1;
+   * @generated from field: int64 units = 2;
    */
   units = protoInt64.zero;
 
@@ -28,7 +35,7 @@ export class Money extends Message<Money> {
    * If `units` is negative, `nanos` must be negative or zero.
    * For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
    *
-   * @generated from field: int32 nanos = 2;
+   * @generated from field: int32 nanos = 3;
    */
   nanos = 0;
 
@@ -40,8 +47,9 @@ export class Money extends Message<Money> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "fijoy.v1.Money";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "units", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
-    { no: 2, name: "nanos", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 1, name: "currency_code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "units", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 3, name: "nanos", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Money {

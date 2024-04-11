@@ -80,27 +80,22 @@ export class Transaction extends Message<Transaction> {
   amount?: Money;
 
   /**
-   * @generated from field: string currency = 7;
-   */
-  currency = "";
-
-  /**
-   * @generated from field: google.protobuf.Timestamp datetime = 8;
+   * @generated from field: google.protobuf.Timestamp datetime = 7;
    */
   datetime?: Timestamp;
 
   /**
-   * @generated from field: optional string category_id = 9;
+   * @generated from field: optional string category_id = 8;
    */
   categoryId?: string;
 
   /**
-   * @generated from field: optional string entity = 10;
+   * @generated from field: optional string entity = 9;
    */
   entity?: string;
 
   /**
-   * @generated from field: optional string note = 11;
+   * @generated from field: optional string note = 10;
    */
   note?: string;
 
@@ -118,11 +113,10 @@ export class Transaction extends Message<Transaction> {
     { no: 4, name: "workspace_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "transaction_type", kind: "enum", T: proto3.getEnumType(TransactionType) },
     { no: 6, name: "amount", kind: "message", T: Money },
-    { no: 7, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "datetime", kind: "message", T: Timestamp },
-    { no: 9, name: "category_id", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 10, name: "entity", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 11, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 7, name: "datetime", kind: "message", T: Timestamp },
+    { no: 8, name: "category_id", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 9, name: "entity", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 10, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Transaction {
