@@ -2,7 +2,7 @@
   "name": "@fijoy/proto",
   "version": "0.0.0",
   "scripts": {
-    "buf": "pnpx @bufbuild/buf generate "
+    "buf": "pnpx @bufbuild/buf generate"
   },
   "devDependencies": {
     "@bufbuild/protoc-gen-es": "^1.8.0",

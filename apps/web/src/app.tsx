@@ -22,6 +22,7 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
+
 export function App() {
   const auth = useAuth();
 
