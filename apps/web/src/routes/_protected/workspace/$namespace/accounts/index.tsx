@@ -41,7 +41,7 @@ import FinalStep from "@/components/accounts/form-step/final-step";
 
 const setupNewAccountSchema = z.object({
   step: NewAccountStep.default("name-type-institution").optional(),
-  "add-account": z.boolean().optional().default(false),
+  "add-account": z.boolean().default(false).optional(),
 });
 
 export const Route = createFileRoute(
@@ -78,7 +78,7 @@ function Page() {
       </PageHeader>
 
       <AddAccount
-        open={addAccountOpen}
+        open={addAccountOpen ?? false}
         step={step ?? "name-type-institution"}
       />
 
