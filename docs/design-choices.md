@@ -5,6 +5,19 @@ and I hope this also helps contributors to gain insight on how and why things
 are done in the way they are, and please feel free to challenge those design
 decisions as certainly they are not perfect :)
 
+## Focus
+
+There are a couple things I would like to achive with Fijoy
+
+- The account balance is traceable at all time. Meaning if an account has X amount
+  of money, it is the sum of all the transactions.
+  Everything always adds up at all time.
+- A great manual transaction logging experience, I have no interest at the
+  moment for providers like Plaid or Flink, as they are quite unreliable
+  based on my own testing, and most importantly, I think they defeat the
+  purpose of doing expense tracking, which is making you more aware of your
+  spending.
+
 ## Accounts
 
 - Each account will maintain its current balance and the currency.
