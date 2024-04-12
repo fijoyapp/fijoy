@@ -1,4 +1,9 @@
-# Database Design
+# Design Choices
+
+This is a document that I use to keep track of all the design choices I made,
+and I hope this also helps contributors to gain insight on how and why things
+are done in the way they are, and please feel free to challenge those design
+decisions as certainly they are not perfect :)
 
 ## Accounts
 
