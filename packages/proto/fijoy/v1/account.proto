@@ -21,10 +21,9 @@ message Account {
   string name = 3 [(buf.validate.field).string.min_len = 1];
   AccountType account_type = 4 [(buf.validate.field).required = true];
   fijoy.v1.Money balance = 5 [(buf.validate.field).required = true];
-  string currency = 6 [(buf.validate.field).string.min_len = 1];
-  string institution = 7 [(buf.validate.field).string.min_len = 1];
-  google.protobuf.Timestamp created_at = 8 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 9 [(buf.validate.field).required = true];
+  string institution = 6 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp created_at = 7 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 8 [(buf.validate.field).required = true];
 }
 
 message Accounts {

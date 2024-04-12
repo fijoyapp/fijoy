@@ -13,7 +13,7 @@ const router = createRouter({
     transport: undefined!,
     queryClient,
   },
-  // defaultPreloadStaleTime: 0,
+  defaultPreloadStaleTime: 0,
 });
 
 // Register the router instance for type safety

@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 export const NewAccountSteps = [
-  "name",
-  "type",
-  "institution",
+  "name-type-institution",
   "balance",
   "final",
 ] as const;
@@ -11,11 +9,6 @@ export const NewAccountSteps = [
 export const NewAccountStep = z.enum(NewAccountSteps);
 
 export type NewAccountStep = z.infer<typeof NewAccountStep>;
-
-export const NameStepData = z.object({
-  name: z.string().min(1, { message: "Required" }),
-});
-export type NameStepData = z.infer<typeof NameStepData>;
 
 export const AccountTypeEnum = z.enum([
   "cash",
@@ -25,15 +18,14 @@ export const AccountTypeEnum = z.enum([
 ]);
 export type AccountTypeEnum = z.infer<typeof AccountTypeEnum>;
 
-export const TypeStepData = z.object({
+export const NameTypeInstitutionStepData = z.object({
+  name: z.string().min(1, { message: "Required" }),
   type: AccountTypeEnum,
-});
-export type TypeStepData = z.infer<typeof TypeStepData>;
-
-export const InstitutionStepData = z.object({
   institution: z.string().min(1, { message: "Required" }),
 });
-export type InstitutionStepData = z.infer<typeof InstitutionStepData>;
+export type NameTypeInstitutionStepData = z.infer<
+  typeof NameTypeInstitutionStepData
+>;
 
 export const BalanceStepData = z.object({
   balance: z.coerce.number(),

@@ -1,27 +1,8 @@
 import { accountTypeConfigMap } from "@/config/account";
 import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
-import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
 
-import { useWorkspace } from "@/hooks/use-workspace";
-import { ColumnDef, Row } from "@tanstack/react-table";
-
-function BalanceCell({ row }: { row: Row<Account> }) {
-  const { workspace } = useWorkspace();
-  if (!row.original.balance) {
-    return "Unknown";
-  }
-  if (row.original.accountType === AccountType.UNSPECIFIED) {
-    return "Unknown";
-  }
-
-  return currencyToDisplay(
-    moneyToCurrency(row.original.balance, {
-      reverse: accountTypeConfigMap[row.original.accountType].isDebt,
-    }),
-    row.original.currency,
-    { compact: false, locale: workspace.locale },
-  );
-}
+import { ColumnDef } from "@tanstack/react-table";
+import { BalanceCell } from "./balance-cell";
 
 export const columns: ColumnDef<Account>[] = [
   {
