@@ -18,7 +18,7 @@ function AmountCell({ row }: { row: Row<Transaction> }) {
 
   return currencyToDisplay(
     moneyToCurrency(row.original.amount, {}),
-    row.original.currency,
+    row.original.amount.currencyCode,
     { compact: false, locale: workspace.locale },
   );
 }
