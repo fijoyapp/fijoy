@@ -5,7 +5,7 @@ and I hope this also helps contributors to gain insight on how and why things
 are done in the way they are, and please feel free to challenge those design
 decisions as certainly they are not perfect :)
 
-## Focus
+## What I want to achieve with Fijoy
 
 There are a couple things I would like to achive with Fijoy
 
@@ -17,6 +17,8 @@ There are a couple things I would like to achive with Fijoy
   based on my own testing, and most importantly, I think they defeat the
   purpose of doing expense tracking, which is making you more aware of your
   spending.
+
+---
 
 ## Accounts
 
