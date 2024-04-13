@@ -40,7 +40,7 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
     const [units, nanos] = value.split(".");
     return {
       units: BigInt(units),
-      nanos: parseInt(nanos.padEnd(9, "0") ?? "0"),
+      nanos: parseInt((nanos ?? "0").padEnd(9, "0")),
     };
   }
 
@@ -57,7 +57,6 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
     }
 
     const money = stringToUnitsNanos(balanceStepData.balance);
-    console.log(money);
 
     await createAccountMutation.mutateAsync({
       name: nameTypeInstitutionStepData.name,

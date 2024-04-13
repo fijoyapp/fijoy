@@ -113,7 +113,7 @@ const BalanceStep = ({ className }: ComponentProps<"form">) => {
 
         <div className="py-2"></div>
 
-        <Button variant="secondary" onClick={onBack}>
+        <Button variant="secondary" type="button" onClick={onBack}>
           Back
         </Button>
         <Button type="submit">Create</Button>
