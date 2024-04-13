@@ -17,7 +17,7 @@ require (
 	github.com/nrednav/cuid2 v1.0.0
 	github.com/rs/cors v1.10.1
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e
-	github.com/shopspring/decimal v1.3.1
+	github.com/shopspring/decimal v1.4.0
 	golang.org/x/oauth2 v0.19.0
 	google.golang.org/protobuf v1.33.0
 )
@@ -27,8 +27,8 @@ require (
 	github.com/google/cel-go v0.20.1 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	golang.org/x/exp v0.0.0-20240409090435-93d18d7e34b8 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240412170617-26222e5d3d56 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240412170617-26222e5d3d56 // indirect
 )
 
 require (
