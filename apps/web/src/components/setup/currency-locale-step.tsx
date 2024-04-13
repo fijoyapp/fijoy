@@ -34,6 +34,7 @@ import { useSetupStore } from "@/store/setup";
 import { getUserLocales, localeCodeToName } from "@/config/locale";
 import { currencyToDisplay } from "@/lib/money";
 import currency from "currency.js";
+import { useState } from "react";
 
 const formSchema = CurrencyLocaleStepData;
 
