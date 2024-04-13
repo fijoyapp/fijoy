@@ -126,7 +126,7 @@ const CurrencyLocaleStep = () => {
                                           "primaryCurrency",
                                           currency,
                                         );
-                                        setPopoverOpen(false)
+                                        setPopoverOpen(false);
                                       }}
                                     >
                                       <Check
