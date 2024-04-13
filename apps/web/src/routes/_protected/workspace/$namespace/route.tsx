@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,16 +34,11 @@ import {
   CircleUser,
   CreditCard,
   Home,
-  LineChart,
-  List,
   LucideIcon,
   Menu,
-  Package,
   Search,
   Settings,
-  ShoppingCart,
   TrendingUp,
-  Users,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -196,7 +190,7 @@ function Page() {
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="flex flex-col">
+              <SheetContent side="left" className="flex max-h-screen flex-col">
                 <Link
                   to={"/workspace/$namespace"}
                   params={{ namespace }}
