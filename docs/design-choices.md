@@ -75,6 +75,19 @@ I do not believe they are useful. Change my mind.
 
 TBD.
 
+## Investment
+
+How to track stacks? Take a brokerage account for example. We will first let the
+user create that account like any other account (input the total value, choose
+the currency...). Then, we will also let the user describe the underlying holdings.
+
+The holdings will be stored, giving us the ability to fetch the latest price of
+the given brokerage account. However! We will not automatically update the value
+of the investment account. To update the value, user can either manually input
+the delta as an income/expense transaction. Or they can click a "checkpoint"
+button where we can automatically calculate the delta and create a transaction
+from the last checkpoint to the current value.
+
 ## Payer / Payee
 
 If this is an income transaction, the payer will be stored, and for an
