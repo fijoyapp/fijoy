@@ -42,3 +42,6 @@ format:
 db-gen:
   just apps/server/jet
   just apps/web/kenel
+
+postgres:
+  docker compose -f docker-compose.dev.yml up
