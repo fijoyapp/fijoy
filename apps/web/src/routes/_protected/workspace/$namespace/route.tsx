@@ -50,6 +50,7 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace")({
   beforeLoad: async ({ params, context }) => {
@@ -133,6 +134,7 @@ function Page() {
   // const { workspace } = Route.useRouteContext();
   const matchRoute = useMatchRoute();
   const { queryClient } = Route.useRouteContext();
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
     <WorkspaceProvider namespace={namespace}>
@@ -157,7 +159,7 @@ function Page() {
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 {navLinks.map((navLink) => (
                   <Link
-                    from={Route.fullPath}
+                    from={navLink.link.from}
                     to={navLink.link.to}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
@@ -179,7 +181,7 @@ function Page() {
         </div>
         <div className="flex flex-col">
           <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-            <Sheet>
+            <Sheet open={sheetOpen} onOpenChange={(open) => setSheetOpen(open)}>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
@@ -202,8 +204,9 @@ function Page() {
                 <nav className="grid gap-2 text-lg font-medium">
                   {navLinks.map((navLink) => (
                     <Link
-                      from={Route.fullPath}
+                      from={navLink.link.from}
                       to={navLink.link.to}
+                      onClick={() => setSheetOpen(false)}
                       className={cn(
                         "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
                         matchRoute({ to: navLink.link.to })
