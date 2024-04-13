@@ -16,7 +16,6 @@ import (
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"
-	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -88,6 +87,18 @@ func (s *AccountServer) CreateAccount(
 		return nil, err
 	}
 
+	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{
+		Isolation: sql.LevelSerializable,
+		ReadOnly:  false,
+	})
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	now := time.Now().UTC()
+	balance := util.MoneyToDecimal(req.Msg.Balance)
+
 	account := entity.FijoyAccount{
 		FijoyAccount: model.FijoyAccount{
 			ID:          "account_" + cuid2.Generate(),
@@ -95,10 +106,10 @@ func (s *AccountServer) CreateAccount(
 			AccountType: util.ConnectAccountTypeToJetAccountType[req.Msg.AccountType],
 			Institution: req.Msg.Institution,
 			WorkspaceID: workspaceId,
-			Currency:    req.Msg.Currency,
-			UpdatedAt:   time.Now().UTC(),
+			Currency:    req.Msg.Balance.CurrencyCode,
+			UpdatedAt:   now,
 		},
-		Balance: decimal.NewFromInt(0),
+		Balance: balance,
 	}
 
 	stmt := FijoyAccount.INSERT(FijoyAccount.AllColumns).MODEL(account).
@@ -106,7 +117,34 @@ func (s *AccountServer) CreateAccount(
 
 	dest := entity.FijoyAccount{}
 
-	err = stmt.QueryContext(ctx, s.db, &dest)
+	err = stmt.QueryContext(ctx, tx, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.Msg.Balance.Nanos != 0 && req.Msg.Balance.Units != 0 {
+
+		transaction := entity.FijoyTransaction{
+			FijoyTransaction: model.FijoyTransaction{
+				ID:              "transaction_" + cuid2.Generate(),
+				AccountID:       account.ID,
+				UserID:          userId,
+				WorkspaceID:     workspaceId,
+				TransactionType: model.FijoyTransactionType_Adjustment,
+				Currency:        req.Msg.Balance.CurrencyCode,
+				Datetime:        now,
+			},
+			Amount: balance,
+		}
+
+		stmt = FijoyTransaction.INSERT(FijoyTransaction.AllColumns).MODEL(transaction)
+		_, err = stmt.ExecContext(ctx, tx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	err = tx.Commit()
 	if err != nil {
 		return nil, err
 	}
@@ -252,14 +290,32 @@ func (s *AccountServer) DeleteAccountById(
 		return nil, err
 	}
 
-	stmt := FijoyAccount.DELETE().WHERE(FijoyAccount.ID.EQ(String(req.Msg.Id))).RETURNING(FijoyAccount.AllColumns)
-
-	dest := entity.FijoyAccount{}
-
-	err = stmt.QueryContext(ctx, s.db, &dest)
+	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{
+		Isolation: sql.LevelSerializable,
+		ReadOnly:  false,
+	})
 	if err != nil {
 		return nil, err
 	}
+	defer tx.Rollback()
+
+	stmt := FijoyTransaction.DELETE().WHERE(FijoyTransaction.AccountID.EQ(String(req.Msg.Id)))
+
+	_, err = stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	stmt = FijoyAccount.DELETE().WHERE(FijoyAccount.ID.EQ(String(req.Msg.Id))).RETURNING(FijoyAccount.AllColumns)
+
+	dest := entity.FijoyAccount{}
+
+	err = stmt.QueryContext(ctx, tx, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
 
 	res := connect.NewResponse(jetAccountToConnectAccount(&dest))
 

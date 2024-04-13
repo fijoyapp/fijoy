@@ -36,8 +36,17 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
   // this makes sure that the mutation only fires once in strict mode
   const hasFired = useRef(false);
 
+  function stringToUnitsNanos(value: string): { units: bigint; nanos: number } {
+    const [units, nanos] = value.split(".");
+    return {
+      units: BigInt(units),
+      nanos: parseInt(nanos.padEnd(9, "0") ?? "0"),
+    };
+  }
+
   async function create() {
-    if (!nameTypeInstitutionStepData) {
+    hasFired.current = true;
+    if (!nameTypeInstitutionStepData || !balanceStepData) {
       router.navigate({
         to: "/workspace/$namespace/accounts",
         search: { step: "name-type-institution", "add-account": true },
@@ -47,18 +56,19 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
       return;
     }
 
+    const money = stringToUnitsNanos(balanceStepData.balance);
+
     await createAccountMutation.mutateAsync({
       name: nameTypeInstitutionStepData.name,
       accountType: tsAccountTypeToProto(nameTypeInstitutionStepData.type),
       institution: nameTypeInstitutionStepData.institution,
-      // TODO: do not hard code
-      currency: "CAD",
+      balance: {
+        // TODO: do not hard code
+        currencyCode: "CAD",
+        nanos: money.nanos,
+        units: money.units,
+      },
     });
-
-    // TODO: add transaction
-    console.log(balanceStepData);
-
-    hasFired.current = true;
 
     reset();
 

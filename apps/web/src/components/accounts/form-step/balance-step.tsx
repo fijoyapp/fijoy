@@ -35,7 +35,7 @@ const BalanceStep = ({ className }: ComponentProps<"form">) => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: balanceStepData ?? { balance: 0 },
+    defaultValues: balanceStepData ?? { balance: "0" },
   });
 
   if (!nameTypeInstitutionStepData) {

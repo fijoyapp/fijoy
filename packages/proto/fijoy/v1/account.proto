@@ -33,7 +33,7 @@ message Accounts {
 message CreateAccountRequest {
   string name = 1 [(buf.validate.field).string.min_len = 1];
   AccountType account_type = 2 [(buf.validate.field).required = true];
-  string currency = 3 [(buf.validate.field).string.min_len = 1];
+  fijoy.v1.Money balance = 3 [(buf.validate.field).required = true];
   string institution = 4 [(buf.validate.field).string.min_len = 1];
 }
 

@@ -15,7 +15,6 @@ import (
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"
-	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -87,7 +86,7 @@ func (s *TransactionServer) CreateIncomeTransaction(
 
 	account := entity.FijoyAccount{}
 
-	err = stmt.QueryContext(ctx, s.db, &account)
+	err = stmt.QueryContext(ctx, tx, &account)
 	if err != nil {
 		return nil, err
 	}
@@ -96,8 +95,7 @@ func (s *TransactionServer) CreateIncomeTransaction(
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
 	}
 
-	amount := decimal.NewFromInt(req.Msg.Amount.Units).
-		Add(decimal.New(int64(req.Msg.Amount.Nanos), -9))
+	amount := util.MoneyToDecimal(req.Msg.Amount)
 
 	after := account.Balance.Add(amount)
 
@@ -124,14 +122,19 @@ func (s *TransactionServer) CreateIncomeTransaction(
 
 	dest := entity.FijoyTransaction{}
 
-	err = insertTransactionStmt.QueryContext(ctx, s.db, &dest)
+	err = insertTransactionStmt.QueryContext(ctx, tx, &dest)
 	if err != nil {
 		return nil, err
 	}
 
 	updateAccountStmt := FijoyAccount.UPDATE(FijoyAccount.Balance).MODEL(account).WHERE(FijoyAccount.ID.EQ(String(account.ID)))
 
-	_, err = updateAccountStmt.ExecContext(ctx, s.db)
+	_, err = updateAccountStmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tx.Commit()
 	if err != nil {
 		return nil, err
 	}
@@ -195,7 +198,7 @@ func (s *TransactionServer) CreateAdjustmentTransaction(
 
 	account := entity.FijoyAccount{}
 
-	err = stmt.QueryContext(ctx, s.db, &account)
+	err = stmt.QueryContext(ctx, tx, &account)
 	if err != nil {
 		return nil, err
 	}
@@ -204,8 +207,7 @@ func (s *TransactionServer) CreateAdjustmentTransaction(
 		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
 	}
 
-	amount := decimal.NewFromInt(req.Msg.Amount.Units).
-		Add(decimal.New(int64(req.Msg.Amount.Nanos), -9))
+	amount := util.MoneyToDecimal(req.Msg.Amount)
 
 	delta := amount.Sub(account.Balance)
 
@@ -232,14 +234,19 @@ func (s *TransactionServer) CreateAdjustmentTransaction(
 
 	dest := entity.FijoyTransaction{}
 
-	err = insertTransactionStmt.QueryContext(ctx, s.db, &dest)
+	err = insertTransactionStmt.QueryContext(ctx, tx, &dest)
 	if err != nil {
 		return nil, err
 	}
 
 	updateAccountStmt := FijoyAccount.UPDATE(FijoyAccount.Balance).WHERE(FijoyAccount.ID.EQ(String(account.ID))).MODEL(account)
 
-	_, err = updateAccountStmt.ExecContext(ctx, s.db)
+	_, err = updateAccountStmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tx.Commit()
 	if err != nil {
 		return nil, err
 	}

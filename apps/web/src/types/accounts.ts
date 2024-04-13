@@ -28,6 +28,6 @@ export type NameTypeInstitutionStepData = z.infer<
 >;
 
 export const BalanceStepData = z.object({
-  balance: z.coerce.number(),
+  balance: z.string(),
 });
 export type BalanceStepData = z.infer<typeof BalanceStepData>;
