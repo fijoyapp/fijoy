@@ -40,6 +40,7 @@ import {
   Search,
   Settings,
   ShoppingCart,
+  TrendingUp,
   Users,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
@@ -163,7 +164,7 @@ function Page() {
                   from="/workspace/$namespace"
                   to="/workspace/$namespace"
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
                     matchRoute({ to: "/workspace/$namespace" })
                       ? "bg-muted text-primary"
                       : "text-muted-foreground",
@@ -176,7 +177,7 @@ function Page() {
                   from="/workspace/$namespace"
                   to="/workspace/$namespace/transactions"
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
                     matchRoute({
                       to: "/workspace/$namespace/transactions",
                       fuzzy: true,
@@ -195,7 +196,7 @@ function Page() {
                   from="/workspace/$namespace"
                   to="/workspace/$namespace/accounts"
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
                     matchRoute({
                       to: "/workspace/$namespace/accounts",
                       fuzzy: true,
@@ -209,9 +210,25 @@ function Page() {
                 </Link>
                 <Link
                   from="/workspace/$namespace"
+                  to="/workspace/$namespace/stocks"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                    matchRoute({
+                      to: "/workspace/$namespace/stocks",
+                      fuzzy: true,
+                    })
+                      ? "bg-muted text-primary"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  Stocks
+                </Link>
+                <Link
+                  from="/workspace/$namespace"
                   to="/workspace/$namespace/settings"
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2  transition-all hover:text-primary",
+                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
                     matchRoute({
                       to: "/workspace/$namespace/settings",
                       fuzzy: true,

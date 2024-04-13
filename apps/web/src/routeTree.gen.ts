@@ -20,6 +20,7 @@ import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/work
 import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_protected/workspace/$namespace/route'
 import { Route as ProtectedWorkspaceNamespaceIndexImport } from './routes/_protected/workspace/$namespace/index'
 import { Route as ProtectedWorkspaceNamespaceTransactionsIndexImport } from './routes/_protected/workspace/$namespace/transactions/index'
+import { Route as ProtectedWorkspaceNamespaceStocksIndexImport } from './routes/_protected/workspace/$namespace/stocks/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsIndexImport } from './routes/_protected/workspace/$namespace/settings/index'
 import { Route as ProtectedWorkspaceNamespaceAccountsIndexImport } from './routes/_protected/workspace/$namespace/accounts/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsUsersIndexImport } from './routes/_protected/workspace/$namespace/settings/users/index'
@@ -116,6 +117,12 @@ const ProtectedWorkspaceNamespaceIndexRoute =
 const ProtectedWorkspaceNamespaceTransactionsIndexRoute =
   ProtectedWorkspaceNamespaceTransactionsIndexImport.update({
     path: '/transactions/',
+    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+  } as any)
+
+const ProtectedWorkspaceNamespaceStocksIndexRoute =
+  ProtectedWorkspaceNamespaceStocksIndexImport.update({
+    path: '/stocks/',
     getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
   } as any)
 
@@ -225,6 +232,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
+    '/_protected/workspace/$namespace/stocks/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceStocksIndexImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    }
     '/_protected/workspace/$namespace/transactions/': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceTransactionsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
@@ -261,6 +272,7 @@ export const routeTree = rootRoute.addChildren([
       ProtectedWorkspaceNamespaceIndexRoute,
       ProtectedWorkspaceNamespaceAccountsIndexRoute,
       ProtectedWorkspaceNamespaceSettingsIndexRoute,
+      ProtectedWorkspaceNamespaceStocksIndexRoute,
       ProtectedWorkspaceNamespaceTransactionsIndexRoute,
       ProtectedWorkspaceNamespaceAccountsAccountIdIndexRoute,
       ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute,
