@@ -7,12 +7,12 @@ import { useAuth } from "./hooks/use-auth";
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  defaultPreload: "intent",
   context: {
     auth: undefined!, // will be set after we wrap the app in AuthProvider
     transport: undefined!,
     queryClient,
   },
+  defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
 });
 

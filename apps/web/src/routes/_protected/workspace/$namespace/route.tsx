@@ -51,6 +51,7 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/page-header";
+import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace")({
   beforeLoad: async ({ params, context }) => {
@@ -62,16 +63,18 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
       await context.queryClient.ensureQueryData(workspaceQueryOpts);
     return { workspace };
   },
-  errorComponent: () => (
+  pendingComponent: CenterLoadingSpinner,
+  errorComponent: ({ error }) => (
     <PageHeader>
       <PageHeaderHeading>Oops!</PageHeaderHeading>
-      <PageHeaderDescription>
-        You do not have access to this workspace :(
-      </PageHeaderDescription>
+      <PageHeaderDescription>Something went wrong :(</PageHeaderDescription>
       <div className="py-2"></div>
       <Button asChild>
         <Link to={"/workspace"}>Go Back</Link>
       </Button>
+      <div className="py-2"></div>
+
+      <div>{(error as Error).toString()}</div>
     </PageHeader>
   ),
 

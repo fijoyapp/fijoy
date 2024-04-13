@@ -26,6 +26,7 @@ import { Route as ProtectedWorkspaceNamespaceSettingsUsersIndexImport } from './
 import { Route as ProtectedWorkspaceNamespaceSettingsGeneralIndexImport } from './routes/_protected/workspace/$namespace/settings/general/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsCurrencyIndexImport } from './routes/_protected/workspace/$namespace/settings/currency/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport } from './routes/_protected/workspace/$namespace/settings/categories/index'
+import { Route as ProtectedWorkspaceNamespaceAccountsAccountIdIndexImport } from './routes/_protected/workspace/$namespace/accounts/$accountId/index'
 
 // Create Virtual Routes
 
@@ -154,6 +155,12 @@ const ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute =
     getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
   } as any)
 
+const ProtectedWorkspaceNamespaceAccountsAccountIdIndexRoute =
+  ProtectedWorkspaceNamespaceAccountsAccountIdIndexImport.update({
+    path: '/accounts/$accountId/',
+    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -222,6 +229,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceTransactionsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
+    '/_protected/workspace/$namespace/accounts/$accountId/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsAccountIdIndexImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    }
     '/_protected/workspace/$namespace/settings/categories/': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
@@ -251,6 +262,7 @@ export const routeTree = rootRoute.addChildren([
       ProtectedWorkspaceNamespaceAccountsIndexRoute,
       ProtectedWorkspaceNamespaceSettingsIndexRoute,
       ProtectedWorkspaceNamespaceTransactionsIndexRoute,
+      ProtectedWorkspaceNamespaceAccountsAccountIdIndexRoute,
       ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute,
       ProtectedWorkspaceNamespaceSettingsCurrencyIndexRoute,
       ProtectedWorkspaceNamespaceSettingsGeneralIndexRoute,

@@ -8,6 +8,7 @@ import {
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
+import CenterLoadingSpinner from "@/components/center-loading-spinner";
 // import { populateExample } from "@/lib/example";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace/")({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/_protected/workspace/$namespace/")({
     );
     return data;
   },
+  pendingComponent: CenterLoadingSpinner,
 });
 
 function Page() {
