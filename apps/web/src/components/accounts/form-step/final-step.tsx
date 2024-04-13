@@ -57,6 +57,7 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
     }
 
     const money = stringToUnitsNanos(balanceStepData.balance);
+    console.log(money);
 
     await createAccountMutation.mutateAsync({
       name: nameTypeInstitutionStepData.name,

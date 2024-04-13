@@ -12,7 +12,7 @@ message Money {
 
   // The whole units of the amount.
   // For example if `currencyCode` is `"USD"`, then 1 unit is one US dollar.
-  int64 units = 2 [(buf.validate.field).required = true];
+  int64 units = 2 [(buf.validate.field).int64.gte = 0];
 
   // Number of nano (10^-9) units of the amount.
   // The value must be between -999,999,999 and +999,999,999 inclusive.
@@ -20,5 +20,5 @@ message Money {
   // If `units` is zero, `nanos` can be positive, zero, or negative.
   // If `units` is negative, `nanos` must be negative or zero.
   // For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
-  int32 nanos = 3 [(buf.validate.field).required = true];
+  int32 nanos = 3 [(buf.validate.field).int32.gte = 0];
 }
