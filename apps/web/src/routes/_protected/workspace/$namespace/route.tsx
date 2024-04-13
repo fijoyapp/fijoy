@@ -23,6 +23,7 @@ import { getWorkspaceByNamespaceQueryOptions } from "@/lib/queries/workspace";
 import { WorkspaceProvider } from "@/workspace";
 import {
   Link,
+  LinkProps,
   // LinkProps,
   Outlet,
   createFileRoute,
@@ -35,6 +36,8 @@ import {
   CreditCard,
   Home,
   LineChart,
+  List,
+  LucideIcon,
   Menu,
   Package,
   Search,
@@ -85,53 +88,51 @@ export const Route = createFileRoute("/_protected/workspace/$namespace")({
   component: Page,
 });
 
-// type NavLink = {
-//   link: LinkProps;
-//   name: string;
-//   icon: React.ReactNode;
-// };
+type NavLink = {
+  link: LinkProps;
+  name: string;
+  icon: LucideIcon;
+};
 
-// FIXME: https://github.com/TanStack/router/issues/1271#
-// waiting for this issue to be resolved
-// const navLinks: NavLink[] = [
-//   {
-//     name: "Overview",
-//     link: { from: "/workspace/$namespace", to: "/workspace/$namespace" },
-//     icon: <Home className="h-4 w-4" />,
-//   },
-//   {
-//     name: "Transactions",
-//     link: {
-//       from: "/workspace/$namespace",
-//       to: "/workspace/$namespace/transactions",
-//     },
-//     icon: <ArrowLeftRight className="h-4 w-4" />,
-//   },
-//   {
-//     name: "Accounts",
-//     link: {
-//       from: "/workspace/$namespace",
-//       to: "/workspace/$namespace/accounts",
-//     },
-//     icon: <CreditCard className="h-4 w-4" />,
-//   },
-//   {
-//     name: "Categories",
-//     link: {
-//       from: "/workspace/$namespace",
-//       to: "/workspace/$namespace/categories",
-//     },
-//     icon: <List className="h-4 w-4" />,
-//   },
-//   {
-//     name: "Settings",
-//     link: {
-//       from: "/workspace/$namespace",
-//       to: "/workspace/$namespace/settings",
-//     },
-//     icon: <Settings className="h-4 w-4" />,
-//   },
-// ];
+const navLinks: NavLink[] = [
+  {
+    name: "Overview",
+    link: { from: Route.fullPath, to: "/workspace/$namespace" },
+    icon: Home,
+  },
+  {
+    name: "Transactions",
+    link: {
+      from: Route.fullPath,
+      to: "/workspace/$namespace/transactions",
+    },
+    icon: ArrowLeftRight,
+  },
+  {
+    name: "Accounts",
+    link: {
+      from: Route.fullPath,
+      to: "/workspace/$namespace/accounts",
+    },
+    icon: CreditCard,
+  },
+  {
+    name: "Stocks",
+    link: {
+      from: Route.fullPath,
+      to: "/workspace/$namespace/stocks",
+    },
+    icon: TrendingUp,
+  },
+  {
+    name: "Settings",
+    link: {
+      from: Route.fullPath,
+      to: "/workspace/$namespace/settings",
+    },
+    icon: Settings,
+  },
+];
 
 function Page() {
   const { namespace } = Route.useParams();
@@ -160,86 +161,21 @@ function Page() {
             </div>
             <div className="flex-1">
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                <Link
-                  from="/workspace/$namespace"
-                  to="/workspace/$namespace"
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                    matchRoute({ to: "/workspace/$namespace" })
-                      ? "bg-muted text-primary"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <Home className="h-4 w-4" />
-                  Overview
-                </Link>
-                <Link
-                  from="/workspace/$namespace"
-                  to="/workspace/$namespace/transactions"
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                    matchRoute({
-                      to: "/workspace/$namespace/transactions",
-                      fuzzy: true,
-                    })
-                      ? "bg-muted text-primary"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <ArrowLeftRight className="h-4 w-4" />
-                  Transactions
-                  {/* <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full"> */}
-                  {/*   6 */}
-                  {/* </Badge> */}
-                </Link>
-                <Link
-                  from="/workspace/$namespace"
-                  to="/workspace/$namespace/accounts"
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                    matchRoute({
-                      to: "/workspace/$namespace/accounts",
-                      fuzzy: true,
-                    })
-                      ? "bg-muted text-primary"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <CreditCard className="h-4 w-4" />
-                  Accounts
-                </Link>
-                <Link
-                  from="/workspace/$namespace"
-                  to="/workspace/$namespace/stocks"
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                    matchRoute({
-                      to: "/workspace/$namespace/stocks",
-                      fuzzy: true,
-                    })
-                      ? "bg-muted text-primary"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <TrendingUp className="h-4 w-4" />
-                  Stocks
-                </Link>
-                <Link
-                  from="/workspace/$namespace"
-                  to="/workspace/$namespace/settings"
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                    matchRoute({
-                      to: "/workspace/$namespace/settings",
-                      fuzzy: true,
-                    })
-                      ? "bg-muted text-primary"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Link>
+                {navLinks.map((navLink) => (
+                  <Link
+                    from={Route.fullPath}
+                    to={navLink.link.to}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                      matchRoute({ to: navLink.link.to })
+                        ? "bg-muted text-primary"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    <navLink.icon className="h-4 w-4" />
+                    {navLink.name}
+                  </Link>
+                ))}
               </nav>
             </div>
             <div className="mt-auto p-4">
@@ -261,53 +197,30 @@ function Page() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="flex flex-col">
+                <Link
+                  to={"/workspace/$namespace"}
+                  params={{ namespace }}
+                  className="flex items-center gap-2 font-semibold"
+                >
+                  <Icons.logo className="h-6 w-6" />
+                  <span className="">Fijoy</span>
+                </Link>
                 <nav className="grid gap-2 text-lg font-medium">
-                  {/* FIXME: update all these once the link issue above gets resolved */}
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2 text-lg font-semibold"
-                  >
-                    <span className="sr-only">Fijoy</span>
-                    <Icons.logo className="h-6 w-6" />
-                  </Link>
-                  <Link
-                    href="#"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Home className="h-5 w-5" />
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="#"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-                  >
-                    <ShoppingCart className="h-5 w-5" />
-                    Orders
-                    <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                      6
-                    </Badge>
-                  </Link>
-                  <Link
-                    href="#"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Package className="h-5 w-5" />
-                    Products
-                  </Link>
-                  <Link
-                    href="#"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Users className="h-5 w-5" />
-                    Customers
-                  </Link>
-                  <Link
-                    href="#"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <LineChart className="h-5 w-5" />
-                    Analytics
-                  </Link>
+                  {navLinks.map((navLink) => (
+                    <Link
+                      from={Route.fullPath}
+                      to={navLink.link.to}
+                      className={cn(
+                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                        matchRoute({ to: navLink.link.to })
+                          ? "bg-muted text-primary"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      <navLink.icon className="h-6 w-6" />
+                      {navLink.name}
+                    </Link>
+                  ))}
                 </nav>
                 <div className="mt-auto">
                   <DiscordCard />
