@@ -39,6 +39,7 @@ const formSchema = CurrencyLocaleStepData;
 
 const CurrencyLocaleStep = () => {
   const router = useRouter();
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const {
     nameNamespaceStepData,
@@ -88,7 +89,10 @@ const CurrencyLocaleStep = () => {
                 <FormLabel>Primary Currency</FormLabel>
                 <FormControl>
                   <div>
-                    <Popover>
+                    <Popover
+                      open={popoverOpen}
+                      onOpenChange={(open) => setPopoverOpen(open)}
+                    >
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
@@ -122,6 +126,7 @@ const CurrencyLocaleStep = () => {
                                           "primaryCurrency",
                                           currency,
                                         );
+                                        setPopoverOpen(false)
                                       }}
                                     >
                                       <Check
