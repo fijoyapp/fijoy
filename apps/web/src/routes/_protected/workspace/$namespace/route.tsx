@@ -268,7 +268,7 @@ function Page() {
             </DropdownMenu>
           </header>
           {/* NOTE: subtract 3.5rem which is the height of the header */}
-          <main className="flex max-h-[calc(100vh-3.5rem)] flex-1 flex-col gap-4 overflow-y-scroll p-4 lg:gap-6 lg:p-6">
+          <main className="scrollbar flex max-h-[calc(100vh-3.5rem)] flex-1 flex-col gap-4 overflow-y-scroll p-4 lg:max-h-[calc(100vh-3.75rem)] lg:gap-6 lg:p-6">
             <Outlet />
           </main>
         </div>

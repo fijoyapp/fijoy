@@ -68,3 +68,21 @@
     src: url("./assets/GeistMonoVariableVF.woff2") format("woff");
   }
 }
+
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    @apply h-2 w-2;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    @apply rounded-full bg-muted;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-foreground;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-foreground;
+  }
+}
