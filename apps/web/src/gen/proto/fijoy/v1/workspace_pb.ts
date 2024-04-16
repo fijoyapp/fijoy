@@ -313,3 +313,77 @@ export class UpdateWorkspaceNamespaceRequest extends Message<UpdateWorkspaceName
   }
 }
 
+/**
+ * @generated from message fijoy.v1.UpdatePrimaryCurrencyRequest
+ */
+export class UpdatePrimaryCurrencyRequest extends Message<UpdatePrimaryCurrencyRequest> {
+  /**
+   * @generated from field: string code = 1;
+   */
+  code = "";
+
+  constructor(data?: PartialMessage<UpdatePrimaryCurrencyRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.UpdatePrimaryCurrencyRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdatePrimaryCurrencyRequest {
+    return new UpdatePrimaryCurrencyRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdatePrimaryCurrencyRequest {
+    return new UpdatePrimaryCurrencyRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdatePrimaryCurrencyRequest {
+    return new UpdatePrimaryCurrencyRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdatePrimaryCurrencyRequest | PlainMessage<UpdatePrimaryCurrencyRequest> | undefined, b: UpdatePrimaryCurrencyRequest | PlainMessage<UpdatePrimaryCurrencyRequest> | undefined): boolean {
+    return proto3.util.equals(UpdatePrimaryCurrencyRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.UpdateLocaleRequest
+ */
+export class UpdateLocaleRequest extends Message<UpdateLocaleRequest> {
+  /**
+   * @generated from field: string locale = 1;
+   */
+  locale = "";
+
+  constructor(data?: PartialMessage<UpdateLocaleRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.UpdateLocaleRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateLocaleRequest {
+    return new UpdateLocaleRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateLocaleRequest {
+    return new UpdateLocaleRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateLocaleRequest {
+    return new UpdateLocaleRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateLocaleRequest | PlainMessage<UpdateLocaleRequest> | undefined, b: UpdateLocaleRequest | PlainMessage<UpdateLocaleRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateLocaleRequest, a, b);
+  }
+}
+

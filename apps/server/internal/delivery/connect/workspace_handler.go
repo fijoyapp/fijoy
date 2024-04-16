@@ -391,3 +391,93 @@ func (s *WorkspaceServer) DeleteWorkspace(
 
 	return res, nil
 }
+
+func (s *WorkspaceServer) UpdatePrimaryCurrency(
+	ctx context.Context,
+	req *connect.Request[fijoyv1.UpdatePrimaryCurrencyRequest],
+) (*connect.Response[fijoyv1.Workspace], error) {
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasAdminPermission(&workspaceUser) {
+		return nil, connect.NewError(
+			connect.CodePermissionDenied, errors.New("user does not have admin permission"),
+		)
+	}
+
+	workspace := model.FijoyWorkspace{
+		PrimaryCurrency: req.Msg.Code,
+	}
+
+	stmt := FijoyWorkspace.UPDATE(FijoyWorkspace.PrimaryCurrency).MODEL(workspace).WHERE(
+		FijoyWorkspace.ID.EQ(String(workspaceId)),
+	).RETURNING(FijoyWorkspace.AllColumns)
+
+	var dest model.FijoyWorkspace
+
+	err = stmt.QueryContext(ctx, s.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&dest))
+
+	return res, nil
+}
+
+func (s *WorkspaceServer) UpdateLocale(
+	ctx context.Context,
+	req *connect.Request[fijoyv1.UpdateLocaleRequest],
+) (*connect.Response[fijoyv1.Workspace], error) {
+	userId, err := util.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	if !util.HasAdminPermission(&workspaceUser) {
+		return nil, connect.NewError(
+			connect.CodePermissionDenied, errors.New("user does not have admin permission"),
+		)
+	}
+
+	workspace := model.FijoyWorkspace{
+		Locale: req.Msg.Locale,
+	}
+
+	stmt := FijoyWorkspace.UPDATE(FijoyWorkspace.Locale).MODEL(workspace).WHERE(
+		FijoyWorkspace.ID.EQ(String(workspaceId)),
+	).RETURNING(FijoyWorkspace.AllColumns)
+
+	var dest model.FijoyWorkspace
+
+	err = stmt.QueryContext(ctx, s.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+	res := connect.NewResponse(jetWorkspaceToConnectWorkspace(&dest))
+
+	return res, nil
+}
+
+// TODO: dedup all the update functions, dry

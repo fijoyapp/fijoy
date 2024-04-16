@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, UpdateWorkspaceNameRequest, UpdateWorkspaceNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
+import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, UpdateLocaleRequest, UpdatePrimaryCurrencyRequest, UpdateWorkspaceNameRequest, UpdateWorkspaceNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -66,6 +66,24 @@ export const WorkspaceService = {
     updateWorkspaceNamespace: {
       name: "UpdateWorkspaceNamespace",
       I: UpdateWorkspaceNamespaceRequest,
+      O: Workspace,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc fijoy.v1.WorkspaceService.UpdatePrimaryCurrency
+     */
+    updatePrimaryCurrency: {
+      name: "UpdatePrimaryCurrency",
+      I: UpdatePrimaryCurrencyRequest,
+      O: Workspace,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc fijoy.v1.WorkspaceService.UpdateLocale
+     */
+    updateLocale: {
+      name: "UpdateLocale",
+      I: UpdateLocaleRequest,
       O: Workspace,
       kind: MethodKind.Unary,
     },

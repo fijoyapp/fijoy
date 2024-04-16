@@ -52,6 +52,12 @@ const (
 	// WorkspaceServiceUpdateWorkspaceNamespaceProcedure is the fully-qualified name of the
 	// WorkspaceService's UpdateWorkspaceNamespace RPC.
 	WorkspaceServiceUpdateWorkspaceNamespaceProcedure = "/fijoy.v1.WorkspaceService/UpdateWorkspaceNamespace"
+	// WorkspaceServiceUpdatePrimaryCurrencyProcedure is the fully-qualified name of the
+	// WorkspaceService's UpdatePrimaryCurrency RPC.
+	WorkspaceServiceUpdatePrimaryCurrencyProcedure = "/fijoy.v1.WorkspaceService/UpdatePrimaryCurrency"
+	// WorkspaceServiceUpdateLocaleProcedure is the fully-qualified name of the WorkspaceService's
+	// UpdateLocale RPC.
+	WorkspaceServiceUpdateLocaleProcedure = "/fijoy.v1.WorkspaceService/UpdateLocale"
 	// WorkspaceServiceDeleteWorkspaceProcedure is the fully-qualified name of the WorkspaceService's
 	// DeleteWorkspace RPC.
 	WorkspaceServiceDeleteWorkspaceProcedure = "/fijoy.v1.WorkspaceService/DeleteWorkspace"
@@ -66,6 +72,8 @@ var (
 	workspaceServiceGetWorkspaceByNamespaceMethodDescriptor  = workspaceServiceServiceDescriptor.Methods().ByName("GetWorkspaceByNamespace")
 	workspaceServiceUpdateWorkspaceNameMethodDescriptor      = workspaceServiceServiceDescriptor.Methods().ByName("UpdateWorkspaceName")
 	workspaceServiceUpdateWorkspaceNamespaceMethodDescriptor = workspaceServiceServiceDescriptor.Methods().ByName("UpdateWorkspaceNamespace")
+	workspaceServiceUpdatePrimaryCurrencyMethodDescriptor    = workspaceServiceServiceDescriptor.Methods().ByName("UpdatePrimaryCurrency")
+	workspaceServiceUpdateLocaleMethodDescriptor             = workspaceServiceServiceDescriptor.Methods().ByName("UpdateLocale")
 	workspaceServiceDeleteWorkspaceMethodDescriptor          = workspaceServiceServiceDescriptor.Methods().ByName("DeleteWorkspace")
 )
 
@@ -77,6 +85,8 @@ type WorkspaceServiceClient interface {
 	GetWorkspaceByNamespace(context.Context, *connect.Request[v1.GetWorkspaceByNamespaceRequest]) (*connect.Response[v1.Workspace], error)
 	UpdateWorkspaceName(context.Context, *connect.Request[v1.UpdateWorkspaceNameRequest]) (*connect.Response[v1.Workspace], error)
 	UpdateWorkspaceNamespace(context.Context, *connect.Request[v1.UpdateWorkspaceNamespaceRequest]) (*connect.Response[v1.Workspace], error)
+	UpdatePrimaryCurrency(context.Context, *connect.Request[v1.UpdatePrimaryCurrencyRequest]) (*connect.Response[v1.Workspace], error)
+	UpdateLocale(context.Context, *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Workspace], error)
 	DeleteWorkspace(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error)
 }
 
@@ -129,6 +139,18 @@ func NewWorkspaceServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(workspaceServiceUpdateWorkspaceNamespaceMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
+		updatePrimaryCurrency: connect.NewClient[v1.UpdatePrimaryCurrencyRequest, v1.Workspace](
+			httpClient,
+			baseURL+WorkspaceServiceUpdatePrimaryCurrencyProcedure,
+			connect.WithSchema(workspaceServiceUpdatePrimaryCurrencyMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
+		updateLocale: connect.NewClient[v1.UpdateLocaleRequest, v1.Workspace](
+			httpClient,
+			baseURL+WorkspaceServiceUpdateLocaleProcedure,
+			connect.WithSchema(workspaceServiceUpdateLocaleMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 		deleteWorkspace: connect.NewClient[emptypb.Empty, v1.Workspace](
 			httpClient,
 			baseURL+WorkspaceServiceDeleteWorkspaceProcedure,
@@ -146,6 +168,8 @@ type workspaceServiceClient struct {
 	getWorkspaceByNamespace  *connect.Client[v1.GetWorkspaceByNamespaceRequest, v1.Workspace]
 	updateWorkspaceName      *connect.Client[v1.UpdateWorkspaceNameRequest, v1.Workspace]
 	updateWorkspaceNamespace *connect.Client[v1.UpdateWorkspaceNamespaceRequest, v1.Workspace]
+	updatePrimaryCurrency    *connect.Client[v1.UpdatePrimaryCurrencyRequest, v1.Workspace]
+	updateLocale             *connect.Client[v1.UpdateLocaleRequest, v1.Workspace]
 	deleteWorkspace          *connect.Client[emptypb.Empty, v1.Workspace]
 }
 
@@ -179,6 +203,16 @@ func (c *workspaceServiceClient) UpdateWorkspaceNamespace(ctx context.Context, r
 	return c.updateWorkspaceNamespace.CallUnary(ctx, req)
 }
 
+// UpdatePrimaryCurrency calls fijoy.v1.WorkspaceService.UpdatePrimaryCurrency.
+func (c *workspaceServiceClient) UpdatePrimaryCurrency(ctx context.Context, req *connect.Request[v1.UpdatePrimaryCurrencyRequest]) (*connect.Response[v1.Workspace], error) {
+	return c.updatePrimaryCurrency.CallUnary(ctx, req)
+}
+
+// UpdateLocale calls fijoy.v1.WorkspaceService.UpdateLocale.
+func (c *workspaceServiceClient) UpdateLocale(ctx context.Context, req *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Workspace], error) {
+	return c.updateLocale.CallUnary(ctx, req)
+}
+
 // DeleteWorkspace calls fijoy.v1.WorkspaceService.DeleteWorkspace.
 func (c *workspaceServiceClient) DeleteWorkspace(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error) {
 	return c.deleteWorkspace.CallUnary(ctx, req)
@@ -192,6 +226,8 @@ type WorkspaceServiceHandler interface {
 	GetWorkspaceByNamespace(context.Context, *connect.Request[v1.GetWorkspaceByNamespaceRequest]) (*connect.Response[v1.Workspace], error)
 	UpdateWorkspaceName(context.Context, *connect.Request[v1.UpdateWorkspaceNameRequest]) (*connect.Response[v1.Workspace], error)
 	UpdateWorkspaceNamespace(context.Context, *connect.Request[v1.UpdateWorkspaceNamespaceRequest]) (*connect.Response[v1.Workspace], error)
+	UpdatePrimaryCurrency(context.Context, *connect.Request[v1.UpdatePrimaryCurrencyRequest]) (*connect.Response[v1.Workspace], error)
+	UpdateLocale(context.Context, *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Workspace], error)
 	DeleteWorkspace(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error)
 }
 
@@ -240,6 +276,18 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 		connect.WithSchema(workspaceServiceUpdateWorkspaceNamespaceMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
+	workspaceServiceUpdatePrimaryCurrencyHandler := connect.NewUnaryHandler(
+		WorkspaceServiceUpdatePrimaryCurrencyProcedure,
+		svc.UpdatePrimaryCurrency,
+		connect.WithSchema(workspaceServiceUpdatePrimaryCurrencyMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
+	workspaceServiceUpdateLocaleHandler := connect.NewUnaryHandler(
+		WorkspaceServiceUpdateLocaleProcedure,
+		svc.UpdateLocale,
+		connect.WithSchema(workspaceServiceUpdateLocaleMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	workspaceServiceDeleteWorkspaceHandler := connect.NewUnaryHandler(
 		WorkspaceServiceDeleteWorkspaceProcedure,
 		svc.DeleteWorkspace,
@@ -260,6 +308,10 @@ func NewWorkspaceServiceHandler(svc WorkspaceServiceHandler, opts ...connect.Han
 			workspaceServiceUpdateWorkspaceNameHandler.ServeHTTP(w, r)
 		case WorkspaceServiceUpdateWorkspaceNamespaceProcedure:
 			workspaceServiceUpdateWorkspaceNamespaceHandler.ServeHTTP(w, r)
+		case WorkspaceServiceUpdatePrimaryCurrencyProcedure:
+			workspaceServiceUpdatePrimaryCurrencyHandler.ServeHTTP(w, r)
+		case WorkspaceServiceUpdateLocaleProcedure:
+			workspaceServiceUpdateLocaleHandler.ServeHTTP(w, r)
 		case WorkspaceServiceDeleteWorkspaceProcedure:
 			workspaceServiceDeleteWorkspaceHandler.ServeHTTP(w, r)
 		default:
@@ -293,6 +345,14 @@ func (UnimplementedWorkspaceServiceHandler) UpdateWorkspaceName(context.Context,
 
 func (UnimplementedWorkspaceServiceHandler) UpdateWorkspaceNamespace(context.Context, *connect.Request[v1.UpdateWorkspaceNamespaceRequest]) (*connect.Response[v1.Workspace], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.UpdateWorkspaceNamespace is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) UpdatePrimaryCurrency(context.Context, *connect.Request[v1.UpdatePrimaryCurrencyRequest]) (*connect.Response[v1.Workspace], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.UpdatePrimaryCurrency is not implemented"))
+}
+
+func (UnimplementedWorkspaceServiceHandler) UpdateLocale(context.Context, *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Workspace], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.WorkspaceService.UpdateLocale is not implemented"))
 }
 
 func (UnimplementedWorkspaceServiceHandler) DeleteWorkspace(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Workspace], error) {

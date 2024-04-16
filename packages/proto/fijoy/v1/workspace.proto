@@ -42,6 +42,14 @@ message UpdateWorkspaceNamespaceRequest {
   string namespace = 1 [(buf.validate.field).string.min_len = 1];
 }
 
+message UpdatePrimaryCurrencyRequest {
+  string code = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+message UpdateLocaleRequest {
+  string locale = 1 [(buf.validate.field).string.min_len = 1];
+}
+
 service WorkspaceService {
   rpc CreateWorkspace(CreateWorkspaceRequest) returns (Workspace);
   rpc GetWorkspaces(google.protobuf.Empty) returns (Workspaces) {
@@ -56,6 +64,8 @@ service WorkspaceService {
 
   rpc UpdateWorkspaceName(UpdateWorkspaceNameRequest) returns (Workspace);
   rpc UpdateWorkspaceNamespace(UpdateWorkspaceNamespaceRequest) returns (Workspace);
+  rpc UpdatePrimaryCurrency(UpdatePrimaryCurrencyRequest) returns (Workspace);
+  rpc UpdateLocale(UpdateLocaleRequest) returns (Workspace);
 
   rpc DeleteWorkspace(google.protobuf.Empty) returns (Workspace) {}
 }
