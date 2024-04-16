@@ -159,6 +159,7 @@ function Page() {
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 {navLinks.map((navLink) => (
                   <Link
+                    key={navLink.name}
                     from={navLink.link.from}
                     to={navLink.link.to}
                     className={cn(
@@ -204,6 +205,7 @@ function Page() {
                 <nav className="grid gap-2 text-lg font-medium">
                   {navLinks.map((navLink) => (
                     <Link
+                      key={navLink.name}
                       from={navLink.link.from}
                       to={navLink.link.to}
                       onClick={() => setSheetOpen(false)}
