@@ -87,6 +87,7 @@ type NavLink = {
   link: LinkProps;
   name: string;
   icon: LucideIcon;
+  fuzzy: boolean;
 };
 
 const navLinks: NavLink[] = [
@@ -94,6 +95,7 @@ const navLinks: NavLink[] = [
     name: "Overview",
     link: { from: Route.fullPath, to: "/workspace/$namespace" },
     icon: Home,
+    fuzzy: false,
   },
   {
     name: "Transactions",
@@ -102,6 +104,7 @@ const navLinks: NavLink[] = [
       to: "/workspace/$namespace/transactions",
     },
     icon: ArrowLeftRight,
+    fuzzy: true,
   },
   {
     name: "Accounts",
@@ -110,6 +113,7 @@ const navLinks: NavLink[] = [
       to: "/workspace/$namespace/accounts",
     },
     icon: CreditCard,
+    fuzzy: true,
   },
   {
     name: "Stocks",
@@ -118,6 +122,7 @@ const navLinks: NavLink[] = [
       to: "/workspace/$namespace/stocks",
     },
     icon: TrendingUp,
+    fuzzy: true,
   },
   {
     name: "Settings",
@@ -126,6 +131,7 @@ const navLinks: NavLink[] = [
       to: "/workspace/$namespace/settings",
     },
     icon: Settings,
+    fuzzy: true,
   },
 ];
 
@@ -164,7 +170,10 @@ function Page() {
                     to={navLink.link.to}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                      matchRoute({ to: navLink.link.to })
+                      matchRoute({
+                        to: navLink.link.to,
+                        fuzzy: navLink.fuzzy,
+                      })
                         ? "bg-muted text-primary"
                         : "text-muted-foreground",
                     )}
@@ -211,7 +220,10 @@ function Page() {
                       onClick={() => setSheetOpen(false)}
                       className={cn(
                         "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
-                        matchRoute({ to: navLink.link.to })
+                        matchRoute({
+                          to: navLink.link.to,
+                          fuzzy: navLink.fuzzy,
+                        })
                           ? "bg-muted text-primary"
                           : "text-muted-foreground",
                       )}
