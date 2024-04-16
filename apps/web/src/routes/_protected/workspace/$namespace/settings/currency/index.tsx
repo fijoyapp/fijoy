@@ -113,17 +113,11 @@ function Page() {
   });
 
   const updateLocaleMutation = useMutation(updateLocale, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: createConnectQueryKey(getWorkspaceByNamespace, {
           namespace: workspace.namespace,
         }),
-      });
-      router.navigate({
-        to: "/workspace/$namespace/settings/general",
-        params: {
-          namespace: data.namespace,
-        },
       });
       toast.success("Locale updated");
     },
@@ -196,18 +190,20 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[360px] justify-between",
+                                "w-full max-w-[300px] justify-between ",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
-                              {field.value
-                                ? `${currencyCodeToName(field.value)} (${field.value})`
-                                : "Select currency"}
+                              <div className="overflow-x-hidden text-ellipsis">
+                                {field.value
+                                  ? `${currencyCodeToName(field.value)} (${field.value})`
+                                  : "Select currency"}
+                              </div>
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent
-                            className="w-[360px] p-0"
+                            className="w-full max-w-[300px] p-0"
                             align="start"
                           >
                             <Command>
@@ -315,18 +311,20 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[360px] justify-between",
+                                "w-full max-w-[300px] justify-between",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
-                              {field.value
-                                ? `${localeCodeToName(field.value).unwrapOr("Unknown")} (${field.value})`
-                                : "Select locale"}
+                              <div className="overflow-x-hidden text-ellipsis">
+                                {field.value
+                                  ? `${localeCodeToName(field.value).unwrapOr("Unknown")} (${field.value})`
+                                  : "Select locale"}
+                              </div>
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent
-                            className="w-[360px] p-0"
+                            className="w-full max-w-[300px] p-0"
                             align="start"
                           >
                             <Command>
