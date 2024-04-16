@@ -140,7 +140,7 @@ function Page() {
   }
 
   return (
-    <div>
+    <div className="max-w-2xl">
       <Breadcrumb>
         <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
           <BreadcrumbItem>
