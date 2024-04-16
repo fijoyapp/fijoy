@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
 import {
   Command,
@@ -73,7 +73,6 @@ const localeFormSchema = z.object({ locale: z.string() });
 function Page() {
   const { workspace } = useWorkspace();
   const { queryClient } = Route.useRouteContext();
-  const router = useRouter();
 
   const [primaryCurrencyPopoverOpen, setPrimaryCurrencyPopoverOpen] =
     useState(false);
@@ -190,7 +189,7 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-full max-w-[300px] justify-between ",
+                                "w-full max-w-[280px] justify-between ",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -203,7 +202,7 @@ function Page() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent
-                            className="w-full max-w-[300px] p-0"
+                            className="w-full max-w-[280px] p-0"
                             align="start"
                           >
                             <Command>
@@ -311,7 +310,7 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-full max-w-[300px] justify-between",
+                                "w-full max-w-[280px] justify-between",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -324,7 +323,7 @@ function Page() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent
-                            className="w-full max-w-[300px] p-0"
+                            className="w-full max-w-[280px] p-0"
                             align="start"
                           >
                             <Command>
