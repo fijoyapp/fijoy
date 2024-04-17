@@ -1,15 +1,15 @@
-import { useTransport } from "@connectrpc/connect-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./lib/query";
 import { useAuth } from "./hooks/use-auth";
+import { finalTransport } from "./lib/connect";
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
   context: {
     auth: undefined!, // will be set after we wrap the app in AuthProvider
-    transport: undefined!,
+    transport: finalTransport,
     queryClient,
   },
   defaultPreload: "intent",
@@ -26,7 +26,5 @@ declare module "@tanstack/react-router" {
 export function App() {
   const auth = useAuth();
 
-  const transport = useTransport();
-
-  return <RouterProvider router={router} context={{ auth, transport }} />;
+  return <RouterProvider router={router} context={{ auth }} />;
 }
