@@ -32,7 +32,7 @@ export const TotalDebtCard = ({ accounts }: CardProps) => {
                 if (!cur.balance) return acc;
                 return acc.add(moneyToCurrency(cur.balance, { reverse: true }));
               }, currency(0)),
-            "CAD", // TODO: Use user's currency
+            workspace.primaryCurrency,
             { compact: true, locale: workspace.locale },
           )}
         </CardTitle>

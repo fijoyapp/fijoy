@@ -34,7 +34,7 @@ export const TotalAssetCard = ({ accounts }: CardProps) => {
                   moneyToCurrency(cur.balance, { reverse: false }),
                 );
               }, currency(0)),
-            "CAD", // TODO: Use user's currency
+            workspace.primaryCurrency,
             { compact: true, locale: workspace.locale },
           )}
         </CardTitle>
