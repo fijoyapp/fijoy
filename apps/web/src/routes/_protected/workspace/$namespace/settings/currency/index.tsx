@@ -60,6 +60,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { currencyToDisplay } from "@/lib/money";
 import currency from "currency.js";
 import { getUserLocales, localeCodeToName } from "@/config/locale";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/settings/currency/",
@@ -72,7 +73,7 @@ const localeFormSchema = z.object({ locale: z.string() });
 
 function Page() {
   const { workspace } = useWorkspace();
-  const { queryClient } = Route.useRouteContext();
+  const queryClient = useQueryClient();
 
   const [primaryCurrencyPopoverOpen, setPrimaryCurrencyPopoverOpen] =
     useState(false);
