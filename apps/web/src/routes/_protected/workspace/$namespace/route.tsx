@@ -51,6 +51,7 @@ import {
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_protected/workspace/$namespace")({
   beforeLoad: async ({ params, context }) => {
@@ -139,7 +140,7 @@ function Page() {
   const { namespace } = Route.useParams();
   // const { workspace } = Route.useRouteContext();
   const matchRoute = useMatchRoute();
-  const { queryClient } = Route.useRouteContext();
+  const queryClient = useQueryClient();
   const [sheetOpen, setSheetOpen] = useState(false);
 
   return (
