@@ -7,7 +7,7 @@ import {
 import { getWorkspaceHeader } from "@/lib/headers";
 import { getAccountByIdQueryOptions } from "@/lib/queries/account";
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -29,7 +29,6 @@ export const Route = createFileRoute(
 function Page() {
   const { accountId } = Route.useParams();
   const context = Route.useRouteContext();
-  const queryClient = useQueryClient();
   const router = useRouter();
 
   const { data: account } = useSuspenseQuery(
@@ -44,7 +43,7 @@ function Page() {
       headers: getWorkspaceHeader(context.workspace.id),
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      context.queryClient.invalidateQueries({
         queryKey: createConnectQueryKey(getAccounts),
       });
       toast.success("Account deleted");

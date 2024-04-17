@@ -50,7 +50,6 @@ import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { getWorkspaceHeader } from "@/lib/headers";
 import { useWorkspace } from "@/hooks/use-workspace";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/settings/general/",
@@ -63,7 +62,7 @@ const workspaceUrlFormSchema = z.object({ namespace: z.string() });
 
 function Page() {
   const { workspace } = useWorkspace();
-  const queryClient = useQueryClient();
+  const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
   const workspaceNameForm = useForm<z.infer<typeof workspaceNameFormSchema>>({

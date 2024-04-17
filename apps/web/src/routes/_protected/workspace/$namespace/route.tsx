@@ -138,6 +138,7 @@ const navLinks: NavLink[] = [
 
 function Page() {
   const { namespace } = Route.useParams();
+  // const { workspace } = Route.useRouteContext();
   const matchRoute = useMatchRoute();
   const queryClient = useQueryClient();
   const [sheetOpen, setSheetOpen] = useState(false);
