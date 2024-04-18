@@ -1,12 +1,16 @@
 version: "3.9"
 
 services:
-  fijoy-postgres:
+  postgres:
     image: postgres:16-alpine
     ports:
       - 5432:5432
-    volumes:
-      - ~/apps/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=user
+      - POSTGRES_DB=fijoy
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
