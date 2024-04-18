@@ -21,7 +21,7 @@ function Page() {
       <Breadcrumb>
         <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
           <BreadcrumbItem>
-            <BreadcrumbLink href="/" asChild>
+            <BreadcrumbLink asChild>
               <Link from={Route.fullPath} to={".."}>
                 Settings
               </Link>
