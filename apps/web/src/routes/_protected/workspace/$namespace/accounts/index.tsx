@@ -1,4 +1,12 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 import * as React from "react";
 
@@ -12,15 +20,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 
 import { NewAccountStep } from "@/types/accounts";
 import { z } from "zod";
@@ -119,25 +118,20 @@ function AddAccount({ open, step }: { open: boolean; step: NewAccountStep }) {
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerTrigger asChild>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetTrigger asChild>
         <Button variant="outline">Add Account</Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>Add Account</DrawerTitle>
-          <DrawerDescription>
+      </SheetTrigger>
+      <SheetContent side="top">
+        <SheetHeader className="text-left">
+          <SheetTitle>Add Account</SheetTitle>
+          <SheetDescription>
             Start tracking your account in Fijoy :)
-          </DrawerDescription>
-        </DrawerHeader>
-        <AccountForm className="px-4" step={step} />
-        <DrawerFooter className="pt-2">
-          {/* <DrawerClose asChild> */}
-          {/*   <Button variant="outline">Cancel</Button> */}
-          {/* </DrawerClose> */}
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+          </SheetDescription>
+        </SheetHeader>
+        <AccountForm step={step} />
+      </SheetContent>
+    </Sheet>
   );
 }
 
