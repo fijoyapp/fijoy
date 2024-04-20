@@ -71,4 +71,4 @@ just test
 
 ---
 
-To run the project, simply use `pnpm dev`.
+To run the project, simply use `just dev`.
