@@ -34,6 +34,8 @@ a type-safe query building experience.
 just jet
 ```
 
+### Database
+
 All database migrations are in `apps/server/internal/database/migrations`.
 Here are all the migration commands:
 
@@ -41,6 +43,12 @@ Here are all the migration commands:
 just db-up
 just db-down
 just db-force <version>
+```
+
+To start a local Postgres instance with Docker, you can use:
+
+```bash
+just postgres
 ```
 
 ### Web
