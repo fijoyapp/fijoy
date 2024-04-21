@@ -6,6 +6,17 @@ Joyful personal finance management for everyone.
 
 ![Fijoy Home](./assets/readme.png)
 
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 ## Contribution
 
 Make sure you have [Just](https://github.com/casey/just) installed to run just commands.
