@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "itsjoeoui",
+      "name": "Joey Yu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25695219?v=4",
+      "profile": "http://jyu.dev",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "fijoy",
+  "projectOwner": "itsjoeoui"
+}
