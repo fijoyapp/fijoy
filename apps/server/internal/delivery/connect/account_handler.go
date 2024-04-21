@@ -14,6 +14,7 @@ import (
 	. "fijoy/internal/gen/postgres/table"
 
 	"connectrpc.com/connect"
+	"github.com/bojanz/currency"
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"
@@ -89,6 +90,10 @@ func (s *AccountServer) CreateAccount(
 		return nil, err
 	}
 
+	if ok := currency.IsValid(req.Msg.Balance.CurrencyCode); !ok {
+		return nil, errors.New("invalid currency code")
+	}
+
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelSerializable,
 		ReadOnly:  false,
@@ -100,7 +105,6 @@ func (s *AccountServer) CreateAccount(
 
 	now := time.Now().UTC()
 	balance := util.MoneyToDecimal(req.Msg.Balance)
-	fmt.Println("balance: ", balance)
 
 	account := entity.FijoyAccount{
 		FijoyAccount: model.FijoyAccount{
