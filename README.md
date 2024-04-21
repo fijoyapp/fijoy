@@ -2,7 +2,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-![All Contributors](https://img.shields.io/github/all-contributors/itsjoeoui/fijoy?style=for-the-badge&color=green)
+![All Contributors](https://img.shields.io/github/all-contributors/itsjoeoui/fijoy?style=for-the-badge&color=yellow)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
