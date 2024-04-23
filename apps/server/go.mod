@@ -6,7 +6,7 @@ require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.33.0-20240401165935-b983156c5e99.1
 	connectrpc.com/connect v1.16.1
 	connectrpc.com/cors v0.1.0
-	github.com/bufbuild/protovalidate-go v0.6.1
+	github.com/bufbuild/protovalidate-go v0.6.2
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/cors v1.2.1
@@ -63,7 +63,7 @@ require (
 	github.com/segmentio/asm v1.2.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
+	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
