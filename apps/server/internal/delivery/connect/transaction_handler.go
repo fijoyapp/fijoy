@@ -12,7 +12,6 @@ import (
 	. "fijoy/internal/gen/postgres/table"
 
 	"connectrpc.com/connect"
-	"github.com/bojanz/currency"
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"
@@ -74,8 +73,8 @@ func (s *TransactionServer) CreateIncomeTransaction(
 		return nil, err
 	}
 
-	if ok := currency.IsValid(req.Msg.Amount.CurrencyCode); !ok {
-		return nil, errors.New("invalid currency code")
+	if err := util.ValidateCurrency(req.Msg.Amount.CurrencyCode); err != nil {
+		return nil, err
 	}
 
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{

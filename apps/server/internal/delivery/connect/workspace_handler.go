@@ -72,6 +72,14 @@ func (s *WorkspaceServer) CreateWorkspace(
 		return nil, err
 	}
 
+	if err := util.ValidateCurrency(req.Msg.PrimaryCurrency); err != nil {
+		return nil, err
+	}
+
+	if err := util.ValidateLocale(req.Msg.Locale); err != nil {
+		return nil, err
+	}
+
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
