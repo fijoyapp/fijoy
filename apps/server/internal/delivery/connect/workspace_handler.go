@@ -428,6 +428,10 @@ func (s *WorkspaceServer) UpdatePrimaryCurrency(
 		)
 	}
 
+	if err := s.validator.Var(req.Msg.Code, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
 	workspace := model.FijoyWorkspace{
 		PrimaryCurrency: req.Msg.Code,
 	}
@@ -470,6 +474,10 @@ func (s *WorkspaceServer) UpdateLocale(
 		return nil, connect.NewError(
 			connect.CodePermissionDenied, errors.New("user does not have admin permission"),
 		)
+	}
+
+	if err := s.validator.Var(req.Msg.Locale, "bcp47_language_tag"); err != nil {
+		return nil, errors.New(constants.ErrInvalidLocaleCode)
 	}
 
 	workspace := model.FijoyWorkspace{
