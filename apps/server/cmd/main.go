@@ -7,6 +7,7 @@ import (
 	http_handler "fijoy/internal/delivery/http"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
@@ -45,6 +46,8 @@ func main() {
 		Endpoint:     google.Endpoint,
 	}
 
+	validator := validator.New(validator.WithRequiredStructEnabled())
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
@@ -63,10 +66,10 @@ func main() {
 
 	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.WEB_URL, cfg.DISCORD_WEBHOOK)
 	connect_handler.NewUserHandler(r, tokenAuth, db)
-	connect_handler.NewWorkspaceHandler(r, tokenAuth, db)
-	connect_handler.NewAccountHandler(r, tokenAuth, db)
+	connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
+	connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// http_handler.NewCategoryHandler(r, tokenAuth, db)
-	connect_handler.NewTransactionHandler(r, tokenAuth, db)
+	connect_handler.NewTransactionHandler(r, tokenAuth, db, validator)
 
 	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("OK"))

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fijoy/constants"
 	"fijoy/internal/entity"
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
@@ -16,6 +17,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-playground/validator/v10"
 	"github.com/nrednav/cuid2"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -27,11 +29,12 @@ import (
 )
 
 type AccountServer struct {
-	db *sql.DB
+	db        *sql.DB
+	validator *validator.Validate
 }
 
-func NewAccountHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
-	accountServer := &AccountServer{db: db}
+func NewAccountHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB, validator *validator.Validate) {
+	accountServer := &AccountServer{db: db, validator: validator}
 
 	path, handler := fijoyv1connect.NewAccountServiceHandler(accountServer)
 
@@ -89,6 +92,10 @@ func (s *AccountServer) CreateAccount(
 		return nil, err
 	}
 
+	if err := s.validator.Var(req.Msg.Balance.CurrencyCode, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{
 		Isolation: sql.LevelSerializable,
 		ReadOnly:  false,
@@ -100,7 +107,6 @@ func (s *AccountServer) CreateAccount(
 
 	now := time.Now().UTC()
 	balance := util.MoneyToDecimal(req.Msg.Balance)
-	fmt.Println("balance: ", balance)
 
 	account := entity.FijoyAccount{
 		FijoyAccount: model.FijoyAccount{

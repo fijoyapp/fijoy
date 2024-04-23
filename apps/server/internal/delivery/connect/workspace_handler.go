@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fijoy/constants"
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"fijoy/internal/util"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-playground/validator/v10"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -27,11 +29,12 @@ import (
 )
 
 type WorkspaceServer struct {
-	db *sql.DB
+	db        *sql.DB
+	validator *validator.Validate
 }
 
-func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
-	workspaceServer := &WorkspaceServer{db: db}
+func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB, validator *validator.Validate) {
+	workspaceServer := &WorkspaceServer{db: db, validator: validator}
 
 	path, handler := fijoyv1connect.NewWorkspaceServiceHandler(workspaceServer)
 
@@ -70,6 +73,14 @@ func (s *WorkspaceServer) CreateWorkspace(
 
 	if err = v.Validate(req.Msg); err != nil {
 		return nil, err
+	}
+
+	if err := s.validator.Var(req.Msg.PrimaryCurrency, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
+	if err := s.validator.Var(req.Msg.Locale, "bcp47_language_tag"); err != nil {
+		return nil, errors.New(constants.ErrInvalidLocaleCode)
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -417,6 +428,10 @@ func (s *WorkspaceServer) UpdatePrimaryCurrency(
 		)
 	}
 
+	if err := s.validator.Var(req.Msg.Code, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
 	workspace := model.FijoyWorkspace{
 		PrimaryCurrency: req.Msg.Code,
 	}
@@ -459,6 +474,10 @@ func (s *WorkspaceServer) UpdateLocale(
 		return nil, connect.NewError(
 			connect.CodePermissionDenied, errors.New("user does not have admin permission"),
 		)
+	}
+
+	if err := s.validator.Var(req.Msg.Locale, "bcp47_language_tag"); err != nil {
+		return nil, errors.New(constants.ErrInvalidLocaleCode)
 	}
 
 	workspace := model.FijoyWorkspace{

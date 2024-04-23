@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fijoy/constants"
 	"fijoy/internal/entity"
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
@@ -14,6 +15,7 @@ import (
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-playground/validator/v10"
 	"github.com/nrednav/cuid2"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -25,11 +27,12 @@ import (
 )
 
 type TransactionServer struct {
-	db *sql.DB
+	db        *sql.DB
+	validator *validator.Validate
 }
 
-func NewTransactionHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
-	transactionServer := &TransactionServer{db: db}
+func NewTransactionHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB, validator *validator.Validate) {
+	transactionServer := &TransactionServer{db: db, validator: validator}
 
 	path, handler := fijoyv1connect.NewTransactionServiceHandler(transactionServer)
 
@@ -71,6 +74,10 @@ func (s *TransactionServer) CreateIncomeTransaction(
 
 	if err = v.Validate(req.Msg); err != nil {
 		return nil, err
+	}
+
+	if err := s.validator.Var(req.Msg.Amount.CurrencyCode, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
 	}
 
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{
