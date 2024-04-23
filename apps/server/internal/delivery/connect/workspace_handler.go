@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fijoy/constants"
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"fijoy/internal/util"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/bufbuild/protovalidate-go"
 	. "github.com/go-jet/jet/v2/postgres"
+	"github.com/go-playground/validator/v10"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -27,11 +29,12 @@ import (
 )
 
 type WorkspaceServer struct {
-	db *sql.DB
+	db        *sql.DB
+	validator *validator.Validate
 }
 
-func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB) {
-	workspaceServer := &WorkspaceServer{db: db}
+func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB, validator *validator.Validate) {
+	workspaceServer := &WorkspaceServer{db: db, validator: validator}
 
 	path, handler := fijoyv1connect.NewWorkspaceServiceHandler(workspaceServer)
 
@@ -72,12 +75,12 @@ func (s *WorkspaceServer) CreateWorkspace(
 		return nil, err
 	}
 
-	if err := util.ValidateCurrency(req.Msg.PrimaryCurrency); err != nil {
-		return nil, err
+	if err := s.validator.Var(req.Msg.PrimaryCurrency, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
 	}
 
-	if err := util.ValidateLocale(req.Msg.Locale); err != nil {
-		return nil, err
+	if err := s.validator.Var(req.Msg.Locale, "bcp47_language_tag"); err != nil {
+		return nil, errors.New(constants.ErrInvalidLocaleCode)
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
