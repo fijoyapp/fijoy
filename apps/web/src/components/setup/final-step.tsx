@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { type TypeOf } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation } from "@connectrpc/connect-query";
@@ -23,7 +23,7 @@ const FinalStep = () => {
     }),
   );
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...generalStepData,

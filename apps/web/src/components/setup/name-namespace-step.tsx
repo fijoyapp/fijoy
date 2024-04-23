@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { type TypeOf } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -26,12 +26,12 @@ const NameNamespaceStep = () => {
     setGeneralStepData: state.setNameNamespaceStepData,
   }));
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: generalStepData,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: TypeOf<typeof formSchema>) {
     setGeneralStepData(values);
     router.navigate({
       from: "/setup",

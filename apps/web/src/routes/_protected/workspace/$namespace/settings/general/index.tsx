@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
+import { z, type TypeOf } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -65,7 +65,7 @@ function Page() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
-  const workspaceNameForm = useForm<z.infer<typeof workspaceNameFormSchema>>({
+  const workspaceNameForm = useForm<TypeOf<typeof workspaceNameFormSchema>>({
     resolver: zodResolver(workspaceNameFormSchema),
   });
 
@@ -84,12 +84,12 @@ function Page() {
   });
 
   function onUpdateWorkspaceNameSubmit(
-    values: z.infer<typeof workspaceNameFormSchema>,
+    values: TypeOf<typeof workspaceNameFormSchema>,
   ) {
     return updateWorkspaceNameMutation.mutateAsync(values);
   }
 
-  const workspaceUrlForm = useForm<z.infer<typeof workspaceUrlFormSchema>>({
+  const workspaceUrlForm = useForm<TypeOf<typeof workspaceUrlFormSchema>>({
     resolver: zodResolver(workspaceUrlFormSchema),
   });
 
@@ -117,7 +117,7 @@ function Page() {
   );
 
   function onUpdateWorkspaceUrlSubmit(
-    values: z.infer<typeof workspaceUrlFormSchema>,
+    values: TypeOf<typeof workspaceUrlFormSchema>,
   ) {
     return updateWorkspaceNamespaceMutation.mutateAsync(values);
   }

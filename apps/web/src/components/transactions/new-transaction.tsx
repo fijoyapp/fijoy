@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { z, type TypeOf } from "zod";
 import {
   Sheet,
   SheetContent,
@@ -48,7 +48,7 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
   // TODO: remove me
   console.log(accounts, categories, workspace);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       Currency: "CAD", // TODO: make this the same as account's currency
@@ -72,7 +72,7 @@ const NewTransaction = ({ accounts, workspace, categories }: Props) => {
   //   },
   // });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: TypeOf<typeof formSchema>) {
     console.log(values);
     // toast.promise(createTransaction.mutateAsync(values), {
     //   success: "Transaction created!",

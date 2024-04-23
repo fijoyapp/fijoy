@@ -23,7 +23,7 @@ import { useAccountsStore } from "@/store/accounts";
 import { NameTypeInstitutionStepData } from "@/types/accounts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type TypeOf } from "zod";
 import { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
 import { snakeToTitle } from "@/lib/format";
@@ -40,12 +40,12 @@ const NameTypeInstitutionStep = ({ className }: ComponentProps<"form">) => {
       setNameTypeInstitutionStepData: state.setNameTypeInstitutionStepData,
     }));
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: nameTypeInstitutionStepData,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: TypeOf<typeof formSchema>) {
     setNameTypeInstitutionStepData(values);
     router.navigate({
       to: "/workspace/$namespace/accounts",

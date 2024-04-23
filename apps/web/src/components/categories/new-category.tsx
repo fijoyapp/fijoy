@@ -45,7 +45,7 @@
 // const formSchema = InsertCategory;
 //
 // const NewCategory = ({ workspace }: Props) => {
-//   const form = useForm<z.infer<typeof formSchema>>({
+//   const form = useForm<TypeOf<typeof formSchema>>({
 //     resolver: zodResolver(formSchema),
 //   });
 //   const queryClient = useQueryClient();
@@ -53,7 +53,7 @@
 //   const [open, setOpen] = useState(false);
 //
 //   const insertCategory = useMutation({
-//     mutationFn: async (data: z.infer<typeof formSchema>) => {
+//     mutationFn: async (data: TypeOf<typeof formSchema>) => {
 //       await api.post("categories", {
 //         json: data,
 //         searchParams: {
@@ -70,7 +70,7 @@
 //     },
 //   });
 //
-//   function onSubmit(data: z.infer<typeof formSchema>) {
+//   function onSubmit(data: TypeOf<typeof formSchema>) {
 //     toast.promise(insertCategory.mutateAsync(data), {
 //       success: "Category created!",
 //       loading: "Creating category...",

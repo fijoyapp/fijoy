@@ -32,7 +32,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { z } from "zod";
+import { z, type TypeOf } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -79,12 +79,12 @@ function Page() {
 
   const [localePopoverOpen, setLocalePopoverOpen] = useState(false);
 
-  const primaryCurrencyForm = useForm<
-    z.infer<typeof primaryCurrencyFormSchema>
-  >({
-    resolver: zodResolver(primaryCurrencyFormSchema),
-    defaultValues: { code: workspace.primaryCurrency },
-  });
+  const primaryCurrencyForm = useForm<TypeOf<typeof primaryCurrencyFormSchema>>(
+    {
+      resolver: zodResolver(primaryCurrencyFormSchema),
+      defaultValues: { code: workspace.primaryCurrency },
+    },
+  );
 
   const updatePrimaryCurrencyMutation = useMutation(updatePrimaryCurrency, {
     onSuccess: () => {
@@ -101,12 +101,12 @@ function Page() {
   });
 
   function onUpdatePrimaryCurrencySubmit(
-    values: z.infer<typeof primaryCurrencyFormSchema>,
+    values: TypeOf<typeof primaryCurrencyFormSchema>,
   ) {
     return updatePrimaryCurrencyMutation.mutateAsync(values);
   }
 
-  const localeForm = useForm<z.infer<typeof localeFormSchema>>({
+  const localeForm = useForm<TypeOf<typeof localeFormSchema>>({
     resolver: zodResolver(localeFormSchema),
     defaultValues: { locale: workspace.locale },
   });
@@ -125,7 +125,7 @@ function Page() {
     },
   });
 
-  function onUpdateLocaleSubmit(values: z.infer<typeof localeFormSchema>) {
+  function onUpdateLocaleSubmit(values: TypeOf<typeof localeFormSchema>) {
     return updateLocaleMutation.mutateAsync(values);
   }
 

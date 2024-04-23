@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -35,6 +34,7 @@ import { getUserLocales, localeCodeToName } from "@/config/locale";
 import { currencyToDisplay } from "@/lib/money";
 import currency from "currency.js";
 import { useState } from "react";
+import { type TypeOf } from "zod";
 
 const formSchema = CurrencyLocaleStepData;
 
@@ -52,14 +52,14 @@ const CurrencyLocaleStep = () => {
     setCurrencyLocaleStepData: state.setCurrencyLocaleStepData,
   }));
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: !currencyLocaleStepData
       ? { locale: navigator.language }
       : currencyLocaleStepData,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: TypeOf<typeof formSchema>) {
     setCurrencyLocaleStepData(values);
     router.navigate({
       from: "/setup",

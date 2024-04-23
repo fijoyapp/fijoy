@@ -15,7 +15,7 @@ import {
 import { match } from "ts-pattern";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type TypeOf } from "zod";
 import { BalanceStepData } from "@/types/accounts";
 import { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
@@ -33,7 +33,7 @@ const BalanceStep = ({ className }: ComponentProps<"form">) => {
       setBalanceStepData: state.setBalanceStepData,
     }));
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: balanceStepData ?? { balance: "0" },
   });
@@ -55,7 +55,7 @@ const BalanceStep = ({ className }: ComponentProps<"form">) => {
     });
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: TypeOf<typeof formSchema>) {
     setBalanceStepData(values);
     router.navigate({
       to: "/workspace/$namespace/accounts",
