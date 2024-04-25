@@ -15,7 +15,7 @@ export function PublicHeader() {
         <PublicNav />
         <nav className="flex flex-1 items-center justify-end gap-2">
           {user ? (
-            <Link to={"/workspace/"}>
+            <Link to={"/workspace"}>
               <Button size="sm" variant="outline">
                 Go to Workspace
               </Button>

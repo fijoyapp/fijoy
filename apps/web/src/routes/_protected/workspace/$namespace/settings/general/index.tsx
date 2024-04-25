@@ -126,7 +126,7 @@ function Page() {
     onSuccess: () => {
       queryClient.invalidateQueries();
       router.navigate({
-        to: "/workspace/",
+        to: "/workspace",
       });
       toast.success("Workspace deleted");
     },
