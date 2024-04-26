@@ -37,6 +37,7 @@ import { match } from "ts-pattern";
 import NameTypeInstitutionStep from "@/components/accounts/form-step/name-type-institution-step";
 import BalanceStep from "@/components/accounts/form-step/balance-step";
 import FinalStep from "@/components/accounts/form-step/final-step";
+import { AccountStats } from "@/components/accounts/account-stats";
 
 const setupNewAccountSchema = z.object({
   step: NewAccountStep.default("name-type-institution").optional(),
@@ -80,6 +81,8 @@ function Page() {
         open={addAccountOpen ?? false}
         step={step ?? "name-type-institution"}
       />
+
+      <AccountStats accounts={accounts} />
 
       <AccountTable columns={columns} data={accounts} />
     </>
