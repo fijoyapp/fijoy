@@ -29,6 +29,12 @@ There are a couple things I would like to achive with Fijoy
 - The account balance at all time is the sum of all the transactions.
   Therefore, everything is traceable.
 
+## Debt vs. Asset
+
+If I have $100 (asset), that will be displayed as $100, and will be stored as
+$100 in the database. IF I own $100 (debt), it will STILL be displayed as $100
+as the "credit balance" on the client side, but stored as -$100 in the database.
+
 ## Transactions
 
 - Make sure to update the balance of the accounts involved in the transaction.
