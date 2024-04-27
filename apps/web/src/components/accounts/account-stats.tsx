@@ -5,14 +5,14 @@ import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { calculateStats, currencyToDisplay } from "@/lib/money";
 import { useWorkspace } from "@/hooks/use-workspace";
 
-interface AccountStatsProps {
+type AccountStatsProps = {
   accounts: Account[];
-}
+};
 
 export function AccountStats({ accounts }: AccountStatsProps) {
-  const debt = calculateStats(accounts, true);
   const assets = calculateStats(accounts, false);
-  const networth = assets.subtract(debt.multiply(currency(-1)));
+  const debt = calculateStats(accounts, true);
+  const networth = assets.add(debt);
 
   return (
     <div className="grid gap-4 lg:grid-cols-3">
@@ -31,18 +31,20 @@ export function AccountStats({ accounts }: AccountStatsProps) {
         title="Total Debt"
         icon={<Banknote className="h-4 w-4 text-muted-foreground" />}
         value={debt}
+        isDebt={true}
       />
     </div>
   );
 }
 
-interface CardStatsProps {
+type CardStatsProps = {
   title: string;
   icon: JSX.Element;
   value: currency;
-}
+  isDebt?: boolean;
+};
 
-const CardStats = ({ value, title, icon }: CardStatsProps) => {
+const CardStats = ({ value, title, icon, isDebt }: CardStatsProps) => {
   const { workspace } = useWorkspace();
   return (
     <Card>
@@ -53,10 +55,11 @@ const CardStats = ({ value, title, icon }: CardStatsProps) => {
         {icon}
       </CardHeader>
       <CardContent>
-        <h3 className="font-roboto-mono text-xl font-semibold leading-none tracking-tight ">
+        <h3 className="font-roboto-mono text-xl font-semibold leading-none tracking-tight">
           {currencyToDisplay(value, workspace.primaryCurrency, {
             compact: true,
             locale: workspace.locale,
+            isDebt: isDebt,
           })}
         </h3>
       </CardContent>

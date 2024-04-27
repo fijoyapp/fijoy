@@ -30,9 +30,7 @@ export const TotalAssetCard = ({ accounts }: CardProps) => {
               )
               .reduce((acc, cur) => {
                 if (!cur.balance) return acc;
-                return acc.add(
-                  moneyToCurrency(cur.balance, { reverse: false }),
-                );
+                return acc.add(moneyToCurrency(cur.balance));
               }, currency(0)),
             workspace.primaryCurrency,
             { compact: true, locale: workspace.locale },

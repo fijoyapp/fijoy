@@ -15,10 +15,12 @@ export function BalanceCell({ row }: { row: Row<Account> }) {
   }
 
   return currencyToDisplay(
-    moneyToCurrency(row.original.balance, {
-      reverse: accountTypeConfigMap[row.original.accountType].isDebt,
-    }),
+    moneyToCurrency(row.original.balance),
     row.original.balance.currencyCode,
-    { compact: false, locale: workspace.locale },
+    {
+      compact: false,
+      locale: workspace.locale,
+      isDebt: accountTypeConfigMap[row.original.accountType].isDebt,
+    },
   );
 }
