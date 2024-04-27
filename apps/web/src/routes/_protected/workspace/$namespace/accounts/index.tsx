@@ -84,6 +84,7 @@ function Page() {
         step={step ?? "name-type-institution"}
       />
 
+      {/* FIXME: table is too wide on mobile */}
       <AccountTable columns={columns} data={accounts} />
     </>
   );
