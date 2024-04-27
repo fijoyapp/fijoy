@@ -2,7 +2,7 @@ dev:
   pnpm dev
 
 build:
-  just apps/server/build
+  pnpm build
 
 db-up:
   just apps/server/db-up
