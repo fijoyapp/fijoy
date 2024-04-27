@@ -9,7 +9,6 @@ import (
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"fijoy/internal/util"
-	"fmt"
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
@@ -72,7 +71,6 @@ func (s *AccountServer) CreateAccount(
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(req.Msg.Balance.Units)
 
 	workspaceUser, err := util.GetWorkspaceUserPermission(s.db, userId, workspaceId)
 	if err != nil {
@@ -106,7 +104,15 @@ func (s *AccountServer) CreateAccount(
 	defer tx.Rollback()
 
 	now := time.Now().UTC()
+
 	balance := util.MoneyToDecimal(req.Msg.Balance)
+	if req.Msg.AccountType == fijoyv1.AccountType_ACCOUNT_TYPE_DEBT {
+		// NOTE: For debt accounts, like a credit card, if the user own $200, they
+		// will input the balance as 200, but in the database we will store it as -200
+		// This makes doing networth sums easier.
+
+		balance = balance.Neg()
+	}
 
 	account := entity.FijoyAccount{
 		FijoyAccount: model.FijoyAccount{
