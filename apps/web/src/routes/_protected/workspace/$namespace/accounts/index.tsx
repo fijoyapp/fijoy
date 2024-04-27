@@ -77,12 +77,12 @@ function Page() {
         </PageHeaderDescription>
       </PageHeader>
 
+      <AccountStats accounts={accounts} />
+
       <AddAccount
         open={addAccountOpen ?? false}
         step={step ?? "name-type-institution"}
       />
-
-      <AccountStats accounts={accounts} />
 
       <AccountTable columns={columns} data={accounts} />
     </>
