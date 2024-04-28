@@ -35,7 +35,7 @@ export const useAccountsStore = create<State & Actions>()(
     reset: () => {
       set(() => ({
         nameTypeInstitutionStepData: undefined,
-        CurrencyBalanceStepData: undefined,
+        currencyBalanceStepData: undefined,
       }));
     },
   })),
