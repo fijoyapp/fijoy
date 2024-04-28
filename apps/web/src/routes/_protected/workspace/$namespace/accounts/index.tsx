@@ -23,7 +23,7 @@ import {
 
 import { NewAccountStep } from "@/types/accounts";
 import { z } from "zod";
-import { AccountTable } from "@/components/accounts/account-table";
+import { DataTable } from "@/components/accounts/account-table";
 import { columns } from "@/components/accounts/columns";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -85,7 +85,7 @@ function Page() {
       />
 
       {/* FIXME: table is too wide on mobile */}
-      <AccountTable columns={columns} data={accounts} />
+      <DataTable columns={columns} data={accounts} />
     </>
   );
 }
