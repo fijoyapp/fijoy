@@ -24,7 +24,8 @@ message CreateWorkspaceRequest {
   string namespace = 1 [(buf.validate.field).string.min_len = 1];
   string name = 2 [(buf.validate.field).string.min_len = 1];
   string primary_currency = 3 [(buf.validate.field).string.min_len = 1];
-  string locale = 4 [(buf.validate.field).string.min_len = 1];
+  repeated string supported_currencies = 4 [(buf.validate.field).repeated.unique = true];
+  string locale = 5 [(buf.validate.field).string.min_len = 1];
 }
 
 message GetWorkspaceByIdRequest {

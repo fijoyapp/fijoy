@@ -136,7 +136,12 @@ export class CreateWorkspaceRequest extends Message<CreateWorkspaceRequest> {
   primaryCurrency = "";
 
   /**
-   * @generated from field: string locale = 4;
+   * @generated from field: repeated string supported_currencies = 4;
+   */
+  supportedCurrencies: string[] = [];
+
+  /**
+   * @generated from field: string locale = 5;
    */
   locale = "";
 
@@ -151,7 +156,8 @@ export class CreateWorkspaceRequest extends Message<CreateWorkspaceRequest> {
     { no: 1, name: "namespace", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "primary_currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "supported_currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 5, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateWorkspaceRequest {
