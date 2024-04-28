@@ -30,6 +30,9 @@ export default interface FijoyAccount {
   /** Database type: pg_catalog.text */
   institution: string;
 
+  /** Database type: pg_catalog.bool */
+  active: boolean;
+
   /** Database type: pg_catalog.timestamptz */
   createdAt: Date;
 
@@ -59,6 +62,12 @@ export interface FijoyAccountInitializer {
 
   /** Database type: pg_catalog.text */
   institution: string;
+
+  /**
+   * Database type: pg_catalog.bool
+   * Default value: true
+   */
+  active?: boolean;
 
   /**
    * Database type: pg_catalog.timestamptz
@@ -96,6 +105,9 @@ export interface FijoyAccountMutator {
   /** Database type: pg_catalog.text */
   institution?: string;
 
+  /** Database type: pg_catalog.bool */
+  active?: boolean;
+
   /** Database type: pg_catalog.timestamptz */
   createdAt?: Date;
 
@@ -113,6 +125,7 @@ export const fijoyAccount = z.object({
   balance: z.string(),
   currency: z.string(),
   institution: z.string(),
+  active: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
@@ -125,6 +138,7 @@ export const fijoyAccountInitializer = z.object({
   balance: z.string(),
   currency: z.string(),
   institution: z.string(),
+  active: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 });
@@ -137,6 +151,7 @@ export const fijoyAccountMutator = z.object({
   balance: z.string().optional(),
   currency: z.string().optional(),
   institution: z.string().optional(),
+  active: z.boolean().optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
 });

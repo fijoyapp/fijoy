@@ -8,6 +8,7 @@ CREATE TABLE "fijoy_account" (
   "balance" NUMERIC(16, 8) NOT NULL,
   "currency" TEXT NOT NULL,
   "institution" TEXT NOT NULL,
+  "active" BOOLEAN DEFAULT TRUE NOT NULL,
   "created_at" TIMESTAMPTZ DEFAULT now() NOT NULL,
   "updated_at" TIMESTAMPTZ DEFAULT now() NOT NULL,
   CONSTRAINT "fijoy_account_workspace_id_name_unique" UNIQUE ("workspace_id", "name"),

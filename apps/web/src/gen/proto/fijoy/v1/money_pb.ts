@@ -28,6 +28,7 @@ export class Money extends Message<Money> {
   units = protoInt64.zero;
 
   /**
+   * TODO: write some validation logic for this
    * Number of nano (10^-9) units of the amount.
    * The value must be between -999,999,999 and +999,999,999 inclusive.
    * If `units` is positive, `nanos` must be positive or zero.

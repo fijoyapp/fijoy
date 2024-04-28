@@ -19,6 +19,7 @@ type FijoyAccount struct {
 	Balance     float64          `json:"Balance"`
 	Currency    string           `json:"Currency"`
 	Institution string           `json:"Institution"`
+	Active      bool             `json:"Active"`
 	CreatedAt   time.Time        `json:"CreatedAt"`
 	UpdatedAt   time.Time        `json:"UpdatedAt"`
 }

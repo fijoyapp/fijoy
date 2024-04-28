@@ -80,12 +80,17 @@ export class Account extends Message<Account> {
   institution = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 7;
+   * @generated from field: bool active = 7;
+   */
+  active = false;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 8;
    */
   createdAt?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 8;
+   * @generated from field: google.protobuf.Timestamp updated_at = 9;
    */
   updatedAt?: Timestamp;
 
@@ -103,8 +108,9 @@ export class Account extends Message<Account> {
     { no: 4, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
     { no: 5, name: "balance", kind: "message", T: Money },
     { no: 6, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "created_at", kind: "message", T: Timestamp },
-    { no: 8, name: "updated_at", kind: "message", T: Timestamp },
+    { no: 7, name: "active", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 8, name: "created_at", kind: "message", T: Timestamp },
+    { no: 9, name: "updated_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
