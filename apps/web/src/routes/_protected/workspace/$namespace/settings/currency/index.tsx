@@ -185,7 +185,7 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-full max-w-[280px] justify-between ",
+                                "justify-between",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -197,10 +197,7 @@ function Page() {
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent
-                            className="w-full max-w-[280px] p-0"
-                            align="start"
-                          >
+                          <PopoverContent className="p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search currency..." />
                               <CommandList>
@@ -334,7 +331,7 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-full max-w-[280px] justify-between",
+                                "justify-between",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -346,10 +343,7 @@ function Page() {
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent
-                            className="w-full max-w-[280px] p-0"
-                            align="start"
-                          >
+                          <PopoverContent className="p-0" align="start">
                             <Command>
                               <CommandInput placeholder="Search locale..." />
                               <CommandList>
