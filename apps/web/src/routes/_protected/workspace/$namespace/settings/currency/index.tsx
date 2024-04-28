@@ -245,7 +245,7 @@ function Page() {
                 />
               </CardContent>
 
-              <CardHeader>
+              <CardHeader className="pt-0">
                 <CardTitle className="text-xl">Supported Currencies</CardTitle>
                 <CardDescription>
                   You will be able to create accounts and log transactions in
