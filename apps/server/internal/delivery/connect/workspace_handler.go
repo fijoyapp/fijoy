@@ -503,5 +503,3 @@ func (s *WorkspaceServer) UpdateLocale(
 
 	return res, nil
 }
-
-// TODO: dedup all the update functions, dry

@@ -12,7 +12,10 @@ message Workspace {
   string name = 3 [(buf.validate.field).string.min_len = 1];
   google.protobuf.Timestamp created_at = 4 [(buf.validate.field).required = true];
   string primary_currency = 5 [(buf.validate.field).string.min_len = 1];
-  repeated string supported_currencies = 6 [(buf.validate.field).repeated.unique = true];
+  repeated string supported_currencies = 6 [
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.min_items = 1
+  ];
   string locale = 7 [(buf.validate.field).string.min_len = 1];
 }
 
@@ -24,7 +27,10 @@ message CreateWorkspaceRequest {
   string namespace = 1 [(buf.validate.field).string.min_len = 1];
   string name = 2 [(buf.validate.field).string.min_len = 1];
   string primary_currency = 3 [(buf.validate.field).string.min_len = 1];
-  repeated string supported_currencies = 4 [(buf.validate.field).repeated.unique = true];
+  repeated string supported_currencies = 4 [
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.min_items = 1
+  ];
   string locale = 5 [(buf.validate.field).string.min_len = 1];
 }
 
@@ -46,7 +52,10 @@ message UpdateWorkspaceNamespaceRequest {
 
 message UpdateCurrencyRequest {
   string primaryCurrency = 1 [(buf.validate.field).string.min_len = 1];
-  repeated string supportedCurrencies = 2 [(buf.validate.field).repeated.unique = true];
+  repeated string supportedCurrencies = 2 [
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.min_items = 1
+  ];
 }
 
 message UpdateLocaleRequest {
