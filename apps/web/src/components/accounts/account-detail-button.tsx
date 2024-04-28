@@ -10,6 +10,7 @@ export function AccountDetailButton({ row }: { row: Row<Account> }) {
 
   return (
     <ChevronRight
+      className="cursor-pointer"
       onClick={() =>
         router.navigate({
           to: "/workspace/$namespace/accounts/$accountId",
