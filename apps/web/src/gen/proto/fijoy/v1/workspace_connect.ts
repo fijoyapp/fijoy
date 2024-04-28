@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, UpdateLocaleRequest, UpdatePrimaryCurrencyRequest, UpdateWorkspaceNameRequest, UpdateWorkspaceNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
+import { CreateWorkspaceRequest, GetWorkspaceByIdRequest, GetWorkspaceByNamespaceRequest, UpdateCurrencyRequest, UpdateLocaleRequest, UpdateWorkspaceNameRequest, UpdateWorkspaceNamespaceRequest, Workspace, Workspaces } from "./workspace_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -70,11 +70,11 @@ export const WorkspaceService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc fijoy.v1.WorkspaceService.UpdatePrimaryCurrency
+     * @generated from rpc fijoy.v1.WorkspaceService.UpdateCurrency
      */
-    updatePrimaryCurrency: {
-      name: "UpdatePrimaryCurrency",
-      I: UpdatePrimaryCurrencyRequest,
+    updateCurrency: {
+      name: "UpdateCurrency",
+      I: UpdateCurrencyRequest,
       O: Workspace,
       kind: MethodKind.Unary,
     },

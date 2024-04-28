@@ -8,6 +8,7 @@ import (
 	"fijoy/internal/gen/postgres/model"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"fijoy/internal/util"
+	"strings"
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
@@ -48,12 +49,13 @@ func NewWorkspaceHandler(r *chi.Mux, tokenAuth *jwtauth.JWTAuth, db *sql.DB, val
 
 func jetWorkspaceToConnectWorkspace(w *model.FijoyWorkspace) *fijoyv1.Workspace {
 	return &fijoyv1.Workspace{
-		Id:              w.ID,
-		Namespace:       w.Namespace,
-		Name:            w.Name,
-		CreatedAt:       timestamppb.New(w.CreatedAt),
-		PrimaryCurrency: w.PrimaryCurrency,
-		Locale:          w.Locale,
+		Id:                  w.ID,
+		Namespace:           w.Namespace,
+		Name:                w.Name,
+		CreatedAt:           timestamppb.New(w.CreatedAt),
+		PrimaryCurrency:     w.PrimaryCurrency,
+		SupportedCurrencies: strings.Split(w.SupportedCurrencies, ","),
+		Locale:              w.Locale,
 	}
 }
 
@@ -403,9 +405,9 @@ func (s *WorkspaceServer) DeleteWorkspace(
 	return res, nil
 }
 
-func (s *WorkspaceServer) UpdatePrimaryCurrency(
+func (s *WorkspaceServer) UpdateCurrency(
 	ctx context.Context,
-	req *connect.Request[fijoyv1.UpdatePrimaryCurrencyRequest],
+	req *connect.Request[fijoyv1.UpdateCurrencyRequest],
 ) (*connect.Response[fijoyv1.Workspace], error) {
 	userId, err := util.GetUserIdFromContext(ctx)
 	if err != nil {
@@ -428,17 +430,19 @@ func (s *WorkspaceServer) UpdatePrimaryCurrency(
 		)
 	}
 
-	if err := s.validator.Var(req.Msg.Code, "iso4217"); err != nil {
+	if err := s.validator.Var(req.Msg.PrimaryCurrency, "iso4217"); err != nil {
 		return nil, errors.New(constants.ErrInvalidCurrencyCode)
 	}
 
 	workspace := model.FijoyWorkspace{
-		PrimaryCurrency: req.Msg.Code,
+		PrimaryCurrency:     req.Msg.PrimaryCurrency,
+		SupportedCurrencies: strings.Join(req.Msg.SupportedCurrencies, ","),
 	}
 
-	stmt := FijoyWorkspace.UPDATE(FijoyWorkspace.PrimaryCurrency).MODEL(workspace).WHERE(
-		FijoyWorkspace.ID.EQ(String(workspaceId)),
-	).RETURNING(FijoyWorkspace.AllColumns)
+	stmt := FijoyWorkspace.
+		UPDATE(FijoyWorkspace.PrimaryCurrency, FijoyWorkspace.SupportedCurrencies).
+		MODEL(workspace).WHERE(FijoyWorkspace.ID.EQ(String(workspaceId))).
+		RETURNING(FijoyWorkspace.AllColumns)
 
 	var dest model.FijoyWorkspace
 

@@ -12,10 +12,11 @@ import (
 )
 
 type FijoyWorkspace struct {
-	ID              string    `sql:"primary_key" json:"ID"`
-	Namespace       string    `json:"Namespace"`
-	Name            string    `json:"Name"`
-	CreatedAt       time.Time `json:"CreatedAt"`
-	PrimaryCurrency string    `json:"PrimaryCurrency"`
-	Locale          string    `json:"Locale"`
+	ID                  string    `sql:"primary_key" json:"ID"`
+	Namespace           string    `json:"Namespace"`
+	Name                string    `json:"Name"`
+	CreatedAt           time.Time `json:"CreatedAt"`
+	PrimaryCurrency     string    `json:"PrimaryCurrency"`
+	SupportedCurrencies string    `json:"SupportedCurrencies"`
+	Locale              string    `json:"Locale"`
 }

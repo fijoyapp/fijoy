@@ -45,7 +45,7 @@ import {
 import {
   getWorkspaceByNamespace,
   updateLocale,
-  updatePrimaryCurrency,
+  updateCurrency,
 } from "@/gen/proto/fijoy/v1/workspace-WorkspaceService_connectquery";
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
@@ -60,6 +60,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { currencyToDisplay } from "@/lib/money";
 import currency from "currency.js";
 import { getUserLocales, localeCodeToName } from "@/config/locale";
+import MultiSelectFormField from "@/components/ui/multi-select";
 
 export const Route = createFileRoute(
   "/_protected/workspace/$namespace/settings/currency/",
@@ -67,43 +68,44 @@ export const Route = createFileRoute(
   component: Page,
 });
 
-const primaryCurrencyFormSchema = z.object({ code: z.string() });
+const currencyFormSchema = z.object({
+  primaryCurrency: z.string(),
+  supportedCurrencies: z.string().array(),
+});
 const localeFormSchema = z.object({ locale: z.string() });
 
 function Page() {
   const { workspace } = useWorkspace();
   const { queryClient } = Route.useRouteContext();
 
-  const [primaryCurrencyPopoverOpen, setPrimaryCurrencyPopoverOpen] =
-    useState(false);
+  const [currencyPopoverOpen, setCurrencyPopoverOpen] = useState(false);
 
   const [localePopoverOpen, setLocalePopoverOpen] = useState(false);
 
-  const primaryCurrencyForm = useForm<TypeOf<typeof primaryCurrencyFormSchema>>(
-    {
-      resolver: zodResolver(primaryCurrencyFormSchema),
-      defaultValues: { code: workspace.primaryCurrency },
+  const currencyForm = useForm<TypeOf<typeof currencyFormSchema>>({
+    resolver: zodResolver(currencyFormSchema),
+    defaultValues: {
+      primaryCurrency: workspace.primaryCurrency,
+      supportedCurrencies: workspace.supportedCurrencies,
     },
-  );
+  });
 
-  const updatePrimaryCurrencyMutation = useMutation(updatePrimaryCurrency, {
+  const updateCurrencyMutation = useMutation(updateCurrency, {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: createConnectQueryKey(getWorkspaceByNamespace, {
           namespace: workspace.namespace,
         }),
       });
-      toast.success("Primary currency updated");
+      toast.success("Currency settings updated");
     },
     callOptions: {
       headers: getWorkspaceHeader(workspace.id),
     },
   });
 
-  function onUpdatePrimaryCurrencySubmit(
-    values: TypeOf<typeof primaryCurrencyFormSchema>,
-  ) {
-    return updatePrimaryCurrencyMutation.mutateAsync(values);
+  function onUpdateCurrencySubmit(values: TypeOf<typeof currencyFormSchema>) {
+    return updateCurrencyMutation.mutateAsync(values);
   }
 
   const localeForm = useForm<TypeOf<typeof localeFormSchema>>({
@@ -155,34 +157,28 @@ function Page() {
       <div className="py-4"></div>
 
       <div className="space-y-4">
-        <Form {...primaryCurrencyForm}>
+        <Form {...currencyForm}>
           <form
-            onSubmit={primaryCurrencyForm.handleSubmit(
-              onUpdatePrimaryCurrencySubmit,
-            )}
+            onSubmit={currencyForm.handleSubmit(onUpdateCurrencySubmit)}
             className="space-y-8"
           >
-            <FormField
-              control={primaryCurrencyForm.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-xl">
-                        Primary Currency
-                      </CardTitle>
-                      <CardDescription>
-                        Your total net worth will be displayed in this currency.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Primary Currency</CardTitle>
+                <CardDescription>
+                  Your total net worth will be displayed in this currency.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={currencyForm.control}
+                  name="primaryCurrency"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormControl>
                         <Popover
-                          open={primaryCurrencyPopoverOpen}
-                          onOpenChange={(open) =>
-                            setPrimaryCurrencyPopoverOpen(open)
-                          }
+                          open={currencyPopoverOpen}
+                          onOpenChange={(open) => setCurrencyPopoverOpen(open)}
                         >
                           <PopoverTrigger asChild>
                             <Button
@@ -218,13 +214,11 @@ function Page() {
                                           value={currencyName}
                                           key={currencyName}
                                           onSelect={() => {
-                                            primaryCurrencyForm.setValue(
-                                              "code",
+                                            currencyForm.setValue(
+                                              "primaryCurrency",
                                               currency,
                                             );
-                                            setPrimaryCurrencyPopoverOpen(
-                                              false,
-                                            );
+                                            setCurrencyPopoverOpen(false);
                                           }}
                                         >
                                           <Check
@@ -246,21 +240,51 @@ function Page() {
                           </PopoverContent>
                         </Popover>
                       </FormControl>
-                    </CardContent>
-                    <CardFooter className="space-x-4 border-t px-6 py-4">
-                      {primaryCurrencyForm.formState.isSubmitting ? (
-                        <Button disabled={true}>
-                          <Icons.spinner />
-                        </Button>
-                      ) : (
-                        <Button>Save</Button>
-                      )}
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+
+              <CardHeader>
+                <CardTitle className="text-xl">Supported Currencies</CardTitle>
+                <CardDescription>
+                  You will be able to create accounts and log transactions in
+                  the following currencies.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={currencyForm.control}
+                  name="supportedCurrencies"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <MultiSelectFormField
+                          options={CURRENCIES.map((c) => ({
+                            label: `${currencyCodeToName(c)} (${c})`,
+                            value: c,
+                          }))}
+                          defaultValue={field.value}
+                          onValueChange={field.onChange}
+                          placeholder="Select currencies"
+                        />
+                      </FormControl>
                       <FormMessage />
-                    </CardFooter>
-                  </Card>
-                </FormItem>
-              )}
-            />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter className="space-x-4 border-t px-6 py-4">
+                {currencyForm.formState.isSubmitting ? (
+                  <Button disabled={true}>
+                    <Icons.spinner />
+                  </Button>
+                ) : (
+                  <Button>Save</Button>
+                )}
+                <FormMessage />
+              </CardFooter>
+            </Card>
           </form>
         </Form>
 
@@ -280,23 +304,23 @@ function Page() {
                       <CardDescription>
                         This has an impact on how numbers and dates are
                         formatted in Fijoy.
-                        {primaryCurrencyForm.watch("code") && field.value && (
-                          <>
-                            <div className="py-1"></div>
-                            Preview: 420 {primaryCurrencyForm.watch(
-                              "code",
-                            )}{" "}
-                            will be displayed as{" "}
-                            {currencyToDisplay(
-                              currency("420"),
-                              primaryCurrencyForm.getValues("code"),
-                              {
-                                locale: field.value,
-                                compact: false,
-                              },
-                            )}
-                          </>
-                        )}
+                        {currencyForm.watch("primaryCurrency") &&
+                          field.value && (
+                            <>
+                              <div className="py-1"></div>
+                              Preview: 420{" "}
+                              {currencyForm.watch("primaryCurrency")} will be
+                              displayed as{" "}
+                              {currencyToDisplay(
+                                currency("420"),
+                                currencyForm.getValues("primaryCurrency"),
+                                {
+                                  locale: field.value,
+                                  compact: false,
+                                },
+                              )}
+                            </>
+                          )}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

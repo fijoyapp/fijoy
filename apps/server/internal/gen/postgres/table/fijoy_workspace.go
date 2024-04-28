@@ -17,12 +17,13 @@ type fijoyWorkspaceTable struct {
 	postgres.Table
 
 	// Columns
-	ID              postgres.ColumnString
-	Namespace       postgres.ColumnString
-	Name            postgres.ColumnString
-	CreatedAt       postgres.ColumnTimestampz
-	PrimaryCurrency postgres.ColumnString
-	Locale          postgres.ColumnString
+	ID                  postgres.ColumnString
+	Namespace           postgres.ColumnString
+	Name                postgres.ColumnString
+	CreatedAt           postgres.ColumnTimestampz
+	PrimaryCurrency     postgres.ColumnString
+	SupportedCurrencies postgres.ColumnString
+	Locale              postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -63,26 +64,28 @@ func newFijoyWorkspaceTable(schemaName, tableName, alias string) *FijoyWorkspace
 
 func newFijoyWorkspaceTableImpl(schemaName, tableName, alias string) fijoyWorkspaceTable {
 	var (
-		IDColumn              = postgres.StringColumn("id")
-		NamespaceColumn       = postgres.StringColumn("namespace")
-		NameColumn            = postgres.StringColumn("name")
-		CreatedAtColumn       = postgres.TimestampzColumn("created_at")
-		PrimaryCurrencyColumn = postgres.StringColumn("primary_currency")
-		LocaleColumn          = postgres.StringColumn("locale")
-		allColumns            = postgres.ColumnList{IDColumn, NamespaceColumn, NameColumn, CreatedAtColumn, PrimaryCurrencyColumn, LocaleColumn}
-		mutableColumns        = postgres.ColumnList{NamespaceColumn, NameColumn, CreatedAtColumn, PrimaryCurrencyColumn, LocaleColumn}
+		IDColumn                  = postgres.StringColumn("id")
+		NamespaceColumn           = postgres.StringColumn("namespace")
+		NameColumn                = postgres.StringColumn("name")
+		CreatedAtColumn           = postgres.TimestampzColumn("created_at")
+		PrimaryCurrencyColumn     = postgres.StringColumn("primary_currency")
+		SupportedCurrenciesColumn = postgres.StringColumn("supported_currencies")
+		LocaleColumn              = postgres.StringColumn("locale")
+		allColumns                = postgres.ColumnList{IDColumn, NamespaceColumn, NameColumn, CreatedAtColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn}
+		mutableColumns            = postgres.ColumnList{NamespaceColumn, NameColumn, CreatedAtColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn}
 	)
 
 	return fijoyWorkspaceTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:              IDColumn,
-		Namespace:       NamespaceColumn,
-		Name:            NameColumn,
-		CreatedAt:       CreatedAtColumn,
-		PrimaryCurrency: PrimaryCurrencyColumn,
-		Locale:          LocaleColumn,
+		ID:                  IDColumn,
+		Namespace:           NamespaceColumn,
+		Name:                NameColumn,
+		CreatedAt:           CreatedAtColumn,
+		PrimaryCurrency:     PrimaryCurrencyColumn,
+		SupportedCurrencies: SupportedCurrenciesColumn,
+		Locale:              LocaleColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

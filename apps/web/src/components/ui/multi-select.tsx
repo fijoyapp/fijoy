@@ -1,13 +1,7 @@
 // https://github.com/sersavan/shadcn-multi-select-component/
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  CheckIcon,
-  XCircle,
-  ChevronDown,
-  XIcon,
-  WandSparkles,
-} from "lucide-react";
+import { CheckIcon, XCircle, ChevronDown, XIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -28,25 +22,21 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 
-const multiSelectVariants = cva(
-  "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-foreground/10 drop-shadow-md text-foreground bg-card hover:bg-card/80",
-        secondary:
-          "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        inverted: "inverted",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
+const multiSelectVariants = cva("transition ease-in-out duration-300", {
+  variants: {
+    variant: {
+      default: "border-foreground/10  text-foreground bg-card hover:bg-card/80",
+      secondary:
+        "border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80",
+      destructive:
+        "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+      inverted: "inverted",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 interface MultiSelectFormFieldProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -61,7 +51,6 @@ interface MultiSelectFormFieldProps
   disabled?: boolean;
   placeholder: string;
   className?: string;
-  animation?: number;
   onValueChange: (value: string[]) => void;
 }
 
@@ -79,7 +68,6 @@ const MultiSelectFormField = React.forwardRef<
       onValueChange,
       // disabled,
       placeholder,
-      animation = 0,
       ...props
     },
     ref,
@@ -89,7 +77,6 @@ const MultiSelectFormField = React.forwardRef<
     );
     const selectedValuesSet = React.useRef(new Set(selectedValues));
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
-    const [isAnimating, setIsAnimating] = React.useState(animation > 0);
 
     React.useEffect(() => {
       setSelectedValues(defaultValue || []);
@@ -136,7 +123,7 @@ const MultiSelectFormField = React.forwardRef<
           >
             {selectedValues.length > 0 ? (
               <div className="flex w-full items-center justify-between">
-                <div className="flex flex-wrap items-center">
+                <div className="flex flex-wrap items-center gap-2">
                   {selectedValues.map((value) => {
                     const option = options.find((o) => o.value === value);
                     const IconComponent = option?.icon;
@@ -144,19 +131,16 @@ const MultiSelectFormField = React.forwardRef<
                       <Badge
                         key={value}
                         className={cn(
-                          isAnimating ? "animate-bounce" : "",
+                          "has-[:hover]:border-destructive",
                           multiSelectVariants({ variant, className }),
                         )}
-                        style={{
-                          animationDuration: `${animation}s`,
-                        }}
                       >
                         {IconComponent && (
                           <IconComponent className="mr-2 h-4 w-4" />
                         )}
                         {option?.label}
                         <XCircle
-                          className="ml-2 h-4 w-4 cursor-pointer"
+                          className="ml-2 h-4 w-4 cursor-pointer transition duration-300 ease-in-out hover:text-destructive"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
@@ -178,7 +162,7 @@ const MultiSelectFormField = React.forwardRef<
                   />
                   <Separator
                     orientation="vertical"
-                    className="flex h-full min-h-6"
+                    className="flex h-full min-h-5"
                   />
                   <ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
                 </div>
@@ -194,7 +178,7 @@ const MultiSelectFormField = React.forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[200px] p-0 drop-shadow-sm"
+          className="w-[280px] p-0 drop-shadow-sm"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
           onInteractOutside={(event) => {
@@ -284,15 +268,6 @@ const MultiSelectFormField = React.forwardRef<
             </CommandList>
           </Command>
         </PopoverContent>
-        {animation > 0 && selectedValues.length > 0 && (
-          <WandSparkles
-            className={cn(
-              "my-2 h-3 w-3 cursor-pointer bg-background text-foreground",
-              isAnimating ? "" : "text-muted-foreground",
-            )}
-            onClick={() => setIsAnimating(!isAnimating)}
-          />
-        )}
       </Popover>
     );
   },
