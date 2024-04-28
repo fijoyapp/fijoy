@@ -35,7 +35,7 @@ import {
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { match } from "ts-pattern";
 import NameTypeInstitutionStep from "@/components/accounts/form-step/name-type-institution-step";
-import BalanceStep from "@/components/accounts/form-step/balance-step";
+import CurrencyBalanceStep from "@/components/accounts/form-step/currency-balance-step";
 import FinalStep from "@/components/accounts/form-step/final-step";
 import { AccountStats } from "@/components/accounts/account-stats";
 
@@ -149,7 +149,9 @@ function AccountForm({
         .with("name-type-institution", () => (
           <NameTypeInstitutionStep className={className} />
         ))
-        .with("balance", () => <BalanceStep className={className} />)
+        .with("currency-balance", () => (
+          <CurrencyBalanceStep className={className} />
+        ))
         .with("final", () => <FinalStep className={className} />)
         .exhaustive()}
     </>

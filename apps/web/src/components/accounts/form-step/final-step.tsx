@@ -24,10 +24,10 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
     },
   });
 
-  const { nameTypeInstitutionStepData, balanceStepData, reset } =
+  const { nameTypeInstitutionStepData, currencyBalanceStepData, reset } =
     useAccountsStore((state) => ({
       nameTypeInstitutionStepData: state.nameTypeInstitutionStepData,
-      balanceStepData: state.balanceStepData,
+      currencyBalanceStepData: state.currencyBalanceStepData,
       reset: state.reset,
     }));
   const router = useRouter();
@@ -46,7 +46,7 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
 
   async function create() {
     hasFired.current = true;
-    if (!nameTypeInstitutionStepData || !balanceStepData) {
+    if (!nameTypeInstitutionStepData || !currencyBalanceStepData) {
       router.navigate({
         to: "/workspace/$namespace/accounts",
         search: { step: "name-type-institution", "add-account": true },
@@ -56,15 +56,14 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
       return;
     }
 
-    const money = stringToUnitsNanos(balanceStepData.balance);
+    const money = stringToUnitsNanos(currencyBalanceStepData.balance);
 
     await createAccountMutation.mutateAsync({
       name: nameTypeInstitutionStepData.name,
       accountType: tsAccountTypeToProto(nameTypeInstitutionStepData.type),
       institution: nameTypeInstitutionStepData.institution,
       balance: {
-        // TODO: do not hard code
-        currencyCode: "CAD",
+        currencyCode: currencyBalanceStepData.currencyCode,
         nanos: money.nanos,
         units: money.units,
       },
