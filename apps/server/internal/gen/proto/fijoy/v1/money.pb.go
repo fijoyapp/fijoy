@@ -32,6 +32,7 @@ type Money struct {
 	// The whole units of the amount.
 	// For example if `currencyCode` is `"USD"`, then 1 unit is one US dollar.
 	Units int64 `protobuf:"varint,2,opt,name=units,proto3" json:"units,omitempty"`
+	// TODO: write some validation logic for this
 	// Number of nano (10^-9) units of the amount.
 	// The value must be between -999,999,999 and +999,999,999 inclusive.
 	// If `units` is positive, `nanos` must be positive or zero.

@@ -53,6 +53,7 @@ func jetAccountToConnectAccount(a *entity.FijoyAccount) *fijoyv1.Account {
 		AccountType: util.JetAccountTypeToConnectAccountType[a.AccountType],
 		Balance:     util.DecimalToMoney(a.Balance, a.Currency),
 		Institution: a.Institution,
+		Active:      a.Active,
 		CreatedAt:   timestamppb.New(a.CreatedAt),
 		UpdatedAt:   timestamppb.New(a.UpdatedAt),
 	}
@@ -120,6 +121,7 @@ func (s *AccountServer) CreateAccount(
 			Name:        req.Msg.Name,
 			AccountType: util.ConnectAccountTypeToJetAccountType[req.Msg.AccountType],
 			Institution: req.Msg.Institution,
+			Active:      true,
 			WorkspaceID: workspaceId,
 			Currency:    req.Msg.Balance.CurrencyCode,
 			UpdatedAt:   now,

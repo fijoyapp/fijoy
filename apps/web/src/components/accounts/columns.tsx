@@ -41,6 +41,13 @@ export const columns: ColumnDef<Account>[] = [
     },
   },
   {
+    accessorKey: "active",
+    header: "Status",
+    cell: ({ row }) => {
+      return row.original.active ? "Active" : "Inactive";
+    },
+  },
+  {
     id: "actions",
     cell: AccountDetailButton,
   },
