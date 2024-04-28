@@ -23,6 +23,9 @@ export default interface FijoyWorkspace {
   primaryCurrency: string;
 
   /** Database type: pg_catalog.text */
+  supportedCurrencies: string;
+
+  /** Database type: pg_catalog.text */
   locale: string;
 }
 
@@ -47,6 +50,9 @@ export interface FijoyWorkspaceInitializer {
   primaryCurrency: string;
 
   /** Database type: pg_catalog.text */
+  supportedCurrencies: string;
+
+  /** Database type: pg_catalog.text */
   locale: string;
 }
 
@@ -68,6 +74,9 @@ export interface FijoyWorkspaceMutator {
   primaryCurrency?: string;
 
   /** Database type: pg_catalog.text */
+  supportedCurrencies?: string;
+
+  /** Database type: pg_catalog.text */
   locale?: string;
 }
 
@@ -79,6 +88,7 @@ export const fijoyWorkspace = z.object({
   name: z.string(),
   createdAt: z.coerce.date(),
   primaryCurrency: z.string(),
+  supportedCurrencies: z.string(),
   locale: z.string(),
 });
 
@@ -88,6 +98,7 @@ export const fijoyWorkspaceInitializer = z.object({
   name: z.string(),
   createdAt: z.coerce.date().optional(),
   primaryCurrency: z.string(),
+  supportedCurrencies: z.string(),
   locale: z.string(),
 });
 
@@ -97,5 +108,6 @@ export const fijoyWorkspaceMutator = z.object({
   name: z.string().optional(),
   createdAt: z.coerce.date().optional(),
   primaryCurrency: z.string().optional(),
+  supportedCurrencies: z.string().optional(),
   locale: z.string().optional(),
 });
