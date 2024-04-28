@@ -92,12 +92,13 @@ func (s *WorkspaceServer) CreateWorkspace(
 	defer tx.Rollback()
 
 	workspace := model.FijoyWorkspace{
-		Name:            req.Msg.Name,
-		Namespace:       req.Msg.Namespace,
-		ID:              "workspace_" + cuid2.Generate(),
-		CreatedAt:       time.Now(),
-		PrimaryCurrency: req.Msg.PrimaryCurrency,
-		Locale:          req.Msg.Locale,
+		Name:                req.Msg.Name,
+		Namespace:           req.Msg.Namespace,
+		ID:                  "workspace_" + cuid2.Generate(),
+		CreatedAt:           time.Now(),
+		PrimaryCurrency:     req.Msg.PrimaryCurrency,
+		SupportedCurrencies: strings.Join(req.Msg.SupportedCurrencies, ","),
+		Locale:              req.Msg.Locale,
 	}
 
 	insertWorkspaceStmt := FijoyWorkspace.

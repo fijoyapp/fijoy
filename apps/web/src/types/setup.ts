@@ -13,6 +13,7 @@ export type NameNamespaceStepData = TypeOf<typeof NameNamespaceStepData>;
 
 export const CurrencyLocaleStepData = z.object({
   primaryCurrency: z.string(),
+  supportedCurrencies: z.array(z.string()),
   locale: z.string(),
 });
 

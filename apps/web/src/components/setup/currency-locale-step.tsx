@@ -35,6 +35,7 @@ import { currencyToDisplay } from "@/lib/money";
 import currency from "currency.js";
 import { useState } from "react";
 import { type TypeOf } from "zod";
+import MultiSelectFormField from "../ui/multi-select";
 
 const formSchema = CurrencyLocaleStepData;
 
@@ -109,9 +110,9 @@ const CurrencyLocaleStep = () => {
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[360px] p-0" align="start">
+                      <PopoverContent className="p-0" align="start">
                         <Command>
-                          <CommandInput placeholder="Search currency..." />
+                          <CommandInput placeholder="Search..." />
                           <CommandList>
                             <CommandEmpty>No currency found.</CommandEmpty>
                             <CommandGroup>
@@ -160,6 +161,32 @@ const CurrencyLocaleStep = () => {
 
           <FormField
             control={form.control}
+            name="supportedCurrencies"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Supported Currencies</FormLabel>
+                <FormControl>
+                  <MultiSelectFormField
+                    options={CURRENCIES.map((c) => ({
+                      label: `${currencyCodeToName(c)} (${c})`,
+                      value: c,
+                    }))}
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="Select currencies"
+                  />
+                </FormControl>
+                <FormDescription>
+                  You will be able to create accounts and log transactions in
+                  those currencies.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="locale"
             render={({ field }) => (
               <FormItem>
@@ -198,9 +225,9 @@ const CurrencyLocaleStep = () => {
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-[360px] p-0" align="start">
+                      <PopoverContent className="p-0" align="start">
                         <Command>
-                          <CommandInput placeholder="Search locale..." />
+                          <CommandInput placeholder="Search..." />
                           <CommandList>
                             <CommandEmpty>No locale found.</CommandEmpty>
                             <CommandGroup>
