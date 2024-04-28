@@ -36,8 +36,10 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  // TODO: persist visibility to local storage
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
