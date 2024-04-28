@@ -91,7 +91,7 @@ function Page() {
 }
 
 function AddAccount({ open, step }: { open: boolean; step: NewAccountStep }) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 640px)");
   const router = useRouter();
 
   function onOpenChange(open: boolean) {
