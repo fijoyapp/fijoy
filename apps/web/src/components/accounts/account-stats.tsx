@@ -15,9 +15,9 @@ export function AccountStats({ accounts }: AccountStatsProps) {
   const networth = assets.add(debt);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-3">
       <CardStats
-        title="Total Networth"
+        title="Networth"
         icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
         value={networth}
       />
