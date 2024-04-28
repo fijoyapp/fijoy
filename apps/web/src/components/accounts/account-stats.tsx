@@ -55,13 +55,13 @@ const CardStats = ({ value, title, icon, isDebt }: CardStatsProps) => {
         {icon}
       </CardHeader>
       <CardContent>
-        <h3 className="font-roboto-mono text-xl font-semibold leading-none tracking-tight">
+        <div className="font-roboto-mono overflow-x-hidden text-ellipsis font-semibold md:text-[2vmin]">
           {currencyToDisplay(value, workspace.primaryCurrency, {
-            compact: true,
+            compact: false,
             locale: workspace.locale,
             isDebt: isDebt,
           })}
-        </h3>
+        </div>
       </CardContent>
     </Card>
   );
