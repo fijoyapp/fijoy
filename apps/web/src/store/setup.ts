@@ -29,11 +29,10 @@ export const useSetupStore = create<State & Actions>()(
       });
     },
 
-    reset: () => {
-      set(() => ({
-        NameNamespaceStepData: undefined,
-        CurrencyLocaleStepData: undefined,
-      }));
-    },
+    reset: () =>
+      set((state) => {
+        state.nameNamespaceStepData = undefined;
+        state.currencyLocaleStepData = undefined;
+      }),
   })),
 );

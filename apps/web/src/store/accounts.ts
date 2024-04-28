@@ -32,11 +32,10 @@ export const useAccountsStore = create<State & Actions>()(
       });
     },
 
-    reset: () => {
-      set(() => ({
-        nameTypeInstitutionStepData: undefined,
-        currencyBalanceStepData: undefined,
-      }));
-    },
+    reset: () =>
+      set((state) => {
+        state.nameTypeInstitutionStepData = undefined;
+        state.currencyBalanceStepData = undefined;
+      }),
   })),
 );
