@@ -36,7 +36,12 @@ export class Workspace extends Message<Workspace> {
   primaryCurrency = "";
 
   /**
-   * @generated from field: string locale = 6;
+   * @generated from field: repeated string supported_currencies = 6;
+   */
+  supportedCurrencies: string[] = [];
+
+  /**
+   * @generated from field: string locale = 7;
    */
   locale = "";
 
@@ -53,7 +58,8 @@ export class Workspace extends Message<Workspace> {
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "created_at", kind: "message", T: Timestamp },
     { no: 5, name: "primary_currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "supported_currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 7, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Workspace {
@@ -314,39 +320,45 @@ export class UpdateWorkspaceNamespaceRequest extends Message<UpdateWorkspaceName
 }
 
 /**
- * @generated from message fijoy.v1.UpdatePrimaryCurrencyRequest
+ * @generated from message fijoy.v1.UpdateCurrencyRequest
  */
-export class UpdatePrimaryCurrencyRequest extends Message<UpdatePrimaryCurrencyRequest> {
+export class UpdateCurrencyRequest extends Message<UpdateCurrencyRequest> {
   /**
-   * @generated from field: string code = 1;
+   * @generated from field: string primaryCurrency = 1;
    */
-  code = "";
+  primaryCurrency = "";
 
-  constructor(data?: PartialMessage<UpdatePrimaryCurrencyRequest>) {
+  /**
+   * @generated from field: repeated string supportedCurrencies = 2;
+   */
+  supportedCurrencies: string[] = [];
+
+  constructor(data?: PartialMessage<UpdateCurrencyRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.UpdatePrimaryCurrencyRequest";
+  static readonly typeName = "fijoy.v1.UpdateCurrencyRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "code", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "primaryCurrency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "supportedCurrencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdatePrimaryCurrencyRequest {
-    return new UpdatePrimaryCurrencyRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCurrencyRequest {
+    return new UpdateCurrencyRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdatePrimaryCurrencyRequest {
-    return new UpdatePrimaryCurrencyRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateCurrencyRequest {
+    return new UpdateCurrencyRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdatePrimaryCurrencyRequest {
-    return new UpdatePrimaryCurrencyRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateCurrencyRequest {
+    return new UpdateCurrencyRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdatePrimaryCurrencyRequest | PlainMessage<UpdatePrimaryCurrencyRequest> | undefined, b: UpdatePrimaryCurrencyRequest | PlainMessage<UpdatePrimaryCurrencyRequest> | undefined): boolean {
-    return proto3.util.equals(UpdatePrimaryCurrencyRequest, a, b);
+  static equals(a: UpdateCurrencyRequest | PlainMessage<UpdateCurrencyRequest> | undefined, b: UpdateCurrencyRequest | PlainMessage<UpdateCurrencyRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateCurrencyRequest, a, b);
   }
 }
 
