@@ -32,10 +32,11 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function AccountTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  children,
+}: DataTableProps<TData, TValue> & { children: React.ReactNode }) {
   // TODO: persist visibility to local storage
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -59,7 +60,8 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center gap-2 py-4">
+      <div className="flex items-center gap-2">
+        {children}
         <Input
           placeholder="Filter names..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -95,6 +97,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <div className="py-2"></div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

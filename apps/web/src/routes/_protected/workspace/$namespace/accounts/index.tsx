@@ -23,7 +23,7 @@ import {
 
 import { NewAccountStep } from "@/types/accounts";
 import { z } from "zod";
-import { DataTable } from "@/components/accounts/account-table";
+import { AccountTable } from "@/components/accounts/account-table";
 import { columns } from "@/components/accounts/columns";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -79,13 +79,13 @@ function Page() {
 
       <AccountStats accounts={accounts} />
 
-      <AddAccount
-        open={addAccountOpen ?? false}
-        step={step ?? "name-type-institution"}
-      />
-
       {/* FIXME: table is too wide on mobile */}
-      <DataTable columns={columns} data={accounts} />
+      <AccountTable columns={columns} data={accounts}>
+        <AddAccount
+          open={addAccountOpen ?? false}
+          step={step ?? "name-type-institution"}
+        />
+      </AccountTable>
     </>
   );
 }
@@ -106,11 +106,11 @@ function AddAccount({ open, step }: { open: boolean; step: NewAccountStep }) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
-          <Button variant="outline">Add Account</Button>
+          <Button variant="default">New Account</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add Account</DialogTitle>
+            <DialogTitle>New Account</DialogTitle>
             <DialogDescription>
               Start tracking your account in Fijoy :)
             </DialogDescription>
@@ -124,11 +124,13 @@ function AddAccount({ open, step }: { open: boolean; step: NewAccountStep }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="outline">Add Account</Button>
+        <Button variant="default" className="">
+          New
+        </Button>
       </SheetTrigger>
       <SheetContent side="top">
         <SheetHeader className="text-left">
-          <SheetTitle>Add Account</SheetTitle>
+          <SheetTitle>New Account</SheetTitle>
           <SheetDescription>
             Start tracking your account in Fijoy :)
           </SheetDescription>
