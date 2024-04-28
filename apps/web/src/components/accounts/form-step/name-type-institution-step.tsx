@@ -50,7 +50,7 @@ const NameTypeInstitutionStep = ({ className }: ComponentProps<"form">) => {
     router.navigate({
       to: "/workspace/$namespace/accounts",
       params: { namespace: workspace.namespace },
-      search: { step: "balance", "add-account": true },
+      search: { step: "currency-balance", "add-account": true },
     });
   }
 

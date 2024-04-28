@@ -2,7 +2,7 @@ import { z, type TypeOf } from "zod";
 
 export const NewAccountSteps = [
   "name-type-institution",
-  "balance",
+  "currency-balance",
   "final",
 ] as const;
 
@@ -27,7 +27,8 @@ export type NameTypeInstitutionStepData = TypeOf<
   typeof NameTypeInstitutionStepData
 >;
 
-export const BalanceStepData = z.object({
+export const CurrencyBalanceStepData = z.object({
   balance: z.string(),
+  currencyCode: z.string(),
 });
-export type BalanceStepData = TypeOf<typeof BalanceStepData>;
+export type CurrencyBalanceStepData = TypeOf<typeof CurrencyBalanceStepData>;

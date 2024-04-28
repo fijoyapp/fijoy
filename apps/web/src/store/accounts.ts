@@ -1,15 +1,18 @@
-import { BalanceStepData, NameTypeInstitutionStepData } from "@/types/accounts";
+import {
+  CurrencyBalanceStepData,
+  NameTypeInstitutionStepData,
+} from "@/types/accounts";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 type State = {
   nameTypeInstitutionStepData: NameTypeInstitutionStepData | undefined;
-  balanceStepData: BalanceStepData | undefined;
+  currencyBalanceStepData: CurrencyBalanceStepData | undefined;
 };
 
 type Actions = {
   setNameTypeInstitutionStepData: (step: NameTypeInstitutionStepData) => void;
-  setBalanceStepData: (step: BalanceStepData) => void;
+  setCurrencyBalanceStepData: (step: CurrencyBalanceStepData) => void;
 
   reset: () => void;
 };
@@ -17,22 +20,22 @@ type Actions = {
 export const useAccountsStore = create<State & Actions>()(
   immer((set) => ({
     nameTypeInstitutionStepData: undefined,
-    balanceStepData: undefined,
+    currencyBalanceStepData: undefined,
     setNameTypeInstitutionStepData: (step) => {
       set((state) => {
         state.nameTypeInstitutionStepData = step;
       });
     },
-    setBalanceStepData: (step) => {
+    setCurrencyBalanceStepData: (step) => {
       set((state) => {
-        state.balanceStepData = step;
+        state.currencyBalanceStepData = step;
       });
     },
 
     reset: () => {
       set(() => ({
         nameTypeInstitutionStepData: undefined,
-        balanceStepData: undefined,
+        CurrencyBalanceStepData: undefined,
       }));
     },
   })),
