@@ -55,20 +55,20 @@ function Page() {
         className="items-start gap-4 space-y-4 xl:flex xl:space-y-0"
       >
         <Card>
-          <CardContent>
+          <CardContent className="pb-0">
             <AccordionItem value="expense" className="border-none xl:w-64">
               <AccordionTrigger>
                 <Receipt className="h-4 w-4 !transform-none" />
                 Expense Categories
               </AccordionTrigger>
-              <AccordionContent className="pb-0">
+              <AccordionContent>
                 Yes. It adheres to the WAI-ARIA design pattern.
               </AccordionContent>
             </AccordionItem>
           </CardContent>
         </Card>
         <Card>
-          <CardContent>
+          <CardContent className="pb-0">
             <AccordionItem value="income" className="border-none xl:w-64">
               <AccordionTrigger>
                 <PiggyBank className="h-4 w-4 !transform-none" />
@@ -82,7 +82,7 @@ function Page() {
         </Card>
 
         <Card>
-          <CardContent>
+          <CardContent className="pb-0">
             <AccordionItem value="transfer" className="border-none xl:w-64">
               <AccordionTrigger>
                 <ArrowLeftRight className="h-4 w-4 !transform-none" />
