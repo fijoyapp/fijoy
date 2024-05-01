@@ -29,11 +29,11 @@ import {
   useMatchRoute,
 } from "@tanstack/react-router";
 import {
-  ArrowLeftRight,
   Bell,
   CircleUser,
   CreditCard,
   Home,
+  Landmark,
   LucideIcon,
   Menu,
   Search,
@@ -103,7 +103,7 @@ const navLinks: NavLink[] = [
       from: Route.fullPath,
       to: "/workspace/$namespace/transactions",
     },
-    icon: ArrowLeftRight,
+    icon: CreditCard,
     fuzzy: true,
   },
   {
@@ -112,7 +112,7 @@ const navLinks: NavLink[] = [
       from: Route.fullPath,
       to: "/workspace/$namespace/accounts",
     },
-    icon: CreditCard,
+    icon: Landmark,
     fuzzy: true,
   },
   {
