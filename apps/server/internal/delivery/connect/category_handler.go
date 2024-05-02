@@ -8,11 +8,13 @@ import (
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 	"fijoy/internal/util"
 	"fijoy/internal/util/fracdex"
+	"fmt"
 
 	. "fijoy/internal/gen/postgres/table"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/go-jet/jet/qrm"
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-playground/validator/v10"
 	"github.com/nrednav/cuid2"
@@ -92,19 +94,28 @@ func (s *CategoryServer) CreateCategories(
 
 	// When creating categories, we will insert all of them before the first postion.
 	// Therefore, we need to first retrive the position of the first entry for the given category.
-	stmt := FijoyCategory.SELECT(FijoyCategory.Position).
+	stmt := FijoyCategory.SELECT(FijoyCategory.AllColumns).
 		WHERE(AND(
 			FijoyCategory.WorkspaceID.EQ(String(workspaceId)),
-			FijoyCategory.CategoryType.EQ(String(req.Msg.CategoryType.String())))).
-		ORDER_BY(FijoyCategory.Position).LIMIT(1)
+			FijoyCategory.CategoryType.EQ(util.ConnectTransactionTypeToJetTransactionTypeEnum[req.Msg.CategoryType]))).
+		ORDER_BY(FijoyCategory.Position.ASC()).LIMIT(1)
 
-	position := ""
-	err = stmt.QueryContext(ctx, s.db, &position)
+	category := model.FijoyCategory{}
+	err = stmt.QueryContext(ctx, s.db, &category)
 	if err != nil {
-		return nil, err
+		if err.Error() == qrm.ErrNoRows.Error() {
+			category.Position = ""
+		} else {
+			return nil, err
+		}
 	}
 
-	positions, err := fracdex.NKeysBetween("", position, uint(len(req.Msg.Categories)))
+	fmt.Println("b", category.Position)
+
+	positions, err := fracdex.NKeysBetween("", category.Position, uint(len(req.Msg.Categories)))
+	for i, p := range positions {
+		fmt.Println(i, p)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -116,10 +127,11 @@ func (s *CategoryServer) CreateCategories(
 			CategoryType: util.ConnectTransactionTypeToJetTransactionType[req.Msg.CategoryType],
 			Position:     positions[idx],
 			WorkspaceID:  workspaceId,
-		}).RETURNING(FijoyCategory.AllColumns)
+		})
 
 		_, err = stmt.ExecContext(ctx, tx)
 		if err != nil {
+			fmt.Println("1Error: ", err)
 			return nil, err
 		}
 	}

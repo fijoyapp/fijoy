@@ -1,4 +1,14 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
 
 import {
   Breadcrumb,
@@ -14,7 +24,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowLeftRight, PiggyBank, Plus, Receipt } from "lucide-react";
+import { ArrowLeftRight, PiggyBank, Plus, Receipt, Trash } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Sheet,
@@ -33,15 +43,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { TypeOf, z } from "zod";
+import { z } from "zod";
 import { getCategoriesQueryOptions } from "@/lib/queries/category";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { TransactionType } from "@/gen/proto/fijoy/v1/transaction_pb";
-
-const categoryType = z.enum(["expense", "income", "transfer"]);
+import _ from "lodash";
+import {
+  createCategories,
+  getCategories,
+} from "@/gen/proto/fijoy/v1/category-CategoryService_connectquery";
+import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+import { getWorkspaceHeader } from "@/lib/headers";
+import { useWorkspace } from "@/hooks/use-workspace";
+import { toast } from "sonner";
+import { TransactionTypeEnum } from "@/types/transaction";
+import { tsTransactionTypeToProto } from "@/lib/convert";
 
 const settingsCategoriesSchema = z.object({
-  category: categoryType.default("expense").optional(),
+  category: TransactionTypeEnum.default("expense").optional(),
   "add-category": z.boolean().default(false).optional(),
 });
 
@@ -68,17 +87,17 @@ function Page() {
 
   const expenseCategories = categories.data.categories
     .filter((c) => c.categoryType === TransactionType.EXPENSE)
-    .sort((a, b) => a.position.localeCompare(b.position));
+    .sort((a, b) => (a.position < b.position ? -1 : 1));
 
   const incomeCategories = categories.data.categories
     .filter((c) => c.categoryType === TransactionType.INCOME)
-    .sort((a, b) => a.position.localeCompare(b.position));
+    .sort((a, b) => (a.position < b.position ? -1 : 1));
 
   const transferCategories = categories.data.categories
     .filter((c) => c.categoryType === TransactionType.TRANSFER)
-    .sort((a, b) => a.position.localeCompare(b.position));
+    .sort((a, b) => (a.position < b.position ? -1 : 1));
 
-  function onNewCategory(category: TypeOf<typeof categoryType>) {
+  function onNewCategory(category: TransactionTypeEnum) {
     router.navigate({
       from: Route.fullPath,
       to: ".",
@@ -208,7 +227,7 @@ function AddCategory({
   category,
 }: {
   open: boolean;
-  category: TypeOf<typeof categoryType>;
+  category: TransactionTypeEnum;
 }) {
   const isDesktop = useMediaQuery("(min-width: 640px)");
   const router = useRouter();
@@ -226,12 +245,12 @@ function AddCategory({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>New Category</DialogTitle>
+            <DialogTitle>New {_.capitalize(category)} Category</DialogTitle>
             <DialogDescription>
               Add a new transaction category
             </DialogDescription>
           </DialogHeader>
-          {/* <AccountForm step={step} /> */}
+          <CategoryForm category={category} />
         </DialogContent>
       </Dialog>
     );
@@ -241,11 +260,107 @@ function AddCategory({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="top">
         <SheetHeader className="text-left">
-          <SheetTitle>New Category</SheetTitle>
+          <SheetTitle>New {_.capitalize(category)} Category</SheetTitle>
           <SheetDescription>Add a new transaction category</SheetDescription>
         </SheetHeader>
-        {/* <AccountForm step={step} /> */}
+        <CategoryForm category={category} />
       </SheetContent>
     </Sheet>
+  );
+}
+
+const formSchema = z.object({
+  categories: z.object({ name: z.string().min(1) }).array(),
+});
+
+type formSchema = z.infer<typeof formSchema>;
+
+function CategoryForm({ category }: { category: TransactionTypeEnum }) {
+  const form = useForm<formSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      categories: [{ name: "" }],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    name: "categories",
+    control: form.control,
+  });
+  const queryClient = useQueryClient();
+  const { workspace } = useWorkspace();
+  const router = useRouter();
+
+  const addCategories = useMutation(createCategories, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getCategories),
+      });
+      form.reset({
+        categories: [{ name: "" }],
+      });
+      router.navigate({
+        from: Route.fullPath,
+        to: ".",
+        search: { "add-category": false, category },
+      });
+    },
+    callOptions: {
+      headers: getWorkspaceHeader(workspace.id),
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    toast.promise(
+      addCategories.mutateAsync({
+        categories: _.uniq(values.categories.map((category) => category.name)),
+        categoryType: tsTransactionTypeToProto(category),
+      }),
+      {
+        success: "Success!",
+      },
+    );
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {fields.map((field, index) => (
+          <FormField
+            control={form.control}
+            key={field.id}
+            name={`categories.${index}.name`}
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Input
+                      placeholder={`${category} category name`}
+                      {...field}
+                    />
+                  </FormControl>
+                  <Button
+                    onClick={() => remove(index)}
+                    variant="ghost"
+                    size="icon"
+                  >
+                    <Trash />
+                  </Button>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))}
+        <div className="flex">
+          <Button onClick={() => append({ name: "" })} variant="secondary">
+            Add more
+          </Button>
+          <span className="grow"></span>
+
+          <Button type="submit">Submit</Button>
+        </div>
+      </form>
+    </Form>
   );
 }

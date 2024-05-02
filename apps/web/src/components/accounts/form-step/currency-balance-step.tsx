@@ -25,7 +25,7 @@ import { match } from "ts-pattern";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { type TypeOf } from "zod";
-import { CurrencyBalanceStepData } from "@/types/accounts";
+import { CurrencyBalanceStepData } from "@/types/account";
 import { ComponentProps, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
