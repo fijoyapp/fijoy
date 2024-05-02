@@ -21,7 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { NewAccountStep } from "@/types/accounts";
+import { NewAccountStep } from "@/types/account";
 import { z } from "zod";
 import { AccountTable } from "@/components/accounts/account-table";
 import { columns } from "@/components/accounts/columns";
