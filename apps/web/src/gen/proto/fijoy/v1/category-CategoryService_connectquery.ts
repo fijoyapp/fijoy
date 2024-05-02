@@ -4,17 +4,17 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { Category, Categorys, CreateCategoryRequest, DeleteCategoryByIdRequest, UpdateCategoryByIdRequest } from "./category_pb.js";
+import { Categories, Category, CreateCategoriesRequest, DeleteCategoryByIdRequest, UpdateCategoryByIdRequest } from "./category_pb.js";
 
 /**
- * @generated from rpc fijoy.v1.CategoryService.CreateCategory
+ * @generated from rpc fijoy.v1.CategoryService.CreateCategories
  */
-export const createCategory = {
-  localName: "createCategory",
-  name: "CreateCategory",
+export const createCategories = {
+  localName: "createCategories",
+  name: "CreateCategories",
   kind: MethodKind.Unary,
-  I: CreateCategoryRequest,
-  O: Category,
+  I: CreateCategoriesRequest,
+  O: Empty,
   service: {
     typeName: "fijoy.v1.CategoryService"
   }
@@ -28,7 +28,7 @@ export const getCategories = {
   name: "GetCategories",
   kind: MethodKind.Unary,
   I: Empty,
-  O: Categorys,
+  O: Categories,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.CategoryService"
