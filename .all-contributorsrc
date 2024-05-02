@@ -25,6 +25,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "SamZhang02",
+      "name": "Sam Zhang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/112342947?v=4",
+      "profile": "http://cs.mcgill.ca/~szhang139",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
