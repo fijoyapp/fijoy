@@ -25,6 +25,7 @@ buf:
 init:
   pnpm install
   just packages/proto/init
+  go install air
 
 update:
   pnpm update -r
