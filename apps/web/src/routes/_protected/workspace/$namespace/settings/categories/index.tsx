@@ -34,6 +34,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TypeOf, z } from "zod";
+import { getCategoriesQueryOptions } from "@/lib/queries/category";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { TransactionType } from "@/gen/proto/fijoy/v1/transaction_pb";
 
 const categoryType = z.enum(["expense", "income", "transfer"]);
 
@@ -49,12 +52,31 @@ export const Route = createFileRoute(
     return settingsCategoriesSchema.parse(search);
   },
 
+  loader: ({ context }) => {
+    context.queryClient.ensureQueryData(getCategoriesQueryOptions({ context }));
+  },
   component: Page,
 });
 
 function Page() {
   const { "add-category": addCategoryOpen, category } = Route.useSearch();
   const router = useRouter();
+
+  const context = Route.useRouteContext();
+
+  const categories = useSuspenseQuery(getCategoriesQueryOptions({ context }));
+
+  const expenseCategories = categories.data.categories
+    .filter((c) => c.categoryType === TransactionType.EXPENSE)
+    .sort((a, b) => a.position.localeCompare(b.position));
+
+  const incomeCategories = categories.data.categories
+    .filter((c) => c.categoryType === TransactionType.INCOME)
+    .sort((a, b) => a.position.localeCompare(b.position));
+
+  const transferCategories = categories.data.categories
+    .filter((c) => c.categoryType === TransactionType.TRANSFER)
+    .sort((a, b) => a.position.localeCompare(b.position));
 
   function onNewCategory(category: TypeOf<typeof categoryType>) {
     router.navigate({
@@ -110,6 +132,11 @@ function Page() {
                   <Plus className="h-4 w-4" />
                   New
                 </Button>
+                {expenseCategories.map((category) => (
+                  <div key={category.id}>
+                    {category.name}, {category.position}
+                  </div>
+                ))}
               </AccordionContent>
             </AccordionItem>
           </CardContent>
@@ -130,6 +157,12 @@ function Page() {
                   <Plus className="h-4 w-4" />
                   New
                 </Button>
+
+                {incomeCategories.map((category) => (
+                  <div key={category.id}>
+                    {category.name}, {category.position}
+                  </div>
+                ))}
               </AccordionContent>
             </AccordionItem>
           </CardContent>
@@ -151,6 +184,12 @@ function Page() {
                   <Plus className="h-4 w-4" />
                   New
                 </Button>
+
+                {transferCategories.map((category) => (
+                  <div key={category.id}>
+                    {category.name}, {category.position}
+                  </div>
+                ))}
               </AccordionContent>
             </AccordionItem>
           </CardContent>
