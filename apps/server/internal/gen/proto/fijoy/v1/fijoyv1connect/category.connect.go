@@ -34,9 +34,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// CategoryServiceCreateCategoryProcedure is the fully-qualified name of the CategoryService's
-	// CreateCategory RPC.
-	CategoryServiceCreateCategoryProcedure = "/fijoy.v1.CategoryService/CreateCategory"
+	// CategoryServiceCreateCategoriesProcedure is the fully-qualified name of the CategoryService's
+	// CreateCategories RPC.
+	CategoryServiceCreateCategoriesProcedure = "/fijoy.v1.CategoryService/CreateCategories"
 	// CategoryServiceGetCategoriesProcedure is the fully-qualified name of the CategoryService's
 	// GetCategories RPC.
 	CategoryServiceGetCategoriesProcedure = "/fijoy.v1.CategoryService/GetCategories"
@@ -51,7 +51,7 @@ const (
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
 	categoryServiceServiceDescriptor                  = v1.File_fijoy_v1_category_proto.Services().ByName("CategoryService")
-	categoryServiceCreateCategoryMethodDescriptor     = categoryServiceServiceDescriptor.Methods().ByName("CreateCategory")
+	categoryServiceCreateCategoriesMethodDescriptor   = categoryServiceServiceDescriptor.Methods().ByName("CreateCategories")
 	categoryServiceGetCategoriesMethodDescriptor      = categoryServiceServiceDescriptor.Methods().ByName("GetCategories")
 	categoryServiceUpdateCategoryByIdMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("UpdateCategoryById")
 	categoryServiceDeleteCategoryByIdMethodDescriptor = categoryServiceServiceDescriptor.Methods().ByName("DeleteCategoryById")
@@ -59,8 +59,8 @@ var (
 
 // CategoryServiceClient is a client for the fijoy.v1.CategoryService service.
 type CategoryServiceClient interface {
-	CreateCategory(context.Context, *connect.Request[v1.CreateCategoryRequest]) (*connect.Response[v1.Category], error)
-	GetCategories(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categorys], error)
+	CreateCategories(context.Context, *connect.Request[v1.CreateCategoriesRequest]) (*connect.Response[emptypb.Empty], error)
+	GetCategories(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categories], error)
 	UpdateCategoryById(context.Context, *connect.Request[v1.UpdateCategoryByIdRequest]) (*connect.Response[v1.Category], error)
 	DeleteCategoryById(context.Context, *connect.Request[v1.DeleteCategoryByIdRequest]) (*connect.Response[v1.Category], error)
 }
@@ -75,13 +75,13 @@ type CategoryServiceClient interface {
 func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) CategoryServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &categoryServiceClient{
-		createCategory: connect.NewClient[v1.CreateCategoryRequest, v1.Category](
+		createCategories: connect.NewClient[v1.CreateCategoriesRequest, emptypb.Empty](
 			httpClient,
-			baseURL+CategoryServiceCreateCategoryProcedure,
-			connect.WithSchema(categoryServiceCreateCategoryMethodDescriptor),
+			baseURL+CategoryServiceCreateCategoriesProcedure,
+			connect.WithSchema(categoryServiceCreateCategoriesMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		getCategories: connect.NewClient[emptypb.Empty, v1.Categorys](
+		getCategories: connect.NewClient[emptypb.Empty, v1.Categories](
 			httpClient,
 			baseURL+CategoryServiceGetCategoriesProcedure,
 			connect.WithSchema(categoryServiceGetCategoriesMethodDescriptor),
@@ -105,19 +105,19 @@ func NewCategoryServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // categoryServiceClient implements CategoryServiceClient.
 type categoryServiceClient struct {
-	createCategory     *connect.Client[v1.CreateCategoryRequest, v1.Category]
-	getCategories      *connect.Client[emptypb.Empty, v1.Categorys]
+	createCategories   *connect.Client[v1.CreateCategoriesRequest, emptypb.Empty]
+	getCategories      *connect.Client[emptypb.Empty, v1.Categories]
 	updateCategoryById *connect.Client[v1.UpdateCategoryByIdRequest, v1.Category]
 	deleteCategoryById *connect.Client[v1.DeleteCategoryByIdRequest, v1.Category]
 }
 
-// CreateCategory calls fijoy.v1.CategoryService.CreateCategory.
-func (c *categoryServiceClient) CreateCategory(ctx context.Context, req *connect.Request[v1.CreateCategoryRequest]) (*connect.Response[v1.Category], error) {
-	return c.createCategory.CallUnary(ctx, req)
+// CreateCategories calls fijoy.v1.CategoryService.CreateCategories.
+func (c *categoryServiceClient) CreateCategories(ctx context.Context, req *connect.Request[v1.CreateCategoriesRequest]) (*connect.Response[emptypb.Empty], error) {
+	return c.createCategories.CallUnary(ctx, req)
 }
 
 // GetCategories calls fijoy.v1.CategoryService.GetCategories.
-func (c *categoryServiceClient) GetCategories(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categorys], error) {
+func (c *categoryServiceClient) GetCategories(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categories], error) {
 	return c.getCategories.CallUnary(ctx, req)
 }
 
@@ -133,8 +133,8 @@ func (c *categoryServiceClient) DeleteCategoryById(ctx context.Context, req *con
 
 // CategoryServiceHandler is an implementation of the fijoy.v1.CategoryService service.
 type CategoryServiceHandler interface {
-	CreateCategory(context.Context, *connect.Request[v1.CreateCategoryRequest]) (*connect.Response[v1.Category], error)
-	GetCategories(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categorys], error)
+	CreateCategories(context.Context, *connect.Request[v1.CreateCategoriesRequest]) (*connect.Response[emptypb.Empty], error)
+	GetCategories(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categories], error)
 	UpdateCategoryById(context.Context, *connect.Request[v1.UpdateCategoryByIdRequest]) (*connect.Response[v1.Category], error)
 	DeleteCategoryById(context.Context, *connect.Request[v1.DeleteCategoryByIdRequest]) (*connect.Response[v1.Category], error)
 }
@@ -145,10 +145,10 @@ type CategoryServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	categoryServiceCreateCategoryHandler := connect.NewUnaryHandler(
-		CategoryServiceCreateCategoryProcedure,
-		svc.CreateCategory,
-		connect.WithSchema(categoryServiceCreateCategoryMethodDescriptor),
+	categoryServiceCreateCategoriesHandler := connect.NewUnaryHandler(
+		CategoryServiceCreateCategoriesProcedure,
+		svc.CreateCategories,
+		connect.WithSchema(categoryServiceCreateCategoriesMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
 	categoryServiceGetCategoriesHandler := connect.NewUnaryHandler(
@@ -172,8 +172,8 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 	)
 	return "/fijoy.v1.CategoryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case CategoryServiceCreateCategoryProcedure:
-			categoryServiceCreateCategoryHandler.ServeHTTP(w, r)
+		case CategoryServiceCreateCategoriesProcedure:
+			categoryServiceCreateCategoriesHandler.ServeHTTP(w, r)
 		case CategoryServiceGetCategoriesProcedure:
 			categoryServiceGetCategoriesHandler.ServeHTTP(w, r)
 		case CategoryServiceUpdateCategoryByIdProcedure:
@@ -189,11 +189,11 @@ func NewCategoryServiceHandler(svc CategoryServiceHandler, opts ...connect.Handl
 // UnimplementedCategoryServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedCategoryServiceHandler struct{}
 
-func (UnimplementedCategoryServiceHandler) CreateCategory(context.Context, *connect.Request[v1.CreateCategoryRequest]) (*connect.Response[v1.Category], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.CategoryService.CreateCategory is not implemented"))
+func (UnimplementedCategoryServiceHandler) CreateCategories(context.Context, *connect.Request[v1.CreateCategoriesRequest]) (*connect.Response[emptypb.Empty], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.CategoryService.CreateCategories is not implemented"))
 }
 
-func (UnimplementedCategoryServiceHandler) GetCategories(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categorys], error) {
+func (UnimplementedCategoryServiceHandler) GetCategories(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Categories], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.CategoryService.GetCategories is not implemented"))
 }
 

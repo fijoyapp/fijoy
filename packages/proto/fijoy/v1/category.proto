@@ -15,18 +15,24 @@ message Category {
   fijoy.v1.TransactionType category_type = 5 [(buf.validate.field).string.min_len = 1];
 }
 
-message Categorys {
+message Categories {
   repeated Category categories = 1;
 }
 
-message CreateCategoryRequest {
-  // The reason to use a map here is such that multiple categires can be created at once
-  map<string, fijoy.v1.TransactionType> categories = 1;
+message CreateCategoriesRequest {
+  repeated string categories = 1 [
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.min_items = 1
+  ];
+
+  fijoy.v1.TransactionType category_type = 2 [(buf.validate.field).string.min_len = 1];
 }
 
 message UpdateCategoryByIdRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
-  string name = 2 [(buf.validate.field).string.min_len = 1];
+  string name = 2;
+  string beforeId = 3;
+  string afterId = 4;
 }
 
 message DeleteCategoryByIdRequest {
@@ -34,9 +40,9 @@ message DeleteCategoryByIdRequest {
 }
 
 service CategoryService {
-  rpc CreateCategory(CreateCategoryRequest) returns (Category);
+  rpc CreateCategories(CreateCategoriesRequest) returns (google.protobuf.Empty);
 
-  rpc GetCategories(google.protobuf.Empty) returns (Categorys) {
+  rpc GetCategories(google.protobuf.Empty) returns (Categories) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 

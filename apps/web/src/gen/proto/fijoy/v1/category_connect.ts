@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Category, Categorys, CreateCategoryRequest, DeleteCategoryByIdRequest, UpdateCategoryByIdRequest } from "./category_pb.js";
+import { Categories, Category, CreateCategoriesRequest, DeleteCategoryByIdRequest, UpdateCategoryByIdRequest } from "./category_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -13,12 +13,12 @@ export const CategoryService = {
   typeName: "fijoy.v1.CategoryService",
   methods: {
     /**
-     * @generated from rpc fijoy.v1.CategoryService.CreateCategory
+     * @generated from rpc fijoy.v1.CategoryService.CreateCategories
      */
-    createCategory: {
-      name: "CreateCategory",
-      I: CreateCategoryRequest,
-      O: Category,
+    createCategories: {
+      name: "CreateCategories",
+      I: CreateCategoriesRequest,
+      O: Empty,
       kind: MethodKind.Unary,
     },
     /**
@@ -27,7 +27,7 @@ export const CategoryService = {
     getCategories: {
       name: "GetCategories",
       I: Empty,
-      O: Categorys,
+      O: Categories,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
