@@ -11,6 +11,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/jwtauth/v5 v5.3.1
+	github.com/go-jet/jet v2.3.0+incompatible
 	github.com/go-jet/jet/v2 v2.11.1
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/joho/godotenv v1.5.1
@@ -19,6 +20,7 @@ require (
 	github.com/rs/cors v1.11.0
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e
 	github.com/shopspring/decimal v1.4.0
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/oauth2 v0.19.0
 	google.golang.org/protobuf v1.34.0
 )
@@ -37,7 +39,6 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
-	github.com/go-jet/jet v2.3.0+incompatible // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
@@ -62,7 +63,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	github.com/stretchr/testify v1.9.0 // indirect
 	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
