@@ -259,7 +259,6 @@ func (s *CategoryServer) UpdateCategoryById(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.UpdateCategoryByIdRequest],
 ) (*connect.Response[fijoyv1.Category], error) {
-	// TODO: support position
 	workspaceId, err := util.ExtractWorkspaceIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
@@ -294,8 +293,18 @@ func (s *CategoryServer) UpdateCategoryById(
 	}
 	defer tx.Rollback()
 
-	category := model.FijoyCategory{
-		Name: req.Msg.Name,
+	category := model.FijoyCategory{}
+
+	if req.Msg.Name != "" {
+		category.Name = req.Msg.Name
+	}
+
+	if req.Msg.BeforePoition != "" || req.Msg.AfterPoition != "" {
+		newPos, err := fracdex.KeyBetween(req.Msg.AfterPoition, req.Msg.BeforePoition)
+		if err != nil {
+			return nil, err
+		}
+		category.Position = newPos
 	}
 
 	stmt := FijoyTransaction.UPDATE().WHERE(FijoyTransaction.CategoryID.EQ(String(req.Msg.Id))).MODEL(category).RETURNING(FijoyCategory.AllColumns)
