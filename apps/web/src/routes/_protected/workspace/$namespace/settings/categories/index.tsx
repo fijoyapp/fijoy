@@ -18,14 +18,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ArrowLeftRight, PiggyBank, Plus, Receipt, Trash } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Accordion } from "@/components/ui/accordion";
+import { Trash } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -58,6 +52,7 @@ import { useWorkspace } from "@/hooks/use-workspace";
 import { toast } from "sonner";
 import { TransactionTypeEnum } from "@/types/transaction";
 import { tsTransactionTypeToProto } from "@/lib/convert";
+import { CategoryList } from "@/components/settings/categories/category-list";
 
 const settingsCategoriesSchema = z.object({
   category: TransactionTypeEnum.default("expense").optional(),
@@ -133,87 +128,26 @@ function Page() {
       <Accordion
         type="multiple"
         defaultValue={["expense", "income", "transfer"]}
-        className="items-start gap-4 space-y-4 xl:flex xl:space-y-0"
+        className="gap-4 space-y-4 md:flex md:flex-wrap md:items-start md:space-y-0"
       >
-        <Card>
-          <CardContent className="pb-0">
-            <AccordionItem value="expense" className="border-none xl:w-64">
-              <AccordionTrigger>
-                <Receipt className="h-4 w-4 !transform-none" />
-                Expense
-              </AccordionTrigger>
-              <AccordionContent>
-                <Button
-                  variant="secondary"
-                  className="w-full gap-1"
-                  onClick={() => onNewCategory("expense")}
-                >
-                  <Plus className="h-4 w-4" />
-                  New
-                </Button>
-                {expenseCategories.map((category) => (
-                  <div key={category.id}>
-                    {category.name}, {category.position}
-                  </div>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pb-0">
-            <AccordionItem value="income" className="border-none xl:w-64">
-              <AccordionTrigger>
-                <PiggyBank className="h-4 w-4 !transform-none" />
-                Income
-              </AccordionTrigger>
-              <AccordionContent>
-                <Button
-                  variant="secondary"
-                  className="w-full gap-1"
-                  onClick={() => onNewCategory("income")}
-                >
-                  <Plus className="h-4 w-4" />
-                  New
-                </Button>
+        <CategoryList
+          categories={expenseCategories}
+          categoryType="expense"
+          onAddNewCategory={onNewCategory}
+        />
 
-                {incomeCategories.map((category) => (
-                  <div key={category.id}>
-                    {category.name}, {category.position}
-                  </div>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pb-0">
-            <AccordionItem value="transfer" className="border-none xl:w-64">
-              <AccordionTrigger>
-                <ArrowLeftRight className="h-4 w-4 !transform-none" />
-                Transfer
-              </AccordionTrigger>
-              <AccordionContent>
-                <Button
-                  variant="secondary"
-                  className="w-full gap-1"
-                  onClick={() => onNewCategory("transfer")}
-                >
-                  <Plus className="h-4 w-4" />
-                  New
-                </Button>
-
-                {transferCategories.map((category) => (
-                  <div key={category.id}>
-                    {category.name}, {category.position}
-                  </div>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-          </CardContent>
-        </Card>
+        <CategoryList
+          categories={incomeCategories}
+          categoryType="income"
+          onAddNewCategory={onNewCategory}
+        />
+        <CategoryList
+          categories={transferCategories}
+          categoryType="transfer"
+          onAddNewCategory={onNewCategory}
+        />
       </Accordion>
+
       <AddCategory
         open={addCategoryOpen ?? false}
         category={category ?? "expense"}
