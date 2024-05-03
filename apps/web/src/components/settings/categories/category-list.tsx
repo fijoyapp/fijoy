@@ -1,5 +1,16 @@
 import invariant from "tiny-invariant";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -8,7 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { GripVertical, Plus, Receipt } from "lucide-react";
+import { GripVertical, Plus, Receipt, Trash } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import _ from "lodash";
@@ -16,6 +27,15 @@ import { TransactionTypeEnum } from "@/types/transaction";
 import { Category } from "@/gen/proto/fijoy/v1/category_pb";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+import {
+  deleteCategoryById,
+  getCategories,
+} from "@/gen/proto/fijoy/v1/category-CategoryService_connectquery";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { getWorkspaceHeader } from "@/lib/headers";
+import { useWorkspace } from "@/hooks/use-workspace";
 
 type CategoryListProps = {
   categories: Category[];
@@ -106,15 +126,71 @@ function CategoryCard({ category }: { category: Category }) {
           {category.name}, {category.position}
         </div>
         <div className="grow"></div>
+
+        <DeleteCategoryButton id={category.id} />
+
+        <div className="px-1"></div>
+
         <Button
           ref={dragHandleRef}
           variant="ghost"
           size="icon"
-          className="h-4 w-4"
+          className="h-4 w-4 hover:bg-background"
         >
           <GripVertical className="h-4 w-4" />
         </Button>
       </Card>
     </CategoryCardHolder>
+  );
+}
+
+function DeleteCategoryButton({ id }: { id: string }) {
+  const queryClient = useQueryClient();
+  const { workspace } = useWorkspace();
+  const deleteCategory = useMutation(deleteCategoryById, {
+    callOptions: {
+      headers: getWorkspaceHeader(workspace.id),
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getCategories),
+      });
+    },
+  });
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-4 w-4 hover:bg-background"
+        >
+          <Trash className="h-4 w-4" />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. All transactions under this category
+            will lose its category information.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() =>
+              toast.promise(deleteCategory.mutateAsync({ id }), {
+                success: "Category deleted!",
+                error: "Failed to delete category",
+              })
+            }
+          >
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

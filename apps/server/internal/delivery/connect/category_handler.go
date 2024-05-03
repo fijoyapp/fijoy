@@ -238,14 +238,8 @@ func (s *CategoryServer) DeleteCategoryById(
 	}
 	defer tx.Rollback()
 
-	stmt := FijoyTransaction.DELETE().WHERE(FijoyTransaction.CategoryID.EQ(String(req.Msg.Id)))
-
-	_, err = stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return nil, err
-	}
-
-	stmt = FijoyCategory.DELETE().WHERE(FijoyCategory.ID.EQ(String(req.Msg.Id))).RETURNING(FijoyCategory.AllColumns)
+	stmt := FijoyCategory.DELETE().WHERE(FijoyCategory.ID.EQ(String(req.Msg.Id))).
+		RETURNING(FijoyCategory.AllColumns)
 
 	dest := model.FijoyCategory{}
 
