@@ -163,14 +163,14 @@ export class UpdateCategoryByIdRequest extends Message<UpdateCategoryByIdRequest
   name = "";
 
   /**
-   * @generated from field: string beforeId = 3;
+   * @generated from field: string beforePoition = 3;
    */
-  beforeId = "";
+  beforePoition = "";
 
   /**
-   * @generated from field: string afterId = 4;
+   * @generated from field: string afterPoition = 4;
    */
-  afterId = "";
+  afterPoition = "";
 
   constructor(data?: PartialMessage<UpdateCategoryByIdRequest>) {
     super();
@@ -182,8 +182,8 @@ export class UpdateCategoryByIdRequest extends Message<UpdateCategoryByIdRequest
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "beforeId", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "afterId", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "beforePoition", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "afterPoition", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCategoryByIdRequest {
