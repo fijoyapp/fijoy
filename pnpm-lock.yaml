@@ -35,6 +35,9 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop':
         specifier: ^1.1.7
         version: 1.1.7
+      '@atlaskit/pragmatic-drag-and-drop-hitbox':
+        specifier: ^1.0.3
+        version: 1.0.3
       '@bufbuild/protobuf':
         specifier: ^1.9.0
         version: 1.9.0
@@ -315,6 +318,9 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@atlaskit/pragmatic-drag-and-drop-hitbox@1.0.3':
+    resolution: {integrity: sha512-/Sbu/HqN2VGLYBhnsG7SbRNg98XKkbF6L7XDdBi+izRybfaK1FeMfodPpm/xnBHPJzwYMdkE0qtLyv6afhgMUA==}
 
   '@atlaskit/pragmatic-drag-and-drop@1.1.7':
     resolution: {integrity: sha512-pCopubqXglL9VJ7YU+CS0CJwa62CqdGAS3QYfTsEgC844OOMiQ+G6HlSnBsZU9EV6DTHZHLooiTXFBqleib2ew==}
@@ -3636,6 +3642,11 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
+
+  '@atlaskit/pragmatic-drag-and-drop-hitbox@1.0.3':
+    dependencies:
+      '@atlaskit/pragmatic-drag-and-drop': 1.1.7
+      '@babel/runtime': 7.24.5
 
   '@atlaskit/pragmatic-drag-and-drop@1.1.7':
     dependencies:
