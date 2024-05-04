@@ -1,5 +1,10 @@
 import invariant from "tiny-invariant";
 import {
+  attachClosestEdge,
+  extractClosestEdge,
+  Edge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -13,6 +18,7 @@ import {
 import {
   draggable,
   dropTargetForElements,
+  monitorForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import {
   AccordionContent,
@@ -24,25 +30,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import _ from "lodash";
 import { TransactionTypeEnum } from "@/types/transaction";
-import {
-  Category,
-  UpdateCategoryByIdRequest,
-} from "@/gen/proto/fijoy/v1/category_pb";
+import { Category } from "@/gen/proto/fijoy/v1/category_pb";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import {
-  callUnaryMethod,
-  createConnectQueryKey,
-  useTransport,
-} from "@connectrpc/connect-query";
+import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import {
   deleteCategoryById,
   getCategories,
   updateCategoryById,
 } from "@/gen/proto/fijoy/v1/category-CategoryService_connectquery";
 import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMutation as useConnectMutation } from "@connectrpc/connect-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { getWorkspaceHeader } from "@/lib/headers";
 import { useWorkspace } from "@/hooks/use-workspace";
 
@@ -59,81 +57,114 @@ export function CategoryList({
   const { workspace } = useWorkspace();
 
   const queryClient = useQueryClient();
-  const transport = useTransport();
 
-  const updatePosition = useMutation({
-    mutationFn: async (updateCategory: UpdateCategoryByIdRequest) => {
-      callUnaryMethod(updateCategoryById, updateCategory, {
-        transport,
-        callOptions: {
-          headers: getWorkspaceHeader(workspace.id),
-        },
-      });
+  const updatePosition = useMutation(updateCategoryById, {
+    callOptions: {
+      headers: getWorkspaceHeader(workspace.id),
     },
-    onMutate: async (updateCategory) => {
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-      const categoriesQueryKey = createConnectQueryKey(getCategories);
-      await queryClient.cancelQueries({
-        queryKey: categoriesQueryKey,
-      });
-
-      const optimisticCategories = [...categories];
-
-      const x = categories.findIndex((e) => e.id === updateCategory.id);
-
-      const [element] = optimisticCategories.splice(x, 1);
-
-      let y;
-
-      if (updateCategory.beforePoition) {
-        y =
-          categories.findIndex(
-            (e) => e.position === updateCategory.beforePoition,
-          ) - 1;
-      } else {
-        y = categories.findIndex(
-          (e) => e.position === updateCategory.afterPoition,
-        );
-      }
-
-      optimisticCategories.splice(y, 0, element);
-
-      queryClient.setQueryData(categoriesQueryKey, optimisticCategories);
-
-      // Return a context object with the snapshotted value
-      return { categories };
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, _, context) => {
-      console.error(err);
-      queryClient.setQueryData(
-        createConnectQueryKey(getCategories),
-        context?.categories,
-      );
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: createConnectQueryKey(getCategories),
       });
     },
   });
 
-  function handlePositionUpdate(
-    id: string,
-    beforePosition?: string,
-    afterPosition?: string,
+  function getBeforeAfterPosition(
+    referencePosition: string,
+    location: "top" | "bottom",
   ) {
-    const req = new UpdateCategoryByIdRequest({
-      id,
-      beforePoition: beforePosition ?? "",
-      afterPoition: afterPosition ?? "",
-    });
+    const referenceIndex = categories.findIndex(
+      (c) => c.position === referencePosition,
+    );
+    if (referenceIndex === -1) {
+      throw new Error("Reference category not found");
+    }
 
-    updatePosition.mutateAsync(req);
+    if (location === "top") {
+      const targetIndex = referenceIndex - 1;
+      if (targetIndex < 0) {
+        return {
+          beforePosition: referencePosition,
+          afterPosition: "",
+        };
+      }
+
+      return {
+        beforePosition: referencePosition,
+        afterPosition: categories[targetIndex].position,
+      };
+    }
+    if (location === "bottom") {
+      const targetIndex = referenceIndex + 1;
+      if (targetIndex >= categories.length) {
+        return {
+          beforePosition: "",
+          afterPosition: referencePosition,
+        };
+      }
+
+      return {
+        beforePosition: categories[targetIndex].position,
+        afterPosition: referencePosition,
+      };
+    }
   }
+
+  // this makes sure that the mutation only fires once in strict mode
+  useEffect(() => {
+    return monitorForElements({
+      onDrop({ source, location }) {
+        const destination = location.current.dropTargets[0];
+        if (!destination) {
+          // if dropped outside of any drop targets
+          return;
+        }
+        const destinationLocation = destination.data.location;
+        const sourceLocation = source.data.location;
+        console.log("---------");
+        console.log("source.data", source.data);
+        console.log("destination.data", destination.data);
+
+        console.log(
+          "calling with",
+          source.data.category.id,
+          destination.data.position,
+        );
+
+        updatePosition.mutateAsync({
+          id: source.data.category.id,
+          ...getBeforeAfterPosition(destination.data.position, "top"),
+          // afterPosition: destination.data.position ?? "",
+          // beforePosition: "",
+        });
+
+        // if (
+        //   // type guarding
+        //   !isCoord(destinationLocation) ||
+        //   !isCoord(sourceLocation) ||
+        //   !isPieceType(pieceType)
+        // ) {
+        //   return;
+        // }
+
+        // const piece = pieces.find((p) =>
+        //   isEqualCoord(p.location, sourceLocation),
+        // );
+        // const restOfPieces = pieces.filter((p) => p !== piece);
+        //
+        // if (
+        //   canMove(sourceLocation, destinationLocation, pieceType, pieces) &&
+        //   piece !== undefined
+        // ) {
+        //   // moving the piece!
+        //   setPieces([
+        //     { type: piece.type, location: destinationLocation },
+        //     ...restOfPieces,
+        //   ]);
+        // }
+      },
+    });
+  }, [categories]);
 
   return (
     <Card className="md:min-w-80">
@@ -162,7 +193,13 @@ export function CategoryList({
   );
 }
 
-function CategoryCardHolder({ children }: { children: ReactNode }) {
+function CategoryCardHolder({
+  position,
+  children,
+}: {
+  position: string;
+  children: ReactNode;
+}) {
   const ref = useRef(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 
@@ -174,19 +211,28 @@ function CategoryCardHolder({ children }: { children: ReactNode }) {
       element: el,
       onDragEnter: () => setIsDraggedOver(true),
 
-      getData: () => {
-        return {
-          location: "holder",
+      getData: ({ input, element }) => {
+        // your base data you want to attach to the drop target
+        const data = {
+          position,
         };
+        // this will 'attach' the closest edge to your `data` object
+        return attachClosestEdge(data, {
+          input,
+          element,
+          // you can specify what edges you want to allow the user to be closest to
+          allowedEdges: ["top", "bottom"],
+        });
       },
-      onDrop: ({ location }) => {
-        console.log(location);
-
+      onDrop: ({ location, self }) => {
+        // console.log(location);
+        const closestEdgeOfTarget: Edge | null = extractClosestEdge(self.data);
+        // console.log(closestEdgeOfTarget);
         setIsDraggedOver(false);
       },
       onDragLeave: () => setIsDraggedOver(false),
     });
-  }, []);
+  }, [position]);
 
   return (
     <div className={cn("", isDraggedOver && "bg-cyan-300")} ref={ref}>
@@ -197,7 +243,8 @@ function CategoryCardHolder({ children }: { children: ReactNode }) {
 
 function CategoryCard({ category }: { category: Category }) {
   const ref = useRef(null);
-  const [dragging, setDragging] = useState<boolean>(false); // NEW
+
+  const [dragging, setDragging] = useState<boolean>(false);
 
   const dragHandleRef = useRef<HTMLButtonElement>(null);
 
@@ -211,19 +258,19 @@ function CategoryCard({ category }: { category: Category }) {
       dragHandle: dragHandleRef.current,
       getInitialData() {
         return {
-          location: "source",
+          category,
         };
       },
       onDragStart: () => setDragging(true),
       onDrop: ({ source, location }) => {
         setDragging(false);
-        console.log(source, location);
+        // console.log(source, location);
       },
     });
   }, []);
 
   return (
-    <CategoryCardHolder>
+    <CategoryCardHolder position={category.position}>
       <Card
         className={cn("flex items-center p-2", dragging && "bg-muted")}
         ref={ref}
@@ -253,7 +300,7 @@ function CategoryCard({ category }: { category: Category }) {
 function DeleteCategoryButton({ id }: { id: string }) {
   const queryClient = useQueryClient();
   const { workspace } = useWorkspace();
-  const deleteCategory = useConnectMutation(deleteCategoryById, {
+  const deleteCategory = useMutation(deleteCategoryById, {
     callOptions: {
       headers: getWorkspaceHeader(workspace.id),
     },

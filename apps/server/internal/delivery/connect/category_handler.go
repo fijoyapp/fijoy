@@ -122,7 +122,7 @@ func (s *CategoryServer) CreateCategories(
 
 	for idx, name := range req.Msg.Categories {
 		stmt := FijoyCategory.INSERT(FijoyCategory.AllColumns).MODEL(model.FijoyCategory{
-			ID:           "Category_" + cuid2.Generate(),
+			ID:           "category_" + cuid2.Generate(),
 			Name:         name,
 			CategoryType: util.ConnectTransactionTypeToJetTransactionType[req.Msg.CategoryType],
 			Position:     positions[idx],
@@ -275,7 +275,8 @@ func (s *CategoryServer) UpdateCategoryById(
 	}
 
 	if !util.HasEditPermission(&workspaceUser) {
-		return nil, connect.NewError(connect.CodePermissionDenied, errors.New("user does not have edit permission"))
+		return nil, connect.NewError(connect.CodePermissionDenied,
+			errors.New("user does not have edit permission"))
 	}
 
 	v, err := protovalidate.New()
@@ -295,19 +296,30 @@ func (s *CategoryServer) UpdateCategoryById(
 
 	category := model.FijoyCategory{}
 
+	updateList := ColumnList{}
+
+	fmt.Println(req.Msg.BeforePosition)
+	fmt.Println(req.Msg.AfterPosition)
+
 	if req.Msg.Name != "" {
 		category.Name = req.Msg.Name
+		updateList = append(updateList, FijoyCategory.Name)
 	}
 
-	if req.Msg.BeforePoition != "" || req.Msg.AfterPoition != "" {
-		newPos, err := fracdex.KeyBetween(req.Msg.AfterPoition, req.Msg.BeforePoition)
+	if req.Msg.BeforePosition != "" || req.Msg.AfterPosition != "" {
+		newPos, err := fracdex.KeyBetween(req.Msg.AfterPosition, req.Msg.BeforePosition)
 		if err != nil {
 			return nil, err
 		}
 		category.Position = newPos
+		updateList = append(updateList, FijoyCategory.Position)
 	}
+	fmt.Println(req.Msg.Id)
+	fmt.Println(category.Name)
+	fmt.Println(category.Position)
 
-	stmt := FijoyTransaction.UPDATE().WHERE(FijoyTransaction.CategoryID.EQ(String(req.Msg.Id))).MODEL(category).RETURNING(FijoyCategory.AllColumns)
+	stmt := FijoyCategory.UPDATE(updateList).MODEL(category).WHERE(FijoyCategory.ID.EQ(String(req.Msg.Id))).
+		RETURNING(FijoyCategory.AllColumns)
 
 	dest := model.FijoyCategory{}
 
