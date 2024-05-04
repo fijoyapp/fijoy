@@ -24,16 +24,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import _ from "lodash";
 import { TransactionTypeEnum } from "@/types/transaction";
-import { Category } from "@/gen/proto/fijoy/v1/category_pb";
+import {
+  Category,
+  UpdateCategoryByIdRequest,
+} from "@/gen/proto/fijoy/v1/category_pb";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+import {
+  callUnaryMethod,
+  createConnectQueryKey,
+  useTransport,
+} from "@connectrpc/connect-query";
 import {
   deleteCategoryById,
   getCategories,
+  updateCategoryById,
 } from "@/gen/proto/fijoy/v1/category-CategoryService_connectquery";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation as useConnectMutation } from "@connectrpc/connect-query";
 import { getWorkspaceHeader } from "@/lib/headers";
 import { useWorkspace } from "@/hooks/use-workspace";
 
@@ -47,6 +56,85 @@ export function CategoryList({
   categoryType,
   onAddNewCategory,
 }: CategoryListProps) {
+  const { workspace } = useWorkspace();
+
+  const queryClient = useQueryClient();
+  const transport = useTransport();
+
+  const updatePosition = useMutation({
+    mutationFn: async (updateCategory: UpdateCategoryByIdRequest) => {
+      callUnaryMethod(updateCategoryById, updateCategory, {
+        transport,
+        callOptions: {
+          headers: getWorkspaceHeader(workspace.id),
+        },
+      });
+    },
+    onMutate: async (updateCategory) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      const categoriesQueryKey = createConnectQueryKey(getCategories);
+      await queryClient.cancelQueries({
+        queryKey: categoriesQueryKey,
+      });
+
+      const optimisticCategories = [...categories];
+
+      const x = categories.findIndex((e) => e.id === updateCategory.id);
+
+      const [element] = optimisticCategories.splice(x, 1);
+
+      let y;
+
+      if (updateCategory.beforePoition) {
+        y =
+          categories.findIndex(
+            (e) => e.position === updateCategory.beforePoition,
+          ) - 1;
+      } else {
+        y = categories.findIndex(
+          (e) => e.position === updateCategory.afterPoition,
+        );
+      }
+
+      optimisticCategories.splice(y, 0, element);
+
+      queryClient.setQueryData(categoriesQueryKey, optimisticCategories);
+
+      // Return a context object with the snapshotted value
+      return { categories };
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, _, context) => {
+      console.error(err);
+      queryClient.setQueryData(
+        createConnectQueryKey(getCategories),
+        context?.categories,
+      );
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getCategories),
+      });
+    },
+  });
+
+  function handlePositionUpdate(
+    id: string,
+    beforePosition?: string,
+    afterPosition?: string,
+  ) {
+    const req = new UpdateCategoryByIdRequest({
+      id,
+      beforePoition: beforePosition ?? "",
+      afterPoition: afterPosition ?? "",
+    });
+
+    updatePosition.mutateAsync(req);
+  }
+
   return (
     <Card className="md:min-w-80">
       <CardContent className="pb-0">
@@ -85,8 +173,18 @@ function CategoryCardHolder({ children }: { children: ReactNode }) {
     return dropTargetForElements({
       element: el,
       onDragEnter: () => setIsDraggedOver(true),
+
+      getData: () => {
+        return {
+          location: "holder",
+        };
+      },
+      onDrop: ({ location }) => {
+        console.log(location);
+
+        setIsDraggedOver(false);
+      },
       onDragLeave: () => setIsDraggedOver(false),
-      onDrop: () => setIsDraggedOver(false),
     });
   }, []);
 
@@ -111,8 +209,16 @@ function CategoryCard({ category }: { category: Category }) {
     return draggable({
       element: el,
       dragHandle: dragHandleRef.current,
+      getInitialData() {
+        return {
+          location: "source",
+        };
+      },
       onDragStart: () => setDragging(true),
-      onDrop: () => setDragging(false),
+      onDrop: ({ source, location }) => {
+        setDragging(false);
+        console.log(source, location);
+      },
     });
   }, []);
 
@@ -147,7 +253,7 @@ function CategoryCard({ category }: { category: Category }) {
 function DeleteCategoryButton({ id }: { id: string }) {
   const queryClient = useQueryClient();
   const { workspace } = useWorkspace();
-  const deleteCategory = useMutation(deleteCategoryById, {
+  const deleteCategory = useConnectMutation(deleteCategoryById, {
     callOptions: {
       headers: getWorkspaceHeader(workspace.id),
     },
