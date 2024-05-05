@@ -198,7 +198,15 @@ function Page() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="p-0" align="start">
-                            <Command>
+                            <Command
+                              filter={(value, search) =>
+                                value
+                                  .toLowerCase()
+                                  .includes(search.toLowerCase())
+                                  ? 1
+                                  : 0
+                              }
+                            >
                               <CommandInput placeholder="Search currency..." />
                               <CommandList>
                                 <CommandEmpty>No currency found.</CommandEmpty>
@@ -344,7 +352,15 @@ function Page() {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="p-0" align="start">
-                            <Command>
+                            <Command
+                              filter={(value, search) =>
+                                value
+                                  .toLowerCase()
+                                  .includes(search.toLowerCase())
+                                  ? 1
+                                  : 0
+                              }
+                            >
                               <CommandInput placeholder="Search locale..." />
                               <CommandList>
                                 <CommandEmpty>No locale found.</CommandEmpty>

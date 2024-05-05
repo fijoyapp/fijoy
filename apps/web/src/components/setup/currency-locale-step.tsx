@@ -113,7 +113,13 @@ const CurrencyLocaleStep = () => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="p-0" align="start">
-                        <Command>
+                        <Command
+                          filter={(value, search) =>
+                            value.toLowerCase().includes(search.toLowerCase())
+                              ? 1
+                              : 0
+                          }
+                        >
                           <CommandInput placeholder="Search..." />
                           <CommandList>
                             <CommandEmpty>No currency found.</CommandEmpty>
@@ -228,7 +234,13 @@ const CurrencyLocaleStep = () => {
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="p-0" align="start">
-                        <Command>
+                        <Command
+                          filter={(value, search) =>
+                            value.toLowerCase().includes(search.toLowerCase())
+                              ? 1
+                              : 0
+                          }
+                        >
                           <CommandInput placeholder="Search..." />
                           <CommandList>
                             <CommandEmpty>No locale found.</CommandEmpty>

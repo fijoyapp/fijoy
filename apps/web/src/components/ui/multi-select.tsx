@@ -187,7 +187,11 @@ const MultiSelectFormField = React.forwardRef<
             }
           }}
         >
-          <Command>
+          <Command
+            filter={(value, search) =>
+              value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0
+            }
+          >
             <CommandInput
               placeholder="Search..."
               onKeyDown={handleInputKeyDown}
