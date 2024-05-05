@@ -35,6 +35,7 @@ const NameNamespaceStep = () => {
     setGeneralStepData(values);
     router.navigate({
       from: "/setup",
+      to: "/setup",
       search: { step: "currency-locale" },
     });
   }

@@ -64,6 +64,7 @@ const CurrencyLocaleStep = () => {
     setCurrencyLocaleStepData(values);
     router.navigate({
       from: "/setup",
+      to: "/setup",
       search: { step: "final" },
     });
   }
@@ -72,6 +73,7 @@ const CurrencyLocaleStep = () => {
     setCurrencyLocaleStepData(form.getValues());
     router.navigate({
       from: "/setup",
+      to: "/setup",
       search: { step: "name-namespace" },
     });
   }
