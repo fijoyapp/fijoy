@@ -31,7 +31,7 @@ import { Button } from "@/components/ui/button";
 import _ from "lodash";
 import { TransactionTypeEnum } from "@/types/transaction";
 import { Category } from "@/gen/proto/fijoy/v1/category_pb";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import {
@@ -69,46 +69,46 @@ export function CategoryList({
     },
   });
 
-  function getBeforeAfterPosition(
-    referencePosition: string,
-    location: "top" | "bottom",
-  ) {
-    const referenceIndex = categories.findIndex(
-      (c) => c.position === referencePosition,
-    );
-    if (referenceIndex === -1) {
-      throw new Error("Reference category not found");
-    }
-
-    if (location === "top") {
-      const targetIndex = referenceIndex - 1;
-      if (targetIndex < 0) {
-        return {
-          beforePosition: referencePosition,
-          afterPosition: "",
-        };
+  const getBeforeAfterPosition = useCallback(
+    (referencePosition: string, location: "top" | "bottom") => {
+      const referenceIndex = categories.findIndex(
+        (c) => c.position === referencePosition,
+      );
+      if (referenceIndex === -1) {
+        throw new Error("Reference category not found");
       }
 
-      return {
-        beforePosition: referencePosition,
-        afterPosition: categories[targetIndex].position,
-      };
-    }
-    if (location === "bottom") {
-      const targetIndex = referenceIndex + 1;
-      if (targetIndex >= categories.length) {
+      if (location === "top") {
+        const targetIndex = referenceIndex - 1;
+        if (targetIndex < 0) {
+          return {
+            beforePosition: referencePosition,
+            afterPosition: "",
+          };
+        }
+
         return {
-          beforePosition: "",
+          beforePosition: referencePosition,
+          afterPosition: categories[targetIndex].position,
+        };
+      }
+      if (location === "bottom") {
+        const targetIndex = referenceIndex + 1;
+        if (targetIndex >= categories.length) {
+          return {
+            beforePosition: "",
+            afterPosition: referencePosition,
+          };
+        }
+
+        return {
+          beforePosition: categories[targetIndex].position,
           afterPosition: referencePosition,
         };
       }
-
-      return {
-        beforePosition: categories[targetIndex].position,
-        afterPosition: referencePosition,
-      };
-    }
-  }
+    },
+    [categories],
+  );
 
   // this makes sure that the mutation only fires once in strict mode
   useEffect(() => {
@@ -125,6 +125,8 @@ export function CategoryList({
         console.log("source.data", source.data);
         console.log("destination.data", destination.data);
 
+        const edgeData = extractClosestEdge(destination.data);
+
         console.log(
           "calling with",
           source.data.category.id,
@@ -133,7 +135,7 @@ export function CategoryList({
 
         updatePosition.mutateAsync({
           id: source.data.category.id,
-          ...getBeforeAfterPosition(destination.data.position, "top"),
+          ...getBeforeAfterPosition(destination.data.position, edgeData),
           // afterPosition: destination.data.position ?? "",
           // beforePosition: "",
         });
