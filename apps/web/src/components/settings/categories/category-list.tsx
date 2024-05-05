@@ -1,4 +1,5 @@
 import invariant from "tiny-invariant";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import {
   attachClosestEdge,
   extractClosestEdge,
@@ -185,13 +186,16 @@ function CategoryCardHolder({
   const ref = useRef(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
   useEffect(() => {
     const el = ref.current;
     invariant(el);
 
     return dropTargetForElements({
       element: el,
-      onDragEnter: () => setIsDraggedOver(true),
+      onDragEnter: () => {
+        setIsDraggedOver(true);
+      },
 
       getData: ({ input, element }) => {
         // your base data you want to attach to the drop target
@@ -206,20 +210,51 @@ function CategoryCardHolder({
           allowedEdges: ["top", "bottom"],
         });
       },
+      onDrag({ self, source }) {
+        const isSource = source.element === el;
+        if (isSource) {
+          setClosestEdge(null);
+          return;
+        }
+
+        const closestEdge = extractClosestEdge(self.data);
+
+        // const sourceIndex = source.data.index;
+        // invariant(typeof sourceIndex === 'number');
+
+        // const isItemBeforeSource = index === sourceIndex - 1;
+        // const isItemAfterSource = index === sourceIndex + 1;
+        //
+        // const isDropIndicatorHidden =
+        //   (isItemBeforeSource && closestEdge === 'bottom') ||
+        //   (isItemAfterSource && closestEdge === 'top');
+        //
+        // if (isDropIndicatorHidden) {
+        //   setClosestEdge(null);
+        //   return;
+        // }
+
+        setClosestEdge(closestEdge);
+      },
       onDrop: ({ location, self }) => {
+        setClosestEdge(null);
         console.log(location);
         console.log(self.data);
         // const closestEdgeOfTarget: Edge | null = extractClosestEdge(self.data);
         // console.log(closestEdgeOfTarget);
         setIsDraggedOver(false);
       },
-      onDragLeave: () => setIsDraggedOver(false),
+      onDragLeave: () => {
+        setIsDraggedOver(false);
+        setClosestEdge(null);
+      },
     });
   }, [position]);
 
   return (
-    <div className={cn("", isDraggedOver && "bg-cyan-300")} ref={ref}>
+    <div className={cn("relative", isDraggedOver && "")} ref={ref}>
       {children}
+      {closestEdge && <DropIndicator edge={closestEdge} gap="8px" />}
     </div>
   );
 }
