@@ -76,9 +76,9 @@ export function CategoryList({
       const referenceIndex = categories.findIndex(
         (c) => c.position === referencePosition,
       );
-      if (referenceIndex === -1) {
-        throw new Error("Reference position not found");
-      }
+
+      invariant(referenceIndex !== -1);
+      invariant(location === "top" || location === "bottom");
 
       if (location === "top") {
         const targetIndex = referenceIndex - 1;
@@ -93,8 +93,7 @@ export function CategoryList({
           beforePosition: referencePosition,
           afterPosition: categories[targetIndex].position,
         };
-      }
-      if (location === "bottom") {
+      } else {
         const targetIndex = referenceIndex + 1;
         if (targetIndex >= categories.length) {
           return {
@@ -135,15 +134,22 @@ export function CategoryList({
           return;
         }
 
-        console.log(
-          "calling with",
-          sourceCategory.id,
-          destination.data.position,
+        const { beforePosition, afterPosition } = getBeforeAfterPosition(
+          destinationLocation,
+          edgeData,
         );
+
+        if (
+          beforePosition === sourceCategory.position ||
+          afterPosition === sourceCategory.position
+        ) {
+          return;
+        }
 
         updatePosition.mutateAsync({
           id: sourceCategory.id,
-          ...getBeforeAfterPosition(destinationLocation, edgeData),
+          beforePosition,
+          afterPosition,
         });
       },
     });
@@ -157,7 +163,7 @@ export function CategoryList({
             <Receipt className="h-4 w-4 !transform-none" />
             {_.capitalize(categoryType)}
           </AccordionTrigger>
-          <AccordionContent className="space-y-2">
+          <AccordionContent className="grid gap-2">
             <Button
               variant="secondary"
               className="w-full gap-1"
@@ -219,29 +225,10 @@ function CategoryCardHolder({
 
         const closestEdge = extractClosestEdge(self.data);
 
-        // const sourceIndex = source.data.index;
-        // invariant(typeof sourceIndex === 'number');
-
-        // const isItemBeforeSource = index === sourceIndex - 1;
-        // const isItemAfterSource = index === sourceIndex + 1;
-        //
-        // const isDropIndicatorHidden =
-        //   (isItemBeforeSource && closestEdge === 'bottom') ||
-        //   (isItemAfterSource && closestEdge === 'top');
-        //
-        // if (isDropIndicatorHidden) {
-        //   setClosestEdge(null);
-        //   return;
-        // }
-
         setClosestEdge(closestEdge);
       },
-      onDrop: ({ location, self }) => {
+      onDrop: () => {
         setClosestEdge(null);
-        console.log(location);
-        console.log(self.data);
-        // const closestEdgeOfTarget: Edge | null = extractClosestEdge(self.data);
-        // console.log(closestEdgeOfTarget);
         setIsDraggedOver(false);
       },
       onDragLeave: () => {
@@ -280,10 +267,8 @@ function CategoryCard({ category }: { category: Category }) {
         };
       },
       onDragStart: () => setDragging(true),
-      onDrop: ({ source, location }) => {
-        console.log(source, location);
+      onDrop: () => {
         setDragging(false);
-        // console.log(source, location);
       },
     });
   }, []);
