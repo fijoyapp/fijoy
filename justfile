@@ -25,7 +25,7 @@ buf:
 init:
   pnpm install
   just packages/proto/init
-  go install air
+  go install github.com/cosmtrek/air@latest
 
 update:
   pnpm update -r
