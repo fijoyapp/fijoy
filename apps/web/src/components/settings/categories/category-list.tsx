@@ -49,6 +49,7 @@ type CategoryListProps = {
   categoryType: TransactionTypeEnum;
   onAddNewCategory: (categoryType: TransactionTypeEnum) => void;
 };
+
 export function CategoryList({
   categories,
   categoryType,
@@ -70,7 +71,7 @@ export function CategoryList({
   });
 
   const getBeforeAfterPosition = useCallback(
-    (referencePosition: string, location: "top" | "bottom") => {
+    (referencePosition: string, location: Edge) => {
       const referenceIndex = categories.findIndex(
         (c) => c.position === referencePosition,
       );
@@ -119,23 +120,37 @@ export function CategoryList({
           // if dropped outside of any drop targets
           return;
         }
+
         const destinationLocation = destination.data.location;
         const sourceLocation = source.data.location;
         console.log("---------");
         console.log("source.data", source.data);
         console.log("destination.data", destination.data);
 
+        const sourceCategory = source.data;
+
+        if (
+          !isCategory(sourceCategory) ||
+          !isPosition(destinationLocation) ||
+          !isPosition(sourceLocation)
+        ) {
+          return;
+        }
+
         const edgeData = extractClosestEdge(destination.data);
+        if (edgeData === null) {
+          return;
+        }
 
         console.log(
           "calling with",
-          source.data.category.id,
+          sourceCategory.id,
           destination.data.position,
         );
 
         updatePosition.mutateAsync({
-          id: source.data.category.id,
-          ...getBeforeAfterPosition(destination.data.position, edgeData),
+          id: sourceCategory.id,
+          ...getBeforeAfterPosition(destinationLocation, edgeData),
           // afterPosition: destination.data.position ?? "",
           // beforePosition: "",
         });
@@ -227,8 +242,9 @@ function CategoryCardHolder({
         });
       },
       onDrop: ({ location, self }) => {
-        // console.log(location);
-        const closestEdgeOfTarget: Edge | null = extractClosestEdge(self.data);
+        console.log(location);
+        console.log(self.data);
+        // const closestEdgeOfTarget: Edge | null = extractClosestEdge(self.data);
         // console.log(closestEdgeOfTarget);
         setIsDraggedOver(false);
       },
@@ -265,6 +281,7 @@ function CategoryCard({ category }: { category: Category }) {
       },
       onDragStart: () => setDragging(true),
       onDrop: ({ source, location }) => {
+        console.log(source, location);
         setDragging(false);
         // console.log(source, location);
       },
@@ -348,4 +365,18 @@ function DeleteCategoryButton({ id }: { id: string }) {
       </AlertDialogContent>
     </AlertDialog>
   );
+}
+
+function isCategory(category: unknown): category is Category {
+  return (
+    typeof category === "object" &&
+    category !== null &&
+    "id" in category &&
+    "position" in category &&
+    "name" in category
+  );
+}
+
+function isPosition(position: unknown): position is string {
+  return typeof position === "string";
 }
