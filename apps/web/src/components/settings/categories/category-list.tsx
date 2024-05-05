@@ -76,7 +76,7 @@ export function CategoryList({
         (c) => c.position === referencePosition,
       );
       if (referenceIndex === -1) {
-        throw new Error("Reference category not found");
+        throw new Error("Reference position not found");
       }
 
       if (location === "top") {
@@ -121,19 +121,11 @@ export function CategoryList({
           return;
         }
 
-        const destinationLocation = destination.data.location;
-        const sourceLocation = source.data.location;
-        console.log("---------");
-        console.log("source.data", source.data);
-        console.log("destination.data", destination.data);
+        const destinationLocation = destination.data.position;
 
-        const sourceCategory = source.data;
+        const sourceCategory = source.data.category;
 
-        if (
-          !isCategory(sourceCategory) ||
-          !isPosition(destinationLocation) ||
-          !isPosition(sourceLocation)
-        ) {
+        if (!isCategory(sourceCategory) || !isPosition(destinationLocation)) {
           return;
         }
 
@@ -151,34 +143,7 @@ export function CategoryList({
         updatePosition.mutateAsync({
           id: sourceCategory.id,
           ...getBeforeAfterPosition(destinationLocation, edgeData),
-          // afterPosition: destination.data.position ?? "",
-          // beforePosition: "",
         });
-
-        // if (
-        //   // type guarding
-        //   !isCoord(destinationLocation) ||
-        //   !isCoord(sourceLocation) ||
-        //   !isPieceType(pieceType)
-        // ) {
-        //   return;
-        // }
-
-        // const piece = pieces.find((p) =>
-        //   isEqualCoord(p.location, sourceLocation),
-        // );
-        // const restOfPieces = pieces.filter((p) => p !== piece);
-        //
-        // if (
-        //   canMove(sourceLocation, destinationLocation, pieceType, pieces) &&
-        //   piece !== undefined
-        // ) {
-        //   // moving the piece!
-        //   setPieces([
-        //     { type: piece.type, location: destinationLocation },
-        //     ...restOfPieces,
-        //   ]);
-        // }
       },
     });
   }, [categories]);
