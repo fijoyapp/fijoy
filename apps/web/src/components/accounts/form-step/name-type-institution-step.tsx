@@ -1,4 +1,4 @@
-import { AccountTypeEnum } from "@/types/accounts";
+import { AccountTypeEnum } from "@/types/account";
 import {
   Select,
   SelectContent,
@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { useWorkspace } from "@/hooks/use-workspace";
 import { useRouter } from "@tanstack/react-router";
 import { useAccountsStore } from "@/store/accounts";
-import { NameTypeInstitutionStepData } from "@/types/accounts";
+import { NameTypeInstitutionStepData } from "@/types/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { type TypeOf } from "zod";

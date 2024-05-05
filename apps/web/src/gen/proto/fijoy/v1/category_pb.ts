@@ -27,7 +27,12 @@ export class Category extends Message<Category> {
   name = "";
 
   /**
-   * @generated from field: fijoy.v1.TransactionType category_type = 4;
+   * @generated from field: string position = 4;
+   */
+  position = "";
+
+  /**
+   * @generated from field: fijoy.v1.TransactionType category_type = 5;
    */
   categoryType = TransactionType.UNSPECIFIED;
 
@@ -42,7 +47,8 @@ export class Category extends Message<Category> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "workspace_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "category_type", kind: "enum", T: proto3.getEnumType(TransactionType) },
+    { no: 4, name: "position", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "category_type", kind: "enum", T: proto3.getEnumType(TransactionType) },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Category {
@@ -59,6 +65,178 @@ export class Category extends Message<Category> {
 
   static equals(a: Category | PlainMessage<Category> | undefined, b: Category | PlainMessage<Category> | undefined): boolean {
     return proto3.util.equals(Category, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.Categories
+ */
+export class Categories extends Message<Categories> {
+  /**
+   * @generated from field: repeated fijoy.v1.Category categories = 1;
+   */
+  categories: Category[] = [];
+
+  constructor(data?: PartialMessage<Categories>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.Categories";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "categories", kind: "message", T: Category, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Categories {
+    return new Categories().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Categories {
+    return new Categories().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Categories {
+    return new Categories().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Categories | PlainMessage<Categories> | undefined, b: Categories | PlainMessage<Categories> | undefined): boolean {
+    return proto3.util.equals(Categories, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.CreateCategoriesRequest
+ */
+export class CreateCategoriesRequest extends Message<CreateCategoriesRequest> {
+  /**
+   * @generated from field: repeated string categories = 1;
+   */
+  categories: string[] = [];
+
+  /**
+   * @generated from field: fijoy.v1.TransactionType category_type = 2;
+   */
+  categoryType = TransactionType.UNSPECIFIED;
+
+  constructor(data?: PartialMessage<CreateCategoriesRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.CreateCategoriesRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "categories", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "category_type", kind: "enum", T: proto3.getEnumType(TransactionType) },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateCategoriesRequest {
+    return new CreateCategoriesRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateCategoriesRequest {
+    return new CreateCategoriesRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateCategoriesRequest {
+    return new CreateCategoriesRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: CreateCategoriesRequest | PlainMessage<CreateCategoriesRequest> | undefined, b: CreateCategoriesRequest | PlainMessage<CreateCategoriesRequest> | undefined): boolean {
+    return proto3.util.equals(CreateCategoriesRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.UpdateCategoryByIdRequest
+ */
+export class UpdateCategoryByIdRequest extends Message<UpdateCategoryByIdRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string name = 2;
+   */
+  name = "";
+
+  /**
+   * @generated from field: string beforePosition = 3;
+   */
+  beforePosition = "";
+
+  /**
+   * @generated from field: string afterPosition = 4;
+   */
+  afterPosition = "";
+
+  constructor(data?: PartialMessage<UpdateCategoryByIdRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.UpdateCategoryByIdRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "beforePosition", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "afterPosition", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCategoryByIdRequest {
+    return new UpdateCategoryByIdRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateCategoryByIdRequest {
+    return new UpdateCategoryByIdRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateCategoryByIdRequest {
+    return new UpdateCategoryByIdRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateCategoryByIdRequest | PlainMessage<UpdateCategoryByIdRequest> | undefined, b: UpdateCategoryByIdRequest | PlainMessage<UpdateCategoryByIdRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateCategoryByIdRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.DeleteCategoryByIdRequest
+ */
+export class DeleteCategoryByIdRequest extends Message<DeleteCategoryByIdRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<DeleteCategoryByIdRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.DeleteCategoryByIdRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteCategoryByIdRequest {
+    return new DeleteCategoryByIdRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteCategoryByIdRequest {
+    return new DeleteCategoryByIdRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteCategoryByIdRequest {
+    return new DeleteCategoryByIdRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: DeleteCategoryByIdRequest | PlainMessage<DeleteCategoryByIdRequest> | undefined, b: DeleteCategoryByIdRequest | PlainMessage<DeleteCategoryByIdRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteCategoryByIdRequest, a, b);
   }
 }
 

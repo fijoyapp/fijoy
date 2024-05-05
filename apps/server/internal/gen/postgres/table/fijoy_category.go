@@ -21,6 +21,7 @@ type fijoyCategoryTable struct {
 	WorkspaceID  postgres.ColumnString
 	Name         postgres.ColumnString
 	CategoryType postgres.ColumnString
+	Position     postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -65,8 +66,9 @@ func newFijoyCategoryTableImpl(schemaName, tableName, alias string) fijoyCategor
 		WorkspaceIDColumn  = postgres.StringColumn("workspace_id")
 		NameColumn         = postgres.StringColumn("name")
 		CategoryTypeColumn = postgres.StringColumn("category_type")
-		allColumns         = postgres.ColumnList{IDColumn, WorkspaceIDColumn, NameColumn, CategoryTypeColumn}
-		mutableColumns     = postgres.ColumnList{WorkspaceIDColumn, NameColumn, CategoryTypeColumn}
+		PositionColumn     = postgres.StringColumn("position")
+		allColumns         = postgres.ColumnList{IDColumn, WorkspaceIDColumn, NameColumn, CategoryTypeColumn, PositionColumn}
+		mutableColumns     = postgres.ColumnList{WorkspaceIDColumn, NameColumn, CategoryTypeColumn, PositionColumn}
 	)
 
 	return fijoyCategoryTable{
@@ -77,6 +79,7 @@ func newFijoyCategoryTableImpl(schemaName, tableName, alias string) fijoyCategor
 		WorkspaceID:  WorkspaceIDColumn,
 		Name:         NameColumn,
 		CategoryType: CategoryTypeColumn,
+		Position:     PositionColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

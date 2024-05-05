@@ -12,4 +12,5 @@ type FijoyCategory struct {
 	WorkspaceID  string               `json:"WorkspaceID"`
 	Name         string               `json:"Name"`
 	CategoryType FijoyTransactionType `json:"CategoryType"`
+	Position     string               `json:"Position"`
 }
