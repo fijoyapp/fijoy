@@ -44,6 +44,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { getWorkspaceHeader } from "@/lib/headers";
 import { useWorkspace } from "@/hooks/use-workspace";
+import { tsTransactionTypeToProto } from "@/lib/convert";
 
 type CategoryListProps = {
   categories: Category[];
@@ -114,6 +115,14 @@ export function CategoryList({
   // this makes sure that the mutation only fires once in strict mode
   useEffect(() => {
     return monitorForElements({
+      canMonitor({ source }) {
+        const sourceCategory = source.data.category;
+
+        return (
+          isCategory(sourceCategory) &&
+          sourceCategory.categoryType === tsTransactionTypeToProto(categoryType)
+        );
+      },
       onDrop({ source, location }) {
         const destination = location.current.dropTargets[0];
         if (!destination) {
@@ -271,7 +280,7 @@ function CategoryCard({ category }: { category: Category }) {
         setDragging(false);
       },
     });
-  }, []);
+  }, [category]);
 
   return (
     <CategoryCardHolder position={category.position}>

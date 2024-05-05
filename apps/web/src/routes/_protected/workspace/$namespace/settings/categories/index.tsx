@@ -1,4 +1,5 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import invariant from "tiny-invariant";
 import {
   Form,
   FormControl,
@@ -53,6 +54,7 @@ import { toast } from "sonner";
 import { TransactionTypeEnum } from "@/types/transaction";
 import { tsTransactionTypeToProto } from "@/lib/convert";
 import { CategoryList } from "@/components/settings/categories/category-list";
+import { useRef } from "react";
 
 const settingsCategoriesSchema = z.object({
   category: TransactionTypeEnum.default("expense").optional(),
@@ -141,6 +143,7 @@ function Page() {
           categoryType="income"
           onAddNewCategory={onNewCategory}
         />
+
         <CategoryList
           categories={transferCategories}
           categoryType="transfer"
@@ -224,6 +227,7 @@ function CategoryForm({ category }: { category: TransactionTypeEnum }) {
   const queryClient = useQueryClient();
   const { workspace } = useWorkspace();
   const router = useRouter();
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const addCategories = useMutation(createCategories, {
     onSuccess: () => {
@@ -267,7 +271,15 @@ function CategoryForm({ category }: { category: TransactionTypeEnum }) {
             render={({ field }) => (
               <FormItem>
                 <div className="flex gap-2">
-                  <FormControl>
+                  <FormControl
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        invariant(submitButtonRef.current);
+                        submitButtonRef.current.click();
+                      }
+                    }}
+                  >
                     <Input
                       placeholder={`${category} category name`}
                       {...field}
@@ -292,7 +304,9 @@ function CategoryForm({ category }: { category: TransactionTypeEnum }) {
           </Button>
           <span className="grow"></span>
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" ref={submitButtonRef}>
+            Submit
+          </Button>
         </div>
       </form>
     </Form>
