@@ -5,7 +5,7 @@ export const siteConfig = {
   description: "Joyful personal finance management for everyone.",
   links: {
     discord: "https://discord.gg/HwZarY9Aas",
-    github: "https://github.com/itsjoeoui/fijoy",
+    github: "https://github.com/fijoyapp/fijoy",
   },
 };
 
