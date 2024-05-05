@@ -288,9 +288,7 @@ function CategoryCard({ category }: { category: Category }) {
         className={cn("flex items-center p-2", dragging && "bg-muted")}
         ref={ref}
       >
-        <div>
-          {category.name}, {category.position}
-        </div>
+        <div>{category.name}</div>
         <div className="grow"></div>
 
         <DeleteCategoryButton id={category.id} />
