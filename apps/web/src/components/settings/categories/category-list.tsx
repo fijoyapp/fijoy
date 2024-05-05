@@ -348,6 +348,7 @@ function DeleteCategoryButton({ id }: { id: string }) {
           <AlertDialogAction
             onClick={() =>
               toast.promise(deleteCategory.mutateAsync({ id }), {
+                loading: "Deleting category...",
                 success: "Category deleted!",
                 error: "Failed to delete category",
               })

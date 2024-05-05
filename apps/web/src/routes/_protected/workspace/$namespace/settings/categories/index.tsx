@@ -255,6 +255,8 @@ function CategoryForm({ category }: { category: TransactionTypeEnum }) {
         categoryType: tsTransactionTypeToProto(category),
       }),
       {
+        loading: "Working on it...",
+        error: "Something went wrong :(",
         success: "Success!",
       },
     );
