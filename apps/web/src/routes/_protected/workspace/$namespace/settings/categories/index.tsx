@@ -29,7 +29,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -55,6 +54,7 @@ import { TransactionTypeEnum } from "@/types/transaction";
 import { tsTransactionTypeToProto } from "@/lib/convert";
 import { CategoryList } from "@/components/settings/categories/category-list";
 import { useRef } from "react";
+import { useMediaSizes } from "@/hooks/use-media-sizes";
 
 const settingsCategoriesSchema = z.object({
   category: TransactionTypeEnum.default("expense").optional(),
@@ -166,7 +166,7 @@ function AddCategory({
   open: boolean;
   category: TransactionTypeEnum;
 }) {
-  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const { sm } = useMediaSizes();
   const router = useRouter();
 
   function onOpenChange(open: boolean) {
@@ -177,7 +177,7 @@ function AddCategory({
     });
   }
 
-  if (isDesktop) {
+  if (sm) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[425px]">

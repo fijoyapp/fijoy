@@ -10,7 +10,6 @@ import {
 
 import * as React from "react";
 
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -38,6 +37,7 @@ import NameTypeInstitutionStep from "@/components/accounts/form-step/name-type-i
 import CurrencyBalanceStep from "@/components/accounts/form-step/currency-balance-step";
 import FinalStep from "@/components/accounts/form-step/final-step";
 import { AccountStats } from "@/components/accounts/account-stats";
+import { useMediaSizes } from "@/hooks/use-media-sizes";
 
 const setupNewAccountSchema = z.object({
   step: NewAccountStep.default("name-type-institution").optional(),
@@ -91,7 +91,7 @@ function Page() {
 }
 
 function AddAccount({ open, step }: { open: boolean; step: NewAccountStep }) {
-  const isDesktop = useMediaQuery("(min-width: 640px)");
+  const { sm } = useMediaSizes();
   const router = useRouter();
 
   function onOpenChange(open: boolean) {
@@ -102,7 +102,7 @@ function AddAccount({ open, step }: { open: boolean; step: NewAccountStep }) {
     });
   }
 
-  if (isDesktop) {
+  if (sm) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
