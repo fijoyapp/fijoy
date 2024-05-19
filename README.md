@@ -3,6 +3,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
 ![All Contributors](https://img.shields.io/github/all-contributors/fijoyapp/fijoy?style=for-the-badge&color=yellow)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffijoyapp%2Ffijoy.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ffijoyapp%2Ffijoy?ref=badge_shield)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -106,3 +107,7 @@ just test
 ---
 
 To run the project, simply use `just dev`.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ffijoyapp%2Ffijoy.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ffijoyapp%2Ffijoy?ref=badge_large)
