@@ -3,6 +3,7 @@ import TermsAndPrivacy from "@/components/terms-and-privacy";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { Computer } from "lucide-react";
 
 export const Route = createLazyFileRoute("/_public/signup")({
   component: Signup,
@@ -21,6 +22,17 @@ function Signup() {
         </div>
 
         <div className="flex flex-col gap-2">
+          {!import.meta.env.PROD && (
+            <Button asChild>
+              <a
+                href={env.VITE_SERVER_URL + "/v1/auth/local/login"}
+                className="flex gap-2"
+              >
+                <Computer className="h-4 w-4" />
+                Local Sandbox
+              </a>
+            </Button>
+          )}
           <Button asChild>
             <a
               href={env.VITE_SERVER_URL + "/v1/auth/google/login"}

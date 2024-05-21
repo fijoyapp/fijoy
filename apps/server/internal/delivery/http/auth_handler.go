@@ -43,10 +43,84 @@ func NewAuthHandler(r *chi.Mux, googleOAuthConfig *oauth2.Config, tokenAuth *jwt
 	handler := &authHandler{googleOAuthConfig, tokenAuth, db, frontendUrl, discordWebhook}
 
 	r.Route("/v1/auth", func(r chi.Router) {
+		r.Get("/local/login", handler.localLogin)
 		r.Get("/google/login", handler.googleLogin)
 		r.Get("/google/callback", handler.googleCallback)
 		r.Get("/logout", handler.logout)
 	})
+}
+
+func (ah authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
+	stmt := SELECT(FijoyUserKey.AllColumns).FROM(FijoyUserKey).
+		WHERE(FijoyUserKey.ID.EQ(String("local:"))) // share the same local account
+
+	var userKeyDest struct {
+		model.FijoyUserKey
+	}
+
+	err := stmt.Query(ah.db, &userKeyDest)
+
+	if err == qrm.ErrNoRows {
+		userId := "user_" + cuid2.Generate()
+		user := model.FijoyUser{
+			ID:        userId,
+			Email:     "local@fijoy.app",
+			CreatedAt: time.Now(),
+		}
+		insertUserStmt := FijoyUser.INSERT(FijoyUser.AllColumns).MODEL(user)
+
+		_, err := insertUserStmt.Exec(ah.db)
+		if err != nil {
+			http.Error(w, "Failed to insert user: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		userKey := model.FijoyUserKey{
+			ID:     "local:",
+			UserID: userId,
+		}
+
+		insert := FijoyUserKey.INSERT(FijoyUserKey.ID, FijoyUserKey.UserID).MODEL(userKey)
+		_, err = insert.Exec(ah.db)
+		if err != nil {
+			http.Error(w, "Failed to insert user key: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		userKeyDest.UserID = userKey.UserID
+	} else if err != nil {
+		http.Error(w, "Failed to query user data: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var workspaceUserDest []struct {
+		model.FijoyWorkspaceUser
+	}
+
+	stmt = SELECT(FijoyWorkspaceUser.AllColumns).FROM(FijoyWorkspaceUser).
+		WHERE(FijoyWorkspaceUser.UserID.EQ(String(userKeyDest.UserID)))
+
+	err = stmt.Query(ah.db, &workspaceUserDest)
+	if err != nil {
+		http.Error(w, "Failed to query workspace user data: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_, tokenString, _ := ah.tokenAuth.Encode(
+		map[string]interface{}{"user_id": userKeyDest.UserID})
+
+	cookie := &http.Cookie{
+		Name:     "jwt",
+		Value:    tokenString,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, ah.frontendUrl+"/workspace", http.StatusFound)
 }
 
 func (ah authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
@@ -157,13 +231,6 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to query workspace user data: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// ids := make([]string, len(workspaceUserDest))
-	// for idx, workspaceUser := range workspaceUserDest {
-	// 	fmt.Println(workspaceUser.WorkspaceID)
-	// 	ids[idx] = workspaceUser.WorkspaceID
-	// }
-	// fmt.Println("wtf", ids)
 
 	_, tokenString, _ := ah.tokenAuth.Encode(
 		map[string]interface{}{"user_id": userKeyDest.UserID})
