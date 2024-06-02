@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ['nodejs_21', 'corepack_21']
+nixPkgs = ['nodejs_21']
 
 [phases.install]
 cmd = "pnpm install"
