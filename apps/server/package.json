@@ -7,7 +7,7 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.0",
     "prettier-plugin-sql": "^0.18.0"
   }
 }

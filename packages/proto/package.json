@@ -5,8 +5,8 @@
     "buf": "pnpx @bufbuild/buf generate"
   },
   "devDependencies": {
-    "@bufbuild/protoc-gen-es": "^1.9.0",
+    "@bufbuild/protoc-gen-es": "^1.10.0",
     "@connectrpc/protoc-gen-connect-es": "^1.4.0",
-    "@connectrpc/protoc-gen-connect-query": "^1.3.1"
+    "@connectrpc/protoc-gen-connect-query": "^1.4.1"
   }
 }
