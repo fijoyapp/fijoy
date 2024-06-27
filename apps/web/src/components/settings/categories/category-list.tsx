@@ -167,7 +167,7 @@ export function CategoryList({
   return (
     <Card className="md:min-w-80">
       <CardContent className="pb-0">
-        <AccordionItem value={categoryType} className="border-none ">
+        <AccordionItem value={categoryType} className="border-none">
           <AccordionTrigger>
             <Receipt className="h-4 w-4 !transform-none" />
             {_.capitalize(categoryType)}
