@@ -20,6 +20,9 @@ export default interface FijoyCategory {
 
   /** Database type: public.fijoy_transaction_type */
   categoryType: FijoyTransactionType;
+
+  /** Database type: pg_catalog.text */
+  position: string;
 }
 
 /** Represents the initializer for the table public.fijoy_category */
@@ -35,6 +38,9 @@ export interface FijoyCategoryInitializer {
 
   /** Database type: public.fijoy_transaction_type */
   categoryType: FijoyTransactionType;
+
+  /** Database type: pg_catalog.text */
+  position: string;
 }
 
 /** Represents the mutator for the table public.fijoy_category */
@@ -50,6 +56,9 @@ export interface FijoyCategoryMutator {
 
   /** Database type: public.fijoy_transaction_type */
   categoryType?: FijoyTransactionType;
+
+  /** Database type: pg_catalog.text */
+  position?: string;
 }
 
 export const fijoyCategoryId = z.string();
@@ -59,6 +68,7 @@ export const fijoyCategory = z.object({
   workspaceId: fijoyWorkspaceId,
   name: z.string(),
   categoryType: fijoyTransactionType,
+  position: z.string(),
 });
 
 export const fijoyCategoryInitializer = z.object({
@@ -66,6 +76,7 @@ export const fijoyCategoryInitializer = z.object({
   workspaceId: fijoyWorkspaceId,
   name: z.string(),
   categoryType: fijoyTransactionType,
+  position: z.string(),
 });
 
 export const fijoyCategoryMutator = z.object({
@@ -73,4 +84,5 @@ export const fijoyCategoryMutator = z.object({
   workspaceId: fijoyWorkspaceId.optional(),
   name: z.string().optional(),
   categoryType: fijoyTransactionType.optional(),
+  position: z.string().optional(),
 });
