@@ -1,17 +1,29 @@
-import { createContext } from "react";
-import { useQuery } from "@connectrpc/connect-query";
-import { getUser } from "./gen/proto/fijoy/v1/user-UserService_connectquery";
+import { createContext, useEffect, useState } from "react";
+
+import { createPromiseClient } from "@connectrpc/connect";
 import { User } from "./gen/proto/fijoy/v1/user_pb";
+import { UserService } from "./gen/proto/fijoy/v1/user_connect";
+import { finalTransport } from "./lib/connect";
 
 export interface AuthContext {
   user: User | undefined;
   isLoading: boolean;
 }
 
+const userClient = createPromiseClient(UserService, finalTransport);
+
 export const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: user, isLoading } = useQuery(getUser, {}, { retry: false });
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    userClient.getUser({}).then((user) => {
+      setUser(user);
+      setIsLoading(false);
+    });
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, isLoading }}>
