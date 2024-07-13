@@ -270,7 +270,7 @@ function Page() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onSelect={() => {
-                    queryClient.clear();
+                    queryClient.removeQueries();
                     window.location.replace(
                       env.VITE_SERVER_URL + "/v1/auth/logout",
                     );
