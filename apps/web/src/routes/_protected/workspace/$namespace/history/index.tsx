@@ -1,5 +1,5 @@
 import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
-import NewTransaction from "@/components/transactions/new-transaction";
+// import NewTransaction from "@/components/transactions/new-transaction";
 
 import {
   PageHeader,
@@ -10,7 +10,7 @@ import {
 // import { categoriesQueryOptions } from "@/lib/queries/category";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { getAccountsQueryOptions } from "@/lib/queries/account";
+// import { getAccountsQueryOptions } from "@/lib/queries/account";
 import { DataTable } from "@/components/transactions/data-table";
 import { columns } from "@/components/transactions/columns";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
@@ -39,9 +39,9 @@ function Page() {
 
   const transactions = transactionsQuery.data.transactions;
 
-  const accountsQuery = useSuspenseQuery(getAccountsQueryOptions({ context }));
+  // const accountsQuery = useSuspenseQuery(getAccountsQueryOptions({ context }));
 
-  const accounts = accountsQuery.data.accounts;
+  // const accounts = accountsQuery.data.accounts;
 
   // const { data: accounts } = useSuspenseQuery(
   //   accountsQueryOptions(workspace.id),
@@ -50,17 +50,17 @@ function Page() {
   return (
     <>
       <PageHeader>
-        <PageHeaderHeading>Transactions</PageHeaderHeading>
+        <PageHeaderHeading>History</PageHeaderHeading>
         <PageHeaderDescription>
-          All your transactions in one place
+          See all the modifications made to your accounts
         </PageHeaderDescription>
       </PageHeader>
 
-      <NewTransaction
-        accounts={accounts}
-        workspace={context.workspace}
-        categories={[]} // FIXME: load categories
-      />
+      {/* <NewTransaction */}
+      {/*   accounts={accounts} */}
+      {/*   workspace={context.workspace} */}
+      {/*   categories={[]} // FIXME: load categories */}
+      {/* /> */}
 
       <DataTable columns={columns} data={transactions} />
     </>
