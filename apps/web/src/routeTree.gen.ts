@@ -19,9 +19,9 @@ import { Route as ProtectedSetupImport } from './routes/_protected/setup'
 import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/workspace/index'
 import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_protected/workspace/$namespace/route'
 import { Route as ProtectedWorkspaceNamespaceIndexImport } from './routes/_protected/workspace/$namespace/index'
-import { Route as ProtectedWorkspaceNamespaceTransactionsIndexImport } from './routes/_protected/workspace/$namespace/transactions/index'
 import { Route as ProtectedWorkspaceNamespaceStocksIndexImport } from './routes/_protected/workspace/$namespace/stocks/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsIndexImport } from './routes/_protected/workspace/$namespace/settings/index'
+import { Route as ProtectedWorkspaceNamespaceHistoryIndexImport } from './routes/_protected/workspace/$namespace/history/index'
 import { Route as ProtectedWorkspaceNamespaceAccountsIndexImport } from './routes/_protected/workspace/$namespace/accounts/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsUsersIndexImport } from './routes/_protected/workspace/$namespace/settings/users/index'
 import { Route as ProtectedWorkspaceNamespaceSettingsGeneralIndexImport } from './routes/_protected/workspace/$namespace/settings/general/index'
@@ -114,12 +114,6 @@ const ProtectedWorkspaceNamespaceIndexRoute =
     getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
   } as any)
 
-const ProtectedWorkspaceNamespaceTransactionsIndexRoute =
-  ProtectedWorkspaceNamespaceTransactionsIndexImport.update({
-    path: '/transactions/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
-
 const ProtectedWorkspaceNamespaceStocksIndexRoute =
   ProtectedWorkspaceNamespaceStocksIndexImport.update({
     path: '/stocks/',
@@ -129,6 +123,12 @@ const ProtectedWorkspaceNamespaceStocksIndexRoute =
 const ProtectedWorkspaceNamespaceSettingsIndexRoute =
   ProtectedWorkspaceNamespaceSettingsIndexImport.update({
     path: '/settings/',
+    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+  } as any)
+
+const ProtectedWorkspaceNamespaceHistoryIndexRoute =
+  ProtectedWorkspaceNamespaceHistoryIndexImport.update({
+    path: '/history/',
     getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
   } as any)
 
@@ -228,16 +228,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
+    '/_protected/workspace/$namespace/history/': {
+      preLoaderRoute: typeof ProtectedWorkspaceNamespaceHistoryIndexImport
+      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    }
     '/_protected/workspace/$namespace/settings/': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
     '/_protected/workspace/$namespace/stocks/': {
       preLoaderRoute: typeof ProtectedWorkspaceNamespaceStocksIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
-    }
-    '/_protected/workspace/$namespace/transactions/': {
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceTransactionsIndexImport
       parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
     }
     '/_protected/workspace/$namespace/accounts/$accountId/': {
@@ -271,9 +271,9 @@ export const routeTree = rootRoute.addChildren([
     ProtectedWorkspaceNamespaceRouteRoute.addChildren([
       ProtectedWorkspaceNamespaceIndexRoute,
       ProtectedWorkspaceNamespaceAccountsIndexRoute,
+      ProtectedWorkspaceNamespaceHistoryIndexRoute,
       ProtectedWorkspaceNamespaceSettingsIndexRoute,
       ProtectedWorkspaceNamespaceStocksIndexRoute,
-      ProtectedWorkspaceNamespaceTransactionsIndexRoute,
       ProtectedWorkspaceNamespaceAccountsAccountIdIndexRoute,
       ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute,
       ProtectedWorkspaceNamespaceSettingsCurrencyIndexRoute,

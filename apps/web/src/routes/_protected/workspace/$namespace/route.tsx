@@ -31,14 +31,13 @@ import {
 import {
   Bell,
   CircleUser,
-  CreditCard,
+  History,
   Home,
   Landmark,
   LucideIcon,
   Menu,
   Search,
   Settings,
-  TrendingUp,
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -98,15 +97,6 @@ const navLinks: NavLink[] = [
     fuzzy: false,
   },
   {
-    name: "Transactions",
-    link: {
-      from: Route.fullPath,
-      to: "/workspace/$namespace/transactions",
-    },
-    icon: CreditCard,
-    fuzzy: true,
-  },
-  {
     name: "Accounts",
     link: {
       from: Route.fullPath,
@@ -116,14 +106,23 @@ const navLinks: NavLink[] = [
     fuzzy: true,
   },
   {
-    name: "Stocks",
+    name: "History",
     link: {
       from: Route.fullPath,
-      to: "/workspace/$namespace/stocks",
+      to: "/workspace/$namespace/history",
     },
-    icon: TrendingUp,
+    icon: History,
     fuzzy: true,
   },
+  // {
+  //   name: "Stocks",
+  //   link: {
+  //     from: Route.fullPath,
+  //     to: "/workspace/$namespace/stocks",
+  //   },
+  //   icon: TrendingUp,
+  //   fuzzy: true,
+  // },
   {
     name: "Settings",
     link: {

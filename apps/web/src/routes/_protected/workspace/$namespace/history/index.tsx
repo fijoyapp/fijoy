@@ -16,7 +16,7 @@ import { columns } from "@/components/transactions/columns";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
 export const Route = createFileRoute(
-  "/_protected/workspace/$namespace/transactions/",
+  "/_protected/workspace/$namespace/history/",
 )({
   loader: (opts) =>
     opts.context.queryClient.ensureQueryData(
