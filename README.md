@@ -87,14 +87,6 @@ just postgres
 
 ### Web
 
-[Kanel](https://kristiandupont.github.io/kanel/) is used to generate all the
-TypeScript types and [Zod](https://zod.dev/) schemas from Postgres schemas on
-a live Postgres database instance. It will use the `DB_URL` from `apps/server/.env`.
-
-```bash
-just kanel
-```
-
 ### Test
 
 This will run all the tests for the server and the web.
