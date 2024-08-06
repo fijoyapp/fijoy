@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "air",
+    "build": "go build -tags netgo -ldflags '-s -w' -o ./dist/app ./cmd/fijoy/main.go",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
