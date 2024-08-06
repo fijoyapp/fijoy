@@ -70,7 +70,7 @@ just jet # your database must be running
 
 ### Database
 
-All database migrations are in `apps/server/internal/database/migrations`.
+All database migrations are in `apps/server/migrations`.
 Here are all the migration commands:
 
 ```bash

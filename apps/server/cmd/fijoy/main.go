@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fijoy/config"
 	connect_handler "fijoy/internal/delivery/connect"
-	http_handler "fijoy/internal/delivery/http"
+	"fijoy/internal/domain/auth"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -64,7 +64,7 @@ func main() {
 		Debug:            false,
 	}))
 
-	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.Server.WEB_URL, cfg.Discord.DISCORD_WEBHOOK)
+	auth.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.Server.WEB_URL, cfg.Discord.DISCORD_WEBHOOK)
 	connect_handler.NewUserHandler(r, tokenAuth, db)
 	connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
