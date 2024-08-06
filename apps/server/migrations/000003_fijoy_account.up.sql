@@ -10,6 +10,7 @@ CREATE TABLE "fijoy_account" (
   id TEXT PRIMARY KEY NOT NULL,
   workspace_id TEXT NOT NULL,
   name TEXT NOT NULL,
+  symbol TEXT,
   account_type fijoy_account_type NOT NULL,
   alance NUMERIC(16, 8) NOT NULL,
   currency TEXT NOT NULL,
