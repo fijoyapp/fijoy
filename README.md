@@ -65,7 +65,7 @@ We are using [Jet](https://github.com/go-jet/jet) to generate DB related stuff f
 a type-safe query building experience.
 
 ```bash
-just jet
+just jet # your database must be running
 ```
 
 ### Database
