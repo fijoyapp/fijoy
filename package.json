@@ -12,8 +12,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
-    "husky": "^9.1.3",
-    "turbo": "^2.0.9"
+    "husky": "^9.1.4",
+    "turbo": "^2.0.11"
   },
   "commitlint": {
     "extends": [
