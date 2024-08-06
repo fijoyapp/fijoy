@@ -16,9 +16,6 @@ db-force version:
 jet:
   just apps/server/jet
 
-kanel:
-  just apps/web/kanel
-
 buf:
   just packages/proto/buf
 
