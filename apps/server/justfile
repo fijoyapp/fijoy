@@ -3,7 +3,7 @@ set fallback
 set dotenv-load := true
 
 build:
-  go build -o ./tmp/main ./cmd/main.go
+  go build -o ./tmp/main ./cmd/fijoy/main.go
 
 db-up:
   migrate -database ${DB_URL} -path internal/database/migrations up
@@ -15,7 +15,7 @@ db-force version:
   migrate -database ${DB_URL} -path internal/database/migrations force {{version}}
 
 jet:
-  go run ./scripts/jet.go
+  go run ./cmd/jet/main.go
 
 update:
   go mod tidy
