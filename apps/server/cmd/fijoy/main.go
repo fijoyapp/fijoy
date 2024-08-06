@@ -24,24 +24,24 @@ import (
 var tokenAuth *jwtauth.JWTAuth
 
 func main() {
-	cfg, err := config.LoadAppConfig()
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	tokenAuth = jwtauth.New("HS256", []byte(cfg.JWT_SECRET), nil)
+	tokenAuth = jwtauth.New("HS256", []byte(cfg.Auth.JWT_SECRET), nil)
 
 	// Setup Postgres
-	db, err := setupDB("postgres", cfg.DB_URL)
+	db, err := setupDB("postgres", cfg.Database.DB_URL)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
 	googleOAuthConfig := &oauth2.Config{
-		RedirectURL:  cfg.GOOGLE_REDIRECT_URL,
-		ClientID:     cfg.GOOGLE_CLIENT_ID,
-		ClientSecret: cfg.GOOGLE_CLIENT_SECRET,
+		RedirectURL:  cfg.Auth.GOOGLE_REDIRECT_URL,
+		ClientID:     cfg.Auth.GOOGLE_CLIENT_ID,
+		ClientSecret: cfg.Auth.GOOGLE_CLIENT_SECRET,
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
 		Endpoint:     google.Endpoint,
 	}
@@ -53,7 +53,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{cfg.WEB_URL}, // Use this to allow specific origin hosts
+		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   connectcors.AllowedMethods(),
@@ -64,7 +64,7 @@ func main() {
 		Debug:            false,
 	}))
 
-	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.WEB_URL, cfg.DISCORD_WEBHOOK)
+	http_handler.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.Server.WEB_URL, cfg.Discord.DISCORD_WEBHOOK)
 	connect_handler.NewUserHandler(r, tokenAuth, db)
 	connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
@@ -76,7 +76,7 @@ func main() {
 	})
 
 	// Start our server
-	server := newServer(":"+cfg.PORT, r)
+	server := newServer(":"+cfg.Server.PORT, r)
 
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		panic(err)

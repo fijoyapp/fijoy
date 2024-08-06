@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	cfg, err := config.LoadAppConfig()
+	cfg, err := config.LoadDatabaseConfig()
 	if err != nil {
 		panic(err)
 	}
