@@ -26,3 +26,7 @@ test:
 
 format:
   pnpm format
+
+kill:
+  pids=$(lsof -t -i :3000) && [ -n "$pids" ] && kill -9 $pids
+
