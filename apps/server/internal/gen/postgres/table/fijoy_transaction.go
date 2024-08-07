@@ -25,8 +25,6 @@ type fijoyTransactionTable struct {
 	Amount          postgres.ColumnFloat
 	Currency        postgres.ColumnString
 	Datetime        postgres.ColumnTimestampz
-	CategoryID      postgres.ColumnString
-	Entity          postgres.ColumnString
 	Note            postgres.ColumnString
 
 	AllColumns     postgres.ColumnList
@@ -76,11 +74,9 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		AmountColumn          = postgres.FloatColumn("amount")
 		CurrencyColumn        = postgres.StringColumn("currency")
 		DatetimeColumn        = postgres.TimestampzColumn("datetime")
-		CategoryIDColumn      = postgres.StringColumn("category_id")
-		EntityColumn          = postgres.StringColumn("entity")
 		NoteColumn            = postgres.StringColumn("note")
-		allColumns            = postgres.ColumnList{IDColumn, AccountIDColumn, UserIDColumn, WorkspaceIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, CategoryIDColumn, EntityColumn, NoteColumn}
-		mutableColumns        = postgres.ColumnList{AccountIDColumn, UserIDColumn, WorkspaceIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, CategoryIDColumn, EntityColumn, NoteColumn}
+		allColumns            = postgres.ColumnList{IDColumn, AccountIDColumn, UserIDColumn, WorkspaceIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
+		mutableColumns        = postgres.ColumnList{AccountIDColumn, UserIDColumn, WorkspaceIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
 	)
 
 	return fijoyTransactionTable{
@@ -95,8 +91,6 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		Amount:          AmountColumn,
 		Currency:        CurrencyColumn,
 		Datetime:        DatetimeColumn,
-		CategoryID:      CategoryIDColumn,
-		Entity:          EntityColumn,
 		Note:            NoteColumn,
 
 		AllColumns:     allColumns,
