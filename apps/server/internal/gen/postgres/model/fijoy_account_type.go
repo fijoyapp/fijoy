@@ -12,10 +12,11 @@ import "errors"
 type FijoyAccountType string
 
 const (
-	FijoyAccountType_Cash       FijoyAccountType = "cash"
-	FijoyAccountType_Debt       FijoyAccountType = "debt"
+	FijoyAccountType_Liquidity  FijoyAccountType = "liquidity"
 	FijoyAccountType_Investment FijoyAccountType = "investment"
-	FijoyAccountType_OtherAsset FijoyAccountType = "other_asset"
+	FijoyAccountType_Property   FijoyAccountType = "property"
+	FijoyAccountType_Receivable FijoyAccountType = "receivable"
+	FijoyAccountType_Liability  FijoyAccountType = "liability"
 )
 
 func (e *FijoyAccountType) Scan(value interface{}) error {
@@ -30,14 +31,16 @@ func (e *FijoyAccountType) Scan(value interface{}) error {
 	}
 
 	switch enumValue {
-	case "cash":
-		*e = FijoyAccountType_Cash
-	case "debt":
-		*e = FijoyAccountType_Debt
+	case "liquidity":
+		*e = FijoyAccountType_Liquidity
 	case "investment":
 		*e = FijoyAccountType_Investment
-	case "other_asset":
-		*e = FijoyAccountType_OtherAsset
+	case "property":
+		*e = FijoyAccountType_Property
+	case "receivable":
+		*e = FijoyAccountType_Receivable
+	case "liability":
+		*e = FijoyAccountType_Liability
 	default:
 		return errors.New("jet: Invalid scan value '" + enumValue + "' for FijoyAccountType enum")
 	}
