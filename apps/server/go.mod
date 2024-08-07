@@ -9,7 +9,7 @@ require (
 	connectrpc.com/connect v1.16.2
 	connectrpc.com/cors v0.1.0
 	github.com/bufbuild/protovalidate-go v0.6.3
-	github.com/caarlos0/env/v10 v10.0.0
+	github.com/caarlos0/env/v11 v11.2.0
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/jwtauth/v5 v5.3.1
