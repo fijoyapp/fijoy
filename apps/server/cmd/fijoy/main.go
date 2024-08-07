@@ -3,25 +3,19 @@ package main
 import (
 	"database/sql"
 	"fijoy/config"
-	connect_handler "fijoy/internal/delivery/connect"
 	"fijoy/internal/domain/auth"
+	"fijoy/internal/service"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/go-chi/jwtauth/v5"
 
 	connectcors "connectrpc.com/cors"
 	_ "github.com/rs/cors"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 )
-
-var tokenAuth *jwtauth.JWTAuth
 
 func main() {
 	cfg, err := config.LoadConfig()
@@ -29,7 +23,7 @@ func main() {
 		panic(err)
 	}
 
-	tokenAuth = jwtauth.New("HS256", []byte(cfg.Auth.JWT_SECRET), nil)
+	analyticsService := service.NewAnalyticsService(cfg.Analytics)
 
 	// Setup Postgres
 	db, err := setupDB("postgres", cfg.Database.DB_URL)
@@ -38,15 +32,7 @@ func main() {
 	}
 	defer db.Close()
 
-	googleOAuthConfig := &oauth2.Config{
-		RedirectURL:  cfg.Auth.GOOGLE_REDIRECT_URL,
-		ClientID:     cfg.Auth.GOOGLE_CLIENT_ID,
-		ClientSecret: cfg.Auth.GOOGLE_CLIENT_SECRET,
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
-		Endpoint:     google.Endpoint,
-	}
-
-	validator := validator.New(validator.WithRequiredStructEnabled())
+	// validator := validator.New(validator.WithRequiredStructEnabled())
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -64,12 +50,12 @@ func main() {
 		Debug:            false,
 	}))
 
-	auth.NewAuthHandler(r, googleOAuthConfig, tokenAuth, db, cfg.Server.WEB_URL, cfg.Discord.DISCORD_WEBHOOK)
-	connect_handler.NewUserHandler(r, tokenAuth, db)
-	connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
-	connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
-	connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)
-	connect_handler.NewTransactionHandler(r, tokenAuth, db, validator)
+	auth.RegisterHTTPEndpoints(r, cfg.Auth, db, cfg.Server, analyticsService)
+	// connect_handler.NewUserHandler(r, tokenAuth, db)
+	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
+	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
+	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)
+	// connect_handler.NewTransactionHandler(r, tokenAuth, db, validator)
 
 	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte("OK"))

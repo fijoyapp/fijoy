@@ -6,11 +6,13 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"encoding/json"
+	"fijoy/config"
 	"fijoy/internal/gen/postgres/model"
+	"fijoy/internal/service"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
@@ -18,10 +20,6 @@ import (
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nrednav/cuid2"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/jwtauth/v5"
-	"golang.org/x/oauth2"
 )
 
 type googleUserInfo struct {
@@ -32,22 +30,19 @@ type googleUserInfo struct {
 }
 
 type authHandler struct {
-	googleOAuthConfig *oauth2.Config
-	tokenAuth         *jwtauth.JWTAuth
-	db                *sql.DB
-	frontendUrl       string
-	discordWebhook    string
+	authConfig       *config.AuthConfig
+	db               *sql.DB
+	serverConfig     *config.ServerConfig
+	analyticsService service.AnalyticsService
 }
 
-func NewAuthHandler(r *chi.Mux, googleOAuthConfig *oauth2.Config, tokenAuth *jwtauth.JWTAuth, db *sql.DB, frontendUrl string, discordWebhook string) {
-	handler := &authHandler{googleOAuthConfig, tokenAuth, db, frontendUrl, discordWebhook}
-
-	r.Route("/v1/auth", func(r chi.Router) {
-		r.Get("/local/login", handler.localLogin)
-		r.Get("/google/login", handler.googleLogin)
-		r.Get("/google/callback", handler.googleCallback)
-		r.Get("/logout", handler.logout)
-	})
+func NewAuthHandler(authConfig *config.AuthConfig, db *sql.DB, serverConfig *config.ServerConfig, analyticsService service.AnalyticsService) *authHandler {
+	return &authHandler{
+		authConfig,
+		db,
+		serverConfig,
+		analyticsService,
+	}
 }
 
 func (ah authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +101,7 @@ func (ah authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, tokenString, _ := ah.tokenAuth.Encode(
+	_, tokenString, _ := ah.authConfig.JWT_AUTH.Encode(
 		map[string]interface{}{"user_id": userKeyDest.UserID})
 
 	cookie := &http.Cookie{
@@ -120,12 +115,12 @@ func (ah authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, ah.frontendUrl+"/workspace", http.StatusFound)
+	http.Redirect(w, r, ah.serverConfig.WEB_URL+"/workspace", http.StatusFound)
 }
 
 func (ah authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
 	googleOAuthState := generateStateOAuthCookie(w)
-	url := ah.googleOAuthConfig.AuthCodeURL(googleOAuthState)
+	url := ah.authConfig.GOOGLE.AuthCodeURL(googleOAuthState)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
@@ -140,7 +135,7 @@ func (ah authHandler) logout(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteNoneMode,
 	}
 	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, ah.frontendUrl, http.StatusFound)
+	http.Redirect(w, r, ah.serverConfig.WEB_URL, http.StatusFound)
 }
 
 func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
@@ -199,18 +194,10 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if ah.discordWebhook != "" {
-			resp, err := http.Post(
-				ah.discordWebhook, "application/json",
-				strings.NewReader(
-					fmt.Sprintf(`{"content": "New user: %s"}`,
-						googleUserInfo.Email),
-				),
-			)
-
-			if err == nil {
-				defer resp.Body.Close()
-			}
+		err = ah.analyticsService.SendToDiscord(fmt.Sprintf("New user: %s", googleUserInfo.Email))
+		if err != nil {
+			// TODO: improve logging
+			log.Printf("Failed to send message to Discord: %s", err.Error())
 		}
 
 		userKeyDest.UserID = userKey.UserID
@@ -232,7 +219,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, tokenString, _ := ah.tokenAuth.Encode(
+	_, tokenString, _ := ah.authConfig.JWT_AUTH.Encode(
 		map[string]interface{}{"user_id": userKeyDest.UserID})
 
 	cookie := &http.Cookie{
@@ -246,7 +233,7 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, ah.frontendUrl+"/workspace", http.StatusFound)
+	http.Redirect(w, r, ah.serverConfig.WEB_URL+"/workspace", http.StatusFound)
 }
 
 func generateStateOAuthCookie(w http.ResponseWriter) string {
@@ -263,7 +250,7 @@ func generateStateOAuthCookie(w http.ResponseWriter) string {
 
 func (ah *authHandler) getUserDataFromGoogle(code string) ([]byte, error) {
 	// Use code to get token and get user info from Google.
-	token, err := ah.googleOAuthConfig.Exchange(context.Background(), code)
+	token, err := ah.authConfig.GOOGLE.Exchange(context.Background(), code)
 	if err != nil {
 		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())
 	}

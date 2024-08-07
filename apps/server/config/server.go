@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/caarlos0/env/v10"
+	"github.com/caarlos0/env/v11"
 )
 
 type ServerConfig struct {
@@ -11,16 +11,15 @@ type ServerConfig struct {
 	PORT    string `env:"PORT"`
 }
 
-func LoadServerConfig() (ServerConfig, error) {
-	cfg := ServerConfig{}
-
-	if err := env.Parse(&cfg); err != nil {
-		return ServerConfig{}, fmt.Errorf("%+v", err)
+func LoadServerConfig() (*ServerConfig, error) {
+	cfg, err := env.ParseAs[ServerConfig]()
+	if err != nil {
+		return &ServerConfig{}, fmt.Errorf("%+v", err)
 	}
 
 	if !IsOnRailway() {
 		cfg.PORT = "3000"
 	}
 
-	return cfg, nil
+	return &cfg, nil
 }
