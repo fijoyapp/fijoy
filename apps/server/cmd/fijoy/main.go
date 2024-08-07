@@ -23,14 +23,14 @@ func main() {
 		panic(err)
 	}
 
-	analyticsService := service.NewAnalyticsService(cfg.Analytics)
-
 	// Setup Postgres
 	db, err := setupDB("postgres", cfg.Database.DB_URL)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
+
+	analyticsService := service.NewAnalyticsService(cfg.Analytics)
 
 	// validator := validator.New(validator.WithRequiredStructEnabled())
 
