@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fijoy/config"
 	"fijoy/internal/domain/auth"
+	userHandler "fijoy/internal/domain/user/handler"
 	"fijoy/internal/service"
 	"net/http"
 
@@ -51,7 +52,7 @@ func main() {
 	}))
 
 	auth.RegisterHTTPEndpoints(r, cfg.Auth, db, cfg.Server, analyticsService)
-	// connect_handler.NewUserHandler(r, tokenAuth, db)
+	userHandler.RegisterConnect(r, cfg.Auth, db)
 	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)
