@@ -64,10 +64,6 @@ func main() {
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewTransactionHandler(r, tokenAuth, db, validator)
 
-	r.Get("/health", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte("OK"))
-	})
-
 	// Start our server
 	server := newServer(":"+cfg.Server.PORT, r)
 
