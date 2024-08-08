@@ -5,6 +5,8 @@ import (
 	"fijoy/config"
 	"fijoy/internal/domain/auth"
 	userHandler "fijoy/internal/domain/user/handler"
+	user_repository "fijoy/internal/domain/user/repository"
+	user_usecase "fijoy/internal/domain/user/usecase"
 	"fijoy/internal/service"
 	"net/http"
 
@@ -33,6 +35,9 @@ func main() {
 
 	analyticsService := service.NewAnalyticsService(cfg.Analytics)
 
+	userRepo := user_repository.NewUserRepository(db)
+	userUseCase := user_usecase.New(userRepo)
+
 	// validator := validator.New(validator.WithRequiredStructEnabled())
 
 	r := chi.NewRouter()
@@ -52,7 +57,8 @@ func main() {
 	}))
 
 	auth.RegisterHTTPEndpoints(r, cfg.Auth, db, cfg.Server, analyticsService)
-	userHandler.RegisterConnect(r, cfg.Auth, db)
+
+	userHandler.RegisterConnect(r, cfg.Auth, userUseCase)
 	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)
