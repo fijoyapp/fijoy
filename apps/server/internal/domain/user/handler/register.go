@@ -1,16 +1,16 @@
 package handler
 
 import (
-	"database/sql"
 	"fijoy/config"
+	"fijoy/internal/domain/user/usecase"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 )
 
-func RegisterConnect(r *chi.Mux, authConfig *config.AuthConfig, db *sql.DB) {
-	userServer := NewUserHandler(db)
+func RegisterConnect(r *chi.Mux, authConfig *config.AuthConfig, useCase usecase.UserUseCase) {
+	userServer := NewUserHandler(useCase)
 
 	path, handler := fijoyv1connect.NewUserServiceHandler(userServer)
 

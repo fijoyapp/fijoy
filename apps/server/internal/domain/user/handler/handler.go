@@ -2,26 +2,20 @@ package handler
 
 import (
 	"context"
-	"database/sql"
-	"fijoy/internal/gen/postgres/model"
+	"fijoy/internal/domain/user/usecase"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
 	"fijoy/internal/util"
 
-	. "fijoy/internal/gen/postgres/table"
-
 	"connectrpc.com/connect"
-	"github.com/bufbuild/protovalidate-go"
-	. "github.com/go-jet/jet/v2/postgres"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserServer struct {
-	db *sql.DB
+	useCase usecase.UserUseCase
 }
 
-func NewUserHandler(db *sql.DB) *UserServer {
-	return &UserServer{db: db}
+func NewUserHandler(useCase usecase.UserUseCase) *UserServer {
+	return &UserServer{useCase: useCase}
 }
 
 func (s *UserServer) GetUser(
@@ -33,28 +27,10 @@ func (s *UserServer) GetUser(
 		return nil, err
 	}
 
-	v, err := protovalidate.New()
+	user, err := s.useCase.GetUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = v.Validate(req.Msg); err != nil {
-		return nil, err
-	}
-
-	stmt := SELECT(FijoyUser.AllColumns).FROM(FijoyUser).
-		WHERE(FijoyUser.ID.EQ(String(userId)))
-
-	dest := model.FijoyUser{}
-
-	err = stmt.QueryContext(ctx, s.db, &dest)
-	if err != nil {
-		return nil, err
-	}
-
-	return connect.NewResponse(&fijoyv1.User{
-		Id:        dest.ID,
-		Email:     dest.Email,
-		CreatedAt: timestamppb.New(dest.CreatedAt),
-	}), nil
+	return connect.NewResponse(user), nil
 }
