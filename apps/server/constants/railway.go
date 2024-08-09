@@ -1,3 +1,3 @@
 package constants
 
-const RAILWAY_PUBLIC_DOMAIN = "RAILWAY_PUBLIC_DOMAIN"
+const RailwayPublicDomain = "RAILWAY_PUBLIC_DOMAIN"
