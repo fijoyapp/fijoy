@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fijoy/constants"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/gen/postgres/model"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
@@ -34,17 +35,15 @@ func userModelToProto(user *model.FijoyUser) *fijoyv1.User {
 }
 
 func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
-	localEmail := "local@fijoy.app"
-
-	userKey, err := u.userKeyRepo.GetUserKey(ctx, "local:")
+	userKey, err := u.userKeyRepo.GetUserKey(ctx, constants.LocalUserKey)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
-			user, err := u.userRepo.CreateUser(ctx, localEmail)
+			user, err := u.userRepo.CreateUser(ctx, constants.LocalLoginEmail)
 			if err != nil {
 				return nil, err
 			}
 
-			userKey, err = u.userKeyRepo.CreateUserKey(ctx, "local:", user.ID)
+			userKey, err = u.userKeyRepo.CreateUserKey(ctx, constants.LocalUserKey, user.ID)
 			if err != nil {
 				return nil, err
 			}
@@ -63,7 +62,7 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 }
 
 func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId string) (*fijoyv1.User, error) {
-	userKey, err := u.userKeyRepo.GetUserKey(ctx, "google:"+googleId)
+	userKey, err := u.userKeyRepo.GetUserKey(ctx, constants.GoogleUserKey+googleId)
 	if err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			user, err := u.userRepo.CreateUser(ctx, email)
@@ -71,7 +70,7 @@ func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId st
 				return nil, err
 			}
 
-			userKey, err = u.userKeyRepo.CreateUserKey(ctx, "google:"+googleId, user.ID)
+			userKey, err = u.userKeyRepo.CreateUserKey(ctx, constants.GoogleUserKey+googleId, user.ID)
 			if err != nil {
 				return nil, err
 			}
