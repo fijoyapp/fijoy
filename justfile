@@ -16,9 +16,6 @@ db-force version:
 jet:
   just apps/server/jet
 
-kanel:
-  just apps/web/kanel
-
 buf:
   just packages/proto/buf
 
@@ -46,3 +43,6 @@ db-gen:
 
 postgres:
   docker compose -f docker-compose.dev.yml up
+
+psql:
+  psql -h 127.0.0.1 -p 5432 -U user -d fijoy

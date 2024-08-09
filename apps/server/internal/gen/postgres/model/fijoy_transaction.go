@@ -20,7 +20,5 @@ type FijoyTransaction struct {
 	Amount          float64              `json:"Amount"`
 	Currency        string               `json:"Currency"`
 	Datetime        time.Time            `json:"Datetime"`
-	CategoryID      *string              `json:"CategoryID"`
-	Entity          *string              `json:"Entity"`
 	Note            *string              `json:"Note"`
 }

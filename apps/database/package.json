@@ -1,0 +1,7 @@
+{
+  "name": "@fijoy/database",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "just postgres"
+  }
+}

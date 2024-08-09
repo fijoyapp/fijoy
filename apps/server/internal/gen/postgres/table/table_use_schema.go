@@ -11,8 +11,6 @@ package table
 // this method only once at the beginning of the program.
 func UseSchema(schema string) {
 	FijoyAccount = FijoyAccount.FromSchema(schema)
-	FijoyCategory = FijoyCategory.FromSchema(schema)
-	FijoyTag = FijoyTag.FromSchema(schema)
 	FijoyTransaction = FijoyTransaction.FromSchema(schema)
 	FijoyUser = FijoyUser.FromSchema(schema)
 	FijoyUserKey = FijoyUserKey.FromSchema(schema)

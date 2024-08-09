@@ -65,12 +65,12 @@ We are using [Jet](https://github.com/go-jet/jet) to generate DB related stuff f
 a type-safe query building experience.
 
 ```bash
-just jet
+just jet # your database must be running
 ```
 
 ### Database
 
-All database migrations are in `apps/server/internal/database/migrations`.
+All database migrations are in `apps/server/migrations`.
 Here are all the migration commands:
 
 ```bash
@@ -86,14 +86,6 @@ just postgres
 ```
 
 ### Web
-
-[Kanel](https://kristiandupont.github.io/kanel/) is used to generate all the
-TypeScript types and [Zod](https://zod.dev/) schemas from Postgres schemas on
-a live Postgres database instance. It will use the `DB_URL` from `apps/server/.env`.
-
-```bash
-just kanel
-```
 
 ### Test
 

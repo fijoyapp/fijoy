@@ -10,13 +10,15 @@ package enum
 import "github.com/go-jet/jet/v2/postgres"
 
 var FijoyAccountType = &struct {
-	Cash       postgres.StringExpression
-	Debt       postgres.StringExpression
+	Liquidity  postgres.StringExpression
 	Investment postgres.StringExpression
-	OtherAsset postgres.StringExpression
+	Property   postgres.StringExpression
+	Receivable postgres.StringExpression
+	Liability  postgres.StringExpression
 }{
-	Cash:       postgres.NewEnumValue("cash"),
-	Debt:       postgres.NewEnumValue("debt"),
+	Liquidity:  postgres.NewEnumValue("liquidity"),
 	Investment: postgres.NewEnumValue("investment"),
-	OtherAsset: postgres.NewEnumValue("other_asset"),
+	Property:   postgres.NewEnumValue("property"),
+	Receivable: postgres.NewEnumValue("receivable"),
+	Liability:  postgres.NewEnumValue("liability"),
 }

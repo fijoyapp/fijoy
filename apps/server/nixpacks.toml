@@ -1,5 +1,7 @@
 [phases.build]
-cmds = ["go build -tags netgo -ldflags '-s -w' -o ./dist/app ./cmd/main.go"]
+cmds = [
+  "go build -tags netgo -ldflags '-s -w' -o ./dist/app ./cmd/fijoy/main.go",
+]
 
 [start]
 cmd = 'sleep 3 && ./dist/app'

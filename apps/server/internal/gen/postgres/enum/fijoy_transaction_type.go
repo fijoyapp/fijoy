@@ -11,12 +11,10 @@ import "github.com/go-jet/jet/v2/postgres"
 
 var FijoyTransactionType = &struct {
 	Expense    postgres.StringExpression
-	Income     postgres.StringExpression
 	Transfer   postgres.StringExpression
 	Adjustment postgres.StringExpression
 }{
 	Expense:    postgres.NewEnumValue("expense"),
-	Income:     postgres.NewEnumValue("income"),
 	Transfer:   postgres.NewEnumValue("transfer"),
 	Adjustment: postgres.NewEnumValue("adjustment"),
 }

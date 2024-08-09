@@ -16,9 +16,8 @@ type FijoyAccount struct {
 	WorkspaceID string           `json:"WorkspaceID"`
 	Name        string           `json:"Name"`
 	AccountType FijoyAccountType `json:"AccountType"`
-	Balance     float64          `json:"Balance"`
+	Alance      float64          `json:"Alance"`
 	Currency    string           `json:"Currency"`
-	Institution string           `json:"Institution"`
 	Active      bool             `json:"Active"`
 	CreatedAt   time.Time        `json:"CreatedAt"`
 	UpdatedAt   time.Time        `json:"UpdatedAt"`

@@ -21,9 +21,8 @@ type fijoyAccountTable struct {
 	WorkspaceID postgres.ColumnString
 	Name        postgres.ColumnString
 	AccountType postgres.ColumnString
-	Balance     postgres.ColumnFloat
+	Alance      postgres.ColumnFloat
 	Currency    postgres.ColumnString
-	Institution postgres.ColumnString
 	Active      postgres.ColumnBool
 	CreatedAt   postgres.ColumnTimestampz
 	UpdatedAt   postgres.ColumnTimestampz
@@ -71,14 +70,13 @@ func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountT
 		WorkspaceIDColumn = postgres.StringColumn("workspace_id")
 		NameColumn        = postgres.StringColumn("name")
 		AccountTypeColumn = postgres.StringColumn("account_type")
-		BalanceColumn     = postgres.FloatColumn("balance")
+		AlanceColumn      = postgres.FloatColumn("alance")
 		CurrencyColumn    = postgres.StringColumn("currency")
-		InstitutionColumn = postgres.StringColumn("institution")
 		ActiveColumn      = postgres.BoolColumn("active")
 		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
 		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
-		allColumns        = postgres.ColumnList{IDColumn, WorkspaceIDColumn, NameColumn, AccountTypeColumn, BalanceColumn, CurrencyColumn, InstitutionColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns    = postgres.ColumnList{WorkspaceIDColumn, NameColumn, AccountTypeColumn, BalanceColumn, CurrencyColumn, InstitutionColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
+		allColumns        = postgres.ColumnList{IDColumn, WorkspaceIDColumn, NameColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns    = postgres.ColumnList{WorkspaceIDColumn, NameColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fijoyAccountTable{
@@ -89,9 +87,8 @@ func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountT
 		WorkspaceID: WorkspaceIDColumn,
 		Name:        NameColumn,
 		AccountType: AccountTypeColumn,
-		Balance:     BalanceColumn,
+		Alance:      AlanceColumn,
 		Currency:    CurrencyColumn,
-		Institution: InstitutionColumn,
 		Active:      ActiveColumn,
 		CreatedAt:   CreatedAtColumn,
 		UpdatedAt:   UpdatedAtColumn,

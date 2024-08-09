@@ -1,8 +1,5 @@
 set fallback
 
-kanel:
-  pnpm kanel
-
 test:
   pnpm test
 
