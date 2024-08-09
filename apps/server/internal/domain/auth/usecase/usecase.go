@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/gen/postgres/model"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
@@ -37,7 +38,7 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 
 	userKey, err := u.userKeyRepo.GetUserKey(ctx, "local:")
 	if err != nil {
-		if err.Error() == qrm.ErrNoRows.Error() {
+		if errors.Is(err, qrm.ErrNoRows) {
 			user, err := u.userRepo.CreateUser(ctx, localEmail)
 			if err != nil {
 				return nil, err
@@ -64,7 +65,7 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId string) (*fijoyv1.User, error) {
 	userKey, err := u.userKeyRepo.GetUserKey(ctx, "google:"+googleId)
 	if err != nil {
-		if err.Error() == qrm.ErrNoRows.Error() {
+		if errors.Is(err, qrm.ErrNoRows) {
 			user, err := u.userRepo.CreateUser(ctx, email)
 			if err != nil {
 				return nil, err
