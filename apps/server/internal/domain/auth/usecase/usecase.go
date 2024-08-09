@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/gen/postgres/model"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
@@ -35,24 +36,25 @@ func userModelToProto(user *model.FijoyUser) *fijoyv1.User {
 func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 	localEmail := "local@fijoy.app"
 
-	_, err := u.userKeyRepo.GetUserKey(ctx, "local:")
+	userKey, err := u.userKeyRepo.GetUserKey(ctx, "local:")
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			user, err := u.userRepo.CreateUser(ctx, localEmail)
+			if err != nil {
+				return nil, err
+			}
 
-	if err == qrm.ErrNoRows {
-		user, err := u.userRepo.CreateUser(ctx, localEmail)
-		if err != nil {
+			userKey, err = u.userKeyRepo.CreateUserKey(ctx, "local:", user.ID)
+			if err != nil {
+				return nil, err
+			}
+
+		} else {
 			return nil, err
 		}
-
-		_, err = u.userKeyRepo.CreateUserKey(ctx, "local:", user.ID)
-		if err != nil {
-			return nil, err
-		}
-
-	} else if err != nil {
-		return nil, err
 	}
 
-	user, err := u.userRepo.GetUser(ctx, localEmail)
+	user, err := u.userRepo.GetUser(ctx, userKey.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -62,20 +64,20 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 
 func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId string) (*fijoyv1.User, error) {
 	_, err := u.userKeyRepo.GetUserKey(ctx, "local:")
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			_, err := u.userRepo.CreateUser(ctx, email)
+			if err != nil {
+				return nil, err
+			}
 
-	if err == qrm.ErrNoRows {
-		_, err := u.userRepo.CreateUser(ctx, email)
-		if err != nil {
+			_, err = u.userKeyRepo.CreateUserKey(ctx, "google:", googleId)
+			if err != nil {
+				return nil, err
+			}
+		} else {
 			return nil, err
 		}
-
-		_, err = u.userKeyRepo.CreateUserKey(ctx, "google:", googleId)
-		if err != nil {
-			return nil, err
-		}
-
-	} else if err != nil {
-		return nil, err
 	}
 
 	user, err := u.userRepo.GetUser(ctx, email)

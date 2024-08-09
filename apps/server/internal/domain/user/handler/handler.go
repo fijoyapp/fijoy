@@ -10,15 +10,15 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-type UserServer struct {
+type UserHandler struct {
 	useCase usecase.UserUseCase
 }
 
-func NewUserHandler(useCase usecase.UserUseCase) *UserServer {
-	return &UserServer{useCase: useCase}
+func NewUserHandler(useCase usecase.UserUseCase) *UserHandler {
+	return &UserHandler{useCase: useCase}
 }
 
-func (s *UserServer) GetUser(
+func (s *UserHandler) GetUser(
 	ctx context.Context,
 	req *connect.Request[emptypb.Empty],
 ) (*connect.Response[fijoyv1.User], error) {
