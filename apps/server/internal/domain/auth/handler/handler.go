@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
@@ -12,6 +11,8 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"golang.org/x/oauth2"
 )
 
 type googleUserInfo struct {
@@ -97,7 +98,14 @@ func (ah *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := ah.getUserDataFromGoogle(r.FormValue("code"))
+	// Use code to get token and get user info from Google.
+	token, err := ah.authConfig.GOOGLE.Exchange(r.Context(), r.FormValue("code"))
+	if err != nil {
+		http.Error(w, "code exchange wrong: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data, err := getUserDataFromGoogle(token)
 	if err != nil {
 		http.Error(w, "Failed to get user data: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -140,12 +148,7 @@ func generateStateOAuthCookie(w http.ResponseWriter) string {
 	return state
 }
 
-func (ah *authHandler) getUserDataFromGoogle(code string) ([]byte, error) {
-	// Use code to get token and get user info from Google.
-	token, err := ah.authConfig.GOOGLE.Exchange(context.Background(), code)
-	if err != nil {
-		return nil, fmt.Errorf("code exchange wrong: %s", err.Error())
-	}
+func getUserDataFromGoogle(token *oauth2.Token) ([]byte, error) {
 	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
 	if err != nil {
 		return nil, fmt.Errorf("failed getting user info: %s", err.Error())
