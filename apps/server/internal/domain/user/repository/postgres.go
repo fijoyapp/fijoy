@@ -49,7 +49,9 @@ func (r *userRepository) CreateUser(ctx context.Context, email string) (*model.F
 		Email:     email,
 		CreatedAt: time.Now(),
 	}
-	stmt := FijoyUser.INSERT(FijoyUser.AllColumns).MODEL(user)
+	stmt := FijoyUser.
+		INSERT(FijoyUser.AllColumns).
+		MODEL(user).RETURNING(FijoyUser.AllColumns)
 
 	dest := model.FijoyUser{}
 
@@ -97,7 +99,10 @@ func (r *userKeyRepository) CreateUserKey(ctx context.Context, id string, userId
 		UserID: userId,
 	}
 
-	stmt := FijoyUserKey.INSERT(FijoyUserKey.AllColumns).MODEL(userKey)
+	stmt := FijoyUserKey.
+		INSERT(FijoyUserKey.AllColumns).
+		MODEL(userKey).
+		RETURNING(FijoyUserKey.AllColumns)
 
 	dest := model.FijoyUserKey{}
 	err := stmt.QueryContext(ctx, r.db, &dest)
