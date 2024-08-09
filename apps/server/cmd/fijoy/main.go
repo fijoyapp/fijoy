@@ -3,12 +3,14 @@ package main
 import (
 	"database/sql"
 	"fijoy/config"
-	"fijoy/internal/domain/auth"
-	userHandler "fijoy/internal/domain/user/handler"
-	user_repository "fijoy/internal/domain/user/repository"
-	user_usecase "fijoy/internal/domain/user/usecase"
 	"fijoy/internal/service"
 	"net/http"
+
+	auth_handler "fijoy/internal/domain/auth/handler"
+	auth_usecase "fijoy/internal/domain/auth/usecase"
+	user_handler "fijoy/internal/domain/user/handler"
+	user_repository "fijoy/internal/domain/user/repository"
+	user_usecase "fijoy/internal/domain/user/usecase"
 
 	_ "github.com/lib/pq"
 
@@ -36,7 +38,9 @@ func main() {
 	analyticsService := service.NewAnalyticsService(cfg.Analytics)
 
 	userRepo := user_repository.NewUserRepository(db)
+	userKeyRepo := user_repository.NewUserKeyRepository(db)
 	userUseCase := user_usecase.New(userRepo)
+	authUseCase := auth_usecase.New(userRepo, userKeyRepo)
 
 	// validator := validator.New(validator.WithRequiredStructEnabled())
 
@@ -56,9 +60,9 @@ func main() {
 		Debug:            false,
 	}))
 
-	auth.RegisterHTTPEndpoints(r, cfg.Auth, db, cfg.Server, analyticsService)
+	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
 
-	userHandler.RegisterConnect(r, cfg.Auth, userUseCase)
+	user_handler.RegisterConnect(r, cfg.Auth, userUseCase)
 	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)

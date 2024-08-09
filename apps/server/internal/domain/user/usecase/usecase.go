@@ -16,11 +16,11 @@ type UserUseCase interface {
 }
 
 type userUseCase struct {
-	repo repository.UserRepository
+	userRepo repository.UserRepository
 }
 
 func New(userRepo repository.UserRepository) UserUseCase {
-	return &userUseCase{repo: userRepo}
+	return &userUseCase{userRepo: userRepo}
 }
 
 func userModelToProto(user *model.FijoyUser) *fijoyv1.User {
@@ -32,7 +32,7 @@ func userModelToProto(user *model.FijoyUser) *fijoyv1.User {
 }
 
 func (u *userUseCase) CreateUser(ctx context.Context, email string) (*fijoyv1.User, error) {
-	user, err := u.repo.CreateUser(ctx, email)
+	user, err := u.userRepo.CreateUser(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (u *userUseCase) CreateUser(ctx context.Context, email string) (*fijoyv1.Us
 }
 
 func (u *userUseCase) GetUser(ctx context.Context, userId string) (*fijoyv1.User, error) {
-	user, err := u.repo.GetUser(ctx, userId)
+	user, err := u.userRepo.GetUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (u *userUseCase) GetUser(ctx context.Context, userId string) (*fijoyv1.User
 }
 
 func (u *userUseCase) DeleteUser(ctx context.Context, userId string) (*fijoyv1.User, error) {
-	user, err := u.repo.DeleteUser(ctx, userId)
+	user, err := u.userRepo.DeleteUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
