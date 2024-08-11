@@ -87,7 +87,7 @@ const CurrencyLocaleStep = () => {
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "justify-between",
+                            "w-full justify-between",
                             !field.value && "text-muted-foreground",
                           )}
                         >
@@ -202,7 +202,7 @@ const CurrencyLocaleStep = () => {
                           variant="outline"
                           role="combobox"
                           className={cn(
-                            "justify-between",
+                            "w-full justify-between",
                             !field.value && "text-muted-foreground",
                           )}
                         >

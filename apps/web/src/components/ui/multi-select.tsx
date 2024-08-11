@@ -117,9 +117,14 @@ const MultiSelectFormField = React.forwardRef<
         <PopoverTrigger asChild>
           <Button
             ref={ref}
+            variant={"outline"}
+            role="combobox"
             {...props}
             onClick={() => setIsPopoverOpen(!isPopoverOpen)}
-            className="flex h-auto min-h-10 w-full items-center justify-between rounded-md border bg-inherit hover:bg-card"
+            className={cn(
+              "flex h-auto min-h-10 w-full items-center justify-between rounded-md border",
+              selectedValues.length == 0 && "text-muted-foreground",
+            )}
           >
             {selectedValues.length > 0 ? (
               <div className="flex w-full items-center justify-between">
@@ -164,15 +169,17 @@ const MultiSelectFormField = React.forwardRef<
                     orientation="vertical"
                     className="flex h-full min-h-5"
                   />
-                  <ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
+                  <ChevronDown className="ml-2 h-4 cursor-pointer text-muted-foreground" />
                 </div>
               </div>
             ) : (
-              <div className="mx-auto flex w-full items-center justify-between">
-                <span className="mx-3 text-sm text-muted-foreground">
-                  {placeholder}
-                </span>
-                <ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
+              <div
+                className={cn(
+                  "mx-auto flex w-full items-center justify-between",
+                )}
+              >
+                <span className="text-sm">{placeholder}</span>
+                <ChevronDown className="h-4 cursor-pointer" />
               </div>
             )}
           </Button>
