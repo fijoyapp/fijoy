@@ -8,6 +8,9 @@ import (
 
 	auth_handler "fijoy/internal/domain/auth/handler"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
+	profile_handler "fijoy/internal/domain/profile/handler"
+	profile_repository "fijoy/internal/domain/profile/repository"
+	profile_usecase "fijoy/internal/domain/profile/usecase"
 	user_handler "fijoy/internal/domain/user/handler"
 	user_repository "fijoy/internal/domain/user/repository"
 	user_usecase "fijoy/internal/domain/user/usecase"
@@ -42,6 +45,9 @@ func main() {
 	userUseCase := user_usecase.New(userRepo)
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo)
 
+	profileRepo := profile_repository.NewProfileRepository(db)
+	profileUseCase := profile_usecase.New(db, profileRepo)
+
 	// validator := validator.New(validator.WithRequiredStructEnabled())
 
 	r := chi.NewRouter()
@@ -53,7 +59,7 @@ func main() {
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   connectcors.AllowedMethods(),
-		AllowedHeaders:   append(connectcors.AllowedHeaders(), "Fijoy-Workspace-Id"),
+		AllowedHeaders:   append(connectcors.AllowedHeaders(), "Fijoy-Profile-Id"),
 		ExposedHeaders:   connectcors.ExposedHeaders(),
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
@@ -63,6 +69,7 @@ func main() {
 	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
 
 	user_handler.RegisterConnect(r, cfg.Auth, userUseCase)
+	profile_handler.RegisterConnect(r, cfg.Auth, profileUseCase)
 	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)

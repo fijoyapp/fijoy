@@ -2,7 +2,7 @@ package constants
 
 const (
 	UserPrefix        = "user_"
-	WorkspacePrefix   = "workspace_"
+	ProfilePrefix     = "profile_"
 	AccountPrefix     = "account_"
 	TransactionPrefix = "transaction_"
 )

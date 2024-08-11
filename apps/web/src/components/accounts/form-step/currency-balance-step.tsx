@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import CurrencyInput from "react-currency-input-field";
-import { useWorkspace } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-workspace";
 import { useRouter } from "@tanstack/react-router";
 import { useAccountsStore } from "@/store/accounts";
 
@@ -41,7 +41,7 @@ const formSchema = CurrencyBalanceStepData;
 
 const CurrencyBalanceStep = ({ className }: ComponentProps<"form">) => {
   const router = useRouter();
-  const { workspace } = useWorkspace();
+  const { workspace } = useProfile();
 
   const [popoverOpen, setPopoverOpen] = useState(false);
   const {

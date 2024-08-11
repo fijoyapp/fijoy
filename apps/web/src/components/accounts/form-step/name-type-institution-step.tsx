@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useWorkspace } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-workspace";
 import { useRouter } from "@tanstack/react-router";
 import { useAccountsStore } from "@/store/accounts";
 import { NameTypeInstitutionStepData } from "@/types/account";
@@ -32,7 +32,7 @@ const formSchema = NameTypeInstitutionStepData;
 
 const NameTypeInstitutionStep = ({ className }: ComponentProps<"form">) => {
   const router = useRouter();
-  const { workspace } = useWorkspace();
+  const { workspace } = useProfile();
 
   const { nameTypeInstitutionStepData, setNameTypeInstitutionStepData } =
     useAccountsStore((state) => ({

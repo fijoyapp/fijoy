@@ -7,12 +7,11 @@ import {
 } from "@/components/page-header";
 import { SetupStep } from "@/types/setup";
 import { z } from "zod";
-import NameNamespaceStep from "@/components/setup/name-namespace-step";
 import CurrencyLocaleStep from "@/components/setup/currency-locale-step";
 import FinalStep from "@/components/setup/final-step";
 
 const setupSearchSchema = z.object({
-  step: SetupStep.default("name-namespace"),
+  step: SetupStep.default("currency-locale"),
 });
 
 export const Route = createFileRoute("/_protected/setup")({
@@ -29,11 +28,10 @@ function Setup() {
       <PageHeader>
         <PageHeaderHeading className="">Welcome to Fijoy</PageHeaderHeading>
         <PageHeaderDescription>
-          Let&apos;s get you set up with a new workspace.
+          Let&apos;s setup your profile.
         </PageHeaderDescription>
       </PageHeader>
       <div className="mx-auto max-w-lg">
-        {step === "name-namespace" && <NameNamespaceStep />}
         {step === "currency-locale" && <CurrencyLocaleStep />}
         {step === "final" && <FinalStep />}
       </div>

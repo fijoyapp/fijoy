@@ -1,13 +1,13 @@
 import { Transport } from "@connectrpc/connect";
 import { createQueryOptions } from "@connectrpc/connect-query";
-import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 import { getTransactions } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
-import { getWorkspaceHeader } from "@/lib/headers";
+import { getProfileHeader } from "@/lib/headers";
+import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 
 type getTransactionsProps = {
   context: {
     transport: Transport;
-    workspace: Workspace;
+    profile: Profile;
   };
 };
 
@@ -20,7 +20,7 @@ export const getTransactionsQueryOptions = ({
     {
       transport: context.transport,
       callOptions: {
-        headers: getWorkspaceHeader(context.workspace.id),
+        headers: getProfileHeader(context.profile.id),
       },
     },
   );

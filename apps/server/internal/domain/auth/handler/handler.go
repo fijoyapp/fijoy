@@ -80,7 +80,7 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, h.serverConfig.WEB_URL+"/workspace", http.StatusFound)
+	http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
 }
 
 func (h *authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
@@ -146,7 +146,7 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, h.serverConfig.WEB_URL+"/workspace", http.StatusFound)
+	http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
 }
 
 func generateStateOAuthCookie(w http.ResponseWriter) string {

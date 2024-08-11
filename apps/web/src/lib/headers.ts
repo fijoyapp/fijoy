@@ -1,5 +1,5 @@
-export function getWorkspaceHeader(workspaceId: string) {
+export function getProfileHeader(profileId: string) {
   return {
-    "Fijoy-Workspace-Id": workspaceId,
+    "Fijoy-Profile-Id": profileId,
   };
 }

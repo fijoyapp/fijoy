@@ -13,8 +13,9 @@ import (
 
 type FijoyAccount struct {
 	ID          string           `sql:"primary_key" json:"ID"`
-	WorkspaceID string           `json:"WorkspaceID"`
+	ProfileID   string           `json:"ProfileID"`
 	Name        string           `json:"Name"`
+	Symbol      *string          `json:"Symbol"`
 	AccountType FijoyAccountType `json:"AccountType"`
 	Alance      float64          `json:"Alance"`
 	Currency    string           `json:"Currency"`

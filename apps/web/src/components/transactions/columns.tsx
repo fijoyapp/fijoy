@@ -4,11 +4,11 @@ import {
   TransactionType,
 } from "@/gen/proto/fijoy/v1/transaction_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
-import { useWorkspace } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-workspace";
 import { ColumnDef, Row } from "@tanstack/react-table";
 
 function AmountCell({ row }: { row: Row<Transaction> }) {
-  const { workspace } = useWorkspace();
+  const { workspace } = useProfile();
   if (!row.original.amount) {
     return "Unknown";
   }

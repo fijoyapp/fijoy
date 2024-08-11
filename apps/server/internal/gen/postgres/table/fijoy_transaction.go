@@ -18,9 +18,8 @@ type fijoyTransactionTable struct {
 
 	// Columns
 	ID              postgres.ColumnString
+	ProfileID       postgres.ColumnString
 	AccountID       postgres.ColumnString
-	UserID          postgres.ColumnString
-	WorkspaceID     postgres.ColumnString
 	TransactionType postgres.ColumnString
 	Amount          postgres.ColumnFloat
 	Currency        postgres.ColumnString
@@ -67,16 +66,15 @@ func newFijoyTransactionTable(schemaName, tableName, alias string) *FijoyTransac
 func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTransactionTable {
 	var (
 		IDColumn              = postgres.StringColumn("id")
+		ProfileIDColumn       = postgres.StringColumn("profile_id")
 		AccountIDColumn       = postgres.StringColumn("account_id")
-		UserIDColumn          = postgres.StringColumn("user_id")
-		WorkspaceIDColumn     = postgres.StringColumn("workspace_id")
 		TransactionTypeColumn = postgres.StringColumn("transaction_type")
 		AmountColumn          = postgres.FloatColumn("amount")
 		CurrencyColumn        = postgres.StringColumn("currency")
 		DatetimeColumn        = postgres.TimestampzColumn("datetime")
 		NoteColumn            = postgres.StringColumn("note")
-		allColumns            = postgres.ColumnList{IDColumn, AccountIDColumn, UserIDColumn, WorkspaceIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
-		mutableColumns        = postgres.ColumnList{AccountIDColumn, UserIDColumn, WorkspaceIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
+		allColumns            = postgres.ColumnList{IDColumn, ProfileIDColumn, AccountIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
+		mutableColumns        = postgres.ColumnList{ProfileIDColumn, AccountIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
 	)
 
 	return fijoyTransactionTable{
@@ -84,9 +82,8 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 
 		//Columns
 		ID:              IDColumn,
+		ProfileID:       ProfileIDColumn,
 		AccountID:       AccountIDColumn,
-		UserID:          UserIDColumn,
-		WorkspaceID:     WorkspaceIDColumn,
 		TransactionType: TransactionTypeColumn,
 		Amount:          AmountColumn,
 		Currency:        CurrencyColumn,
