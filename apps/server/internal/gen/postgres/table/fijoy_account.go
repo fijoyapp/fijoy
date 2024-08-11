@@ -17,16 +17,18 @@ type fijoyAccountTable struct {
 	postgres.Table
 
 	// Columns
-	ID          postgres.ColumnString
-	ProfileID   postgres.ColumnString
-	Name        postgres.ColumnString
-	Symbol      postgres.ColumnString
-	AccountType postgres.ColumnString
-	Alance      postgres.ColumnFloat
-	Currency    postgres.ColumnString
-	Active      postgres.ColumnBool
-	CreatedAt   postgres.ColumnTimestampz
-	UpdatedAt   postgres.ColumnTimestampz
+	ID           postgres.ColumnString
+	ProfileID    postgres.ColumnString
+	Name         postgres.ColumnString
+	AccountType  postgres.ColumnString
+	Active       postgres.ColumnBool
+	CreatedAt    postgres.ColumnTimestampz
+	UpdatedAt    postgres.ColumnTimestampz
+	Symbol       postgres.ColumnString
+	Amount       postgres.ColumnFloat
+	Currency     postgres.ColumnString
+	Value        postgres.ColumnFloat
+	ExchangeRate postgres.ColumnFloat
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -67,34 +69,38 @@ func newFijoyAccountTable(schemaName, tableName, alias string) *FijoyAccountTabl
 
 func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountTable {
 	var (
-		IDColumn          = postgres.StringColumn("id")
-		ProfileIDColumn   = postgres.StringColumn("profile_id")
-		NameColumn        = postgres.StringColumn("name")
-		SymbolColumn      = postgres.StringColumn("symbol")
-		AccountTypeColumn = postgres.StringColumn("account_type")
-		AlanceColumn      = postgres.FloatColumn("alance")
-		CurrencyColumn    = postgres.StringColumn("currency")
-		ActiveColumn      = postgres.BoolColumn("active")
-		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
-		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
-		allColumns        = postgres.ColumnList{IDColumn, ProfileIDColumn, NameColumn, SymbolColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns    = postgres.ColumnList{ProfileIDColumn, NameColumn, SymbolColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
+		IDColumn           = postgres.StringColumn("id")
+		ProfileIDColumn    = postgres.StringColumn("profile_id")
+		NameColumn         = postgres.StringColumn("name")
+		AccountTypeColumn  = postgres.StringColumn("account_type")
+		ActiveColumn       = postgres.BoolColumn("active")
+		CreatedAtColumn    = postgres.TimestampzColumn("created_at")
+		UpdatedAtColumn    = postgres.TimestampzColumn("updated_at")
+		SymbolColumn       = postgres.StringColumn("symbol")
+		AmountColumn       = postgres.FloatColumn("amount")
+		CurrencyColumn     = postgres.StringColumn("currency")
+		ValueColumn        = postgres.FloatColumn("value")
+		ExchangeRateColumn = postgres.FloatColumn("exchange_rate")
+		allColumns         = postgres.ColumnList{IDColumn, ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, ExchangeRateColumn}
+		mutableColumns     = postgres.ColumnList{ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, ExchangeRateColumn}
 	)
 
 	return fijoyAccountTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		ProfileID:   ProfileIDColumn,
-		Name:        NameColumn,
-		Symbol:      SymbolColumn,
-		AccountType: AccountTypeColumn,
-		Alance:      AlanceColumn,
-		Currency:    CurrencyColumn,
-		Active:      ActiveColumn,
-		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
+		ID:           IDColumn,
+		ProfileID:    ProfileIDColumn,
+		Name:         NameColumn,
+		AccountType:  AccountTypeColumn,
+		Active:       ActiveColumn,
+		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
+		Symbol:       SymbolColumn,
+		Amount:       AmountColumn,
+		Currency:     CurrencyColumn,
+		Value:        ValueColumn,
+		ExchangeRate: ExchangeRateColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

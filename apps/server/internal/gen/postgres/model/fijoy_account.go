@@ -12,14 +12,16 @@ import (
 )
 
 type FijoyAccount struct {
-	ID          string           `sql:"primary_key" json:"ID"`
-	ProfileID   string           `json:"ProfileID"`
-	Name        string           `json:"Name"`
-	Symbol      *string          `json:"Symbol"`
-	AccountType FijoyAccountType `json:"AccountType"`
-	Alance      float64          `json:"Alance"`
-	Currency    string           `json:"Currency"`
-	Active      bool             `json:"Active"`
-	CreatedAt   time.Time        `json:"CreatedAt"`
-	UpdatedAt   time.Time        `json:"UpdatedAt"`
+	ID           string           `sql:"primary_key" json:"ID"`
+	ProfileID    string           `json:"ProfileID"`
+	Name         string           `json:"Name"`
+	AccountType  FijoyAccountType `json:"AccountType"`
+	Active       bool             `json:"Active"`
+	CreatedAt    time.Time        `json:"CreatedAt"`
+	UpdatedAt    time.Time        `json:"UpdatedAt"`
+	Symbol       *string          `json:"Symbol"`
+	Amount       *float64         `json:"Amount"`
+	Currency     string           `json:"Currency"`
+	Value        float64          `json:"Value"`
+	ExchangeRate *float64         `json:"ExchangeRate"`
 }
