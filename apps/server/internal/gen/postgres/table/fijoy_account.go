@@ -17,18 +17,18 @@ type fijoyAccountTable struct {
 	postgres.Table
 
 	// Columns
-	ID           postgres.ColumnString
-	ProfileID    postgres.ColumnString
-	Name         postgres.ColumnString
-	AccountType  postgres.ColumnString
-	Active       postgres.ColumnBool
-	CreatedAt    postgres.ColumnTimestampz
-	UpdatedAt    postgres.ColumnTimestampz
-	Symbol       postgres.ColumnString
-	Amount       postgres.ColumnFloat
-	Currency     postgres.ColumnString
-	Value        postgres.ColumnFloat
-	ExchangeRate postgres.ColumnFloat
+	ID          postgres.ColumnString
+	ProfileID   postgres.ColumnString
+	Name        postgres.ColumnString
+	AccountType postgres.ColumnString
+	Active      postgres.ColumnBool
+	CreatedAt   postgres.ColumnTimestampz
+	UpdatedAt   postgres.ColumnTimestampz
+	Symbol      postgres.ColumnString
+	Amount      postgres.ColumnFloat
+	Currency    postgres.ColumnString
+	Value       postgres.ColumnFloat
+	FxRate      postgres.ColumnFloat
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -69,38 +69,38 @@ func newFijoyAccountTable(schemaName, tableName, alias string) *FijoyAccountTabl
 
 func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountTable {
 	var (
-		IDColumn           = postgres.StringColumn("id")
-		ProfileIDColumn    = postgres.StringColumn("profile_id")
-		NameColumn         = postgres.StringColumn("name")
-		AccountTypeColumn  = postgres.StringColumn("account_type")
-		ActiveColumn       = postgres.BoolColumn("active")
-		CreatedAtColumn    = postgres.TimestampzColumn("created_at")
-		UpdatedAtColumn    = postgres.TimestampzColumn("updated_at")
-		SymbolColumn       = postgres.StringColumn("symbol")
-		AmountColumn       = postgres.FloatColumn("amount")
-		CurrencyColumn     = postgres.StringColumn("currency")
-		ValueColumn        = postgres.FloatColumn("value")
-		ExchangeRateColumn = postgres.FloatColumn("exchange_rate")
-		allColumns         = postgres.ColumnList{IDColumn, ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, ExchangeRateColumn}
-		mutableColumns     = postgres.ColumnList{ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, ExchangeRateColumn}
+		IDColumn          = postgres.StringColumn("id")
+		ProfileIDColumn   = postgres.StringColumn("profile_id")
+		NameColumn        = postgres.StringColumn("name")
+		AccountTypeColumn = postgres.StringColumn("account_type")
+		ActiveColumn      = postgres.BoolColumn("active")
+		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
+		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
+		SymbolColumn      = postgres.StringColumn("symbol")
+		AmountColumn      = postgres.FloatColumn("amount")
+		CurrencyColumn    = postgres.StringColumn("currency")
+		ValueColumn       = postgres.FloatColumn("value")
+		FxRateColumn      = postgres.FloatColumn("fx_rate")
+		allColumns        = postgres.ColumnList{IDColumn, ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, FxRateColumn}
+		mutableColumns    = postgres.ColumnList{ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, FxRateColumn}
 	)
 
 	return fijoyAccountTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:           IDColumn,
-		ProfileID:    ProfileIDColumn,
-		Name:         NameColumn,
-		AccountType:  AccountTypeColumn,
-		Active:       ActiveColumn,
-		CreatedAt:    CreatedAtColumn,
-		UpdatedAt:    UpdatedAtColumn,
-		Symbol:       SymbolColumn,
-		Amount:       AmountColumn,
-		Currency:     CurrencyColumn,
-		Value:        ValueColumn,
-		ExchangeRate: ExchangeRateColumn,
+		ID:          IDColumn,
+		ProfileID:   ProfileIDColumn,
+		Name:        NameColumn,
+		AccountType: AccountTypeColumn,
+		Active:      ActiveColumn,
+		CreatedAt:   CreatedAtColumn,
+		UpdatedAt:   UpdatedAtColumn,
+		Symbol:      SymbolColumn,
+		Amount:      AmountColumn,
+		Currency:    CurrencyColumn,
+		Value:       ValueColumn,
+		FxRate:      FxRateColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
