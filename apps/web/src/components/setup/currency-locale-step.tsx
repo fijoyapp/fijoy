@@ -97,7 +97,7 @@ const CurrencyLocaleStep = () => {
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="p-0" align="start">
+                      <PopoverContent className="w-fill p-0" align="start">
                         <Command>
                           <CommandInput placeholder="Search..." />
                           <CommandList>
@@ -195,7 +195,7 @@ const CurrencyLocaleStep = () => {
                   )}
                 </FormDescription>
                 <FormControl>
-                  <div>
+                  <div className="">
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -212,13 +212,13 @@ const CurrencyLocaleStep = () => {
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="p-0" align="start">
+                      <PopoverContent className="w-fill p-0" align="start">
                         <Command>
                           <CommandInput placeholder="Search..." />
                           <CommandList>
                             <CommandEmpty>No locale found.</CommandEmpty>
                             <CommandGroup>
-                              <ScrollArea>
+                              <ScrollArea className="">
                                 {getUserLocales().map((lc) => {
                                   const localeDisplay = `${localeCodeToName(lc).unwrapOr("Unknown")} (${lc})`;
                                   return (

@@ -185,7 +185,7 @@ const MultiSelectFormField = React.forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[280px] p-0 drop-shadow-sm"
+          className="w-fill p-0"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
           onInteractOutside={(event) => {
@@ -233,44 +233,6 @@ const MultiSelectFormField = React.forwardRef<
                     </CommandItem>
                   );
                 })}
-              </CommandGroup>
-              <CommandSeparator />
-              <CommandGroup>
-                <div className="flex items-center justify-between">
-                  {selectedValues.length > 0 && (
-                    <>
-                      <CommandItem
-                        onSelect={() => {
-                          setSelectedValues([]);
-                          selectedValuesSet.current.clear();
-                          onValueChange([]);
-                        }}
-                        style={{
-                          pointerEvents: "auto",
-                          opacity: 1,
-                        }}
-                        className="flex-1 cursor-pointer justify-center"
-                      >
-                        Clear
-                      </CommandItem>
-                      <Separator
-                        orientation="vertical"
-                        className="flex h-full min-h-6"
-                      />
-                    </>
-                  )}
-                  <CommandSeparator />
-                  <CommandItem
-                    onSelect={() => setIsPopoverOpen(false)}
-                    style={{
-                      pointerEvents: "auto",
-                      opacity: 1,
-                    }}
-                    className="flex-1 cursor-pointer justify-center"
-                  >
-                    Close
-                  </CommandItem>
-                </div>
               </CommandGroup>
             </CommandList>
           </Command>
