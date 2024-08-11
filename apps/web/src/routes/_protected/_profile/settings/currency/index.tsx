@@ -46,10 +46,9 @@ import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { getProfileHeader } from "@/lib/headers";
-import { useProfile } from "@/hooks/use-profile";
 import { cn } from "@/lib/utils";
 import { CURRENCIES, currencyCodeToName } from "@/config/currency";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { currencyToDisplay } from "@/lib/money";
@@ -75,8 +74,7 @@ const currencyFormSchema = z.object({
 const localeFormSchema = z.object({ locale: z.string() });
 
 function Page() {
-  const { profile } = useProfile();
-  const { queryClient } = Route.useRouteContext();
+  const { queryClient, profile } = Route.useRouteContext();
 
   const [currencyPopoverOpen, setCurrencyPopoverOpen] = useState(false);
 
@@ -286,37 +284,35 @@ function Page() {
             onSubmit={localeForm.handleSubmit(onUpdateLocaleSubmit)}
             className="space-y-8"
           >
-            <FormField
-              control={localeForm.control}
-              name="locale"
-              render={({ field }) => (
-                <FormItem>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-xl">Locale</CardTitle>
-                      <CardDescription>
-                        This has an impact on how numbers and dates are
-                        formatted in Fijoy.
-                        {currencyForm.watch("primaryCurrency") &&
-                          field.value && (
-                            <>
-                              <div className="py-1"></div>
-                              Preview: 420{" "}
-                              {currencyForm.watch("primaryCurrency")} will be
-                              displayed as{" "}
-                              {currencyToDisplay(
-                                currency("420"),
-                                currencyForm.getValues("primaryCurrency"),
-                                {
-                                  locale: field.value,
-                                  compact: false,
-                                },
-                              )}
-                            </>
-                          )}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-xl">Locale</CardTitle>
+                <CardDescription>
+                  This has an impact on how numbers and dates are formatted in
+                  Fijoy. <br />
+                  {currencyForm.watch("primaryCurrency") &&
+                    localeForm.getValues("locale") && (
+                      <>
+                        Preview: 420 {currencyForm.watch("primaryCurrency")}{" "}
+                        will be displayed as{" "}
+                        {currencyToDisplay(
+                          currency("420"),
+                          currencyForm.getValues("primaryCurrency"),
+                          {
+                            locale: localeForm.getValues("locale"),
+                            compact: false,
+                          },
+                        )}
+                      </>
+                    )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={localeForm.control}
+                  name="locale"
+                  render={({ field }) => (
+                    <FormItem>
                       <FormControl>
                         <Popover
                           open={localePopoverOpen}
@@ -376,21 +372,21 @@ function Page() {
                           </PopoverContent>
                         </Popover>
                       </FormControl>
-                    </CardContent>
-                    <CardFooter className="space-x-4 border-t px-6 py-4">
-                      {localeForm.formState.isSubmitting ? (
-                        <Button disabled={true}>
-                          <Icons.spinner />
-                        </Button>
-                      ) : (
-                        <Button>Save</Button>
-                      )}
-                      <FormMessage />
-                    </CardFooter>
-                  </Card>
-                </FormItem>
-              )}
-            />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+              <CardFooter className="space-x-4 border-t px-6 py-4">
+                {localeForm.formState.isSubmitting ? (
+                  <Button disabled={true}>
+                    <Icons.spinner />
+                  </Button>
+                ) : (
+                  <Button>Save</Button>
+                )}
+                <FormMessage />
+              </CardFooter>
+            </Card>
           </form>
         </Form>
       </div>
