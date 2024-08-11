@@ -115,6 +115,9 @@ const CurrencyLocaleStep = () => {
                                           "primaryCurrency",
                                           currency,
                                         );
+                                        form.setValue("supportedCurrencies", [
+                                          currency,
+                                        ]);
                                         setPopoverOpen(false);
                                       }}
                                     >
