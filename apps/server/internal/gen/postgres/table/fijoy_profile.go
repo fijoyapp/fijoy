@@ -19,10 +19,10 @@ type fijoyProfileTable struct {
 	// Columns
 	ID                  postgres.ColumnString
 	UserID              postgres.ColumnString
-	CreatedAt           postgres.ColumnTimestampz
 	PrimaryCurrency     postgres.ColumnString
 	SupportedCurrencies postgres.ColumnString
 	Locale              postgres.ColumnString
+	CreatedAt           postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -65,12 +65,12 @@ func newFijoyProfileTableImpl(schemaName, tableName, alias string) fijoyProfileT
 	var (
 		IDColumn                  = postgres.StringColumn("id")
 		UserIDColumn              = postgres.StringColumn("user_id")
-		CreatedAtColumn           = postgres.TimestampzColumn("created_at")
 		PrimaryCurrencyColumn     = postgres.StringColumn("primary_currency")
 		SupportedCurrenciesColumn = postgres.StringColumn("supported_currencies")
 		LocaleColumn              = postgres.StringColumn("locale")
-		allColumns                = postgres.ColumnList{IDColumn, UserIDColumn, CreatedAtColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn}
-		mutableColumns            = postgres.ColumnList{UserIDColumn, CreatedAtColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn}
+		CreatedAtColumn           = postgres.TimestampzColumn("created_at")
+		allColumns                = postgres.ColumnList{IDColumn, UserIDColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn, CreatedAtColumn}
+		mutableColumns            = postgres.ColumnList{UserIDColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn, CreatedAtColumn}
 	)
 
 	return fijoyProfileTable{
@@ -79,10 +79,10 @@ func newFijoyProfileTableImpl(schemaName, tableName, alias string) fijoyProfileT
 		//Columns
 		ID:                  IDColumn,
 		UserID:              UserIDColumn,
-		CreatedAt:           CreatedAtColumn,
 		PrimaryCurrency:     PrimaryCurrencyColumn,
 		SupportedCurrencies: SupportedCurrenciesColumn,
 		Locale:              LocaleColumn,
+		CreatedAt:           CreatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -14,8 +14,8 @@ import (
 type FijoyProfile struct {
 	ID                  string    `sql:"primary_key" json:"ID"`
 	UserID              string    `json:"UserID"`
-	CreatedAt           time.Time `json:"CreatedAt"`
 	PrimaryCurrency     string    `json:"PrimaryCurrency"`
 	SupportedCurrencies string    `json:"SupportedCurrencies"`
 	Locale              string    `json:"Locale"`
+	CreatedAt           time.Time `json:"CreatedAt"`
 }
