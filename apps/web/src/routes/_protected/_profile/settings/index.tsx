@@ -23,7 +23,7 @@ function Page() {
       <PageHeader>
         <PageHeaderHeading>Settings</PageHeaderHeading>
         <PageHeaderDescription>
-          Configure your workspace settings
+          Configure your Fijoy profile
         </PageHeaderDescription>
       </PageHeader>
 
