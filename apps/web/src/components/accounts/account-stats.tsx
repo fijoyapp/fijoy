@@ -3,7 +3,7 @@ import { Banknote, CandlestickChart, DollarSign } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { calculateStats, currencyToDisplay } from "@/lib/money";
-import { useProfile } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-profile";
 
 type AccountStatsProps = {
   accounts: Account[];

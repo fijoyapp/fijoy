@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 import { Profile } from "./gen/proto/fijoy/v1/profile_pb";
 import { ProfileService } from "./gen/proto/fijoy/v1/profile_connect";
 import { createPromiseClient } from "@connectrpc/connect";
@@ -8,6 +8,7 @@ import { finalTransport } from "./lib/connect";
 export interface ProfileContext {
   profile: Profile | undefined;
   isLoading: boolean;
+  refresh: () => void;
 }
 
 const profileClient = createPromiseClient(ProfileService, finalTransport);
@@ -18,7 +19,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
+    setIsLoading(true);
     profileClient
       .getProfile({})
       .catch(() => {
@@ -30,8 +32,12 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       });
   }, []);
 
+  useEffect(() => {
+    refresh();
+  }, []);
+
   return (
-    <ProfileContext.Provider value={{ profile: profile, isLoading }}>
+    <ProfileContext.Provider value={{ profile: profile, isLoading, refresh }}>
       {children}
     </ProfileContext.Provider>
   );

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import CurrencyInput from "react-currency-input-field";
-import { useProfile } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-profile";
 import { useRouter } from "@tanstack/react-router";
 import { useAccountsStore } from "@/store/accounts";
 

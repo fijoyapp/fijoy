@@ -46,7 +46,7 @@ import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { getProfileHeader } from "@/lib/headers";
-import { useProfile } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-profile";
 import { cn } from "@/lib/utils";
 import { CURRENCIES, currencyCodeToName } from "@/config/currency";
 import { useState } from "react";

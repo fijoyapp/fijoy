@@ -6,7 +6,7 @@ import {
   createFileRoute,
   useMatchRoute,
 } from "@tanstack/react-router";
-import { useProfile } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-profile";
 
 export const Route = createFileRoute("/_protected")({
   component: Protected,
@@ -31,6 +31,10 @@ function Protected() {
 
   if (!profile.profile && !matchRoute({ to: "/setup" })) {
     return <Navigate to="/setup" search={{ step: "currency-locale" }} />;
+  }
+
+  if (profile.profile && matchRoute({ to: "/setup" })) {
+    return <Navigate to="/home" />;
   }
 
   return <Outlet />;
