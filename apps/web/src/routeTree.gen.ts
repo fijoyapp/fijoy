@@ -16,18 +16,13 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as PublicRouteImport } from './routes/_public/route'
 import { Route as ProtectedRouteImport } from './routes/_protected/route'
 import { Route as ProtectedSetupImport } from './routes/_protected/setup'
-import { Route as ProtectedWorkspaceIndexImport } from './routes/_protected/workspace/index'
-import { Route as ProtectedWorkspaceNamespaceRouteImport } from './routes/_protected/workspace/$namespace/route'
-import { Route as ProtectedWorkspaceNamespaceIndexImport } from './routes/_protected/workspace/$namespace/index'
-import { Route as ProtectedWorkspaceNamespaceStocksIndexImport } from './routes/_protected/workspace/$namespace/stocks/index'
-import { Route as ProtectedWorkspaceNamespaceSettingsIndexImport } from './routes/_protected/workspace/$namespace/settings/index'
-import { Route as ProtectedWorkspaceNamespaceHistoryIndexImport } from './routes/_protected/workspace/$namespace/history/index'
-import { Route as ProtectedWorkspaceNamespaceAccountsIndexImport } from './routes/_protected/workspace/$namespace/accounts/index'
-import { Route as ProtectedWorkspaceNamespaceSettingsUsersIndexImport } from './routes/_protected/workspace/$namespace/settings/users/index'
-import { Route as ProtectedWorkspaceNamespaceSettingsGeneralIndexImport } from './routes/_protected/workspace/$namespace/settings/general/index'
-import { Route as ProtectedWorkspaceNamespaceSettingsCurrencyIndexImport } from './routes/_protected/workspace/$namespace/settings/currency/index'
-import { Route as ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport } from './routes/_protected/workspace/$namespace/settings/categories/index'
-import { Route as ProtectedWorkspaceNamespaceAccountsAccountIdIndexImport } from './routes/_protected/workspace/$namespace/accounts/$accountId/index'
+import { Route as ProtectedProfileRouteImport } from './routes/_protected/_profile/route'
+import { Route as ProtectedProfileTransactionsIndexImport } from './routes/_protected/_profile/transactions/index'
+import { Route as ProtectedProfileSettingsIndexImport } from './routes/_protected/_profile/settings/index'
+import { Route as ProtectedProfileHomeIndexImport } from './routes/_protected/_profile/home/index'
+import { Route as ProtectedProfileAccountsIndexImport } from './routes/_protected/_profile/accounts/index'
+import { Route as ProtectedProfileSettingsCurrencyIndexImport } from './routes/_protected/_profile/settings/currency/index'
+import { Route as ProtectedProfileAccountsAccountIdIndexImport } from './routes/_protected/_profile/accounts/$accountId/index'
 
 // Create Virtual Routes
 
@@ -97,75 +92,44 @@ const ProtectedSetupRoute = ProtectedSetupImport.update({
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
 
-const ProtectedWorkspaceIndexRoute = ProtectedWorkspaceIndexImport.update({
-  path: '/workspace/',
+const ProtectedProfileRouteRoute = ProtectedProfileRouteImport.update({
+  id: '/_profile',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
 
-const ProtectedWorkspaceNamespaceRouteRoute =
-  ProtectedWorkspaceNamespaceRouteImport.update({
-    path: '/workspace/$namespace',
-    getParentRoute: () => ProtectedRouteRoute,
+const ProtectedProfileTransactionsIndexRoute =
+  ProtectedProfileTransactionsIndexImport.update({
+    path: '/transactions/',
+    getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
-const ProtectedWorkspaceNamespaceIndexRoute =
-  ProtectedWorkspaceNamespaceIndexImport.update({
-    path: '/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
-
-const ProtectedWorkspaceNamespaceStocksIndexRoute =
-  ProtectedWorkspaceNamespaceStocksIndexImport.update({
-    path: '/stocks/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
-
-const ProtectedWorkspaceNamespaceSettingsIndexRoute =
-  ProtectedWorkspaceNamespaceSettingsIndexImport.update({
+const ProtectedProfileSettingsIndexRoute =
+  ProtectedProfileSettingsIndexImport.update({
     path: '/settings/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+    getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
-const ProtectedWorkspaceNamespaceHistoryIndexRoute =
-  ProtectedWorkspaceNamespaceHistoryIndexImport.update({
-    path: '/history/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
+const ProtectedProfileHomeIndexRoute = ProtectedProfileHomeIndexImport.update({
+  path: '/home/',
+  getParentRoute: () => ProtectedProfileRouteRoute,
+} as any)
 
-const ProtectedWorkspaceNamespaceAccountsIndexRoute =
-  ProtectedWorkspaceNamespaceAccountsIndexImport.update({
+const ProtectedProfileAccountsIndexRoute =
+  ProtectedProfileAccountsIndexImport.update({
     path: '/accounts/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+    getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
-const ProtectedWorkspaceNamespaceSettingsUsersIndexRoute =
-  ProtectedWorkspaceNamespaceSettingsUsersIndexImport.update({
-    path: '/settings/users/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
-
-const ProtectedWorkspaceNamespaceSettingsGeneralIndexRoute =
-  ProtectedWorkspaceNamespaceSettingsGeneralIndexImport.update({
-    path: '/settings/general/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
-
-const ProtectedWorkspaceNamespaceSettingsCurrencyIndexRoute =
-  ProtectedWorkspaceNamespaceSettingsCurrencyIndexImport.update({
+const ProtectedProfileSettingsCurrencyIndexRoute =
+  ProtectedProfileSettingsCurrencyIndexImport.update({
     path: '/settings/currency/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+    getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
-const ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute =
-  ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport.update({
-    path: '/settings/categories/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
-  } as any)
-
-const ProtectedWorkspaceNamespaceAccountsAccountIdIndexRoute =
-  ProtectedWorkspaceNamespaceAccountsAccountIdIndexImport.update({
+const ProtectedProfileAccountsAccountIdIndexRoute =
+  ProtectedProfileAccountsAccountIdIndexImport.update({
     path: '/accounts/$accountId/',
-    getParentRoute: () => ProtectedWorkspaceNamespaceRouteRoute,
+    getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -185,6 +149,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRoute
+    }
+    '/_protected/_profile': {
+      id: '/_protected/_profile'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectedProfileRouteImport
+      parentRoute: typeof ProtectedRouteImport
     }
     '/_protected/setup': {
       id: '/_protected/setup'
@@ -242,89 +213,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicIndexLazyImport
       parentRoute: typeof PublicRouteImport
     }
-    '/_protected/workspace/$namespace': {
-      id: '/_protected/workspace/$namespace'
-      path: '/workspace/$namespace'
-      fullPath: '/workspace/$namespace'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceRouteImport
-      parentRoute: typeof ProtectedRouteImport
-    }
-    '/_protected/workspace/': {
-      id: '/_protected/workspace/'
-      path: '/workspace'
-      fullPath: '/workspace'
-      preLoaderRoute: typeof ProtectedWorkspaceIndexImport
-      parentRoute: typeof ProtectedRouteImport
-    }
-    '/_protected/workspace/$namespace/': {
-      id: '/_protected/workspace/$namespace/'
-      path: '/'
-      fullPath: '/workspace/$namespace/'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
-    }
-    '/_protected/workspace/$namespace/accounts/': {
-      id: '/_protected/workspace/$namespace/accounts/'
+    '/_protected/_profile/accounts/': {
+      id: '/_protected/_profile/accounts/'
       path: '/accounts'
-      fullPath: '/workspace/$namespace/accounts'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+      fullPath: '/accounts'
+      preLoaderRoute: typeof ProtectedProfileAccountsIndexImport
+      parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/workspace/$namespace/history/': {
-      id: '/_protected/workspace/$namespace/history/'
-      path: '/history'
-      fullPath: '/workspace/$namespace/history'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceHistoryIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    '/_protected/_profile/home/': {
+      id: '/_protected/_profile/home/'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof ProtectedProfileHomeIndexImport
+      parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/workspace/$namespace/settings/': {
-      id: '/_protected/workspace/$namespace/settings/'
+    '/_protected/_profile/settings/': {
+      id: '/_protected/_profile/settings/'
       path: '/settings'
-      fullPath: '/workspace/$namespace/settings'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+      fullPath: '/settings'
+      preLoaderRoute: typeof ProtectedProfileSettingsIndexImport
+      parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/workspace/$namespace/stocks/': {
-      id: '/_protected/workspace/$namespace/stocks/'
-      path: '/stocks'
-      fullPath: '/workspace/$namespace/stocks'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceStocksIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+    '/_protected/_profile/transactions/': {
+      id: '/_protected/_profile/transactions/'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof ProtectedProfileTransactionsIndexImport
+      parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/workspace/$namespace/accounts/$accountId/': {
-      id: '/_protected/workspace/$namespace/accounts/$accountId/'
+    '/_protected/_profile/accounts/$accountId/': {
+      id: '/_protected/_profile/accounts/$accountId/'
       path: '/accounts/$accountId'
-      fullPath: '/workspace/$namespace/accounts/$accountId'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceAccountsAccountIdIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+      fullPath: '/accounts/$accountId'
+      preLoaderRoute: typeof ProtectedProfileAccountsAccountIdIndexImport
+      parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/workspace/$namespace/settings/categories/': {
-      id: '/_protected/workspace/$namespace/settings/categories/'
-      path: '/settings/categories'
-      fullPath: '/workspace/$namespace/settings/categories'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsCategoriesIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
-    }
-    '/_protected/workspace/$namespace/settings/currency/': {
-      id: '/_protected/workspace/$namespace/settings/currency/'
+    '/_protected/_profile/settings/currency/': {
+      id: '/_protected/_profile/settings/currency/'
       path: '/settings/currency'
-      fullPath: '/workspace/$namespace/settings/currency'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsCurrencyIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
-    }
-    '/_protected/workspace/$namespace/settings/general/': {
-      id: '/_protected/workspace/$namespace/settings/general/'
-      path: '/settings/general'
-      fullPath: '/workspace/$namespace/settings/general'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsGeneralIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
-    }
-    '/_protected/workspace/$namespace/settings/users/': {
-      id: '/_protected/workspace/$namespace/settings/users/'
-      path: '/settings/users'
-      fullPath: '/workspace/$namespace/settings/users'
-      preLoaderRoute: typeof ProtectedWorkspaceNamespaceSettingsUsersIndexImport
-      parentRoute: typeof ProtectedWorkspaceNamespaceRouteImport
+      fullPath: '/settings/currency'
+      preLoaderRoute: typeof ProtectedProfileSettingsCurrencyIndexImport
+      parentRoute: typeof ProtectedProfileRouteImport
     }
   }
 }
@@ -333,21 +262,15 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   ProtectedRouteRoute: ProtectedRouteRoute.addChildren({
+    ProtectedProfileRouteRoute: ProtectedProfileRouteRoute.addChildren({
+      ProtectedProfileAccountsIndexRoute,
+      ProtectedProfileHomeIndexRoute,
+      ProtectedProfileSettingsIndexRoute,
+      ProtectedProfileTransactionsIndexRoute,
+      ProtectedProfileAccountsAccountIdIndexRoute,
+      ProtectedProfileSettingsCurrencyIndexRoute,
+    }),
     ProtectedSetupRoute,
-    ProtectedWorkspaceNamespaceRouteRoute:
-      ProtectedWorkspaceNamespaceRouteRoute.addChildren({
-        ProtectedWorkspaceNamespaceIndexRoute,
-        ProtectedWorkspaceNamespaceAccountsIndexRoute,
-        ProtectedWorkspaceNamespaceHistoryIndexRoute,
-        ProtectedWorkspaceNamespaceSettingsIndexRoute,
-        ProtectedWorkspaceNamespaceStocksIndexRoute,
-        ProtectedWorkspaceNamespaceAccountsAccountIdIndexRoute,
-        ProtectedWorkspaceNamespaceSettingsCategoriesIndexRoute,
-        ProtectedWorkspaceNamespaceSettingsCurrencyIndexRoute,
-        ProtectedWorkspaceNamespaceSettingsGeneralIndexRoute,
-        ProtectedWorkspaceNamespaceSettingsUsersIndexRoute,
-      }),
-    ProtectedWorkspaceIndexRoute,
   }),
   PublicRouteRoute: PublicRouteRoute.addChildren({
     PublicFeaturesLazyRoute,
@@ -375,9 +298,8 @@ export const routeTree = rootRoute.addChildren({
     "/_protected": {
       "filePath": "_protected/route.tsx",
       "children": [
-        "/_protected/setup",
-        "/_protected/workspace/$namespace",
-        "/_protected/workspace/"
+        "/_protected/_profile",
+        "/_protected/setup"
       ]
     },
     "/_public": {
@@ -390,6 +312,18 @@ export const routeTree = rootRoute.addChildren({
         "/_public/stack",
         "/_public/why",
         "/_public/"
+      ]
+    },
+    "/_protected/_profile": {
+      "filePath": "_protected/_profile/route.tsx",
+      "parent": "/_protected",
+      "children": [
+        "/_protected/_profile/accounts/",
+        "/_protected/_profile/home/",
+        "/_protected/_profile/settings/",
+        "/_protected/_profile/transactions/",
+        "/_protected/_profile/accounts/$accountId/",
+        "/_protected/_profile/settings/currency/"
       ]
     },
     "/_protected/setup": {
@@ -424,65 +358,29 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "_public/index.lazy.tsx",
       "parent": "/_public"
     },
-    "/_protected/workspace/$namespace": {
-      "filePath": "_protected/workspace/$namespace/route.tsx",
-      "parent": "/_protected",
-      "children": [
-        "/_protected/workspace/$namespace/",
-        "/_protected/workspace/$namespace/accounts/",
-        "/_protected/workspace/$namespace/history/",
-        "/_protected/workspace/$namespace/settings/",
-        "/_protected/workspace/$namespace/stocks/",
-        "/_protected/workspace/$namespace/accounts/$accountId/",
-        "/_protected/workspace/$namespace/settings/categories/",
-        "/_protected/workspace/$namespace/settings/currency/",
-        "/_protected/workspace/$namespace/settings/general/",
-        "/_protected/workspace/$namespace/settings/users/"
-      ]
+    "/_protected/_profile/accounts/": {
+      "filePath": "_protected/_profile/accounts/index.tsx",
+      "parent": "/_protected/_profile"
     },
-    "/_protected/workspace/": {
-      "filePath": "_protected/workspace/index.tsx",
-      "parent": "/_protected"
+    "/_protected/_profile/home/": {
+      "filePath": "_protected/_profile/home/index.tsx",
+      "parent": "/_protected/_profile"
     },
-    "/_protected/workspace/$namespace/": {
-      "filePath": "_protected/workspace/$namespace/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
+    "/_protected/_profile/settings/": {
+      "filePath": "_protected/_profile/settings/index.tsx",
+      "parent": "/_protected/_profile"
     },
-    "/_protected/workspace/$namespace/accounts/": {
-      "filePath": "_protected/workspace/$namespace/accounts/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
+    "/_protected/_profile/transactions/": {
+      "filePath": "_protected/_profile/transactions/index.tsx",
+      "parent": "/_protected/_profile"
     },
-    "/_protected/workspace/$namespace/history/": {
-      "filePath": "_protected/workspace/$namespace/history/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
+    "/_protected/_profile/accounts/$accountId/": {
+      "filePath": "_protected/_profile/accounts/$accountId/index.tsx",
+      "parent": "/_protected/_profile"
     },
-    "/_protected/workspace/$namespace/settings/": {
-      "filePath": "_protected/workspace/$namespace/settings/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
-    },
-    "/_protected/workspace/$namespace/stocks/": {
-      "filePath": "_protected/workspace/$namespace/stocks/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
-    },
-    "/_protected/workspace/$namespace/accounts/$accountId/": {
-      "filePath": "_protected/workspace/$namespace/accounts/$accountId/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
-    },
-    "/_protected/workspace/$namespace/settings/categories/": {
-      "filePath": "_protected/workspace/$namespace/settings/categories/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
-    },
-    "/_protected/workspace/$namespace/settings/currency/": {
-      "filePath": "_protected/workspace/$namespace/settings/currency/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
-    },
-    "/_protected/workspace/$namespace/settings/general/": {
-      "filePath": "_protected/workspace/$namespace/settings/general/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
-    },
-    "/_protected/workspace/$namespace/settings/users/": {
-      "filePath": "_protected/workspace/$namespace/settings/users/index.tsx",
-      "parent": "/_protected/workspace/$namespace"
+    "/_protected/_profile/settings/currency/": {
+      "filePath": "_protected/_profile/settings/currency/index.tsx",
+      "parent": "/_protected/_profile"
     }
   }
 }

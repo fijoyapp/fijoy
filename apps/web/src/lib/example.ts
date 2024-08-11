@@ -1,11 +1,11 @@
 import { createPromiseClient } from "@connectrpc/connect";
-import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
 import { AccountService } from "@/gen/proto/fijoy/v1/account_connect";
 import { finalTransport } from "./connect";
 import { AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 // import { TransactionService } from "@/gen/proto/fijoy/v1/transaction_connect";
 // import { Timestamp } from "@bufbuild/protobuf";
-import { getWorkspaceHeader } from "./headers";
+import { getProfileHeader } from "./headers";
+import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 
 const accountClient = createPromiseClient(AccountService, finalTransport);
 // const transactionClient = createPromiseClient(
@@ -13,8 +13,8 @@ const accountClient = createPromiseClient(AccountService, finalTransport);
 //   finalTransport,
 // );
 
-export async function populateExample(workspace: Workspace) {
-  const headers = getWorkspaceHeader(workspace.id);
+export async function populateExample(profile: Profile) {
+  const headers = getProfileHeader(profile.id);
   const cobalt = await accountClient.createAccount(
     {
       name: "Cobalt",

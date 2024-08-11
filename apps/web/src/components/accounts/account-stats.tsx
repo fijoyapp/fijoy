@@ -3,7 +3,7 @@ import { Banknote, CandlestickChart, DollarSign } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { calculateStats, currencyToDisplay } from "@/lib/money";
-import { useWorkspace } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-workspace";
 
 type AccountStatsProps = {
   accounts: Account[];
@@ -45,7 +45,7 @@ type CardStatsProps = {
 };
 
 const CardStats = ({ value, title, icon, isDebt }: CardStatsProps) => {
-  const { workspace } = useWorkspace();
+  const { workspace } = useProfile();
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

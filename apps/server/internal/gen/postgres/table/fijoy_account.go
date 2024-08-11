@@ -18,8 +18,9 @@ type fijoyAccountTable struct {
 
 	// Columns
 	ID          postgres.ColumnString
-	WorkspaceID postgres.ColumnString
+	ProfileID   postgres.ColumnString
 	Name        postgres.ColumnString
+	Symbol      postgres.ColumnString
 	AccountType postgres.ColumnString
 	Alance      postgres.ColumnFloat
 	Currency    postgres.ColumnString
@@ -67,16 +68,17 @@ func newFijoyAccountTable(schemaName, tableName, alias string) *FijoyAccountTabl
 func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountTable {
 	var (
 		IDColumn          = postgres.StringColumn("id")
-		WorkspaceIDColumn = postgres.StringColumn("workspace_id")
+		ProfileIDColumn   = postgres.StringColumn("profile_id")
 		NameColumn        = postgres.StringColumn("name")
+		SymbolColumn      = postgres.StringColumn("symbol")
 		AccountTypeColumn = postgres.StringColumn("account_type")
 		AlanceColumn      = postgres.FloatColumn("alance")
 		CurrencyColumn    = postgres.StringColumn("currency")
 		ActiveColumn      = postgres.BoolColumn("active")
 		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
 		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
-		allColumns        = postgres.ColumnList{IDColumn, WorkspaceIDColumn, NameColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns    = postgres.ColumnList{WorkspaceIDColumn, NameColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
+		allColumns        = postgres.ColumnList{IDColumn, ProfileIDColumn, NameColumn, SymbolColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns    = postgres.ColumnList{ProfileIDColumn, NameColumn, SymbolColumn, AccountTypeColumn, AlanceColumn, CurrencyColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fijoyAccountTable{
@@ -84,8 +86,9 @@ func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountT
 
 		//Columns
 		ID:          IDColumn,
-		WorkspaceID: WorkspaceIDColumn,
+		ProfileID:   ProfileIDColumn,
 		Name:        NameColumn,
+		Symbol:      SymbolColumn,
 		AccountType: AccountTypeColumn,
 		Alance:      AlanceColumn,
 		Currency:    CurrencyColumn,

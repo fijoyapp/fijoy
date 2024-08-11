@@ -4,13 +4,13 @@ import {
   getAccountById,
   getAccounts,
 } from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
-import { Workspace } from "@/gen/proto/fijoy/v1/workspace_pb";
-import { getWorkspaceHeader } from "../headers";
+import { getProfileHeader } from "../headers";
+import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 
 type getAccountsProps = {
   context: {
     transport: Transport;
-    workspace: Workspace;
+    profile: Profile;
   };
 };
 
@@ -21,7 +21,7 @@ export const getAccountsQueryOptions = ({ context }: getAccountsProps) => {
     {
       transport: context.transport,
       callOptions: {
-        headers: getWorkspaceHeader(context.workspace.id),
+        headers: getProfileHeader(context.profile.id),
       },
     },
   );
@@ -31,7 +31,7 @@ type getAccountByIdProps = {
   id: string;
   context: {
     transport: Transport;
-    workspace: Workspace;
+    profile: Profile;
   };
 };
 
@@ -45,7 +45,7 @@ export const getAccountByIdQueryOptions = ({
     {
       transport: context.transport,
       callOptions: {
-        headers: getWorkspaceHeader(context.workspace.id),
+        headers: getProfileHeader(context.profile.id),
       },
     },
   );

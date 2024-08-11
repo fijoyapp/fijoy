@@ -13,6 +13,7 @@ import { TransportProvider } from "@connectrpc/connect-query";
 import { finalTransport } from "./lib/connect";
 import { queryClient } from "./lib/query";
 import { App } from "./app";
+import { ProfileProvider } from "./profile";
 
 // Render the app
 const rootElement = document.getElementById("app")!;
@@ -23,10 +24,12 @@ if (!rootElement.innerHTML) {
       <TransportProvider transport={finalTransport}>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-              <App />
-              <Toaster />
-            </ThemeProvider>
+            <ProfileProvider>
+              <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+                <App />
+                <Toaster />
+              </ThemeProvider>
+            </ProfileProvider>
           </AuthProvider>
         </QueryClientProvider>
       </TransportProvider>

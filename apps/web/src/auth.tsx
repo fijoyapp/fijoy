@@ -19,10 +19,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    userClient.getUser({}).then((user) => {
-      setUser(user);
-      setIsLoading(false);
-    });
+    userClient
+      .getUser({})
+      .catch(() => {
+        // console.error(error);
+      })
+      .then((user) => {
+        setUser(user || undefined);
+        setIsLoading(false);
+      });
   }, []);
 
   return (

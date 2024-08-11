@@ -1,10 +1,10 @@
-import { WorkspaceContext } from "@/workspace";
+import { ProfileContext } from "@/profile";
 import { useContext } from "react";
 
-export function useWorkspace() {
-  const context = useContext(WorkspaceContext);
+export function useProfile() {
+  const context = useContext(ProfileContext);
   if (!context) {
-    throw new Error("useWorkspace must be used within an WorkspaceProvider");
+    throw new Error("useProfile must be used within an ProfileProvider");
   }
   return context;
 }

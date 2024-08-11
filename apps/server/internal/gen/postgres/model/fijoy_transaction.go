@@ -13,9 +13,8 @@ import (
 
 type FijoyTransaction struct {
 	ID              string               `sql:"primary_key" json:"ID"`
+	ProfileID       string               `json:"ProfileID"`
 	AccountID       string               `json:"AccountID"`
-	UserID          string               `json:"UserID"`
-	WorkspaceID     string               `json:"WorkspaceID"`
 	TransactionType FijoyTransactionType `json:"TransactionType"`
 	Amount          float64              `json:"Amount"`
 	Currency        string               `json:"Currency"`

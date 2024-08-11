@@ -9,18 +9,18 @@ import { ComponentProps, useEffect, useRef } from "react";
 
 import { useAccountsStore } from "@/store/accounts";
 import { useRouter } from "@tanstack/react-router";
-import { useWorkspace } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-workspace";
 import { tsAccountTypeToProto } from "@/lib/convert";
-import { getWorkspaceHeader } from "@/lib/headers";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTransactions } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 import { toast } from "sonner";
+import { getProfileHeader } from "@/lib/headers";
 
 const FinalStep = ({ className }: ComponentProps<"div">) => {
-  const { workspace } = useWorkspace();
+  const { profile } = useProfile();
   const createAccountMutation = useMutation(createAccount, {
     callOptions: {
-      headers: getWorkspaceHeader(workspace.id),
+      headers: getProfileHeader(profile.id),
     },
   });
 
@@ -48,9 +48,8 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
     hasFired.current = true;
     if (!nameTypeInstitutionStepData || !currencyBalanceStepData) {
       router.navigate({
-        to: "/workspace/$namespace/accounts",
+        to: "/accounts",
         search: { step: "name-type-institution", "add-account": true },
-        params: { namespace: workspace.namespace },
       });
 
       return;
@@ -82,9 +81,8 @@ const FinalStep = ({ className }: ComponentProps<"div">) => {
     toast.success("Account created");
 
     router.navigate({
-      to: "/workspace/$namespace/accounts",
+      to: "/accounts",
       search: { "add-account": false, step: "final" },
-      params: { namespace: workspace.namespace },
     });
   }
 

@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Navigate, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import {
   Command,
   CommandEmpty,
@@ -43,15 +43,12 @@ const CurrencyLocaleStep = () => {
   const router = useRouter();
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  const {
-    nameNamespaceStepData,
-    currencyLocaleStepData,
-    setCurrencyLocaleStepData,
-  } = useSetupStore((state) => ({
-    nameNamespaceStepData: state.nameNamespaceStepData,
-    currencyLocaleStepData: state.currencyLocaleStepData,
-    setCurrencyLocaleStepData: state.setCurrencyLocaleStepData,
-  }));
+  const { currencyLocaleStepData, setCurrencyLocaleStepData } = useSetupStore(
+    (state) => ({
+      currencyLocaleStepData: state.currencyLocaleStepData,
+      setCurrencyLocaleStepData: state.setCurrencyLocaleStepData,
+    }),
+  );
 
   const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,20 +66,8 @@ const CurrencyLocaleStep = () => {
     });
   }
 
-  function onBack() {
-    setCurrencyLocaleStepData(form.getValues());
-    router.navigate({
-      from: "/setup",
-      to: "/setup",
-      search: { step: "name-namespace" },
-    });
-  }
-
   return (
     <>
-      {!nameNamespaceStepData && (
-        <Navigate to="/setup" search={{ step: "name-namespace" }} />
-      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -272,14 +257,9 @@ const CurrencyLocaleStep = () => {
             )}
           />
 
-          <div className="grid grid-cols-3 gap-4">
-            <Button className="col-span-1" variant="secondary" onClick={onBack}>
-              Back
-            </Button>
-            <Button type="submit" className="col-span-2">
-              Create
-            </Button>
-          </div>
+          <Button type="submit" className="col-span-2">
+            Create
+          </Button>
         </form>
       </Form>
     </>

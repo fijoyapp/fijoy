@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package fijoy.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message Profile {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string user_id = 2 [(buf.validate.field).string.min_len = 1];
+  string primary_currency = 3 [(buf.validate.field).string.min_len = 1];
+  repeated string supported_currencies = 4 [
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.min_items = 1
+  ];
+  string locale = 5 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp created_at = 6 [(buf.validate.field).required = true];
+}
+
+message CreateProfileRequest {
+  string primary_currency = 1 [(buf.validate.field).string.min_len = 1];
+  repeated string supported_currencies = 2 [
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.min_items = 1
+  ];
+  string locale = 3 [(buf.validate.field).string.min_len = 1];
+}
+
+message UpdateCurrencyRequest {
+  string primaryCurrency = 1 [(buf.validate.field).string.min_len = 1];
+  repeated string supportedCurrencies = 2 [
+    (buf.validate.field).repeated.unique = true,
+    (buf.validate.field).repeated.min_items = 1
+  ];
+}
+
+message UpdateLocaleRequest {
+  string locale = 1 [(buf.validate.field).string.min_len = 1];
+}
+
+service ProfileService {
+  rpc CreateProfile(CreateProfileRequest) returns (Profile);
+
+  rpc GetProfile(google.protobuf.Empty) returns (Profile) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+
+  rpc UpdateCurrency(UpdateCurrencyRequest) returns (Profile);
+  rpc UpdateLocale(UpdateLocaleRequest) returns (Profile);
+
+  rpc DeleteProfile(google.protobuf.Empty) returns (Profile) {}
+}
