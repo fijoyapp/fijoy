@@ -48,7 +48,7 @@ import { Icons } from "@/components/icons";
 import { getProfileHeader } from "@/lib/headers";
 import { cn } from "@/lib/utils";
 import { CURRENCIES, currencyCodeToName } from "@/config/currency";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { currencyToDisplay } from "@/lib/money";
