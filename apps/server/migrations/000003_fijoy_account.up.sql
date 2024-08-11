@@ -21,6 +21,6 @@ CREATE TABLE "fijoy_account" (
   -- fx related stuff
   currency TEXT NOT NULL, -- the underlying currency
   value NUMERIC(16, 8) NOT NULL, -- in ORIGINAL currency
-  exchange_rate NUMERIC(16, 8), -- for foreign currency accounts
+  fx_rate NUMERIC(16, 8), -- for foreign currency accounts
   FOREIGN KEY (profile_id) REFERENCES fijoy_profile (id) ON DELETE CASCADE
 );
