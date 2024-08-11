@@ -9,7 +9,7 @@ import { ComponentProps, useEffect, useRef } from "react";
 
 import { useAccountsStore } from "@/store/accounts";
 import { useRouter } from "@tanstack/react-router";
-import { useProfile } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-profile";
 import { tsAccountTypeToProto } from "@/lib/convert";
 import { useQueryClient } from "@tanstack/react-query";
 import { getTransactions } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";

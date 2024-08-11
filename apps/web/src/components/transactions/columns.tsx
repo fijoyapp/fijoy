@@ -4,7 +4,7 @@ import {
   TransactionType,
 } from "@/gen/proto/fijoy/v1/transaction_pb";
 import { currencyToDisplay, moneyToCurrency } from "@/lib/money";
-import { useProfile } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-profile";
 import { ColumnDef, Row } from "@tanstack/react-table";
 
 function AmountCell({ row }: { row: Row<Transaction> }) {

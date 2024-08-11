@@ -9,11 +9,13 @@ import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useEffect, useRef } from "react";
 import { createProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
+import { useProfile } from "@/hooks/use-profile";
 
 const formSchema = CurrencyLocaleStepData;
 
 const FinalStep = () => {
   const router = useRouter();
+  const { refresh } = useProfile();
 
   const { currencyLocaleStepData, reset } = useSetupStore((state) => ({
     currencyLocaleStepData: state.currencyLocaleStepData,
@@ -28,10 +30,11 @@ const FinalStep = () => {
   });
 
   const createProfileMut = useMutation(createProfile, {
-    onSuccess: () => {
-      router.navigate({
-        to: "/home",
-      });
+    onSuccess: async () => {
+      refresh();
+      // router.navigate({
+      //   to: "/home",
+      // });
     },
   });
 

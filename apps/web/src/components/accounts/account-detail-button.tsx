@@ -1,5 +1,5 @@
 import { Account } from "@/gen/proto/fijoy/v1/account_pb";
-import { useProfile } from "@/hooks/use-workspace";
+import { useProfile } from "@/hooks/use-profile";
 import { useRouter } from "@tanstack/react-router";
 import { Row } from "@tanstack/react-table";
 import { ChevronRight } from "lucide-react";
