@@ -179,7 +179,7 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "justify-between",
+                                "w-full justify-between",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
@@ -323,7 +323,7 @@ function Page() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "justify-between",
+                                "w-full justify-between",
                                 !field.value && "text-muted-foreground",
                               )}
                             >
