@@ -1,4 +1,4 @@
-package service
+package usecase
 
 import (
 	"fijoy/config"
@@ -7,19 +7,19 @@ import (
 	"strings"
 )
 
-type AnalyticsService interface {
+type AnalyticsUseCase interface {
 	SendToDiscord(msg string) error
 }
 
-type analyticsService struct {
+type analyticsUseCase struct {
 	analyticsConfig *config.AnalyticsConfig
 }
 
-func NewAnalyticsService(analyticsConfig *config.AnalyticsConfig) AnalyticsService {
-	return &analyticsService{analyticsConfig: analyticsConfig}
+func New(analyticsConfig *config.AnalyticsConfig) AnalyticsUseCase {
+	return &analyticsUseCase{analyticsConfig: analyticsConfig}
 }
 
-func (s *analyticsService) SendToDiscord(msg string) error {
+func (s *analyticsUseCase) SendToDiscord(msg string) error {
 	// Send message to Discord
 	resp, err := http.Post(
 		s.analyticsConfig.DISCORD_WEBHOOK,

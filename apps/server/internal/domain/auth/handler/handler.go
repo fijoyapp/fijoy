@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fijoy/config"
+	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
-	"fijoy/internal/service"
 	"fmt"
 	"io"
 	"net/http"
@@ -22,20 +22,20 @@ type authHandler struct {
 
 	serverConfig *config.ServerConfig
 
-	analyticsService service.AnalyticsService
+	analyticsUseCase analytics_usecase.AnalyticsUseCase
 }
 
 func NewAuthHandler(
 	authConfig *config.AuthConfig,
 	authUseCase auth_usecase.AuthUseCase,
 	serverConfig *config.ServerConfig,
-	analyticsService service.AnalyticsService,
+	analyticsUseCase analytics_usecase.AnalyticsUseCase,
 ) *authHandler {
 	return &authHandler{
 		authConfig,
 		authUseCase,
 		serverConfig,
-		analyticsService,
+		analyticsUseCase,
 	}
 }
 
