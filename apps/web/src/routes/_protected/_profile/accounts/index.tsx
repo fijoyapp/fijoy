@@ -78,12 +78,12 @@ function Page() {
       {/* <AccountStats accounts={accounts} /> */}
 
       {/* FIXME: table is too wide on mobile */}
-      <AccountTable columns={columns} data={accounts}>
-        {/* <AddAccount */}
-        {/*   open={addAccountOpen ?? false} */}
-        {/*   step={step ?? "name-type-institution"} */}
-        {/* /> */}
-      </AccountTable>
+      {/* <AccountTable columns={columns} data={accounts}> */}
+      {/* <AddAccount */}
+      {/*   open={addAccountOpen ?? false} */}
+      {/*   step={step ?? "name-type-institution"} */}
+      {/* /> */}
+      {/* </AccountTable> */}
     </>
   );
 }
