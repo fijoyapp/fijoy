@@ -15,6 +15,8 @@ import (
 	user_repository "fijoy/internal/domain/user/repository"
 	user_usecase "fijoy/internal/domain/user/usecase"
 
+	"github.com/bufbuild/protovalidate-go"
+	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 
 	"github.com/go-chi/chi/v5"
@@ -38,6 +40,12 @@ func main() {
 	}
 	defer db.Close()
 
+	validator := validator.New(validator.WithRequiredStructEnabled())
+	protoValidator, err := protovalidate.New()
+	if err != nil {
+		panic(err)
+	}
+
 	analyticsService := service.NewAnalyticsService(cfg.Analytics)
 
 	userRepo := user_repository.NewUserRepository(db)
@@ -46,9 +54,7 @@ func main() {
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo)
 
 	profileRepo := profile_repository.NewProfileRepository(db)
-	profileUseCase := profile_usecase.New(db, profileRepo)
-
-	// validator := validator.New(validator.WithRequiredStructEnabled())
+	profileUseCase := profile_usecase.New(validator, db, profileRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -68,8 +74,8 @@ func main() {
 
 	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
 
-	user_handler.RegisterConnect(r, cfg.Auth, userUseCase)
-	profile_handler.RegisterConnect(r, cfg.Auth, profileUseCase)
+	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
+	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)

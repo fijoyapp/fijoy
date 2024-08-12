@@ -5,12 +5,13 @@ import (
 	"fijoy/internal/domain/user/usecase"
 	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
 
+	"github.com/bufbuild/protovalidate-go"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 )
 
-func RegisterConnect(r *chi.Mux, authConfig *config.AuthConfig, useCase usecase.UserUseCase) {
-	userServer := NewUserHandler(useCase)
+func RegisterConnect(r *chi.Mux, protoValidator *protovalidate.Validator, authConfig *config.AuthConfig, useCase usecase.UserUseCase) {
+	userServer := NewUserHandler(protoValidator, useCase)
 
 	path, handler := fijoyv1connect.NewUserServiceHandler(userServer)
 

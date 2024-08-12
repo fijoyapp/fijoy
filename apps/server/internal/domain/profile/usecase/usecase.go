@@ -3,11 +3,15 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fijoy/constants"
 	"fijoy/internal/domain/profile/repository"
 	"fijoy/internal/gen/postgres/model"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	"fmt"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -21,22 +25,28 @@ type ProfileUseCase interface {
 }
 
 type profileUseCase struct {
-	repo repository.ProfileRepository
+	validator *validator.Validate
 
-	db *sql.DB
+	db   *sql.DB
+	repo repository.ProfileRepository
 }
 
-func New(db *sql.DB, repo repository.ProfileRepository) ProfileUseCase {
-	return &profileUseCase{db: db, repo: repo}
+func New(validator *validator.Validate, db *sql.DB, repo repository.ProfileRepository) ProfileUseCase {
+	return &profileUseCase{validator: validator, db: db, repo: repo}
 }
 
 func profileModelToProto(profile *model.FijoyProfile) *fijoyv1.Profile {
+	var supportedCurrencies []string
+	if profile.SupportedCurrencies != "" {
+		supportedCurrencies = strings.Split(profile.SupportedCurrencies, ",")
+	}
+
 	return &fijoyv1.Profile{
 		Id:                  profile.ID,
 		UserId:              profile.UserID,
 		PrimaryCurrency:     profile.PrimaryCurrency,
 		Locale:              profile.Locale,
-		SupportedCurrencies: strings.Split(profile.SupportedCurrencies, ","),
+		SupportedCurrencies: supportedCurrencies,
 		CreatedAt:           timestamppb.New(profile.CreatedAt),
 	}
 }
@@ -58,6 +68,18 @@ func (u *profileUseCase) CreateProfile(ctx context.Context, userId string, req *
 			err = tx.Commit() // commit on success
 		}
 	}()
+
+	if err := u.validator.Var(req.PrimaryCurrency, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
+	if err := u.validator.Var(req.SupportedCurrencies, "dive,iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
+	if err := u.validator.Var(req.Locale, "bcp47_language_tag"); err != nil {
+		return nil, errors.New(constants.ErrInvalidLocaleCode)
+	}
 
 	profile, err := u.repo.CreateProfileTX(ctx, tx, userId, req)
 	if err != nil {
@@ -129,6 +151,15 @@ func (u *profileUseCase) UpdateCurrency(ctx context.Context, id string, req *fij
 		}
 	}()
 
+	if err := u.validator.Var(req.PrimaryCurrency, "iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
+	fmt.Println(req.SupportedCurrencies)
+	if err := u.validator.Var(req.SupportedCurrencies, "dive,iso4217"); err != nil {
+		return nil, errors.New(constants.ErrInvalidCurrencyCode)
+	}
+
 	profile, err := u.repo.UpdateCurrencyTX(ctx, tx, id, req)
 	if err != nil {
 		return nil, err
@@ -154,6 +185,10 @@ func (u *profileUseCase) UpdateLocale(ctx context.Context, id string, req *fijoy
 			err = tx.Commit() // commit on success
 		}
 	}()
+
+	if err := u.validator.Var(req.Locale, "bcp47_language_tag"); err != nil {
+		return nil, errors.New(constants.ErrInvalidLocaleCode)
+	}
 
 	profile, err := u.repo.UpdateLocaleTX(ctx, tx, id, req)
 	if err != nil {
