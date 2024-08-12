@@ -35,7 +35,7 @@ import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { match } from "ts-pattern";
 import NameTypeInstitutionStep from "@/components/accounts/form-step/name-type-institution-step";
 import CurrencyBalanceStep from "@/components/accounts/form-step/currency-balance-step";
-import FinalStep from "@/components/accounts/form-step/final-step";
+// import FinalStep from "@/components/accounts/form-step/final-step";
 import { AccountStats } from "@/components/accounts/account-stats";
 import { useMediaSizes } from "@/hooks/use-media-sizes";
 
@@ -75,14 +75,14 @@ function Page() {
         </PageHeaderDescription>
       </PageHeader>
 
-      <AccountStats accounts={accounts} />
+      {/* <AccountStats accounts={accounts} /> */}
 
       {/* FIXME: table is too wide on mobile */}
       <AccountTable columns={columns} data={accounts}>
-        <AddAccount
-          open={addAccountOpen ?? false}
-          step={step ?? "name-type-institution"}
-        />
+        {/* <AddAccount */}
+        {/*   open={addAccountOpen ?? false} */}
+        {/*   step={step ?? "name-type-institution"} */}
+        {/* /> */}
       </AccountTable>
     </>
   );
