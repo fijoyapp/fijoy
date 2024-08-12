@@ -9,22 +9,29 @@ import "google/protobuf/timestamp.proto";
 
 enum AccountType {
   ACCOUNT_TYPE_UNSPECIFIED = 0;
-  ACCOUNT_TYPE_CASH = 1;
-  ACCOUNT_TYPE_DEBT = 2;
-  ACCOUNT_TYPE_INVESTMENT = 3;
-  ACCOUNT_TYPE_OTHER_ASSET = 4;
+  ACCOUNT_TYPE_LIQUIDITY = 1;
+  ACCOUNT_TYPE_INVESTMENT = 2;
+  ACCOUNT_TYPE_PROPERTY = 3;
+  ACCOUNT_TYPE_RECEIVABLE = 4;
+  ACCOUNT_TYPE_LIABILITY = 5;
 }
 
 message Account {
+  // the standard stuff
   string id = 1 [(buf.validate.field).string.min_len = 1];
-  string workspace_id = 2 [(buf.validate.field).string.min_len = 1];
+  string profile_id = 2 [(buf.validate.field).string.min_len = 1];
   string name = 3 [(buf.validate.field).string.min_len = 1];
   AccountType account_type = 4 [(buf.validate.field).required = true];
-  fijoy.v1.Money balance = 5 [(buf.validate.field).required = true];
-  string institution = 6 [(buf.validate.field).string.min_len = 1];
-  bool active = 7 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp created_at = 8 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 9 [(buf.validate.field).required = true];
+  bool active = 5 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp created_at = 6 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 7 [(buf.validate.field).required = true];
+  // stock and crypto
+  string symbol = 8;
+  fijoy.v1.Money amount = 9;
+  // fx related stuff
+  string currency = 10 [(buf.validate.field).string.min_len = 1];
+  fijoy.v1.Money value = 11 [(buf.validate.field).required = true];
+  fijoy.v1.Money fx_rate = 12;
 }
 
 message Accounts {
@@ -32,10 +39,16 @@ message Accounts {
 }
 
 message CreateAccountRequest {
+  // the standard stuff
   string name = 1 [(buf.validate.field).string.min_len = 1];
   AccountType account_type = 2 [(buf.validate.field).required = true];
-  fijoy.v1.Money balance = 3 [(buf.validate.field).required = true];
-  string institution = 4 [(buf.validate.field).string.min_len = 1];
+  // stock and crypto
+  string symbol = 3;
+  fijoy.v1.Money amount = 4;
+  // fx related stuff
+  string currency = 5 [(buf.validate.field).string.min_len = 1];
+  fijoy.v1.Money value = 6 [(buf.validate.field).required = true];
+  fijoy.v1.Money fx_rate = 7;
 }
 
 message GetAccountByIdRequest {
