@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fijoy/config"
-	"fijoy/internal/service"
 	"net/http"
 
 	auth_handler "fijoy/internal/domain/auth/handler"
@@ -18,6 +17,7 @@ import (
 	account_handler "fijoy/internal/domain/account/handler"
 	account_repository "fijoy/internal/domain/account/repository"
 	account_usecase "fijoy/internal/domain/account/usecase"
+	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/go-playground/validator/v10"
@@ -50,7 +50,7 @@ func main() {
 		panic(err)
 	}
 
-	analyticsService := service.NewAnalyticsService(cfg.Analytics)
+	analyticsService := analytics_usecase.New(cfg.Analytics)
 
 	userRepo := user_repository.NewUserRepository(db)
 	userKeyRepo := user_repository.NewUserKeyRepository(db)

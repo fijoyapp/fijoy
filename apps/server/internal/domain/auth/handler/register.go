@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fijoy/config"
+	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
-	"fijoy/internal/service"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -13,13 +13,13 @@ func RegisterHTTPEndpoints(
 	authConfig *config.AuthConfig,
 	authUseCase auth_usecase.AuthUseCase,
 	serverConfig *config.ServerConfig,
-	analyticsService service.AnalyticsService,
+	analyticsUseCase analytics_usecase.AnalyticsUseCase,
 ) {
 	handler := NewAuthHandler(
 		authConfig,
 		authUseCase,
 		serverConfig,
-		analyticsService,
+		analyticsUseCase,
 	)
 
 	r.Route("/v1/auth", func(r chi.Router) {
