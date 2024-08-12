@@ -1,4 +1,4 @@
-# Fijoy
+# Fijoy - Joyful Net Worth Tracking
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
@@ -6,7 +6,8 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Joyful personal finance management for everyone.
+Personal finance made simple.
+Track your net worth, manage your assets, and grow your wealth.
 
 **Looking for collaborators!** [https://discord.gg/HwZarY9Aas](https://discord.gg/HwZarY9Aas)
 
