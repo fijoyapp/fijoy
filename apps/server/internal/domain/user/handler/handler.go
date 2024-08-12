@@ -4,7 +4,7 @@ import (
 	"context"
 	"fijoy/internal/domain/user/usecase"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
-	"fijoy/internal/util"
+	"fijoy/internal/util/auth"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
@@ -28,7 +28,7 @@ func (h *userHandler) GetUser(
 		return nil, err
 	}
 
-	userId, err := util.GetUserIdFromContext(ctx)
+	userId, err := auth.GetUserIdFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
