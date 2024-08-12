@@ -75,7 +75,6 @@ const localeFormSchema = z.object({ locale: z.string() });
 
 function Page() {
   const { queryClient, profile } = Route.useRouteContext();
-  console.log(profile);
 
   const [currencyPopoverOpen, setCurrencyPopoverOpen] = useState(false);
 
@@ -105,7 +104,6 @@ function Page() {
   });
 
   function onUpdateCurrencySubmit(values: TypeOf<typeof currencyFormSchema>) {
-    console.log(values);
     return updateCurrencyMutation.mutateAsync(values);
   }
 
