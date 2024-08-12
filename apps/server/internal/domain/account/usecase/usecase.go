@@ -1,1 +1,105 @@
 package usecase
+
+import (
+	"context"
+	"database/sql"
+	"fijoy/internal/domain/account"
+	"fijoy/internal/domain/account/repository"
+	"fijoy/internal/gen/postgres/model"
+	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/shopspring/decimal"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+type AccountUseCase interface {
+	GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error)
+	GetAccounts(ctx context.Context, profileId string) (*fijoyv1.Accounts, error)
+
+	// CreateProfile(ctx context.Context, userId string, req *fijoyv1.CreateProfileRequest) (*fijoyv1.Profile, error)
+	// DeleteProfile(ctx context.Context, id string) (*fijoyv1.Profile, error)
+	// UpdateCurrency(ctx context.Context, id string, req *fijoyv1.UpdateCurrencyRequest) (*fijoyv1.Profile, error)
+	// UpdateLocale(ctx context.Context, id string, req *fijoyv1.UpdateLocaleRequest) (*fijoyv1.Profile, error)
+}
+
+type accountUseCase struct {
+	validator *validator.Validate
+
+	db   *sql.DB
+	repo repository.AccountRepository
+}
+
+func New(validator *validator.Validate, db *sql.DB, repo repository.AccountRepository) AccountUseCase {
+	return &accountUseCase{validator: validator, db: db, repo: repo}
+}
+
+func accountModelToProto(account *account.FijoyAccount) *fijoyv1.Account {
+	return &fijoyv1.Account{
+		Id:          account.ID,
+		ProfileId:   account.ProfileID,
+		Name:        account.Name,
+		AccountType: accountTypeModelToProto(account.AccountType),
+		Active:      account.Active,
+
+		CreatedAt: timestamppb.New(account.CreatedAt),
+		UpdatedAt: timestamppb.New(account.UpdatedAt),
+		Symbol:    *account.Symbol,
+		Amount:    decimalModelToProto(account.Amount),
+		Currency:  account.Currency,
+		Value:     decimalModelToProto(account.Value),
+		FxRate:    decimalModelToProto(account.FxRate),
+	}
+}
+
+func accountsModelToProto(accounts []*account.FijoyAccount) *fijoyv1.Accounts {
+	protoAccounts := make([]*fijoyv1.Account, len(accounts))
+	for i, account := range accounts {
+		protoAccounts[i] = accountModelToProto(account)
+	}
+	return &fijoyv1.Accounts{
+		Accounts: protoAccounts,
+	}
+}
+
+func decimalModelToProto(d decimal.Decimal) *fijoyv1.Decimal {
+	return &fijoyv1.Decimal{
+		Units: d.IntPart(),
+		Nanos: int32(d.Coefficient().Int64() - (d.IntPart() * 1e8)),
+	}
+}
+
+func accountTypeModelToProto(accountType model.FijoyAccountType) fijoyv1.AccountType {
+	switch accountType {
+	case model.FijoyAccountType_Liquidity:
+		return fijoyv1.AccountType_ACCOUNT_TYPE_LIQUIDITY
+	case model.FijoyAccountType_Investment:
+		return fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT
+	case model.FijoyAccountType_Property:
+		return fijoyv1.AccountType_ACCOUNT_TYPE_PROPERTY
+	case model.FijoyAccountType_Receivable:
+		return fijoyv1.AccountType_ACCOUNT_TYPE_RECEIVABLE
+	case model.FijoyAccountType_Liability:
+		return fijoyv1.AccountType_ACCOUNT_TYPE_LIABILITY
+	default:
+		return fijoyv1.AccountType_ACCOUNT_TYPE_UNSPECIFIED
+	}
+}
+
+func (u *accountUseCase) GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error) {
+	account, err := u.repo.GetAccountById(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return accountModelToProto(account), nil
+}
+
+func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fijoyv1.Accounts, error) {
+	accounts, err := u.repo.GetAccounts(ctx, profileId)
+	if err != nil {
+		return nil, err
+	}
+
+	return accountsModelToProto(accounts), nil
+}

@@ -5,7 +5,7 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
-import { Money } from "./money_pb.js";
+import { Decimal } from "./decimal_pb.js";
 
 /**
  * @generated from enum fijoy.v1.AccountType
@@ -100,9 +100,9 @@ export class Account extends Message<Account> {
   symbol = "";
 
   /**
-   * @generated from field: fijoy.v1.Money amount = 9;
+   * @generated from field: fijoy.v1.Decimal amount = 9;
    */
-  amount?: Money;
+  amount?: Decimal;
 
   /**
    * fx related stuff
@@ -112,14 +112,14 @@ export class Account extends Message<Account> {
   currency = "";
 
   /**
-   * @generated from field: fijoy.v1.Money value = 11;
+   * @generated from field: fijoy.v1.Decimal value = 11;
    */
-  value?: Money;
+  value?: Decimal;
 
   /**
-   * @generated from field: fijoy.v1.Money fx_rate = 12;
+   * @generated from field: fijoy.v1.Decimal fx_rate = 12;
    */
-  fxRate?: Money;
+  fxRate?: Decimal;
 
   constructor(data?: PartialMessage<Account>) {
     super();
@@ -137,10 +137,10 @@ export class Account extends Message<Account> {
     { no: 6, name: "created_at", kind: "message", T: Timestamp },
     { no: 7, name: "updated_at", kind: "message", T: Timestamp },
     { no: 8, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "amount", kind: "message", T: Money },
+    { no: 9, name: "amount", kind: "message", T: Decimal },
     { no: 10, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "value", kind: "message", T: Money },
-    { no: 12, name: "fx_rate", kind: "message", T: Money },
+    { no: 11, name: "value", kind: "message", T: Decimal },
+    { no: 12, name: "fx_rate", kind: "message", T: Decimal },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -221,9 +221,9 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   symbol = "";
 
   /**
-   * @generated from field: fijoy.v1.Money amount = 4;
+   * @generated from field: fijoy.v1.Decimal amount = 4;
    */
-  amount?: Money;
+  amount?: Decimal;
 
   /**
    * fx related stuff
@@ -233,14 +233,14 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   currency = "";
 
   /**
-   * @generated from field: fijoy.v1.Money value = 6;
+   * @generated from field: fijoy.v1.Decimal value = 6;
    */
-  value?: Money;
+  value?: Decimal;
 
   /**
-   * @generated from field: fijoy.v1.Money fx_rate = 7;
+   * @generated from field: fijoy.v1.Decimal fx_rate = 7;
    */
-  fxRate?: Money;
+  fxRate?: Decimal;
 
   constructor(data?: PartialMessage<CreateAccountRequest>) {
     super();
@@ -253,10 +253,10 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
     { no: 3, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "amount", kind: "message", T: Money },
+    { no: 4, name: "amount", kind: "message", T: Decimal },
     { no: 5, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "value", kind: "message", T: Money },
-    { no: 7, name: "fx_rate", kind: "message", T: Money },
+    { no: 6, name: "value", kind: "message", T: Decimal },
+    { no: 7, name: "fx_rate", kind: "message", T: Decimal },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {

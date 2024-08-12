@@ -3,7 +3,7 @@ syntax = "proto3";
 package fijoy.v1;
 
 import "buf/validate/validate.proto";
-import "fijoy/v1/money.proto";
+import "fijoy/v1/decimal.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -27,11 +27,11 @@ message Account {
   google.protobuf.Timestamp updated_at = 7 [(buf.validate.field).required = true];
   // stock and crypto
   string symbol = 8;
-  fijoy.v1.Money amount = 9;
+  fijoy.v1.Decimal amount = 9;
   // fx related stuff
   string currency = 10 [(buf.validate.field).string.min_len = 1];
-  fijoy.v1.Money value = 11 [(buf.validate.field).required = true];
-  fijoy.v1.Money fx_rate = 12;
+  fijoy.v1.Decimal value = 11 [(buf.validate.field).required = true];
+  fijoy.v1.Decimal fx_rate = 12;
 }
 
 message Accounts {
@@ -44,11 +44,11 @@ message CreateAccountRequest {
   AccountType account_type = 2 [(buf.validate.field).required = true];
   // stock and crypto
   string symbol = 3;
-  fijoy.v1.Money amount = 4;
+  fijoy.v1.Decimal amount = 4;
   // fx related stuff
   string currency = 5 [(buf.validate.field).string.min_len = 1];
-  fijoy.v1.Money value = 6 [(buf.validate.field).required = true];
-  fijoy.v1.Money fx_rate = 7;
+  fijoy.v1.Decimal value = 6 [(buf.validate.field).required = true];
+  fijoy.v1.Decimal fx_rate = 7;
 }
 
 message GetAccountByIdRequest {
@@ -60,7 +60,7 @@ message DeleteAccountByIdRequest {
 }
 
 service AccountService {
-  rpc CreateAccount(CreateAccountRequest) returns (Account);
+  // rpc CreateAccount(CreateAccountRequest) returns (Account);
 
   rpc GetAccounts(google.protobuf.Empty) returns (Accounts) {
     option idempotency_level = NO_SIDE_EFFECTS;
@@ -70,5 +70,5 @@ service AccountService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  rpc DeleteAccountById(DeleteAccountByIdRequest) returns (Account) {}
+  //  rpc DeleteAccountById(DeleteAccountByIdRequest) returns (Account) {}
 }

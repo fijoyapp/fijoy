@@ -15,6 +15,10 @@ import (
 	user_repository "fijoy/internal/domain/user/repository"
 	user_usecase "fijoy/internal/domain/user/usecase"
 
+	account_handler "fijoy/internal/domain/account/handler"
+	account_repository "fijoy/internal/domain/account/repository"
+	account_usecase "fijoy/internal/domain/account/usecase"
+
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
@@ -56,6 +60,9 @@ func main() {
 	profileRepo := profile_repository.NewProfileRepository(db)
 	profileUseCase := profile_usecase.New(validator, db, profileRepo)
 
+	accountRepo := account_repository.NewAccountRepository(db)
+	accountUseCase := account_usecase.New(validator, db, accountRepo)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
@@ -76,6 +83,7 @@ func main() {
 
 	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
+	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
 	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)

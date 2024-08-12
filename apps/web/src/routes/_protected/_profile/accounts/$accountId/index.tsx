@@ -1,7 +1,7 @@
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { Button } from "@/components/ui/button";
 import {
-  deleteAccountById,
+  // deleteAccountById,
   getAccounts,
 } from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
 import { getProfileHeader } from "@/lib/headers";
@@ -38,24 +38,24 @@ function Page() {
     }),
   );
 
-  const deleteAccount = useMutation(deleteAccountById, {
-    callOptions: {
-      headers: getProfileHeader(context.profile.id),
-    },
-    onSuccess: () => {
-      context.queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getAccounts),
-      });
-      toast.success("Account deleted");
-      router.navigate({ from: Route.fullPath, to: ".." });
-    },
-  });
-
+  // const deleteAccount = useMutation(deleteAccountById, {
+  //   callOptions: {
+  //     headers: getProfileHeader(context.profile.id),
+  //   },
+  //   onSuccess: () => {
+  //     context.queryClient.invalidateQueries({
+  //       queryKey: createConnectQueryKey(getAccounts),
+  //     });
+  //     toast.success("Account deleted");
+  //     router.navigate({ from: Route.fullPath, to: ".." });
+  //   },
+  // });
+  //
   return (
     <div>
-      <Button onClick={() => deleteAccount.mutate({ id: account.id })}>
-        Delete {account.name}
-      </Button>
+      {/* <Button onClick={() => deleteAccount.mutate({ id: account.id })}> */}
+      Delete {account.name}
+      {/* </Button> */}
     </div>
   );
 }
