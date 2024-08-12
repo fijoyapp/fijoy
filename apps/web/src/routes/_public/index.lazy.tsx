@@ -23,7 +23,7 @@ function Index() {
           Joyful net worth tracking <br /> for everyone.
         </PageHeaderHeading>
         <PageHeaderDescription>
-          Personal finance made simple. Track your net worth, manage your
+          Personal finance made simple. <br /> Track your net worth, manage your
           assets, and grow your wealth.
         </PageHeaderDescription>
         <PageActions>
