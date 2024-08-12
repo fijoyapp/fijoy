@@ -4,7 +4,7 @@ import (
 	"context"
 	"fijoy/internal/domain/account/usecase"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
-	"fijoy/internal/util"
+	"fijoy/internal/util/auth"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
@@ -28,7 +28,7 @@ func (h *accountHandler) GetAccountById(
 		return nil, err
 	}
 
-	profileId, err := util.ExtractProfileIdFromHeader(req.Header())
+	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (h *accountHandler) GetAccounts(
 		return nil, err
 	}
 
-	profileId, err := util.ExtractProfileIdFromHeader(req.Header())
+	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
 	}

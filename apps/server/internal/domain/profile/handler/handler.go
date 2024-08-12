@@ -4,7 +4,7 @@ import (
 	"context"
 	"fijoy/internal/domain/profile/usecase"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
-	"fijoy/internal/util"
+	"fijoy/internal/util/auth"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
@@ -28,7 +28,7 @@ func (h *profileHandler) GetProfile(
 		return nil, err
 	}
 
-	userId, err := util.GetUserIdFromContext(ctx)
+	userId, err := auth.GetUserIdFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (h *profileHandler) CreateProfile(
 		return nil, err
 	}
 
-	userId, err := util.GetUserIdFromContext(ctx)
+	userId, err := auth.GetUserIdFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (h *profileHandler) DeleteProfile(
 		return nil, err
 	}
 
-	profileId, err := util.ExtractProfileIdFromHeader(req.Header())
+	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func (h *profileHandler) UpdateCurrency(
 		return nil, err
 	}
 
-	profileId, err := util.ExtractProfileIdFromHeader(req.Header())
+	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (h *profileHandler) UpdateLocale(
 		return nil, err
 	}
 
-	profileId, err := util.ExtractProfileIdFromHeader(req.Header())
+	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
 	if err != nil {
 		return nil, err
 	}
