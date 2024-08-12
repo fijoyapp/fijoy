@@ -75,6 +75,7 @@ const localeFormSchema = z.object({ locale: z.string() });
 
 function Page() {
   const { queryClient, profile } = Route.useRouteContext();
+  console.log(profile);
 
   const [currencyPopoverOpen, setCurrencyPopoverOpen] = useState(false);
 
@@ -95,12 +96,16 @@ function Page() {
       });
       toast.success("Currency settings updated");
     },
+    onError(error) {
+      toast.error(error.message);
+    },
     callOptions: {
       headers: getProfileHeader(profile.id),
     },
   });
 
   function onUpdateCurrencySubmit(values: TypeOf<typeof currencyFormSchema>) {
+    console.log(values);
     return updateCurrencyMutation.mutateAsync(values);
   }
 
@@ -115,6 +120,9 @@ function Page() {
         queryKey: createConnectQueryKey(getProfile, {}),
       });
       toast.success("Locale updated");
+    },
+    onError(error) {
+      toast.error(error.message);
     },
     callOptions: {
       headers: getProfileHeader(profile.id),

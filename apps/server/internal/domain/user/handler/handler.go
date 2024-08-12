@@ -7,27 +7,33 @@ import (
 	"fijoy/internal/util"
 
 	"connectrpc.com/connect"
+	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type userHandler struct {
-	useCase usecase.UserUseCase
+	useCase        usecase.UserUseCase
+	protoValidator *protovalidate.Validator
 }
 
-func NewUserHandler(useCase usecase.UserUseCase) *userHandler {
-	return &userHandler{useCase: useCase}
+func NewUserHandler(protoValidator *protovalidate.Validator, useCase usecase.UserUseCase) *userHandler {
+	return &userHandler{useCase: useCase, protoValidator: protoValidator}
 }
 
-func (s *userHandler) GetUser(
+func (h *userHandler) GetUser(
 	ctx context.Context,
 	req *connect.Request[emptypb.Empty],
 ) (*connect.Response[fijoyv1.User], error) {
+	if err := h.protoValidator.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
 	userId, err := util.GetUserIdFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := s.useCase.GetUser(ctx, userId)
+	user, err := h.useCase.GetUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
