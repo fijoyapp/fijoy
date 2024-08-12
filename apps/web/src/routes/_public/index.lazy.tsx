@@ -20,10 +20,11 @@ function Index() {
       <PageHeader>
         <Announcement />
         <PageHeaderHeading className="">
-          Joyful personal finance management for everyone.
+          Joyful net worth tracking <br /> for everyone.
         </PageHeaderHeading>
         <PageHeaderDescription>
-          Free forever, open source, and easy to use.
+          Personal finance made simple. Track your net worth, manage your
+          assets, and grow your wealth.
         </PageHeaderDescription>
         <PageActions>
           <div className="flex gap-2">
