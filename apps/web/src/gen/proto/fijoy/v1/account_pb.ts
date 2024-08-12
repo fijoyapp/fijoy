@@ -17,32 +17,38 @@ export enum AccountType {
   UNSPECIFIED = 0,
 
   /**
-   * @generated from enum value: ACCOUNT_TYPE_CASH = 1;
+   * @generated from enum value: ACCOUNT_TYPE_LIQUIDITY = 1;
    */
-  CASH = 1,
+  LIQUIDITY = 1,
 
   /**
-   * @generated from enum value: ACCOUNT_TYPE_DEBT = 2;
+   * @generated from enum value: ACCOUNT_TYPE_INVESTMENT = 2;
    */
-  DEBT = 2,
+  INVESTMENT = 2,
 
   /**
-   * @generated from enum value: ACCOUNT_TYPE_INVESTMENT = 3;
+   * @generated from enum value: ACCOUNT_TYPE_PROPERTY = 3;
    */
-  INVESTMENT = 3,
+  PROPERTY = 3,
 
   /**
-   * @generated from enum value: ACCOUNT_TYPE_OTHER_ASSET = 4;
+   * @generated from enum value: ACCOUNT_TYPE_RECEIVABLE = 4;
    */
-  OTHER_ASSET = 4,
+  RECEIVABLE = 4,
+
+  /**
+   * @generated from enum value: ACCOUNT_TYPE_LIABILITY = 5;
+   */
+  LIABILITY = 5,
 }
 // Retrieve enum metadata with: proto3.getEnumType(AccountType)
 proto3.util.setEnumType(AccountType, "fijoy.v1.AccountType", [
   { no: 0, name: "ACCOUNT_TYPE_UNSPECIFIED" },
-  { no: 1, name: "ACCOUNT_TYPE_CASH" },
-  { no: 2, name: "ACCOUNT_TYPE_DEBT" },
-  { no: 3, name: "ACCOUNT_TYPE_INVESTMENT" },
-  { no: 4, name: "ACCOUNT_TYPE_OTHER_ASSET" },
+  { no: 1, name: "ACCOUNT_TYPE_LIQUIDITY" },
+  { no: 2, name: "ACCOUNT_TYPE_INVESTMENT" },
+  { no: 3, name: "ACCOUNT_TYPE_PROPERTY" },
+  { no: 4, name: "ACCOUNT_TYPE_RECEIVABLE" },
+  { no: 5, name: "ACCOUNT_TYPE_LIABILITY" },
 ]);
 
 /**
@@ -50,14 +56,16 @@ proto3.util.setEnumType(AccountType, "fijoy.v1.AccountType", [
  */
 export class Account extends Message<Account> {
   /**
+   * the standard stuff
+   *
    * @generated from field: string id = 1;
    */
   id = "";
 
   /**
-   * @generated from field: string workspace_id = 2;
+   * @generated from field: string profile_id = 2;
    */
-  workspaceId = "";
+  profileId = "";
 
   /**
    * @generated from field: string name = 3;
@@ -70,29 +78,48 @@ export class Account extends Message<Account> {
   accountType = AccountType.UNSPECIFIED;
 
   /**
-   * @generated from field: fijoy.v1.Money balance = 5;
-   */
-  balance?: Money;
-
-  /**
-   * @generated from field: string institution = 6;
-   */
-  institution = "";
-
-  /**
-   * @generated from field: bool active = 7;
+   * @generated from field: bool active = 5;
    */
   active = false;
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 8;
+   * @generated from field: google.protobuf.Timestamp created_at = 6;
    */
   createdAt?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 9;
+   * @generated from field: google.protobuf.Timestamp updated_at = 7;
    */
   updatedAt?: Timestamp;
+
+  /**
+   * stock and crypto
+   *
+   * @generated from field: string symbol = 8;
+   */
+  symbol = "";
+
+  /**
+   * @generated from field: fijoy.v1.Money amount = 9;
+   */
+  amount?: Money;
+
+  /**
+   * fx related stuff
+   *
+   * @generated from field: string currency = 10;
+   */
+  currency = "";
+
+  /**
+   * @generated from field: fijoy.v1.Money value = 11;
+   */
+  value?: Money;
+
+  /**
+   * @generated from field: fijoy.v1.Money fx_rate = 12;
+   */
+  fxRate?: Money;
 
   constructor(data?: PartialMessage<Account>) {
     super();
@@ -103,14 +130,17 @@ export class Account extends Message<Account> {
   static readonly typeName = "fijoy.v1.Account";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "workspace_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "profile_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 5, name: "balance", kind: "message", T: Money },
-    { no: 6, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "active", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 8, name: "created_at", kind: "message", T: Timestamp },
-    { no: 9, name: "updated_at", kind: "message", T: Timestamp },
+    { no: 5, name: "active", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "created_at", kind: "message", T: Timestamp },
+    { no: 7, name: "updated_at", kind: "message", T: Timestamp },
+    { no: 8, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "amount", kind: "message", T: Money },
+    { no: 10, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "value", kind: "message", T: Money },
+    { no: 12, name: "fx_rate", kind: "message", T: Money },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -172,6 +202,8 @@ export class Accounts extends Message<Accounts> {
  */
 export class CreateAccountRequest extends Message<CreateAccountRequest> {
   /**
+   * the standard stuff
+   *
    * @generated from field: string name = 1;
    */
   name = "";
@@ -182,14 +214,33 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   accountType = AccountType.UNSPECIFIED;
 
   /**
-   * @generated from field: fijoy.v1.Money balance = 3;
+   * stock and crypto
+   *
+   * @generated from field: string symbol = 3;
    */
-  balance?: Money;
+  symbol = "";
 
   /**
-   * @generated from field: string institution = 4;
+   * @generated from field: fijoy.v1.Money amount = 4;
    */
-  institution = "";
+  amount?: Money;
+
+  /**
+   * fx related stuff
+   *
+   * @generated from field: string currency = 5;
+   */
+  currency = "";
+
+  /**
+   * @generated from field: fijoy.v1.Money value = 6;
+   */
+  value?: Money;
+
+  /**
+   * @generated from field: fijoy.v1.Money fx_rate = 7;
+   */
+  fxRate?: Money;
 
   constructor(data?: PartialMessage<CreateAccountRequest>) {
     super();
@@ -201,8 +252,11 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 3, name: "balance", kind: "message", T: Money },
-    { no: 4, name: "institution", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "amount", kind: "message", T: Money },
+    { no: 5, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "value", kind: "message", T: Money },
+    { no: 7, name: "fx_rate", kind: "message", T: Money },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {
