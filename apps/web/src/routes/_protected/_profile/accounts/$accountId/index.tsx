@@ -1,15 +1,10 @@
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { Button } from "@/components/ui/button";
-import {
-  // deleteAccountById,
-  getAccounts,
-} from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
-import { getProfileHeader } from "@/lib/headers";
+// import { getProfileHeader } from "@/lib/headers";
 import { getAccountByIdQueryOptions } from "@/lib/queries/account";
-import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+// import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { createFileRoute } from "@tanstack/react-router";
+// import { toast } from "sonner";
 
 export const Route = createFileRoute(
   "/_protected/_profile/accounts/$accountId/",
@@ -29,7 +24,7 @@ export const Route = createFileRoute(
 function Page() {
   const { accountId } = Route.useParams();
   const context = Route.useRouteContext();
-  const router = useRouter();
+  // const router = useRouter();
 
   const { data: account } = useSuspenseQuery(
     getAccountByIdQueryOptions({
