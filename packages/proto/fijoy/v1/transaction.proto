@@ -3,7 +3,6 @@ syntax = "proto3";
 package fijoy.v1;
 
 import "buf/validate/validate.proto";
-import "fijoy/v1/decimal.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -22,7 +21,7 @@ message Transaction {
   string workspace_id = 4 [(buf.validate.field).string.min_len = 1];
 
   TransactionType transaction_type = 5 [(buf.validate.field).required = true];
-  fijoy.v1.Decimal amount = 6 [(buf.validate.field).required = true];
+  string amount = 6 [(buf.validate.field).required = true];
 
   google.protobuf.Timestamp datetime = 7 [(buf.validate.field).required = true];
 
@@ -38,7 +37,7 @@ message Transactions {
 message CreateIncomeTransactionRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
 
-  fijoy.v1.Decimal amount = 2 [(buf.validate.field).required = true];
+  string amount = 2 [(buf.validate.field).required = true];
 
   google.protobuf.Timestamp datetime = 3 [(buf.validate.field).required = true];
 
@@ -50,7 +49,7 @@ message CreateIncomeTransactionRequest {
 message CreateExpenseTransactionRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
 
-  fijoy.v1.Decimal amount = 2 [(buf.validate.field).required = true];
+  string amount = 2 [(buf.validate.field).required = true];
 
   google.protobuf.Timestamp datetime = 3 [(buf.validate.field).required = true];
 
@@ -63,8 +62,8 @@ message CreateTransferTransactionRequest {
   string from_account_id = 1 [(buf.validate.field).string.min_len = 1];
   string to_account_id = 2 [(buf.validate.field).string.min_len = 1];
 
-  fijoy.v1.Decimal from_amount = 3 [(buf.validate.field).required = true];
-  fijoy.v1.Decimal to_amount = 4 [(buf.validate.field).required = true];
+  string from_amount = 3 [(buf.validate.field).required = true];
+  string to_amount = 4 [(buf.validate.field).required = true];
 
   google.protobuf.Timestamp datetime = 5 [(buf.validate.field).required = true];
 
@@ -76,7 +75,7 @@ message CreateTransferTransactionRequest {
 message CreateAdjustmentTransactionRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
 
-  fijoy.v1.Decimal amount = 2 [(buf.validate.field).required = true];
+  string amount = 2 [(buf.validate.field).required = true];
 
   google.protobuf.Timestamp datetime = 3 [(buf.validate.field).required = true];
 

@@ -5,7 +5,6 @@
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
 import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
-import { Decimal } from "./decimal_pb.js";
 
 /**
  * @generated from enum fijoy.v1.TransactionType
@@ -75,9 +74,9 @@ export class Transaction extends Message<Transaction> {
   transactionType = TransactionType.UNSPECIFIED;
 
   /**
-   * @generated from field: fijoy.v1.Decimal amount = 6;
+   * @generated from field: string amount = 6;
    */
-  amount?: Decimal;
+  amount = "";
 
   /**
    * @generated from field: google.protobuf.Timestamp datetime = 7;
@@ -112,7 +111,7 @@ export class Transaction extends Message<Transaction> {
     { no: 3, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "workspace_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "transaction_type", kind: "enum", T: proto3.getEnumType(TransactionType) },
-    { no: 6, name: "amount", kind: "message", T: Decimal },
+    { no: 6, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "datetime", kind: "message", T: Timestamp },
     { no: 8, name: "category_id", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 9, name: "entity", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
@@ -183,9 +182,9 @@ export class CreateIncomeTransactionRequest extends Message<CreateIncomeTransact
   accountId = "";
 
   /**
-   * @generated from field: fijoy.v1.Decimal amount = 2;
+   * @generated from field: string amount = 2;
    */
-  amount?: Decimal;
+  amount = "";
 
   /**
    * @generated from field: google.protobuf.Timestamp datetime = 3;
@@ -216,7 +215,7 @@ export class CreateIncomeTransactionRequest extends Message<CreateIncomeTransact
   static readonly typeName = "fijoy.v1.CreateIncomeTransactionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "amount", kind: "message", T: Decimal },
+    { no: 2, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "datetime", kind: "message", T: Timestamp },
     { no: 4, name: "category_id", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 5, name: "entity", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
@@ -250,9 +249,9 @@ export class CreateExpenseTransactionRequest extends Message<CreateExpenseTransa
   accountId = "";
 
   /**
-   * @generated from field: fijoy.v1.Decimal amount = 2;
+   * @generated from field: string amount = 2;
    */
-  amount?: Decimal;
+  amount = "";
 
   /**
    * @generated from field: google.protobuf.Timestamp datetime = 3;
@@ -283,7 +282,7 @@ export class CreateExpenseTransactionRequest extends Message<CreateExpenseTransa
   static readonly typeName = "fijoy.v1.CreateExpenseTransactionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "amount", kind: "message", T: Decimal },
+    { no: 2, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "datetime", kind: "message", T: Timestamp },
     { no: 4, name: "category_id", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 5, name: "entity", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
@@ -322,14 +321,14 @@ export class CreateTransferTransactionRequest extends Message<CreateTransferTran
   toAccountId = "";
 
   /**
-   * @generated from field: fijoy.v1.Decimal from_amount = 3;
+   * @generated from field: string from_amount = 3;
    */
-  fromAmount?: Decimal;
+  fromAmount = "";
 
   /**
-   * @generated from field: fijoy.v1.Decimal to_amount = 4;
+   * @generated from field: string to_amount = 4;
    */
-  toAmount?: Decimal;
+  toAmount = "";
 
   /**
    * @generated from field: google.protobuf.Timestamp datetime = 5;
@@ -361,8 +360,8 @@ export class CreateTransferTransactionRequest extends Message<CreateTransferTran
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "from_account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "to_account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "from_amount", kind: "message", T: Decimal },
-    { no: 4, name: "to_amount", kind: "message", T: Decimal },
+    { no: 3, name: "from_amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "to_amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "datetime", kind: "message", T: Timestamp },
     { no: 6, name: "category_id", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 7, name: "entity", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
@@ -396,9 +395,9 @@ export class CreateAdjustmentTransactionRequest extends Message<CreateAdjustment
   accountId = "";
 
   /**
-   * @generated from field: fijoy.v1.Decimal amount = 2;
+   * @generated from field: string amount = 2;
    */
-  amount?: Decimal;
+  amount = "";
 
   /**
    * @generated from field: google.protobuf.Timestamp datetime = 3;
@@ -429,7 +428,7 @@ export class CreateAdjustmentTransactionRequest extends Message<CreateAdjustment
   static readonly typeName = "fijoy.v1.CreateAdjustmentTransactionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "amount", kind: "message", T: Decimal },
+    { no: 2, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "datetime", kind: "message", T: Timestamp },
     { no: 4, name: "category_id", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 5, name: "entity", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },

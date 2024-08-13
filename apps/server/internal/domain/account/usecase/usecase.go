@@ -9,7 +9,6 @@ import (
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -45,10 +44,10 @@ func accountModelToProto(account *account.FijoyAccount) *fijoyv1.Account {
 		CreatedAt: timestamppb.New(account.CreatedAt),
 		UpdatedAt: timestamppb.New(account.UpdatedAt),
 		Symbol:    *account.Symbol,
-		Amount:    decimalModelToProto(account.Amount),
+		Amount:    account.Amount.String(),
 		Currency:  account.Currency,
-		Value:     decimalModelToProto(account.Value),
-		FxRate:    decimalModelToProto(account.FxRate),
+		Value:     account.Value.String(),
+		FxRate:    account.FxRate.String(),
 	}
 }
 
@@ -59,13 +58,6 @@ func accountsModelToProto(accounts []*account.FijoyAccount) *fijoyv1.Accounts {
 	}
 	return &fijoyv1.Accounts{
 		Accounts: protoAccounts,
-	}
-}
-
-func decimalModelToProto(d decimal.Decimal) *fijoyv1.Decimal {
-	return &fijoyv1.Decimal{
-		Units: d.IntPart(),
-		Nanos: int32(d.Coefficient().Int64() - (d.IntPart() * 1e8)),
 	}
 }
 
