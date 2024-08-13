@@ -79,7 +79,7 @@ type AccountsViewProps = {
 
 function AccountsView({ accounts }: AccountsViewProps) {
   return (
-    <div>
+    <div className="max-w-screen-2xl">
       <PageHeader>
         <PageHeaderHeading>Accounts</PageHeaderHeading>
         <PageHeaderDescription>
@@ -149,7 +149,7 @@ type AddAccountProps = {
 function AddAccount({ type }: AddAccountProps) {
   const accountTypeDetail = getAccountTypeDetail(type);
   return (
-    <div>
+    <div className="max-w-screen-sm">
       <Breadcrumb>
         <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
           <BreadcrumbItem>
