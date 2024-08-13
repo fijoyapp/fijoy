@@ -1,32 +1,34 @@
 import { AccountType } from "@/gen/proto/fijoy/v1/account_pb";
-import { TransactionType } from "@/gen/proto/fijoy/v1/transaction_pb";
-import { AccountTypeEnum } from "@/types/account";
-import { TransactionTypeEnum } from "@/types/transaction";
+import { AccountTypeDetail } from "@/types/account";
+import { match } from "ts-pattern";
 
-export function tsAccountTypeToProto(
-  accountType: AccountTypeEnum,
-): AccountType {
-  switch (accountType) {
-    case "cash":
-      return AccountType.CASH;
-    case "debt":
-      return AccountType.DEBT;
-    case "investment":
-      return AccountType.INVESTMENT;
-    case "other_asset":
-      return AccountType.OTHER_ASSET;
-  }
-}
-
-export function tsTransactionTypeToProto(
-  transactionType: TransactionTypeEnum,
-): TransactionType {
-  switch (transactionType) {
-    case "expense":
-      return TransactionType.EXPENSE;
-    case "income":
-      return TransactionType.INCOME;
-    case "transfer":
-      return TransactionType.TRANSFER;
-  }
+export function getAccountTypeDetail(
+  accountType: AccountType,
+): AccountTypeDetail {
+  return match(accountType)
+    .with(AccountType.UNSPECIFIED as 0, () => ({
+      name: "Unspecified",
+      description: "Unspecified",
+    }))
+    .with(AccountType.LIQUIDITY as 1, () => ({
+      name: "Liquidity",
+      description: "Liquid assets that can be quickly converted to cash",
+    }))
+    .with(AccountType.INVESTMENT as 2, () => ({
+      name: "Investment",
+      description: "Investment assets such as stocks, cryptocurrencies, etc.",
+    }))
+    .with(AccountType.PROPERTY as 3, () => ({
+      name: "Property",
+      description: "Property assets such as real estate, vehicles, etc.",
+    }))
+    .with(AccountType.RECEIVABLE as 4, () => ({
+      name: "Receivable",
+      description: "Assets that other people owe to you",
+    }))
+    .with(AccountType.LIABILITY as 5, () => ({
+      name: "Liability",
+      description: "Debts such as loans, mortgages, etc.",
+    }))
+    .exhaustive();
 }

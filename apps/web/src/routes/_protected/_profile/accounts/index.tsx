@@ -1,29 +1,6 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-
-import * as React from "react";
-
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
-import { NewAccountStep } from "@/types/account";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
-import { AccountTable } from "@/components/accounts/account-table";
-import { columns } from "@/components/accounts/columns";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
@@ -32,16 +9,36 @@ import {
   PageHeaderHeading,
 } from "@/components/small-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { match } from "ts-pattern";
-import NameTypeInstitutionStep from "@/components/accounts/form-step/name-type-institution-step";
-import CurrencyBalanceStep from "@/components/accounts/form-step/currency-balance-step";
-// import FinalStep from "@/components/accounts/form-step/final-step";
-import { AccountStats } from "@/components/accounts/account-stats";
-import { useMediaSizes } from "@/hooks/use-media-sizes";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { AccountType, Accounts } from "@/gen/proto/fijoy/v1/account_pb";
+import { getAccountTypeDetail } from "@/lib/convert";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
+  ChartCandlestick,
+  CreditCard,
+  HandCoins,
+  House,
+  PiggyBank,
+} from "lucide-react";
 
 const setupNewAccountSchema = z.object({
-  step: NewAccountStep.default("name-type-institution").optional(),
-  "add-account": z.boolean().default(false).optional(),
+  add: AccountTypeEnum.optional(),
 });
 
 export const Route = createFileRoute("/_protected/_profile/accounts/")({
@@ -62,12 +59,21 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
 
 function Page() {
   const context = Route.useRouteContext();
-  const accountsQuery = useSuspenseQuery(getAccountsQueryOptions({ context }));
-  const accounts = accountsQuery.data.accounts;
-  const { step, "add-account": addAccountOpen } = Route.useSearch();
+  const { data } = useSuspenseQuery(getAccountsQueryOptions({ context }));
+  const { add } = Route.useSearch();
 
   return (
-    <>
+    <>{add ? <AddAccount type={add} /> : <AccountsView accounts={data} />}</>
+  );
+}
+
+type AccountsViewProps = {
+  accounts: Accounts;
+};
+
+function AccountsView({ accounts }: AccountsViewProps) {
+  return (
+    <div>
       <PageHeader>
         <PageHeaderHeading>Accounts</PageHeaderHeading>
         <PageHeaderDescription>
@@ -75,85 +81,81 @@ function Page() {
         </PageHeaderDescription>
       </PageHeader>
 
-      {/* <AccountStats accounts={accounts} /> */}
+      <div className="py-2"></div>
 
-      {/* FIXME: table is too wide on mobile */}
-      {/* <AccountTable columns={columns} data={accounts}> */}
-      {/* <AddAccount */}
-      {/*   open={addAccountOpen ?? false} */}
-      {/*   step={step ?? "name-type-institution"} */}
-      {/* /> */}
-      {/* </AccountTable> */}
-    </>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button>New Account</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Select a type</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <Link to={"/accounts"} search={{ add: AccountType.LIQUIDITY }}>
+            <DropdownMenuItem>
+              <PiggyBank className="mr-2 h-4 w-4" />
+              <span>Liquitity</span>
+            </DropdownMenuItem>
+          </Link>
+          <Link to={"/accounts"} search={{ add: AccountType.INVESTMENT }}>
+            <DropdownMenuItem>
+              <ChartCandlestick className="mr-2 h-4 w-4" />
+              <span>Investment</span>
+            </DropdownMenuItem>
+          </Link>
+          <Link to={"/accounts"} search={{ add: AccountType.PROPERTY }}>
+            <DropdownMenuItem>
+              <House className="mr-2 h-4 w-4" />
+              <span>Property</span>
+            </DropdownMenuItem>
+          </Link>
+          <Link to={"/accounts"} search={{ add: AccountType.RECEIVABLE }}>
+            <DropdownMenuItem>
+              <HandCoins className="mr-2 h-4 w-4" />
+              <span>Receivable</span>
+            </DropdownMenuItem>
+          </Link>
+          <Link to={"/accounts"} search={{ add: AccountType.LIABILITY }}>
+            <DropdownMenuItem>
+              <CreditCard className="mr-2 h-4 w-4" />
+              <span>Liability</span>
+            </DropdownMenuItem>
+          </Link>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <div className="py-2"></div>
+    </div>
   );
 }
 
-function AddAccount({ open, step }: { open: boolean; step: NewAccountStep }) {
-  const { sm } = useMediaSizes();
-  const router = useRouter();
+type AddAccountProps = {
+  type: AccountTypeEnum;
+};
 
-  function onOpenChange(open: boolean) {
-    router.navigate({
-      from: Route.fullPath,
-      to: "/accounts",
-      search: { "add-account": open, step },
-    });
-  }
-
-  if (sm) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogTrigger asChild>
-          <Button variant="default">New Account</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>New Account</DialogTitle>
-            <DialogDescription>
-              Start tracking your account in Fijoy :)
-            </DialogDescription>
-          </DialogHeader>
-          <AccountForm step={step} />
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
+function AddAccount({ type }: AddAccountProps) {
+  const accountTypeDetail = getAccountTypeDetail(type);
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetTrigger asChild>
-        <Button variant="default" className="">
-          New
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="top">
-        <SheetHeader className="text-left">
-          <SheetTitle>New Account</SheetTitle>
-          <SheetDescription>
-            Start tracking your account in Fijoy :)
-          </SheetDescription>
-        </SheetHeader>
-        <AccountForm step={step} />
-      </SheetContent>
-    </Sheet>
-  );
-}
+    <div>
+      <Breadcrumb>
+        <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to={"/accounts"}>Accounts</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage className="font-semibold text-foreground">
+              Add {accountTypeDetail.name}
+            </BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <p className="text-sm text-muted-foreground">
+        {accountTypeDetail.description}
+      </p>
 
-function AccountForm({
-  className,
-  step,
-}: React.ComponentProps<"form"> & { step: NewAccountStep }) {
-  return (
-    <>
-      {match(step)
-        .with("name-type-institution", () => (
-          <NameTypeInstitutionStep className={className} />
-        ))
-        .with("currency-balance", () => (
-          <CurrencyBalanceStep className={className} />
-        ))
-        .with("final", () => <FinalStep className={className} />)
-        .exhaustive()}
-    </>
+      <div className="py-2"></div>
+    </div>
   );
 }
