@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { AccountType, Accounts } from "@/gen/proto/fijoy/v1/account_pb";
-import { getAccountTypeDetail } from "@/lib/convert";
+import { getAccountTypeDetail } from "@/config/account";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -36,6 +36,12 @@ import {
   House,
   PiggyBank,
 } from "lucide-react";
+import { match } from "ts-pattern";
+import NewLiquidity from "@/components/accounts/liquidity/new-account";
+import NewInvestment from "@/components/accounts/investment/new-account";
+import NewProperty from "@/components/accounts/property/new-account";
+import NewReceivable from "@/components/accounts/receivable/new-account";
+import NewLiability from "@/components/accounts/liability/new-account";
 
 const setupNewAccountSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -124,6 +130,14 @@ function AccountsView({ accounts }: AccountsViewProps) {
       </DropdownMenu>
 
       <div className="py-2"></div>
+
+      {accounts.accounts.map((account, idx) => {
+        return (
+          <div key={idx}>
+            <div>{account.name}</div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -156,6 +170,15 @@ function AddAccount({ type }: AddAccountProps) {
       </p>
 
       <div className="py-2"></div>
+
+      {match(type)
+        .with(AccountType.UNSPECIFIED as 0, () => <Navigate to={"/accounts"} />)
+        .with(AccountType.LIQUIDITY as 1, () => <NewLiquidity />)
+        .with(AccountType.INVESTMENT as 2, () => <NewInvestment />)
+        .with(AccountType.PROPERTY as 3, () => <NewProperty />)
+        .with(AccountType.RECEIVABLE as 4, () => <NewReceivable />)
+        .with(AccountType.LIABILITY as 5, () => <NewLiability />)
+        .exhaustive()}
     </div>
   );
 }
