@@ -59,7 +59,7 @@ message DeleteAccountByIdRequest {
 }
 
 service AccountService {
-  // rpc CreateAccount(CreateAccountRequest) returns (Account);
+  rpc CreateAccount(CreateAccountRequest) returns (Account);
 
   rpc GetAccounts(google.protobuf.Empty) returns (Accounts) {
     option idempotency_level = NO_SIDE_EFFECTS;

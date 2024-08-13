@@ -3,17 +3,24 @@
 /* eslint-disable */
 // @ts-nocheck
 
+import { Account, Accounts, CreateAccountRequest, GetAccountByIdRequest } from "./account_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { Account, Accounts, GetAccountByIdRequest } from "./account_pb.js";
 
 /**
- * rpc CreateAccount(CreateAccountRequest) returns (Account);
- *
  * @generated from service fijoy.v1.AccountService
  */
 export const AccountService = {
   typeName: "fijoy.v1.AccountService",
   methods: {
+    /**
+     * @generated from rpc fijoy.v1.AccountService.CreateAccount
+     */
+    createAccount: {
+      name: "CreateAccount",
+      I: CreateAccountRequest,
+      O: Account,
+      kind: MethodKind.Unary,
+    },
     /**
      * @generated from rpc fijoy.v1.AccountService.GetAccounts
      */

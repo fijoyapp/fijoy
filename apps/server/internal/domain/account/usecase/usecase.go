@@ -15,6 +15,7 @@ import (
 type AccountUseCase interface {
 	GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error)
 	GetAccounts(ctx context.Context, profileId string) (*fijoyv1.Accounts, error)
+	CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error)
 
 	// CreateProfile(ctx context.Context, userId string, req *fijoyv1.CreateProfileRequest) (*fijoyv1.Profile, error)
 	// DeleteProfile(ctx context.Context, id string) (*fijoyv1.Profile, error)
@@ -76,6 +77,31 @@ func accountTypeModelToProto(accountType model.FijoyAccountType) fijoyv1.Account
 	default:
 		return fijoyv1.AccountType_ACCOUNT_TYPE_UNSPECIFIED
 	}
+}
+
+func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error) {
+	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelDefault})
+	if err != nil {
+		return nil, err
+	}
+
+	// Defer a rollback in case anything fails.
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			panic(p) // re-throw panic after rollback
+		} else if err != nil {
+			tx.Rollback() // rollback on error
+		} else {
+			err = tx.Commit() // commit on success
+		}
+	}()
+
+	createdAccount, err := u.repo.CreateAccountTX(ctx, tx, profileId, req)
+	if err != nil {
+		return nil, err
+	}
+	return accountModelToProto(createdAccount), nil
 }
 
 func (u *accountUseCase) GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error) {

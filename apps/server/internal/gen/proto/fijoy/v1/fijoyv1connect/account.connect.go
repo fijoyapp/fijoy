@@ -34,6 +34,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// AccountServiceCreateAccountProcedure is the fully-qualified name of the AccountService's
+	// CreateAccount RPC.
+	AccountServiceCreateAccountProcedure = "/fijoy.v1.AccountService/CreateAccount"
 	// AccountServiceGetAccountsProcedure is the fully-qualified name of the AccountService's
 	// GetAccounts RPC.
 	AccountServiceGetAccountsProcedure = "/fijoy.v1.AccountService/GetAccounts"
@@ -45,12 +48,14 @@ const (
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
 	accountServiceServiceDescriptor              = v1.File_fijoy_v1_account_proto.Services().ByName("AccountService")
+	accountServiceCreateAccountMethodDescriptor  = accountServiceServiceDescriptor.Methods().ByName("CreateAccount")
 	accountServiceGetAccountsMethodDescriptor    = accountServiceServiceDescriptor.Methods().ByName("GetAccounts")
 	accountServiceGetAccountByIdMethodDescriptor = accountServiceServiceDescriptor.Methods().ByName("GetAccountById")
 )
 
 // AccountServiceClient is a client for the fijoy.v1.AccountService service.
 type AccountServiceClient interface {
+	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
 	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
 }
@@ -65,6 +70,12 @@ type AccountServiceClient interface {
 func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) AccountServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &accountServiceClient{
+		createAccount: connect.NewClient[v1.CreateAccountRequest, v1.Account](
+			httpClient,
+			baseURL+AccountServiceCreateAccountProcedure,
+			connect.WithSchema(accountServiceCreateAccountMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 		getAccounts: connect.NewClient[emptypb.Empty, v1.Accounts](
 			httpClient,
 			baseURL+AccountServiceGetAccountsProcedure,
@@ -84,8 +95,14 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // accountServiceClient implements AccountServiceClient.
 type accountServiceClient struct {
+	createAccount  *connect.Client[v1.CreateAccountRequest, v1.Account]
 	getAccounts    *connect.Client[emptypb.Empty, v1.Accounts]
 	getAccountById *connect.Client[v1.GetAccountByIdRequest, v1.Account]
+}
+
+// CreateAccount calls fijoy.v1.AccountService.CreateAccount.
+func (c *accountServiceClient) CreateAccount(ctx context.Context, req *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error) {
+	return c.createAccount.CallUnary(ctx, req)
 }
 
 // GetAccounts calls fijoy.v1.AccountService.GetAccounts.
@@ -100,6 +117,7 @@ func (c *accountServiceClient) GetAccountById(ctx context.Context, req *connect.
 
 // AccountServiceHandler is an implementation of the fijoy.v1.AccountService service.
 type AccountServiceHandler interface {
+	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
 	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
 }
@@ -110,6 +128,12 @@ type AccountServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	accountServiceCreateAccountHandler := connect.NewUnaryHandler(
+		AccountServiceCreateAccountProcedure,
+		svc.CreateAccount,
+		connect.WithSchema(accountServiceCreateAccountMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	accountServiceGetAccountsHandler := connect.NewUnaryHandler(
 		AccountServiceGetAccountsProcedure,
 		svc.GetAccounts,
@@ -126,6 +150,8 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 	)
 	return "/fijoy.v1.AccountService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case AccountServiceCreateAccountProcedure:
+			accountServiceCreateAccountHandler.ServeHTTP(w, r)
 		case AccountServiceGetAccountsProcedure:
 			accountServiceGetAccountsHandler.ServeHTTP(w, r)
 		case AccountServiceGetAccountByIdProcedure:
@@ -138,6 +164,10 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 
 // UnimplementedAccountServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedAccountServiceHandler struct{}
+
+func (UnimplementedAccountServiceHandler) CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.CreateAccount is not implemented"))
+}
 
 func (UnimplementedAccountServiceHandler) GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.GetAccounts is not implemented"))
