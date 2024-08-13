@@ -202,13 +202,13 @@ function Page() {
                       to={navLink.link.to}
                       onClick={() => setSheetOpen(false)}
                       className={cn(
-                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
+                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground",
                         matchRoute({
                           to: navLink.link.to,
                           fuzzy: navLink.fuzzy,
                         })
                           ? "bg-muted text-primary"
-                          : "text-muted-foreground",
+                          : "text-muted-foreground hover:text-foreground",
                       )}
                     >
                       <navLink.icon className="h-6 w-6" />
