@@ -20,6 +20,27 @@ func NewAccountHandler(protoValidator *protovalidate.Validator, useCase usecase.
 	return &accountHandler{useCase: useCase, protoValidator: protoValidator}
 }
 
+func (h *accountHandler) CreateAccount(
+	ctx context.Context,
+	req *connect.Request[fijoyv1.CreateAccountRequest],
+) (*connect.Response[fijoyv1.Account], error) {
+	if err := h.protoValidator.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
+	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := h.useCase.CreateAccount(ctx, profileId, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(account), nil
+}
+
 func (h *accountHandler) GetAccountById(
 	ctx context.Context,
 	req *connect.Request[fijoyv1.GetAccountByIdRequest],
