@@ -49,6 +49,7 @@ import {
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useState } from "react";
 import { getProfileQueryOptions } from "@/lib/queries/profile";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_protected/_profile")({
   beforeLoad: async ({ context }) => {
@@ -127,6 +128,8 @@ function Page() {
   const { queryClient } = Route.useRouteContext();
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
   return (
     <ProfileProvider>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -148,23 +151,36 @@ function Page() {
             <div className="flex-1">
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 {navLinks.map((navLink) => (
-                  <Link
-                    key={navLink.name}
-                    from={navLink.link.from}
-                    to={navLink.link.to}
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                      matchRoute({
-                        to: navLink.link.to,
-                        fuzzy: navLink.fuzzy,
-                      })
-                        ? "bg-muted text-primary"
-                        : "text-muted-foreground",
-                    )}
+                  <motion.div
+                    layout
+                    onMouseOver={() => setActiveTab(navLink.name)}
+                    onMouseLeave={() => setActiveTab(null)}
+                    className="relative"
                   >
-                    <navLink.icon className="h-4 w-4" />
-                    {navLink.name}
-                  </Link>
+                    <Link
+                      key={navLink.name}
+                      from={navLink.link.from}
+                      to={navLink.link.to}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
+                        matchRoute({
+                          to: navLink.link.to,
+                          fuzzy: navLink.fuzzy,
+                        })
+                          ? "text-primary"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      <navLink.icon className="h-4 w-4" />
+                      {navLink.name}
+                      {activeTab === navLink.name ? (
+                        <motion.div
+                          layoutId="tab-indicator"
+                          className="absolute inset-0 rounded-lg bg-primary/10"
+                        />
+                      ) : null}
+                    </Link>
+                  </motion.div>
                 ))}
               </nav>
             </div>
