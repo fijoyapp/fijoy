@@ -60,6 +60,7 @@ import {
   updateCurrency,
   updateLocale,
 } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const Route = createFileRoute("/_protected/_profile/settings/currency/")(
   {
@@ -72,6 +73,11 @@ const currencyFormSchema = z.object({
   supportedCurrencies: z.string().array(),
 });
 const localeFormSchema = z.object({ locale: z.string() });
+
+const variants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: { opacity: 1, scale: 1 },
+};
 
 function Page() {
   const { queryClient, profile } = Route.useRouteContext();
@@ -272,13 +278,33 @@ function Page() {
                 />
               </CardContent>
               <CardFooter className="space-x-4 border-t px-6 py-4">
-                {currencyForm.formState.isSubmitting ? (
-                  <Button disabled={true}>
-                    <Icons.spinner />
-                  </Button>
-                ) : (
-                  <Button>Save</Button>
-                )}
+                <AnimatePresence mode="wait" initial={false}>
+                  {localeForm.formState.isSubmitting ? (
+                    <Button disabled={true}>
+                      <motion.span
+                        key="checkmark"
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                      >
+                        <Icons.spinner />
+                      </motion.span>
+                    </Button>
+                  ) : (
+                    <Button>
+                      <motion.span
+                        key="copy"
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                      >
+                        Save
+                      </motion.span>
+                    </Button>
+                  )}
+                </AnimatePresence>
                 <FormMessage />
               </CardFooter>
             </Card>
@@ -383,13 +409,33 @@ function Page() {
                 />
               </CardContent>
               <CardFooter className="space-x-4 border-t px-6 py-4">
-                {localeForm.formState.isSubmitting ? (
-                  <Button disabled={true}>
-                    <Icons.spinner />
-                  </Button>
-                ) : (
-                  <Button>Save</Button>
-                )}
+                <AnimatePresence mode="wait" initial={false}>
+                  {localeForm.formState.isSubmitting ? (
+                    <Button disabled={true}>
+                      <motion.span
+                        key="checkmark"
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                      >
+                        <Icons.spinner />
+                      </motion.span>
+                    </Button>
+                  ) : (
+                    <Button>
+                      <motion.span
+                        key="copy"
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="hidden"
+                      >
+                        Save
+                      </motion.span>
+                    </Button>
+                  )}
+                </AnimatePresence>
                 <FormMessage />
               </CardFooter>
             </Card>
