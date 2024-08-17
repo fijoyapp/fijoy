@@ -279,8 +279,11 @@ function Page() {
               </CardContent>
               <CardFooter className="space-x-4 border-t px-6 py-4">
                 <AnimatePresence mode="wait" initial={false}>
-                  {localeForm.formState.isSubmitting ? (
-                    <Button disabled={true}>
+                  <Button
+                    disabled={currencyForm.formState.isSubmitting}
+                    className="w-16"
+                  >
+                    {currencyForm.formState.isSubmitting ? (
                       <motion.span
                         key="checkmark"
                         variants={variants}
@@ -290,9 +293,7 @@ function Page() {
                       >
                         <Icons.spinner />
                       </motion.span>
-                    </Button>
-                  ) : (
-                    <Button>
+                    ) : (
                       <motion.span
                         key="copy"
                         variants={variants}
@@ -302,8 +303,8 @@ function Page() {
                       >
                         Save
                       </motion.span>
-                    </Button>
-                  )}
+                    )}
+                  </Button>
                 </AnimatePresence>
                 <FormMessage />
               </CardFooter>
@@ -410,8 +411,11 @@ function Page() {
               </CardContent>
               <CardFooter className="space-x-4 border-t px-6 py-4">
                 <AnimatePresence mode="wait" initial={false}>
-                  {localeForm.formState.isSubmitting ? (
-                    <Button disabled={true}>
+                  <Button
+                    disabled={localeForm.formState.isSubmitting}
+                    className="w-16"
+                  >
+                    {localeForm.formState.isSubmitting ? (
                       <motion.span
                         key="checkmark"
                         variants={variants}
@@ -421,9 +425,7 @@ function Page() {
                       >
                         <Icons.spinner />
                       </motion.span>
-                    </Button>
-                  ) : (
-                    <Button>
+                    ) : (
                       <motion.span
                         key="copy"
                         variants={variants}
@@ -433,8 +435,8 @@ function Page() {
                       >
                         Save
                       </motion.span>
-                    </Button>
-                  )}
+                    )}
+                  </Button>
                 </AnimatePresence>
                 <FormMessage />
               </CardFooter>
