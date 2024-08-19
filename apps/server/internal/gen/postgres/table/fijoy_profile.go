@@ -17,12 +17,11 @@ type fijoyProfileTable struct {
 	postgres.Table
 
 	// Columns
-	ID                  postgres.ColumnString
-	UserID              postgres.ColumnString
-	PrimaryCurrency     postgres.ColumnString
-	SupportedCurrencies postgres.ColumnString
-	Locale              postgres.ColumnString
-	CreatedAt           postgres.ColumnTimestampz
+	ID         postgres.ColumnString
+	UserID     postgres.ColumnString
+	Currencies postgres.ColumnString
+	Locale     postgres.ColumnString
+	CreatedAt  postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -63,26 +62,24 @@ func newFijoyProfileTable(schemaName, tableName, alias string) *FijoyProfileTabl
 
 func newFijoyProfileTableImpl(schemaName, tableName, alias string) fijoyProfileTable {
 	var (
-		IDColumn                  = postgres.StringColumn("id")
-		UserIDColumn              = postgres.StringColumn("user_id")
-		PrimaryCurrencyColumn     = postgres.StringColumn("primary_currency")
-		SupportedCurrenciesColumn = postgres.StringColumn("supported_currencies")
-		LocaleColumn              = postgres.StringColumn("locale")
-		CreatedAtColumn           = postgres.TimestampzColumn("created_at")
-		allColumns                = postgres.ColumnList{IDColumn, UserIDColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn, CreatedAtColumn}
-		mutableColumns            = postgres.ColumnList{UserIDColumn, PrimaryCurrencyColumn, SupportedCurrenciesColumn, LocaleColumn, CreatedAtColumn}
+		IDColumn         = postgres.StringColumn("id")
+		UserIDColumn     = postgres.StringColumn("user_id")
+		CurrenciesColumn = postgres.StringColumn("currencies")
+		LocaleColumn     = postgres.StringColumn("locale")
+		CreatedAtColumn  = postgres.TimestampzColumn("created_at")
+		allColumns       = postgres.ColumnList{IDColumn, UserIDColumn, CurrenciesColumn, LocaleColumn, CreatedAtColumn}
+		mutableColumns   = postgres.ColumnList{UserIDColumn, CurrenciesColumn, LocaleColumn, CreatedAtColumn}
 	)
 
 	return fijoyProfileTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:                  IDColumn,
-		UserID:              UserIDColumn,
-		PrimaryCurrency:     PrimaryCurrencyColumn,
-		SupportedCurrencies: SupportedCurrenciesColumn,
-		Locale:              LocaleColumn,
-		CreatedAt:           CreatedAtColumn,
+		ID:         IDColumn,
+		UserID:     UserIDColumn,
+		Currencies: CurrenciesColumn,
+		Locale:     LocaleColumn,
+		CreatedAt:  CreatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

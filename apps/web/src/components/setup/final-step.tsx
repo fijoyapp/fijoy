@@ -50,8 +50,7 @@ const FinalStep = () => {
     const values = form.getValues();
     toast.promise(
       createProfileMut.mutateAsync({
-        primaryCurrency: values.primaryCurrency,
-        supportedCurrencies: values.supportedCurrencies,
+        currencies: values.currencies,
         locale: values.locale,
       }),
       {

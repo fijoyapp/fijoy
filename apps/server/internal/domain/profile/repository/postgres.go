@@ -37,12 +37,11 @@ func (r *profileRepository) CreateProfileTX(ctx context.Context, tx *sql.Tx, use
 	profileId := constants.ProfilePrefix + cuid2.Generate()
 
 	profile := model.FijoyProfile{
-		ID:                  profileId,
-		UserID:              userId,
-		PrimaryCurrency:     req.PrimaryCurrency,
-		SupportedCurrencies: strings.Join(req.SupportedCurrencies, ","),
-		Locale:              req.Locale,
-		CreatedAt:           time.Now(),
+		ID:         profileId,
+		UserID:     userId,
+		Currencies: strings.Join(req.Currencies, ","),
+		Locale:     req.Locale,
+		CreatedAt:  time.Now(),
 	}
 
 	stmt := FijoyProfile.
@@ -106,12 +105,11 @@ func (r *profileRepository) DeleteProfileTX(ctx context.Context, tx *sql.Tx, id 
 
 func (r *profileRepository) UpdateCurrencyTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateCurrencyRequest) (*model.FijoyProfile, error) {
 	profile := model.FijoyProfile{
-		PrimaryCurrency:     req.PrimaryCurrency,
-		SupportedCurrencies: strings.Join(req.SupportedCurrencies, ","),
+		Currencies: strings.Join(req.Currencies, ","),
 	}
 
 	stmt := FijoyProfile.
-		UPDATE(FijoyProfile.PrimaryCurrency, FijoyProfile.SupportedCurrencies).
+		UPDATE(FijoyProfile.Currencies).
 		MODEL(profile).WHERE(FijoyProfile.ID.EQ(String(id))).
 		RETURNING(FijoyProfile.AllColumns)
 
