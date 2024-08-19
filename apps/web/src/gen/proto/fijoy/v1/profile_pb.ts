@@ -21,22 +21,17 @@ export class Profile extends Message<Profile> {
   userId = "";
 
   /**
-   * @generated from field: string primary_currency = 3;
+   * @generated from field: repeated string currencies = 3;
    */
-  primaryCurrency = "";
+  currencies: string[] = [];
 
   /**
-   * @generated from field: repeated string supported_currencies = 4;
-   */
-  supportedCurrencies: string[] = [];
-
-  /**
-   * @generated from field: string locale = 5;
+   * @generated from field: string locale = 4;
    */
   locale = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 6;
+   * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: Timestamp;
 
@@ -50,10 +45,9 @@ export class Profile extends Message<Profile> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "primary_currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "supported_currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 5, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "created_at", kind: "message", T: Timestamp },
+    { no: 3, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 4, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "created_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Profile {
@@ -78,17 +72,12 @@ export class Profile extends Message<Profile> {
  */
 export class CreateProfileRequest extends Message<CreateProfileRequest> {
   /**
-   * @generated from field: string primary_currency = 1;
+   * @generated from field: repeated string currencies = 1;
    */
-  primaryCurrency = "";
+  currencies: string[] = [];
 
   /**
-   * @generated from field: repeated string supported_currencies = 2;
-   */
-  supportedCurrencies: string[] = [];
-
-  /**
-   * @generated from field: string locale = 3;
+   * @generated from field: string locale = 2;
    */
   locale = "";
 
@@ -100,9 +89,8 @@ export class CreateProfileRequest extends Message<CreateProfileRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "fijoy.v1.CreateProfileRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "primary_currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "supported_currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 3, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 1, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateProfileRequest {
@@ -127,14 +115,9 @@ export class CreateProfileRequest extends Message<CreateProfileRequest> {
  */
 export class UpdateCurrencyRequest extends Message<UpdateCurrencyRequest> {
   /**
-   * @generated from field: string primaryCurrency = 1;
+   * @generated from field: repeated string currencies = 2;
    */
-  primaryCurrency = "";
-
-  /**
-   * @generated from field: repeated string supportedCurrencies = 2;
-   */
-  supportedCurrencies: string[] = [];
+  currencies: string[] = [];
 
   constructor(data?: PartialMessage<UpdateCurrencyRequest>) {
     super();
@@ -144,8 +127,7 @@ export class UpdateCurrencyRequest extends Message<UpdateCurrencyRequest> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "fijoy.v1.UpdateCurrencyRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "primaryCurrency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "supportedCurrencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCurrencyRequest {

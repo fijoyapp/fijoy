@@ -138,7 +138,7 @@ function Page() {
   }
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-xl">
       <Breadcrumb>
         <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
           <BreadcrumbItem>
@@ -251,8 +251,8 @@ function Page() {
               <CardHeader className="pt-0">
                 <CardTitle className="text-xl">Supported Currencies</CardTitle>
                 <CardDescription>
-                  You will be able to create accounts and log transactions in
-                  the following currencies.
+                  You will be able to create accounts in the following
+                  currencies.
                 </CardDescription>
               </CardHeader>
               <CardContent>
