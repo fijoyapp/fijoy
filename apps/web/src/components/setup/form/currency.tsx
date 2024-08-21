@@ -160,7 +160,10 @@ export function CurrencyField<T extends FieldValues>({
                 }}
               >
                 <CommandInput placeholder="Search currency..." />
-                <CommandEmpty>No currency found.</CommandEmpty>
+                <CommandEmpty>
+                  Missing your currency?
+                  <br /> Let us know in Discord!
+                </CommandEmpty>
                 <CommandList>
                   <CommandGroup>
                     {selectableCurrencies.map((currency) => (
