@@ -43,9 +43,6 @@ const (
 	// ProfileServiceUpdateCurrencyProcedure is the fully-qualified name of the ProfileService's
 	// UpdateCurrency RPC.
 	ProfileServiceUpdateCurrencyProcedure = "/fijoy.v1.ProfileService/UpdateCurrency"
-	// ProfileServiceUpdateLocaleProcedure is the fully-qualified name of the ProfileService's
-	// UpdateLocale RPC.
-	ProfileServiceUpdateLocaleProcedure = "/fijoy.v1.ProfileService/UpdateLocale"
 	// ProfileServiceDeleteProfileProcedure is the fully-qualified name of the ProfileService's
 	// DeleteProfile RPC.
 	ProfileServiceDeleteProfileProcedure = "/fijoy.v1.ProfileService/DeleteProfile"
@@ -57,7 +54,6 @@ var (
 	profileServiceCreateProfileMethodDescriptor  = profileServiceServiceDescriptor.Methods().ByName("CreateProfile")
 	profileServiceGetProfileMethodDescriptor     = profileServiceServiceDescriptor.Methods().ByName("GetProfile")
 	profileServiceUpdateCurrencyMethodDescriptor = profileServiceServiceDescriptor.Methods().ByName("UpdateCurrency")
-	profileServiceUpdateLocaleMethodDescriptor   = profileServiceServiceDescriptor.Methods().ByName("UpdateLocale")
 	profileServiceDeleteProfileMethodDescriptor  = profileServiceServiceDescriptor.Methods().ByName("DeleteProfile")
 )
 
@@ -66,7 +62,6 @@ type ProfileServiceClient interface {
 	CreateProfile(context.Context, *connect.Request[v1.CreateProfileRequest]) (*connect.Response[v1.Profile], error)
 	GetProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 	UpdateCurrency(context.Context, *connect.Request[v1.UpdateCurrencyRequest]) (*connect.Response[v1.Profile], error)
-	UpdateLocale(context.Context, *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Profile], error)
 	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 }
 
@@ -99,12 +94,6 @@ func NewProfileServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(profileServiceUpdateCurrencyMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		updateLocale: connect.NewClient[v1.UpdateLocaleRequest, v1.Profile](
-			httpClient,
-			baseURL+ProfileServiceUpdateLocaleProcedure,
-			connect.WithSchema(profileServiceUpdateLocaleMethodDescriptor),
-			connect.WithClientOptions(opts...),
-		),
 		deleteProfile: connect.NewClient[emptypb.Empty, v1.Profile](
 			httpClient,
 			baseURL+ProfileServiceDeleteProfileProcedure,
@@ -119,7 +108,6 @@ type profileServiceClient struct {
 	createProfile  *connect.Client[v1.CreateProfileRequest, v1.Profile]
 	getProfile     *connect.Client[emptypb.Empty, v1.Profile]
 	updateCurrency *connect.Client[v1.UpdateCurrencyRequest, v1.Profile]
-	updateLocale   *connect.Client[v1.UpdateLocaleRequest, v1.Profile]
 	deleteProfile  *connect.Client[emptypb.Empty, v1.Profile]
 }
 
@@ -138,11 +126,6 @@ func (c *profileServiceClient) UpdateCurrency(ctx context.Context, req *connect.
 	return c.updateCurrency.CallUnary(ctx, req)
 }
 
-// UpdateLocale calls fijoy.v1.ProfileService.UpdateLocale.
-func (c *profileServiceClient) UpdateLocale(ctx context.Context, req *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Profile], error) {
-	return c.updateLocale.CallUnary(ctx, req)
-}
-
 // DeleteProfile calls fijoy.v1.ProfileService.DeleteProfile.
 func (c *profileServiceClient) DeleteProfile(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error) {
 	return c.deleteProfile.CallUnary(ctx, req)
@@ -153,7 +136,6 @@ type ProfileServiceHandler interface {
 	CreateProfile(context.Context, *connect.Request[v1.CreateProfileRequest]) (*connect.Response[v1.Profile], error)
 	GetProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 	UpdateCurrency(context.Context, *connect.Request[v1.UpdateCurrencyRequest]) (*connect.Response[v1.Profile], error)
-	UpdateLocale(context.Context, *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Profile], error)
 	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 }
 
@@ -182,12 +164,6 @@ func NewProfileServiceHandler(svc ProfileServiceHandler, opts ...connect.Handler
 		connect.WithSchema(profileServiceUpdateCurrencyMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
-	profileServiceUpdateLocaleHandler := connect.NewUnaryHandler(
-		ProfileServiceUpdateLocaleProcedure,
-		svc.UpdateLocale,
-		connect.WithSchema(profileServiceUpdateLocaleMethodDescriptor),
-		connect.WithHandlerOptions(opts...),
-	)
 	profileServiceDeleteProfileHandler := connect.NewUnaryHandler(
 		ProfileServiceDeleteProfileProcedure,
 		svc.DeleteProfile,
@@ -202,8 +178,6 @@ func NewProfileServiceHandler(svc ProfileServiceHandler, opts ...connect.Handler
 			profileServiceGetProfileHandler.ServeHTTP(w, r)
 		case ProfileServiceUpdateCurrencyProcedure:
 			profileServiceUpdateCurrencyHandler.ServeHTTP(w, r)
-		case ProfileServiceUpdateLocaleProcedure:
-			profileServiceUpdateLocaleHandler.ServeHTTP(w, r)
 		case ProfileServiceDeleteProfileProcedure:
 			profileServiceDeleteProfileHandler.ServeHTTP(w, r)
 		default:
@@ -225,10 +199,6 @@ func (UnimplementedProfileServiceHandler) GetProfile(context.Context, *connect.R
 
 func (UnimplementedProfileServiceHandler) UpdateCurrency(context.Context, *connect.Request[v1.UpdateCurrencyRequest]) (*connect.Response[v1.Profile], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.ProfileService.UpdateCurrency is not implemented"))
-}
-
-func (UnimplementedProfileServiceHandler) UpdateLocale(context.Context, *connect.Request[v1.UpdateLocaleRequest]) (*connect.Response[v1.Profile], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.ProfileService.UpdateLocale is not implemented"))
 }
 
 func (UnimplementedProfileServiceHandler) DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error) {

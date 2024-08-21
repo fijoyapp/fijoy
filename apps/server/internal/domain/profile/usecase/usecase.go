@@ -20,7 +20,6 @@ type ProfileUseCase interface {
 	GetProfileByUserId(ctx context.Context, userId string) (*fijoyv1.Profile, error)
 	DeleteProfile(ctx context.Context, id string) (*fijoyv1.Profile, error)
 	UpdateCurrency(ctx context.Context, id string, req *fijoyv1.UpdateCurrencyRequest) (*fijoyv1.Profile, error)
-	UpdateLocale(ctx context.Context, id string, req *fijoyv1.UpdateLocaleRequest) (*fijoyv1.Profile, error)
 }
 
 type profileUseCase struct {
@@ -39,7 +38,6 @@ func profileModelToProto(profile *model.FijoyProfile) *fijoyv1.Profile {
 		Id:         profile.ID,
 		UserId:     profile.UserID,
 		Currencies: strings.Split(profile.Currencies, ","),
-		Locale:     profile.Locale,
 		CreatedAt:  timestamppb.New(profile.CreatedAt),
 	}
 }
@@ -64,10 +62,6 @@ func (u *profileUseCase) CreateProfile(ctx context.Context, userId string, req *
 
 	if err := u.validator.Var(req.Currencies, "dive,iso4217"); err != nil {
 		return nil, errors.New(constants.ErrInvalidCurrencyCode)
-	}
-
-	if err := u.validator.Var(req.Locale, "bcp47_language_tag"); err != nil {
-		return nil, errors.New(constants.ErrInvalidLocaleCode)
 	}
 
 	profile, err := u.repo.CreateProfileTX(ctx, tx, userId, req)
@@ -145,36 +139,6 @@ func (u *profileUseCase) UpdateCurrency(ctx context.Context, id string, req *fij
 	}
 
 	profile, err := u.repo.UpdateCurrencyTX(ctx, tx, id, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return profileModelToProto(profile), nil
-}
-
-func (u *profileUseCase) UpdateLocale(ctx context.Context, id string, req *fijoyv1.UpdateLocaleRequest) (*fijoyv1.Profile, error) {
-	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelDefault})
-	if err != nil {
-		return nil, err
-	}
-
-	// Defer a rollback in case anything fails.
-	defer func() {
-		if p := recover(); p != nil {
-			tx.Rollback()
-			panic(p) // re-throw panic after rollback
-		} else if err != nil {
-			tx.Rollback() // rollback on error
-		} else {
-			err = tx.Commit() // commit on success
-		}
-	}()
-
-	if err := u.validator.Var(req.Locale, "bcp47_language_tag"); err != nil {
-		return nil, errors.New(constants.ErrInvalidLocaleCode)
-	}
-
-	profile, err := u.repo.UpdateLocaleTX(ctx, tx, id, req)
 	if err != nil {
 		return nil, err
 	}

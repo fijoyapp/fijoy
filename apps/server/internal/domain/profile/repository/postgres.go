@@ -19,7 +19,6 @@ type ProfileRepository interface {
 	CreateProfileTX(ctx context.Context, tx *sql.Tx, userId string, req *fijoyv1.CreateProfileRequest) (*model.FijoyProfile, error)
 	DeleteProfileTX(ctx context.Context, tx *sql.Tx, id string) (*model.FijoyProfile, error)
 	UpdateCurrencyTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateCurrencyRequest) (*model.FijoyProfile, error)
-	UpdateLocaleTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateLocaleRequest) (*model.FijoyProfile, error)
 
 	GetProfileById(ctx context.Context, id string) (*model.FijoyProfile, error)
 	GetProfileByUserId(ctx context.Context, userId string) (*model.FijoyProfile, error)
@@ -40,7 +39,6 @@ func (r *profileRepository) CreateProfileTX(ctx context.Context, tx *sql.Tx, use
 		ID:         profileId,
 		UserID:     userId,
 		Currencies: strings.Join(req.Currencies, ","),
-		Locale:     req.Locale,
 		CreatedAt:  time.Now(),
 	}
 
@@ -110,26 +108,6 @@ func (r *profileRepository) UpdateCurrencyTX(ctx context.Context, tx *sql.Tx, id
 
 	stmt := FijoyProfile.
 		UPDATE(FijoyProfile.Currencies).
-		MODEL(profile).WHERE(FijoyProfile.ID.EQ(String(id))).
-		RETURNING(FijoyProfile.AllColumns)
-
-	var dest model.FijoyProfile
-
-	err := stmt.QueryContext(ctx, tx, &dest)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dest, nil
-}
-
-func (r *profileRepository) UpdateLocaleTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateLocaleRequest) (*model.FijoyProfile, error) {
-	profile := model.FijoyProfile{
-		Locale: req.Locale,
-	}
-
-	stmt := FijoyProfile.
-		UPDATE(FijoyProfile.Locale).
 		MODEL(profile).WHERE(FijoyProfile.ID.EQ(String(id))).
 		RETURNING(FijoyProfile.AllColumns)
 

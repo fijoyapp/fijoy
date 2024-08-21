@@ -1,12 +1,11 @@
 import { z, type TypeOf } from "zod";
 
-export const SetupStep = z.enum(["currency-locale", "final"]);
+export const SetupStep = z.enum(["currency", "final"]);
 
 export type SetupStep = TypeOf<typeof SetupStep>;
 
-export const CurrencyLocaleStepData = z.object({
+export const CurrencyStepData = z.object({
   currencies: z.array(z.string()),
-  locale: z.string(),
 });
 
-export type CurrencyLocaleStepData = TypeOf<typeof CurrencyLocaleStepData>;
+export type CurrencyStepData = TypeOf<typeof CurrencyStepData>;
