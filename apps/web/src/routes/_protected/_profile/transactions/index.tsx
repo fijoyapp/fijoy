@@ -1,4 +1,4 @@
-import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
+// import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
 // import NewTransaction from "@/components/transactions/new-transaction";
 
 import {
@@ -14,10 +14,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
 export const Route = createFileRoute("/_protected/_profile/transactions/")({
-  loader: (opts) =>
-    opts.context.queryClient.ensureQueryData(
-      getTransactionsQueryOptions({ context: opts.context }),
-    ),
+  // loader: (opts) =>
+  //   opts.context.queryClient.ensureQueryData(
+  //     getTransactionsQueryOptions({ context: opts.context }),
+  //   ),
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
