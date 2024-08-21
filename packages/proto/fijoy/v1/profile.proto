@@ -13,7 +13,8 @@ message Profile {
     (buf.validate.field).repeated.unique = true,
     (buf.validate.field).repeated.min_items = 1
   ];
-  google.protobuf.Timestamp created_at = 4 [(buf.validate.field).required = true];
+  string locale = 4 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
 }
 
 message CreateProfileRequest {

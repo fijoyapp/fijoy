@@ -34,10 +34,13 @@ func New(validator *validator.Validate, db *sql.DB, repo repository.ProfileRepos
 }
 
 func profileModelToProto(profile *model.FijoyProfile) *fijoyv1.Profile {
+	currencies := strings.Split(profile.Currencies, ",")
+
 	return &fijoyv1.Profile{
 		Id:         profile.ID,
 		UserId:     profile.UserID,
-		Currencies: strings.Split(profile.Currencies, ","),
+		Currencies: currencies,
+		Locale:     constants.Currencies[currencies[0]].Locale,
 		CreatedAt:  timestamppb.New(profile.CreatedAt),
 	}
 }
