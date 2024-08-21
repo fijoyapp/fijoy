@@ -13,8 +13,7 @@ message Profile {
     (buf.validate.field).repeated.unique = true,
     (buf.validate.field).repeated.min_items = 1
   ];
-  string locale = 4 [(buf.validate.field).string.min_len = 1];
-  google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp created_at = 4 [(buf.validate.field).required = true];
 }
 
 message CreateProfileRequest {
@@ -22,7 +21,6 @@ message CreateProfileRequest {
     (buf.validate.field).repeated.unique = true,
     (buf.validate.field).repeated.min_items = 1
   ];
-  string locale = 2 [(buf.validate.field).string.min_len = 1];
 }
 
 message UpdateCurrencyRequest {
@@ -30,10 +28,6 @@ message UpdateCurrencyRequest {
     (buf.validate.field).repeated.unique = true,
     (buf.validate.field).repeated.min_items = 1
   ];
-}
-
-message UpdateLocaleRequest {
-  string locale = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 service ProfileService {
@@ -44,7 +38,6 @@ service ProfileService {
   }
 
   rpc UpdateCurrency(UpdateCurrencyRequest) returns (Profile);
-  rpc UpdateLocale(UpdateLocaleRequest) returns (Profile);
 
   rpc DeleteProfile(google.protobuf.Empty) returns (Profile) {}
 }

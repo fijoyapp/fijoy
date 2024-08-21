@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateProfileRequest, Profile, UpdateCurrencyRequest, UpdateLocaleRequest } from "./profile_pb.js";
+import { CreateProfileRequest, Profile, UpdateCurrencyRequest } from "./profile_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,15 +37,6 @@ export const ProfileService = {
     updateCurrency: {
       name: "UpdateCurrency",
       I: UpdateCurrencyRequest,
-      O: Profile,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc fijoy.v1.ProfileService.UpdateLocale
-     */
-    updateLocale: {
-      name: "UpdateLocale",
-      I: UpdateLocaleRequest,
       O: Profile,
       kind: MethodKind.Unary,
     },

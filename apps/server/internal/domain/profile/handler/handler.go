@@ -103,24 +103,3 @@ func (h *profileHandler) UpdateCurrency(
 
 	return connect.NewResponse(profile), nil
 }
-
-func (h *profileHandler) UpdateLocale(
-	ctx context.Context,
-	req *connect.Request[fijoyv1.UpdateLocaleRequest],
-) (*connect.Response[fijoyv1.Profile], error) {
-	if err := h.protoValidator.Validate(req.Msg); err != nil {
-		return nil, err
-	}
-
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
-	}
-
-	profile, err := h.useCase.UpdateLocale(ctx, profileId, req.Msg)
-	if err != nil {
-		return nil, err
-	}
-
-	return connect.NewResponse(profile), nil
-}

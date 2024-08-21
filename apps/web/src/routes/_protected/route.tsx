@@ -30,7 +30,7 @@ function Protected() {
   }
 
   if (!profile.profile && !matchRoute({ to: "/setup" })) {
-    return <Navigate to="/setup" search={{ step: "currency-locale" }} />;
+    return <Navigate to="/setup" search={{ step: "currency" }} />;
   }
 
   if (profile.profile && matchRoute({ to: "/setup" })) {

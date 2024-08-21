@@ -4,28 +4,28 @@ import { type TypeOf } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation } from "@connectrpc/connect-query";
-import { CurrencyLocaleStepData } from "@/types/setup";
+import { CurrencyStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useEffect, useRef } from "react";
 import { createProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { useProfile } from "@/hooks/use-profile";
 
-const formSchema = CurrencyLocaleStepData;
+const formSchema = CurrencyStepData;
 
 const FinalStep = () => {
   const router = useRouter();
   const { refresh } = useProfile();
 
-  const { currencyLocaleStepData, reset } = useSetupStore((state) => ({
-    currencyLocaleStepData: state.currencyLocaleStepData,
+  const { currencyStepData, reset } = useSetupStore((state) => ({
+    currencyStepData: state.currencyStepData,
     reset: state.reset,
   }));
 
   const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ...currencyLocaleStepData,
+      ...currencyStepData,
     },
   });
 
@@ -42,7 +42,7 @@ const FinalStep = () => {
     if (!(await form.trigger())) {
       router.navigate({
         to: "/setup",
-        search: { step: "currency-locale" },
+        search: { step: "currency" },
       });
       return;
     }
@@ -51,7 +51,6 @@ const FinalStep = () => {
     toast.promise(
       createProfileMut.mutateAsync({
         currencies: values.currencies,
-        locale: values.locale,
       }),
       {
         success: () => {

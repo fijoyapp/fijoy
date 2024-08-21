@@ -20,7 +20,6 @@ type fijoyProfileTable struct {
 	ID         postgres.ColumnString
 	UserID     postgres.ColumnString
 	Currencies postgres.ColumnString
-	Locale     postgres.ColumnString
 	CreatedAt  postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
@@ -65,10 +64,9 @@ func newFijoyProfileTableImpl(schemaName, tableName, alias string) fijoyProfileT
 		IDColumn         = postgres.StringColumn("id")
 		UserIDColumn     = postgres.StringColumn("user_id")
 		CurrenciesColumn = postgres.StringColumn("currencies")
-		LocaleColumn     = postgres.StringColumn("locale")
 		CreatedAtColumn  = postgres.TimestampzColumn("created_at")
-		allColumns       = postgres.ColumnList{IDColumn, UserIDColumn, CurrenciesColumn, LocaleColumn, CreatedAtColumn}
-		mutableColumns   = postgres.ColumnList{UserIDColumn, CurrenciesColumn, LocaleColumn, CreatedAtColumn}
+		allColumns       = postgres.ColumnList{IDColumn, UserIDColumn, CurrenciesColumn, CreatedAtColumn}
+		mutableColumns   = postgres.ColumnList{UserIDColumn, CurrenciesColumn, CreatedAtColumn}
 	)
 
 	return fijoyProfileTable{
@@ -78,7 +76,6 @@ func newFijoyProfileTableImpl(schemaName, tableName, alias string) fijoyProfileT
 		ID:         IDColumn,
 		UserID:     UserIDColumn,
 		Currencies: CurrenciesColumn,
-		Locale:     LocaleColumn,
 		CreatedAt:  CreatedAtColumn,
 
 		AllColumns:     allColumns,

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package fijoy.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message Currency {
+  string code = 1 [(buf.validate.field).string.min_len = 1];
+  string locale = 2 [(buf.validate.field).string.min_len = 1];
+}
+
+message Currencies {
+  repeated Currency currencies = 1 [(buf.validate.field).required = true];
+}
+
+service CurrencyService {
+  rpc GetCurrencies(google.protobuf.Empty) returns (Currencies) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+}
