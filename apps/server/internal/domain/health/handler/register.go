@@ -7,7 +7,7 @@ import (
 func RegisterHTTPEndpoints(r *chi.Mux) {
 	handler := NewHealthHandler()
 
-	r.Route("", func(r chi.Router) {
+	r.Route("/", func(r chi.Router) {
 		r.Get("/health", handler.CheckHealth)
 	})
 }

@@ -18,6 +18,7 @@ import (
 	account_repository "fijoy/internal/domain/account/repository"
 	account_usecase "fijoy/internal/domain/account/usecase"
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
+	health_handler "fijoy/internal/domain/health/handler"
 
 	currency_handler "fijoy/internal/domain/currency/handler"
 
@@ -87,6 +88,8 @@ func main() {
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
 	currency_handler.RegisterConnect(r)
+
+	health_handler.RegisterHTTPEndpoints(r)
 	// connect_handler.NewWorkspaceHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewAccountHandler(r, tokenAuth, db, validator)
 	// connect_handler.NewCategoryHandler(r, tokenAuth, db, validator)
