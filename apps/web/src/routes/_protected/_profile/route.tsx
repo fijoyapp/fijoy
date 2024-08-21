@@ -153,6 +153,7 @@ function Page() {
                 {navLinks.map((navLink) => (
                   <motion.div
                     layout
+                    key={navLink.name}
                     onMouseOver={() => setActiveTab(navLink.name)}
                     onMouseLeave={() => setActiveTab(null)}
                     className="relative"
