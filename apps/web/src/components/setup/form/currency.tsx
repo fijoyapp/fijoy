@@ -26,7 +26,6 @@ import { useEffect, useState } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ChevronsUpDown, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { currencyCodeToName } from "@/config/currency";
 import { cn } from "@/lib/utils";
 import { currencyToDisplay } from "@/lib/money";
