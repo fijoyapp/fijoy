@@ -78,6 +78,58 @@ export function CurrencyField<T extends FieldValues>({
             Your net worth will be displayed in the default currency
           </FormDescription>
 
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className={cn(
+                    "justify-between",
+                    !field.value && "text-muted-foreground",
+                  )}
+                >
+                  Add a currency
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className="p-0" side="bottom" align="start">
+              <Command
+                filter={(value, search) => {
+                  const extendValue = value + " " + currencyCodeToName(value);
+                  if (extendValue.toLowerCase().includes(search.toLowerCase()))
+                    return 1;
+                  return 0;
+                }}
+              >
+                <CommandInput placeholder="Search currency..." />
+                <CommandEmpty>
+                  Missing your currency?
+                  <br /> Let us know in Discord!
+                </CommandEmpty>
+                <CommandList>
+                  <CommandGroup>
+                    {selectableCurrencies.map((currency) => (
+                      <CommandItem
+                        key={currency.code}
+                        value={currency.code}
+                        onSelect={(currencyCode) => {
+                          setSelectedCurrencies([
+                            ...selectedCurrencies,
+                            currencyCode,
+                          ]);
+                        }}
+                      >
+                        {currencyCodeToName(currency.code)} ({currency.code})
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
           {selectedCurrencies.map((currency, idx) => (
             <Card key={currency}>
               <CardHeader className="p-4">
@@ -134,57 +186,6 @@ export function CurrencyField<T extends FieldValues>({
               </CardHeader>
             </Card>
           ))}
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <FormControl>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  className={cn(
-                    "justify-between",
-                    !field.value && "text-muted-foreground",
-                  )}
-                >
-                  Add a currency
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </FormControl>
-            </PopoverTrigger>
-            <PopoverContent className="p-0" side="bottom" align="start">
-              <Command
-                filter={(value, search) => {
-                  const extendValue = value + " " + currencyCodeToName(value);
-                  if (extendValue.toLowerCase().includes(search.toLowerCase()))
-                    return 1;
-                  return 0;
-                }}
-              >
-                <CommandInput placeholder="Search currency..." />
-                <CommandEmpty>
-                  Missing your currency?
-                  <br /> Let us know in Discord!
-                </CommandEmpty>
-                <CommandList>
-                  <CommandGroup>
-                    {selectableCurrencies.map((currency) => (
-                      <CommandItem
-                        key={currency.code}
-                        value={currency.code}
-                        onSelect={(currencyCode) => {
-                          setSelectedCurrencies([
-                            ...selectedCurrencies,
-                            currencyCode,
-                          ]);
-                        }}
-                      >
-                        {currencyCodeToName(currency.code)} ({currency.code})
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
           <FormMessage />
         </FormItem>
       )}
