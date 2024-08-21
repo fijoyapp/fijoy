@@ -18,4 +18,24 @@ var Currencies = map[string]Currency{
 		Code:   "CNY",
 		Locale: "zh-CN",
 	},
+	"EUR": {
+		Code:   "EUR",
+		Locale: "en-EU",
+	},
+	"JPY": {
+		Code:   "JPY",
+		Locale: "ja-JP",
+	},
+	"GBP": {
+		Code:   "GBP",
+		Locale: "en-GB",
+	},
+	"AUD": {
+		Code:   "AUD",
+		Locale: "en-AU",
+	},
+	"CHF": {
+		Code:   "CHF",
+		Locale: "de-CH",
+	},
 }
