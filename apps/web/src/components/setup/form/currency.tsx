@@ -29,6 +29,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { currencyCodeToName } from "@/config/currency";
 import { cn } from "@/lib/utils";
+import { currencyToDisplay } from "@/lib/money";
+import currency from "currency.js";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -76,6 +78,11 @@ export function CurrencyField<T extends FieldValues>({
           <FormLabel>Currency Configuration</FormLabel>
           <FormDescription>
             Your net worth will be displayed in the default currency
+            {selectedCurrencies.length > 0 && (
+              <>
+                <br />
+              </>
+            )}
           </FormDescription>
 
           <Popover open={open} onOpenChange={setOpen}>
@@ -130,22 +137,41 @@ export function CurrencyField<T extends FieldValues>({
             </PopoverContent>
           </Popover>
 
-          {selectedCurrencies.map((currency, idx) => (
-            <Card key={currency}>
+          {selectedCurrencies.map((curr, idx) => (
+            <Card key={curr}>
               <CardHeader className="p-4">
                 <div className="flex items-center">
-                  <span>
-                    {currencyCodeToName(currency)} ({currency})
-                  </span>
+                  <div className="flex flex-col">
+                    <span>
+                      {currencyCodeToName(curr)} ({curr})
+                    </span>
+
+                    <span className="text-sm text-muted-foreground">
+                      {currencyToDisplay(currency(420), curr, {
+                        compact: false,
+                        isDebt: false,
+                        locale: currencies.currencies.find(
+                          (currency) => currency.code === selectedCurrencies[0],
+                        )!.locale,
+                      })}
+                    </span>
+                  </div>
+
+                  <div className="grow"></div>
 
                   {idx === 0 && (
                     <>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        type="button"
+                        className="cursor-default"
+                      >
+                        Default
+                      </Button>
                       <div className="px-1"></div>
-                      <Badge variant="secondary">Default</Badge>
                     </>
                   )}
-
-                  <div className="grow"></div>
 
                   {idx !== 0 && allowChangeDefault && (
                     <>
@@ -153,12 +179,12 @@ export function CurrencyField<T extends FieldValues>({
                         type="button"
                         size="sm"
                         variant="outline"
+                        className="cursor-pointer"
                         onClick={() => {
                           setSelectedCurrencies([
-                            currency,
+                            curr,
                             ...selectedCurrencies.filter(
-                              (selectedCurrency) =>
-                                selectedCurrency !== currency,
+                              (selectedCurrency) => selectedCurrency !== curr,
                             ),
                           ]);
                         }}
@@ -169,18 +195,20 @@ export function CurrencyField<T extends FieldValues>({
                     </>
                   )}
                   {(allowChangeDefault || idx !== 0) && (
-                    <div
+                    <Button
+                      size="icon"
+                      variant="ghost"
                       onClick={() =>
                         setSelectedCurrencies(
                           selectedCurrencies.filter(
-                            (selectedCurrency) => selectedCurrency !== currency,
+                            (selectedCurrency) => selectedCurrency !== curr,
                           ),
                         )
                       }
                       className="cursor-pointer"
                     >
                       <Trash />
-                    </div>
+                    </Button>
                   )}
                 </div>
               </CardHeader>
