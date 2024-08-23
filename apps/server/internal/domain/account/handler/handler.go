@@ -82,3 +82,24 @@ func (h *accountHandler) GetAccounts(
 
 	return connect.NewResponse(accounts), nil
 }
+
+func (h *accountHandler) DeleteAccountById(
+	ctx context.Context,
+	req *connect.Request[fijoyv1.DeleteAccountByIdRequest],
+) (*connect.Response[fijoyv1.Account], error) {
+	if err := h.protoValidator.Validate(req.Msg); err != nil {
+		return nil, err
+	}
+
+	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := h.useCase.DeleteAccountById(ctx, profileId, req.Msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(account), nil
+}

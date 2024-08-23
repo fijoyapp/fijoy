@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Account, Accounts, CreateAccountRequest, GetAccountByIdRequest } from "./account_pb.js";
+import { Account, Accounts, CreateAccountRequest, DeleteAccountByIdRequest, GetAccountByIdRequest } from "./account_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -40,6 +40,15 @@ export const AccountService = {
       O: Account,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc fijoy.v1.AccountService.DeleteAccountById
+     */
+    deleteAccountById: {
+      name: "DeleteAccountById",
+      I: DeleteAccountByIdRequest,
+      O: Account,
+      kind: MethodKind.Unary,
     },
   }
 } as const;
