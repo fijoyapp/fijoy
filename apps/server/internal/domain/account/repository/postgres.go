@@ -23,8 +23,10 @@ type AccountRepository interface {
 	// UpdateLocaleTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateLocaleRequest) (*model.FijoyProfile, error)
 	CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error)
 
-	GetAccountById(ctx context.Context, id string) (*account.FijoyAccount, error)
+	GetAccountById(ctx context.Context, profileId string, id string) (*account.FijoyAccount, error)
 	GetAccounts(ctx context.Context, profileId string) ([]*account.FijoyAccount, error)
+
+	DeleteAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, id string) (*account.FijoyAccount, error)
 }
 
 type accountRepository struct {
@@ -52,22 +54,44 @@ func accountTypeProtoToModel(accountType fijoyv1.AccountType) model.FijoyAccount
 	}
 }
 
+func accountSymbolTypeProtoToModel(accountSymbolType fijoyv1.AccountSymbolType) model.FijoyAccountSymbolType {
+	switch accountSymbolType {
+	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CURRENCY:
+		return model.FijoyAccountSymbolType_Currency
+	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CRYPTO:
+		return model.FijoyAccountSymbolType_Crypto
+	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_STOCK:
+		return model.FijoyAccountSymbolType_Stock
+	default:
+		panic("unknown account symbol type")
+	}
+}
+
 func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error) {
+	amount := decimal.RequireFromString(req.Amount)
+	value := decimal.RequireFromString(req.Value)
+	fxRate := decimal.RequireFromString(req.FxRate)
+
 	newAccount := account.FijoyAccount{
 		FijoyAccount: model.FijoyAccount{
 			ID:          constants.AccountPrefix + cuid2.Generate(),
 			ProfileID:   profileId,
 			Name:        req.Name,
 			AccountType: accountTypeProtoToModel(req.AccountType),
-			Active:      true,
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-			Symbol:      &req.Symbol,
-			Currency:    req.Currency,
+
+			Archived:          false,
+			IncludeInNetWorth: true,
+
+			Symbol:     req.Symbol,
+			SymbolType: accountSymbolTypeProtoToModel(req.SymbolType),
+
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		},
-		Amount: decimal.RequireFromString(req.Amount),
-		Value:  decimal.RequireFromString(req.Value),
-		FxRate: decimal.RequireFromString(req.FxRate),
+		Amount:  amount,
+		Value:   value,
+		FxRate:  fxRate,
+		Balance: amount.Mul(value).Mul(fxRate),
 	}
 
 	dest := account.FijoyAccount{}
@@ -83,10 +107,11 @@ func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, pro
 	return &dest, nil
 }
 
-func (r *accountRepository) GetAccountById(ctx context.Context, id string) (*account.FijoyAccount, error) {
+func (r *accountRepository) GetAccountById(ctx context.Context, profileId, id string) (*account.FijoyAccount, error) {
 	stmt := SELECT(FijoyAccount.AllColumns).
 		FROM(FijoyAccount).
-		WHERE(FijoyAccount.ID.EQ(String(id)))
+		WHERE(FijoyAccount.ID.EQ(String(id))).
+		WHERE(FijoyAccount.ProfileID.EQ(String(profileId)))
 
 	dest := account.FijoyAccount{}
 
@@ -111,4 +136,21 @@ func (r *accountRepository) GetAccounts(ctx context.Context, profileId string) (
 	}
 
 	return dest, nil
+}
+
+func (r *accountRepository) DeleteAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*account.FijoyAccount, error) {
+	stmt := FijoyAccount.
+		DELETE().
+		WHERE(FijoyAccount.ID.EQ(String(id))).
+		WHERE(FijoyAccount.ProfileID.EQ(String(profileId))).
+		RETURNING(FijoyAccount.AllColumns)
+
+	dest := account.FijoyAccount{}
+
+	err := stmt.QueryContext(ctx, tx, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
 }

@@ -8,7 +8,8 @@ import (
 
 type FijoyAccount struct {
 	model.FijoyAccount
-	Amount decimal.Decimal
-	Value  decimal.Decimal
-	FxRate decimal.Decimal
+	Amount  decimal.Decimal
+	Value   decimal.Decimal
+	FxRate  decimal.Decimal
+	Balance decimal.Decimal
 }

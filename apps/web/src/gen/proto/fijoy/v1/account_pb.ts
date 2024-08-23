@@ -51,6 +51,38 @@ proto3.util.setEnumType(AccountType, "fijoy.v1.AccountType", [
 ]);
 
 /**
+ * @generated from enum fijoy.v1.AccountSymbolType
+ */
+export enum AccountSymbolType {
+  /**
+   * @generated from enum value: ACCOUNT_SYMBOL_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: ACCOUNT_SYMBOL_TYPE_CURRENCY = 1;
+   */
+  CURRENCY = 1,
+
+  /**
+   * @generated from enum value: ACCOUNT_SYMBOL_TYPE_CRYPTO = 2;
+   */
+  CRYPTO = 2,
+
+  /**
+   * @generated from enum value: ACCOUNT_SYMBOL_TYPE_STOCK = 3;
+   */
+  STOCK = 3,
+}
+// Retrieve enum metadata with: proto3.getEnumType(AccountSymbolType)
+proto3.util.setEnumType(AccountSymbolType, "fijoy.v1.AccountSymbolType", [
+  { no: 0, name: "ACCOUNT_SYMBOL_TYPE_UNSPECIFIED" },
+  { no: 1, name: "ACCOUNT_SYMBOL_TYPE_CURRENCY" },
+  { no: 2, name: "ACCOUNT_SYMBOL_TYPE_CRYPTO" },
+  { no: 3, name: "ACCOUNT_SYMBOL_TYPE_STOCK" },
+]);
+
+/**
  * @generated from message fijoy.v1.Account
  */
 export class Account extends Message<Account> {
@@ -77,26 +109,24 @@ export class Account extends Message<Account> {
   accountType = AccountType.UNSPECIFIED;
 
   /**
-   * @generated from field: bool active = 5;
+   * @generated from field: bool archived = 5;
    */
-  active = false;
+  archived = false;
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 6;
+   * @generated from field: bool include_in_net_worth = 6;
    */
-  createdAt?: Timestamp;
+  includeInNetWorth = false;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 7;
-   */
-  updatedAt?: Timestamp;
-
-  /**
-   * stock and crypto
-   *
-   * @generated from field: string symbol = 8;
+   * @generated from field: string symbol = 7;
    */
   symbol = "";
+
+  /**
+   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 8;
+   */
+  symbolType = AccountSymbolType.UNSPECIFIED;
 
   /**
    * @generated from field: string amount = 9;
@@ -104,21 +134,29 @@ export class Account extends Message<Account> {
   amount = "";
 
   /**
-   * fx related stuff
-   *
-   * @generated from field: string currency = 10;
-   */
-  currency = "";
-
-  /**
-   * @generated from field: string value = 11;
+   * @generated from field: string value = 10;
    */
   value = "";
 
   /**
-   * @generated from field: string fx_rate = 12;
+   * @generated from field: string fx_rate = 11;
    */
   fxRate = "";
+
+  /**
+   * @generated from field: string balance = 12;
+   */
+  balance = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 13;
+   */
+  createdAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 14;
+   */
+  updatedAt?: Timestamp;
 
   constructor(data?: PartialMessage<Account>) {
     super();
@@ -132,14 +170,16 @@ export class Account extends Message<Account> {
     { no: 2, name: "profile_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 5, name: "active", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 6, name: "created_at", kind: "message", T: Timestamp },
-    { no: 7, name: "updated_at", kind: "message", T: Timestamp },
-    { no: 8, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 7, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
     { no: 9, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 12, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 12, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 13, name: "created_at", kind: "message", T: Timestamp },
+    { no: 14, name: "updated_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -201,8 +241,6 @@ export class Accounts extends Message<Accounts> {
  */
 export class CreateAccountRequest extends Message<CreateAccountRequest> {
   /**
-   * the standard stuff
-   *
    * @generated from field: string name = 1;
    */
   name = "";
@@ -213,33 +251,39 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   accountType = AccountType.UNSPECIFIED;
 
   /**
-   * stock and crypto
-   *
-   * @generated from field: string symbol = 3;
+   * @generated from field: bool include_in_net_worth = 3;
+   */
+  includeInNetWorth = false;
+
+  /**
+   * @generated from field: string symbol = 4;
    */
   symbol = "";
 
   /**
-   * @generated from field: string amount = 4;
+   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 5;
+   */
+  symbolType = AccountSymbolType.UNSPECIFIED;
+
+  /**
+   * @generated from field: string amount = 6;
    */
   amount = "";
 
   /**
-   * fx related stuff
-   *
-   * @generated from field: string currency = 5;
-   */
-  currency = "";
-
-  /**
-   * @generated from field: string value = 6;
+   * @generated from field: string value = 7;
    */
   value = "";
 
   /**
-   * @generated from field: string fx_rate = 7;
+   * @generated from field: string fx_rate = 8;
    */
   fxRate = "";
+
+  /**
+   * @generated from field: string balance = 9;
+   */
+  balance = "";
 
   constructor(data?: PartialMessage<CreateAccountRequest>) {
     super();
@@ -251,11 +295,13 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 3, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "currency", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 4, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
+    { no: 6, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {

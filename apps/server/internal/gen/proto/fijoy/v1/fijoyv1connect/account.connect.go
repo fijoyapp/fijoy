@@ -43,14 +43,18 @@ const (
 	// AccountServiceGetAccountByIdProcedure is the fully-qualified name of the AccountService's
 	// GetAccountById RPC.
 	AccountServiceGetAccountByIdProcedure = "/fijoy.v1.AccountService/GetAccountById"
+	// AccountServiceDeleteAccountByIdProcedure is the fully-qualified name of the AccountService's
+	// DeleteAccountById RPC.
+	AccountServiceDeleteAccountByIdProcedure = "/fijoy.v1.AccountService/DeleteAccountById"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	accountServiceServiceDescriptor              = v1.File_fijoy_v1_account_proto.Services().ByName("AccountService")
-	accountServiceCreateAccountMethodDescriptor  = accountServiceServiceDescriptor.Methods().ByName("CreateAccount")
-	accountServiceGetAccountsMethodDescriptor    = accountServiceServiceDescriptor.Methods().ByName("GetAccounts")
-	accountServiceGetAccountByIdMethodDescriptor = accountServiceServiceDescriptor.Methods().ByName("GetAccountById")
+	accountServiceServiceDescriptor                 = v1.File_fijoy_v1_account_proto.Services().ByName("AccountService")
+	accountServiceCreateAccountMethodDescriptor     = accountServiceServiceDescriptor.Methods().ByName("CreateAccount")
+	accountServiceGetAccountsMethodDescriptor       = accountServiceServiceDescriptor.Methods().ByName("GetAccounts")
+	accountServiceGetAccountByIdMethodDescriptor    = accountServiceServiceDescriptor.Methods().ByName("GetAccountById")
+	accountServiceDeleteAccountByIdMethodDescriptor = accountServiceServiceDescriptor.Methods().ByName("DeleteAccountById")
 )
 
 // AccountServiceClient is a client for the fijoy.v1.AccountService service.
@@ -58,6 +62,7 @@ type AccountServiceClient interface {
 	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
 	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
+	DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error)
 }
 
 // NewAccountServiceClient constructs a client for the fijoy.v1.AccountService service. By default,
@@ -90,14 +95,21 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
+		deleteAccountById: connect.NewClient[v1.DeleteAccountByIdRequest, v1.Account](
+			httpClient,
+			baseURL+AccountServiceDeleteAccountByIdProcedure,
+			connect.WithSchema(accountServiceDeleteAccountByIdMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // accountServiceClient implements AccountServiceClient.
 type accountServiceClient struct {
-	createAccount  *connect.Client[v1.CreateAccountRequest, v1.Account]
-	getAccounts    *connect.Client[emptypb.Empty, v1.Accounts]
-	getAccountById *connect.Client[v1.GetAccountByIdRequest, v1.Account]
+	createAccount     *connect.Client[v1.CreateAccountRequest, v1.Account]
+	getAccounts       *connect.Client[emptypb.Empty, v1.Accounts]
+	getAccountById    *connect.Client[v1.GetAccountByIdRequest, v1.Account]
+	deleteAccountById *connect.Client[v1.DeleteAccountByIdRequest, v1.Account]
 }
 
 // CreateAccount calls fijoy.v1.AccountService.CreateAccount.
@@ -115,11 +127,17 @@ func (c *accountServiceClient) GetAccountById(ctx context.Context, req *connect.
 	return c.getAccountById.CallUnary(ctx, req)
 }
 
+// DeleteAccountById calls fijoy.v1.AccountService.DeleteAccountById.
+func (c *accountServiceClient) DeleteAccountById(ctx context.Context, req *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error) {
+	return c.deleteAccountById.CallUnary(ctx, req)
+}
+
 // AccountServiceHandler is an implementation of the fijoy.v1.AccountService service.
 type AccountServiceHandler interface {
 	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
 	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
+	DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error)
 }
 
 // NewAccountServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -148,6 +166,12 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
+	accountServiceDeleteAccountByIdHandler := connect.NewUnaryHandler(
+		AccountServiceDeleteAccountByIdProcedure,
+		svc.DeleteAccountById,
+		connect.WithSchema(accountServiceDeleteAccountByIdMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/fijoy.v1.AccountService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case AccountServiceCreateAccountProcedure:
@@ -156,6 +180,8 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 			accountServiceGetAccountsHandler.ServeHTTP(w, r)
 		case AccountServiceGetAccountByIdProcedure:
 			accountServiceGetAccountByIdHandler.ServeHTTP(w, r)
+		case AccountServiceDeleteAccountByIdProcedure:
+			accountServiceDeleteAccountByIdHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -175,4 +201,8 @@ func (UnimplementedAccountServiceHandler) GetAccounts(context.Context, *connect.
 
 func (UnimplementedAccountServiceHandler) GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.GetAccountById is not implemented"))
+}
+
+func (UnimplementedAccountServiceHandler) DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.DeleteAccountById is not implemented"))
 }
