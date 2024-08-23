@@ -13,7 +13,7 @@ import { createFileRoute } from "@tanstack/react-router";
 // import { getAccountsQueryOptions } from "@/lib/queries/account";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
-export const Route = createFileRoute("/_protected/_profile/transactions/")({
+export const Route = createFileRoute("/_protected/_profile/history/")({
   // loader: (opts) =>
   //   opts.context.queryClient.ensureQueryData(
   //     getTransactionsQueryOptions({ context: opts.context }),
