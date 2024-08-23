@@ -104,10 +104,10 @@ const navLinks: NavLink[] = [
     fuzzy: true,
   },
   {
-    name: "Transactions",
+    name: "History",
     link: {
       from: Route.fullPath,
-      to: "/transactions",
+      to: "/history",
     },
     icon: History,
     fuzzy: true,

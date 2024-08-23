@@ -17,14 +17,17 @@ type fijoyTransactionTable struct {
 	postgres.Table
 
 	// Columns
-	ID              postgres.ColumnString
-	ProfileID       postgres.ColumnString
-	AccountID       postgres.ColumnString
-	TransactionType postgres.ColumnString
-	Amount          postgres.ColumnFloat
-	Currency        postgres.ColumnString
-	Datetime        postgres.ColumnTimestampz
-	Note            postgres.ColumnString
+	ID           postgres.ColumnString
+	ProfileID    postgres.ColumnString
+	AccountID    postgres.ColumnString
+	Amount       postgres.ColumnFloat
+	AmountDelta  postgres.ColumnFloat
+	Value        postgres.ColumnFloat
+	FxRate       postgres.ColumnFloat
+	Balance      postgres.ColumnFloat
+	BalanceDelta postgres.ColumnFloat
+	CreatedAt    postgres.ColumnTimestampz
+	UpdatedAt    postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -65,30 +68,36 @@ func newFijoyTransactionTable(schemaName, tableName, alias string) *FijoyTransac
 
 func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTransactionTable {
 	var (
-		IDColumn              = postgres.StringColumn("id")
-		ProfileIDColumn       = postgres.StringColumn("profile_id")
-		AccountIDColumn       = postgres.StringColumn("account_id")
-		TransactionTypeColumn = postgres.StringColumn("transaction_type")
-		AmountColumn          = postgres.FloatColumn("amount")
-		CurrencyColumn        = postgres.StringColumn("currency")
-		DatetimeColumn        = postgres.TimestampzColumn("datetime")
-		NoteColumn            = postgres.StringColumn("note")
-		allColumns            = postgres.ColumnList{IDColumn, ProfileIDColumn, AccountIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
-		mutableColumns        = postgres.ColumnList{ProfileIDColumn, AccountIDColumn, TransactionTypeColumn, AmountColumn, CurrencyColumn, DatetimeColumn, NoteColumn}
+		IDColumn           = postgres.StringColumn("id")
+		ProfileIDColumn    = postgres.StringColumn("profile_id")
+		AccountIDColumn    = postgres.StringColumn("account_id")
+		AmountColumn       = postgres.FloatColumn("amount")
+		AmountDeltaColumn  = postgres.FloatColumn("amount_delta")
+		ValueColumn        = postgres.FloatColumn("value")
+		FxRateColumn       = postgres.FloatColumn("fx_rate")
+		BalanceColumn      = postgres.FloatColumn("balance")
+		BalanceDeltaColumn = postgres.FloatColumn("balance_delta")
+		CreatedAtColumn    = postgres.TimestampzColumn("created_at")
+		UpdatedAtColumn    = postgres.TimestampzColumn("updated_at")
+		allColumns         = postgres.ColumnList{IDColumn, ProfileIDColumn, AccountIDColumn, AmountColumn, AmountDeltaColumn, ValueColumn, FxRateColumn, BalanceColumn, BalanceDeltaColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns     = postgres.ColumnList{ProfileIDColumn, AccountIDColumn, AmountColumn, AmountDeltaColumn, ValueColumn, FxRateColumn, BalanceColumn, BalanceDeltaColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fijoyTransactionTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:              IDColumn,
-		ProfileID:       ProfileIDColumn,
-		AccountID:       AccountIDColumn,
-		TransactionType: TransactionTypeColumn,
-		Amount:          AmountColumn,
-		Currency:        CurrencyColumn,
-		Datetime:        DatetimeColumn,
-		Note:            NoteColumn,
+		ID:           IDColumn,
+		ProfileID:    ProfileIDColumn,
+		AccountID:    AccountIDColumn,
+		Amount:       AmountColumn,
+		AmountDelta:  AmountDeltaColumn,
+		Value:        ValueColumn,
+		FxRate:       FxRateColumn,
+		Balance:      BalanceColumn,
+		BalanceDelta: BalanceDeltaColumn,
+		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
