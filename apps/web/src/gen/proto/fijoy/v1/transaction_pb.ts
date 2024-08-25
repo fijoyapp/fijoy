@@ -171,12 +171,7 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
   fxRate = "";
 
   /**
-   * @generated from field: string balance = 5;
-   */
-  balance = "";
-
-  /**
-   * @generated from field: string note = 6;
+   * @generated from field: string note = 5;
    */
   note = "";
 
@@ -192,8 +187,7 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
     { no: 2, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateTransactionRequest {
