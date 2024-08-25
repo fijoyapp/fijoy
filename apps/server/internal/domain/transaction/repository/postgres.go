@@ -76,8 +76,12 @@ func (r *transactionRepository) CreateTransactionTX(ctx context.Context, tx *sql
 func (r *transactionRepository) GetTransactionById(ctx context.Context, profileId, id string) (*transaction.FijoyTransaction, error) {
 	stmt := SELECT(FijoyTransaction.AllColumns).
 		FROM(FijoyTransaction).
-		WHERE(FijoyTransaction.ID.EQ(String(id))).
-		WHERE(FijoyTransaction.ProfileID.EQ(String(profileId)))
+		WHERE(
+			AND(
+				FijoyTransaction.ID.EQ(String(id)),
+				FijoyTransaction.ProfileID.EQ(String(profileId)),
+			),
+		)
 
 	dest := transaction.FijoyTransaction{}
 
@@ -107,8 +111,12 @@ func (r *transactionRepository) GetTransactions(ctx context.Context, profileId s
 func (r *transactionRepository) GetTransactionsByAccountId(ctx context.Context, profileId string, accountId string) ([]*transaction.FijoyTransaction, error) {
 	stmt := SELECT(FijoyTransaction.AllColumns).
 		FROM(FijoyTransaction).
-		WHERE(FijoyTransaction.ProfileID.EQ(String(profileId))).
-		WHERE(FijoyTransaction.AccountID.EQ(String(accountId)))
+		WHERE(
+			AND(
+				FijoyTransaction.ProfileID.EQ(String(profileId)),
+				FijoyTransaction.AccountID.EQ(String(accountId)),
+			),
+		)
 
 	dest := []*transaction.FijoyTransaction{}
 
@@ -123,8 +131,12 @@ func (r *transactionRepository) GetTransactionsByAccountId(ctx context.Context, 
 func (r *transactionRepository) GetLatestTransactionByAccountIdTX(ctx context.Context, tx *sql.Tx, profileId string, accountId string) (*transaction.FijoyTransaction, error) {
 	stmt := SELECT(FijoyTransaction.AllColumns).
 		FROM(FijoyTransaction).
-		WHERE(FijoyTransaction.ProfileID.EQ(String(profileId))).
-		WHERE(FijoyTransaction.AccountID.EQ(String(accountId))).
+		WHERE(
+			AND(
+				FijoyTransaction.ProfileID.EQ(String(profileId)),
+				FijoyTransaction.AccountID.EQ(String(accountId)),
+			),
+		).
 		ORDER_BY(FijoyTransaction.CreatedAt.DESC()).
 		LIMIT(1)
 
@@ -141,8 +153,12 @@ func (r *transactionRepository) GetLatestTransactionByAccountIdTX(ctx context.Co
 func (r *transactionRepository) DeleteTransactionByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*transaction.FijoyTransaction, error) {
 	stmt := FijoyTransaction.
 		DELETE().
-		WHERE(FijoyTransaction.ID.EQ(String(id))).
-		WHERE(FijoyTransaction.ProfileID.EQ(String(profileId))).
+		WHERE(
+			AND(
+				FijoyTransaction.ID.EQ(String(id)),
+				FijoyTransaction.ProfileID.EQ(String(profileId)),
+			),
+		).
 		RETURNING(FijoyTransaction.AllColumns)
 
 	dest := transaction.FijoyTransaction{}
