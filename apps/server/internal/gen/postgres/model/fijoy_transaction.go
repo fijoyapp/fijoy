@@ -21,6 +21,7 @@ type FijoyTransaction struct {
 	FxRate       *float64  `json:"FxRate"`
 	Balance      *float64  `json:"Balance"`
 	BalanceDelta *float64  `json:"BalanceDelta"`
+	Note         *string   `json:"Note"`
 	CreatedAt    time.Time `json:"CreatedAt"`
 	UpdatedAt    time.Time `json:"UpdatedAt"`
 }

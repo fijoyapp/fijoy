@@ -10,6 +10,7 @@ CREATE TABLE "fijoy_transaction" (
   balance NUMERIC(16, 8),
   balance_delta NUMERIC(16, 8),
   -- more details
+  note TEXT,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   FOREIGN KEY (account_id) REFERENCES fijoy_account (id) ON DELETE CASCADE,
