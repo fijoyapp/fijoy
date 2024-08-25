@@ -14,8 +14,11 @@ import { NameField } from "../form/name";
 import { CurrencyField } from "../form/currency";
 import { useProfile } from "@/hooks/use-profile";
 import { MoneyField } from "../form/money";
-import { useMutation } from "@connectrpc/connect-query";
-import { createAccount } from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
+import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+import {
+  createAccount,
+  getAccounts,
+} from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
 import {
   AccountSymbolType,
   AccountType,
@@ -23,6 +26,7 @@ import {
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getProfileHeader } from "@/lib/headers";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,6 +40,7 @@ export default function NewAccount() {
   const { profile } = useProfile();
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,6 +54,9 @@ export default function NewAccount() {
       headers: getProfileHeader(profile?.id ?? ""),
     },
     onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getAccounts),
+      });
       router.navigate({
         to: "/accounts",
       });

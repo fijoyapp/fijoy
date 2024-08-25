@@ -6,7 +6,6 @@ import (
 	"fijoy/constants"
 	"fijoy/internal/domain/account"
 	"fijoy/internal/gen/postgres/model"
-	"fmt"
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
@@ -109,8 +108,12 @@ func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, pro
 func (r *accountRepository) GetAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*account.FijoyAccount, error) {
 	stmt := SELECT(FijoyAccount.AllColumns).
 		FROM(FijoyAccount).
-		WHERE(FijoyAccount.ID.EQ(String(id))).
-		WHERE(FijoyAccount.ProfileID.EQ(String(profileId)))
+		WHERE(
+			AND(
+				FijoyAccount.ID.EQ(String(id)),
+				FijoyAccount.ProfileID.EQ(String(profileId)),
+			),
+		)
 
 	dest := account.FijoyAccount{}
 
@@ -125,8 +128,12 @@ func (r *accountRepository) GetAccountByIdTX(ctx context.Context, tx *sql.Tx, pr
 func (r *accountRepository) GetAccountById(ctx context.Context, profileId, id string) (*account.FijoyAccount, error) {
 	stmt := SELECT(FijoyAccount.AllColumns).
 		FROM(FijoyAccount).
-		WHERE(FijoyAccount.ID.EQ(String(id))).
-		WHERE(FijoyAccount.ProfileID.EQ(String(profileId)))
+		WHERE(
+			AND(
+				FijoyAccount.ID.EQ(String(id)),
+				FijoyAccount.ProfileID.EQ(String(profileId)),
+			),
+		)
 
 	dest := account.FijoyAccount{}
 
@@ -155,7 +162,6 @@ func (r *accountRepository) GetAccounts(ctx context.Context, profileId string) (
 
 func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.UpdateAccountRequest) (*account.FijoyAccount, error) {
 	newAccount, err := r.GetAccountByIdTX(ctx, tx, profileId, req.Id)
-	fmt.Println("newAccount", newAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -195,8 +201,13 @@ func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx,
 
 	stmt := FijoyAccount.
 		UPDATE(columnList).
-		MODEL(newAccount).WHERE(FijoyAccount.ID.EQ(String(req.Id))).
-		WHERE(FijoyAccount.ProfileID.EQ(String(profileId))).
+		MODEL(newAccount).
+		WHERE(
+			AND(
+				FijoyAccount.ID.EQ(String(req.Id)),
+				FijoyAccount.ProfileID.EQ(String(profileId)),
+			),
+		).
 		RETURNING(FijoyAccount.AllColumns)
 
 	dest := account.FijoyAccount{}
@@ -212,8 +223,12 @@ func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx,
 func (r *accountRepository) DeleteAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*account.FijoyAccount, error) {
 	stmt := FijoyAccount.
 		DELETE().
-		WHERE(FijoyAccount.ID.EQ(String(id))).
-		WHERE(FijoyAccount.ProfileID.EQ(String(profileId))).
+		WHERE(
+			AND(
+				FijoyAccount.ID.EQ(String(id)),
+				FijoyAccount.ProfileID.EQ(String(profileId)),
+			),
+		).
 		RETURNING(FijoyAccount.AllColumns)
 
 	dest := account.FijoyAccount{}
