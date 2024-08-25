@@ -135,6 +135,7 @@ function AccountsView({ accounts }: AccountsViewProps) {
         return (
           <div key={idx}>
             <div>{account.name}</div>
+            <div>{account.balance}</div>
           </div>
         );
       })}

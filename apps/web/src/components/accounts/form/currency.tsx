@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,12 +21,14 @@ type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   label: string;
+  description: string;
 };
 
 export function CurrencyField<T extends FieldValues>({
   control,
   name,
   label,
+  description,
 }: CurrencyFieldProps<T>) {
   const { profile } = useProfile();
 
@@ -36,6 +39,7 @@ export function CurrencyField<T extends FieldValues>({
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
+          <FormDescription>{description}</FormDescription>
           <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl>
               <SelectTrigger>
@@ -45,7 +49,7 @@ export function CurrencyField<T extends FieldValues>({
             <SelectContent>
               {profile?.currencies.map((currency) => (
                 <SelectItem key={currency} value={currency}>
-                  {currencyCodeToName(currency)}
+                  {currencyCodeToName(currency)} ({currency})
                 </SelectItem>
               ))}
             </SelectContent>

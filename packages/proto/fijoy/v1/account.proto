@@ -60,7 +60,18 @@ message CreateAccountRequest {
   string amount = 6 [(buf.validate.field).required = true];
   string value = 7 [(buf.validate.field).required = true];
   string fx_rate = 8;
-  string balance = 9 [(buf.validate.field).required = true];
+}
+
+message UpdateAccountRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  optional string name = 2;
+
+  optional bool archived = 3;
+  optional bool include_in_net_worth = 4;
+
+  optional string amount = 5;
+  optional string value = 6;
+  optional string fx_rate = 7;
 }
 
 message GetAccountByIdRequest {

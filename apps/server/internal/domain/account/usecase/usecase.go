@@ -30,7 +30,7 @@ type accountUseCase struct {
 }
 
 func New(validator *validator.Validate, db *sql.DB, accountRepo account_repository.AccountRepository, transactionRepo transaction_repository.TransactionRepository) AccountUseCase {
-	return &accountUseCase{validator: validator, db: db, accountRepo: accountRepo}
+	return &accountUseCase{validator: validator, db: db, accountRepo: accountRepo, transactionRepo: transactionRepo}
 }
 
 func accountModelToProto(account *account.FijoyAccount) *fijoyv1.Account {
