@@ -57,6 +57,7 @@ export function CurrencyField<T extends FieldValues>({
   );
 
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setSelectableCurrencies(
@@ -109,7 +110,11 @@ export function CurrencyField<T extends FieldValues>({
                   return 0;
                 }}
               >
-                <CommandInput placeholder="Search currency..." />
+                <CommandInput
+                  value={search}
+                  onValueChange={(value) => setSearch(value)}
+                  placeholder="Search currency..."
+                />
                 <CommandEmpty>
                   Missing your currency?
                   <br /> Let us know in Discord!
@@ -125,6 +130,7 @@ export function CurrencyField<T extends FieldValues>({
                             ...selectedCurrencies,
                             currencyCode,
                           ]);
+                          setSearch("");
                         }}
                       >
                         {currencyCodeToName(currency.code)} ({currency.code})
