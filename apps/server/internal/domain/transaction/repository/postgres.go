@@ -22,6 +22,7 @@ type TransactionRepository interface {
 	GetTransactionById(ctx context.Context, profileId string, id string) (*transaction.FijoyTransaction, error)
 	GetTransactions(ctx context.Context, profileId string) ([]*transaction.FijoyTransaction, error)
 	GetTransactionsByAccountId(ctx context.Context, profileId string, accountId string) ([]*transaction.FijoyTransaction, error)
+	GetLatestTransactionByAccountIdTX(ctx context.Context, tx *sql.Tx, profileId string, accountId string) (*transaction.FijoyTransaction, error)
 
 	DeleteTransactionByIdTX(ctx context.Context, tx *sql.Tx, profileId string, id string) (*transaction.FijoyTransaction, error)
 }
@@ -117,6 +118,24 @@ func (r *transactionRepository) GetTransactionsByAccountId(ctx context.Context, 
 	}
 
 	return dest, nil
+}
+
+func (r *transactionRepository) GetLatestTransactionByAccountIdTX(ctx context.Context, tx *sql.Tx, profileId string, accountId string) (*transaction.FijoyTransaction, error) {
+	stmt := SELECT(FijoyTransaction.AllColumns).
+		FROM(FijoyTransaction).
+		WHERE(FijoyTransaction.ProfileID.EQ(String(profileId))).
+		WHERE(FijoyTransaction.AccountID.EQ(String(accountId))).
+		ORDER_BY(FijoyTransaction.CreatedAt.DESC()).
+		LIMIT(1)
+
+	dest := transaction.FijoyTransaction{}
+
+	err := stmt.QueryContext(ctx, tx, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
 }
 
 func (r *transactionRepository) DeleteTransactionByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*transaction.FijoyTransaction, error) {
