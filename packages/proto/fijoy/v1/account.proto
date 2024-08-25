@@ -15,22 +15,33 @@ enum AccountType {
   ACCOUNT_TYPE_LIABILITY = 5;
 }
 
+enum AccountSymbolType {
+  ACCOUNT_SYMBOL_TYPE_UNSPECIFIED = 0;
+  ACCOUNT_SYMBOL_TYPE_CURRENCY = 1;
+  ACCOUNT_SYMBOL_TYPE_CRYPTO = 2;
+  ACCOUNT_SYMBOL_TYPE_STOCK = 3;
+}
+
 message Account {
   // the standard stuff
   string id = 1 [(buf.validate.field).string.min_len = 1];
   string profile_id = 2 [(buf.validate.field).string.min_len = 1];
   string name = 3 [(buf.validate.field).string.min_len = 1];
   AccountType account_type = 4 [(buf.validate.field).required = true];
-  bool active = 5 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp created_at = 6 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 7 [(buf.validate.field).required = true];
-  // stock and crypto
-  string symbol = 8;
-  string amount = 9;
-  // fx related stuff
-  string currency = 10 [(buf.validate.field).string.min_len = 1];
-  string value = 11 [(buf.validate.field).required = true];
-  string fx_rate = 12;
+
+  bool archived = 5 [(buf.validate.field).required = false];
+  bool include_in_net_worth = 6 [(buf.validate.field).required = false];
+
+  string symbol = 7 [(buf.validate.field).string.min_len = 1];
+  AccountSymbolType symbol_type = 8 [(buf.validate.field).required = true];
+
+  string amount = 9 [(buf.validate.field).required = true];
+  string value = 10 [(buf.validate.field).required = true];
+  string fx_rate = 11;
+  string balance = 12 [(buf.validate.field).required = true];
+
+  google.protobuf.Timestamp created_at = 13 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 14 [(buf.validate.field).required = true];
 }
 
 message Accounts {
@@ -38,16 +49,18 @@ message Accounts {
 }
 
 message CreateAccountRequest {
-  // the standard stuff
   string name = 1 [(buf.validate.field).string.min_len = 1];
   AccountType account_type = 2 [(buf.validate.field).required = true];
-  // stock and crypto
-  string symbol = 3;
-  string amount = 4;
-  // fx related stuff
-  string currency = 5 [(buf.validate.field).string.min_len = 1];
-  string value = 6 [(buf.validate.field).required = true];
-  string fx_rate = 7;
+
+  bool include_in_net_worth = 3 [(buf.validate.field).required = false];
+
+  string symbol = 4 [(buf.validate.field).string.min_len = 1];
+  AccountSymbolType symbol_type = 5 [(buf.validate.field).required = true];
+
+  string amount = 6 [(buf.validate.field).required = true];
+  string value = 7 [(buf.validate.field).required = true];
+  string fx_rate = 8;
+  string balance = 9 [(buf.validate.field).required = true];
 }
 
 message GetAccountByIdRequest {
@@ -69,5 +82,5 @@ service AccountService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  //  rpc DeleteAccountById(DeleteAccountByIdRequest) returns (Account) {}
+  rpc DeleteAccountById(DeleteAccountByIdRequest) returns (Account) {}
 }
