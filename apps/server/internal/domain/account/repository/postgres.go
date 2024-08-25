@@ -17,10 +17,6 @@ import (
 )
 
 type AccountRepository interface {
-	// CreateProfileTX(ctx context.Context, tx *sql.Tx, userId string, req *fijoyv1.CreateProfileRequest) (*model.FijoyProfile, error)
-	// DeleteProfileTX(ctx context.Context, tx *sql.Tx, id string) (*model.FijoyProfile, error)
-	// UpdateCurrencyTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateCurrencyRequest) (*model.FijoyProfile, error)
-	// UpdateLocaleTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateLocaleRequest) (*model.FijoyProfile, error)
 	CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error)
 
 	GetAccountById(ctx context.Context, profileId string, id string) (*account.FijoyAccount, error)
