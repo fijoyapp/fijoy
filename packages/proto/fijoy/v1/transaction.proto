@@ -34,9 +34,8 @@ message CreateTransactionRequest {
   string amount = 2;
   string value = 3;
   string fx_rate = 4;
-  string balance = 5;
 
-  string note = 6;
+  string note = 5;
 }
 
 message CreateTransactionsRequest {

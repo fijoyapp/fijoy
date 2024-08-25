@@ -64,7 +64,6 @@ func accountSymbolTypeProtoToModel(accountSymbolType fijoyv1.AccountSymbolType) 
 }
 
 func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error) {
-	amount := decimal.RequireFromString(req.Amount)
 	value := decimal.RequireFromString(req.Value)
 	fxRate := decimal.RequireFromString(req.FxRate)
 
@@ -84,10 +83,10 @@ func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, pro
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Amount:  amount,
+		Amount:  decimal.Zero,
 		Value:   value,
 		FxRate:  fxRate,
-		Balance: amount.Mul(value).Mul(fxRate),
+		Balance: decimal.Zero,
 	}
 
 	dest := account.FijoyAccount{}

@@ -4,11 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"fijoy/internal/domain/account"
-	"fijoy/internal/domain/account/repository"
+	account_repository "fijoy/internal/domain/account/repository"
+	transaction_repository "fijoy/internal/domain/transaction/repository"
 	"fijoy/internal/gen/postgres/model"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -22,12 +24,13 @@ type AccountUseCase interface {
 type accountUseCase struct {
 	validator *validator.Validate
 
-	db   *sql.DB
-	repo repository.AccountRepository
+	db              *sql.DB
+	accountRepo     account_repository.AccountRepository
+	transactionRepo transaction_repository.TransactionRepository
 }
 
-func New(validator *validator.Validate, db *sql.DB, repo repository.AccountRepository) AccountUseCase {
-	return &accountUseCase{validator: validator, db: db, repo: repo}
+func New(validator *validator.Validate, db *sql.DB, accountRepo account_repository.AccountRepository, transactionRepo transaction_repository.TransactionRepository) AccountUseCase {
+	return &accountUseCase{validator: validator, db: db, accountRepo: accountRepo}
 }
 
 func accountModelToProto(account *account.FijoyAccount) *fijoyv1.Account {
@@ -110,15 +113,29 @@ func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, re
 		}
 	}()
 
-	createdAccount, err := u.repo.CreateAccountTX(ctx, tx, profileId, req)
+	createdAccount, err := u.accountRepo.CreateAccountTX(ctx, tx, profileId, req)
 	if err != nil {
 		return nil, err
 	}
+
+	transactionReq := &fijoyv1.CreateTransactionRequest{
+		AccountId: createdAccount.ID,
+		Amount:    req.Amount,
+		Value:     createdAccount.Value.String(),
+		FxRate:    createdAccount.FxRate.String(),
+		Note:      "Initial balance",
+	}
+
+	_, err = u.transactionRepo.CreateTransactionTX(ctx, tx, profileId, transactionReq, decimal.Zero, decimal.Zero)
+	if err != nil {
+		return nil, err
+	}
+
 	return accountModelToProto(createdAccount), nil
 }
 
 func (u *accountUseCase) GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error) {
-	account, err := u.repo.GetAccountById(ctx, profileId, req.Id)
+	account, err := u.accountRepo.GetAccountById(ctx, profileId, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +144,7 @@ func (u *accountUseCase) GetAccountById(ctx context.Context, profileId string, r
 }
 
 func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fijoyv1.Accounts, error) {
-	accounts, err := u.repo.GetAccounts(ctx, profileId)
+	accounts, err := u.accountRepo.GetAccounts(ctx, profileId)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +170,7 @@ func (u *accountUseCase) DeleteAccountById(ctx context.Context, profileId string
 		}
 	}()
 
-	deletedAccount, err := u.repo.DeleteAccountByIdTX(ctx, tx, profileId, req.Id)
+	deletedAccount, err := u.accountRepo.DeleteAccountByIdTX(ctx, tx, profileId, req.Id)
 	if err != nil {
 		return nil, err
 	}

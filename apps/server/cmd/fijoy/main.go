@@ -19,6 +19,7 @@ import (
 	account_usecase "fijoy/internal/domain/account/usecase"
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 	health_handler "fijoy/internal/domain/health/handler"
+	transaction_repository "fijoy/internal/domain/transaction/repository"
 
 	currency_handler "fijoy/internal/domain/currency/handler"
 
@@ -64,7 +65,8 @@ func main() {
 	profileUseCase := profile_usecase.New(validator, db, profileRepo)
 
 	accountRepo := account_repository.NewAccountRepository(db)
-	accountUseCase := account_usecase.New(validator, db, accountRepo)
+	transactionRepo := transaction_repository.NewTransactionRepository(db)
+	accountUseCase := account_usecase.New(validator, db, accountRepo, transactionRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
