@@ -30,14 +30,13 @@ message Transactions {
 
 message CreateTransactionRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
-  string to_account_id = 2 [(buf.validate.field).string.min_len = 1];
 
-  string amount = 3;
-  string value = 4;
-  string fx_rate = 5;
-  string balance = 6;
+  string amount = 2;
+  string value = 3;
+  string fx_rate = 4;
+  string balance = 5;
 
-  string note = 7;
+  string note = 6;
 }
 
 message CreateTransactionsRequest {
