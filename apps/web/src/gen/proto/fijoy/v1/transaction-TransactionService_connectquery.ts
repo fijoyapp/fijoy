@@ -4,16 +4,16 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { CreateAdjustmentTransactionRequest, CreateIncomeTransactionRequest, Transaction, Transactions } from "./transaction_pb.js";
+import { CreateTransactionRequest, CreateTransactionsRequest, DeleteTransactionByIdRequest, GetTransactionByIdRequest, GetTransactionsByAccountIdRequest, Transaction, Transactions } from "./transaction_pb.js";
 
 /**
- * @generated from rpc fijoy.v1.TransactionService.CreateIncomeTransaction
+ * @generated from rpc fijoy.v1.TransactionService.CreateTransaction
  */
-export const createIncomeTransaction = {
-  localName: "createIncomeTransaction",
-  name: "CreateIncomeTransaction",
+export const createTransaction = {
+  localName: "createTransaction",
+  name: "CreateTransaction",
   kind: MethodKind.Unary,
-  I: CreateIncomeTransactionRequest,
+  I: CreateTransactionRequest,
   O: Transaction,
   service: {
     typeName: "fijoy.v1.TransactionService"
@@ -21,17 +21,44 @@ export const createIncomeTransaction = {
 } as const;
 
 /**
- * rpc CreateExpenseTransaction(CreateExpenseTransactionRequest) returns (Transaction);
- * rpc CreateTransferTransaction(CreateTransferTransactionRequest) returns (Transaction);
- *
- * @generated from rpc fijoy.v1.TransactionService.CreateAdjustmentTransaction
+ * @generated from rpc fijoy.v1.TransactionService.CreateTransactions
  */
-export const createAdjustmentTransaction = {
-  localName: "createAdjustmentTransaction",
-  name: "CreateAdjustmentTransaction",
+export const createTransactions = {
+  localName: "createTransactions",
+  name: "CreateTransactions",
   kind: MethodKind.Unary,
-  I: CreateAdjustmentTransactionRequest,
+  I: CreateTransactionsRequest,
+  O: Transactions,
+  service: {
+    typeName: "fijoy.v1.TransactionService"
+  }
+} as const;
+
+/**
+ * @generated from rpc fijoy.v1.TransactionService.GetTransactionById
+ */
+export const getTransactionById = {
+  localName: "getTransactionById",
+  name: "GetTransactionById",
+  kind: MethodKind.Unary,
+  I: GetTransactionByIdRequest,
   O: Transaction,
+      idempotency: MethodIdempotency.NoSideEffects,
+  service: {
+    typeName: "fijoy.v1.TransactionService"
+  }
+} as const;
+
+/**
+ * @generated from rpc fijoy.v1.TransactionService.GetTransactionsByAccountId
+ */
+export const getTransactionsByAccountId = {
+  localName: "getTransactionsByAccountId",
+  name: "GetTransactionsByAccountId",
+  kind: MethodKind.Unary,
+  I: GetTransactionsByAccountIdRequest,
+  O: Transactions,
+      idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.TransactionService"
   }
@@ -47,6 +74,20 @@ export const getTransactions = {
   I: Empty,
   O: Transactions,
       idempotency: MethodIdempotency.NoSideEffects,
+  service: {
+    typeName: "fijoy.v1.TransactionService"
+  }
+} as const;
+
+/**
+ * @generated from rpc fijoy.v1.TransactionService.DeleteTransactionById
+ */
+export const deleteTransactionById = {
+  localName: "deleteTransactionById",
+  name: "DeleteTransactionById",
+  kind: MethodKind.Unary,
+  I: DeleteTransactionByIdRequest,
+  O: Empty,
   service: {
     typeName: "fijoy.v1.TransactionService"
   }

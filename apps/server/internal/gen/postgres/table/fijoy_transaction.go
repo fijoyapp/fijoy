@@ -26,6 +26,7 @@ type fijoyTransactionTable struct {
 	FxRate       postgres.ColumnFloat
 	Balance      postgres.ColumnFloat
 	BalanceDelta postgres.ColumnFloat
+	Note         postgres.ColumnString
 	CreatedAt    postgres.ColumnTimestampz
 	UpdatedAt    postgres.ColumnTimestampz
 
@@ -77,10 +78,11 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		FxRateColumn       = postgres.FloatColumn("fx_rate")
 		BalanceColumn      = postgres.FloatColumn("balance")
 		BalanceDeltaColumn = postgres.FloatColumn("balance_delta")
+		NoteColumn         = postgres.StringColumn("note")
 		CreatedAtColumn    = postgres.TimestampzColumn("created_at")
 		UpdatedAtColumn    = postgres.TimestampzColumn("updated_at")
-		allColumns         = postgres.ColumnList{IDColumn, ProfileIDColumn, AccountIDColumn, AmountColumn, AmountDeltaColumn, ValueColumn, FxRateColumn, BalanceColumn, BalanceDeltaColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns     = postgres.ColumnList{ProfileIDColumn, AccountIDColumn, AmountColumn, AmountDeltaColumn, ValueColumn, FxRateColumn, BalanceColumn, BalanceDeltaColumn, CreatedAtColumn, UpdatedAtColumn}
+		allColumns         = postgres.ColumnList{IDColumn, ProfileIDColumn, AccountIDColumn, AmountColumn, AmountDeltaColumn, ValueColumn, FxRateColumn, BalanceColumn, BalanceDeltaColumn, NoteColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns     = postgres.ColumnList{ProfileIDColumn, AccountIDColumn, AmountColumn, AmountDeltaColumn, ValueColumn, FxRateColumn, BalanceColumn, BalanceDeltaColumn, NoteColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fijoyTransactionTable{
@@ -96,6 +98,7 @@ func newFijoyTransactionTableImpl(schemaName, tableName, alias string) fijoyTran
 		FxRate:       FxRateColumn,
 		Balance:      BalanceColumn,
 		BalanceDelta: BalanceDeltaColumn,
+		Note:         NoteColumn,
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
 
