@@ -6,6 +6,7 @@ import (
 	"fijoy/constants"
 	"fijoy/internal/domain/account"
 	"fijoy/internal/gen/postgres/model"
+	"fmt"
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
@@ -19,6 +20,7 @@ import (
 type AccountRepository interface {
 	CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error)
 
+	GetAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, id string) (*account.FijoyAccount, error)
 	GetAccountById(ctx context.Context, profileId string, id string) (*account.FijoyAccount, error)
 	GetAccounts(ctx context.Context, profileId string) ([]*account.FijoyAccount, error)
 
@@ -104,6 +106,22 @@ func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, pro
 	return &dest, nil
 }
 
+func (r *accountRepository) GetAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*account.FijoyAccount, error) {
+	stmt := SELECT(FijoyAccount.AllColumns).
+		FROM(FijoyAccount).
+		WHERE(FijoyAccount.ID.EQ(String(id))).
+		WHERE(FijoyAccount.ProfileID.EQ(String(profileId)))
+
+	dest := account.FijoyAccount{}
+
+	err := stmt.QueryContext(ctx, tx, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}
+
 func (r *accountRepository) GetAccountById(ctx context.Context, profileId, id string) (*account.FijoyAccount, error) {
 	stmt := SELECT(FijoyAccount.AllColumns).
 		FROM(FijoyAccount).
@@ -136,7 +154,8 @@ func (r *accountRepository) GetAccounts(ctx context.Context, profileId string) (
 }
 
 func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.UpdateAccountRequest) (*account.FijoyAccount, error) {
-	newAccount, err := r.GetAccountById(ctx, profileId, req.Id)
+	newAccount, err := r.GetAccountByIdTX(ctx, tx, profileId, req.Id)
+	fmt.Println("newAccount", newAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +197,7 @@ func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx,
 		UPDATE(columnList).
 		MODEL(newAccount).WHERE(FijoyAccount.ID.EQ(String(req.Id))).
 		WHERE(FijoyAccount.ProfileID.EQ(String(profileId))).
-		RETURNING(FijoyProfile.AllColumns)
+		RETURNING(FijoyAccount.AllColumns)
 
 	dest := account.FijoyAccount{}
 
