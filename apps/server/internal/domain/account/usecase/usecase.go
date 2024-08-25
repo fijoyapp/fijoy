@@ -15,9 +15,13 @@ import (
 )
 
 type AccountUseCase interface {
+	CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error)
+
 	GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error)
 	GetAccounts(ctx context.Context, profileId string) (*fijoyv1.Accounts, error)
-	CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error)
+
+	UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error)
+
 	DeleteAccountById(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountByIdRequest) (*fijoyv1.Account, error)
 }
 
@@ -131,6 +135,18 @@ func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, re
 		return nil, err
 	}
 
+	amount := req.Amount
+
+	updateAccountReq := &fijoyv1.UpdateAccountRequest{
+		Id:     createdAccount.ID,
+		Amount: &amount,
+	}
+
+	_, err = u.accountRepo.UpdateAccountByIdTX(ctx, tx, profileId, updateAccountReq)
+	if err != nil {
+		return nil, err
+	}
+
 	return accountModelToProto(createdAccount), nil
 }
 
@@ -150,6 +166,32 @@ func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fi
 	}
 
 	return accountsModelToProto(accounts), nil
+}
+
+func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error) {
+	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelDefault})
+	if err != nil {
+		return nil, err
+	}
+
+	// Defer a rollback in case anything fails.
+	defer func() {
+		if p := recover(); p != nil {
+			tx.Rollback()
+			panic(p) // re-throw panic after rollback
+		} else if err != nil {
+			tx.Rollback() // rollback on error
+		} else {
+			err = tx.Commit() // commit on success
+		}
+	}()
+
+	updatedAccount, err := u.accountRepo.UpdateAccountByIdTX(ctx, tx, profileId, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return accountModelToProto(updatedAccount), nil
 }
 
 func (u *accountUseCase) DeleteAccountById(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountByIdRequest) (*fijoyv1.Account, error) {

@@ -93,5 +93,7 @@ service AccountService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  rpc UpdateAccount(UpdateAccountRequest) returns (Account);
+
   rpc DeleteAccountById(DeleteAccountByIdRequest) returns (Account) {}
 }

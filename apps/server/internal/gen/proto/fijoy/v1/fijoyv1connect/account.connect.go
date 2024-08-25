@@ -43,6 +43,9 @@ const (
 	// AccountServiceGetAccountByIdProcedure is the fully-qualified name of the AccountService's
 	// GetAccountById RPC.
 	AccountServiceGetAccountByIdProcedure = "/fijoy.v1.AccountService/GetAccountById"
+	// AccountServiceUpdateAccountProcedure is the fully-qualified name of the AccountService's
+	// UpdateAccount RPC.
+	AccountServiceUpdateAccountProcedure = "/fijoy.v1.AccountService/UpdateAccount"
 	// AccountServiceDeleteAccountByIdProcedure is the fully-qualified name of the AccountService's
 	// DeleteAccountById RPC.
 	AccountServiceDeleteAccountByIdProcedure = "/fijoy.v1.AccountService/DeleteAccountById"
@@ -54,6 +57,7 @@ var (
 	accountServiceCreateAccountMethodDescriptor     = accountServiceServiceDescriptor.Methods().ByName("CreateAccount")
 	accountServiceGetAccountsMethodDescriptor       = accountServiceServiceDescriptor.Methods().ByName("GetAccounts")
 	accountServiceGetAccountByIdMethodDescriptor    = accountServiceServiceDescriptor.Methods().ByName("GetAccountById")
+	accountServiceUpdateAccountMethodDescriptor     = accountServiceServiceDescriptor.Methods().ByName("UpdateAccount")
 	accountServiceDeleteAccountByIdMethodDescriptor = accountServiceServiceDescriptor.Methods().ByName("DeleteAccountById")
 )
 
@@ -62,6 +66,7 @@ type AccountServiceClient interface {
 	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
 	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
+	UpdateAccount(context.Context, *connect.Request[v1.UpdateAccountRequest]) (*connect.Response[v1.Account], error)
 	DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error)
 }
 
@@ -95,6 +100,12 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
+		updateAccount: connect.NewClient[v1.UpdateAccountRequest, v1.Account](
+			httpClient,
+			baseURL+AccountServiceUpdateAccountProcedure,
+			connect.WithSchema(accountServiceUpdateAccountMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 		deleteAccountById: connect.NewClient[v1.DeleteAccountByIdRequest, v1.Account](
 			httpClient,
 			baseURL+AccountServiceDeleteAccountByIdProcedure,
@@ -109,6 +120,7 @@ type accountServiceClient struct {
 	createAccount     *connect.Client[v1.CreateAccountRequest, v1.Account]
 	getAccounts       *connect.Client[emptypb.Empty, v1.Accounts]
 	getAccountById    *connect.Client[v1.GetAccountByIdRequest, v1.Account]
+	updateAccount     *connect.Client[v1.UpdateAccountRequest, v1.Account]
 	deleteAccountById *connect.Client[v1.DeleteAccountByIdRequest, v1.Account]
 }
 
@@ -127,6 +139,11 @@ func (c *accountServiceClient) GetAccountById(ctx context.Context, req *connect.
 	return c.getAccountById.CallUnary(ctx, req)
 }
 
+// UpdateAccount calls fijoy.v1.AccountService.UpdateAccount.
+func (c *accountServiceClient) UpdateAccount(ctx context.Context, req *connect.Request[v1.UpdateAccountRequest]) (*connect.Response[v1.Account], error) {
+	return c.updateAccount.CallUnary(ctx, req)
+}
+
 // DeleteAccountById calls fijoy.v1.AccountService.DeleteAccountById.
 func (c *accountServiceClient) DeleteAccountById(ctx context.Context, req *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error) {
 	return c.deleteAccountById.CallUnary(ctx, req)
@@ -137,6 +154,7 @@ type AccountServiceHandler interface {
 	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
 	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
+	UpdateAccount(context.Context, *connect.Request[v1.UpdateAccountRequest]) (*connect.Response[v1.Account], error)
 	DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error)
 }
 
@@ -166,6 +184,12 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
+	accountServiceUpdateAccountHandler := connect.NewUnaryHandler(
+		AccountServiceUpdateAccountProcedure,
+		svc.UpdateAccount,
+		connect.WithSchema(accountServiceUpdateAccountMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	accountServiceDeleteAccountByIdHandler := connect.NewUnaryHandler(
 		AccountServiceDeleteAccountByIdProcedure,
 		svc.DeleteAccountById,
@@ -180,6 +204,8 @@ func NewAccountServiceHandler(svc AccountServiceHandler, opts ...connect.Handler
 			accountServiceGetAccountsHandler.ServeHTTP(w, r)
 		case AccountServiceGetAccountByIdProcedure:
 			accountServiceGetAccountByIdHandler.ServeHTTP(w, r)
+		case AccountServiceUpdateAccountProcedure:
+			accountServiceUpdateAccountHandler.ServeHTTP(w, r)
 		case AccountServiceDeleteAccountByIdProcedure:
 			accountServiceDeleteAccountByIdHandler.ServeHTTP(w, r)
 		default:
@@ -201,6 +227,10 @@ func (UnimplementedAccountServiceHandler) GetAccounts(context.Context, *connect.
 
 func (UnimplementedAccountServiceHandler) GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.GetAccountById is not implemented"))
+}
+
+func (UnimplementedAccountServiceHandler) UpdateAccount(context.Context, *connect.Request[v1.UpdateAccountRequest]) (*connect.Response[v1.Account], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.UpdateAccount is not implemented"))
 }
 
 func (UnimplementedAccountServiceHandler) DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error) {

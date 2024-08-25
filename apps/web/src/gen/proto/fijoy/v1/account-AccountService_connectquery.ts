@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { Account, Accounts, CreateAccountRequest, DeleteAccountByIdRequest, GetAccountByIdRequest } from "./account_pb.js";
+import { Account, Accounts, CreateAccountRequest, DeleteAccountByIdRequest, GetAccountByIdRequest, UpdateAccountRequest } from "./account_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.AccountService.CreateAccount
@@ -45,6 +45,20 @@ export const getAccountById = {
   I: GetAccountByIdRequest,
   O: Account,
       idempotency: MethodIdempotency.NoSideEffects,
+  service: {
+    typeName: "fijoy.v1.AccountService"
+  }
+} as const;
+
+/**
+ * @generated from rpc fijoy.v1.AccountService.UpdateAccount
+ */
+export const updateAccount = {
+  localName: "updateAccount",
+  name: "UpdateAccount",
+  kind: MethodKind.Unary,
+  I: UpdateAccountRequest,
+  O: Account,
   service: {
     typeName: "fijoy.v1.AccountService"
   }
