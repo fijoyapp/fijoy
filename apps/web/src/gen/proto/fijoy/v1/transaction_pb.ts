@@ -156,32 +156,27 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
   accountId = "";
 
   /**
-   * @generated from field: string to_account_id = 2;
-   */
-  toAccountId = "";
-
-  /**
-   * @generated from field: string amount = 3;
+   * @generated from field: string amount = 2;
    */
   amount = "";
 
   /**
-   * @generated from field: string value = 4;
+   * @generated from field: string value = 3;
    */
   value = "";
 
   /**
-   * @generated from field: string fx_rate = 5;
+   * @generated from field: string fx_rate = 4;
    */
   fxRate = "";
 
   /**
-   * @generated from field: string balance = 6;
+   * @generated from field: string balance = 5;
    */
   balance = "";
 
   /**
-   * @generated from field: string note = 7;
+   * @generated from field: string note = 6;
    */
   note = "";
 
@@ -194,12 +189,11 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
   static readonly typeName = "fijoy.v1.CreateTransactionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "to_account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateTransactionRequest {
