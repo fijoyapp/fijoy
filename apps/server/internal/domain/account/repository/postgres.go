@@ -22,6 +22,8 @@ type AccountRepository interface {
 	GetAccountById(ctx context.Context, profileId string, id string) (*account.FijoyAccount, error)
 	GetAccounts(ctx context.Context, profileId string) ([]*account.FijoyAccount, error)
 
+	UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.UpdateAccountRequest) (*account.FijoyAccount, error)
+
 	DeleteAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, id string) (*account.FijoyAccount, error)
 }
 
@@ -131,6 +133,61 @@ func (r *accountRepository) GetAccounts(ctx context.Context, profileId string) (
 	}
 
 	return dest, nil
+}
+
+func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.UpdateAccountRequest) (*account.FijoyAccount, error) {
+	newAccount, err := r.GetAccountById(ctx, profileId, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	columnList := ColumnList{}
+
+	if req.Name != nil {
+		newAccount.Name = *req.Name
+		columnList = append(columnList, FijoyAccount.Name)
+	}
+	if req.Archived != nil {
+		newAccount.Archived = *req.Archived
+		columnList = append(columnList, FijoyAccount.Archived)
+	}
+	if req.IncludeInNetWorth != nil {
+		newAccount.IncludeInNetWorth = *req.IncludeInNetWorth
+		columnList = append(columnList, FijoyAccount.IncludeInNetWorth)
+	}
+	if req.Amount != nil {
+		newAccount.Amount = decimal.RequireFromString(*req.Amount)
+		columnList = append(columnList, FijoyAccount.Amount)
+	}
+	if req.Value != nil {
+		newAccount.Value = decimal.RequireFromString(*req.Value)
+		columnList = append(columnList, FijoyAccount.Value)
+	}
+	if req.FxRate != nil {
+		newAccount.FxRate = decimal.RequireFromString(*req.FxRate)
+		columnList = append(columnList, FijoyAccount.FxRate)
+	}
+
+	newBalance := newAccount.Amount.Mul(newAccount.Value).Mul(newAccount.FxRate)
+	if newBalance.Cmp(newAccount.Balance) != 0 {
+		newAccount.Balance = newBalance
+		columnList = append(columnList, FijoyAccount.Balance)
+	}
+
+	stmt := FijoyAccount.
+		UPDATE(columnList).
+		MODEL(newAccount).WHERE(FijoyAccount.ID.EQ(String(req.Id))).
+		WHERE(FijoyAccount.ProfileID.EQ(String(profileId))).
+		RETURNING(FijoyProfile.AllColumns)
+
+	dest := account.FijoyAccount{}
+
+	err = stmt.QueryContext(ctx, tx, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
 }
 
 func (r *accountRepository) DeleteAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*account.FijoyAccount, error) {

@@ -280,11 +280,6 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
    */
   fxRate = "";
 
-  /**
-   * @generated from field: string balance = 9;
-   */
-  balance = "";
-
   constructor(data?: PartialMessage<CreateAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -301,7 +296,6 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
     { no: 6, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 7, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 8, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {
@@ -318,6 +312,79 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
 
   static equals(a: CreateAccountRequest | PlainMessage<CreateAccountRequest> | undefined, b: CreateAccountRequest | PlainMessage<CreateAccountRequest> | undefined): boolean {
     return proto3.util.equals(CreateAccountRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.UpdateAccountRequest
+ */
+export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: optional string name = 2;
+   */
+  name?: string;
+
+  /**
+   * @generated from field: optional bool archived = 3;
+   */
+  archived?: boolean;
+
+  /**
+   * @generated from field: optional bool include_in_net_worth = 4;
+   */
+  includeInNetWorth?: boolean;
+
+  /**
+   * @generated from field: optional string amount = 5;
+   */
+  amount?: string;
+
+  /**
+   * @generated from field: optional string value = 6;
+   */
+  value?: string;
+
+  /**
+   * @generated from field: optional string fx_rate = 7;
+   */
+  fxRate?: string;
+
+  constructor(data?: PartialMessage<UpdateAccountRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.UpdateAccountRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 3, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+    { no: 4, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+    { no: 5, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 6, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 7, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateAccountRequest {
+    return new UpdateAccountRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateAccountRequest {
+    return new UpdateAccountRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateAccountRequest {
+    return new UpdateAccountRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateAccountRequest | PlainMessage<UpdateAccountRequest> | undefined, b: UpdateAccountRequest | PlainMessage<UpdateAccountRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateAccountRequest, a, b);
   }
 }
 
