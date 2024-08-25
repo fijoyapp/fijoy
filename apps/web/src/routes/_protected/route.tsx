@@ -7,16 +7,8 @@ import {
 } from "@tanstack/react-router";
 import { useProfile } from "@/hooks/use-profile";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { getProfileQueryOptions } from "@/lib/queries/profile";
 
 export const Route = createFileRoute("/_protected")({
-  beforeLoad: async ({ context }) => {
-    const profileQueryOpts = getProfileQueryOptions({
-      context,
-    });
-    const profile = await context.queryClient.ensureQueryData(profileQueryOpts);
-    return { profile: profile };
-  },
   component: Protected,
 });
 
