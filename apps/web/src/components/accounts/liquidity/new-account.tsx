@@ -11,18 +11,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { NameField } from "../form/name";
+import { CurrencyField } from "../form/currency";
+import { useProfile } from "@/hooks/use-profile";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
   }),
+  symbol: z.string().length(3),
 });
 
 export default function NewAccount() {
+  const { profile } = useProfile();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      symbol: profile?.currencies[0],
     },
   });
 
@@ -47,9 +52,15 @@ export default function NewAccount() {
             <CardContent>
               <NameField
                 control={form.control}
-                name="username"
+                name="name"
                 label="Name"
-                placeholder="Name"
+                placeholder="Give your account a descriptive name, e.g. Wealthsimple Cash"
+              />
+
+              <CurrencyField
+                control={form.control}
+                name="symbol"
+                label="Account Currency"
               />
             </CardContent>
           </Card>
