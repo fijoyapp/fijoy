@@ -15,8 +15,8 @@ export default function AccountList({ accounts }: AccountListProps) {
   return (
     <div>
       <div>
-        <div>Liquidities</div>
-        <div className="py-2"></div>
+        <div className="font-semibold">Liquidities</div>
+        <div className="py-1"></div>
 
         <Card className="">
           {liquidities.map((account, idx) => {
