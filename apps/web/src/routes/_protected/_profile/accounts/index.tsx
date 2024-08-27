@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
@@ -20,15 +20,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { AccountType, Accounts } from "@/gen/proto/fijoy/v1/account_pb";
-import { getAccountTypeDetail } from "@/config/account";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import {
   ChartCandlestick,
   CreditCard,
@@ -36,12 +27,8 @@ import {
   House,
   PiggyBank,
 } from "lucide-react";
-import { match } from "ts-pattern";
-import NewLiquidity from "@/components/accounts/liquidity/new-account";
-import NewInvestment from "@/components/accounts/investment/new-account";
-import NewProperty from "@/components/accounts/property/new-account";
-import NewReceivable from "@/components/accounts/receivable/new-account";
-import NewLiability from "@/components/accounts/liability/new-account";
+import AddAccount from "@/components/accounts/add-account";
+import AccountList from "@/components/accounts/account-list";
 
 const setupNewAccountSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -131,55 +118,7 @@ function AccountsView({ accounts }: AccountsViewProps) {
 
       <div className="py-2"></div>
 
-      {accounts.accounts.map((account, idx) => {
-        return (
-          <div key={idx}>
-            <div>{account.name}</div>
-            <div>{account.balance}</div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-type AddAccountProps = {
-  type: AccountTypeEnum;
-};
-
-function AddAccount({ type }: AddAccountProps) {
-  const accountTypeDetail = getAccountTypeDetail(type);
-  return (
-    <div className="max-w-screen-sm">
-      <Breadcrumb>
-        <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to={"/accounts"}>Accounts</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage className="font-semibold text-foreground">
-              Add {accountTypeDetail.name}
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <p className="text-sm text-muted-foreground">
-        {accountTypeDetail.description}
-      </p>
-
-      <div className="py-2"></div>
-
-      {match(type)
-        .with(AccountType.UNSPECIFIED as 0, () => <Navigate to={"/accounts"} />)
-        .with(AccountType.LIQUIDITY as 1, () => <NewLiquidity />)
-        .with(AccountType.INVESTMENT as 2, () => <NewInvestment />)
-        .with(AccountType.PROPERTY as 3, () => <NewProperty />)
-        .with(AccountType.RECEIVABLE as 4, () => <NewReceivable />)
-        .with(AccountType.LIABILITY as 5, () => <NewLiability />)
-        .exhaustive()}
+      <AccountList accounts={accounts} />
     </div>
   );
 }

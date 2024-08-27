@@ -28,8 +28,7 @@ import { ChevronsUpDown, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { currencyCodeToName } from "@/config/currency";
 import { cn } from "@/lib/utils";
-import { currencyToDisplay } from "@/lib/money";
-import currency from "currency.js";
+import { getCurrencyDisplay } from "@/lib/money";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -142,83 +141,85 @@ export function CurrencyField<T extends FieldValues>({
             </PopoverContent>
           </Popover>
 
-          {selectedCurrencies.map((curr, idx) => (
-            <Card key={curr}>
-              <CardHeader className="p-4">
-                <div className="flex items-center">
-                  <div className="flex flex-col">
-                    <span>
-                      {currencyCodeToName(curr)} ({curr})
-                    </span>
+          {selectedCurrencies.map((curr, idx) => {
+            const locale = currencies.currencies.find(
+              (currency) => currency.code === selectedCurrencies[0],
+            )!.locale;
+            return (
+              <Card key={curr}>
+                <CardHeader className="p-4">
+                  <div className="flex items-center">
+                    <div className="flex flex-col">
+                      <span>
+                        {currencyCodeToName(curr)} ({curr})
+                      </span>
 
-                    <span className="text-sm text-muted-foreground">
-                      {currencyToDisplay(currency(420), curr, {
-                        compact: false,
-                        isDebt: false,
-                        locale: currencies.currencies.find(
-                          (currency) => currency.code === selectedCurrencies[0],
-                        )!.locale,
-                      })}
-                    </span>
-                  </div>
+                      <span className="text-sm text-muted-foreground">
+                        {getCurrencyDisplay("420", curr, locale, {
+                          compact: false,
+                          isDebt: false,
+                        })}
+                      </span>
+                    </div>
 
-                  <div className="grow"></div>
+                    <div className="grow"></div>
 
-                  {idx === 0 && (
-                    <>
+                    {idx === 0 && (
+                      <>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          type="button"
+                          className="cursor-default"
+                        >
+                          Default
+                        </Button>
+                        <div className="px-1"></div>
+                      </>
+                    )}
+
+                    {idx !== 0 && allowChangeDefault && (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setSelectedCurrencies([
+                              curr,
+                              ...selectedCurrencies.filter(
+                                (selectedCurrency) => selectedCurrency !== curr,
+                              ),
+                            ]);
+                          }}
+                        >
+                          Set Default
+                        </Button>
+                        <div className="px-1"></div>
+                      </>
+                    )}
+                    {(allowChangeDefault || idx !== 0) && (
                       <Button
-                        variant="secondary"
-                        size="sm"
-                        type="button"
-                        className="cursor-default"
-                      >
-                        Default
-                      </Button>
-                      <div className="px-1"></div>
-                    </>
-                  )}
-
-                  {idx !== 0 && allowChangeDefault && (
-                    <>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        className="cursor-pointer"
-                        onClick={() => {
-                          setSelectedCurrencies([
-                            curr,
-                            ...selectedCurrencies.filter(
+                        size="icon"
+                        variant="ghost"
+                        onClick={() =>
+                          setSelectedCurrencies(
+                            selectedCurrencies.filter(
                               (selectedCurrency) => selectedCurrency !== curr,
                             ),
-                          ]);
-                        }}
+                          )
+                        }
+                        className="cursor-pointer"
                       >
-                        Set Default
+                        <Trash />
                       </Button>
-                      <div className="px-1"></div>
-                    </>
-                  )}
-                  {(allowChangeDefault || idx !== 0) && (
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() =>
-                        setSelectedCurrencies(
-                          selectedCurrencies.filter(
-                            (selectedCurrency) => selectedCurrency !== curr,
-                          ),
-                        )
-                      }
-                      className="cursor-pointer"
-                    >
-                      <Trash />
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-            </Card>
-          ))}
+                    )}
+                  </div>
+                </CardHeader>
+              </Card>
+            );
+          })}
           <FormMessage />
         </FormItem>
       )}
