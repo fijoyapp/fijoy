@@ -2,9 +2,10 @@ package handler
 
 import (
 	"context"
+	"errors"
+	"fijoy/constants"
 	"fijoy/internal/domain/account/usecase"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
-	"fijoy/internal/util/auth"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
@@ -28,9 +29,9 @@ func (h *accountHandler) CreateAccount(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	account, err := h.useCase.CreateAccount(ctx, profileId, req.Msg)
@@ -49,9 +50,9 @@ func (h *accountHandler) GetAccountById(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	account, err := h.useCase.GetAccountById(ctx, profileId, req.Msg)
@@ -70,9 +71,9 @@ func (h *accountHandler) GetAccounts(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	accounts, err := h.useCase.GetAccounts(ctx, profileId)
@@ -91,9 +92,9 @@ func (h *accountHandler) UpdateAccount(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	account, err := h.useCase.UpdateAccount(ctx, profileId, req.Msg)
@@ -112,9 +113,9 @@ func (h *accountHandler) DeleteAccountById(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	account, err := h.useCase.DeleteAccountById(ctx, profileId, req.Msg)

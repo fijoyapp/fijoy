@@ -2,6 +2,8 @@ package handler
 
 import (
 	"context"
+	"errors"
+	"fijoy/constants"
 	"fijoy/internal/domain/profile/usecase"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
 	"fijoy/internal/util/auth"
@@ -70,9 +72,9 @@ func (h *profileHandler) DeleteProfile(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	profile, err := h.useCase.DeleteProfile(ctx, profileId)
@@ -91,9 +93,9 @@ func (h *profileHandler) UpdateCurrency(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	profile, err := h.useCase.UpdateCurrency(ctx, profileId, req.Msg)
