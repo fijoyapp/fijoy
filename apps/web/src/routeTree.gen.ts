@@ -22,7 +22,6 @@ import { Route as ProtectedProfileHomeIndexImport } from './routes/_protected/_p
 import { Route as ProtectedProfileHistoryIndexImport } from './routes/_protected/_profile/history/index'
 import { Route as ProtectedProfileAccountsIndexImport } from './routes/_protected/_profile/accounts/index'
 import { Route as ProtectedProfileSettingsCurrencyIndexImport } from './routes/_protected/_profile/settings/currency/index'
-import { Route as ProtectedProfileAccountsAccountIdIndexImport } from './routes/_protected/_profile/accounts/$accountId/index'
 
 // Create Virtual Routes
 
@@ -123,12 +122,6 @@ const ProtectedProfileAccountsIndexRoute =
 const ProtectedProfileSettingsCurrencyIndexRoute =
   ProtectedProfileSettingsCurrencyIndexImport.update({
     path: '/settings/currency/',
-    getParentRoute: () => ProtectedProfileRouteRoute,
-  } as any)
-
-const ProtectedProfileAccountsAccountIdIndexRoute =
-  ProtectedProfileAccountsAccountIdIndexImport.update({
-    path: '/accounts/$accountId/',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
@@ -241,13 +234,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedProfileSettingsIndexImport
       parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/_profile/accounts/$accountId/': {
-      id: '/_protected/_profile/accounts/$accountId/'
-      path: '/accounts/$accountId'
-      fullPath: '/accounts/$accountId'
-      preLoaderRoute: typeof ProtectedProfileAccountsAccountIdIndexImport
-      parentRoute: typeof ProtectedProfileRouteImport
-    }
     '/_protected/_profile/settings/currency/': {
       id: '/_protected/_profile/settings/currency/'
       path: '/settings/currency'
@@ -267,7 +253,6 @@ export const routeTree = rootRoute.addChildren({
       ProtectedProfileHistoryIndexRoute,
       ProtectedProfileHomeIndexRoute,
       ProtectedProfileSettingsIndexRoute,
-      ProtectedProfileAccountsAccountIdIndexRoute,
       ProtectedProfileSettingsCurrencyIndexRoute,
     }),
     ProtectedSetupRoute,
@@ -322,7 +307,6 @@ export const routeTree = rootRoute.addChildren({
         "/_protected/_profile/history/",
         "/_protected/_profile/home/",
         "/_protected/_profile/settings/",
-        "/_protected/_profile/accounts/$accountId/",
         "/_protected/_profile/settings/currency/"
       ]
     },
@@ -372,10 +356,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_protected/_profile/settings/": {
       "filePath": "_protected/_profile/settings/index.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/accounts/$accountId/": {
-      "filePath": "_protected/_profile/accounts/$accountId/index.tsx",
       "parent": "/_protected/_profile"
     },
     "/_protected/_profile/settings/currency/": {
