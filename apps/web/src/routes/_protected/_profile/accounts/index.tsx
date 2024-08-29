@@ -33,14 +33,15 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
-const setupNewAccountSchema = z.object({
+const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
+  detail: z.string().startsWith("account_").optional(),
 });
 
 export const Route = createFileRoute("/_protected/_profile/accounts/")({
   // loaderDeps: ({ search}) => ({ search }),
   validateSearch: (search) => {
-    return setupNewAccountSchema.parse(search);
+    return accountsRouteSchema.parse(search);
   },
   loader: (opts) => {
     opts.context.queryClient.ensureQueryData(
@@ -56,27 +57,35 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
 function Page() {
   const context = Route.useRouteContext();
   const { data } = useSuspenseQuery(getAccountsQueryOptions({ context }));
-  const { add } = Route.useSearch();
+  const { add, detail } = Route.useSearch();
 
   return (
-    <>{add ? <AddAccount type={add} /> : <AccountsView accounts={data} />}</>
+    <>
+      {add ? (
+        <AddAccount type={add} />
+      ) : (
+        <AccountsView accounts={data} detail={detail} />
+      )}
+    </>
   );
 }
 
 type AccountsViewProps = {
   accounts: Accounts;
+  detail?: string;
 };
 
-function AccountsView({ accounts }: AccountsViewProps) {
+function AccountsView({ accounts, detail }: AccountsViewProps) {
+  // TODO: improve this to get the 3 breakpoints for fijoy
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const sidePanelActive = true; // TODO: set this dynamically of course
+  const sidePanelActive = detail !== undefined;
 
   return (
-    <div className={cn("flex min-h-full", isDesktop ? "" : "")}>
+    <div className={cn("flex min-h-full w-full", isDesktop ? "" : "")}>
       <div
         className={cn(
-          "w-1/2 p-4 lg:p-6",
-          sidePanelActive && !isDesktop ? "hidden" : "",
+          "w-full p-4 lg:p-6",
+          sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
         )}
       >
         <PageHeader>
@@ -132,8 +141,17 @@ function AccountsView({ accounts }: AccountsViewProps) {
 
         <AccountList accounts={accounts} />
       </div>
-      <Separator orientation="vertical" className="h-full" />
-      <div className="w-1/2 p-4 lg:p-6">Side Panel</div>
+
+      {isDesktop && <Separator orientation="vertical" className="h-full" />}
+
+      <div
+        className={cn(
+          "w-full p-4 lg:p-6",
+          !sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
+        )}
+      >
+        Side Panel
+      </div>
     </div>
   );
 }
