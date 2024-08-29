@@ -19,13 +19,15 @@ export const Route = createFileRoute("/_protected/_profile/settings/")({
 
 function Page() {
   return (
-    <>
+    <div className="p-4 lg:p-6">
       <PageHeader>
         <PageHeaderHeading>Settings</PageHeaderHeading>
         <PageHeaderDescription>
           Configure your Fijoy profile
         </PageHeaderDescription>
       </PageHeader>
+
+      <div className="py-2"></div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Link from={Route.fullPath} to={"/settings/currency"}>
@@ -44,6 +46,6 @@ function Page() {
           </Card>
         </Link>
       </div>
-    </>
+    </div>
   );
 }

@@ -44,7 +44,7 @@ function Page() {
   // );
 
   return (
-    <>
+    <div className="p-4 lg:p-6">
       <PageHeader>
         <PageHeaderHeading>History</PageHeaderHeading>
         <PageHeaderDescription>
@@ -57,6 +57,6 @@ function Page() {
       {/*   workspace={context.workspace} */}
       {/*   categories={[]} // FIXME: load categories */}
       {/* /> */}
-    </>
+    </div>
   );
 }
