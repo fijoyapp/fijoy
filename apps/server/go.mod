@@ -8,7 +8,7 @@ require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240717164558-a6c49f84cc0f.2
 	connectrpc.com/connect v1.16.2
 	connectrpc.com/cors v0.1.0
-	github.com/bufbuild/protovalidate-go v0.6.4
+	github.com/bufbuild/protovalidate-go v0.6.5
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
@@ -18,7 +18,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/nrednav/cuid2 v1.0.0
-	github.com/rs/cors v1.11.0
+	github.com/rs/cors v1.11.1
 	github.com/serenize/snaker v0.0.0-20201027110005-a7ad2135616e
 	github.com/shopspring/decimal v1.4.0
 	github.com/stretchr/testify v1.9.0
