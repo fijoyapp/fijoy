@@ -87,7 +87,7 @@ function Page() {
   }
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-xl p-4 lg:p-6">
       <Breadcrumb>
         <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
           <BreadcrumbItem>
@@ -109,7 +109,7 @@ function Page() {
         Everything related to multi-currency settings.
       </p>
 
-      <div className="py-4"></div>
+      <div className="py-2"></div>
 
       <div className="space-y-4">
         <Form {...form}>

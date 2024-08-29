@@ -29,6 +29,9 @@ import {
 } from "lucide-react";
 import AddAccount from "@/components/accounts/add-account";
 import AccountList from "@/components/accounts/account-list";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 const setupNewAccountSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -65,60 +68,72 @@ type AccountsViewProps = {
 };
 
 function AccountsView({ accounts }: AccountsViewProps) {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const sidePanelActive = true; // TODO: set this dynamically of course
+
   return (
-    <div className="max-w-screen-2xl">
-      <PageHeader>
-        <PageHeaderHeading>Accounts</PageHeaderHeading>
-        <PageHeaderDescription>
-          View and manage your accounts
-        </PageHeaderDescription>
-      </PageHeader>
+    <div className={cn("flex min-h-full", isDesktop ? "" : "")}>
+      <div
+        className={cn(
+          "w-1/2 p-4 lg:p-6",
+          sidePanelActive && !isDesktop ? "hidden" : "",
+        )}
+      >
+        <PageHeader>
+          <PageHeaderHeading>Accounts</PageHeaderHeading>
+          <PageHeaderDescription>
+            View and manage your accounts
+          </PageHeaderDescription>
+        </PageHeader>
 
-      <div className="py-2"></div>
+        <div className="py-2"></div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button>New Account</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Select a type</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <Link to={"/accounts"} search={{ add: AccountType.LIQUIDITY }}>
-            <DropdownMenuItem>
-              <PiggyBank className="mr-2 h-4 w-4" />
-              <span>Liquitity</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.INVESTMENT }}>
-            <DropdownMenuItem>
-              <ChartCandlestick className="mr-2 h-4 w-4" />
-              <span>Investment</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.PROPERTY }}>
-            <DropdownMenuItem>
-              <House className="mr-2 h-4 w-4" />
-              <span>Property</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.RECEIVABLE }}>
-            <DropdownMenuItem>
-              <HandCoins className="mr-2 h-4 w-4" />
-              <span>Receivable</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.LIABILITY }}>
-            <DropdownMenuItem>
-              <CreditCard className="mr-2 h-4 w-4" />
-              <span>Liability</span>
-            </DropdownMenuItem>
-          </Link>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button>New Account</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Select a type</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <Link to={"/accounts"} search={{ add: AccountType.LIQUIDITY }}>
+              <DropdownMenuItem>
+                <PiggyBank className="mr-2 h-4 w-4" />
+                <span>Liquitity</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.INVESTMENT }}>
+              <DropdownMenuItem>
+                <ChartCandlestick className="mr-2 h-4 w-4" />
+                <span>Investment</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.PROPERTY }}>
+              <DropdownMenuItem>
+                <House className="mr-2 h-4 w-4" />
+                <span>Property</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.RECEIVABLE }}>
+              <DropdownMenuItem>
+                <HandCoins className="mr-2 h-4 w-4" />
+                <span>Receivable</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.LIABILITY }}>
+              <DropdownMenuItem>
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Liability</span>
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-      <div className="py-2"></div>
+        <div className="py-2"></div>
 
-      <AccountList accounts={accounts} />
+        <AccountList accounts={accounts} />
+      </div>
+      <Separator orientation="vertical" className="h-full" />
+      <div className="w-1/2 p-4 lg:p-6">Side Panel</div>
     </div>
   );
 }
