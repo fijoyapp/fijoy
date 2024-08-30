@@ -1,6 +1,6 @@
 import { Accounts } from "@/gen/proto/fijoy/v1/account_pb";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Coins } from "lucide-react";
+import { Clock, Coins, CreditCard, Wallet } from "lucide-react";
 import { getOverallStats } from "@/lib/account";
 import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
@@ -34,7 +34,7 @@ const NetWorthInfo = ({ accounts }: Props) => {
           <CardDescription>Asset</CardDescription>
         </CardHeader>
         <div className="grow"></div>
-        <Coins />
+        <Wallet />
         <div className="px-4"></div>
       </Card>
       <Card className="flex items-center">
@@ -51,7 +51,7 @@ const NetWorthInfo = ({ accounts }: Props) => {
         </CardHeader>
 
         <div className="grow"></div>
-        <Coins />
+        <CreditCard />
         <div className="px-4"></div>
       </Card>
       <Card className="flex items-center">
@@ -78,7 +78,7 @@ const NetWorthInfo = ({ accounts }: Props) => {
         </CardHeader>
 
         <div className="grow"></div>
-        <Coins />
+        <Clock />
         <div className="px-4"></div>
       </Card>
     </div>
