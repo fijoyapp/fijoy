@@ -1,8 +1,7 @@
 import { Accounts } from "@/gen/proto/fijoy/v1/account_pb";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Coins } from "lucide-react";
-import { accountsGroupBy, getOverallStats } from "@/lib/account";
-import { Timestamp } from "@bufbuild/protobuf";
+import { getOverallStats } from "@/lib/account";
 import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
 import { getPrettyTime } from "@/lib/time";
