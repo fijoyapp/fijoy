@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import AddAccount from "@/components/accounts/add-account";
 import AccountList from "@/components/accounts/account-list";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useMediaQuery, WIDTH_OPTIONS } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
@@ -76,8 +76,7 @@ type AccountsViewProps = {
 };
 
 function AccountsView({ accounts, detail }: AccountsViewProps) {
-  // TODO: improve this to get the 3 breakpoints for fijoy
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery(WIDTH_OPTIONS.lg);
   const sidePanelActive = detail !== undefined;
 
   return (
