@@ -5,14 +5,17 @@ import { getOverallStats } from "@/lib/account";
 import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
 import { getPrettyTime } from "@/lib/time";
+import { useMemo } from "react";
 
 type Props = {
   accounts: Accounts;
 };
 
 const NetWorthInfo = ({ accounts }: Props) => {
-  const { asset, netWorth, liability, lastUpdatedTimestamp } =
-    getOverallStats(accounts);
+  const { asset, netWorth, liability, lastUpdatedTimestamp } = useMemo(
+    () => getOverallStats(accounts),
+    [accounts],
+  );
 
   const { profile } = useProfile();
   if (!profile) {
