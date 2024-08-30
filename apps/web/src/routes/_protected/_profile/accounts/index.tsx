@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { AccountType, Accounts } from "@/gen/proto/fijoy/v1/account_pb";
 import {
   ChartCandlestick,
+  Coins,
   CreditCard,
   HandCoins,
   House,
@@ -32,6 +33,13 @@ import AccountList from "@/components/accounts/account-list";
 import { useMediaQuery, WIDTH_OPTIONS } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import NetWorthInfo from "@/components/accounts/net-worth-info";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -149,7 +157,7 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
           !sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
         )}
       >
-        Side Panel
+        <NetWorthInfo accounts={accounts} />
       </div>
     </div>
   );
