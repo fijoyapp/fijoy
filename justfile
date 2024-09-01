@@ -22,7 +22,7 @@ buf:
 init:
   pnpm install
   just packages/proto/init
-  go install github.com/air-verse/air@latest
+  just apps/server/init
 
 update:
   pnpm update -r

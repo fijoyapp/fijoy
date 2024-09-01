@@ -30,3 +30,6 @@ format:
 kill:
   pids=$(lsof -t -i :3000) && [ -n "$pids" ] && kill -9 $pids
 
+init:
+  go install github.com/air-verse/air@latest
+  go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
