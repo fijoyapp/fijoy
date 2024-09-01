@@ -51,10 +51,19 @@ The next step is to setup all the environment variables.
 You can find more details in `apps/server/.env.example` and
 `apps/web/.env.example`.
 
+For local development, you can just copy the `.env.example` file to `.env`
+and you do not need to change anything!
+
+To start the project, you can run `just dev`. (Make sure Docker is running!)
+
+Note: if you are starting the project for the first time, your will also need
+to run `just db-up` to setup the database schema once `just dev` completes loading.
+
 ### Proto
 
 We use protobuf to define the API for the server and the web.
-To generate all the necessary code, run the following commands:
+Everytime you change something under `packages/proto`, you need to run the
+following commands to regenerate the gRPC related code.
 
 ```bash
 just buf
@@ -62,8 +71,8 @@ just buf
 
 ### Server
 
-We are using [Jet](https://github.com/go-jet/jet) to generate DB related stuff for
-a type-safe query building experience.
+We are using [Jet](https://github.com/go-jet/jet) to generate DB related stuff
+for a type-safe query building experience.
 
 ```bash
 just jet # your database must be running
@@ -88,6 +97,8 @@ just postgres
 
 ### Web
 
+Make sure you have `pnpm` installed.
+
 ### Test
 
 This will run all the tests for the server and the web.
@@ -95,7 +106,3 @@ This will run all the tests for the server and the web.
 ```bash
 just test
 ```
-
----
-
-To run the project, simply use `just dev`.
