@@ -1,4 +1,10 @@
+const EARLIEST_DATE = new Date(0);
+
 export const getPrettyTime = (givenDate: Date): string => {
+  if (givenDate <= EARLIEST_DATE) {
+    return "Never";
+  }
+
   // Calculate the time difference in milliseconds
   const currentTime = new Date();
 
