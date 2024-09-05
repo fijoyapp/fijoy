@@ -25,7 +25,7 @@ type AddAccountProps = {
 export default function AddAccount({ type }: AddAccountProps) {
   const accountTypeDetail = getAccountTypeDetail(type);
   return (
-    <div className="max-w-screen-sm">
+    <div className="max-w-screen-sm p-4 lg:p-6">
       <Breadcrumb>
         <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
           <BreadcrumbItem>
