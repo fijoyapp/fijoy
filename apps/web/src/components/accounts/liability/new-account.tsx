@@ -69,7 +69,7 @@ export default function NewAccount() {
     toast.promise(
       createAccountMut.mutateAsync({
         name: values.name,
-        accountType: AccountType.LIQUIDITY,
+        accountType: AccountType.LIABILITY,
 
         includeInNetWorth: true,
         symbol: values.symbol,
