@@ -9,7 +9,7 @@ type LiabilityCardProps = {
   account: Account;
 };
 
-export default function LiabilityCard({ account }: LiabilityCardProps) {
+export function LiabilityCard({ account }: LiabilityCardProps) {
   const { profile } = useProfile();
   if (!profile) {
     return null;

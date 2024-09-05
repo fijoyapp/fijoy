@@ -37,7 +37,7 @@ const formSchema = z.object({
   balance: z.string(),
 });
 
-export default function NewAccount() {
+export function NewLiability() {
   const { profile } = useProfile();
 
   const router = useRouter();
