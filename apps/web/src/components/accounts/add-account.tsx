@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import { match } from "ts-pattern";
-import NewLiquidity from "@/components/accounts/liquidity/new-account";
-import NewInvestment from "@/components/accounts/investment/new-account";
-import NewProperty from "@/components/accounts/property/new-account";
-import NewReceivable from "@/components/accounts/receivable/new-account";
-import NewLiability from "@/components/accounts/liability/new-account";
+import { NewLiquidity } from "@/components/accounts/liquidity/new-account";
+import { NewInvestment } from "@/components/accounts/investment/new-account";
+import { NewProperty } from "@/components/accounts/property/new-account";
+import { NewReceivable } from "@/components/accounts/receivable/new-account";
+import { NewLiability } from "@/components/accounts/liability/new-account";
 
 type AddAccountProps = {
   type: AccountTypeEnum;

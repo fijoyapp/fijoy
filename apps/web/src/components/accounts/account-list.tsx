@@ -1,5 +1,5 @@
 import { Accounts, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
-import LiquidityCard from "./liquidity/card";
+import { LiquidityCard } from "./liquidity/card";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
 

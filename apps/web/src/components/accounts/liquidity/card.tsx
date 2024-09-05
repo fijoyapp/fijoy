@@ -9,7 +9,7 @@ type LiquidityCardProps = {
   account: Account;
 };
 
-export default function LiquidityCard({ account }: LiquidityCardProps) {
+export function LiquidityCard({ account }: LiquidityCardProps) {
   const { profile } = useProfile();
   if (!profile) {
     return null;

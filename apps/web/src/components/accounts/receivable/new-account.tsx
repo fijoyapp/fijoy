@@ -1,4 +1,4 @@
-export default function NewAccount() {
+export function NewReceivable() {
   return (
     <div>
       <div>New Liquidity</div>
