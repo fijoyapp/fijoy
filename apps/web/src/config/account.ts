@@ -28,7 +28,7 @@ export function getAccountTypeDetail(
     }))
     .with(AccountType.LIABILITY as 5, () => ({
       name: "Liability",
-      description: "Debts such as loans, mortgages, etc.",
+      description: "Debts such as credit cards, loans, mortgages, etc.",
     }))
     .exhaustive();
 }
