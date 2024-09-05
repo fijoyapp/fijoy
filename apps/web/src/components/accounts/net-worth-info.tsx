@@ -47,7 +47,7 @@ const NetWorthInfo = ({ accounts }: Props) => {
               liability.toString(),
               profile.currencies[0],
               profile.locale,
-              { compact: false },
+              { compact: false, isDebt: true },
             )}
           </CardTitle>
           <CardDescription>Liability</CardDescription>
