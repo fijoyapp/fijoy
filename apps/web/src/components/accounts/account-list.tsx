@@ -5,6 +5,8 @@ import { Separator } from "../ui/separator";
 import { useMemo } from "react";
 import { accountsGroupBy } from "@/lib/account";
 import { LiabilityCard } from "./liability/card";
+import { PropertyCard } from "./property/card";
+import { ReceivableCard } from "./receivable/card";
 
 type AccountListProps = {
   accounts: Accounts;
@@ -34,12 +36,12 @@ export default function AccountList({ accounts }: AccountListProps) {
     {
       name: "Property",
       accounts: properties,
-      card: LiquidityCard,
+      card: PropertyCard,
     },
     {
       name: "Receivable",
       accounts: receivables,
-      card: LiquidityCard,
+      card: ReceivableCard,
     },
     {
       name: "Liability",
