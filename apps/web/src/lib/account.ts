@@ -52,7 +52,7 @@ export function getOverallStats(accounts: Accounts) {
     return acc;
   }, currency(0));
 
-  const netWorth = asset.subtract(liability);
+  const netWorth = asset.add(liability);
 
   const lastUpdatedTimestamp = accounts.accounts.reduce((acc, account) => {
     if (account.updatedAt) {
