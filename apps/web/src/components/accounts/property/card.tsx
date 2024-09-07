@@ -3,7 +3,7 @@ import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
-import { PiggyBank } from "lucide-react";
+import { House } from "lucide-react";
 
 type PropertyCardProps = {
   account: Account;
@@ -18,7 +18,7 @@ export function PropertyCard({ account }: PropertyCardProps) {
   return (
     <CardContent className="flex items-center space-x-2.5 p-2 px-4">
       <div>
-        <PiggyBank />
+        <House />
       </div>
 
       <div>
