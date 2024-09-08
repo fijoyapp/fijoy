@@ -17,10 +17,11 @@ type fijoyProfileTable struct {
 	postgres.Table
 
 	// Columns
-	ID         postgres.ColumnString
-	UserID     postgres.ColumnString
-	Currencies postgres.ColumnString
-	CreatedAt  postgres.ColumnTimestampz
+	ID           postgres.ColumnString
+	UserID       postgres.ColumnString
+	Currencies   postgres.ColumnString
+	CreatedAt    postgres.ColumnTimestampz
+	NetWorthGoal postgres.ColumnFloat
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -61,22 +62,24 @@ func newFijoyProfileTable(schemaName, tableName, alias string) *FijoyProfileTabl
 
 func newFijoyProfileTableImpl(schemaName, tableName, alias string) fijoyProfileTable {
 	var (
-		IDColumn         = postgres.StringColumn("id")
-		UserIDColumn     = postgres.StringColumn("user_id")
-		CurrenciesColumn = postgres.StringColumn("currencies")
-		CreatedAtColumn  = postgres.TimestampzColumn("created_at")
-		allColumns       = postgres.ColumnList{IDColumn, UserIDColumn, CurrenciesColumn, CreatedAtColumn}
-		mutableColumns   = postgres.ColumnList{UserIDColumn, CurrenciesColumn, CreatedAtColumn}
+		IDColumn           = postgres.StringColumn("id")
+		UserIDColumn       = postgres.StringColumn("user_id")
+		CurrenciesColumn   = postgres.StringColumn("currencies")
+		CreatedAtColumn    = postgres.TimestampzColumn("created_at")
+		NetWorthGoalColumn = postgres.FloatColumn("net_worth_goal")
+		allColumns         = postgres.ColumnList{IDColumn, UserIDColumn, CurrenciesColumn, CreatedAtColumn, NetWorthGoalColumn}
+		mutableColumns     = postgres.ColumnList{UserIDColumn, CurrenciesColumn, CreatedAtColumn, NetWorthGoalColumn}
 	)
 
 	return fijoyProfileTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:         IDColumn,
-		UserID:     UserIDColumn,
-		Currencies: CurrenciesColumn,
-		CreatedAt:  CreatedAtColumn,
+		ID:           IDColumn,
+		UserID:       UserIDColumn,
+		Currencies:   CurrenciesColumn,
+		CreatedAt:    CreatedAtColumn,
+		NetWorthGoal: NetWorthGoalColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

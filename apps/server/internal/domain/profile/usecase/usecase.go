@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fijoy/constants"
+	"fijoy/internal/domain/profile"
 	"fijoy/internal/domain/profile/repository"
-	"fijoy/internal/gen/postgres/model"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
 	"strings"
 
@@ -19,7 +19,7 @@ type ProfileUseCase interface {
 	GetProfileById(ctx context.Context, id string) (*fijoyv1.Profile, error)
 	GetProfileByUserId(ctx context.Context, userId string) (*fijoyv1.Profile, error)
 	DeleteProfile(ctx context.Context, id string) (*fijoyv1.Profile, error)
-	UpdateCurrency(ctx context.Context, id string, req *fijoyv1.UpdateCurrencyRequest) (*fijoyv1.Profile, error)
+	UpdateProfile(ctx context.Context, id string, req *fijoyv1.UpdateProfileRequest) (*fijoyv1.Profile, error)
 }
 
 type profileUseCase struct {
@@ -33,15 +33,16 @@ func New(validator *validator.Validate, db *sql.DB, repo repository.ProfileRepos
 	return &profileUseCase{validator: validator, db: db, repo: repo}
 }
 
-func profileModelToProto(profile *model.FijoyProfile) *fijoyv1.Profile {
+func profileModelToProto(profile *profile.FijoyProfile) *fijoyv1.Profile {
 	currencies := strings.Split(profile.Currencies, ",")
 
 	return &fijoyv1.Profile{
-		Id:         profile.ID,
-		UserId:     profile.UserID,
-		Currencies: currencies,
-		Locale:     constants.Currencies[currencies[0]].Locale,
-		CreatedAt:  timestamppb.New(profile.CreatedAt),
+		Id:           profile.ID,
+		UserId:       profile.UserID,
+		Currencies:   currencies,
+		Locale:       constants.Currencies[currencies[0]].Locale,
+		CreatedAt:    timestamppb.New(profile.CreatedAt),
+		NetWorthGoal: profile.NetWorthGoal.String(),
 	}
 }
 
@@ -119,7 +120,7 @@ func (u *profileUseCase) DeleteProfile(ctx context.Context, id string) (*fijoyv1
 	return profileModelToProto(profile), nil
 }
 
-func (u *profileUseCase) UpdateCurrency(ctx context.Context, id string, req *fijoyv1.UpdateCurrencyRequest) (*fijoyv1.Profile, error) {
+func (u *profileUseCase) UpdateProfile(ctx context.Context, id string, req *fijoyv1.UpdateProfileRequest) (*fijoyv1.Profile, error) {
 	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelDefault})
 	if err != nil {
 		return nil, err
@@ -141,7 +142,7 @@ func (u *profileUseCase) UpdateCurrency(ctx context.Context, id string, req *fij
 		return nil, errors.New(constants.ErrInvalidCurrencyCode)
 	}
 
-	profile, err := u.repo.UpdateCurrencyTX(ctx, tx, id, req)
+	profile, err := u.repo.UpdateProfileTX(ctx, tx, id, req)
 	if err != nil {
 		return nil, err
 	}

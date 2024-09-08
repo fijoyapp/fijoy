@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateProfileRequest, Profile, UpdateCurrencyRequest } from "./profile_pb.js";
+import { CreateProfileRequest, Profile, UpdateProfileRequest } from "./profile_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -32,11 +32,11 @@ export const ProfileService = {
       idempotency: MethodIdempotency.NoSideEffects,
     },
     /**
-     * @generated from rpc fijoy.v1.ProfileService.UpdateCurrency
+     * @generated from rpc fijoy.v1.ProfileService.UpdateProfile
      */
-    updateCurrency: {
-      name: "UpdateCurrency",
-      I: UpdateCurrencyRequest,
+    updateProfile: {
+      name: "UpdateProfile",
+      I: UpdateProfileRequest,
       O: Profile,
       kind: MethodKind.Unary,
     },
