@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fijoy/constants"
+	"fijoy/internal/domain/profile"
 	"fijoy/internal/gen/postgres/model"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
 	"strings"
@@ -13,15 +14,17 @@ import (
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"
+	"github.com/shopspring/decimal"
 )
 
 type ProfileRepository interface {
-	CreateProfileTX(ctx context.Context, tx *sql.Tx, userId string, req *fijoyv1.CreateProfileRequest) (*model.FijoyProfile, error)
-	DeleteProfileTX(ctx context.Context, tx *sql.Tx, id string) (*model.FijoyProfile, error)
-	UpdateCurrencyTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateCurrencyRequest) (*model.FijoyProfile, error)
+	CreateProfileTX(ctx context.Context, tx *sql.Tx, userId string, req *fijoyv1.CreateProfileRequest) (*profile.FijoyProfile, error)
+	GetProfileByIdTX(ctx context.Context, tx *sql.Tx, id string) (*profile.FijoyProfile, error)
+	DeleteProfileTX(ctx context.Context, tx *sql.Tx, id string) (*profile.FijoyProfile, error)
+	UpdateProfileTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateProfileRequest) (*profile.FijoyProfile, error)
 
-	GetProfileById(ctx context.Context, id string) (*model.FijoyProfile, error)
-	GetProfileByUserId(ctx context.Context, userId string) (*model.FijoyProfile, error)
+	GetProfileById(ctx context.Context, id string) (*profile.FijoyProfile, error)
+	GetProfileByUserId(ctx context.Context, userId string) (*profile.FijoyProfile, error)
 }
 
 type profileRepository struct {
@@ -32,21 +35,24 @@ func NewProfileRepository(db *sql.DB) *profileRepository {
 	return &profileRepository{db: db}
 }
 
-func (r *profileRepository) CreateProfileTX(ctx context.Context, tx *sql.Tx, userId string, req *fijoyv1.CreateProfileRequest) (*model.FijoyProfile, error) {
+func (r *profileRepository) CreateProfileTX(ctx context.Context, tx *sql.Tx, userId string, req *fijoyv1.CreateProfileRequest) (*profile.FijoyProfile, error) {
 	profileId := constants.ProfilePrefix + cuid2.Generate()
 
-	profile := model.FijoyProfile{
-		ID:         profileId,
-		UserID:     userId,
-		Currencies: strings.Join(req.Currencies, ","),
-		CreatedAt:  time.Now(),
+	newProfile := profile.FijoyProfile{
+		FijoyProfile: model.FijoyProfile{
+			ID:         profileId,
+			UserID:     userId,
+			Currencies: strings.Join(req.Currencies, ","),
+			CreatedAt:  time.Now(),
+		},
+		NetWorthGoal: decimal.RequireFromString(req.NetWorthGoal),
 	}
 
 	stmt := FijoyProfile.
 		INSERT(FijoyProfile.AllColumns).
-		MODEL(profile).RETURNING(FijoyProfile.AllColumns)
+		MODEL(newProfile).RETURNING(FijoyProfile.AllColumns)
 
-	dest := model.FijoyProfile{}
+	dest := profile.FijoyProfile{}
 
 	err := stmt.QueryContext(ctx, tx, &dest)
 	if err != nil {
@@ -56,12 +62,12 @@ func (r *profileRepository) CreateProfileTX(ctx context.Context, tx *sql.Tx, use
 	return &dest, nil
 }
 
-func (r *profileRepository) GetProfileById(ctx context.Context, id string) (*model.FijoyProfile, error) {
+func (r *profileRepository) GetProfileById(ctx context.Context, id string) (*profile.FijoyProfile, error) {
 	stmt := SELECT(FijoyProfile.AllColumns).
 		FROM(FijoyProfile).
 		WHERE(FijoyProfile.ID.EQ(String(id)))
 
-	dest := model.FijoyProfile{}
+	dest := profile.FijoyProfile{}
 
 	err := stmt.QueryContext(ctx, r.db, &dest)
 	if err != nil {
@@ -71,12 +77,27 @@ func (r *profileRepository) GetProfileById(ctx context.Context, id string) (*mod
 	return &dest, nil
 }
 
-func (r *profileRepository) GetProfileByUserId(ctx context.Context, userId string) (*model.FijoyProfile, error) {
+func (r *profileRepository) GetProfileByIdTX(ctx context.Context, tx *sql.Tx, id string) (*profile.FijoyProfile, error) {
+	stmt := SELECT(FijoyProfile.AllColumns).
+		FROM(FijoyProfile).
+		WHERE(FijoyProfile.ID.EQ(String(id)))
+
+	dest := profile.FijoyProfile{}
+
+	err := stmt.QueryContext(ctx, tx, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}
+
+func (r *profileRepository) GetProfileByUserId(ctx context.Context, userId string) (*profile.FijoyProfile, error) {
 	stmt := SELECT(FijoyProfile.AllColumns).
 		FROM(FijoyProfile).
 		WHERE(FijoyProfile.UserID.EQ(String(userId)))
 
-	dest := model.FijoyProfile{}
+	dest := profile.FijoyProfile{}
 
 	err := stmt.QueryContext(ctx, r.db, &dest)
 	if err != nil {
@@ -86,12 +107,12 @@ func (r *profileRepository) GetProfileByUserId(ctx context.Context, userId strin
 	return &dest, nil
 }
 
-func (r *profileRepository) DeleteProfileTX(ctx context.Context, tx *sql.Tx, id string) (*model.FijoyProfile, error) {
+func (r *profileRepository) DeleteProfileTX(ctx context.Context, tx *sql.Tx, id string) (*profile.FijoyProfile, error) {
 	stmt := FijoyProfile.DELETE().
 		WHERE(FijoyProfile.ID.EQ(String(id))).
 		RETURNING(FijoyProfile.AllColumns)
 
-	dest := model.FijoyProfile{}
+	dest := profile.FijoyProfile{}
 
 	err := stmt.QueryContext(ctx, r.db, &dest)
 	if err != nil {
@@ -101,19 +122,32 @@ func (r *profileRepository) DeleteProfileTX(ctx context.Context, tx *sql.Tx, id 
 	return &dest, nil
 }
 
-func (r *profileRepository) UpdateCurrencyTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateCurrencyRequest) (*model.FijoyProfile, error) {
-	profile := model.FijoyProfile{
-		Currencies: strings.Join(req.Currencies, ","),
+func (r *profileRepository) UpdateProfileTX(ctx context.Context, tx *sql.Tx, id string, req *fijoyv1.UpdateProfileRequest) (*profile.FijoyProfile, error) {
+	updatedProfile, err := r.GetProfileByIdTX(ctx, tx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	columnList := ColumnList{}
+
+	if req.Currencies != nil {
+		updatedProfile.Currencies = strings.Join(req.Currencies, ",")
+		columnList = append(columnList, FijoyProfile.Currencies)
+	}
+
+	if req.NetWorthGoal != nil {
+		updatedProfile.NetWorthGoal = decimal.RequireFromString(*req.NetWorthGoal)
+		columnList = append(columnList, FijoyProfile.NetWorthGoal)
 	}
 
 	stmt := FijoyProfile.
-		UPDATE(FijoyProfile.Currencies).
-		MODEL(profile).WHERE(FijoyProfile.ID.EQ(String(id))).
+		UPDATE(columnList).
+		MODEL(updatedProfile).WHERE(FijoyProfile.ID.EQ(String(id))).
 		RETURNING(FijoyProfile.AllColumns)
 
-	var dest model.FijoyProfile
+	dest := profile.FijoyProfile{}
 
-	err := stmt.QueryContext(ctx, tx, &dest)
+	err = stmt.QueryContext(ctx, tx, &dest)
 	if err != nil {
 		return nil, err
 	}

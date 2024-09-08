@@ -85,9 +85,9 @@ func (h *profileHandler) DeleteProfile(
 	return connect.NewResponse(profile), nil
 }
 
-func (h *profileHandler) UpdateCurrency(
+func (h *profileHandler) UpdateProfile(
 	ctx context.Context,
-	req *connect.Request[fijoyv1.UpdateCurrencyRequest],
+	req *connect.Request[fijoyv1.UpdateProfileRequest],
 ) (*connect.Response[fijoyv1.Profile], error) {
 	if err := h.protoValidator.Validate(req.Msg); err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func (h *profileHandler) UpdateCurrency(
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
-	profile, err := h.useCase.UpdateCurrency(ctx, profileId, req.Msg)
+	profile, err := h.useCase.UpdateProfile(ctx, profileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}

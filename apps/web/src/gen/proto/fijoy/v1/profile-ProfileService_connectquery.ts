@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { CreateProfileRequest, Profile, UpdateCurrencyRequest } from "./profile_pb.js";
+import { CreateProfileRequest, Profile, UpdateProfileRequest } from "./profile_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.ProfileService.CreateProfile
@@ -36,13 +36,13 @@ export const getProfile = {
 } as const;
 
 /**
- * @generated from rpc fijoy.v1.ProfileService.UpdateCurrency
+ * @generated from rpc fijoy.v1.ProfileService.UpdateProfile
  */
-export const updateCurrency = {
-  localName: "updateCurrency",
-  name: "UpdateCurrency",
+export const updateProfile = {
+  localName: "updateProfile",
+  name: "UpdateProfile",
   kind: MethodKind.Unary,
-  I: UpdateCurrencyRequest,
+  I: UpdateProfileRequest,
   O: Profile,
   service: {
     typeName: "fijoy.v1.ProfileService"

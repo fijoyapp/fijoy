@@ -40,9 +40,9 @@ const (
 	// ProfileServiceGetProfileProcedure is the fully-qualified name of the ProfileService's GetProfile
 	// RPC.
 	ProfileServiceGetProfileProcedure = "/fijoy.v1.ProfileService/GetProfile"
-	// ProfileServiceUpdateCurrencyProcedure is the fully-qualified name of the ProfileService's
-	// UpdateCurrency RPC.
-	ProfileServiceUpdateCurrencyProcedure = "/fijoy.v1.ProfileService/UpdateCurrency"
+	// ProfileServiceUpdateProfileProcedure is the fully-qualified name of the ProfileService's
+	// UpdateProfile RPC.
+	ProfileServiceUpdateProfileProcedure = "/fijoy.v1.ProfileService/UpdateProfile"
 	// ProfileServiceDeleteProfileProcedure is the fully-qualified name of the ProfileService's
 	// DeleteProfile RPC.
 	ProfileServiceDeleteProfileProcedure = "/fijoy.v1.ProfileService/DeleteProfile"
@@ -50,18 +50,18 @@ const (
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	profileServiceServiceDescriptor              = v1.File_fijoy_v1_profile_proto.Services().ByName("ProfileService")
-	profileServiceCreateProfileMethodDescriptor  = profileServiceServiceDescriptor.Methods().ByName("CreateProfile")
-	profileServiceGetProfileMethodDescriptor     = profileServiceServiceDescriptor.Methods().ByName("GetProfile")
-	profileServiceUpdateCurrencyMethodDescriptor = profileServiceServiceDescriptor.Methods().ByName("UpdateCurrency")
-	profileServiceDeleteProfileMethodDescriptor  = profileServiceServiceDescriptor.Methods().ByName("DeleteProfile")
+	profileServiceServiceDescriptor             = v1.File_fijoy_v1_profile_proto.Services().ByName("ProfileService")
+	profileServiceCreateProfileMethodDescriptor = profileServiceServiceDescriptor.Methods().ByName("CreateProfile")
+	profileServiceGetProfileMethodDescriptor    = profileServiceServiceDescriptor.Methods().ByName("GetProfile")
+	profileServiceUpdateProfileMethodDescriptor = profileServiceServiceDescriptor.Methods().ByName("UpdateProfile")
+	profileServiceDeleteProfileMethodDescriptor = profileServiceServiceDescriptor.Methods().ByName("DeleteProfile")
 )
 
 // ProfileServiceClient is a client for the fijoy.v1.ProfileService service.
 type ProfileServiceClient interface {
 	CreateProfile(context.Context, *connect.Request[v1.CreateProfileRequest]) (*connect.Response[v1.Profile], error)
 	GetProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
-	UpdateCurrency(context.Context, *connect.Request[v1.UpdateCurrencyRequest]) (*connect.Response[v1.Profile], error)
+	UpdateProfile(context.Context, *connect.Request[v1.UpdateProfileRequest]) (*connect.Response[v1.Profile], error)
 	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 }
 
@@ -88,10 +88,10 @@ func NewProfileServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		updateCurrency: connect.NewClient[v1.UpdateCurrencyRequest, v1.Profile](
+		updateProfile: connect.NewClient[v1.UpdateProfileRequest, v1.Profile](
 			httpClient,
-			baseURL+ProfileServiceUpdateCurrencyProcedure,
-			connect.WithSchema(profileServiceUpdateCurrencyMethodDescriptor),
+			baseURL+ProfileServiceUpdateProfileProcedure,
+			connect.WithSchema(profileServiceUpdateProfileMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
 		deleteProfile: connect.NewClient[emptypb.Empty, v1.Profile](
@@ -105,10 +105,10 @@ func NewProfileServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // profileServiceClient implements ProfileServiceClient.
 type profileServiceClient struct {
-	createProfile  *connect.Client[v1.CreateProfileRequest, v1.Profile]
-	getProfile     *connect.Client[emptypb.Empty, v1.Profile]
-	updateCurrency *connect.Client[v1.UpdateCurrencyRequest, v1.Profile]
-	deleteProfile  *connect.Client[emptypb.Empty, v1.Profile]
+	createProfile *connect.Client[v1.CreateProfileRequest, v1.Profile]
+	getProfile    *connect.Client[emptypb.Empty, v1.Profile]
+	updateProfile *connect.Client[v1.UpdateProfileRequest, v1.Profile]
+	deleteProfile *connect.Client[emptypb.Empty, v1.Profile]
 }
 
 // CreateProfile calls fijoy.v1.ProfileService.CreateProfile.
@@ -121,9 +121,9 @@ func (c *profileServiceClient) GetProfile(ctx context.Context, req *connect.Requ
 	return c.getProfile.CallUnary(ctx, req)
 }
 
-// UpdateCurrency calls fijoy.v1.ProfileService.UpdateCurrency.
-func (c *profileServiceClient) UpdateCurrency(ctx context.Context, req *connect.Request[v1.UpdateCurrencyRequest]) (*connect.Response[v1.Profile], error) {
-	return c.updateCurrency.CallUnary(ctx, req)
+// UpdateProfile calls fijoy.v1.ProfileService.UpdateProfile.
+func (c *profileServiceClient) UpdateProfile(ctx context.Context, req *connect.Request[v1.UpdateProfileRequest]) (*connect.Response[v1.Profile], error) {
+	return c.updateProfile.CallUnary(ctx, req)
 }
 
 // DeleteProfile calls fijoy.v1.ProfileService.DeleteProfile.
@@ -135,7 +135,7 @@ func (c *profileServiceClient) DeleteProfile(ctx context.Context, req *connect.R
 type ProfileServiceHandler interface {
 	CreateProfile(context.Context, *connect.Request[v1.CreateProfileRequest]) (*connect.Response[v1.Profile], error)
 	GetProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
-	UpdateCurrency(context.Context, *connect.Request[v1.UpdateCurrencyRequest]) (*connect.Response[v1.Profile], error)
+	UpdateProfile(context.Context, *connect.Request[v1.UpdateProfileRequest]) (*connect.Response[v1.Profile], error)
 	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 }
 
@@ -158,10 +158,10 @@ func NewProfileServiceHandler(svc ProfileServiceHandler, opts ...connect.Handler
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	profileServiceUpdateCurrencyHandler := connect.NewUnaryHandler(
-		ProfileServiceUpdateCurrencyProcedure,
-		svc.UpdateCurrency,
-		connect.WithSchema(profileServiceUpdateCurrencyMethodDescriptor),
+	profileServiceUpdateProfileHandler := connect.NewUnaryHandler(
+		ProfileServiceUpdateProfileProcedure,
+		svc.UpdateProfile,
+		connect.WithSchema(profileServiceUpdateProfileMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
 	profileServiceDeleteProfileHandler := connect.NewUnaryHandler(
@@ -176,8 +176,8 @@ func NewProfileServiceHandler(svc ProfileServiceHandler, opts ...connect.Handler
 			profileServiceCreateProfileHandler.ServeHTTP(w, r)
 		case ProfileServiceGetProfileProcedure:
 			profileServiceGetProfileHandler.ServeHTTP(w, r)
-		case ProfileServiceUpdateCurrencyProcedure:
-			profileServiceUpdateCurrencyHandler.ServeHTTP(w, r)
+		case ProfileServiceUpdateProfileProcedure:
+			profileServiceUpdateProfileHandler.ServeHTTP(w, r)
 		case ProfileServiceDeleteProfileProcedure:
 			profileServiceDeleteProfileHandler.ServeHTTP(w, r)
 		default:
@@ -197,8 +197,8 @@ func (UnimplementedProfileServiceHandler) GetProfile(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.ProfileService.GetProfile is not implemented"))
 }
 
-func (UnimplementedProfileServiceHandler) UpdateCurrency(context.Context, *connect.Request[v1.UpdateCurrencyRequest]) (*connect.Response[v1.Profile], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.ProfileService.UpdateCurrency is not implemented"))
+func (UnimplementedProfileServiceHandler) UpdateProfile(context.Context, *connect.Request[v1.UpdateProfileRequest]) (*connect.Response[v1.Profile], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.ProfileService.UpdateProfile is not implemented"))
 }
 
 func (UnimplementedProfileServiceHandler) DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error) {
