@@ -20,7 +20,7 @@ import { Icons } from "@/components/icons";
 import { getProfileHeader } from "@/lib/headers";
 import {
   getProfile,
-  updateCurrency,
+  updateProfile,
 } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
@@ -67,7 +67,7 @@ function Page() {
     }),
   );
 
-  const updateCurrencyMutation = useMutation(updateCurrency, {
+  const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: createConnectQueryKey(getProfile),
@@ -83,7 +83,7 @@ function Page() {
   });
 
   function onUpdateCurrencySubmit(values: TypeOf<typeof currencyFormSchema>) {
-    return updateCurrencyMutation.mutateAsync(values);
+    return updateProfileMutation.mutateAsync(values);
   }
 
   return (
