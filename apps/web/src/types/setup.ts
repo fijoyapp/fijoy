@@ -1,6 +1,6 @@
 import { z, type TypeOf } from "zod";
 
-export const SetupStep = z.enum(["currency", "final"]);
+export const SetupStep = z.enum(["currency", "goal", "final"]);
 
 export type SetupStep = TypeOf<typeof SetupStep>;
 
@@ -11,3 +11,9 @@ export const CurrencyStepData = z.object({
 });
 
 export type CurrencyStepData = TypeOf<typeof CurrencyStepData>;
+
+export const GoalStepData = z.object({
+  net_worth_goal: z.string(),
+});
+
+export type GoalStepData = TypeOf<typeof GoalStepData>;

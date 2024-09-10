@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { match } from "ts-pattern";
 import {
   PageHeader,
   PageHeaderDescription,
@@ -11,6 +12,7 @@ import CurrencyStep from "@/components/setup/currency-step";
 import FinalStep from "@/components/setup/final-step";
 import { getCurrenciesQueryOptions } from "@/lib/queries/currency";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import GoalStep from "@/components/setup/goal-step";
 
 const setupSearchSchema = z.object({
   step: SetupStep.default("currency"),
@@ -52,8 +54,11 @@ function Setup() {
         </PageHeaderDescription>
       </PageHeader>
       <div className="mx-auto max-w-lg">
-        {step === "currency" && <CurrencyStep currencies={currencies} />}
-        {step === "final" && <FinalStep />}
+        {match(step)
+          .with("currency", () => <CurrencyStep currencies={currencies} />)
+          .with("goal", () => <GoalStep currencies={currencies} />)
+          .with("final", () => <FinalStep />)
+          .exhaustive()}
       </div>
     </div>
   );

@@ -246,27 +246,187 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  ProtectedRouteRoute: ProtectedRouteRoute.addChildren({
-    ProtectedProfileRouteRoute: ProtectedProfileRouteRoute.addChildren({
-      ProtectedProfileAccountsIndexRoute,
-      ProtectedProfileHistoryIndexRoute,
-      ProtectedProfileHomeIndexRoute,
-      ProtectedProfileSettingsIndexRoute,
-      ProtectedProfileSettingsCurrencyIndexRoute,
-    }),
-    ProtectedSetupRoute,
-  }),
-  PublicRouteRoute: PublicRouteRoute.addChildren({
-    PublicFeaturesLazyRoute,
-    PublicLoginLazyRoute,
-    PublicPricingLazyRoute,
-    PublicSignupLazyRoute,
-    PublicStackLazyRoute,
-    PublicWhyLazyRoute,
-    PublicIndexLazyRoute,
-  }),
-})
+interface ProtectedProfileRouteRouteChildren {
+  ProtectedProfileAccountsIndexRoute: typeof ProtectedProfileAccountsIndexRoute
+  ProtectedProfileHistoryIndexRoute: typeof ProtectedProfileHistoryIndexRoute
+  ProtectedProfileHomeIndexRoute: typeof ProtectedProfileHomeIndexRoute
+  ProtectedProfileSettingsIndexRoute: typeof ProtectedProfileSettingsIndexRoute
+  ProtectedProfileSettingsCurrencyIndexRoute: typeof ProtectedProfileSettingsCurrencyIndexRoute
+}
+
+const ProtectedProfileRouteRouteChildren: ProtectedProfileRouteRouteChildren = {
+  ProtectedProfileAccountsIndexRoute: ProtectedProfileAccountsIndexRoute,
+  ProtectedProfileHistoryIndexRoute: ProtectedProfileHistoryIndexRoute,
+  ProtectedProfileHomeIndexRoute: ProtectedProfileHomeIndexRoute,
+  ProtectedProfileSettingsIndexRoute: ProtectedProfileSettingsIndexRoute,
+  ProtectedProfileSettingsCurrencyIndexRoute:
+    ProtectedProfileSettingsCurrencyIndexRoute,
+}
+
+const ProtectedProfileRouteRouteWithChildren =
+  ProtectedProfileRouteRoute._addFileChildren(
+    ProtectedProfileRouteRouteChildren,
+  )
+
+interface ProtectedRouteRouteChildren {
+  ProtectedProfileRouteRoute: typeof ProtectedProfileRouteRouteWithChildren
+  ProtectedSetupRoute: typeof ProtectedSetupRoute
+}
+
+const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
+  ProtectedProfileRouteRoute: ProtectedProfileRouteRouteWithChildren,
+  ProtectedSetupRoute: ProtectedSetupRoute,
+}
+
+const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
+  ProtectedRouteRouteChildren,
+)
+
+interface PublicRouteRouteChildren {
+  PublicFeaturesLazyRoute: typeof PublicFeaturesLazyRoute
+  PublicLoginLazyRoute: typeof PublicLoginLazyRoute
+  PublicPricingLazyRoute: typeof PublicPricingLazyRoute
+  PublicSignupLazyRoute: typeof PublicSignupLazyRoute
+  PublicStackLazyRoute: typeof PublicStackLazyRoute
+  PublicWhyLazyRoute: typeof PublicWhyLazyRoute
+  PublicIndexLazyRoute: typeof PublicIndexLazyRoute
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicFeaturesLazyRoute: PublicFeaturesLazyRoute,
+  PublicLoginLazyRoute: PublicLoginLazyRoute,
+  PublicPricingLazyRoute: PublicPricingLazyRoute,
+  PublicSignupLazyRoute: PublicSignupLazyRoute,
+  PublicStackLazyRoute: PublicStackLazyRoute,
+  PublicWhyLazyRoute: PublicWhyLazyRoute,
+  PublicIndexLazyRoute: PublicIndexLazyRoute,
+}
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
+
+export interface FileRoutesByFullPath {
+  '': typeof ProtectedProfileRouteRouteWithChildren
+  '/setup': typeof ProtectedSetupRoute
+  '/features': typeof PublicFeaturesLazyRoute
+  '/login': typeof PublicLoginLazyRoute
+  '/pricing': typeof PublicPricingLazyRoute
+  '/signup': typeof PublicSignupLazyRoute
+  '/stack': typeof PublicStackLazyRoute
+  '/why': typeof PublicWhyLazyRoute
+  '/': typeof PublicIndexLazyRoute
+  '/accounts': typeof ProtectedProfileAccountsIndexRoute
+  '/history': typeof ProtectedProfileHistoryIndexRoute
+  '/home': typeof ProtectedProfileHomeIndexRoute
+  '/settings': typeof ProtectedProfileSettingsIndexRoute
+  '/settings/currency': typeof ProtectedProfileSettingsCurrencyIndexRoute
+}
+
+export interface FileRoutesByTo {
+  '': typeof ProtectedProfileRouteRouteWithChildren
+  '/setup': typeof ProtectedSetupRoute
+  '/features': typeof PublicFeaturesLazyRoute
+  '/login': typeof PublicLoginLazyRoute
+  '/pricing': typeof PublicPricingLazyRoute
+  '/signup': typeof PublicSignupLazyRoute
+  '/stack': typeof PublicStackLazyRoute
+  '/why': typeof PublicWhyLazyRoute
+  '/': typeof PublicIndexLazyRoute
+  '/accounts': typeof ProtectedProfileAccountsIndexRoute
+  '/history': typeof ProtectedProfileHistoryIndexRoute
+  '/home': typeof ProtectedProfileHomeIndexRoute
+  '/settings': typeof ProtectedProfileSettingsIndexRoute
+  '/settings/currency': typeof ProtectedProfileSettingsCurrencyIndexRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  '/_protected': typeof ProtectedRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
+  '/_protected/_profile': typeof ProtectedProfileRouteRouteWithChildren
+  '/_protected/setup': typeof ProtectedSetupRoute
+  '/_public/features': typeof PublicFeaturesLazyRoute
+  '/_public/login': typeof PublicLoginLazyRoute
+  '/_public/pricing': typeof PublicPricingLazyRoute
+  '/_public/signup': typeof PublicSignupLazyRoute
+  '/_public/stack': typeof PublicStackLazyRoute
+  '/_public/why': typeof PublicWhyLazyRoute
+  '/_public/': typeof PublicIndexLazyRoute
+  '/_protected/_profile/accounts/': typeof ProtectedProfileAccountsIndexRoute
+  '/_protected/_profile/history/': typeof ProtectedProfileHistoryIndexRoute
+  '/_protected/_profile/home/': typeof ProtectedProfileHomeIndexRoute
+  '/_protected/_profile/settings/': typeof ProtectedProfileSettingsIndexRoute
+  '/_protected/_profile/settings/currency/': typeof ProtectedProfileSettingsCurrencyIndexRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | ''
+    | '/setup'
+    | '/features'
+    | '/login'
+    | '/pricing'
+    | '/signup'
+    | '/stack'
+    | '/why'
+    | '/'
+    | '/accounts'
+    | '/history'
+    | '/home'
+    | '/settings'
+    | '/settings/currency'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | ''
+    | '/setup'
+    | '/features'
+    | '/login'
+    | '/pricing'
+    | '/signup'
+    | '/stack'
+    | '/why'
+    | '/'
+    | '/accounts'
+    | '/history'
+    | '/home'
+    | '/settings'
+    | '/settings/currency'
+  id:
+    | '__root__'
+    | '/_protected'
+    | '/_public'
+    | '/_protected/_profile'
+    | '/_protected/setup'
+    | '/_public/features'
+    | '/_public/login'
+    | '/_public/pricing'
+    | '/_public/signup'
+    | '/_public/stack'
+    | '/_public/why'
+    | '/_public/'
+    | '/_protected/_profile/accounts/'
+    | '/_protected/_profile/history/'
+    | '/_protected/_profile/home/'
+    | '/_protected/_profile/settings/'
+    | '/_protected/_profile/settings/currency/'
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 

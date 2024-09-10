@@ -33,7 +33,7 @@ const CurrencyStep = ({ currencies }: CurrencyStepProps) => {
     router.navigate({
       from: "/setup",
       to: "/setup",
-      search: { step: "final" },
+      search: { step: "goal" },
     });
   }
 
@@ -51,7 +51,7 @@ const CurrencyStep = ({ currencies }: CurrencyStepProps) => {
           />
 
           <Button type="submit" className="col-span-2">
-            Create
+            Next
           </Button>
         </form>
       </Form>
