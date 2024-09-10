@@ -1,31 +1,36 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type TypeOf } from "zod";
+import { z, type TypeOf } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { useMutation } from "@connectrpc/connect-query";
-import { CurrencyStepData } from "@/types/setup";
+import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useEffect, useRef } from "react";
 import { createProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { useProfile } from "@/hooks/use-profile";
 
-const formSchema = CurrencyStepData;
+const formSchema = z.object({
+  currency: CurrencyStepData,
+  goal: GoalStepData,
+});
 
 const FinalStep = () => {
   const router = useRouter();
   const { refresh } = useProfile();
 
-  const { currencyStepData, reset } = useSetupStore((state) => ({
+  const { currencyStepData, goalStepData, reset } = useSetupStore((state) => ({
     currencyStepData: state.currencyStepData,
+    goalStepData: state.goalStepData,
     reset: state.reset,
   }));
 
   const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ...currencyStepData,
+      currency: currencyStepData,
+      goal: goalStepData,
     },
   });
 
@@ -50,7 +55,8 @@ const FinalStep = () => {
     const values = form.getValues();
     toast.promise(
       createProfileMut.mutateAsync({
-        currencies: values.currencies,
+        currencies: values.currency.currencies,
+        netWorthGoal: values.goal.net_worth_goal,
       }),
       {
         success: () => {
