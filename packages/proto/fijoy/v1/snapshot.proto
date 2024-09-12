@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package fijoy.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "google/type/date.proto";
+
+message Snapshot {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string profile_id = 2 [(buf.validate.field).string.min_len = 1];
+  google.type.Date date = 3 [(buf.validate.field).required = true];
+
+  string liquidity = 4 [(buf.validate.field).required = true];
+  string investment = 5 [(buf.validate.field).required = true];
+  string property = 6 [(buf.validate.field).required = true];
+  string receivable = 7 [(buf.validate.field).required = true];
+  string liability = 8 [(buf.validate.field).required = true];
+}
+
+message Snapshots {
+  repeated Snapshot snapshots = 1 [(buf.validate.field).required = true];
+}
+
+message GetSnapshotRequest {
+  google.type.Date date = 1 [(buf.validate.field).required = true];
+}
+
+message GetSnapshotsRequest {
+  google.type.Date from_date = 1 [(buf.validate.field).required = true];
+  // inclusive
+  google.type.Date to_date = 2 [(buf.validate.field).required = true];
+}
+
+service SnapshotService {
+  rpc GetSnapshot(GetSnapshotRequest) returns (Snapshot) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc GetSnapshots(GetSnapshotsRequest) returns (Snapshots) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+}
