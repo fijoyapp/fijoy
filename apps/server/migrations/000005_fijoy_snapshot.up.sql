@@ -10,4 +10,3 @@ CREATE TABLE "fijoy_snapshot" (
   FOREIGN KEY (profile_id) REFERENCES fijoy_profile (id) ON DELETE CASCADE,
   UNIQUE (profile_id, date)
 );
-
