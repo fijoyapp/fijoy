@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package fijoy.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message Delta {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string profile_id = 2 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp datetime = 3 [(buf.validate.field).required = true];
+
+  string liquidity = 4 [(buf.validate.field).required = true];
+  string investment = 5 [(buf.validate.field).required = true];
+  string property = 6 [(buf.validate.field).required = true];
+  string receivable = 7 [(buf.validate.field).required = true];
+  string liability = 8 [(buf.validate.field).required = true];
+}
+
+message Deltas {
+  repeated Delta Deltas = 1 [(buf.validate.field).required = true];
+}
+
+message GetDeltasRequest {
+  google.protobuf.Timestamp from_date = 1 [(buf.validate.field).required = true];
+  // inclusive
+  google.protobuf.Timestamp to_date = 2 [(buf.validate.field).required = true];
+}
+
+service DeltaService {
+  rpc GetDeltas(GetDeltasRequest) returns (Deltas) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+}
