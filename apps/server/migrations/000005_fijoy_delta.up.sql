@@ -5,7 +5,6 @@ CREATE TABLE "fijoy_delta" (
   -- was the last entry added. If it was within 1 hour, we should combine them
   -- to reduce the number of entries
   datetime TIMESTAMPTZ NOT NULL,
-
   -- all these values are delta, not absolute
   liquidity NUMERIC(16, 8) NOT NULL,
   investment NUMERIC(16, 8) NOT NULL,
