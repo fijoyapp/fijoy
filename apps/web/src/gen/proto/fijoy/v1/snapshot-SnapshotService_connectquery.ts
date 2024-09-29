@@ -4,17 +4,17 @@
 // @ts-nocheck
 
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { GetSnapshotRequest, GetSnapshotsRequest, Snapshot, Snapshots } from "./snapshot_pb.js";
+import { AccountSnapshotList, GetAccountSnapshotsRequest, GetOverallSnapshotsRequest, OverallSnapshotList } from "./snapshot_pb.js";
 
 /**
- * @generated from rpc fijoy.v1.SnapshotService.GetSnapshot
+ * @generated from rpc fijoy.v1.SnapshotService.GetOverallSnapshots
  */
-export const getSnapshot = {
-  localName: "getSnapshot",
-  name: "GetSnapshot",
+export const getOverallSnapshots = {
+  localName: "getOverallSnapshots",
+  name: "GetOverallSnapshots",
   kind: MethodKind.Unary,
-  I: GetSnapshotRequest,
-  O: Snapshot,
+  I: GetOverallSnapshotsRequest,
+  O: OverallSnapshotList,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.SnapshotService"
@@ -22,14 +22,14 @@ export const getSnapshot = {
 } as const;
 
 /**
- * @generated from rpc fijoy.v1.SnapshotService.GetSnapshots
+ * @generated from rpc fijoy.v1.SnapshotService.GetAccountSnapshots
  */
-export const getSnapshots = {
-  localName: "getSnapshots",
-  name: "GetSnapshots",
+export const getAccountSnapshots = {
+  localName: "getAccountSnapshots",
+  name: "GetAccountSnapshots",
   kind: MethodKind.Unary,
-  I: GetSnapshotsRequest,
-  O: Snapshots,
+  I: GetAccountSnapshotsRequest,
+  O: AccountSnapshotList,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.SnapshotService"

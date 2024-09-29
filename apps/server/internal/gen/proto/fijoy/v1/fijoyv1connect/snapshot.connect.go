@@ -33,25 +33,25 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// SnapshotServiceGetSnapshotProcedure is the fully-qualified name of the SnapshotService's
-	// GetSnapshot RPC.
-	SnapshotServiceGetSnapshotProcedure = "/fijoy.v1.SnapshotService/GetSnapshot"
-	// SnapshotServiceGetSnapshotsProcedure is the fully-qualified name of the SnapshotService's
-	// GetSnapshots RPC.
-	SnapshotServiceGetSnapshotsProcedure = "/fijoy.v1.SnapshotService/GetSnapshots"
+	// SnapshotServiceGetOverallSnapshotsProcedure is the fully-qualified name of the SnapshotService's
+	// GetOverallSnapshots RPC.
+	SnapshotServiceGetOverallSnapshotsProcedure = "/fijoy.v1.SnapshotService/GetOverallSnapshots"
+	// SnapshotServiceGetAccountSnapshotsProcedure is the fully-qualified name of the SnapshotService's
+	// GetAccountSnapshots RPC.
+	SnapshotServiceGetAccountSnapshotsProcedure = "/fijoy.v1.SnapshotService/GetAccountSnapshots"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	snapshotServiceServiceDescriptor            = v1.File_fijoy_v1_snapshot_proto.Services().ByName("SnapshotService")
-	snapshotServiceGetSnapshotMethodDescriptor  = snapshotServiceServiceDescriptor.Methods().ByName("GetSnapshot")
-	snapshotServiceGetSnapshotsMethodDescriptor = snapshotServiceServiceDescriptor.Methods().ByName("GetSnapshots")
+	snapshotServiceServiceDescriptor                   = v1.File_fijoy_v1_snapshot_proto.Services().ByName("SnapshotService")
+	snapshotServiceGetOverallSnapshotsMethodDescriptor = snapshotServiceServiceDescriptor.Methods().ByName("GetOverallSnapshots")
+	snapshotServiceGetAccountSnapshotsMethodDescriptor = snapshotServiceServiceDescriptor.Methods().ByName("GetAccountSnapshots")
 )
 
 // SnapshotServiceClient is a client for the fijoy.v1.SnapshotService service.
 type SnapshotServiceClient interface {
-	GetSnapshot(context.Context, *connect.Request[v1.GetSnapshotRequest]) (*connect.Response[v1.Snapshot], error)
-	GetSnapshots(context.Context, *connect.Request[v1.GetSnapshotsRequest]) (*connect.Response[v1.Snapshots], error)
+	GetOverallSnapshots(context.Context, *connect.Request[v1.GetOverallSnapshotsRequest]) (*connect.Response[v1.OverallSnapshotList], error)
+	GetAccountSnapshots(context.Context, *connect.Request[v1.GetAccountSnapshotsRequest]) (*connect.Response[v1.AccountSnapshotList], error)
 }
 
 // NewSnapshotServiceClient constructs a client for the fijoy.v1.SnapshotService service. By
@@ -64,17 +64,17 @@ type SnapshotServiceClient interface {
 func NewSnapshotServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) SnapshotServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &snapshotServiceClient{
-		getSnapshot: connect.NewClient[v1.GetSnapshotRequest, v1.Snapshot](
+		getOverallSnapshots: connect.NewClient[v1.GetOverallSnapshotsRequest, v1.OverallSnapshotList](
 			httpClient,
-			baseURL+SnapshotServiceGetSnapshotProcedure,
-			connect.WithSchema(snapshotServiceGetSnapshotMethodDescriptor),
+			baseURL+SnapshotServiceGetOverallSnapshotsProcedure,
+			connect.WithSchema(snapshotServiceGetOverallSnapshotsMethodDescriptor),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
-		getSnapshots: connect.NewClient[v1.GetSnapshotsRequest, v1.Snapshots](
+		getAccountSnapshots: connect.NewClient[v1.GetAccountSnapshotsRequest, v1.AccountSnapshotList](
 			httpClient,
-			baseURL+SnapshotServiceGetSnapshotsProcedure,
-			connect.WithSchema(snapshotServiceGetSnapshotsMethodDescriptor),
+			baseURL+SnapshotServiceGetAccountSnapshotsProcedure,
+			connect.WithSchema(snapshotServiceGetAccountSnapshotsMethodDescriptor),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
@@ -83,24 +83,24 @@ func NewSnapshotServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // snapshotServiceClient implements SnapshotServiceClient.
 type snapshotServiceClient struct {
-	getSnapshot  *connect.Client[v1.GetSnapshotRequest, v1.Snapshot]
-	getSnapshots *connect.Client[v1.GetSnapshotsRequest, v1.Snapshots]
+	getOverallSnapshots *connect.Client[v1.GetOverallSnapshotsRequest, v1.OverallSnapshotList]
+	getAccountSnapshots *connect.Client[v1.GetAccountSnapshotsRequest, v1.AccountSnapshotList]
 }
 
-// GetSnapshot calls fijoy.v1.SnapshotService.GetSnapshot.
-func (c *snapshotServiceClient) GetSnapshot(ctx context.Context, req *connect.Request[v1.GetSnapshotRequest]) (*connect.Response[v1.Snapshot], error) {
-	return c.getSnapshot.CallUnary(ctx, req)
+// GetOverallSnapshots calls fijoy.v1.SnapshotService.GetOverallSnapshots.
+func (c *snapshotServiceClient) GetOverallSnapshots(ctx context.Context, req *connect.Request[v1.GetOverallSnapshotsRequest]) (*connect.Response[v1.OverallSnapshotList], error) {
+	return c.getOverallSnapshots.CallUnary(ctx, req)
 }
 
-// GetSnapshots calls fijoy.v1.SnapshotService.GetSnapshots.
-func (c *snapshotServiceClient) GetSnapshots(ctx context.Context, req *connect.Request[v1.GetSnapshotsRequest]) (*connect.Response[v1.Snapshots], error) {
-	return c.getSnapshots.CallUnary(ctx, req)
+// GetAccountSnapshots calls fijoy.v1.SnapshotService.GetAccountSnapshots.
+func (c *snapshotServiceClient) GetAccountSnapshots(ctx context.Context, req *connect.Request[v1.GetAccountSnapshotsRequest]) (*connect.Response[v1.AccountSnapshotList], error) {
+	return c.getAccountSnapshots.CallUnary(ctx, req)
 }
 
 // SnapshotServiceHandler is an implementation of the fijoy.v1.SnapshotService service.
 type SnapshotServiceHandler interface {
-	GetSnapshot(context.Context, *connect.Request[v1.GetSnapshotRequest]) (*connect.Response[v1.Snapshot], error)
-	GetSnapshots(context.Context, *connect.Request[v1.GetSnapshotsRequest]) (*connect.Response[v1.Snapshots], error)
+	GetOverallSnapshots(context.Context, *connect.Request[v1.GetOverallSnapshotsRequest]) (*connect.Response[v1.OverallSnapshotList], error)
+	GetAccountSnapshots(context.Context, *connect.Request[v1.GetAccountSnapshotsRequest]) (*connect.Response[v1.AccountSnapshotList], error)
 }
 
 // NewSnapshotServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -109,26 +109,26 @@ type SnapshotServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewSnapshotServiceHandler(svc SnapshotServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	snapshotServiceGetSnapshotHandler := connect.NewUnaryHandler(
-		SnapshotServiceGetSnapshotProcedure,
-		svc.GetSnapshot,
-		connect.WithSchema(snapshotServiceGetSnapshotMethodDescriptor),
+	snapshotServiceGetOverallSnapshotsHandler := connect.NewUnaryHandler(
+		SnapshotServiceGetOverallSnapshotsProcedure,
+		svc.GetOverallSnapshots,
+		connect.WithSchema(snapshotServiceGetOverallSnapshotsMethodDescriptor),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
-	snapshotServiceGetSnapshotsHandler := connect.NewUnaryHandler(
-		SnapshotServiceGetSnapshotsProcedure,
-		svc.GetSnapshots,
-		connect.WithSchema(snapshotServiceGetSnapshotsMethodDescriptor),
+	snapshotServiceGetAccountSnapshotsHandler := connect.NewUnaryHandler(
+		SnapshotServiceGetAccountSnapshotsProcedure,
+		svc.GetAccountSnapshots,
+		connect.WithSchema(snapshotServiceGetAccountSnapshotsMethodDescriptor),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/fijoy.v1.SnapshotService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case SnapshotServiceGetSnapshotProcedure:
-			snapshotServiceGetSnapshotHandler.ServeHTTP(w, r)
-		case SnapshotServiceGetSnapshotsProcedure:
-			snapshotServiceGetSnapshotsHandler.ServeHTTP(w, r)
+		case SnapshotServiceGetOverallSnapshotsProcedure:
+			snapshotServiceGetOverallSnapshotsHandler.ServeHTTP(w, r)
+		case SnapshotServiceGetAccountSnapshotsProcedure:
+			snapshotServiceGetAccountSnapshotsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -138,10 +138,10 @@ func NewSnapshotServiceHandler(svc SnapshotServiceHandler, opts ...connect.Handl
 // UnimplementedSnapshotServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedSnapshotServiceHandler struct{}
 
-func (UnimplementedSnapshotServiceHandler) GetSnapshot(context.Context, *connect.Request[v1.GetSnapshotRequest]) (*connect.Response[v1.Snapshot], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.SnapshotService.GetSnapshot is not implemented"))
+func (UnimplementedSnapshotServiceHandler) GetOverallSnapshots(context.Context, *connect.Request[v1.GetOverallSnapshotsRequest]) (*connect.Response[v1.OverallSnapshotList], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.SnapshotService.GetOverallSnapshots is not implemented"))
 }
 
-func (UnimplementedSnapshotServiceHandler) GetSnapshots(context.Context, *connect.Request[v1.GetSnapshotsRequest]) (*connect.Response[v1.Snapshots], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.SnapshotService.GetSnapshots is not implemented"))
+func (UnimplementedSnapshotServiceHandler) GetAccountSnapshots(context.Context, *connect.Request[v1.GetAccountSnapshotsRequest]) (*connect.Response[v1.AccountSnapshotList], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.SnapshotService.GetAccountSnapshots is not implemented"))
 }

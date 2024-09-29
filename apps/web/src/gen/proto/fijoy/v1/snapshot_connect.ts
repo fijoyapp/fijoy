@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GetSnapshotRequest, GetSnapshotsRequest, Snapshot, Snapshots } from "./snapshot_pb.js";
+import { AccountSnapshotList, GetAccountSnapshotsRequest, GetOverallSnapshotsRequest, OverallSnapshotList } from "./snapshot_pb.js";
 import { MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -13,22 +13,22 @@ export const SnapshotService = {
   typeName: "fijoy.v1.SnapshotService",
   methods: {
     /**
-     * @generated from rpc fijoy.v1.SnapshotService.GetSnapshot
+     * @generated from rpc fijoy.v1.SnapshotService.GetOverallSnapshots
      */
-    getSnapshot: {
-      name: "GetSnapshot",
-      I: GetSnapshotRequest,
-      O: Snapshot,
+    getOverallSnapshots: {
+      name: "GetOverallSnapshots",
+      I: GetOverallSnapshotsRequest,
+      O: OverallSnapshotList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
     /**
-     * @generated from rpc fijoy.v1.SnapshotService.GetSnapshots
+     * @generated from rpc fijoy.v1.SnapshotService.GetAccountSnapshots
      */
-    getSnapshots: {
-      name: "GetSnapshots",
-      I: GetSnapshotsRequest,
-      O: Snapshots,
+    getAccountSnapshots: {
+      name: "GetAccountSnapshots",
+      I: GetAccountSnapshotsRequest,
+      O: AccountSnapshotList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },

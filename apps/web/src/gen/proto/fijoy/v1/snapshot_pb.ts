@@ -4,13 +4,12 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3 } from "@bufbuild/protobuf";
-import { Date } from "../../google/type/date_pb.js";
+import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
 
 /**
- * @generated from message fijoy.v1.Snapshot
+ * @generated from message fijoy.v1.OverallSnapshot
  */
-export class Snapshot extends Message<Snapshot> {
+export class OverallSnapshot extends Message<OverallSnapshot> {
   /**
    * @generated from field: string id = 1;
    */
@@ -22,9 +21,9 @@ export class Snapshot extends Message<Snapshot> {
   profileId = "";
 
   /**
-   * @generated from field: google.type.Date date = 3;
+   * @generated from field: google.protobuf.Timestamp datehour = 3;
    */
-  date?: Date;
+  datehour?: Timestamp;
 
   /**
    * @generated from field: string liquidity = 4;
@@ -51,17 +50,17 @@ export class Snapshot extends Message<Snapshot> {
    */
   liability = "";
 
-  constructor(data?: PartialMessage<Snapshot>) {
+  constructor(data?: PartialMessage<OverallSnapshot>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.Snapshot";
+  static readonly typeName = "fijoy.v1.OverallSnapshot";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "profile_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "date", kind: "message", T: Date },
+    { no: 3, name: "datehour", kind: "message", T: Timestamp },
     { no: 4, name: "liquidity", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "investment", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "property", kind: "scalar", T: 9 /* ScalarType.STRING */ },
@@ -69,139 +68,245 @@ export class Snapshot extends Message<Snapshot> {
     { no: 8, name: "liability", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Snapshot {
-    return new Snapshot().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OverallSnapshot {
+    return new OverallSnapshot().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Snapshot {
-    return new Snapshot().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OverallSnapshot {
+    return new OverallSnapshot().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Snapshot {
-    return new Snapshot().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OverallSnapshot {
+    return new OverallSnapshot().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Snapshot | PlainMessage<Snapshot> | undefined, b: Snapshot | PlainMessage<Snapshot> | undefined): boolean {
-    return proto3.util.equals(Snapshot, a, b);
+  static equals(a: OverallSnapshot | PlainMessage<OverallSnapshot> | undefined, b: OverallSnapshot | PlainMessage<OverallSnapshot> | undefined): boolean {
+    return proto3.util.equals(OverallSnapshot, a, b);
   }
 }
 
 /**
- * @generated from message fijoy.v1.Snapshots
+ * @generated from message fijoy.v1.OverallSnapshotList
  */
-export class Snapshots extends Message<Snapshots> {
+export class OverallSnapshotList extends Message<OverallSnapshotList> {
   /**
-   * @generated from field: repeated fijoy.v1.Snapshot snapshots = 1;
+   * @generated from field: repeated fijoy.v1.OverallSnapshot items = 1;
    */
-  snapshots: Snapshot[] = [];
+  items: OverallSnapshot[] = [];
 
-  constructor(data?: PartialMessage<Snapshots>) {
+  constructor(data?: PartialMessage<OverallSnapshotList>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.Snapshots";
+  static readonly typeName = "fijoy.v1.OverallSnapshotList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "snapshots", kind: "message", T: Snapshot, repeated: true },
+    { no: 1, name: "items", kind: "message", T: OverallSnapshot, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Snapshots {
-    return new Snapshots().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): OverallSnapshotList {
+    return new OverallSnapshotList().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Snapshots {
-    return new Snapshots().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): OverallSnapshotList {
+    return new OverallSnapshotList().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Snapshots {
-    return new Snapshots().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): OverallSnapshotList {
+    return new OverallSnapshotList().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Snapshots | PlainMessage<Snapshots> | undefined, b: Snapshots | PlainMessage<Snapshots> | undefined): boolean {
-    return proto3.util.equals(Snapshots, a, b);
+  static equals(a: OverallSnapshotList | PlainMessage<OverallSnapshotList> | undefined, b: OverallSnapshotList | PlainMessage<OverallSnapshotList> | undefined): boolean {
+    return proto3.util.equals(OverallSnapshotList, a, b);
   }
 }
 
 /**
- * @generated from message fijoy.v1.GetSnapshotRequest
+ * @generated from message fijoy.v1.GetOverallSnapshotsRequest
  */
-export class GetSnapshotRequest extends Message<GetSnapshotRequest> {
+export class GetOverallSnapshotsRequest extends Message<GetOverallSnapshotsRequest> {
   /**
-   * @generated from field: google.type.Date date = 1;
+   * @generated from field: google.protobuf.Timestamp from_datehour = 1;
    */
-  date?: Date;
-
-  constructor(data?: PartialMessage<GetSnapshotRequest>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.GetSnapshotRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "date", kind: "message", T: Date },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSnapshotRequest {
-    return new GetSnapshotRequest().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSnapshotRequest {
-    return new GetSnapshotRequest().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSnapshotRequest {
-    return new GetSnapshotRequest().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: GetSnapshotRequest | PlainMessage<GetSnapshotRequest> | undefined, b: GetSnapshotRequest | PlainMessage<GetSnapshotRequest> | undefined): boolean {
-    return proto3.util.equals(GetSnapshotRequest, a, b);
-  }
-}
-
-/**
- * @generated from message fijoy.v1.GetSnapshotsRequest
- */
-export class GetSnapshotsRequest extends Message<GetSnapshotsRequest> {
-  /**
-   * @generated from field: google.type.Date from_date = 1;
-   */
-  fromDate?: Date;
+  fromDatehour?: Timestamp;
 
   /**
    * inclusive
    *
-   * @generated from field: google.type.Date to_date = 2;
+   * @generated from field: google.protobuf.Timestamp to_datehour = 2;
    */
-  toDate?: Date;
+  toDatehour?: Timestamp;
 
-  constructor(data?: PartialMessage<GetSnapshotsRequest>) {
+  constructor(data?: PartialMessage<GetOverallSnapshotsRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.GetSnapshotsRequest";
+  static readonly typeName = "fijoy.v1.GetOverallSnapshotsRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "from_date", kind: "message", T: Date },
-    { no: 2, name: "to_date", kind: "message", T: Date },
+    { no: 1, name: "from_datehour", kind: "message", T: Timestamp },
+    { no: 2, name: "to_datehour", kind: "message", T: Timestamp },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetSnapshotsRequest {
-    return new GetSnapshotsRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetOverallSnapshotsRequest {
+    return new GetOverallSnapshotsRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetSnapshotsRequest {
-    return new GetSnapshotsRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetOverallSnapshotsRequest {
+    return new GetOverallSnapshotsRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetSnapshotsRequest {
-    return new GetSnapshotsRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetOverallSnapshotsRequest {
+    return new GetOverallSnapshotsRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetSnapshotsRequest | PlainMessage<GetSnapshotsRequest> | undefined, b: GetSnapshotsRequest | PlainMessage<GetSnapshotsRequest> | undefined): boolean {
-    return proto3.util.equals(GetSnapshotsRequest, a, b);
+  static equals(a: GetOverallSnapshotsRequest | PlainMessage<GetOverallSnapshotsRequest> | undefined, b: GetOverallSnapshotsRequest | PlainMessage<GetOverallSnapshotsRequest> | undefined): boolean {
+    return proto3.util.equals(GetOverallSnapshotsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.AccountSnapshot
+ */
+export class AccountSnapshot extends Message<AccountSnapshot> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: string account_id = 2;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp datehour = 3;
+   */
+  datehour?: Timestamp;
+
+  /**
+   * @generated from field: string balance = 4;
+   */
+  balance = "";
+
+  constructor(data?: PartialMessage<AccountSnapshot>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.AccountSnapshot";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "datehour", kind: "message", T: Timestamp },
+    { no: 4, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountSnapshot {
+    return new AccountSnapshot().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountSnapshot {
+    return new AccountSnapshot().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountSnapshot {
+    return new AccountSnapshot().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountSnapshot | PlainMessage<AccountSnapshot> | undefined, b: AccountSnapshot | PlainMessage<AccountSnapshot> | undefined): boolean {
+    return proto3.util.equals(AccountSnapshot, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.AccountSnapshotList
+ */
+export class AccountSnapshotList extends Message<AccountSnapshotList> {
+  /**
+   * @generated from field: repeated fijoy.v1.AccountSnapshot items = 1;
+   */
+  items: AccountSnapshot[] = [];
+
+  constructor(data?: PartialMessage<AccountSnapshotList>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.AccountSnapshotList";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "items", kind: "message", T: AccountSnapshot, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountSnapshotList {
+    return new AccountSnapshotList().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountSnapshotList {
+    return new AccountSnapshotList().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountSnapshotList {
+    return new AccountSnapshotList().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: AccountSnapshotList | PlainMessage<AccountSnapshotList> | undefined, b: AccountSnapshotList | PlainMessage<AccountSnapshotList> | undefined): boolean {
+    return proto3.util.equals(AccountSnapshotList, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.GetAccountSnapshotsRequest
+ */
+export class GetAccountSnapshotsRequest extends Message<GetAccountSnapshotsRequest> {
+  /**
+   * @generated from field: string account_id = 1;
+   */
+  accountId = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp from_datehour = 2;
+   */
+  fromDatehour?: Timestamp;
+
+  /**
+   * inclusive
+   *
+   * @generated from field: google.protobuf.Timestamp to_datehour = 3;
+   */
+  toDatehour?: Timestamp;
+
+  constructor(data?: PartialMessage<GetAccountSnapshotsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.GetAccountSnapshotsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "from_datehour", kind: "message", T: Timestamp },
+    { no: 3, name: "to_datehour", kind: "message", T: Timestamp },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAccountSnapshotsRequest {
+    return new GetAccountSnapshotsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAccountSnapshotsRequest {
+    return new GetAccountSnapshotsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAccountSnapshotsRequest {
+    return new GetAccountSnapshotsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetAccountSnapshotsRequest | PlainMessage<GetAccountSnapshotsRequest> | undefined, b: GetAccountSnapshotsRequest | PlainMessage<GetAccountSnapshotsRequest> | undefined): boolean {
+    return proto3.util.equals(GetAccountSnapshotsRequest, a, b);
   }
 }
 
