@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-type FijoyDelta struct {
+type FijoyOverallSnapshot struct {
 	ID         string    `sql:"primary_key" json:"ID"`
 	ProfileID  string    `json:"ProfileID"`
-	Datetime   time.Time `json:"Datetime"`
+	Datehour   time.Time `json:"Datehour"`
 	Liquidity  float64   `json:"Liquidity"`
 	Investment float64   `json:"Investment"`
 	Property   float64   `json:"Property"`
