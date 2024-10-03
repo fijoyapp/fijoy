@@ -8,7 +8,7 @@ require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240920164238-5a7b106cbb87.2
 	connectrpc.com/connect v1.17.0
 	connectrpc.com/cors v0.1.0
-	github.com/bufbuild/protovalidate-go v0.7.1
+	github.com/bufbuild/protovalidate-go v0.7.2
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
