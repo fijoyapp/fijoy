@@ -10,92 +10,70 @@ decisions as certainly they are not perfect :)
 There are a couple things I would like to achive with Fijoy
 
 - The account balance is traceable at all time. Meaning if an account has X amount
-  of money, it is the sum of all the transactions.
+  of money, it is the sum of all the transactions (`balance_delta` field).
   Everything always adds up at all time.
-- A great manual transaction logging experience, I have no interest at the
+- A great **semi-auto** net worth tracking experience, I have no interest at the
   moment for providers like Plaid or Flink, as they are quite unreliable
-  based on my own testing, and most importantly, I think they defeat the
-  purpose of doing expense tracking, which is making you more aware of your
-  spending.
+  based on my own testing, and most importantly, I think the habit of logging
+  things down manually gives you a better sense of your own financial situation.
 
 ---
 
 ## Accounts
 
-- Each account will maintain its current balance and the currency.
-- Every time when there is a transaction, the balance will be updated accordingly.
-- To plot the account balance history, we will do a range query over
-  the transaction time of all the transactions for this account.
-- The account balance at all time is the sum of all the transactions.
-  Therefore, everything is traceable.
+In the account object, there are a couple fields worth mentioning:
 
-## Debt vs. Asset
+- `symbol`: For cash accounts, this symbol is the currency symbol, for investment
+  accounts, this is the ticker symbol.
+- `symbol_type`: This tells us whether the symbol is a currency or stock or crypto,
+  this influences where we will go fetch the price of the symbol.
+- `amount`: The unit of money or share in the account.
+- `value`: How much each unit is worth. For money and crypto, it will always be 1.
+  For stocks, it will be how much the ticker is worth.
+- `fx_rate`: In case this is a foreign currency account, this is the exchange rate
+  to the base currency.
+- `balance`: The displayed balance of the account, this is calculated
+  by `amount * value * fx_rate`.
 
-If I have $100 (asset), that will be displayed as $100, and will be stored as
-$100 in the database. IF I own $100 (debt), it will STILL be displayed as $100
-as the "credit balance" on the client side, but stored as -$100 in the database.
+When creating an account, we will first insert an empty account. Then based on
+the initial data provided, we will insert a transaction to record it.
 
 ## Transactions
 
-- Make sure to update the balance of the accounts involved in the transaction.
+In the transaction object, there are a couple fields worth mentioning:
 
-### Transfer between accounts with the same currency
+- `amount`: The amount of money or share after the transaction is done.
+- `amount_delta`: The amount of money or share changed in the transaction.
+- `value`: This is the new value of each unit.
+- `fx_rate`: This is the new fx rate.
+- `balance`: This is the new balance of the account after the transaction.
+- `balance_delta`: This is the change in balance caused by this transaction.
 
-Easy.
+To create a transaction, we need to fetch the previous transaction
+in order to calculate the `amount`, `balance` and `balance_delta` fields.
 
-### Transfer between accounts with different currencies
+Every time we create a transaction, we will also update the snapshot (Explained later)!
 
-Take the example from RMB to CAD.
+**Important** things to keep in mind for transactions:
 
-If I transfer 1000 RMB to my CAD account, that will results in roughly 200 CAD.
+- You can ONLY delete the latest transaction in a given account! You CANNOT
+  delete a transaction in the middle of the account history. This restriction
+  is placed to ensure a consistent history of each account.
 
-We will store 2 separate transactions with the type `transfer`.
+## Snapshot
 
-By default, we assume the transfer does not change one's net worth,
-meaning there is neither loss nor gain after making the transfer.
+Snapshots are essentially data points for account balance (`account_snapshot`)
+and overall balance (`overall_snapshot`) over time.
+This is used to visualize the account balance and total balance by plotting it
+on a graph.
 
-To take account into the potential loss/gain, we will prompt the user to input
-the total loss/gain. Take the same example, if I transfer 1000 RMB to my CAD
-account and I paid a 2 CAD transfer fee, receiving 198 CAD.
+For example, assume I made 2 updates to my account, 1st time at 12:23 and 2nd
+time at 12:46. The 1st time, a new snapshot row will be inserted in `account_snapshot`
+and `overall_snapshot`. The 2nd time, since it is within the same hour, we do not
+insert a new row, but we update the existing row.
 
-This will result in 3 transactions:
+Every time we add or remove a transaction, we will need to update the snapshot
+of that given account and the total balance snapshot.
 
-1. -1000 RMB from the RMB account, type `transfer`
-2. +200 CAD to the CAD account, type `transfer`
-3. -2 CAD from the CAD account, type `expense`. In case of gain, it will be `income`
-
-This way, the monthly expense/income calculation becomes straightforward.
-
-## Transaction Group
-
-I do not believe they are useful. Change my mind.
-
-## Montly "Statement"
-
-- Every transaction will also update the corresponding monthly statement.
-- Which exchange rate should be used for each monthly statement? The latest one
-  or the one from the last day of that month? "The last day of that month" makes
-  more sense I think.
-
-## Exchange Rate Caching
-
-TBD.
-
-## Investment
-
-How to track stacks? Take a brokerage account for example. We will first let the
-user create that account like any other account (input the total value, choose
-the currency...). Then, we will also let the user describe the underlying holdings.
-
-The holdings will be stored, giving us the ability to fetch the latest price of
-the given brokerage account. However! We will not automatically update the value
-of the investment account. To update the value, user can either manually input
-the delta as an income/expense transaction. Or they can click a "checkpoint"
-button where we can automatically calculate the delta and create a transaction
-from the last checkpoint to the current value.
-
-## Payer / Payee
-
-If this is an income transaction, the payer will be stored, and for an
-expense transaction, the payee will be stored. Don't store anything for transfer
-since it is between the same person's accounts.
+Snapshot are grouped by hours. We cannot group it by days since that does not play
+well when different time zones are involved.
