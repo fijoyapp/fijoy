@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { CreateTransactionRequest, CreateTransactionsRequest, DeleteTransactionByIdRequest, GetTransactionByIdRequest, GetTransactionsByAccountIdRequest, Transaction, Transactions } from "./transaction_pb.js";
+import { CreateTransactionRequest, DeleteTransactionByIdRequest, GetTransactionByIdRequest, GetTransactionsByAccountIdRequest, Transaction, TransactionList } from "./transaction_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.TransactionService.CreateTransaction
@@ -15,20 +15,6 @@ export const createTransaction = {
   kind: MethodKind.Unary,
   I: CreateTransactionRequest,
   O: Transaction,
-  service: {
-    typeName: "fijoy.v1.TransactionService"
-  }
-} as const;
-
-/**
- * @generated from rpc fijoy.v1.TransactionService.CreateTransactions
- */
-export const createTransactions = {
-  localName: "createTransactions",
-  name: "CreateTransactions",
-  kind: MethodKind.Unary,
-  I: CreateTransactionsRequest,
-  O: Transactions,
   service: {
     typeName: "fijoy.v1.TransactionService"
   }
@@ -57,7 +43,7 @@ export const getTransactionsByAccountId = {
   name: "GetTransactionsByAccountId",
   kind: MethodKind.Unary,
   I: GetTransactionsByAccountIdRequest,
-  O: Transactions,
+  O: TransactionList,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.TransactionService"
@@ -72,7 +58,7 @@ export const getTransactions = {
   name: "GetTransactions",
   kind: MethodKind.Unary,
   I: Empty,
-  O: Transactions,
+  O: TransactionList,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
     typeName: "fijoy.v1.TransactionService"

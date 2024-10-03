@@ -66,7 +66,7 @@ func (h *accountHandler) GetAccountById(
 func (h *accountHandler) GetAccounts(
 	ctx context.Context,
 	req *connect.Request[emptypb.Empty],
-) (*connect.Response[fijoyv1.Accounts], error) {
+) (*connect.Response[fijoyv1.AccountList], error) {
 	if err := h.protoValidator.Validate(req.Msg); err != nil {
 		return nil, err
 	}

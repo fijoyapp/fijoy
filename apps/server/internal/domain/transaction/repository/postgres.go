@@ -36,7 +36,8 @@ func NewTransactionRepository(db *sql.DB) *transactionRepository {
 }
 
 func (r *transactionRepository) CreateTransactionTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateTransactionRequest, previousAmount decimal.Decimal, previousBalance decimal.Decimal) (*transaction.FijoyTransaction, error) {
-	amount := decimal.RequireFromString(req.Amount)
+	// FIXME: broken
+	amount := decimal.RequireFromString(req.AmountDelta)
 	value := decimal.RequireFromString(req.Value)
 	fxRate := decimal.RequireFromString(req.FxRate)
 	balance := amount.Mul(value).Mul(fxRate)

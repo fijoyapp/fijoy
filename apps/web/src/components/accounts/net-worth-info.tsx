@@ -1,4 +1,4 @@
-import { Accounts } from "@/gen/proto/fijoy/v1/account_pb";
+import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Clock, Coins, CreditCard, Wallet } from "lucide-react";
 import { getOverallStats } from "@/lib/account";
@@ -8,7 +8,7 @@ import { getPrettyTime } from "@/lib/time";
 import { useMemo } from "react";
 
 type Props = {
-  accounts: Accounts;
+  accounts: Account[];
 };
 
 const NetWorthInfo = ({ accounts }: Props) => {

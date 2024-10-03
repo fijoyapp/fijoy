@@ -76,8 +76,6 @@ export function NewLiability() {
         symbolType: AccountSymbolType.CURRENCY,
 
         amount: currency(values.balance).multiply(-1).toString(),
-        value: "1",
-        fxRate: "1",
       }),
       {
         success: () => {

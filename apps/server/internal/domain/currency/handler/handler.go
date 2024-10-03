@@ -18,7 +18,7 @@ func NewCurrencyHandler() *currencyHandler {
 func (h *currencyHandler) GetCurrencies(
 	ctx context.Context,
 	req *connect.Request[emptypb.Empty],
-) (*connect.Response[fijoyv1.Currencies], error) {
+) (*connect.Response[fijoyv1.CurrencyList], error) {
 	currencies := []*fijoyv1.Currency{}
 
 	for _, currency := range constants.Currencies {
@@ -27,7 +27,7 @@ func (h *currencyHandler) GetCurrencies(
 		})
 	}
 
-	return connect.NewResponse(&fijoyv1.Currencies{
-		Currencies: currencies,
+	return connect.NewResponse(&fijoyv1.CurrencyList{
+		Items: currencies,
 	}), nil
 }

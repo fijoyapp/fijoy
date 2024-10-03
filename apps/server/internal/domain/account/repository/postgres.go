@@ -6,7 +6,6 @@ import (
 	"fijoy/constants"
 	"fijoy/internal/domain/account"
 	"fijoy/internal/gen/postgres/model"
-	"time"
 
 	. "fijoy/internal/gen/postgres/table"
 	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
@@ -67,9 +66,6 @@ func accountSymbolTypeProtoToModel(accountSymbolType fijoyv1.AccountSymbolType) 
 }
 
 func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error) {
-	value := decimal.RequireFromString(req.Value)
-	fxRate := decimal.RequireFromString(req.FxRate)
-
 	newAccount := account.FijoyAccount{
 		FijoyAccount: model.FijoyAccount{
 			ID:          constants.AccountPrefix + cuid2.Generate(),
@@ -82,13 +78,10 @@ func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, pro
 
 			Symbol:     req.Symbol,
 			SymbolType: accountSymbolTypeProtoToModel(req.SymbolType),
-
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
 		},
 		Amount:  decimal.Zero,
-		Value:   value,
-		FxRate:  fxRate,
+		Value:   decimal.Zero,
+		FxRate:  decimal.Zero,
 		Balance: decimal.Zero,
 	}
 
@@ -179,18 +172,6 @@ func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx,
 	if req.IncludeInNetWorth != nil {
 		newAccount.IncludeInNetWorth = *req.IncludeInNetWorth
 		columnList = append(columnList, FijoyAccount.IncludeInNetWorth)
-	}
-	if req.Amount != nil {
-		newAccount.Amount = decimal.RequireFromString(*req.Amount)
-		columnList = append(columnList, FijoyAccount.Amount)
-	}
-	if req.Value != nil {
-		newAccount.Value = decimal.RequireFromString(*req.Value)
-		columnList = append(columnList, FijoyAccount.Value)
-	}
-	if req.FxRate != nil {
-		newAccount.FxRate = decimal.RequireFromString(*req.FxRate)
-		columnList = append(columnList, FijoyAccount.FxRate)
 	}
 
 	newBalance := newAccount.Amount.Mul(newAccount.Value).Mul(newAccount.FxRate)

@@ -47,7 +47,7 @@ var (
 
 // CurrencyServiceClient is a client for the fijoy.v1.CurrencyService service.
 type CurrencyServiceClient interface {
-	GetCurrencies(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Currencies], error)
+	GetCurrencies(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.CurrencyList], error)
 }
 
 // NewCurrencyServiceClient constructs a client for the fijoy.v1.CurrencyService service. By
@@ -60,7 +60,7 @@ type CurrencyServiceClient interface {
 func NewCurrencyServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) CurrencyServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &currencyServiceClient{
-		getCurrencies: connect.NewClient[emptypb.Empty, v1.Currencies](
+		getCurrencies: connect.NewClient[emptypb.Empty, v1.CurrencyList](
 			httpClient,
 			baseURL+CurrencyServiceGetCurrenciesProcedure,
 			connect.WithSchema(currencyServiceGetCurrenciesMethodDescriptor),
@@ -72,17 +72,17 @@ func NewCurrencyServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // currencyServiceClient implements CurrencyServiceClient.
 type currencyServiceClient struct {
-	getCurrencies *connect.Client[emptypb.Empty, v1.Currencies]
+	getCurrencies *connect.Client[emptypb.Empty, v1.CurrencyList]
 }
 
 // GetCurrencies calls fijoy.v1.CurrencyService.GetCurrencies.
-func (c *currencyServiceClient) GetCurrencies(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Currencies], error) {
+func (c *currencyServiceClient) GetCurrencies(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.CurrencyList], error) {
 	return c.getCurrencies.CallUnary(ctx, req)
 }
 
 // CurrencyServiceHandler is an implementation of the fijoy.v1.CurrencyService service.
 type CurrencyServiceHandler interface {
-	GetCurrencies(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Currencies], error)
+	GetCurrencies(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.CurrencyList], error)
 }
 
 // NewCurrencyServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -111,6 +111,6 @@ func NewCurrencyServiceHandler(svc CurrencyServiceHandler, opts ...connect.Handl
 // UnimplementedCurrencyServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedCurrencyServiceHandler struct{}
 
-func (UnimplementedCurrencyServiceHandler) GetCurrencies(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Currencies], error) {
+func (UnimplementedCurrencyServiceHandler) GetCurrencies(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.CurrencyList], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.CurrencyService.GetCurrencies is not implemented"))
 }

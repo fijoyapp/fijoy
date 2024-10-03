@@ -18,8 +18,8 @@ type TransactionUseCase interface {
 	CreateTransaction(ctx context.Context, profileId string, req *fijoyv1.CreateTransactionRequest) (*fijoyv1.Transaction, error)
 
 	GetTransactionById(ctx context.Context, profileId string, req *fijoyv1.GetTransactionByIdRequest) (*fijoyv1.Transaction, error)
-	GetTransactionsByAccountId(ctx context.Context, profileId string, req *fijoyv1.GetTransactionsByAccountIdRequest) (*fijoyv1.Transactions, error)
-	GetTransactions(ctx context.Context, profileId string) (*fijoyv1.Transactions, error)
+	GetTransactionsByAccountId(ctx context.Context, profileId string, req *fijoyv1.GetTransactionsByAccountIdRequest) (*fijoyv1.TransactionList, error)
+	GetTransactions(ctx context.Context, profileId string) (*fijoyv1.TransactionList, error)
 
 	DeleteTransactionById(ctx context.Context, profileId string, req *fijoyv1.DeleteTransactionByIdRequest) (*fijoyv1.Transaction, error)
 }
@@ -55,13 +55,13 @@ func transactionModelToProto(transaction *transaction.FijoyTransaction) *fijoyv1
 	}
 }
 
-func transactionsModelToProto(transactions []*transaction.FijoyTransaction) *fijoyv1.Transactions {
+func transactionsModelToProto(transactions []*transaction.FijoyTransaction) *fijoyv1.TransactionList {
 	protoTransactions := make([]*fijoyv1.Transaction, len(transactions))
 	for i, transaction := range transactions {
 		protoTransactions[i] = transactionModelToProto(transaction)
 	}
-	return &fijoyv1.Transactions{
-		Transactions: protoTransactions,
+	return &fijoyv1.TransactionList{
+		Items: protoTransactions,
 	}
 }
 
@@ -117,7 +117,7 @@ func (u *transactionUseCase) GetTransactionById(ctx context.Context, profileId s
 	return transactionModelToProto(transaction), nil
 }
 
-func (u *transactionUseCase) GetTransactions(ctx context.Context, profileId string) (*fijoyv1.Transactions, error) {
+func (u *transactionUseCase) GetTransactions(ctx context.Context, profileId string) (*fijoyv1.TransactionList, error) {
 	transactions, err := u.repo.GetTransactions(ctx, profileId)
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (u *transactionUseCase) GetTransactions(ctx context.Context, profileId stri
 	return transactionsModelToProto(transactions), nil
 }
 
-func (u *transactionUseCase) GetTransactionsByAccountId(ctx context.Context, profileId string, req *fijoyv1.GetTransactionsByAccountIdRequest) (*fijoyv1.Transactions, error) {
+func (u *transactionUseCase) GetTransactionsByAccountId(ctx context.Context, profileId string, req *fijoyv1.GetTransactionsByAccountIdRequest) (*fijoyv1.TransactionList, error) {
 	transactions, err := u.repo.GetTransactionsByAccountId(ctx, profileId, req.AccountId)
 	if err != nil {
 		return nil, err

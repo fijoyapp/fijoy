@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { Currencies } from "./currency_pb.js";
+import { CurrencyList } from "./currency_pb.js";
 
 /**
  * @generated from service fijoy.v1.CurrencyService
@@ -18,7 +18,7 @@ export const CurrencyService = {
     getCurrencies: {
       name: "GetCurrencies",
       I: Empty,
-      O: Currencies,
+      O: CurrencyList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },

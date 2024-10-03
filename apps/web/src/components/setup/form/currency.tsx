@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Currencies, Currency } from "@/gen/proto/fijoy/v1/currency_pb";
+import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
 import { useEffect, useState } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ChevronsUpDown, Trash } from "lucide-react";
@@ -33,7 +33,7 @@ import { getCurrencyDisplay } from "@/lib/money";
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
-  currencies: Currencies;
+  currencies: Currency[];
   onValueChange: (value: string[]) => void;
   defaultValues?: string[];
 };
@@ -51,16 +51,15 @@ export function CurrencyField<T extends FieldValues>({
 
   const allowChangeDefault = defaultValues === undefined;
 
-  const [selectableCurrencies, setSelectableCurrencies] = useState<Currency[]>(
-    currencies.currencies,
-  );
+  const [selectableCurrencies, setSelectableCurrencies] =
+    useState<Currency[]>(currencies);
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     setSelectableCurrencies(
-      currencies.currencies.filter(
+      currencies.filter(
         (currency) => !selectedCurrencies.includes(currency.code),
       ),
     );
@@ -142,7 +141,7 @@ export function CurrencyField<T extends FieldValues>({
           </Popover>
 
           {selectedCurrencies.map((curr, idx) => {
-            const locale = currencies.currencies.find(
+            const locale = currencies.find(
               (currency) => currency.code === selectedCurrencies[0],
             )!.locale;
             return (

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateTransactionRequest, CreateTransactionsRequest, DeleteTransactionByIdRequest, GetTransactionByIdRequest, GetTransactionsByAccountIdRequest, Transaction, Transactions } from "./transaction_pb.js";
+import { CreateTransactionRequest, DeleteTransactionByIdRequest, GetTransactionByIdRequest, GetTransactionsByAccountIdRequest, Transaction, TransactionList } from "./transaction_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -22,15 +22,6 @@ export const TransactionService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc fijoy.v1.TransactionService.CreateTransactions
-     */
-    createTransactions: {
-      name: "CreateTransactions",
-      I: CreateTransactionsRequest,
-      O: Transactions,
-      kind: MethodKind.Unary,
-    },
-    /**
      * @generated from rpc fijoy.v1.TransactionService.GetTransactionById
      */
     getTransactionById: {
@@ -46,7 +37,7 @@ export const TransactionService = {
     getTransactionsByAccountId: {
       name: "GetTransactionsByAccountId",
       I: GetTransactionsByAccountIdRequest,
-      O: Transactions,
+      O: TransactionList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
@@ -56,7 +47,7 @@ export const TransactionService = {
     getTransactions: {
       name: "GetTransactions",
       I: Empty,
-      O: Transactions,
+      O: TransactionList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
