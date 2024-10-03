@@ -18,7 +18,7 @@ type AccountUseCase interface {
 	CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error)
 
 	GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error)
-	GetAccounts(ctx context.Context, profileId string) (*fijoyv1.Accounts, error)
+	GetAccounts(ctx context.Context, profileId string) (*fijoyv1.AccountList, error)
 
 	UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error)
 
@@ -59,13 +59,13 @@ func accountModelToProto(account *account.FijoyAccount) *fijoyv1.Account {
 	}
 }
 
-func accountsModelToProto(accounts []*account.FijoyAccount) *fijoyv1.Accounts {
+func accountsModelToProto(accounts []*account.FijoyAccount) *fijoyv1.AccountList {
 	protoAccounts := make([]*fijoyv1.Account, len(accounts))
 	for i, account := range accounts {
 		protoAccounts[i] = accountModelToProto(account)
 	}
-	return &fijoyv1.Accounts{
-		Accounts: protoAccounts,
+	return &fijoyv1.AccountList{
+		Items: protoAccounts,
 	}
 }
 
@@ -122,12 +122,14 @@ func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, re
 		return nil, err
 	}
 
+	// FIXME: Broken
+
 	transactionReq := &fijoyv1.CreateTransactionRequest{
-		AccountId: createdAccount.ID,
-		Amount:    req.Amount,
-		Value:     createdAccount.Value.String(),
-		FxRate:    createdAccount.FxRate.String(),
-		Note:      "Initial balance",
+		AccountId:   createdAccount.ID,
+		AmountDelta: req.Amount,
+		Value:       createdAccount.Value.String(),
+		FxRate:      createdAccount.FxRate.String(),
+		Note:        "Initial balance",
 	}
 
 	_, err = u.transactionRepo.CreateTransactionTX(ctx, tx, profileId, transactionReq, decimal.Zero, decimal.Zero)
@@ -135,11 +137,8 @@ func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, re
 		return nil, err
 	}
 
-	amount := req.Amount
-
 	updateAccountReq := &fijoyv1.UpdateAccountRequest{
-		Id:     createdAccount.ID,
-		Amount: &amount,
+		Id: createdAccount.ID,
 	}
 
 	_, err = u.accountRepo.UpdateAccountByIdTX(ctx, tx, profileId, updateAccountReq)
@@ -159,7 +158,7 @@ func (u *accountUseCase) GetAccountById(ctx context.Context, profileId string, r
 	return accountModelToProto(account), nil
 }
 
-func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fijoyv1.Accounts, error) {
+func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fijoyv1.AccountList, error) {
 	accounts, err := u.accountRepo.GetAccounts(ctx, profileId)
 	if err != nil {
 		return nil, err

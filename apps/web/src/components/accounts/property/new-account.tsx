@@ -75,8 +75,6 @@ export function NewProperty() {
         symbolType: AccountSymbolType.CURRENCY,
 
         amount: values.balance,
-        value: "1",
-        fxRate: "1",
       }),
       {
         success: () => {

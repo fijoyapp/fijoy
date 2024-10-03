@@ -110,39 +110,39 @@ export class Transaction extends Message<Transaction> {
 }
 
 /**
- * @generated from message fijoy.v1.Transactions
+ * @generated from message fijoy.v1.TransactionList
  */
-export class Transactions extends Message<Transactions> {
+export class TransactionList extends Message<TransactionList> {
   /**
-   * @generated from field: repeated fijoy.v1.Transaction transactions = 1;
+   * @generated from field: repeated fijoy.v1.Transaction items = 1;
    */
-  transactions: Transaction[] = [];
+  items: Transaction[] = [];
 
-  constructor(data?: PartialMessage<Transactions>) {
+  constructor(data?: PartialMessage<TransactionList>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.Transactions";
+  static readonly typeName = "fijoy.v1.TransactionList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "transactions", kind: "message", T: Transaction, repeated: true },
+    { no: 1, name: "items", kind: "message", T: Transaction, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Transactions {
-    return new Transactions().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): TransactionList {
+    return new TransactionList().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Transactions {
-    return new Transactions().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): TransactionList {
+    return new TransactionList().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Transactions {
-    return new Transactions().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): TransactionList {
+    return new TransactionList().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Transactions | PlainMessage<Transactions> | undefined, b: Transactions | PlainMessage<Transactions> | undefined): boolean {
-    return proto3.util.equals(Transactions, a, b);
+  static equals(a: TransactionList | PlainMessage<TransactionList> | undefined, b: TransactionList | PlainMessage<TransactionList> | undefined): boolean {
+    return proto3.util.equals(TransactionList, a, b);
   }
 }
 
@@ -204,43 +204,6 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
 
   static equals(a: CreateTransactionRequest | PlainMessage<CreateTransactionRequest> | undefined, b: CreateTransactionRequest | PlainMessage<CreateTransactionRequest> | undefined): boolean {
     return proto3.util.equals(CreateTransactionRequest, a, b);
-  }
-}
-
-/**
- * @generated from message fijoy.v1.CreateTransactionsRequest
- */
-export class CreateTransactionsRequest extends Message<CreateTransactionsRequest> {
-  /**
-   * @generated from field: repeated fijoy.v1.CreateTransactionRequest transactions = 1;
-   */
-  transactions: CreateTransactionRequest[] = [];
-
-  constructor(data?: PartialMessage<CreateTransactionsRequest>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.CreateTransactionsRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "transactions", kind: "message", T: CreateTransactionRequest, repeated: true },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateTransactionsRequest {
-    return new CreateTransactionsRequest().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CreateTransactionsRequest {
-    return new CreateTransactionsRequest().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CreateTransactionsRequest {
-    return new CreateTransactionsRequest().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: CreateTransactionsRequest | PlainMessage<CreateTransactionsRequest> | undefined, b: CreateTransactionsRequest | PlainMessage<CreateTransactionsRequest> | undefined): boolean {
-    return proto3.util.equals(CreateTransactionsRequest, a, b);
   }
 }
 

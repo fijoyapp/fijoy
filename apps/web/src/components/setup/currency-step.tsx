@@ -7,12 +7,12 @@ import { CurrencyStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
 import { type TypeOf } from "zod";
 import { CurrencyField } from "./form/currency";
-import { Currencies } from "@/gen/proto/fijoy/v1/currency_pb";
+import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
 
 const formSchema = CurrencyStepData;
 
 type CurrencyStepProps = {
-  currencies: Currencies;
+  currencies: Currency[];
 };
 
 const CurrencyStep = ({ currencies }: CurrencyStepProps) => {

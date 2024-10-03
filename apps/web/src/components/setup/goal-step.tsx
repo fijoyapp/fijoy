@@ -7,12 +7,12 @@ import { GoalStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
 import { type TypeOf } from "zod";
 import { MoneyField } from "./form/money";
-import { Currencies } from "@/gen/proto/fijoy/v1/currency_pb";
+import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
 
 const formSchema = GoalStepData;
 
 type GoalStepProps = {
-  currencies: Currencies;
+  currencies: Currency[];
 };
 
 const GoalStep = ({ currencies }: GoalStepProps) => {
@@ -44,7 +44,7 @@ const GoalStep = ({ currencies }: GoalStepProps) => {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
   }
 
-  const locale = currencies.currencies.find(
+  const locale = currencies.find(
     (currency) => currency.code === currencyStepData.currencies[0],
   )!.locale;
 

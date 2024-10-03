@@ -200,39 +200,39 @@ export class Account extends Message<Account> {
 }
 
 /**
- * @generated from message fijoy.v1.Accounts
+ * @generated from message fijoy.v1.AccountList
  */
-export class Accounts extends Message<Accounts> {
+export class AccountList extends Message<AccountList> {
   /**
-   * @generated from field: repeated fijoy.v1.Account accounts = 1;
+   * @generated from field: repeated fijoy.v1.Account items = 1;
    */
-  accounts: Account[] = [];
+  items: Account[] = [];
 
-  constructor(data?: PartialMessage<Accounts>) {
+  constructor(data?: PartialMessage<AccountList>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.Accounts";
+  static readonly typeName = "fijoy.v1.AccountList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "accounts", kind: "message", T: Account, repeated: true },
+    { no: 1, name: "items", kind: "message", T: Account, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Accounts {
-    return new Accounts().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): AccountList {
+    return new AccountList().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Accounts {
-    return new Accounts().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): AccountList {
+    return new AccountList().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Accounts {
-    return new Accounts().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): AccountList {
+    return new AccountList().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Accounts | PlainMessage<Accounts> | undefined, b: Accounts | PlainMessage<Accounts> | undefined): boolean {
-    return proto3.util.equals(Accounts, a, b);
+  static equals(a: AccountList | PlainMessage<AccountList> | undefined, b: AccountList | PlainMessage<AccountList> | undefined): boolean {
+    return proto3.util.equals(AccountList, a, b);
   }
 }
 

@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { AccountType, Accounts } from "@/gen/proto/fijoy/v1/account_pb";
+import { AccountType, Account } from "@/gen/proto/fijoy/v1/account_pb";
 import {
   ChartCandlestick,
   CreditCard,
@@ -28,11 +28,11 @@ import {
   PiggyBank,
 } from "lucide-react";
 import AddAccount from "@/components/accounts/add-account";
-import AccountList from "@/components/accounts/account-list";
 import { useMediaQuery, WIDTH_OPTIONS } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import NetWorthInfo from "@/components/accounts/net-worth-info";
+import AccountListView from "@/components/accounts/account-list-view";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -65,14 +65,14 @@ function Page() {
       {add ? (
         <AddAccount type={add} />
       ) : (
-        <AccountsView accounts={data} detail={detail} />
+        <AccountsView accounts={data.items} detail={detail} />
       )}
     </>
   );
 }
 
 type AccountsViewProps = {
-  accounts: Accounts;
+  accounts: Account[];
   detail?: string;
 };
 
@@ -139,7 +139,7 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
 
         <div className="py-2"></div>
 
-        <AccountList accounts={accounts} />
+        <AccountListView accounts={accounts} />
       </div>
 
       {isDesktop && <Separator orientation="vertical" className="h-full" />}

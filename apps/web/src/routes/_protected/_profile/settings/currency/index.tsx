@@ -61,7 +61,7 @@ function Page() {
 
   const context = Route.useRouteContext();
 
-  const { data: currencies } = useSuspenseQuery(
+  const { data: currencyList } = useSuspenseQuery(
     getCurrenciesQueryOptions({
       context,
     }),
@@ -124,7 +124,7 @@ function Page() {
                 <CurrencyField
                   control={form.control}
                   name="currencies"
-                  currencies={currencies}
+                  currencies={currencyList.items}
                   defaultValues={profile.currencies}
                   onValueChange={(value) => {
                     form.setValue("currencies", value);

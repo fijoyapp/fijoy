@@ -1,4 +1,4 @@
-import { Account, Accounts } from "@/gen/proto/fijoy/v1/account_pb";
+import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { LiquidityCard } from "./liquidity/card";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
@@ -9,7 +9,7 @@ import { PropertyCard } from "./property/card";
 import { ReceivableCard } from "./receivable/card";
 
 type AccountListProps = {
-  accounts: Accounts;
+  accounts: Account[];
 };
 
 type Section = {
@@ -18,7 +18,7 @@ type Section = {
   card: React.FC<{ account: Account }>;
 };
 
-export default function AccountList({ accounts }: AccountListProps) {
+export default function AccountListView({ accounts }: AccountListProps) {
   const { liabilities, liquidities, investments, properties, receivables } =
     useMemo(() => accountsGroupBy(accounts), [accounts]);
 

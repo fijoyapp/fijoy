@@ -36,10 +36,9 @@ export const Route = createFileRoute("/_protected/setup")({
 function Setup() {
   const { step } = Route.useSearch();
 
-  // const router = useRouter();
   const context = Route.useRouteContext();
 
-  const { data: currencies } = useSuspenseQuery(
+  const { data: currencyList } = useSuspenseQuery(
     getCurrenciesQueryOptions({
       context,
     }),
@@ -55,8 +54,10 @@ function Setup() {
       </PageHeader>
       <div className="mx-auto max-w-lg">
         {match(step)
-          .with("currency", () => <CurrencyStep currencies={currencies} />)
-          .with("goal", () => <GoalStep currencies={currencies} />)
+          .with("currency", () => (
+            <CurrencyStep currencies={currencyList.items} />
+          ))
+          .with("goal", () => <GoalStep currencies={currencyList.items} />)
           .with("final", () => <FinalStep />)
           .exhaustive()}
       </div>

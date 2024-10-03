@@ -64,7 +64,7 @@ var (
 // AccountServiceClient is a client for the fijoy.v1.AccountService service.
 type AccountServiceClient interface {
 	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
-	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
+	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.AccountList], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
 	UpdateAccount(context.Context, *connect.Request[v1.UpdateAccountRequest]) (*connect.Response[v1.Account], error)
 	DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error)
@@ -86,7 +86,7 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(accountServiceCreateAccountMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		getAccounts: connect.NewClient[emptypb.Empty, v1.Accounts](
+		getAccounts: connect.NewClient[emptypb.Empty, v1.AccountList](
 			httpClient,
 			baseURL+AccountServiceGetAccountsProcedure,
 			connect.WithSchema(accountServiceGetAccountsMethodDescriptor),
@@ -118,7 +118,7 @@ func NewAccountServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 // accountServiceClient implements AccountServiceClient.
 type accountServiceClient struct {
 	createAccount     *connect.Client[v1.CreateAccountRequest, v1.Account]
-	getAccounts       *connect.Client[emptypb.Empty, v1.Accounts]
+	getAccounts       *connect.Client[emptypb.Empty, v1.AccountList]
 	getAccountById    *connect.Client[v1.GetAccountByIdRequest, v1.Account]
 	updateAccount     *connect.Client[v1.UpdateAccountRequest, v1.Account]
 	deleteAccountById *connect.Client[v1.DeleteAccountByIdRequest, v1.Account]
@@ -130,7 +130,7 @@ func (c *accountServiceClient) CreateAccount(ctx context.Context, req *connect.R
 }
 
 // GetAccounts calls fijoy.v1.AccountService.GetAccounts.
-func (c *accountServiceClient) GetAccounts(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error) {
+func (c *accountServiceClient) GetAccounts(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.AccountList], error) {
 	return c.getAccounts.CallUnary(ctx, req)
 }
 
@@ -152,7 +152,7 @@ func (c *accountServiceClient) DeleteAccountById(ctx context.Context, req *conne
 // AccountServiceHandler is an implementation of the fijoy.v1.AccountService service.
 type AccountServiceHandler interface {
 	CreateAccount(context.Context, *connect.Request[v1.CreateAccountRequest]) (*connect.Response[v1.Account], error)
-	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error)
+	GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.AccountList], error)
 	GetAccountById(context.Context, *connect.Request[v1.GetAccountByIdRequest]) (*connect.Response[v1.Account], error)
 	UpdateAccount(context.Context, *connect.Request[v1.UpdateAccountRequest]) (*connect.Response[v1.Account], error)
 	DeleteAccountById(context.Context, *connect.Request[v1.DeleteAccountByIdRequest]) (*connect.Response[v1.Account], error)
@@ -221,7 +221,7 @@ func (UnimplementedAccountServiceHandler) CreateAccount(context.Context, *connec
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.CreateAccount is not implemented"))
 }
 
-func (UnimplementedAccountServiceHandler) GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Accounts], error) {
+func (UnimplementedAccountServiceHandler) GetAccounts(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.AccountList], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.AccountService.GetAccounts is not implemented"))
 }
 

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Account, Accounts, CreateAccountRequest, DeleteAccountByIdRequest, GetAccountByIdRequest, UpdateAccountRequest } from "./account_pb.js";
+import { Account, AccountList, CreateAccountRequest, DeleteAccountByIdRequest, GetAccountByIdRequest, UpdateAccountRequest } from "./account_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -27,7 +27,7 @@ export const AccountService = {
     getAccounts: {
       name: "GetAccounts",
       I: Empty,
-      O: Accounts,
+      O: AccountList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },

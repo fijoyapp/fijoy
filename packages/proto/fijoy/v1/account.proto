@@ -44,8 +44,8 @@ message Account {
   google.protobuf.Timestamp updated_at = 14 [(buf.validate.field).required = true];
 }
 
-message Accounts {
-  repeated Account accounts = 1 [(buf.validate.field).required = true];
+message AccountList {
+  repeated Account items = 1 [(buf.validate.field).required = true];
 }
 
 message CreateAccountRequest {
@@ -79,7 +79,7 @@ message DeleteAccountByIdRequest {
 service AccountService {
   rpc CreateAccount(CreateAccountRequest) returns (Account);
 
-  rpc GetAccounts(google.protobuf.Empty) returns (Accounts) {
+  rpc GetAccounts(google.protobuf.Empty) returns (AccountList) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
