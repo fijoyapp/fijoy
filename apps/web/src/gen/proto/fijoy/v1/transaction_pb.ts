@@ -156,9 +156,9 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
   accountId = "";
 
   /**
-   * @generated from field: string amount = 2;
+   * @generated from field: string amount_delta = 2;
    */
-  amount = "";
+  amountDelta = "";
 
   /**
    * @generated from field: string value = 3;
@@ -184,7 +184,7 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
   static readonly typeName = "fijoy.v1.CreateTransactionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "amount_delta", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 4, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },

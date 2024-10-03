@@ -58,8 +58,6 @@ message CreateAccountRequest {
   AccountSymbolType symbol_type = 5 [(buf.validate.field).required = true];
 
   string amount = 6 [(buf.validate.field).required = true];
-  string value = 7 [(buf.validate.field).required = true];
-  string fx_rate = 8;
 }
 
 message UpdateAccountRequest {
@@ -68,10 +66,6 @@ message UpdateAccountRequest {
 
   optional bool archived = 3;
   optional bool include_in_net_worth = 4;
-
-  optional string amount = 5;
-  optional string value = 6;
-  optional string fx_rate = 7;
 }
 
 message GetAccountByIdRequest {
