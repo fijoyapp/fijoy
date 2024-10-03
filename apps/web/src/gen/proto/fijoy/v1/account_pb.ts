@@ -270,16 +270,6 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
    */
   amount = "";
 
-  /**
-   * @generated from field: string value = 7;
-   */
-  value = "";
-
-  /**
-   * @generated from field: string fx_rate = 8;
-   */
-  fxRate = "";
-
   constructor(data?: PartialMessage<CreateAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -294,8 +284,6 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
     { no: 4, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
     { no: 6, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {
@@ -339,21 +327,6 @@ export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
    */
   includeInNetWorth?: boolean;
 
-  /**
-   * @generated from field: optional string amount = 5;
-   */
-  amount?: string;
-
-  /**
-   * @generated from field: optional string value = 6;
-   */
-  value?: string;
-
-  /**
-   * @generated from field: optional string fx_rate = 7;
-   */
-  fxRate?: string;
-
   constructor(data?: PartialMessage<UpdateAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -366,9 +339,6 @@ export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 3, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
     { no: 4, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
-    { no: 5, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 6, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
-    { no: 7, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateAccountRequest {
