@@ -1,6 +1,14 @@
 package schema
 
-import "entgo.io/ent"
+import (
+	"time"
+
+	"entgo.io/ent"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
+)
 
 // Transaction holds the schema definition for the Transaction entity.
 type Transaction struct {
@@ -9,10 +17,55 @@ type Transaction struct {
 
 // Fields of the Transaction.
 func (Transaction) Fields() []ent.Field {
-	return nil
+	return []ent.Field{
+		field.Float("amount").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+		field.Float("amount_delta").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+		field.Float("value").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(18,10)",
+				dialect.Postgres: "numeric(18,10)",
+			}),
+		field.Float("fx_rate").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(18,10)",
+				dialect.Postgres: "numeric(18,10)",
+			}).Optional(),
+		field.Float("balance").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+		field.Float("balance_delta").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+
+		field.Text("note").Optional(),
+
+		field.Time("created_at").Default(time.Now),
+		field.Time("updated_at").Default(time.Now),
+	}
 }
 
 // Edges of the Transaction.
 func (Transaction) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("profile", Profile.Type).Ref("transaction"),
+		edge.From("account", Account.Type).Ref("transaction"),
+	}
 }

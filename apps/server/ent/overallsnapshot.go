@@ -6,17 +6,52 @@ import (
 	"fijoy/ent/overallsnapshot"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shopspring/decimal"
 )
 
 // OverallSnapshot is the model entity for the OverallSnapshot schema.
 type OverallSnapshot struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// Datehour holds the value of the "datehour" field.
+	Datehour time.Time `json:"datehour,omitempty"`
+	// Liquidity holds the value of the "liquidity" field.
+	Liquidity decimal.Decimal `json:"liquidity,omitempty"`
+	// Investment holds the value of the "investment" field.
+	Investment decimal.Decimal `json:"investment,omitempty"`
+	// Property holds the value of the "property" field.
+	Property decimal.Decimal `json:"property,omitempty"`
+	// Receivable holds the value of the "receivable" field.
+	Receivable decimal.Decimal `json:"receivable,omitempty"`
+	// Liablity holds the value of the "liablity" field.
+	Liablity decimal.Decimal `json:"liablity,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the OverallSnapshotQuery when eager-loading is set.
+	Edges        OverallSnapshotEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// OverallSnapshotEdges holds the relations/edges for other nodes in the graph.
+type OverallSnapshotEdges struct {
+	// Profile holds the value of the profile edge.
+	Profile []*Profile `json:"profile,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// ProfileOrErr returns the Profile value or an error if the edge
+// was not loaded in eager-loading.
+func (e OverallSnapshotEdges) ProfileOrErr() ([]*Profile, error) {
+	if e.loadedTypes[0] {
+		return e.Profile, nil
+	}
+	return nil, &NotLoadedError{edge: "profile"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,8 +59,12 @@ func (*OverallSnapshot) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case overallsnapshot.FieldLiquidity, overallsnapshot.FieldInvestment, overallsnapshot.FieldProperty, overallsnapshot.FieldReceivable, overallsnapshot.FieldLiablity:
+			values[i] = new(decimal.Decimal)
 		case overallsnapshot.FieldID:
 			values[i] = new(sql.NullInt64)
+		case overallsnapshot.FieldDatehour:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +86,42 @@ func (os *OverallSnapshot) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			os.ID = int(value.Int64)
+		case overallsnapshot.FieldDatehour:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field datehour", values[i])
+			} else if value.Valid {
+				os.Datehour = value.Time
+			}
+		case overallsnapshot.FieldLiquidity:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field liquidity", values[i])
+			} else if value != nil {
+				os.Liquidity = *value
+			}
+		case overallsnapshot.FieldInvestment:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field investment", values[i])
+			} else if value != nil {
+				os.Investment = *value
+			}
+		case overallsnapshot.FieldProperty:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field property", values[i])
+			} else if value != nil {
+				os.Property = *value
+			}
+		case overallsnapshot.FieldReceivable:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field receivable", values[i])
+			} else if value != nil {
+				os.Receivable = *value
+			}
+		case overallsnapshot.FieldLiablity:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field liablity", values[i])
+			} else if value != nil {
+				os.Liablity = *value
+			}
 		default:
 			os.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +133,11 @@ func (os *OverallSnapshot) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (os *OverallSnapshot) Value(name string) (ent.Value, error) {
 	return os.selectValues.Get(name)
+}
+
+// QueryProfile queries the "profile" edge of the OverallSnapshot entity.
+func (os *OverallSnapshot) QueryProfile() *ProfileQuery {
+	return NewOverallSnapshotClient(os.config).QueryProfile(os)
 }
 
 // Update returns a builder for updating this OverallSnapshot.
@@ -82,7 +162,24 @@ func (os *OverallSnapshot) Unwrap() *OverallSnapshot {
 func (os *OverallSnapshot) String() string {
 	var builder strings.Builder
 	builder.WriteString("OverallSnapshot(")
-	builder.WriteString(fmt.Sprintf("id=%v", os.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", os.ID))
+	builder.WriteString("datehour=")
+	builder.WriteString(os.Datehour.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("liquidity=")
+	builder.WriteString(fmt.Sprintf("%v", os.Liquidity))
+	builder.WriteString(", ")
+	builder.WriteString("investment=")
+	builder.WriteString(fmt.Sprintf("%v", os.Investment))
+	builder.WriteString(", ")
+	builder.WriteString("property=")
+	builder.WriteString(fmt.Sprintf("%v", os.Property))
+	builder.WriteString(", ")
+	builder.WriteString("receivable=")
+	builder.WriteString(fmt.Sprintf("%v", os.Receivable))
+	builder.WriteString(", ")
+	builder.WriteString("liablity=")
+	builder.WriteString(fmt.Sprintf("%v", os.Liablity))
 	builder.WriteByte(')')
 	return builder.String()
 }

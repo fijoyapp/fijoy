@@ -5,13 +5,16 @@ package ent
 import (
 	"context"
 	"errors"
+	"fijoy/ent/account"
 	"fijoy/ent/accountsnapshot"
 	"fijoy/ent/predicate"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
 )
 
 // AccountSnapshotUpdate is the builder for updating AccountSnapshot entities.
@@ -27,9 +30,80 @@ func (asu *AccountSnapshotUpdate) Where(ps ...predicate.AccountSnapshot) *Accoun
 	return asu
 }
 
+// SetDatehour sets the "datehour" field.
+func (asu *AccountSnapshotUpdate) SetDatehour(t time.Time) *AccountSnapshotUpdate {
+	asu.mutation.SetDatehour(t)
+	return asu
+}
+
+// SetNillableDatehour sets the "datehour" field if the given value is not nil.
+func (asu *AccountSnapshotUpdate) SetNillableDatehour(t *time.Time) *AccountSnapshotUpdate {
+	if t != nil {
+		asu.SetDatehour(*t)
+	}
+	return asu
+}
+
+// SetBalance sets the "balance" field.
+func (asu *AccountSnapshotUpdate) SetBalance(d decimal.Decimal) *AccountSnapshotUpdate {
+	asu.mutation.ResetBalance()
+	asu.mutation.SetBalance(d)
+	return asu
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (asu *AccountSnapshotUpdate) SetNillableBalance(d *decimal.Decimal) *AccountSnapshotUpdate {
+	if d != nil {
+		asu.SetBalance(*d)
+	}
+	return asu
+}
+
+// AddBalance adds d to the "balance" field.
+func (asu *AccountSnapshotUpdate) AddBalance(d decimal.Decimal) *AccountSnapshotUpdate {
+	asu.mutation.AddBalance(d)
+	return asu
+}
+
+// AddAccountIDs adds the "account" edge to the Account entity by IDs.
+func (asu *AccountSnapshotUpdate) AddAccountIDs(ids ...int) *AccountSnapshotUpdate {
+	asu.mutation.AddAccountIDs(ids...)
+	return asu
+}
+
+// AddAccount adds the "account" edges to the Account entity.
+func (asu *AccountSnapshotUpdate) AddAccount(a ...*Account) *AccountSnapshotUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return asu.AddAccountIDs(ids...)
+}
+
 // Mutation returns the AccountSnapshotMutation object of the builder.
 func (asu *AccountSnapshotUpdate) Mutation() *AccountSnapshotMutation {
 	return asu.mutation
+}
+
+// ClearAccount clears all "account" edges to the Account entity.
+func (asu *AccountSnapshotUpdate) ClearAccount() *AccountSnapshotUpdate {
+	asu.mutation.ClearAccount()
+	return asu
+}
+
+// RemoveAccountIDs removes the "account" edge to Account entities by IDs.
+func (asu *AccountSnapshotUpdate) RemoveAccountIDs(ids ...int) *AccountSnapshotUpdate {
+	asu.mutation.RemoveAccountIDs(ids...)
+	return asu
+}
+
+// RemoveAccount removes "account" edges to Account entities.
+func (asu *AccountSnapshotUpdate) RemoveAccount(a ...*Account) *AccountSnapshotUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return asu.RemoveAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -68,6 +142,60 @@ func (asu *AccountSnapshotUpdate) sqlSave(ctx context.Context) (n int, err error
 			}
 		}
 	}
+	if value, ok := asu.mutation.Datehour(); ok {
+		_spec.SetField(accountsnapshot.FieldDatehour, field.TypeTime, value)
+	}
+	if value, ok := asu.mutation.Balance(); ok {
+		_spec.SetField(accountsnapshot.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := asu.mutation.AddedBalance(); ok {
+		_spec.AddField(accountsnapshot.FieldBalance, field.TypeFloat64, value)
+	}
+	if asu.mutation.AccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   accountsnapshot.AccountTable,
+			Columns: accountsnapshot.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := asu.mutation.RemovedAccountIDs(); len(nodes) > 0 && !asu.mutation.AccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   accountsnapshot.AccountTable,
+			Columns: accountsnapshot.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := asu.mutation.AccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   accountsnapshot.AccountTable,
+			Columns: accountsnapshot.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, asu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{accountsnapshot.Label}
@@ -88,9 +216,80 @@ type AccountSnapshotUpdateOne struct {
 	mutation *AccountSnapshotMutation
 }
 
+// SetDatehour sets the "datehour" field.
+func (asuo *AccountSnapshotUpdateOne) SetDatehour(t time.Time) *AccountSnapshotUpdateOne {
+	asuo.mutation.SetDatehour(t)
+	return asuo
+}
+
+// SetNillableDatehour sets the "datehour" field if the given value is not nil.
+func (asuo *AccountSnapshotUpdateOne) SetNillableDatehour(t *time.Time) *AccountSnapshotUpdateOne {
+	if t != nil {
+		asuo.SetDatehour(*t)
+	}
+	return asuo
+}
+
+// SetBalance sets the "balance" field.
+func (asuo *AccountSnapshotUpdateOne) SetBalance(d decimal.Decimal) *AccountSnapshotUpdateOne {
+	asuo.mutation.ResetBalance()
+	asuo.mutation.SetBalance(d)
+	return asuo
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (asuo *AccountSnapshotUpdateOne) SetNillableBalance(d *decimal.Decimal) *AccountSnapshotUpdateOne {
+	if d != nil {
+		asuo.SetBalance(*d)
+	}
+	return asuo
+}
+
+// AddBalance adds d to the "balance" field.
+func (asuo *AccountSnapshotUpdateOne) AddBalance(d decimal.Decimal) *AccountSnapshotUpdateOne {
+	asuo.mutation.AddBalance(d)
+	return asuo
+}
+
+// AddAccountIDs adds the "account" edge to the Account entity by IDs.
+func (asuo *AccountSnapshotUpdateOne) AddAccountIDs(ids ...int) *AccountSnapshotUpdateOne {
+	asuo.mutation.AddAccountIDs(ids...)
+	return asuo
+}
+
+// AddAccount adds the "account" edges to the Account entity.
+func (asuo *AccountSnapshotUpdateOne) AddAccount(a ...*Account) *AccountSnapshotUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return asuo.AddAccountIDs(ids...)
+}
+
 // Mutation returns the AccountSnapshotMutation object of the builder.
 func (asuo *AccountSnapshotUpdateOne) Mutation() *AccountSnapshotMutation {
 	return asuo.mutation
+}
+
+// ClearAccount clears all "account" edges to the Account entity.
+func (asuo *AccountSnapshotUpdateOne) ClearAccount() *AccountSnapshotUpdateOne {
+	asuo.mutation.ClearAccount()
+	return asuo
+}
+
+// RemoveAccountIDs removes the "account" edge to Account entities by IDs.
+func (asuo *AccountSnapshotUpdateOne) RemoveAccountIDs(ids ...int) *AccountSnapshotUpdateOne {
+	asuo.mutation.RemoveAccountIDs(ids...)
+	return asuo
+}
+
+// RemoveAccount removes "account" edges to Account entities.
+func (asuo *AccountSnapshotUpdateOne) RemoveAccount(a ...*Account) *AccountSnapshotUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return asuo.RemoveAccountIDs(ids...)
 }
 
 // Where appends a list predicates to the AccountSnapshotUpdate builder.
@@ -158,6 +357,60 @@ func (asuo *AccountSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *Accou
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := asuo.mutation.Datehour(); ok {
+		_spec.SetField(accountsnapshot.FieldDatehour, field.TypeTime, value)
+	}
+	if value, ok := asuo.mutation.Balance(); ok {
+		_spec.SetField(accountsnapshot.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := asuo.mutation.AddedBalance(); ok {
+		_spec.AddField(accountsnapshot.FieldBalance, field.TypeFloat64, value)
+	}
+	if asuo.mutation.AccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   accountsnapshot.AccountTable,
+			Columns: accountsnapshot.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := asuo.mutation.RemovedAccountIDs(); len(nodes) > 0 && !asuo.mutation.AccountCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   accountsnapshot.AccountTable,
+			Columns: accountsnapshot.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := asuo.mutation.AccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   accountsnapshot.AccountTable,
+			Columns: accountsnapshot.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &AccountSnapshot{config: asuo.config}
 	_spec.Assign = _node.assignValues

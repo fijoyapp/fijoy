@@ -6,17 +6,69 @@ import (
 	"fijoy/ent/transaction"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shopspring/decimal"
 )
 
 // Transaction is the model entity for the Transaction schema.
 type Transaction struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// Amount holds the value of the "amount" field.
+	Amount decimal.Decimal `json:"amount,omitempty"`
+	// AmountDelta holds the value of the "amount_delta" field.
+	AmountDelta decimal.Decimal `json:"amount_delta,omitempty"`
+	// Value holds the value of the "value" field.
+	Value decimal.Decimal `json:"value,omitempty"`
+	// FxRate holds the value of the "fx_rate" field.
+	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
+	// Balance holds the value of the "balance" field.
+	Balance decimal.Decimal `json:"balance,omitempty"`
+	// BalanceDelta holds the value of the "balance_delta" field.
+	BalanceDelta decimal.Decimal `json:"balance_delta,omitempty"`
+	// Note holds the value of the "note" field.
+	Note string `json:"note,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the TransactionQuery when eager-loading is set.
+	Edges        TransactionEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// TransactionEdges holds the relations/edges for other nodes in the graph.
+type TransactionEdges struct {
+	// Profile holds the value of the profile edge.
+	Profile []*Profile `json:"profile,omitempty"`
+	// Account holds the value of the account edge.
+	Account []*Account `json:"account,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// ProfileOrErr returns the Profile value or an error if the edge
+// was not loaded in eager-loading.
+func (e TransactionEdges) ProfileOrErr() ([]*Profile, error) {
+	if e.loadedTypes[0] {
+		return e.Profile, nil
+	}
+	return nil, &NotLoadedError{edge: "profile"}
+}
+
+// AccountOrErr returns the Account value or an error if the edge
+// was not loaded in eager-loading.
+func (e TransactionEdges) AccountOrErr() ([]*Account, error) {
+	if e.loadedTypes[1] {
+		return e.Account, nil
+	}
+	return nil, &NotLoadedError{edge: "account"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,8 +76,14 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case transaction.FieldAmount, transaction.FieldAmountDelta, transaction.FieldValue, transaction.FieldFxRate, transaction.FieldBalance, transaction.FieldBalanceDelta:
+			values[i] = new(decimal.Decimal)
 		case transaction.FieldID:
 			values[i] = new(sql.NullInt64)
+		case transaction.FieldNote:
+			values[i] = new(sql.NullString)
+		case transaction.FieldCreatedAt, transaction.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +105,60 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			t.ID = int(value.Int64)
+		case transaction.FieldAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field amount", values[i])
+			} else if value != nil {
+				t.Amount = *value
+			}
+		case transaction.FieldAmountDelta:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field amount_delta", values[i])
+			} else if value != nil {
+				t.AmountDelta = *value
+			}
+		case transaction.FieldValue:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field value", values[i])
+			} else if value != nil {
+				t.Value = *value
+			}
+		case transaction.FieldFxRate:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
+			} else if value != nil {
+				t.FxRate = *value
+			}
+		case transaction.FieldBalance:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field balance", values[i])
+			} else if value != nil {
+				t.Balance = *value
+			}
+		case transaction.FieldBalanceDelta:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field balance_delta", values[i])
+			} else if value != nil {
+				t.BalanceDelta = *value
+			}
+		case transaction.FieldNote:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field note", values[i])
+			} else if value.Valid {
+				t.Note = value.String
+			}
+		case transaction.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				t.CreatedAt = value.Time
+			}
+		case transaction.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				t.UpdatedAt = value.Time
+			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
 		}
@@ -54,10 +166,20 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Transaction.
+// GetValue returns the ent.Value that was dynamically selected and assigned to the Transaction.
 // This includes values selected through modifiers, order, etc.
-func (t *Transaction) Value(name string) (ent.Value, error) {
+func (t *Transaction) GetValue(name string) (ent.Value, error) {
 	return t.selectValues.Get(name)
+}
+
+// QueryProfile queries the "profile" edge of the Transaction entity.
+func (t *Transaction) QueryProfile() *ProfileQuery {
+	return NewTransactionClient(t.config).QueryProfile(t)
+}
+
+// QueryAccount queries the "account" edge of the Transaction entity.
+func (t *Transaction) QueryAccount() *AccountQuery {
+	return NewTransactionClient(t.config).QueryAccount(t)
 }
 
 // Update returns a builder for updating this Transaction.
@@ -82,7 +204,33 @@ func (t *Transaction) Unwrap() *Transaction {
 func (t *Transaction) String() string {
 	var builder strings.Builder
 	builder.WriteString("Transaction(")
-	builder.WriteString(fmt.Sprintf("id=%v", t.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
+	builder.WriteString("amount=")
+	builder.WriteString(fmt.Sprintf("%v", t.Amount))
+	builder.WriteString(", ")
+	builder.WriteString("amount_delta=")
+	builder.WriteString(fmt.Sprintf("%v", t.AmountDelta))
+	builder.WriteString(", ")
+	builder.WriteString("value=")
+	builder.WriteString(fmt.Sprintf("%v", t.Value))
+	builder.WriteString(", ")
+	builder.WriteString("fx_rate=")
+	builder.WriteString(fmt.Sprintf("%v", t.FxRate))
+	builder.WriteString(", ")
+	builder.WriteString("balance=")
+	builder.WriteString(fmt.Sprintf("%v", t.Balance))
+	builder.WriteString(", ")
+	builder.WriteString("balance_delta=")
+	builder.WriteString(fmt.Sprintf("%v", t.BalanceDelta))
+	builder.WriteString(", ")
+	builder.WriteString("note=")
+	builder.WriteString(t.Note)
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

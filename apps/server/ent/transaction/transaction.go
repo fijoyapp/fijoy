@@ -3,7 +3,10 @@
 package transaction
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,14 +14,64 @@ const (
 	Label = "transaction"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldAmount holds the string denoting the amount field in the database.
+	FieldAmount = "amount"
+	// FieldAmountDelta holds the string denoting the amount_delta field in the database.
+	FieldAmountDelta = "amount_delta"
+	// FieldValue holds the string denoting the value field in the database.
+	FieldValue = "value"
+	// FieldFxRate holds the string denoting the fx_rate field in the database.
+	FieldFxRate = "fx_rate"
+	// FieldBalance holds the string denoting the balance field in the database.
+	FieldBalance = "balance"
+	// FieldBalanceDelta holds the string denoting the balance_delta field in the database.
+	FieldBalanceDelta = "balance_delta"
+	// FieldNote holds the string denoting the note field in the database.
+	FieldNote = "note"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// EdgeProfile holds the string denoting the profile edge name in mutations.
+	EdgeProfile = "profile"
+	// EdgeAccount holds the string denoting the account edge name in mutations.
+	EdgeAccount = "account"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
+	// ProfileTable is the table that holds the profile relation/edge. The primary key declared below.
+	ProfileTable = "profile_transaction"
+	// ProfileInverseTable is the table name for the Profile entity.
+	// It exists in this package in order to avoid circular dependency with the "profile" package.
+	ProfileInverseTable = "profiles"
+	// AccountTable is the table that holds the account relation/edge. The primary key declared below.
+	AccountTable = "account_transaction"
+	// AccountInverseTable is the table name for the Account entity.
+	// It exists in this package in order to avoid circular dependency with the "account" package.
+	AccountInverseTable = "accounts"
 )
 
 // Columns holds all SQL columns for transaction fields.
 var Columns = []string{
 	FieldID,
+	FieldAmount,
+	FieldAmountDelta,
+	FieldValue,
+	FieldFxRate,
+	FieldBalance,
+	FieldBalanceDelta,
+	FieldNote,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
+
+var (
+	// ProfilePrimaryKey and ProfileColumn2 are the table columns denoting the
+	// primary key for the profile relation (M2M).
+	ProfilePrimaryKey = []string{"profile_id", "transaction_id"}
+	// AccountPrimaryKey and AccountColumn2 are the table columns denoting the
+	// primary key for the account relation (M2M).
+	AccountPrimaryKey = []string{"account_id", "transaction_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -30,10 +83,104 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+)
+
 // OrderOption defines the ordering options for the Transaction queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByAmount orders the results by the amount field.
+func ByAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByAmountDelta orders the results by the amount_delta field.
+func ByAmountDelta(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAmountDelta, opts...).ToFunc()
+}
+
+// ByValue orders the results by the value field.
+func ByValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldValue, opts...).ToFunc()
+}
+
+// ByFxRate orders the results by the fx_rate field.
+func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFxRate, opts...).ToFunc()
+}
+
+// ByBalance orders the results by the balance field.
+func ByBalance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBalance, opts...).ToFunc()
+}
+
+// ByBalanceDelta orders the results by the balance_delta field.
+func ByBalanceDelta(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBalanceDelta, opts...).ToFunc()
+}
+
+// ByNote orders the results by the note field.
+func ByNote(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNote, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByProfileCount orders the results by profile count.
+func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
+	}
+}
+
+// ByProfile orders the results by profile terms.
+func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAccountCount orders the results by account count.
+func ByAccountCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAccountStep(), opts...)
+	}
+}
+
+// ByAccount orders the results by account terms.
+func ByAccount(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newProfileStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProfileInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+	)
+}
+func newAccountStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, AccountTable, AccountPrimaryKey...),
+	)
 }

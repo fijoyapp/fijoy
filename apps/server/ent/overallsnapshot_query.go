@@ -4,8 +4,10 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/predicate"
+	"fijoy/ent/profile"
 	"fmt"
 	"math"
 
@@ -18,10 +20,11 @@ import (
 // OverallSnapshotQuery is the builder for querying OverallSnapshot entities.
 type OverallSnapshotQuery struct {
 	config
-	ctx        *QueryContext
-	order      []overallsnapshot.OrderOption
-	inters     []Interceptor
-	predicates []predicate.OverallSnapshot
+	ctx         *QueryContext
+	order       []overallsnapshot.OrderOption
+	inters      []Interceptor
+	predicates  []predicate.OverallSnapshot
+	withProfile *ProfileQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +59,28 @@ func (osq *OverallSnapshotQuery) Unique(unique bool) *OverallSnapshotQuery {
 func (osq *OverallSnapshotQuery) Order(o ...overallsnapshot.OrderOption) *OverallSnapshotQuery {
 	osq.order = append(osq.order, o...)
 	return osq
+}
+
+// QueryProfile chains the current query on the "profile" edge.
+func (osq *OverallSnapshotQuery) QueryProfile() *ProfileQuery {
+	query := (&ProfileClient{config: osq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := osq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := osq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(overallsnapshot.Table, overallsnapshot.FieldID, selector),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, overallsnapshot.ProfileTable, overallsnapshot.ProfilePrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(osq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first OverallSnapshot entity from the query.
@@ -245,19 +270,43 @@ func (osq *OverallSnapshotQuery) Clone() *OverallSnapshotQuery {
 		return nil
 	}
 	return &OverallSnapshotQuery{
-		config:     osq.config,
-		ctx:        osq.ctx.Clone(),
-		order:      append([]overallsnapshot.OrderOption{}, osq.order...),
-		inters:     append([]Interceptor{}, osq.inters...),
-		predicates: append([]predicate.OverallSnapshot{}, osq.predicates...),
+		config:      osq.config,
+		ctx:         osq.ctx.Clone(),
+		order:       append([]overallsnapshot.OrderOption{}, osq.order...),
+		inters:      append([]Interceptor{}, osq.inters...),
+		predicates:  append([]predicate.OverallSnapshot{}, osq.predicates...),
+		withProfile: osq.withProfile.Clone(),
 		// clone intermediate query.
 		sql:  osq.sql.Clone(),
 		path: osq.path,
 	}
 }
 
+// WithProfile tells the query-builder to eager-load the nodes that are connected to
+// the "profile" edge. The optional arguments are used to configure the query builder of the edge.
+func (osq *OverallSnapshotQuery) WithProfile(opts ...func(*ProfileQuery)) *OverallSnapshotQuery {
+	query := (&ProfileClient{config: osq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	osq.withProfile = query
+	return osq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		Datehour time.Time `json:"datehour,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.OverallSnapshot.Query().
+//		GroupBy(overallsnapshot.FieldDatehour).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (osq *OverallSnapshotQuery) GroupBy(field string, fields ...string) *OverallSnapshotGroupBy {
 	osq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &OverallSnapshotGroupBy{build: osq}
@@ -269,6 +318,16 @@ func (osq *OverallSnapshotQuery) GroupBy(field string, fields ...string) *Overal
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		Datehour time.Time `json:"datehour,omitempty"`
+//	}
+//
+//	client.OverallSnapshot.Query().
+//		Select(overallsnapshot.FieldDatehour).
+//		Scan(ctx, &v)
 func (osq *OverallSnapshotQuery) Select(fields ...string) *OverallSnapshotSelect {
 	osq.ctx.Fields = append(osq.ctx.Fields, fields...)
 	sbuild := &OverallSnapshotSelect{OverallSnapshotQuery: osq}
@@ -310,8 +369,11 @@ func (osq *OverallSnapshotQuery) prepareQuery(ctx context.Context) error {
 
 func (osq *OverallSnapshotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*OverallSnapshot, error) {
 	var (
-		nodes = []*OverallSnapshot{}
-		_spec = osq.querySpec()
+		nodes       = []*OverallSnapshot{}
+		_spec       = osq.querySpec()
+		loadedTypes = [1]bool{
+			osq.withProfile != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*OverallSnapshot).scanValues(nil, columns)
@@ -319,6 +381,7 @@ func (osq *OverallSnapshotQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &OverallSnapshot{config: osq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -330,7 +393,76 @@ func (osq *OverallSnapshotQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := osq.withProfile; query != nil {
+		if err := osq.loadProfile(ctx, query, nodes,
+			func(n *OverallSnapshot) { n.Edges.Profile = []*Profile{} },
+			func(n *OverallSnapshot, e *Profile) { n.Edges.Profile = append(n.Edges.Profile, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (osq *OverallSnapshotQuery) loadProfile(ctx context.Context, query *ProfileQuery, nodes []*OverallSnapshot, init func(*OverallSnapshot), assign func(*OverallSnapshot, *Profile)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*OverallSnapshot)
+	nids := make(map[int]map[*OverallSnapshot]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(overallsnapshot.ProfileTable)
+		s.Join(joinT).On(s.C(profile.FieldID), joinT.C(overallsnapshot.ProfilePrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(overallsnapshot.ProfilePrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(overallsnapshot.ProfilePrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*OverallSnapshot]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Profile](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "profile" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
 }
 
 func (osq *OverallSnapshotQuery) sqlCount(ctx context.Context) (int, error) {

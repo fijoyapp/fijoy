@@ -11,6 +11,18 @@ var (
 	// AccountsColumns holds the columns for the "accounts" table.
 	AccountsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "account_type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
+		{Name: "archived", Type: field.TypeBool, Default: false},
+		{Name: "include_in_net_worth", Type: field.TypeBool, Default: false},
+		{Name: "symbol", Type: field.TypeString},
+		{Name: "symbol_type", Type: field.TypeEnum, Enums: []string{"currency", "stock", "crypto"}},
+		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
+		{Name: "fx_rate", Type: field.TypeFloat64, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
+		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -21,6 +33,8 @@ var (
 	// AccountSnapshotsColumns holds the columns for the "account_snapshots" table.
 	AccountSnapshotsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "datehour", Type: field.TypeTime, Default: map[string]schema.Expr{"postgres": "date_trunc('hour', now())"}},
+		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 	}
 	// AccountSnapshotsTable holds the schema information for the "account_snapshots" table.
 	AccountSnapshotsTable = &schema.Table{
@@ -31,6 +45,12 @@ var (
 	// OverallSnapshotsColumns holds the columns for the "overall_snapshots" table.
 	OverallSnapshotsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "datehour", Type: field.TypeTime, Default: map[string]schema.Expr{"postgres": "date_trunc('hour', now())"}},
+		{Name: "liquidity", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "investment", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "property", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "receivable", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "liablity", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 	}
 	// OverallSnapshotsTable holds the schema information for the "overall_snapshots" table.
 	OverallSnapshotsTable = &schema.Table{
@@ -41,16 +61,34 @@ var (
 	// ProfilesColumns holds the columns for the "profiles" table.
 	ProfilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "user_profile", Type: field.TypeInt, Nullable: true},
 	}
 	// ProfilesTable holds the schema information for the "profiles" table.
 	ProfilesTable = &schema.Table{
 		Name:       "profiles",
 		Columns:    ProfilesColumns,
 		PrimaryKey: []*schema.Column{ProfilesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "profiles_users_profile",
+				Columns:    []*schema.Column{ProfilesColumns[1]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// TransactionsColumns holds the columns for the "transactions" table.
 	TransactionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "amount_delta", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
+		{Name: "fx_rate", Type: field.TypeFloat64, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
+		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "balance_delta", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
 	TransactionsTable = &schema.Table{
@@ -73,19 +111,161 @@ var (
 	// UserKeysColumns holds the columns for the "user_keys" table.
 	UserKeysColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "user_user_key", Type: field.TypeInt, Nullable: true},
+		{Name: "hashed_password", Type: field.TypeString},
 	}
 	// UserKeysTable holds the schema information for the "user_keys" table.
 	UserKeysTable = &schema.Table{
 		Name:       "user_keys",
 		Columns:    UserKeysColumns,
 		PrimaryKey: []*schema.Column{UserKeysColumns[0]},
+	}
+	// AccountAccountSnapshotColumns holds the columns for the "account_account_snapshot" table.
+	AccountAccountSnapshotColumns = []*schema.Column{
+		{Name: "account_id", Type: field.TypeInt},
+		{Name: "account_snapshot_id", Type: field.TypeInt},
+	}
+	// AccountAccountSnapshotTable holds the schema information for the "account_account_snapshot" table.
+	AccountAccountSnapshotTable = &schema.Table{
+		Name:       "account_account_snapshot",
+		Columns:    AccountAccountSnapshotColumns,
+		PrimaryKey: []*schema.Column{AccountAccountSnapshotColumns[0], AccountAccountSnapshotColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_keys_users_user_key",
-				Columns:    []*schema.Column{UserKeysColumns[1]},
+				Symbol:     "account_account_snapshot_account_id",
+				Columns:    []*schema.Column{AccountAccountSnapshotColumns[0]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "account_account_snapshot_account_snapshot_id",
+				Columns:    []*schema.Column{AccountAccountSnapshotColumns[1]},
+				RefColumns: []*schema.Column{AccountSnapshotsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// AccountTransactionColumns holds the columns for the "account_transaction" table.
+	AccountTransactionColumns = []*schema.Column{
+		{Name: "account_id", Type: field.TypeInt},
+		{Name: "transaction_id", Type: field.TypeInt},
+	}
+	// AccountTransactionTable holds the schema information for the "account_transaction" table.
+	AccountTransactionTable = &schema.Table{
+		Name:       "account_transaction",
+		Columns:    AccountTransactionColumns,
+		PrimaryKey: []*schema.Column{AccountTransactionColumns[0], AccountTransactionColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "account_transaction_account_id",
+				Columns:    []*schema.Column{AccountTransactionColumns[0]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "account_transaction_transaction_id",
+				Columns:    []*schema.Column{AccountTransactionColumns[1]},
+				RefColumns: []*schema.Column{TransactionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// ProfileAccountColumns holds the columns for the "profile_account" table.
+	ProfileAccountColumns = []*schema.Column{
+		{Name: "profile_id", Type: field.TypeInt},
+		{Name: "account_id", Type: field.TypeInt},
+	}
+	// ProfileAccountTable holds the schema information for the "profile_account" table.
+	ProfileAccountTable = &schema.Table{
+		Name:       "profile_account",
+		Columns:    ProfileAccountColumns,
+		PrimaryKey: []*schema.Column{ProfileAccountColumns[0], ProfileAccountColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "profile_account_profile_id",
+				Columns:    []*schema.Column{ProfileAccountColumns[0]},
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "profile_account_account_id",
+				Columns:    []*schema.Column{ProfileAccountColumns[1]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// ProfileTransactionColumns holds the columns for the "profile_transaction" table.
+	ProfileTransactionColumns = []*schema.Column{
+		{Name: "profile_id", Type: field.TypeInt},
+		{Name: "transaction_id", Type: field.TypeInt},
+	}
+	// ProfileTransactionTable holds the schema information for the "profile_transaction" table.
+	ProfileTransactionTable = &schema.Table{
+		Name:       "profile_transaction",
+		Columns:    ProfileTransactionColumns,
+		PrimaryKey: []*schema.Column{ProfileTransactionColumns[0], ProfileTransactionColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "profile_transaction_profile_id",
+				Columns:    []*schema.Column{ProfileTransactionColumns[0]},
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "profile_transaction_transaction_id",
+				Columns:    []*schema.Column{ProfileTransactionColumns[1]},
+				RefColumns: []*schema.Column{TransactionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// ProfileOverallSnapshotColumns holds the columns for the "profile_overall_snapshot" table.
+	ProfileOverallSnapshotColumns = []*schema.Column{
+		{Name: "profile_id", Type: field.TypeInt},
+		{Name: "overall_snapshot_id", Type: field.TypeInt},
+	}
+	// ProfileOverallSnapshotTable holds the schema information for the "profile_overall_snapshot" table.
+	ProfileOverallSnapshotTable = &schema.Table{
+		Name:       "profile_overall_snapshot",
+		Columns:    ProfileOverallSnapshotColumns,
+		PrimaryKey: []*schema.Column{ProfileOverallSnapshotColumns[0], ProfileOverallSnapshotColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "profile_overall_snapshot_profile_id",
+				Columns:    []*schema.Column{ProfileOverallSnapshotColumns[0]},
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "profile_overall_snapshot_overall_snapshot_id",
+				Columns:    []*schema.Column{ProfileOverallSnapshotColumns[1]},
+				RefColumns: []*schema.Column{OverallSnapshotsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// UserUserKeyColumns holds the columns for the "user_user_key" table.
+	UserUserKeyColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "user_key_id", Type: field.TypeInt},
+	}
+	// UserUserKeyTable holds the schema information for the "user_user_key" table.
+	UserUserKeyTable = &schema.Table{
+		Name:       "user_user_key",
+		Columns:    UserUserKeyColumns,
+		PrimaryKey: []*schema.Column{UserUserKeyColumns[0], UserUserKeyColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_user_key_user_id",
+				Columns:    []*schema.Column{UserUserKeyColumns[0]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_user_key_user_key_id",
+				Columns:    []*schema.Column{UserUserKeyColumns[1]},
+				RefColumns: []*schema.Column{UserKeysColumns[0]},
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -98,9 +278,27 @@ var (
 		TransactionsTable,
 		UsersTable,
 		UserKeysTable,
+		AccountAccountSnapshotTable,
+		AccountTransactionTable,
+		ProfileAccountTable,
+		ProfileTransactionTable,
+		ProfileOverallSnapshotTable,
+		UserUserKeyTable,
 	}
 )
 
 func init() {
-	UserKeysTable.ForeignKeys[0].RefTable = UsersTable
+	ProfilesTable.ForeignKeys[0].RefTable = UsersTable
+	AccountAccountSnapshotTable.ForeignKeys[0].RefTable = AccountsTable
+	AccountAccountSnapshotTable.ForeignKeys[1].RefTable = AccountSnapshotsTable
+	AccountTransactionTable.ForeignKeys[0].RefTable = AccountsTable
+	AccountTransactionTable.ForeignKeys[1].RefTable = TransactionsTable
+	ProfileAccountTable.ForeignKeys[0].RefTable = ProfilesTable
+	ProfileAccountTable.ForeignKeys[1].RefTable = AccountsTable
+	ProfileTransactionTable.ForeignKeys[0].RefTable = ProfilesTable
+	ProfileTransactionTable.ForeignKeys[1].RefTable = TransactionsTable
+	ProfileOverallSnapshotTable.ForeignKeys[0].RefTable = ProfilesTable
+	ProfileOverallSnapshotTable.ForeignKeys[1].RefTable = OverallSnapshotsTable
+	UserUserKeyTable.ForeignKeys[0].RefTable = UsersTable
+	UserUserKeyTable.ForeignKeys[1].RefTable = UserKeysTable
 }

@@ -4,11 +4,16 @@ package ent
 
 import (
 	"context"
+	"errors"
+	"fijoy/ent/account"
+	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
 )
 
 // TransactionCreate is the builder for creating a Transaction entity.
@@ -18,6 +23,122 @@ type TransactionCreate struct {
 	hooks    []Hook
 }
 
+// SetAmount sets the "amount" field.
+func (tc *TransactionCreate) SetAmount(d decimal.Decimal) *TransactionCreate {
+	tc.mutation.SetAmount(d)
+	return tc
+}
+
+// SetAmountDelta sets the "amount_delta" field.
+func (tc *TransactionCreate) SetAmountDelta(d decimal.Decimal) *TransactionCreate {
+	tc.mutation.SetAmountDelta(d)
+	return tc
+}
+
+// SetValue sets the "value" field.
+func (tc *TransactionCreate) SetValue(d decimal.Decimal) *TransactionCreate {
+	tc.mutation.SetValue(d)
+	return tc
+}
+
+// SetFxRate sets the "fx_rate" field.
+func (tc *TransactionCreate) SetFxRate(d decimal.Decimal) *TransactionCreate {
+	tc.mutation.SetFxRate(d)
+	return tc
+}
+
+// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableFxRate(d *decimal.Decimal) *TransactionCreate {
+	if d != nil {
+		tc.SetFxRate(*d)
+	}
+	return tc
+}
+
+// SetBalance sets the "balance" field.
+func (tc *TransactionCreate) SetBalance(d decimal.Decimal) *TransactionCreate {
+	tc.mutation.SetBalance(d)
+	return tc
+}
+
+// SetBalanceDelta sets the "balance_delta" field.
+func (tc *TransactionCreate) SetBalanceDelta(d decimal.Decimal) *TransactionCreate {
+	tc.mutation.SetBalanceDelta(d)
+	return tc
+}
+
+// SetNote sets the "note" field.
+func (tc *TransactionCreate) SetNote(s string) *TransactionCreate {
+	tc.mutation.SetNote(s)
+	return tc
+}
+
+// SetNillableNote sets the "note" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableNote(s *string) *TransactionCreate {
+	if s != nil {
+		tc.SetNote(*s)
+	}
+	return tc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (tc *TransactionCreate) SetCreatedAt(t time.Time) *TransactionCreate {
+	tc.mutation.SetCreatedAt(t)
+	return tc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableCreatedAt(t *time.Time) *TransactionCreate {
+	if t != nil {
+		tc.SetCreatedAt(*t)
+	}
+	return tc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (tc *TransactionCreate) SetUpdatedAt(t time.Time) *TransactionCreate {
+	tc.mutation.SetUpdatedAt(t)
+	return tc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableUpdatedAt(t *time.Time) *TransactionCreate {
+	if t != nil {
+		tc.SetUpdatedAt(*t)
+	}
+	return tc
+}
+
+// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
+func (tc *TransactionCreate) AddProfileIDs(ids ...int) *TransactionCreate {
+	tc.mutation.AddProfileIDs(ids...)
+	return tc
+}
+
+// AddProfile adds the "profile" edges to the Profile entity.
+func (tc *TransactionCreate) AddProfile(p ...*Profile) *TransactionCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return tc.AddProfileIDs(ids...)
+}
+
+// AddAccountIDs adds the "account" edge to the Account entity by IDs.
+func (tc *TransactionCreate) AddAccountIDs(ids ...int) *TransactionCreate {
+	tc.mutation.AddAccountIDs(ids...)
+	return tc
+}
+
+// AddAccount adds the "account" edges to the Account entity.
+func (tc *TransactionCreate) AddAccount(a ...*Account) *TransactionCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return tc.AddAccountIDs(ids...)
+}
+
 // Mutation returns the TransactionMutation object of the builder.
 func (tc *TransactionCreate) Mutation() *TransactionMutation {
 	return tc.mutation
@@ -25,6 +146,7 @@ func (tc *TransactionCreate) Mutation() *TransactionMutation {
 
 // Save creates the Transaction in the database.
 func (tc *TransactionCreate) Save(ctx context.Context) (*Transaction, error) {
+	tc.defaults()
 	return withHooks(ctx, tc.sqlSave, tc.mutation, tc.hooks)
 }
 
@@ -50,8 +172,41 @@ func (tc *TransactionCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (tc *TransactionCreate) defaults() {
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		v := transaction.DefaultCreatedAt()
+		tc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := tc.mutation.UpdatedAt(); !ok {
+		v := transaction.DefaultUpdatedAt()
+		tc.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (tc *TransactionCreate) check() error {
+	if _, ok := tc.mutation.Amount(); !ok {
+		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Transaction.amount"`)}
+	}
+	if _, ok := tc.mutation.AmountDelta(); !ok {
+		return &ValidationError{Name: "amount_delta", err: errors.New(`ent: missing required field "Transaction.amount_delta"`)}
+	}
+	if _, ok := tc.mutation.Value(); !ok {
+		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Transaction.value"`)}
+	}
+	if _, ok := tc.mutation.Balance(); !ok {
+		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Transaction.balance"`)}
+	}
+	if _, ok := tc.mutation.BalanceDelta(); !ok {
+		return &ValidationError{Name: "balance_delta", err: errors.New(`ent: missing required field "Transaction.balance_delta"`)}
+	}
+	if _, ok := tc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transaction.created_at"`)}
+	}
+	if _, ok := tc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Transaction.updated_at"`)}
+	}
 	return nil
 }
 
@@ -78,6 +233,74 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		_node = &Transaction{config: tc.config}
 		_spec = sqlgraph.NewCreateSpec(transaction.Table, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	)
+	if value, ok := tc.mutation.Amount(); ok {
+		_spec.SetField(transaction.FieldAmount, field.TypeFloat64, value)
+		_node.Amount = value
+	}
+	if value, ok := tc.mutation.AmountDelta(); ok {
+		_spec.SetField(transaction.FieldAmountDelta, field.TypeFloat64, value)
+		_node.AmountDelta = value
+	}
+	if value, ok := tc.mutation.Value(); ok {
+		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
+		_node.Value = value
+	}
+	if value, ok := tc.mutation.FxRate(); ok {
+		_spec.SetField(transaction.FieldFxRate, field.TypeFloat64, value)
+		_node.FxRate = value
+	}
+	if value, ok := tc.mutation.Balance(); ok {
+		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
+		_node.Balance = value
+	}
+	if value, ok := tc.mutation.BalanceDelta(); ok {
+		_spec.SetField(transaction.FieldBalanceDelta, field.TypeFloat64, value)
+		_node.BalanceDelta = value
+	}
+	if value, ok := tc.mutation.Note(); ok {
+		_spec.SetField(transaction.FieldNote, field.TypeString, value)
+		_node.Note = value
+	}
+	if value, ok := tc.mutation.CreatedAt(); ok {
+		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := tc.mutation.UpdatedAt(); ok {
+		_spec.SetField(transaction.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if nodes := tc.mutation.ProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   transaction.ProfileTable,
+			Columns: transaction.ProfilePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := tc.mutation.AccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   transaction.AccountTable,
+			Columns: transaction.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -99,6 +322,7 @@ func (tcb *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, err
 	for i := range tcb.builders {
 		func(i int, root context.Context) {
 			builder := tcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TransactionMutation)
 				if !ok {

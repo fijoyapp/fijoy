@@ -6,17 +6,44 @@ import (
 	"fijoy/ent/accountsnapshot"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shopspring/decimal"
 )
 
 // AccountSnapshot is the model entity for the AccountSnapshot schema.
 type AccountSnapshot struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// Datehour holds the value of the "datehour" field.
+	Datehour time.Time `json:"datehour,omitempty"`
+	// Balance holds the value of the "balance" field.
+	Balance decimal.Decimal `json:"balance,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the AccountSnapshotQuery when eager-loading is set.
+	Edges        AccountSnapshotEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// AccountSnapshotEdges holds the relations/edges for other nodes in the graph.
+type AccountSnapshotEdges struct {
+	// Account holds the value of the account edge.
+	Account []*Account `json:"account,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// AccountOrErr returns the Account value or an error if the edge
+// was not loaded in eager-loading.
+func (e AccountSnapshotEdges) AccountOrErr() ([]*Account, error) {
+	if e.loadedTypes[0] {
+		return e.Account, nil
+	}
+	return nil, &NotLoadedError{edge: "account"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -24,8 +51,12 @@ func (*AccountSnapshot) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case accountsnapshot.FieldBalance:
+			values[i] = new(decimal.Decimal)
 		case accountsnapshot.FieldID:
 			values[i] = new(sql.NullInt64)
+		case accountsnapshot.FieldDatehour:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +78,18 @@ func (as *AccountSnapshot) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			as.ID = int(value.Int64)
+		case accountsnapshot.FieldDatehour:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field datehour", values[i])
+			} else if value.Valid {
+				as.Datehour = value.Time
+			}
+		case accountsnapshot.FieldBalance:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field balance", values[i])
+			} else if value != nil {
+				as.Balance = *value
+			}
 		default:
 			as.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +101,11 @@ func (as *AccountSnapshot) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (as *AccountSnapshot) Value(name string) (ent.Value, error) {
 	return as.selectValues.Get(name)
+}
+
+// QueryAccount queries the "account" edge of the AccountSnapshot entity.
+func (as *AccountSnapshot) QueryAccount() *AccountQuery {
+	return NewAccountSnapshotClient(as.config).QueryAccount(as)
 }
 
 // Update returns a builder for updating this AccountSnapshot.
@@ -82,7 +130,12 @@ func (as *AccountSnapshot) Unwrap() *AccountSnapshot {
 func (as *AccountSnapshot) String() string {
 	var builder strings.Builder
 	builder.WriteString("AccountSnapshot(")
-	builder.WriteString(fmt.Sprintf("id=%v", as.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", as.ID))
+	builder.WriteString("datehour=")
+	builder.WriteString(as.Datehour.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("balance=")
+	builder.WriteString(fmt.Sprintf("%v", as.Balance))
 	builder.WriteByte(')')
 	return builder.String()
 }

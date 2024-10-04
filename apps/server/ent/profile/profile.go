@@ -4,6 +4,7 @@ package profile
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,8 +12,38 @@ const (
 	Label = "profile"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
+	// EdgeAccount holds the string denoting the account edge name in mutations.
+	EdgeAccount = "account"
+	// EdgeTransaction holds the string denoting the transaction edge name in mutations.
+	EdgeTransaction = "transaction"
+	// EdgeOverallSnapshot holds the string denoting the overall_snapshot edge name in mutations.
+	EdgeOverallSnapshot = "overall_snapshot"
 	// Table holds the table name of the profile in the database.
 	Table = "profiles"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "profiles"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_profile"
+	// AccountTable is the table that holds the account relation/edge. The primary key declared below.
+	AccountTable = "profile_account"
+	// AccountInverseTable is the table name for the Account entity.
+	// It exists in this package in order to avoid circular dependency with the "account" package.
+	AccountInverseTable = "accounts"
+	// TransactionTable is the table that holds the transaction relation/edge. The primary key declared below.
+	TransactionTable = "profile_transaction"
+	// TransactionInverseTable is the table name for the Transaction entity.
+	// It exists in this package in order to avoid circular dependency with the "transaction" package.
+	TransactionInverseTable = "transactions"
+	// OverallSnapshotTable is the table that holds the overall_snapshot relation/edge. The primary key declared below.
+	OverallSnapshotTable = "profile_overall_snapshot"
+	// OverallSnapshotInverseTable is the table name for the OverallSnapshot entity.
+	// It exists in this package in order to avoid circular dependency with the "overallsnapshot" package.
+	OverallSnapshotInverseTable = "overall_snapshots"
 )
 
 // Columns holds all SQL columns for profile fields.
@@ -20,10 +51,33 @@ var Columns = []string{
 	FieldID,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "profiles"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"user_profile",
+}
+
+var (
+	// AccountPrimaryKey and AccountColumn2 are the table columns denoting the
+	// primary key for the account relation (M2M).
+	AccountPrimaryKey = []string{"profile_id", "account_id"}
+	// TransactionPrimaryKey and TransactionColumn2 are the table columns denoting the
+	// primary key for the transaction relation (M2M).
+	TransactionPrimaryKey = []string{"profile_id", "transaction_id"}
+	// OverallSnapshotPrimaryKey and OverallSnapshotColumn2 are the table columns denoting the
+	// primary key for the overall_snapshot relation (M2M).
+	OverallSnapshotPrimaryKey = []string{"profile_id", "overall_snapshot_id"}
+)
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -36,4 +90,81 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByAccountCount orders the results by account count.
+func ByAccountCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAccountStep(), opts...)
+	}
+}
+
+// ByAccount orders the results by account terms.
+func ByAccount(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTransactionCount orders the results by transaction count.
+func ByTransactionCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTransactionStep(), opts...)
+	}
+}
+
+// ByTransaction orders the results by transaction terms.
+func ByTransaction(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransactionStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByOverallSnapshotCount orders the results by overall_snapshot count.
+func ByOverallSnapshotCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOverallSnapshotStep(), opts...)
+	}
+}
+
+// ByOverallSnapshot orders the results by overall_snapshot terms.
+func ByOverallSnapshot(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOverallSnapshotStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
+}
+func newAccountStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AccountInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, AccountTable, AccountPrimaryKey...),
+	)
+}
+func newTransactionStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TransactionInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, TransactionTable, TransactionPrimaryKey...),
+	)
+}
+func newOverallSnapshotStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OverallSnapshotInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, OverallSnapshotTable, OverallSnapshotPrimaryKey...),
+	)
 }

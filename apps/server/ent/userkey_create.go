@@ -4,6 +4,8 @@ package ent
 
 import (
 	"context"
+	"errors"
+	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
 
@@ -16,6 +18,27 @@ type UserKeyCreate struct {
 	config
 	mutation *UserKeyMutation
 	hooks    []Hook
+}
+
+// SetHashedPassword sets the "hashed_password" field.
+func (ukc *UserKeyCreate) SetHashedPassword(s string) *UserKeyCreate {
+	ukc.mutation.SetHashedPassword(s)
+	return ukc
+}
+
+// AddUserIDs adds the "user" edge to the User entity by IDs.
+func (ukc *UserKeyCreate) AddUserIDs(ids ...int) *UserKeyCreate {
+	ukc.mutation.AddUserIDs(ids...)
+	return ukc
+}
+
+// AddUser adds the "user" edges to the User entity.
+func (ukc *UserKeyCreate) AddUser(u ...*User) *UserKeyCreate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ukc.AddUserIDs(ids...)
 }
 
 // Mutation returns the UserKeyMutation object of the builder.
@@ -52,6 +75,9 @@ func (ukc *UserKeyCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (ukc *UserKeyCreate) check() error {
+	if _, ok := ukc.mutation.HashedPassword(); !ok {
+		return &ValidationError{Name: "hashed_password", err: errors.New(`ent: missing required field "UserKey.hashed_password"`)}
+	}
 	return nil
 }
 
@@ -78,6 +104,26 @@ func (ukc *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 		_node = &UserKey{config: ukc.config}
 		_spec = sqlgraph.NewCreateSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	)
+	if value, ok := ukc.mutation.HashedPassword(); ok {
+		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
+		_node.HashedPassword = value
+	}
+	if nodes := ukc.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   userkey.UserTable,
+			Columns: userkey.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 

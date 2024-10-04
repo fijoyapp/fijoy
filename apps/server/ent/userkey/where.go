@@ -6,6 +6,7 @@ import (
 	"fijoy/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -51,6 +52,99 @@ func IDLT(id int) predicate.UserKey {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldLTE(FieldID, id))
+}
+
+// HashedPassword applies equality check predicate on the "hashed_password" field. It's identical to HashedPasswordEQ.
+func HashedPassword(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEQ(FieldHashedPassword, v))
+}
+
+// HashedPasswordEQ applies the EQ predicate on the "hashed_password" field.
+func HashedPasswordEQ(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEQ(FieldHashedPassword, v))
+}
+
+// HashedPasswordNEQ applies the NEQ predicate on the "hashed_password" field.
+func HashedPasswordNEQ(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNEQ(FieldHashedPassword, v))
+}
+
+// HashedPasswordIn applies the In predicate on the "hashed_password" field.
+func HashedPasswordIn(vs ...string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldIn(FieldHashedPassword, vs...))
+}
+
+// HashedPasswordNotIn applies the NotIn predicate on the "hashed_password" field.
+func HashedPasswordNotIn(vs ...string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNotIn(FieldHashedPassword, vs...))
+}
+
+// HashedPasswordGT applies the GT predicate on the "hashed_password" field.
+func HashedPasswordGT(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldGT(FieldHashedPassword, v))
+}
+
+// HashedPasswordGTE applies the GTE predicate on the "hashed_password" field.
+func HashedPasswordGTE(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldGTE(FieldHashedPassword, v))
+}
+
+// HashedPasswordLT applies the LT predicate on the "hashed_password" field.
+func HashedPasswordLT(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldLT(FieldHashedPassword, v))
+}
+
+// HashedPasswordLTE applies the LTE predicate on the "hashed_password" field.
+func HashedPasswordLTE(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldLTE(FieldHashedPassword, v))
+}
+
+// HashedPasswordContains applies the Contains predicate on the "hashed_password" field.
+func HashedPasswordContains(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldContains(FieldHashedPassword, v))
+}
+
+// HashedPasswordHasPrefix applies the HasPrefix predicate on the "hashed_password" field.
+func HashedPasswordHasPrefix(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldHasPrefix(FieldHashedPassword, v))
+}
+
+// HashedPasswordHasSuffix applies the HasSuffix predicate on the "hashed_password" field.
+func HashedPasswordHasSuffix(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldHasSuffix(FieldHashedPassword, v))
+}
+
+// HashedPasswordEqualFold applies the EqualFold predicate on the "hashed_password" field.
+func HashedPasswordEqualFold(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEqualFold(FieldHashedPassword, v))
+}
+
+// HashedPasswordContainsFold applies the ContainsFold predicate on the "hashed_password" field.
+func HashedPasswordContainsFold(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldContainsFold(FieldHashedPassword, v))
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.UserKey {
+	return predicate.UserKey(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.UserKey {
+	return predicate.UserKey(func(s *sql.Selector) {
+		step := newUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

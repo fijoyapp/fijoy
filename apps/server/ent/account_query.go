@@ -4,8 +4,12 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fijoy/ent/account"
+	"fijoy/ent/accountsnapshot"
 	"fijoy/ent/predicate"
+	"fijoy/ent/profile"
+	"fijoy/ent/transaction"
 	"fmt"
 	"math"
 
@@ -18,10 +22,13 @@ import (
 // AccountQuery is the builder for querying Account entities.
 type AccountQuery struct {
 	config
-	ctx        *QueryContext
-	order      []account.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Account
+	ctx                 *QueryContext
+	order               []account.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.Account
+	withProfile         *ProfileQuery
+	withAccountSnapshot *AccountSnapshotQuery
+	withTransaction     *TransactionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +63,72 @@ func (aq *AccountQuery) Unique(unique bool) *AccountQuery {
 func (aq *AccountQuery) Order(o ...account.OrderOption) *AccountQuery {
 	aq.order = append(aq.order, o...)
 	return aq
+}
+
+// QueryProfile chains the current query on the "profile" edge.
+func (aq *AccountQuery) QueryProfile() *ProfileQuery {
+	query := (&ProfileClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, selector),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, account.ProfileTable, account.ProfilePrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAccountSnapshot chains the current query on the "account_snapshot" edge.
+func (aq *AccountQuery) QueryAccountSnapshot() *AccountSnapshotQuery {
+	query := (&AccountSnapshotClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, selector),
+			sqlgraph.To(accountsnapshot.Table, accountsnapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, account.AccountSnapshotTable, account.AccountSnapshotPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTransaction chains the current query on the "transaction" edge.
+func (aq *AccountQuery) QueryTransaction() *TransactionQuery {
+	query := (&TransactionClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, selector),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, account.TransactionTable, account.TransactionPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Account entity from the query.
@@ -245,19 +318,67 @@ func (aq *AccountQuery) Clone() *AccountQuery {
 		return nil
 	}
 	return &AccountQuery{
-		config:     aq.config,
-		ctx:        aq.ctx.Clone(),
-		order:      append([]account.OrderOption{}, aq.order...),
-		inters:     append([]Interceptor{}, aq.inters...),
-		predicates: append([]predicate.Account{}, aq.predicates...),
+		config:              aq.config,
+		ctx:                 aq.ctx.Clone(),
+		order:               append([]account.OrderOption{}, aq.order...),
+		inters:              append([]Interceptor{}, aq.inters...),
+		predicates:          append([]predicate.Account{}, aq.predicates...),
+		withProfile:         aq.withProfile.Clone(),
+		withAccountSnapshot: aq.withAccountSnapshot.Clone(),
+		withTransaction:     aq.withTransaction.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
 	}
 }
 
+// WithProfile tells the query-builder to eager-load the nodes that are connected to
+// the "profile" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AccountQuery) WithProfile(opts ...func(*ProfileQuery)) *AccountQuery {
+	query := (&ProfileClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withProfile = query
+	return aq
+}
+
+// WithAccountSnapshot tells the query-builder to eager-load the nodes that are connected to
+// the "account_snapshot" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AccountQuery) WithAccountSnapshot(opts ...func(*AccountSnapshotQuery)) *AccountQuery {
+	query := (&AccountSnapshotClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withAccountSnapshot = query
+	return aq
+}
+
+// WithTransaction tells the query-builder to eager-load the nodes that are connected to
+// the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AccountQuery) WithTransaction(opts ...func(*TransactionQuery)) *AccountQuery {
+	query := (&TransactionClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withTransaction = query
+	return aq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		Name string `json:"name,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Account.Query().
+//		GroupBy(account.FieldName).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (aq *AccountQuery) GroupBy(field string, fields ...string) *AccountGroupBy {
 	aq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &AccountGroupBy{build: aq}
@@ -269,6 +390,16 @@ func (aq *AccountQuery) GroupBy(field string, fields ...string) *AccountGroupBy 
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		Name string `json:"name,omitempty"`
+//	}
+//
+//	client.Account.Query().
+//		Select(account.FieldName).
+//		Scan(ctx, &v)
 func (aq *AccountQuery) Select(fields ...string) *AccountSelect {
 	aq.ctx.Fields = append(aq.ctx.Fields, fields...)
 	sbuild := &AccountSelect{AccountQuery: aq}
@@ -310,8 +441,13 @@ func (aq *AccountQuery) prepareQuery(ctx context.Context) error {
 
 func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Account, error) {
 	var (
-		nodes = []*Account{}
-		_spec = aq.querySpec()
+		nodes       = []*Account{}
+		_spec       = aq.querySpec()
+		loadedTypes = [3]bool{
+			aq.withProfile != nil,
+			aq.withAccountSnapshot != nil,
+			aq.withTransaction != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Account).scanValues(nil, columns)
@@ -319,6 +455,7 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Account{config: aq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -330,7 +467,212 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := aq.withProfile; query != nil {
+		if err := aq.loadProfile(ctx, query, nodes,
+			func(n *Account) { n.Edges.Profile = []*Profile{} },
+			func(n *Account, e *Profile) { n.Edges.Profile = append(n.Edges.Profile, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withAccountSnapshot; query != nil {
+		if err := aq.loadAccountSnapshot(ctx, query, nodes,
+			func(n *Account) { n.Edges.AccountSnapshot = []*AccountSnapshot{} },
+			func(n *Account, e *AccountSnapshot) { n.Edges.AccountSnapshot = append(n.Edges.AccountSnapshot, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withTransaction; query != nil {
+		if err := aq.loadTransaction(ctx, query, nodes,
+			func(n *Account) { n.Edges.Transaction = []*Transaction{} },
+			func(n *Account, e *Transaction) { n.Edges.Transaction = append(n.Edges.Transaction, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (aq *AccountQuery) loadProfile(ctx context.Context, query *ProfileQuery, nodes []*Account, init func(*Account), assign func(*Account, *Profile)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Account)
+	nids := make(map[int]map[*Account]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(account.ProfileTable)
+		s.Join(joinT).On(s.C(profile.FieldID), joinT.C(account.ProfilePrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(account.ProfilePrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(account.ProfilePrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Account]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Profile](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "profile" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (aq *AccountQuery) loadAccountSnapshot(ctx context.Context, query *AccountSnapshotQuery, nodes []*Account, init func(*Account), assign func(*Account, *AccountSnapshot)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Account)
+	nids := make(map[int]map[*Account]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(account.AccountSnapshotTable)
+		s.Join(joinT).On(s.C(accountsnapshot.FieldID), joinT.C(account.AccountSnapshotPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(account.AccountSnapshotPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(account.AccountSnapshotPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Account]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*AccountSnapshot](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "account_snapshot" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (aq *AccountQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Account, init func(*Account), assign func(*Account, *Transaction)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Account)
+	nids := make(map[int]map[*Account]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(account.TransactionTable)
+		s.Join(joinT).On(s.C(transaction.FieldID), joinT.C(account.TransactionPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(account.TransactionPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(account.TransactionPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Account]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Transaction](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "transaction" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
 }
 
 func (aq *AccountQuery) sqlCount(ctx context.Context) (int, error) {

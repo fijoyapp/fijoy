@@ -3,7 +3,11 @@
 package account
 
 import (
+	"fmt"
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,14 +15,83 @@ const (
 	Label = "account"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// FieldAccountType holds the string denoting the account_type field in the database.
+	FieldAccountType = "account_type"
+	// FieldArchived holds the string denoting the archived field in the database.
+	FieldArchived = "archived"
+	// FieldIncludeInNetWorth holds the string denoting the include_in_net_worth field in the database.
+	FieldIncludeInNetWorth = "include_in_net_worth"
+	// FieldSymbol holds the string denoting the symbol field in the database.
+	FieldSymbol = "symbol"
+	// FieldSymbolType holds the string denoting the symbol_type field in the database.
+	FieldSymbolType = "symbol_type"
+	// FieldAmount holds the string denoting the amount field in the database.
+	FieldAmount = "amount"
+	// FieldValue holds the string denoting the value field in the database.
+	FieldValue = "value"
+	// FieldFxRate holds the string denoting the fx_rate field in the database.
+	FieldFxRate = "fx_rate"
+	// FieldBalance holds the string denoting the balance field in the database.
+	FieldBalance = "balance"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// EdgeProfile holds the string denoting the profile edge name in mutations.
+	EdgeProfile = "profile"
+	// EdgeAccountSnapshot holds the string denoting the account_snapshot edge name in mutations.
+	EdgeAccountSnapshot = "account_snapshot"
+	// EdgeTransaction holds the string denoting the transaction edge name in mutations.
+	EdgeTransaction = "transaction"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
+	// ProfileTable is the table that holds the profile relation/edge. The primary key declared below.
+	ProfileTable = "profile_account"
+	// ProfileInverseTable is the table name for the Profile entity.
+	// It exists in this package in order to avoid circular dependency with the "profile" package.
+	ProfileInverseTable = "profiles"
+	// AccountSnapshotTable is the table that holds the account_snapshot relation/edge. The primary key declared below.
+	AccountSnapshotTable = "account_account_snapshot"
+	// AccountSnapshotInverseTable is the table name for the AccountSnapshot entity.
+	// It exists in this package in order to avoid circular dependency with the "accountsnapshot" package.
+	AccountSnapshotInverseTable = "account_snapshots"
+	// TransactionTable is the table that holds the transaction relation/edge. The primary key declared below.
+	TransactionTable = "account_transaction"
+	// TransactionInverseTable is the table name for the Transaction entity.
+	// It exists in this package in order to avoid circular dependency with the "transaction" package.
+	TransactionInverseTable = "transactions"
 )
 
 // Columns holds all SQL columns for account fields.
 var Columns = []string{
 	FieldID,
+	FieldName,
+	FieldAccountType,
+	FieldArchived,
+	FieldIncludeInNetWorth,
+	FieldSymbol,
+	FieldSymbolType,
+	FieldAmount,
+	FieldValue,
+	FieldFxRate,
+	FieldBalance,
+	FieldCreatedAt,
+	FieldUpdatedAt,
 }
+
+var (
+	// ProfilePrimaryKey and ProfileColumn2 are the table columns denoting the
+	// primary key for the profile relation (M2M).
+	ProfilePrimaryKey = []string{"profile_id", "account_id"}
+	// AccountSnapshotPrimaryKey and AccountSnapshotColumn2 are the table columns denoting the
+	// primary key for the account_snapshot relation (M2M).
+	AccountSnapshotPrimaryKey = []string{"account_id", "account_snapshot_id"}
+	// TransactionPrimaryKey and TransactionColumn2 are the table columns denoting the
+	// primary key for the transaction relation (M2M).
+	TransactionPrimaryKey = []string{"account_id", "transaction_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -30,10 +103,198 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// NameValidator is a validator for the "name" field. It is called by the builders before save.
+	NameValidator func(string) error
+	// DefaultArchived holds the default value on creation for the "archived" field.
+	DefaultArchived bool
+	// DefaultIncludeInNetWorth holds the default value on creation for the "include_in_net_worth" field.
+	DefaultIncludeInNetWorth bool
+	// SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
+	SymbolValidator func(string) error
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+)
+
+// AccountType defines the type for the "account_type" enum field.
+type AccountType string
+
+// AccountType values.
+const (
+	AccountTypeLiquidity  AccountType = "liquidity"
+	AccountTypeInvestment AccountType = "investment"
+	AccountTypeProperty   AccountType = "property"
+	AccountTypeReceivable AccountType = "receivable"
+	AccountTypeLiability  AccountType = "liability"
+)
+
+func (at AccountType) String() string {
+	return string(at)
+}
+
+// AccountTypeValidator is a validator for the "account_type" field enum values. It is called by the builders before save.
+func AccountTypeValidator(at AccountType) error {
+	switch at {
+	case AccountTypeLiquidity, AccountTypeInvestment, AccountTypeProperty, AccountTypeReceivable, AccountTypeLiability:
+		return nil
+	default:
+		return fmt.Errorf("account: invalid enum value for account_type field: %q", at)
+	}
+}
+
+// SymbolType defines the type for the "symbol_type" enum field.
+type SymbolType string
+
+// SymbolType values.
+const (
+	SymbolTypeCurrency SymbolType = "currency"
+	SymbolTypeStock    SymbolType = "stock"
+	SymbolTypeCrypto   SymbolType = "crypto"
+)
+
+func (st SymbolType) String() string {
+	return string(st)
+}
+
+// SymbolTypeValidator is a validator for the "symbol_type" field enum values. It is called by the builders before save.
+func SymbolTypeValidator(st SymbolType) error {
+	switch st {
+	case SymbolTypeCurrency, SymbolTypeStock, SymbolTypeCrypto:
+		return nil
+	default:
+		return fmt.Errorf("account: invalid enum value for symbol_type field: %q", st)
+	}
+}
+
 // OrderOption defines the ordering options for the Account queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByAccountType orders the results by the account_type field.
+func ByAccountType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccountType, opts...).ToFunc()
+}
+
+// ByArchived orders the results by the archived field.
+func ByArchived(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldArchived, opts...).ToFunc()
+}
+
+// ByIncludeInNetWorth orders the results by the include_in_net_worth field.
+func ByIncludeInNetWorth(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIncludeInNetWorth, opts...).ToFunc()
+}
+
+// BySymbol orders the results by the symbol field.
+func BySymbol(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSymbol, opts...).ToFunc()
+}
+
+// BySymbolType orders the results by the symbol_type field.
+func BySymbolType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSymbolType, opts...).ToFunc()
+}
+
+// ByAmount orders the results by the amount field.
+func ByAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByValue orders the results by the value field.
+func ByValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldValue, opts...).ToFunc()
+}
+
+// ByFxRate orders the results by the fx_rate field.
+func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFxRate, opts...).ToFunc()
+}
+
+// ByBalance orders the results by the balance field.
+func ByBalance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBalance, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByProfileCount orders the results by profile count.
+func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
+	}
+}
+
+// ByProfile orders the results by profile terms.
+func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAccountSnapshotCount orders the results by account_snapshot count.
+func ByAccountSnapshotCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAccountSnapshotStep(), opts...)
+	}
+}
+
+// ByAccountSnapshot orders the results by account_snapshot terms.
+func ByAccountSnapshot(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAccountSnapshotStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTransactionCount orders the results by transaction count.
+func ByTransactionCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTransactionStep(), opts...)
+	}
+}
+
+// ByTransaction orders the results by transaction terms.
+func ByTransaction(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransactionStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newProfileStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProfileInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+	)
+}
+func newAccountSnapshotStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AccountSnapshotInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, AccountSnapshotTable, AccountSnapshotPrimaryKey...),
+	)
+}
+func newTransactionStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TransactionInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, TransactionTable, TransactionPrimaryKey...),
+	)
 }

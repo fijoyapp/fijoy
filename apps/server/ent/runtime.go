@@ -3,7 +3,9 @@
 package ent
 
 import (
+	"fijoy/ent/account"
 	"fijoy/ent/schema"
+	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"time"
 )
@@ -12,6 +14,42 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accountFields := schema.Account{}.Fields()
+	_ = accountFields
+	// accountDescName is the schema descriptor for name field.
+	accountDescName := accountFields[0].Descriptor()
+	// account.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	account.NameValidator = accountDescName.Validators[0].(func(string) error)
+	// accountDescArchived is the schema descriptor for archived field.
+	accountDescArchived := accountFields[2].Descriptor()
+	// account.DefaultArchived holds the default value on creation for the archived field.
+	account.DefaultArchived = accountDescArchived.Default.(bool)
+	// accountDescIncludeInNetWorth is the schema descriptor for include_in_net_worth field.
+	accountDescIncludeInNetWorth := accountFields[3].Descriptor()
+	// account.DefaultIncludeInNetWorth holds the default value on creation for the include_in_net_worth field.
+	account.DefaultIncludeInNetWorth = accountDescIncludeInNetWorth.Default.(bool)
+	// accountDescSymbol is the schema descriptor for symbol field.
+	accountDescSymbol := accountFields[4].Descriptor()
+	// account.SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
+	account.SymbolValidator = accountDescSymbol.Validators[0].(func(string) error)
+	// accountDescCreatedAt is the schema descriptor for created_at field.
+	accountDescCreatedAt := accountFields[10].Descriptor()
+	// account.DefaultCreatedAt holds the default value on creation for the created_at field.
+	account.DefaultCreatedAt = accountDescCreatedAt.Default.(func() time.Time)
+	// accountDescUpdatedAt is the schema descriptor for updated_at field.
+	accountDescUpdatedAt := accountFields[11].Descriptor()
+	// account.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	account.DefaultUpdatedAt = accountDescUpdatedAt.Default.(func() time.Time)
+	transactionFields := schema.Transaction{}.Fields()
+	_ = transactionFields
+	// transactionDescCreatedAt is the schema descriptor for created_at field.
+	transactionDescCreatedAt := transactionFields[7].Descriptor()
+	// transaction.DefaultCreatedAt holds the default value on creation for the created_at field.
+	transaction.DefaultCreatedAt = transactionDescCreatedAt.Default.(func() time.Time)
+	// transactionDescUpdatedAt is the schema descriptor for updated_at field.
+	transactionDescUpdatedAt := transactionFields[8].Descriptor()
+	// transaction.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	transaction.DefaultUpdatedAt = transactionDescUpdatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.

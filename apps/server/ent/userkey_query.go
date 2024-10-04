@@ -4,7 +4,9 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fijoy/ent/predicate"
+	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
 	"math"
@@ -22,7 +24,7 @@ type UserKeyQuery struct {
 	order      []userkey.OrderOption
 	inters     []Interceptor
 	predicates []predicate.UserKey
-	withFKs    bool
+	withUser   *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -57,6 +59,28 @@ func (ukq *UserKeyQuery) Unique(unique bool) *UserKeyQuery {
 func (ukq *UserKeyQuery) Order(o ...userkey.OrderOption) *UserKeyQuery {
 	ukq.order = append(ukq.order, o...)
 	return ukq
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (ukq *UserKeyQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: ukq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ukq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ukq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userkey.Table, userkey.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, userkey.UserTable, userkey.UserPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(ukq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first UserKey entity from the query.
@@ -251,14 +275,38 @@ func (ukq *UserKeyQuery) Clone() *UserKeyQuery {
 		order:      append([]userkey.OrderOption{}, ukq.order...),
 		inters:     append([]Interceptor{}, ukq.inters...),
 		predicates: append([]predicate.UserKey{}, ukq.predicates...),
+		withUser:   ukq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  ukq.sql.Clone(),
 		path: ukq.path,
 	}
 }
 
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (ukq *UserKeyQuery) WithUser(opts ...func(*UserQuery)) *UserKeyQuery {
+	query := (&UserClient{config: ukq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ukq.withUser = query
+	return ukq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		HashedPassword string `json:"hashed_password,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.UserKey.Query().
+//		GroupBy(userkey.FieldHashedPassword).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (ukq *UserKeyQuery) GroupBy(field string, fields ...string) *UserKeyGroupBy {
 	ukq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &UserKeyGroupBy{build: ukq}
@@ -270,6 +318,16 @@ func (ukq *UserKeyQuery) GroupBy(field string, fields ...string) *UserKeyGroupBy
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		HashedPassword string `json:"hashed_password,omitempty"`
+//	}
+//
+//	client.UserKey.Query().
+//		Select(userkey.FieldHashedPassword).
+//		Scan(ctx, &v)
 func (ukq *UserKeyQuery) Select(fields ...string) *UserKeySelect {
 	ukq.ctx.Fields = append(ukq.ctx.Fields, fields...)
 	sbuild := &UserKeySelect{UserKeyQuery: ukq}
@@ -311,19 +369,19 @@ func (ukq *UserKeyQuery) prepareQuery(ctx context.Context) error {
 
 func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*UserKey, error) {
 	var (
-		nodes   = []*UserKey{}
-		withFKs = ukq.withFKs
-		_spec   = ukq.querySpec()
+		nodes       = []*UserKey{}
+		_spec       = ukq.querySpec()
+		loadedTypes = [1]bool{
+			ukq.withUser != nil,
+		}
 	)
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, userkey.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*UserKey).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &UserKey{config: ukq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -335,7 +393,76 @@ func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Use
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := ukq.withUser; query != nil {
+		if err := ukq.loadUser(ctx, query, nodes,
+			func(n *UserKey) { n.Edges.User = []*User{} },
+			func(n *UserKey, e *User) { n.Edges.User = append(n.Edges.User, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (ukq *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*UserKey, init func(*UserKey), assign func(*UserKey, *User)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*UserKey)
+	nids := make(map[int]map[*UserKey]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(userkey.UserTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(userkey.UserPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(userkey.UserPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(userkey.UserPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*UserKey]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "user" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
 }
 
 func (ukq *UserKeyQuery) sqlCount(ctx context.Context) (int, error) {
