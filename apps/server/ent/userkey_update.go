@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/predicate"
+	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
 
@@ -27,9 +28,59 @@ func (uku *UserKeyUpdate) Where(ps ...predicate.UserKey) *UserKeyUpdate {
 	return uku
 }
 
+// SetHashedPassword sets the "hashed_password" field.
+func (uku *UserKeyUpdate) SetHashedPassword(s string) *UserKeyUpdate {
+	uku.mutation.SetHashedPassword(s)
+	return uku
+}
+
+// SetNillableHashedPassword sets the "hashed_password" field if the given value is not nil.
+func (uku *UserKeyUpdate) SetNillableHashedPassword(s *string) *UserKeyUpdate {
+	if s != nil {
+		uku.SetHashedPassword(*s)
+	}
+	return uku
+}
+
+// AddUserIDs adds the "user" edge to the User entity by IDs.
+func (uku *UserKeyUpdate) AddUserIDs(ids ...int) *UserKeyUpdate {
+	uku.mutation.AddUserIDs(ids...)
+	return uku
+}
+
+// AddUser adds the "user" edges to the User entity.
+func (uku *UserKeyUpdate) AddUser(u ...*User) *UserKeyUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uku.AddUserIDs(ids...)
+}
+
 // Mutation returns the UserKeyMutation object of the builder.
 func (uku *UserKeyUpdate) Mutation() *UserKeyMutation {
 	return uku.mutation
+}
+
+// ClearUser clears all "user" edges to the User entity.
+func (uku *UserKeyUpdate) ClearUser() *UserKeyUpdate {
+	uku.mutation.ClearUser()
+	return uku
+}
+
+// RemoveUserIDs removes the "user" edge to User entities by IDs.
+func (uku *UserKeyUpdate) RemoveUserIDs(ids ...int) *UserKeyUpdate {
+	uku.mutation.RemoveUserIDs(ids...)
+	return uku
+}
+
+// RemoveUser removes "user" edges to User entities.
+func (uku *UserKeyUpdate) RemoveUser(u ...*User) *UserKeyUpdate {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uku.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -68,6 +119,54 @@ func (uku *UserKeyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := uku.mutation.HashedPassword(); ok {
+		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
+	}
+	if uku.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   userkey.UserTable,
+			Columns: userkey.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uku.mutation.RemovedUserIDs(); len(nodes) > 0 && !uku.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   userkey.UserTable,
+			Columns: userkey.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uku.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   userkey.UserTable,
+			Columns: userkey.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uku.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{userkey.Label}
@@ -88,9 +187,59 @@ type UserKeyUpdateOne struct {
 	mutation *UserKeyMutation
 }
 
+// SetHashedPassword sets the "hashed_password" field.
+func (ukuo *UserKeyUpdateOne) SetHashedPassword(s string) *UserKeyUpdateOne {
+	ukuo.mutation.SetHashedPassword(s)
+	return ukuo
+}
+
+// SetNillableHashedPassword sets the "hashed_password" field if the given value is not nil.
+func (ukuo *UserKeyUpdateOne) SetNillableHashedPassword(s *string) *UserKeyUpdateOne {
+	if s != nil {
+		ukuo.SetHashedPassword(*s)
+	}
+	return ukuo
+}
+
+// AddUserIDs adds the "user" edge to the User entity by IDs.
+func (ukuo *UserKeyUpdateOne) AddUserIDs(ids ...int) *UserKeyUpdateOne {
+	ukuo.mutation.AddUserIDs(ids...)
+	return ukuo
+}
+
+// AddUser adds the "user" edges to the User entity.
+func (ukuo *UserKeyUpdateOne) AddUser(u ...*User) *UserKeyUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ukuo.AddUserIDs(ids...)
+}
+
 // Mutation returns the UserKeyMutation object of the builder.
 func (ukuo *UserKeyUpdateOne) Mutation() *UserKeyMutation {
 	return ukuo.mutation
+}
+
+// ClearUser clears all "user" edges to the User entity.
+func (ukuo *UserKeyUpdateOne) ClearUser() *UserKeyUpdateOne {
+	ukuo.mutation.ClearUser()
+	return ukuo
+}
+
+// RemoveUserIDs removes the "user" edge to User entities by IDs.
+func (ukuo *UserKeyUpdateOne) RemoveUserIDs(ids ...int) *UserKeyUpdateOne {
+	ukuo.mutation.RemoveUserIDs(ids...)
+	return ukuo
+}
+
+// RemoveUser removes "user" edges to User entities.
+func (ukuo *UserKeyUpdateOne) RemoveUser(u ...*User) *UserKeyUpdateOne {
+	ids := make([]int, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return ukuo.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the UserKeyUpdate builder.
@@ -158,6 +307,54 @@ func (ukuo *UserKeyUpdateOne) sqlSave(ctx context.Context) (_node *UserKey, err 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ukuo.mutation.HashedPassword(); ok {
+		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
+	}
+	if ukuo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   userkey.UserTable,
+			Columns: userkey.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ukuo.mutation.RemovedUserIDs(); len(nodes) > 0 && !ukuo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   userkey.UserTable,
+			Columns: userkey.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ukuo.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   userkey.UserTable,
+			Columns: userkey.UserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &UserKey{config: ukuo.config}
 	_spec.Assign = _node.assignValues

@@ -4,11 +4,17 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fijoy/ent/account"
+	"fijoy/ent/accountsnapshot"
+	"fijoy/ent/profile"
+	"fijoy/ent/transaction"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
 )
 
 // AccountCreate is the builder for creating a Account entity.
@@ -18,6 +24,163 @@ type AccountCreate struct {
 	hooks    []Hook
 }
 
+// SetName sets the "name" field.
+func (ac *AccountCreate) SetName(s string) *AccountCreate {
+	ac.mutation.SetName(s)
+	return ac
+}
+
+// SetAccountType sets the "account_type" field.
+func (ac *AccountCreate) SetAccountType(at account.AccountType) *AccountCreate {
+	ac.mutation.SetAccountType(at)
+	return ac
+}
+
+// SetArchived sets the "archived" field.
+func (ac *AccountCreate) SetArchived(b bool) *AccountCreate {
+	ac.mutation.SetArchived(b)
+	return ac
+}
+
+// SetNillableArchived sets the "archived" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableArchived(b *bool) *AccountCreate {
+	if b != nil {
+		ac.SetArchived(*b)
+	}
+	return ac
+}
+
+// SetIncludeInNetWorth sets the "include_in_net_worth" field.
+func (ac *AccountCreate) SetIncludeInNetWorth(b bool) *AccountCreate {
+	ac.mutation.SetIncludeInNetWorth(b)
+	return ac
+}
+
+// SetNillableIncludeInNetWorth sets the "include_in_net_worth" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableIncludeInNetWorth(b *bool) *AccountCreate {
+	if b != nil {
+		ac.SetIncludeInNetWorth(*b)
+	}
+	return ac
+}
+
+// SetSymbol sets the "symbol" field.
+func (ac *AccountCreate) SetSymbol(s string) *AccountCreate {
+	ac.mutation.SetSymbol(s)
+	return ac
+}
+
+// SetSymbolType sets the "symbol_type" field.
+func (ac *AccountCreate) SetSymbolType(at account.SymbolType) *AccountCreate {
+	ac.mutation.SetSymbolType(at)
+	return ac
+}
+
+// SetAmount sets the "amount" field.
+func (ac *AccountCreate) SetAmount(d decimal.Decimal) *AccountCreate {
+	ac.mutation.SetAmount(d)
+	return ac
+}
+
+// SetValue sets the "value" field.
+func (ac *AccountCreate) SetValue(d decimal.Decimal) *AccountCreate {
+	ac.mutation.SetValue(d)
+	return ac
+}
+
+// SetFxRate sets the "fx_rate" field.
+func (ac *AccountCreate) SetFxRate(d decimal.Decimal) *AccountCreate {
+	ac.mutation.SetFxRate(d)
+	return ac
+}
+
+// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableFxRate(d *decimal.Decimal) *AccountCreate {
+	if d != nil {
+		ac.SetFxRate(*d)
+	}
+	return ac
+}
+
+// SetBalance sets the "balance" field.
+func (ac *AccountCreate) SetBalance(d decimal.Decimal) *AccountCreate {
+	ac.mutation.SetBalance(d)
+	return ac
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (ac *AccountCreate) SetCreatedAt(t time.Time) *AccountCreate {
+	ac.mutation.SetCreatedAt(t)
+	return ac
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableCreatedAt(t *time.Time) *AccountCreate {
+	if t != nil {
+		ac.SetCreatedAt(*t)
+	}
+	return ac
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (ac *AccountCreate) SetUpdatedAt(t time.Time) *AccountCreate {
+	ac.mutation.SetUpdatedAt(t)
+	return ac
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableUpdatedAt(t *time.Time) *AccountCreate {
+	if t != nil {
+		ac.SetUpdatedAt(*t)
+	}
+	return ac
+}
+
+// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
+func (ac *AccountCreate) AddProfileIDs(ids ...int) *AccountCreate {
+	ac.mutation.AddProfileIDs(ids...)
+	return ac
+}
+
+// AddProfile adds the "profile" edges to the Profile entity.
+func (ac *AccountCreate) AddProfile(p ...*Profile) *AccountCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ac.AddProfileIDs(ids...)
+}
+
+// AddAccountSnapshotIDs adds the "account_snapshot" edge to the AccountSnapshot entity by IDs.
+func (ac *AccountCreate) AddAccountSnapshotIDs(ids ...int) *AccountCreate {
+	ac.mutation.AddAccountSnapshotIDs(ids...)
+	return ac
+}
+
+// AddAccountSnapshot adds the "account_snapshot" edges to the AccountSnapshot entity.
+func (ac *AccountCreate) AddAccountSnapshot(a ...*AccountSnapshot) *AccountCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ac.AddAccountSnapshotIDs(ids...)
+}
+
+// AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
+func (ac *AccountCreate) AddTransactionIDs(ids ...int) *AccountCreate {
+	ac.mutation.AddTransactionIDs(ids...)
+	return ac
+}
+
+// AddTransaction adds the "transaction" edges to the Transaction entity.
+func (ac *AccountCreate) AddTransaction(t ...*Transaction) *AccountCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return ac.AddTransactionIDs(ids...)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (ac *AccountCreate) Mutation() *AccountMutation {
 	return ac.mutation
@@ -25,6 +188,7 @@ func (ac *AccountCreate) Mutation() *AccountMutation {
 
 // Save creates the Account in the database.
 func (ac *AccountCreate) Save(ctx context.Context) (*Account, error) {
+	ac.defaults()
 	return withHooks(ctx, ac.sqlSave, ac.mutation, ac.hooks)
 }
 
@@ -50,8 +214,81 @@ func (ac *AccountCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ac *AccountCreate) defaults() {
+	if _, ok := ac.mutation.Archived(); !ok {
+		v := account.DefaultArchived
+		ac.mutation.SetArchived(v)
+	}
+	if _, ok := ac.mutation.IncludeInNetWorth(); !ok {
+		v := account.DefaultIncludeInNetWorth
+		ac.mutation.SetIncludeInNetWorth(v)
+	}
+	if _, ok := ac.mutation.CreatedAt(); !ok {
+		v := account.DefaultCreatedAt()
+		ac.mutation.SetCreatedAt(v)
+	}
+	if _, ok := ac.mutation.UpdatedAt(); !ok {
+		v := account.DefaultUpdatedAt()
+		ac.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ac *AccountCreate) check() error {
+	if _, ok := ac.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Account.name"`)}
+	}
+	if v, ok := ac.mutation.Name(); ok {
+		if err := account.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
+		}
+	}
+	if _, ok := ac.mutation.AccountType(); !ok {
+		return &ValidationError{Name: "account_type", err: errors.New(`ent: missing required field "Account.account_type"`)}
+	}
+	if v, ok := ac.mutation.AccountType(); ok {
+		if err := account.AccountTypeValidator(v); err != nil {
+			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "Account.account_type": %w`, err)}
+		}
+	}
+	if _, ok := ac.mutation.Archived(); !ok {
+		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Account.archived"`)}
+	}
+	if _, ok := ac.mutation.IncludeInNetWorth(); !ok {
+		return &ValidationError{Name: "include_in_net_worth", err: errors.New(`ent: missing required field "Account.include_in_net_worth"`)}
+	}
+	if _, ok := ac.mutation.Symbol(); !ok {
+		return &ValidationError{Name: "symbol", err: errors.New(`ent: missing required field "Account.symbol"`)}
+	}
+	if v, ok := ac.mutation.Symbol(); ok {
+		if err := account.SymbolValidator(v); err != nil {
+			return &ValidationError{Name: "symbol", err: fmt.Errorf(`ent: validator failed for field "Account.symbol": %w`, err)}
+		}
+	}
+	if _, ok := ac.mutation.SymbolType(); !ok {
+		return &ValidationError{Name: "symbol_type", err: errors.New(`ent: missing required field "Account.symbol_type"`)}
+	}
+	if v, ok := ac.mutation.SymbolType(); ok {
+		if err := account.SymbolTypeValidator(v); err != nil {
+			return &ValidationError{Name: "symbol_type", err: fmt.Errorf(`ent: validator failed for field "Account.symbol_type": %w`, err)}
+		}
+	}
+	if _, ok := ac.mutation.Amount(); !ok {
+		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Account.amount"`)}
+	}
+	if _, ok := ac.mutation.Value(); !ok {
+		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Account.value"`)}
+	}
+	if _, ok := ac.mutation.Balance(); !ok {
+		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}
+	}
+	if _, ok := ac.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Account.created_at"`)}
+	}
+	if _, ok := ac.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Account.updated_at"`)}
+	}
 	return nil
 }
 
@@ -78,6 +315,102 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_node = &Account{config: ac.config}
 		_spec = sqlgraph.NewCreateSpec(account.Table, sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt))
 	)
+	if value, ok := ac.mutation.Name(); ok {
+		_spec.SetField(account.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
+	if value, ok := ac.mutation.AccountType(); ok {
+		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
+		_node.AccountType = value
+	}
+	if value, ok := ac.mutation.Archived(); ok {
+		_spec.SetField(account.FieldArchived, field.TypeBool, value)
+		_node.Archived = value
+	}
+	if value, ok := ac.mutation.IncludeInNetWorth(); ok {
+		_spec.SetField(account.FieldIncludeInNetWorth, field.TypeBool, value)
+		_node.IncludeInNetWorth = value
+	}
+	if value, ok := ac.mutation.Symbol(); ok {
+		_spec.SetField(account.FieldSymbol, field.TypeString, value)
+		_node.Symbol = value
+	}
+	if value, ok := ac.mutation.SymbolType(); ok {
+		_spec.SetField(account.FieldSymbolType, field.TypeEnum, value)
+		_node.SymbolType = value
+	}
+	if value, ok := ac.mutation.Amount(); ok {
+		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)
+		_node.Amount = value
+	}
+	if value, ok := ac.mutation.Value(); ok {
+		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
+		_node.Value = value
+	}
+	if value, ok := ac.mutation.FxRate(); ok {
+		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
+		_node.FxRate = value
+	}
+	if value, ok := ac.mutation.Balance(); ok {
+		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
+		_node.Balance = value
+	}
+	if value, ok := ac.mutation.CreatedAt(); ok {
+		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := ac.mutation.UpdatedAt(); ok {
+		_spec.SetField(account.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if nodes := ac.mutation.ProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   account.ProfileTable,
+			Columns: account.ProfilePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.AccountSnapshotIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   account.AccountSnapshotTable,
+			Columns: account.AccountSnapshotPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.TransactionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   account.TransactionTable,
+			Columns: account.TransactionPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -99,6 +432,7 @@ func (acb *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
 	for i := range acb.builders {
 		func(i int, root context.Context) {
 			builder := acb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AccountMutation)
 				if !ok {

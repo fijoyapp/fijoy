@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/predicate"
+	"fijoy/ent/profile"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
@@ -72,6 +73,21 @@ func (uu *UserUpdate) AddUserKey(u ...*UserKey) *UserUpdate {
 	return uu.AddUserKeyIDs(ids...)
 }
 
+// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
+func (uu *UserUpdate) AddProfileIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddProfileIDs(ids...)
+	return uu
+}
+
+// AddProfile adds the "profile" edges to the Profile entity.
+func (uu *UserUpdate) AddProfile(p ...*Profile) *UserUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uu.AddProfileIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -96,6 +112,27 @@ func (uu *UserUpdate) RemoveUserKey(u ...*UserKey) *UserUpdate {
 		ids[i] = u[i].ID
 	}
 	return uu.RemoveUserKeyIDs(ids...)
+}
+
+// ClearProfile clears all "profile" edges to the Profile entity.
+func (uu *UserUpdate) ClearProfile() *UserUpdate {
+	uu.mutation.ClearProfile()
+	return uu
+}
+
+// RemoveProfileIDs removes the "profile" edge to Profile entities by IDs.
+func (uu *UserUpdate) RemoveProfileIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveProfileIDs(ids...)
+	return uu
+}
+
+// RemoveProfile removes "profile" edges to Profile entities.
+func (uu *UserUpdate) RemoveProfile(p ...*Profile) *UserUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uu.RemoveProfileIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -155,10 +192,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.UserKeyCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Columns: user.UserKeyPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -168,10 +205,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := uu.mutation.RemovedUserKeyIDs(); len(nodes) > 0 && !uu.mutation.UserKeyCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Columns: user.UserKeyPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -184,13 +221,58 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := uu.mutation.UserKeyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Columns: user.UserKeyPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfileTable,
+			Columns: []string{user.ProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedProfileIDs(); len(nodes) > 0 && !uu.mutation.ProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfileTable,
+			Columns: []string{user.ProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfileTable,
+			Columns: []string{user.ProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -261,6 +343,21 @@ func (uuo *UserUpdateOne) AddUserKey(u ...*UserKey) *UserUpdateOne {
 	return uuo.AddUserKeyIDs(ids...)
 }
 
+// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
+func (uuo *UserUpdateOne) AddProfileIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddProfileIDs(ids...)
+	return uuo
+}
+
+// AddProfile adds the "profile" edges to the Profile entity.
+func (uuo *UserUpdateOne) AddProfile(p ...*Profile) *UserUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uuo.AddProfileIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -285,6 +382,27 @@ func (uuo *UserUpdateOne) RemoveUserKey(u ...*UserKey) *UserUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return uuo.RemoveUserKeyIDs(ids...)
+}
+
+// ClearProfile clears all "profile" edges to the Profile entity.
+func (uuo *UserUpdateOne) ClearProfile() *UserUpdateOne {
+	uuo.mutation.ClearProfile()
+	return uuo
+}
+
+// RemoveProfileIDs removes the "profile" edge to Profile entities by IDs.
+func (uuo *UserUpdateOne) RemoveProfileIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveProfileIDs(ids...)
+	return uuo
+}
+
+// RemoveProfile removes "profile" edges to Profile entities.
+func (uuo *UserUpdateOne) RemoveProfile(p ...*Profile) *UserUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uuo.RemoveProfileIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -374,10 +492,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.UserKeyCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Columns: user.UserKeyPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -387,10 +505,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if nodes := uuo.mutation.RemovedUserKeyIDs(); len(nodes) > 0 && !uuo.mutation.UserKeyCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Columns: user.UserKeyPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -403,13 +521,58 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if nodes := uuo.mutation.UserKeyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Columns: user.UserKeyPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfileTable,
+			Columns: []string{user.ProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedProfileIDs(); len(nodes) > 0 && !uuo.mutation.ProfileCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfileTable,
+			Columns: []string{user.ProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfileTable,
+			Columns: []string{user.ProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

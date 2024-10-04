@@ -4,11 +4,16 @@ package ent
 
 import (
 	"context"
+	"errors"
+	"fijoy/ent/account"
 	"fijoy/ent/accountsnapshot"
 	"fmt"
+	"time"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
 )
 
 // AccountSnapshotCreate is the builder for creating a AccountSnapshot entity.
@@ -16,6 +21,33 @@ type AccountSnapshotCreate struct {
 	config
 	mutation *AccountSnapshotMutation
 	hooks    []Hook
+}
+
+// SetDatehour sets the "datehour" field.
+func (asc *AccountSnapshotCreate) SetDatehour(t time.Time) *AccountSnapshotCreate {
+	asc.mutation.SetDatehour(t)
+	return asc
+}
+
+// SetBalance sets the "balance" field.
+func (asc *AccountSnapshotCreate) SetBalance(d decimal.Decimal) *AccountSnapshotCreate {
+	asc.mutation.SetBalance(d)
+	return asc
+}
+
+// AddAccountIDs adds the "account" edge to the Account entity by IDs.
+func (asc *AccountSnapshotCreate) AddAccountIDs(ids ...int) *AccountSnapshotCreate {
+	asc.mutation.AddAccountIDs(ids...)
+	return asc
+}
+
+// AddAccount adds the "account" edges to the Account entity.
+func (asc *AccountSnapshotCreate) AddAccount(a ...*Account) *AccountSnapshotCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return asc.AddAccountIDs(ids...)
 }
 
 // Mutation returns the AccountSnapshotMutation object of the builder.
@@ -52,6 +84,15 @@ func (asc *AccountSnapshotCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (asc *AccountSnapshotCreate) check() error {
+	switch asc.driver.Dialect() {
+	case dialect.MySQL, dialect.SQLite:
+		if _, ok := asc.mutation.Datehour(); !ok {
+			return &ValidationError{Name: "datehour", err: errors.New(`ent: missing required field "AccountSnapshot.datehour"`)}
+		}
+	}
+	if _, ok := asc.mutation.Balance(); !ok {
+		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "AccountSnapshot.balance"`)}
+	}
 	return nil
 }
 
@@ -78,6 +119,30 @@ func (asc *AccountSnapshotCreate) createSpec() (*AccountSnapshot, *sqlgraph.Crea
 		_node = &AccountSnapshot{config: asc.config}
 		_spec = sqlgraph.NewCreateSpec(accountsnapshot.Table, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeInt))
 	)
+	if value, ok := asc.mutation.Datehour(); ok {
+		_spec.SetField(accountsnapshot.FieldDatehour, field.TypeTime, value)
+		_node.Datehour = value
+	}
+	if value, ok := asc.mutation.Balance(); ok {
+		_spec.SetField(accountsnapshot.FieldBalance, field.TypeFloat64, value)
+		_node.Balance = value
+	}
+	if nodes := asc.mutation.AccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   accountsnapshot.AccountTable,
+			Columns: accountsnapshot.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 

@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"errors"
+	"fijoy/ent/profile"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
@@ -54,6 +55,21 @@ func (uc *UserCreate) AddUserKey(u ...*UserKey) *UserCreate {
 		ids[i] = u[i].ID
 	}
 	return uc.AddUserKeyIDs(ids...)
+}
+
+// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
+func (uc *UserCreate) AddProfileIDs(ids ...int) *UserCreate {
+	uc.mutation.AddProfileIDs(ids...)
+	return uc
+}
+
+// AddProfile adds the "profile" edges to the Profile entity.
+func (uc *UserCreate) AddProfile(p ...*Profile) *UserCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uc.AddProfileIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -146,13 +162,29 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if nodes := uc.mutation.UserKeyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Columns: user.UserKeyPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ProfileTable,
+			Columns: []string{user.ProfileColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -1,6 +1,9 @@
 package schema
 
-import "entgo.io/ent"
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
+)
 
 // Profile holds the schema definition for the Profile entity.
 type Profile struct {
@@ -14,5 +17,10 @@ func (Profile) Fields() []ent.Field {
 
 // Edges of the Profile.
 func (Profile) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("user", User.Type).Ref("profile").Unique(),
+		edge.To("account", Account.Type),
+		edge.To("transaction", Transaction.Type),
+		edge.To("overall_snapshot", OverallSnapshot.Type),
+	}
 }

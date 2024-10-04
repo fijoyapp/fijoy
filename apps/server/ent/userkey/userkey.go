@@ -4,6 +4,7 @@ package userkey
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,30 +12,35 @@ const (
 	Label = "user_key"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldHashedPassword holds the string denoting the hashed_password field in the database.
+	FieldHashedPassword = "hashed_password"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
 	// Table holds the table name of the userkey in the database.
 	Table = "user_keys"
+	// UserTable is the table that holds the user relation/edge. The primary key declared below.
+	UserTable = "user_user_key"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
 )
 
 // Columns holds all SQL columns for userkey fields.
 var Columns = []string{
 	FieldID,
+	FieldHashedPassword,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "user_keys"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"user_user_key",
-}
+var (
+	// UserPrimaryKey and UserColumn2 are the table columns denoting the
+	// primary key for the user relation (M2M).
+	UserPrimaryKey = []string{"user_id", "user_key_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -47,4 +53,30 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByHashedPassword orders the results by the hashed_password field.
+func ByHashedPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHashedPassword, opts...).ToFunc()
+}
+
+// ByUserCount orders the results by user count.
+func ByUserCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserStep(), opts...)
+	}
+}
+
+// ByUser orders the results by user terms.
+func ByUser(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, UserTable, UserPrimaryKey...),
+	)
 }

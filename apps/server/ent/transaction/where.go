@@ -4,8 +4,11 @@ package transaction
 
 import (
 	"fijoy/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/shopspring/decimal"
 )
 
 // ID filters vertices based on their ID field.
@@ -51,6 +54,502 @@ func IDLT(id int) predicate.Transaction {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldID, id))
+}
+
+// Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
+func Amount(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldAmount, v))
+}
+
+// AmountDelta applies equality check predicate on the "amount_delta" field. It's identical to AmountDeltaEQ.
+func AmountDelta(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldAmountDelta, v))
+}
+
+// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
+func Value(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldValue, v))
+}
+
+// FxRate applies equality check predicate on the "fx_rate" field. It's identical to FxRateEQ.
+func FxRate(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldFxRate, v))
+}
+
+// Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
+func Balance(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldBalance, v))
+}
+
+// BalanceDelta applies equality check predicate on the "balance_delta" field. It's identical to BalanceDeltaEQ.
+func BalanceDelta(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldBalanceDelta, v))
+}
+
+// Note applies equality check predicate on the "note" field. It's identical to NoteEQ.
+func Note(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldNote, v))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// AmountEQ applies the EQ predicate on the "amount" field.
+func AmountEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldAmount, v))
+}
+
+// AmountNEQ applies the NEQ predicate on the "amount" field.
+func AmountNEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldAmount, v))
+}
+
+// AmountIn applies the In predicate on the "amount" field.
+func AmountIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldAmount, vs...))
+}
+
+// AmountNotIn applies the NotIn predicate on the "amount" field.
+func AmountNotIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldAmount, vs...))
+}
+
+// AmountGT applies the GT predicate on the "amount" field.
+func AmountGT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldAmount, v))
+}
+
+// AmountGTE applies the GTE predicate on the "amount" field.
+func AmountGTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldAmount, v))
+}
+
+// AmountLT applies the LT predicate on the "amount" field.
+func AmountLT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldAmount, v))
+}
+
+// AmountLTE applies the LTE predicate on the "amount" field.
+func AmountLTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldAmount, v))
+}
+
+// AmountDeltaEQ applies the EQ predicate on the "amount_delta" field.
+func AmountDeltaEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldAmountDelta, v))
+}
+
+// AmountDeltaNEQ applies the NEQ predicate on the "amount_delta" field.
+func AmountDeltaNEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldAmountDelta, v))
+}
+
+// AmountDeltaIn applies the In predicate on the "amount_delta" field.
+func AmountDeltaIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldAmountDelta, vs...))
+}
+
+// AmountDeltaNotIn applies the NotIn predicate on the "amount_delta" field.
+func AmountDeltaNotIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldAmountDelta, vs...))
+}
+
+// AmountDeltaGT applies the GT predicate on the "amount_delta" field.
+func AmountDeltaGT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldAmountDelta, v))
+}
+
+// AmountDeltaGTE applies the GTE predicate on the "amount_delta" field.
+func AmountDeltaGTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldAmountDelta, v))
+}
+
+// AmountDeltaLT applies the LT predicate on the "amount_delta" field.
+func AmountDeltaLT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldAmountDelta, v))
+}
+
+// AmountDeltaLTE applies the LTE predicate on the "amount_delta" field.
+func AmountDeltaLTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldAmountDelta, v))
+}
+
+// ValueEQ applies the EQ predicate on the "value" field.
+func ValueEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldValue, v))
+}
+
+// ValueNEQ applies the NEQ predicate on the "value" field.
+func ValueNEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldValue, v))
+}
+
+// ValueIn applies the In predicate on the "value" field.
+func ValueIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldValue, vs...))
+}
+
+// ValueNotIn applies the NotIn predicate on the "value" field.
+func ValueNotIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldValue, vs...))
+}
+
+// ValueGT applies the GT predicate on the "value" field.
+func ValueGT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldValue, v))
+}
+
+// ValueGTE applies the GTE predicate on the "value" field.
+func ValueGTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldValue, v))
+}
+
+// ValueLT applies the LT predicate on the "value" field.
+func ValueLT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldValue, v))
+}
+
+// ValueLTE applies the LTE predicate on the "value" field.
+func ValueLTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldValue, v))
+}
+
+// FxRateEQ applies the EQ predicate on the "fx_rate" field.
+func FxRateEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldFxRate, v))
+}
+
+// FxRateNEQ applies the NEQ predicate on the "fx_rate" field.
+func FxRateNEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldFxRate, v))
+}
+
+// FxRateIn applies the In predicate on the "fx_rate" field.
+func FxRateIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldFxRate, vs...))
+}
+
+// FxRateNotIn applies the NotIn predicate on the "fx_rate" field.
+func FxRateNotIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldFxRate, vs...))
+}
+
+// FxRateGT applies the GT predicate on the "fx_rate" field.
+func FxRateGT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldFxRate, v))
+}
+
+// FxRateGTE applies the GTE predicate on the "fx_rate" field.
+func FxRateGTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldFxRate, v))
+}
+
+// FxRateLT applies the LT predicate on the "fx_rate" field.
+func FxRateLT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldFxRate, v))
+}
+
+// FxRateLTE applies the LTE predicate on the "fx_rate" field.
+func FxRateLTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldFxRate, v))
+}
+
+// FxRateIsNil applies the IsNil predicate on the "fx_rate" field.
+func FxRateIsNil() predicate.Transaction {
+	return predicate.Transaction(sql.FieldIsNull(FieldFxRate))
+}
+
+// FxRateNotNil applies the NotNil predicate on the "fx_rate" field.
+func FxRateNotNil() predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotNull(FieldFxRate))
+}
+
+// BalanceEQ applies the EQ predicate on the "balance" field.
+func BalanceEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldBalance, v))
+}
+
+// BalanceNEQ applies the NEQ predicate on the "balance" field.
+func BalanceNEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldBalance, v))
+}
+
+// BalanceIn applies the In predicate on the "balance" field.
+func BalanceIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldBalance, vs...))
+}
+
+// BalanceNotIn applies the NotIn predicate on the "balance" field.
+func BalanceNotIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldBalance, vs...))
+}
+
+// BalanceGT applies the GT predicate on the "balance" field.
+func BalanceGT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldBalance, v))
+}
+
+// BalanceGTE applies the GTE predicate on the "balance" field.
+func BalanceGTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldBalance, v))
+}
+
+// BalanceLT applies the LT predicate on the "balance" field.
+func BalanceLT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldBalance, v))
+}
+
+// BalanceLTE applies the LTE predicate on the "balance" field.
+func BalanceLTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldBalance, v))
+}
+
+// BalanceDeltaEQ applies the EQ predicate on the "balance_delta" field.
+func BalanceDeltaEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldBalanceDelta, v))
+}
+
+// BalanceDeltaNEQ applies the NEQ predicate on the "balance_delta" field.
+func BalanceDeltaNEQ(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldBalanceDelta, v))
+}
+
+// BalanceDeltaIn applies the In predicate on the "balance_delta" field.
+func BalanceDeltaIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldBalanceDelta, vs...))
+}
+
+// BalanceDeltaNotIn applies the NotIn predicate on the "balance_delta" field.
+func BalanceDeltaNotIn(vs ...decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldBalanceDelta, vs...))
+}
+
+// BalanceDeltaGT applies the GT predicate on the "balance_delta" field.
+func BalanceDeltaGT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldBalanceDelta, v))
+}
+
+// BalanceDeltaGTE applies the GTE predicate on the "balance_delta" field.
+func BalanceDeltaGTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldBalanceDelta, v))
+}
+
+// BalanceDeltaLT applies the LT predicate on the "balance_delta" field.
+func BalanceDeltaLT(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldBalanceDelta, v))
+}
+
+// BalanceDeltaLTE applies the LTE predicate on the "balance_delta" field.
+func BalanceDeltaLTE(v decimal.Decimal) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldBalanceDelta, v))
+}
+
+// NoteEQ applies the EQ predicate on the "note" field.
+func NoteEQ(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldNote, v))
+}
+
+// NoteNEQ applies the NEQ predicate on the "note" field.
+func NoteNEQ(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldNote, v))
+}
+
+// NoteIn applies the In predicate on the "note" field.
+func NoteIn(vs ...string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldNote, vs...))
+}
+
+// NoteNotIn applies the NotIn predicate on the "note" field.
+func NoteNotIn(vs ...string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldNote, vs...))
+}
+
+// NoteGT applies the GT predicate on the "note" field.
+func NoteGT(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldNote, v))
+}
+
+// NoteGTE applies the GTE predicate on the "note" field.
+func NoteGTE(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldNote, v))
+}
+
+// NoteLT applies the LT predicate on the "note" field.
+func NoteLT(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldNote, v))
+}
+
+// NoteLTE applies the LTE predicate on the "note" field.
+func NoteLTE(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldNote, v))
+}
+
+// NoteContains applies the Contains predicate on the "note" field.
+func NoteContains(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldContains(FieldNote, v))
+}
+
+// NoteHasPrefix applies the HasPrefix predicate on the "note" field.
+func NoteHasPrefix(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldHasPrefix(FieldNote, v))
+}
+
+// NoteHasSuffix applies the HasSuffix predicate on the "note" field.
+func NoteHasSuffix(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldHasSuffix(FieldNote, v))
+}
+
+// NoteIsNil applies the IsNil predicate on the "note" field.
+func NoteIsNil() predicate.Transaction {
+	return predicate.Transaction(sql.FieldIsNull(FieldNote))
+}
+
+// NoteNotNil applies the NotNil predicate on the "note" field.
+func NoteNotNil() predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotNull(FieldNote))
+}
+
+// NoteEqualFold applies the EqualFold predicate on the "note" field.
+func NoteEqualFold(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEqualFold(FieldNote, v))
+}
+
+// NoteContainsFold applies the ContainsFold predicate on the "note" field.
+func NoteContainsFold(v string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldContainsFold(FieldNote, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Transaction {
+	return predicate.Transaction(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// HasProfile applies the HasEdge predicate on the "profile" edge.
+func HasProfile() predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasProfileWith applies the HasEdge predicate on the "profile" edge with a given conditions (other predicates).
+func HasProfileWith(preds ...predicate.Profile) predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := newProfileStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAccount applies the HasEdge predicate on the "account" edge.
+func HasAccount() predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AccountTable, AccountPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAccountWith applies the HasEdge predicate on the "account" edge with a given conditions (other predicates).
+func HasAccountWith(preds ...predicate.Account) predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := newAccountStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

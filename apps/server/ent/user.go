@@ -31,9 +31,11 @@ type User struct {
 type UserEdges struct {
 	// UserKey holds the value of the user_key edge.
 	UserKey []*UserKey `json:"user_key,omitempty"`
+	// Profile holds the value of the profile edge.
+	Profile []*Profile `json:"profile,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UserKeyOrErr returns the UserKey value or an error if the edge
@@ -43,6 +45,15 @@ func (e UserEdges) UserKeyOrErr() ([]*UserKey, error) {
 		return e.UserKey, nil
 	}
 	return nil, &NotLoadedError{edge: "user_key"}
+}
+
+// ProfileOrErr returns the Profile value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ProfileOrErr() ([]*Profile, error) {
+	if e.loadedTypes[1] {
+		return e.Profile, nil
+	}
+	return nil, &NotLoadedError{edge: "profile"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -105,6 +116,11 @@ func (u *User) Value(name string) (ent.Value, error) {
 // QueryUserKey queries the "user_key" edge of the User entity.
 func (u *User) QueryUserKey() *UserKeyQuery {
 	return NewUserClient(u.config).QueryUserKey(u)
+}
+
+// QueryProfile queries the "profile" edge of the User entity.
+func (u *User) QueryProfile() *ProfileQuery {
+	return NewUserClient(u.config).QueryProfile(u)
 }
 
 // Update returns a builder for updating this User.

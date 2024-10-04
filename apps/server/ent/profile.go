@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fijoy/ent/profile"
+	"fijoy/ent/user"
 	"fmt"
 	"strings"
 
@@ -15,8 +16,65 @@ import (
 type Profile struct {
 	config
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the ProfileQuery when eager-loading is set.
+	Edges        ProfileEdges `json:"edges"`
+	user_profile *int
 	selectValues sql.SelectValues
+}
+
+// ProfileEdges holds the relations/edges for other nodes in the graph.
+type ProfileEdges struct {
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// Account holds the value of the account edge.
+	Account []*Account `json:"account,omitempty"`
+	// Transaction holds the value of the transaction edge.
+	Transaction []*Transaction `json:"transaction,omitempty"`
+	// OverallSnapshot holds the value of the overall_snapshot edge.
+	OverallSnapshot []*OverallSnapshot `json:"overall_snapshot,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [4]bool
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ProfileEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
+// AccountOrErr returns the Account value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProfileEdges) AccountOrErr() ([]*Account, error) {
+	if e.loadedTypes[1] {
+		return e.Account, nil
+	}
+	return nil, &NotLoadedError{edge: "account"}
+}
+
+// TransactionOrErr returns the Transaction value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProfileEdges) TransactionOrErr() ([]*Transaction, error) {
+	if e.loadedTypes[2] {
+		return e.Transaction, nil
+	}
+	return nil, &NotLoadedError{edge: "transaction"}
+}
+
+// OverallSnapshotOrErr returns the OverallSnapshot value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProfileEdges) OverallSnapshotOrErr() ([]*OverallSnapshot, error) {
+	if e.loadedTypes[3] {
+		return e.OverallSnapshot, nil
+	}
+	return nil, &NotLoadedError{edge: "overall_snapshot"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -25,6 +83,8 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 	for i := range columns {
 		switch columns[i] {
 		case profile.FieldID:
+			values[i] = new(sql.NullInt64)
+		case profile.ForeignKeys[0]: // user_profile
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -47,6 +107,13 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			pr.ID = int(value.Int64)
+		case profile.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_profile", value)
+			} else if value.Valid {
+				pr.user_profile = new(int)
+				*pr.user_profile = int(value.Int64)
+			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
 		}
@@ -58,6 +125,26 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (pr *Profile) Value(name string) (ent.Value, error) {
 	return pr.selectValues.Get(name)
+}
+
+// QueryUser queries the "user" edge of the Profile entity.
+func (pr *Profile) QueryUser() *UserQuery {
+	return NewProfileClient(pr.config).QueryUser(pr)
+}
+
+// QueryAccount queries the "account" edge of the Profile entity.
+func (pr *Profile) QueryAccount() *AccountQuery {
+	return NewProfileClient(pr.config).QueryAccount(pr)
+}
+
+// QueryTransaction queries the "transaction" edge of the Profile entity.
+func (pr *Profile) QueryTransaction() *TransactionQuery {
+	return NewProfileClient(pr.config).QueryTransaction(pr)
+}
+
+// QueryOverallSnapshot queries the "overall_snapshot" edge of the Profile entity.
+func (pr *Profile) QueryOverallSnapshot() *OverallSnapshotQuery {
+	return NewProfileClient(pr.config).QueryOverallSnapshot(pr)
 }
 
 // Update returns a builder for updating this Profile.

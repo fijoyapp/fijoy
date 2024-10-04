@@ -364,6 +364,54 @@ func (c *AccountClient) GetX(ctx context.Context, id int) *Account {
 	return obj
 }
 
+// QueryProfile queries the profile edge of a Account.
+func (c *AccountClient) QueryProfile(a *Account) *ProfileQuery {
+	query := (&ProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, id),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, account.ProfileTable, account.ProfilePrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAccountSnapshot queries the account_snapshot edge of a Account.
+func (c *AccountClient) QueryAccountSnapshot(a *Account) *AccountSnapshotQuery {
+	query := (&AccountSnapshotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, id),
+			sqlgraph.To(accountsnapshot.Table, accountsnapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, account.AccountSnapshotTable, account.AccountSnapshotPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransaction queries the transaction edge of a Account.
+func (c *AccountClient) QueryTransaction(a *Account) *TransactionQuery {
+	query := (&TransactionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, id),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, account.TransactionTable, account.TransactionPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AccountClient) Hooks() []Hook {
 	return c.hooks.Account
@@ -495,6 +543,22 @@ func (c *AccountSnapshotClient) GetX(ctx context.Context, id int) *AccountSnapsh
 		panic(err)
 	}
 	return obj
+}
+
+// QueryAccount queries the account edge of a AccountSnapshot.
+func (c *AccountSnapshotClient) QueryAccount(as *AccountSnapshot) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := as.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(accountsnapshot.Table, accountsnapshot.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, accountsnapshot.AccountTable, accountsnapshot.AccountPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(as.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -630,6 +694,22 @@ func (c *OverallSnapshotClient) GetX(ctx context.Context, id int) *OverallSnapsh
 	return obj
 }
 
+// QueryProfile queries the profile edge of a OverallSnapshot.
+func (c *OverallSnapshotClient) QueryProfile(os *OverallSnapshot) *ProfileQuery {
+	query := (&ProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := os.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(overallsnapshot.Table, overallsnapshot.FieldID, id),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, overallsnapshot.ProfileTable, overallsnapshot.ProfilePrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(os.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *OverallSnapshotClient) Hooks() []Hook {
 	return c.hooks.OverallSnapshot
@@ -763,6 +843,70 @@ func (c *ProfileClient) GetX(ctx context.Context, id int) *Profile {
 	return obj
 }
 
+// QueryUser queries the user edge of a Profile.
+func (c *ProfileClient) QueryUser(pr *Profile) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, profile.UserTable, profile.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAccount queries the account edge of a Profile.
+func (c *ProfileClient) QueryAccount(pr *Profile) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, profile.AccountTable, profile.AccountPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransaction queries the transaction edge of a Profile.
+func (c *ProfileClient) QueryTransaction(pr *Profile) *TransactionQuery {
+	query := (&TransactionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, id),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, profile.TransactionTable, profile.TransactionPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOverallSnapshot queries the overall_snapshot edge of a Profile.
+func (c *ProfileClient) QueryOverallSnapshot(pr *Profile) *OverallSnapshotQuery {
+	query := (&OverallSnapshotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, id),
+			sqlgraph.To(overallsnapshot.Table, overallsnapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ProfileClient) Hooks() []Hook {
 	return c.hooks.Profile
@@ -894,6 +1038,38 @@ func (c *TransactionClient) GetX(ctx context.Context, id int) *Transaction {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryProfile queries the profile edge of a Transaction.
+func (c *TransactionClient) QueryProfile(t *Transaction) *ProfileQuery {
+	query := (&ProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transaction.Table, transaction.FieldID, id),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, transaction.ProfileTable, transaction.ProfilePrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAccount queries the account edge of a Transaction.
+func (c *TransactionClient) QueryAccount(t *Transaction) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := t.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transaction.Table, transaction.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, transaction.AccountTable, transaction.AccountPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -1037,7 +1213,23 @@ func (c *UserClient) QueryUserKey(u *User) *UserKeyQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(userkey.Table, userkey.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeyTable, user.UserKeyColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.UserKeyTable, user.UserKeyPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryProfile queries the profile edge of a User.
+func (c *UserClient) QueryProfile(u *User) *ProfileQuery {
+	query := (&ProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfileTable, user.ProfileColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -1176,6 +1368,22 @@ func (c *UserKeyClient) GetX(ctx context.Context, id int) *UserKey {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryUser queries the user edge of a UserKey.
+func (c *UserKeyClient) QueryUser(uk *UserKey) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := uk.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userkey.Table, userkey.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, userkey.UserTable, userkey.UserPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(uk.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

@@ -20,15 +20,22 @@ const (
 	FieldCreatedAt = "created_at"
 	// EdgeUserKey holds the string denoting the user_key edge name in mutations.
 	EdgeUserKey = "user_key"
+	// EdgeProfile holds the string denoting the profile edge name in mutations.
+	EdgeProfile = "profile"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// UserKeyTable is the table that holds the user_key relation/edge.
-	UserKeyTable = "user_keys"
+	// UserKeyTable is the table that holds the user_key relation/edge. The primary key declared below.
+	UserKeyTable = "user_user_key"
 	// UserKeyInverseTable is the table name for the UserKey entity.
 	// It exists in this package in order to avoid circular dependency with the "userkey" package.
 	UserKeyInverseTable = "user_keys"
-	// UserKeyColumn is the table column denoting the user_key relation/edge.
-	UserKeyColumn = "user_user_key"
+	// ProfileTable is the table that holds the profile relation/edge.
+	ProfileTable = "profiles"
+	// ProfileInverseTable is the table name for the Profile entity.
+	// It exists in this package in order to avoid circular dependency with the "profile" package.
+	ProfileInverseTable = "profiles"
+	// ProfileColumn is the table column denoting the profile relation/edge.
+	ProfileColumn = "user_profile"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -37,6 +44,12 @@ var Columns = []string{
 	FieldEmail,
 	FieldCreatedAt,
 }
+
+var (
+	// UserKeyPrimaryKey and UserKeyColumn2 are the table columns denoting the
+	// primary key for the user_key relation (M2M).
+	UserKeyPrimaryKey = []string{"user_id", "user_key_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -86,10 +99,31 @@ func ByUserKey(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUserKeyStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByProfileCount orders the results by profile count.
+func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
+	}
+}
+
+// ByProfile orders the results by profile terms.
+func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserKeyStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserKeyInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, UserKeyTable, UserKeyColumn),
+		sqlgraph.Edge(sqlgraph.M2M, false, UserKeyTable, UserKeyPrimaryKey...),
+	)
+}
+func newProfileStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProfileInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProfileTable, ProfileColumn),
 	)
 }

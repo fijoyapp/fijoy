@@ -4,7 +4,11 @@ package ent
 
 import (
 	"context"
+	"fijoy/ent/account"
+	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/profile"
+	"fijoy/ent/transaction"
+	"fijoy/ent/user"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -16,6 +20,70 @@ type ProfileCreate struct {
 	config
 	mutation *ProfileMutation
 	hooks    []Hook
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (pc *ProfileCreate) SetUserID(id int) *ProfileCreate {
+	pc.mutation.SetUserID(id)
+	return pc
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (pc *ProfileCreate) SetNillableUserID(id *int) *ProfileCreate {
+	if id != nil {
+		pc = pc.SetUserID(*id)
+	}
+	return pc
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (pc *ProfileCreate) SetUser(u *User) *ProfileCreate {
+	return pc.SetUserID(u.ID)
+}
+
+// AddAccountIDs adds the "account" edge to the Account entity by IDs.
+func (pc *ProfileCreate) AddAccountIDs(ids ...int) *ProfileCreate {
+	pc.mutation.AddAccountIDs(ids...)
+	return pc
+}
+
+// AddAccount adds the "account" edges to the Account entity.
+func (pc *ProfileCreate) AddAccount(a ...*Account) *ProfileCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return pc.AddAccountIDs(ids...)
+}
+
+// AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
+func (pc *ProfileCreate) AddTransactionIDs(ids ...int) *ProfileCreate {
+	pc.mutation.AddTransactionIDs(ids...)
+	return pc
+}
+
+// AddTransaction adds the "transaction" edges to the Transaction entity.
+func (pc *ProfileCreate) AddTransaction(t ...*Transaction) *ProfileCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return pc.AddTransactionIDs(ids...)
+}
+
+// AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
+func (pc *ProfileCreate) AddOverallSnapshotIDs(ids ...int) *ProfileCreate {
+	pc.mutation.AddOverallSnapshotIDs(ids...)
+	return pc
+}
+
+// AddOverallSnapshot adds the "overall_snapshot" edges to the OverallSnapshot entity.
+func (pc *ProfileCreate) AddOverallSnapshot(o ...*OverallSnapshot) *ProfileCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return pc.AddOverallSnapshotIDs(ids...)
 }
 
 // Mutation returns the ProfileMutation object of the builder.
@@ -78,6 +146,71 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_node = &Profile{config: pc.config}
 		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	)
+	if nodes := pc.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   profile.UserTable,
+			Columns: []string{profile.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_profile = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.AccountIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   profile.AccountTable,
+			Columns: profile.AccountPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.TransactionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   profile.TransactionTable,
+			Columns: profile.TransactionPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.OverallSnapshotIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   profile.OverallSnapshotTable,
+			Columns: profile.OverallSnapshotPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 

@@ -4,6 +4,7 @@ package overallsnapshot
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,14 +12,45 @@ const (
 	Label = "overall_snapshot"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldDatehour holds the string denoting the datehour field in the database.
+	FieldDatehour = "datehour"
+	// FieldLiquidity holds the string denoting the liquidity field in the database.
+	FieldLiquidity = "liquidity"
+	// FieldInvestment holds the string denoting the investment field in the database.
+	FieldInvestment = "investment"
+	// FieldProperty holds the string denoting the property field in the database.
+	FieldProperty = "property"
+	// FieldReceivable holds the string denoting the receivable field in the database.
+	FieldReceivable = "receivable"
+	// FieldLiablity holds the string denoting the liablity field in the database.
+	FieldLiablity = "liablity"
+	// EdgeProfile holds the string denoting the profile edge name in mutations.
+	EdgeProfile = "profile"
 	// Table holds the table name of the overallsnapshot in the database.
 	Table = "overall_snapshots"
+	// ProfileTable is the table that holds the profile relation/edge. The primary key declared below.
+	ProfileTable = "profile_overall_snapshot"
+	// ProfileInverseTable is the table name for the Profile entity.
+	// It exists in this package in order to avoid circular dependency with the "profile" package.
+	ProfileInverseTable = "profiles"
 )
 
 // Columns holds all SQL columns for overallsnapshot fields.
 var Columns = []string{
 	FieldID,
+	FieldDatehour,
+	FieldLiquidity,
+	FieldInvestment,
+	FieldProperty,
+	FieldReceivable,
+	FieldLiablity,
 }
+
+var (
+	// ProfilePrimaryKey and ProfileColumn2 are the table columns denoting the
+	// primary key for the profile relation (M2M).
+	ProfilePrimaryKey = []string{"profile_id", "overall_snapshot_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -36,4 +68,55 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByDatehour orders the results by the datehour field.
+func ByDatehour(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDatehour, opts...).ToFunc()
+}
+
+// ByLiquidity orders the results by the liquidity field.
+func ByLiquidity(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLiquidity, opts...).ToFunc()
+}
+
+// ByInvestment orders the results by the investment field.
+func ByInvestment(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInvestment, opts...).ToFunc()
+}
+
+// ByProperty orders the results by the property field.
+func ByProperty(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProperty, opts...).ToFunc()
+}
+
+// ByReceivable orders the results by the receivable field.
+func ByReceivable(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReceivable, opts...).ToFunc()
+}
+
+// ByLiablity orders the results by the liablity field.
+func ByLiablity(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLiablity, opts...).ToFunc()
+}
+
+// ByProfileCount orders the results by profile count.
+func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
+	}
+}
+
+// ByProfile orders the results by profile terms.
+func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newProfileStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ProfileInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+	)
 }

@@ -4,11 +4,16 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fijoy/ent/overallsnapshot"
+	"fijoy/ent/profile"
 	"fmt"
+	"time"
 
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
 )
 
 // OverallSnapshotCreate is the builder for creating a OverallSnapshot entity.
@@ -16,6 +21,57 @@ type OverallSnapshotCreate struct {
 	config
 	mutation *OverallSnapshotMutation
 	hooks    []Hook
+}
+
+// SetDatehour sets the "datehour" field.
+func (osc *OverallSnapshotCreate) SetDatehour(t time.Time) *OverallSnapshotCreate {
+	osc.mutation.SetDatehour(t)
+	return osc
+}
+
+// SetLiquidity sets the "liquidity" field.
+func (osc *OverallSnapshotCreate) SetLiquidity(d decimal.Decimal) *OverallSnapshotCreate {
+	osc.mutation.SetLiquidity(d)
+	return osc
+}
+
+// SetInvestment sets the "investment" field.
+func (osc *OverallSnapshotCreate) SetInvestment(d decimal.Decimal) *OverallSnapshotCreate {
+	osc.mutation.SetInvestment(d)
+	return osc
+}
+
+// SetProperty sets the "property" field.
+func (osc *OverallSnapshotCreate) SetProperty(d decimal.Decimal) *OverallSnapshotCreate {
+	osc.mutation.SetProperty(d)
+	return osc
+}
+
+// SetReceivable sets the "receivable" field.
+func (osc *OverallSnapshotCreate) SetReceivable(d decimal.Decimal) *OverallSnapshotCreate {
+	osc.mutation.SetReceivable(d)
+	return osc
+}
+
+// SetLiablity sets the "liablity" field.
+func (osc *OverallSnapshotCreate) SetLiablity(d decimal.Decimal) *OverallSnapshotCreate {
+	osc.mutation.SetLiablity(d)
+	return osc
+}
+
+// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
+func (osc *OverallSnapshotCreate) AddProfileIDs(ids ...int) *OverallSnapshotCreate {
+	osc.mutation.AddProfileIDs(ids...)
+	return osc
+}
+
+// AddProfile adds the "profile" edges to the Profile entity.
+func (osc *OverallSnapshotCreate) AddProfile(p ...*Profile) *OverallSnapshotCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return osc.AddProfileIDs(ids...)
 }
 
 // Mutation returns the OverallSnapshotMutation object of the builder.
@@ -52,6 +108,27 @@ func (osc *OverallSnapshotCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (osc *OverallSnapshotCreate) check() error {
+	switch osc.driver.Dialect() {
+	case dialect.MySQL, dialect.SQLite:
+		if _, ok := osc.mutation.Datehour(); !ok {
+			return &ValidationError{Name: "datehour", err: errors.New(`ent: missing required field "OverallSnapshot.datehour"`)}
+		}
+	}
+	if _, ok := osc.mutation.Liquidity(); !ok {
+		return &ValidationError{Name: "liquidity", err: errors.New(`ent: missing required field "OverallSnapshot.liquidity"`)}
+	}
+	if _, ok := osc.mutation.Investment(); !ok {
+		return &ValidationError{Name: "investment", err: errors.New(`ent: missing required field "OverallSnapshot.investment"`)}
+	}
+	if _, ok := osc.mutation.Property(); !ok {
+		return &ValidationError{Name: "property", err: errors.New(`ent: missing required field "OverallSnapshot.property"`)}
+	}
+	if _, ok := osc.mutation.Receivable(); !ok {
+		return &ValidationError{Name: "receivable", err: errors.New(`ent: missing required field "OverallSnapshot.receivable"`)}
+	}
+	if _, ok := osc.mutation.Liablity(); !ok {
+		return &ValidationError{Name: "liablity", err: errors.New(`ent: missing required field "OverallSnapshot.liablity"`)}
+	}
 	return nil
 }
 
@@ -78,6 +155,46 @@ func (osc *OverallSnapshotCreate) createSpec() (*OverallSnapshot, *sqlgraph.Crea
 		_node = &OverallSnapshot{config: osc.config}
 		_spec = sqlgraph.NewCreateSpec(overallsnapshot.Table, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt))
 	)
+	if value, ok := osc.mutation.Datehour(); ok {
+		_spec.SetField(overallsnapshot.FieldDatehour, field.TypeTime, value)
+		_node.Datehour = value
+	}
+	if value, ok := osc.mutation.Liquidity(); ok {
+		_spec.SetField(overallsnapshot.FieldLiquidity, field.TypeFloat64, value)
+		_node.Liquidity = value
+	}
+	if value, ok := osc.mutation.Investment(); ok {
+		_spec.SetField(overallsnapshot.FieldInvestment, field.TypeFloat64, value)
+		_node.Investment = value
+	}
+	if value, ok := osc.mutation.Property(); ok {
+		_spec.SetField(overallsnapshot.FieldProperty, field.TypeFloat64, value)
+		_node.Property = value
+	}
+	if value, ok := osc.mutation.Receivable(); ok {
+		_spec.SetField(overallsnapshot.FieldReceivable, field.TypeFloat64, value)
+		_node.Receivable = value
+	}
+	if value, ok := osc.mutation.Liablity(); ok {
+		_spec.SetField(overallsnapshot.FieldLiablity, field.TypeFloat64, value)
+		_node.Liablity = value
+	}
+	if nodes := osc.mutation.ProfileIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   overallsnapshot.ProfileTable,
+			Columns: overallsnapshot.ProfilePrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 

@@ -1,6 +1,13 @@
 package schema
 
-import "entgo.io/ent"
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
+)
 
 // OverallSnapshot holds the schema definition for the OverallSnapshot entity.
 type OverallSnapshot struct {
@@ -9,10 +16,50 @@ type OverallSnapshot struct {
 
 // Fields of the OverallSnapshot.
 func (OverallSnapshot) Fields() []ent.Field {
-	return nil
+	return []ent.Field{
+		field.Time("datehour").
+			Annotations(
+				entsql.DefaultExprs(map[string]string{
+					dialect.Postgres: "date_trunc('hour', now())",
+				}),
+			),
+
+		field.Float("liquidity").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+		field.Float("investment").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+		field.Float("property").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+		field.Float("receivable").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+		field.Float("liablity").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(38,18)",
+				dialect.Postgres: "numeric(38,18)",
+			}),
+	}
 }
 
 // Edges of the OverallSnapshot.
 func (OverallSnapshot) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("profile", Profile.Type).Ref("overall_snapshot"),
+	}
 }

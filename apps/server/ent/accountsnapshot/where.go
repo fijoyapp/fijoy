@@ -4,8 +4,11 @@ package accountsnapshot
 
 import (
 	"fijoy/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/shopspring/decimal"
 )
 
 // ID filters vertices based on their ID field.
@@ -51,6 +54,119 @@ func IDLT(id int) predicate.AccountSnapshot {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldLTE(FieldID, id))
+}
+
+// Datehour applies equality check predicate on the "datehour" field. It's identical to DatehourEQ.
+func Datehour(v time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldEQ(FieldDatehour, v))
+}
+
+// Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
+func Balance(v decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldEQ(FieldBalance, v))
+}
+
+// DatehourEQ applies the EQ predicate on the "datehour" field.
+func DatehourEQ(v time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldEQ(FieldDatehour, v))
+}
+
+// DatehourNEQ applies the NEQ predicate on the "datehour" field.
+func DatehourNEQ(v time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldNEQ(FieldDatehour, v))
+}
+
+// DatehourIn applies the In predicate on the "datehour" field.
+func DatehourIn(vs ...time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldIn(FieldDatehour, vs...))
+}
+
+// DatehourNotIn applies the NotIn predicate on the "datehour" field.
+func DatehourNotIn(vs ...time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldNotIn(FieldDatehour, vs...))
+}
+
+// DatehourGT applies the GT predicate on the "datehour" field.
+func DatehourGT(v time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldGT(FieldDatehour, v))
+}
+
+// DatehourGTE applies the GTE predicate on the "datehour" field.
+func DatehourGTE(v time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldGTE(FieldDatehour, v))
+}
+
+// DatehourLT applies the LT predicate on the "datehour" field.
+func DatehourLT(v time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldLT(FieldDatehour, v))
+}
+
+// DatehourLTE applies the LTE predicate on the "datehour" field.
+func DatehourLTE(v time.Time) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldLTE(FieldDatehour, v))
+}
+
+// BalanceEQ applies the EQ predicate on the "balance" field.
+func BalanceEQ(v decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldEQ(FieldBalance, v))
+}
+
+// BalanceNEQ applies the NEQ predicate on the "balance" field.
+func BalanceNEQ(v decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldNEQ(FieldBalance, v))
+}
+
+// BalanceIn applies the In predicate on the "balance" field.
+func BalanceIn(vs ...decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldIn(FieldBalance, vs...))
+}
+
+// BalanceNotIn applies the NotIn predicate on the "balance" field.
+func BalanceNotIn(vs ...decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldNotIn(FieldBalance, vs...))
+}
+
+// BalanceGT applies the GT predicate on the "balance" field.
+func BalanceGT(v decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldGT(FieldBalance, v))
+}
+
+// BalanceGTE applies the GTE predicate on the "balance" field.
+func BalanceGTE(v decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldGTE(FieldBalance, v))
+}
+
+// BalanceLT applies the LT predicate on the "balance" field.
+func BalanceLT(v decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldLT(FieldBalance, v))
+}
+
+// BalanceLTE applies the LTE predicate on the "balance" field.
+func BalanceLTE(v decimal.Decimal) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldLTE(FieldBalance, v))
+}
+
+// HasAccount applies the HasEdge predicate on the "account" edge.
+func HasAccount() predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AccountTable, AccountPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAccountWith applies the HasEdge predicate on the "account" edge with a given conditions (other predicates).
+func HasAccountWith(preds ...predicate.Account) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(func(s *sql.Selector) {
+		step := newAccountStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

@@ -13,11 +13,33 @@ import (
 
 // UserKey is the model entity for the UserKey schema.
 type UserKey struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID            int `json:"id,omitempty"`
-	user_user_key *int
-	selectValues  sql.SelectValues
+	ID int `json:"id,omitempty"`
+	// HashedPassword holds the value of the "hashed_password" field.
+	HashedPassword string `json:"hashed_password,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserKeyQuery when eager-loading is set.
+	Edges        UserKeyEdges `json:"edges"`
+	selectValues sql.SelectValues
+}
+
+// UserKeyEdges holds the relations/edges for other nodes in the graph.
+type UserKeyEdges struct {
+	// User holds the value of the user edge.
+	User []*User `json:"user,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserKeyEdges) UserOrErr() ([]*User, error) {
+	if e.loadedTypes[0] {
+		return e.User, nil
+	}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -27,8 +49,8 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case userkey.FieldID:
 			values[i] = new(sql.NullInt64)
-		case userkey.ForeignKeys[0]: // user_user_key
-			values[i] = new(sql.NullInt64)
+		case userkey.FieldHashedPassword:
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -50,12 +72,11 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			uk.ID = int(value.Int64)
-		case userkey.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_user_key", value)
+		case userkey.FieldHashedPassword:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field hashed_password", values[i])
 			} else if value.Valid {
-				uk.user_user_key = new(int)
-				*uk.user_user_key = int(value.Int64)
+				uk.HashedPassword = value.String
 			}
 		default:
 			uk.selectValues.Set(columns[i], values[i])
@@ -68,6 +89,11 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (uk *UserKey) Value(name string) (ent.Value, error) {
 	return uk.selectValues.Get(name)
+}
+
+// QueryUser queries the "user" edge of the UserKey entity.
+func (uk *UserKey) QueryUser() *UserQuery {
+	return NewUserKeyClient(uk.config).QueryUser(uk)
 }
 
 // Update returns a builder for updating this UserKey.
@@ -92,7 +118,9 @@ func (uk *UserKey) Unwrap() *UserKey {
 func (uk *UserKey) String() string {
 	var builder strings.Builder
 	builder.WriteString("UserKey(")
-	builder.WriteString(fmt.Sprintf("id=%v", uk.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", uk.ID))
+	builder.WriteString("hashed_password=")
+	builder.WriteString(uk.HashedPassword)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -25,5 +25,6 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("user_key", UserKey.Type),
+		edge.To("profile", Profile.Type),
 	}
 }

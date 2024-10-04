@@ -4,8 +4,13 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
+	"fijoy/ent/account"
+	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
+	"fijoy/ent/transaction"
+	"fijoy/ent/user"
 	"fmt"
 	"math"
 
@@ -18,10 +23,15 @@ import (
 // ProfileQuery is the builder for querying Profile entities.
 type ProfileQuery struct {
 	config
-	ctx        *QueryContext
-	order      []profile.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Profile
+	ctx                 *QueryContext
+	order               []profile.OrderOption
+	inters              []Interceptor
+	predicates          []predicate.Profile
+	withUser            *UserQuery
+	withAccount         *AccountQuery
+	withTransaction     *TransactionQuery
+	withOverallSnapshot *OverallSnapshotQuery
+	withFKs             bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -56,6 +66,94 @@ func (pq *ProfileQuery) Unique(unique bool) *ProfileQuery {
 func (pq *ProfileQuery) Order(o ...profile.OrderOption) *ProfileQuery {
 	pq.order = append(pq.order, o...)
 	return pq
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (pq *ProfileQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, profile.UserTable, profile.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAccount chains the current query on the "account" edge.
+func (pq *ProfileQuery) QueryAccount() *AccountQuery {
+	query := (&AccountClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, selector),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, profile.AccountTable, profile.AccountPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTransaction chains the current query on the "transaction" edge.
+func (pq *ProfileQuery) QueryTransaction() *TransactionQuery {
+	query := (&TransactionClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, selector),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, profile.TransactionTable, profile.TransactionPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOverallSnapshot chains the current query on the "overall_snapshot" edge.
+func (pq *ProfileQuery) QueryOverallSnapshot() *OverallSnapshotQuery {
+	query := (&OverallSnapshotClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, selector),
+			sqlgraph.To(overallsnapshot.Table, overallsnapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Profile entity from the query.
@@ -245,15 +343,63 @@ func (pq *ProfileQuery) Clone() *ProfileQuery {
 		return nil
 	}
 	return &ProfileQuery{
-		config:     pq.config,
-		ctx:        pq.ctx.Clone(),
-		order:      append([]profile.OrderOption{}, pq.order...),
-		inters:     append([]Interceptor{}, pq.inters...),
-		predicates: append([]predicate.Profile{}, pq.predicates...),
+		config:              pq.config,
+		ctx:                 pq.ctx.Clone(),
+		order:               append([]profile.OrderOption{}, pq.order...),
+		inters:              append([]Interceptor{}, pq.inters...),
+		predicates:          append([]predicate.Profile{}, pq.predicates...),
+		withUser:            pq.withUser.Clone(),
+		withAccount:         pq.withAccount.Clone(),
+		withTransaction:     pq.withTransaction.Clone(),
+		withOverallSnapshot: pq.withOverallSnapshot.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
 	}
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithUser(opts ...func(*UserQuery)) *ProfileQuery {
+	query := (&UserClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withUser = query
+	return pq
+}
+
+// WithAccount tells the query-builder to eager-load the nodes that are connected to
+// the "account" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithAccount(opts ...func(*AccountQuery)) *ProfileQuery {
+	query := (&AccountClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withAccount = query
+	return pq
+}
+
+// WithTransaction tells the query-builder to eager-load the nodes that are connected to
+// the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithTransaction(opts ...func(*TransactionQuery)) *ProfileQuery {
+	query := (&TransactionClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withTransaction = query
+	return pq
+}
+
+// WithOverallSnapshot tells the query-builder to eager-load the nodes that are connected to
+// the "overall_snapshot" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithOverallSnapshot(opts ...func(*OverallSnapshotQuery)) *ProfileQuery {
+	query := (&OverallSnapshotClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withOverallSnapshot = query
+	return pq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -310,15 +456,29 @@ func (pq *ProfileQuery) prepareQuery(ctx context.Context) error {
 
 func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Profile, error) {
 	var (
-		nodes = []*Profile{}
-		_spec = pq.querySpec()
+		nodes       = []*Profile{}
+		withFKs     = pq.withFKs
+		_spec       = pq.querySpec()
+		loadedTypes = [4]bool{
+			pq.withUser != nil,
+			pq.withAccount != nil,
+			pq.withTransaction != nil,
+			pq.withOverallSnapshot != nil,
+		}
 	)
+	if pq.withUser != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, profile.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Profile).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Profile{config: pq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -330,7 +490,250 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := pq.withUser; query != nil {
+		if err := pq.loadUser(ctx, query, nodes, nil,
+			func(n *Profile, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := pq.withAccount; query != nil {
+		if err := pq.loadAccount(ctx, query, nodes,
+			func(n *Profile) { n.Edges.Account = []*Account{} },
+			func(n *Profile, e *Account) { n.Edges.Account = append(n.Edges.Account, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := pq.withTransaction; query != nil {
+		if err := pq.loadTransaction(ctx, query, nodes,
+			func(n *Profile) { n.Edges.Transaction = []*Transaction{} },
+			func(n *Profile, e *Transaction) { n.Edges.Transaction = append(n.Edges.Transaction, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := pq.withOverallSnapshot; query != nil {
+		if err := pq.loadOverallSnapshot(ctx, query, nodes,
+			func(n *Profile) { n.Edges.OverallSnapshot = []*OverallSnapshot{} },
+			func(n *Profile, e *OverallSnapshot) { n.Edges.OverallSnapshot = append(n.Edges.OverallSnapshot, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Profile)
+	for i := range nodes {
+		if nodes[i].user_profile == nil {
+			continue
+		}
+		fk := *nodes[i].user_profile
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_profile" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (pq *ProfileQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Account)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Profile)
+	nids := make(map[int]map[*Profile]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(profile.AccountTable)
+		s.Join(joinT).On(s.C(account.FieldID), joinT.C(profile.AccountPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(profile.AccountPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(profile.AccountPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Profile]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Account](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "account" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (pq *ProfileQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Transaction)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Profile)
+	nids := make(map[int]map[*Profile]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(profile.TransactionTable)
+		s.Join(joinT).On(s.C(transaction.FieldID), joinT.C(profile.TransactionPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(profile.TransactionPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(profile.TransactionPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Profile]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Transaction](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "transaction" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (pq *ProfileQuery) loadOverallSnapshot(ctx context.Context, query *OverallSnapshotQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *OverallSnapshot)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Profile)
+	nids := make(map[int]map[*Profile]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(profile.OverallSnapshotTable)
+		s.Join(joinT).On(s.C(overallsnapshot.FieldID), joinT.C(profile.OverallSnapshotPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(profile.OverallSnapshotPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(profile.OverallSnapshotPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Profile]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*OverallSnapshot](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "overall_snapshot" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
 }
 
 func (pq *ProfileQuery) sqlCount(ctx context.Context) (int, error) {
