@@ -52,77 +52,32 @@ Make sure you have the following dependencies installed:
 - [Docker](https://docs.docker.com/get-started/get-docker/) or [OrbStack](https://orbstack.dev/)
   (Recommanded)
 
-Then you can do a quick `just init` to grab everything else.
+Then you can do a quick
 
-The next step is to setup all the environment variables.
+```bash
+just init
+```
+
+to grab everything else.
+
+### Environment Variables
 
 You can find more details in `apps/server/.env.example` and
 `apps/web/.env.example`.
 
-For local development, you can just copy the `.env.example` file to `.env`
+TLDR: For local development, you can just copy the `.env.example` files to `.env`
 and you do not need to change anything!
 
-To start the project, you can run `just dev`. (Make sure Docker is running!)
+### Start
 
-### gRPC
-
-We use [gRPC](https://grpc.io/) to exchange data between the server and the web.
-All Proto files are located in `packages/proto`.
-
-Just remember to run:
+To start the project, you can run
 
 ```bash
-just buf # regenerate gRPC files
+just dev # Make sure Docker/OrbStack is running!
 ```
 
-after you make changes to the Proto files.
+More details on how to get started can be found in [docs/contribution.md](docs/contribution.md).
+Please also give [docs/design-choices.md](docs/design-choices.md) a read to understand
+why things are done in the way they are :)
 
-Note: We are using [buf](https://buf.build/) to manage our Proto files.
-
-### Server
-
-Nothing special here for the moment. Just a plain old Go server.
-
-### Database
-
-We are using [ent](https://entgo.io/) to define our database schema
-and generate migrations. I think it is a very underrated ORM tool.
-
-To add a new entity, you can run:
-
-```bash
-just ent-new <entity-name>
-```
-
-then your new entity will be created in `apps/server/ent/schema`.
-
-After you make the modifications you need, just run
-
-```bash
-just ent-generate
-```
-
-which generates all the migration files for you.
-
-The migration will automatically be applied when the application reloads.
-
-To update an existing entity, simply modify the schema in `apps/server/ent/schema`
-and run `just ent-generate`.
-
-To start a local Postgres instance with Docker, you can use:
-
-```bash
-just postgres
-```
-
-### Web
-
-Make sure you have `pnpm` installed.
-
-### Test
-
-This will run all the tests for the server and the web.
-
-```bash
-just test
-```
+Happy coding!
