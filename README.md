@@ -56,38 +56,50 @@ and you do not need to change anything!
 
 To start the project, you can run `just dev`. (Make sure Docker is running!)
 
-Note: if you are starting the project for the first time, your will also need
-to run `just db-up` to setup the database schema once `just dev` completes loading.
+### gRPC
 
-### Proto
+We use [gRPC](https://grpc.io/) to exchange data between the server and the web.
+All Proto files are located in `packages/proto`.
 
-We use protobuf to define the API for the server and the web.
-Everytime you change something under `packages/proto`, you need to run the
-following commands to regenerate the gRPC related code.
+Just remember to run:
 
 ```bash
-just buf
+just buf # regenerate gRPC files
 ```
+
+after you make changes to the Proto files.
+
+Note: We are using [buf](https://buf.build/) to manage our Proto files.
 
 ### Server
 
-We are using [Jet](https://github.com/go-jet/jet) to generate DB related stuff
-for a type-safe query building experience.
-
-```bash
-just jet # your database must be running
-```
+Nothing special here for the moment. Just a plain old Go server.
 
 ### Database
 
-All database migrations are in `apps/server/migrations`.
-Here are all the migration commands:
+We are using [ent](https://entgo.io/) to define our database schema
+and generate migrations. I think it is a very underrated ORM tool.
+
+To add a new entity, you can run:
 
 ```bash
-just db-up
-just db-down
-just db-force <version>
+just ent-new <entity-name>
 ```
+
+then your new entity will be created in `apps/server/ent/schema`.
+
+After you make the modifications you need, just run
+
+```bash
+just ent-generate
+```
+
+which generates all the migration files for you.
+
+The migration will automatically be applied when the application reloads.
+
+To update an existing entity, simply modify the schema in `apps/server/ent/schema`
+and run `just ent-generate`.
 
 To start a local Postgres instance with Docker, you can use:
 

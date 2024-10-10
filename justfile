@@ -4,18 +4,6 @@ dev:
 build:
   pnpm build
 
-db-up:
-  just apps/server/db-up
-
-db-down:
-  just apps/server/db-down
-
-db-force version:
-  just apps/server/db-force {{version}}
-
-jet:
-  just apps/server/jet
-
 buf:
   just packages/proto/buf
 
@@ -37,12 +25,21 @@ format:
   just apps/server/format
   just apps/web/format
 
-db-gen:
-  just apps/server/jet
-  just apps/web/kenel
-
 postgres:
   docker compose -f docker-compose.dev.yml up
 
 psql:
   psql -h 127.0.0.1 -p 2345 -U user -d fijoy
+
+migrate-diff name:
+  just apps/server/migrate-diff {{name}}
+
+migrate-lint:
+  just apps/server/migrate-lint
+
+ent-new name:
+  just apps/server/ent-new {{name}}
+
+ent-generate:
+  just apps/server/ent-generate
+
