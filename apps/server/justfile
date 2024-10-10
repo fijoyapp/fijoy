@@ -5,18 +5,6 @@ set dotenv-load := true
 build:
   go build -o ./tmp/main ./cmd/fijoy/main.go
 
-db-up:
-  migrate -database ${DB_URL} -path ./migrations up
-
-db-down:
-  migrate -database ${DB_URL} -path ./migrations down
-
-db-force version:
-  migrate -database ${DB_URL} -path ./migrations force {{version}}
-
-jet:
-  go run ./cmd/jet/main.go
-
 update:
   go mod tidy
   go get -u all
@@ -32,4 +20,21 @@ kill:
 
 init:
   go install github.com/air-verse/air@latest
-  go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+migrate-diff name:
+  atlas migrate diff {{name}} \
+  --dir "file://ent/migrate/migrations" \
+  --to "ent://ent/schema" \
+  --dev-url "docker://postgres/15/test?search_path=public"
+
+migrate-lint:
+  atlas migrate lint \
+  --dev-url="docker://postgres/15/test?search_path=public" \
+  --dir="file://ent/migrate/migrations" \
+  --latest=1
+
+ent-new name:
+  go run -mod=mod entgo.io/ent/cmd/ent new {{name}}
+
+ent-generate:
+  go generate ./ent
