@@ -45,4 +45,4 @@ postgres:
   docker compose -f docker-compose.dev.yml up
 
 psql:
-  psql -h 127.0.0.1 -p 5432 -U user -d fijoy
+  psql -h 127.0.0.1 -p 2345 -U user -d fijoy
