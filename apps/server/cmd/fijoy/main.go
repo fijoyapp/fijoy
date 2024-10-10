@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fijoy/config"
+	"fijoy/ent"
 	"log"
 	"net/http"
 	"os"
@@ -53,6 +54,12 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
+
+	client, err := ent.Open("postgres", cfg.Database.DB_URL)
+	ctx := context.Background()
+	if err := client.Schema.Create(ctx); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
 
 	validator := validator.New(validator.WithRequiredStructEnabled())
 	protoValidator, err := protovalidate.New()
