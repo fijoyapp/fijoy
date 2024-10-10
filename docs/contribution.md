@@ -22,7 +22,9 @@ Nothing special here for the moment. Just a plain old Go server.
 ## Database
 
 We are using [ent](https://entgo.io/) to define our database schema
-and generate migrations. I think it is a very underrated ORM tool.
+and generate migrations.
+
+---
 
 To add a new entity, you can run:
 
@@ -32,6 +34,11 @@ just ent-new <entity-name>
 
 then your new entity will be created in `apps/server/ent/schema`.
 
+To modify an existing entity, just head over to `apps/server/ent/schema`
+and update as you need.
+
+---
+
 After you make the modifications you need, just run
 
 ```bash
@@ -40,10 +47,9 @@ just ent-generate
 
 which generates all the migration files for you.
 
-The migration will automatically be applied when the application reloads.
+**The migration will automatically be applied when the application reloads.**
 
-To update an existing entity, simply modify the schema in `apps/server/ent/schema`
-and run `just ent-generate`.
+---
 
 To start a local Postgres instance with Docker, you can use:
 
@@ -53,7 +59,7 @@ just postgres
 
 ## Web
 
-Make sure you have `pnpm` installed.
+Nothing special here for the moment. Just a plain old React front end.
 
 ## Test
 

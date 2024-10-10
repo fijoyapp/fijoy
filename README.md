@@ -46,7 +46,7 @@ Track your net worth, manage your assets, and grow your wealth.
 Make sure you have the following dependencies installed:
 
 - [Go](https://go.dev/doc/install)
-- [Node.js](https://nodejs.org/en/download)
+- [Node.js](https://nodejs.org/en/download) with [pnpm](https://pnpm.io/installation)
 - [Just](https://github.com/casey/just)
 - [Atlas](https://atlasgo.io/docs)
 - [Docker](https://docs.docker.com/get-started/get-docker/) or [OrbStack](https://orbstack.dev/)
