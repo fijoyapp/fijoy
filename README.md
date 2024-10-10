@@ -43,8 +43,16 @@ Track your net worth, manage your assets, and grow your wealth.
 
 ## Contribution
 
-Make sure you have [Just](https://github.com/casey/just) installed to run just commands.
-And do a quick `just init` to grab all the dependencies.
+Make sure you have the following dependencies installed:
+
+- [Go](https://go.dev/doc/install)
+- [Node.js](https://nodejs.org/en/download)
+- [Just](https://github.com/casey/just)
+- [Atlas](https://atlasgo.io/docs)
+- [Docker](https://docs.docker.com/get-started/get-docker/) or [OrbStack](https://orbstack.dev/)
+  (Recommanded)
+
+Then you can do a quick `just init` to grab everything else.
 
 The next step is to setup all the environment variables.
 
