@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/internal/domain/profile/usecase"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 	"fijoy/internal/util/auth"
 
 	"connectrpc.com/connect"

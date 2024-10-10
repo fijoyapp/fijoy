@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"fijoy/constants"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/emptypb"

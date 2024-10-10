@@ -6,7 +6,7 @@ import (
 	"fijoy/constants"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/gen/postgres/model"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/types/known/timestamppb"

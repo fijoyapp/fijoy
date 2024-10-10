@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fijoy/internal/domain/transaction"
 	"fijoy/internal/domain/transaction/repository"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/go-playground/validator/v10"

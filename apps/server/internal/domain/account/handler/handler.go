@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/internal/domain/account/usecase"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"

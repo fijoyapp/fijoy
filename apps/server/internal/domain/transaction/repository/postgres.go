@@ -9,7 +9,7 @@ import (
 	"time"
 
 	. "fijoy/internal/gen/postgres/table"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	. "github.com/go-jet/jet/v2/postgres"
 	"github.com/nrednav/cuid2"

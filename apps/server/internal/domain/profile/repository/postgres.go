@@ -6,7 +6,7 @@ import (
 	"fijoy/constants"
 	"fijoy/internal/domain/profile"
 	"fijoy/internal/gen/postgres/model"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 	"strings"
 	"time"
 
