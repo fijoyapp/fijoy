@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fijoy/config"
 	"fijoy/ent"
+	"fijoy/ent/migrate"
 	"log"
 	"net/http"
 	"os"
@@ -57,7 +58,7 @@ func main() {
 
 	client, err := ent.Open("postgres", cfg.Database.DB_URL)
 	ctx := context.Background()
-	if err := client.Schema.Create(ctx); err != nil {
+	if err := client.Schema.Create(ctx, migrate.WithGlobalUniqueID(true)); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
