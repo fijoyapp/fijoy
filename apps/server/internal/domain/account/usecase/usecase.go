@@ -7,7 +7,7 @@ import (
 	account_repository "fijoy/internal/domain/account/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	"fijoy/internal/gen/postgres/model"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/shopspring/decimal"

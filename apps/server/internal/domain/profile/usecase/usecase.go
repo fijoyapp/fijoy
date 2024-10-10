@@ -7,7 +7,7 @@ import (
 	"fijoy/constants"
 	"fijoy/internal/domain/profile"
 	"fijoy/internal/domain/profile/repository"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
