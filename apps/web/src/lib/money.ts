@@ -9,18 +9,21 @@ import currency from "currency.js";
 //   return currency(total);
 // };
 //
-export const currencyToDisplay = (
-  money: currency,
+export const getCurrencyDisplay = (
+  money: string,
   code: string,
-  opts: { compact: boolean; locale: string; isDebt?: boolean },
+  locale: string,
+  opts: { compact: boolean; isDebt?: boolean },
 ): string => {
-  return Intl.NumberFormat(opts.locale, {
+  const curr = currency(money);
+
+  return Intl.NumberFormat(locale, {
     currency: code,
     style: "currency",
     notation: opts.compact ? "compact" : "standard",
-  }).format(opts.isDebt ? money.multiply(-1).value : money.value);
+  }).format(opts.isDebt ? curr.multiply(-1).value : curr.value);
 };
-//
+
 // export const calculateStats = (accounts: Account[], isDebt: boolean) => {
 //   return accounts
 //     .filter(

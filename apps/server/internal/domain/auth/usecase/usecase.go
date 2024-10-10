@@ -6,8 +6,7 @@ import (
 	"fijoy/constants"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/gen/postgres/model"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
-	"fmt"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -50,8 +49,6 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 			}
 
 		} else {
-			fmt.Println(err)
-			fmt.Println(qrm.ErrNoRows)
 			return nil, err
 		}
 	}

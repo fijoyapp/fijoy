@@ -50,39 +50,39 @@ export class Currency extends Message<Currency> {
 }
 
 /**
- * @generated from message fijoy.v1.Currencies
+ * @generated from message fijoy.v1.CurrencyList
  */
-export class Currencies extends Message<Currencies> {
+export class CurrencyList extends Message<CurrencyList> {
   /**
-   * @generated from field: repeated fijoy.v1.Currency currencies = 1;
+   * @generated from field: repeated fijoy.v1.Currency items = 1;
    */
-  currencies: Currency[] = [];
+  items: Currency[] = [];
 
-  constructor(data?: PartialMessage<Currencies>) {
+  constructor(data?: PartialMessage<CurrencyList>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.Currencies";
+  static readonly typeName = "fijoy.v1.CurrencyList";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "currencies", kind: "message", T: Currency, repeated: true },
+    { no: 1, name: "items", kind: "message", T: Currency, repeated: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Currencies {
-    return new Currencies().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CurrencyList {
+    return new CurrencyList().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Currencies {
-    return new Currencies().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): CurrencyList {
+    return new CurrencyList().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Currencies {
-    return new Currencies().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): CurrencyList {
+    return new CurrencyList().fromJsonString(jsonString, options);
   }
 
-  static equals(a: Currencies | PlainMessage<Currencies> | undefined, b: Currencies | PlainMessage<Currencies> | undefined): boolean {
-    return proto3.util.equals(Currencies, a, b);
+  static equals(a: CurrencyList | PlainMessage<CurrencyList> | undefined, b: CurrencyList | PlainMessage<CurrencyList> | undefined): boolean {
+    return proto3.util.equals(CurrencyList, a, b);
   }
 }
 

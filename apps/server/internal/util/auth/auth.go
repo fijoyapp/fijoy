@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
 )
@@ -19,12 +18,4 @@ func GetUserIdFromContext(ctx context.Context) (string, error) {
 	}
 
 	return claims["user_id"].(string), nil
-}
-
-func ExtractProfileIdFromHeader(header http.Header) (string, error) {
-	profileId := header.Get("Fijoy-Profile-Id")
-	if profileId == "" {
-		return "", errors.New("missing Fijoy-Profile-Id in request header")
-	}
-	return profileId, nil
 }

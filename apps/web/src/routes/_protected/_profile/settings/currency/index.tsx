@@ -20,7 +20,7 @@ import { Icons } from "@/components/icons";
 import { getProfileHeader } from "@/lib/headers";
 import {
   getProfile,
-  updateCurrency,
+  updateProfile,
 } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
@@ -61,13 +61,13 @@ function Page() {
 
   const context = Route.useRouteContext();
 
-  const { data: currencies } = useSuspenseQuery(
+  const { data: currencyList } = useSuspenseQuery(
     getCurrenciesQueryOptions({
       context,
     }),
   );
 
-  const updateCurrencyMutation = useMutation(updateCurrency, {
+  const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: createConnectQueryKey(getProfile),
@@ -83,11 +83,11 @@ function Page() {
   });
 
   function onUpdateCurrencySubmit(values: TypeOf<typeof currencyFormSchema>) {
-    return updateCurrencyMutation.mutateAsync(values);
+    return updateProfileMutation.mutateAsync(values);
   }
 
   return (
-    <div className="max-w-xl">
+    <div className="max-w-xl p-4 lg:p-6">
       <Breadcrumb>
         <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
           <BreadcrumbItem>
@@ -109,7 +109,7 @@ function Page() {
         Everything related to multi-currency settings.
       </p>
 
-      <div className="py-4"></div>
+      <div className="py-2"></div>
 
       <div className="space-y-4">
         <Form {...form}>
@@ -124,7 +124,7 @@ function Page() {
                 <CurrencyField
                   control={form.control}
                   name="currencies"
-                  currencies={currencies}
+                  currencies={currencyList.items}
                   defaultValues={profile.currencies}
                   onValueChange={(value) => {
                     form.setValue("currencies", value);

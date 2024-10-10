@@ -14,7 +14,8 @@ message Profile {
     (buf.validate.field).repeated.min_items = 1
   ];
   string locale = 4 [(buf.validate.field).string.min_len = 1];
-  google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
+  string net_worth_goal = 5 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp created_at = 6 [(buf.validate.field).required = true];
 }
 
 message CreateProfileRequest {
@@ -22,13 +23,12 @@ message CreateProfileRequest {
     (buf.validate.field).repeated.unique = true,
     (buf.validate.field).repeated.min_items = 1
   ];
+  string net_worth_goal = 2 [(buf.validate.field).string.min_len = 1];
 }
 
-message UpdateCurrencyRequest {
-  repeated string currencies = 2 [
-    (buf.validate.field).repeated.unique = true,
-    (buf.validate.field).repeated.min_items = 1
-  ];
+message UpdateProfileRequest {
+  repeated string currencies = 1 [(buf.validate.field).repeated.unique = true];
+  optional string net_worth_goal = 2;
 }
 
 service ProfileService {
@@ -38,7 +38,7 @@ service ProfileService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  rpc UpdateCurrency(UpdateCurrencyRequest) returns (Profile);
+  rpc UpdateProfile(UpdateProfileRequest) returns (Profile);
 
   rpc DeleteProfile(google.protobuf.Empty) returns (Profile) {}
 }

@@ -43,59 +43,41 @@ Track your net worth, manage your assets, and grow your wealth.
 
 ## Contribution
 
-Make sure you have [Just](https://github.com/casey/just) installed to run just commands.
-And do a quick `just init` to grab all the dependencies.
+Make sure you have the following dependencies installed:
 
-The next step is to setup all the environment variables.
+- [Go](https://go.dev/doc/install)
+- [Node.js](https://nodejs.org/en/download) with [pnpm](https://pnpm.io/installation)
+- [Just](https://github.com/casey/just)
+- [Atlas](https://atlasgo.io/docs)
+- [Docker](https://docs.docker.com/get-started/get-docker/) or [OrbStack](https://orbstack.dev/)
+  (Recommanded)
+
+Then you can do a quick
+
+```bash
+just init
+```
+
+to grab everything else.
+
+### Environment Variables
 
 You can find more details in `apps/server/.env.example` and
 `apps/web/.env.example`.
 
-### Proto
+TLDR: For local development, you can just copy the `.env.example` files to `.env`
+and you do not need to change anything!
 
-We use protobuf to define the API for the server and the web.
-To generate all the necessary code, run the following commands:
+### Start
 
-```bash
-just buf
-```
-
-### Server
-
-We are using [Jet](https://github.com/go-jet/jet) to generate DB related stuff for
-a type-safe query building experience.
+To start the project, you can run
 
 ```bash
-just jet # your database must be running
+just dev # Make sure Docker/OrbStack is running!
 ```
 
-### Database
+More details on how to get started can be found in [docs/contribution.md](docs/contribution.md).
+Please also give [docs/design-choices.md](docs/design-choices.md) a read to understand
+why things are done in the way they are :)
 
-All database migrations are in `apps/server/migrations`.
-Here are all the migration commands:
-
-```bash
-just db-up
-just db-down
-just db-force <version>
-```
-
-To start a local Postgres instance with Docker, you can use:
-
-```bash
-just postgres
-```
-
-### Web
-
-### Test
-
-This will run all the tests for the server and the web.
-
-```bash
-just test
-```
-
----
-
-To run the project, simply use `just dev`.
+Happy coding!

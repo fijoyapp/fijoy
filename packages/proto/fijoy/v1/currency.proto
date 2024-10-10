@@ -11,12 +11,12 @@ message Currency {
   string locale = 2 [(buf.validate.field).string.min_len = 1];
 }
 
-message Currencies {
-  repeated Currency currencies = 1 [(buf.validate.field).required = true];
+message CurrencyList {
+  repeated Currency items = 1 [(buf.validate.field).required = true];
 }
 
 service CurrencyService {
-  rpc GetCurrencies(google.protobuf.Empty) returns (Currencies) {
+  rpc GetCurrencies(google.protobuf.Empty) returns (CurrencyList) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 }

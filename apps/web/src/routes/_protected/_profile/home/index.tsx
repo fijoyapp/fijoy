@@ -1,5 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_protected/_profile/home/")({
-  component: () => <div>Hello /_protected/_profile/home/!</div>,
+  component: HomePage,
 });
+
+function HomePage() {
+  return (
+    <div className="p-4 lg:p-6">
+      <div>Welcome to Fijoy! </div>
+    </div>
+  );
+}

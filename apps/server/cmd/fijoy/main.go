@@ -1,9 +1,17 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fijoy/config"
+	"fijoy/ent"
+	"fijoy/ent/migrate"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	auth_handler "fijoy/internal/domain/auth/handler"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
@@ -19,6 +27,7 @@ import (
 	account_usecase "fijoy/internal/domain/account/usecase"
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 	health_handler "fijoy/internal/domain/health/handler"
+	transaction_repository "fijoy/internal/domain/transaction/repository"
 
 	currency_handler "fijoy/internal/domain/currency/handler"
 
@@ -47,6 +56,12 @@ func main() {
 	}
 	defer db.Close()
 
+	client, err := ent.Open("postgres", cfg.Database.DB_URL)
+	ctx := context.Background()
+	if err := client.Schema.Create(ctx, migrate.WithGlobalUniqueID(true)); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
+
 	validator := validator.New(validator.WithRequiredStructEnabled())
 	protoValidator, err := protovalidate.New()
 	if err != nil {
@@ -64,7 +79,8 @@ func main() {
 	profileUseCase := profile_usecase.New(validator, db, profileRepo)
 
 	accountRepo := account_repository.NewAccountRepository(db)
-	accountUseCase := account_usecase.New(validator, db, accountRepo)
+	transactionRepo := transaction_repository.NewTransactionRepository(db)
+	accountUseCase := account_usecase.New(validator, db, accountRepo, transactionRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -98,17 +114,42 @@ func main() {
 	// Start our server
 	server := newServer(":"+cfg.Server.PORT, r)
 
-	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		panic(err)
+	// Server run context
+	serverCtx, serverStopCtx := context.WithCancel(context.Background())
+
+	// Listen for syscall signals for process to interrupt/quit
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+
+	go func() {
+		<-sig
+
+		// Shutdown signal with grace period of 30 seconds
+		shutdownCtx, _ := context.WithTimeout(serverCtx, 30*time.Second)
+
+		go func() {
+			<-shutdownCtx.Done()
+			if shutdownCtx.Err() == context.DeadlineExceeded {
+				log.Fatal("graceful shutdown timed out.. forcing exit.")
+			}
+		}()
+
+		// Trigger graceful shutdown
+		err := server.Shutdown(shutdownCtx)
+		if err != nil {
+			log.Fatal(err)
+		}
+		serverStopCtx()
+	}()
+
+	// Run the server
+	err = server.ListenAndServe()
+	if err != nil && err != http.ErrServerClosed {
+		log.Fatal(err)
 	}
 
-	// go func() {
-	// 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-	// 		panic(err)
-	// 	}
-	// }()
-	//
-	// waitForShutdown(server)
+	// Wait for server context to be stopped
+	<-serverCtx.Done()
 }
 
 func newServer(addr string, r *chi.Mux) *http.Server {

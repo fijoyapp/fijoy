@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
 import { getAccountsQueryOptions } from "@/lib/queries/account";
@@ -19,16 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { AccountType, Accounts } from "@/gen/proto/fijoy/v1/account_pb";
-import { getAccountTypeDetail } from "@/config/account";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { AccountType, Account } from "@/gen/proto/fijoy/v1/account_pb";
 import {
   ChartCandlestick,
   CreditCard,
@@ -36,21 +27,22 @@ import {
   House,
   PiggyBank,
 } from "lucide-react";
-import { match } from "ts-pattern";
-import NewLiquidity from "@/components/accounts/liquidity/new-account";
-import NewInvestment from "@/components/accounts/investment/new-account";
-import NewProperty from "@/components/accounts/property/new-account";
-import NewReceivable from "@/components/accounts/receivable/new-account";
-import NewLiability from "@/components/accounts/liability/new-account";
+import AddAccount from "@/components/accounts/add-account";
+import { useMediaQuery, WIDTH_OPTIONS } from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import NetWorthInfo from "@/components/accounts/net-worth-info";
+import AccountListView from "@/components/accounts/account-list-view";
 
-const setupNewAccountSchema = z.object({
+const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
+  detail: z.string().startsWith("account_").optional(),
 });
 
 export const Route = createFileRoute("/_protected/_profile/accounts/")({
   // loaderDeps: ({ search}) => ({ search }),
   validateSearch: (search) => {
-    return setupNewAccountSchema.parse(search);
+    return accountsRouteSchema.parse(search);
   },
   loader: (opts) => {
     opts.context.queryClient.ensureQueryData(
@@ -66,119 +58,100 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
 function Page() {
   const context = Route.useRouteContext();
   const { data } = useSuspenseQuery(getAccountsQueryOptions({ context }));
-  const { add } = Route.useSearch();
+  const { add, detail } = Route.useSearch();
 
   return (
-    <>{add ? <AddAccount type={add} /> : <AccountsView accounts={data} />}</>
+    <>
+      {add ? (
+        <AddAccount type={add} />
+      ) : (
+        <AccountsView accounts={data.items} detail={detail} />
+      )}
+    </>
   );
 }
 
 type AccountsViewProps = {
-  accounts: Accounts;
+  accounts: Account[];
+  detail?: string;
 };
 
-function AccountsView({ accounts }: AccountsViewProps) {
+function AccountsView({ accounts, detail }: AccountsViewProps) {
+  const isDesktop = useMediaQuery(WIDTH_OPTIONS.lg);
+  const sidePanelActive = detail !== undefined;
+
   return (
-    <div className="max-w-screen-2xl">
-      <PageHeader>
-        <PageHeaderHeading>Accounts</PageHeaderHeading>
-        <PageHeaderDescription>
-          View and manage your accounts
-        </PageHeaderDescription>
-      </PageHeader>
+    <div className={cn("flex min-h-full w-full", isDesktop ? "" : "")}>
+      <div
+        className={cn(
+          "w-full p-4 lg:p-6",
+          sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
+        )}
+      >
+        <PageHeader>
+          <PageHeaderHeading>Accounts</PageHeaderHeading>
+          <PageHeaderDescription>
+            View and manage your accounts
+          </PageHeaderDescription>
+        </PageHeader>
 
-      <div className="py-2"></div>
+        <div className="py-2"></div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Button>New Account</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Select a type</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <Link to={"/accounts"} search={{ add: AccountType.LIQUIDITY }}>
-            <DropdownMenuItem>
-              <PiggyBank className="mr-2 h-4 w-4" />
-              <span>Liquitity</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.INVESTMENT }}>
-            <DropdownMenuItem>
-              <ChartCandlestick className="mr-2 h-4 w-4" />
-              <span>Investment</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.PROPERTY }}>
-            <DropdownMenuItem>
-              <House className="mr-2 h-4 w-4" />
-              <span>Property</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.RECEIVABLE }}>
-            <DropdownMenuItem>
-              <HandCoins className="mr-2 h-4 w-4" />
-              <span>Receivable</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: AccountType.LIABILITY }}>
-            <DropdownMenuItem>
-              <CreditCard className="mr-2 h-4 w-4" />
-              <span>Liability</span>
-            </DropdownMenuItem>
-          </Link>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button>New Account</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Select a type</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <Link to={"/accounts"} search={{ add: AccountType.LIQUIDITY }}>
+              <DropdownMenuItem>
+                <PiggyBank className="mr-2 h-4 w-4" />
+                <span>Liquitity</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.INVESTMENT }}>
+              <DropdownMenuItem>
+                <ChartCandlestick className="mr-2 h-4 w-4" />
+                <span>Investment</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.PROPERTY }}>
+              <DropdownMenuItem>
+                <House className="mr-2 h-4 w-4" />
+                <span>Property</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.RECEIVABLE }}>
+              <DropdownMenuItem>
+                <HandCoins className="mr-2 h-4 w-4" />
+                <span>Receivable</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: AccountType.LIABILITY }}>
+              <DropdownMenuItem>
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Liability</span>
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-      <div className="py-2"></div>
+        <div className="py-2"></div>
 
-      {accounts.accounts.map((account, idx) => {
-        return (
-          <div key={idx}>
-            <div>{account.name}</div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+        <AccountListView accounts={accounts} />
+      </div>
 
-type AddAccountProps = {
-  type: AccountTypeEnum;
-};
+      {isDesktop && <Separator orientation="vertical" className="h-full" />}
 
-function AddAccount({ type }: AddAccountProps) {
-  const accountTypeDetail = getAccountTypeDetail(type);
-  return (
-    <div className="max-w-screen-sm">
-      <Breadcrumb>
-        <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to={"/accounts"}>Accounts</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage className="font-semibold text-foreground">
-              Add {accountTypeDetail.name}
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <p className="text-sm text-muted-foreground">
-        {accountTypeDetail.description}
-      </p>
-
-      <div className="py-2"></div>
-
-      {match(type)
-        .with(AccountType.UNSPECIFIED as 0, () => <Navigate to={"/accounts"} />)
-        .with(AccountType.LIQUIDITY as 1, () => <NewLiquidity />)
-        .with(AccountType.INVESTMENT as 2, () => <NewInvestment />)
-        .with(AccountType.PROPERTY as 3, () => <NewProperty />)
-        .with(AccountType.RECEIVABLE as 4, () => <NewReceivable />)
-        .with(AccountType.LIABILITY as 5, () => <NewLiability />)
-        .exhaustive()}
+      <div
+        className={cn(
+          "w-full p-4 lg:p-6",
+          !sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
+        )}
+      >
+        <NetWorthInfo accounts={accounts} />
+      </div>
     </div>
   );
 }

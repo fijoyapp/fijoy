@@ -1,5 +1,4 @@
 import { useAuth } from "@/hooks/use-auth";
-import { Icons } from "@/components/icons";
 import {
   Navigate,
   Outlet,
@@ -7,6 +6,7 @@ import {
   useMatchRoute,
 } from "@tanstack/react-router";
 import { useProfile } from "@/hooks/use-profile";
+import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
 export const Route = createFileRoute("/_protected")({
   component: Protected,
@@ -18,11 +18,7 @@ function Protected() {
   const matchRoute = useMatchRoute();
 
   if (auth.isLoading || profile.isLoading) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center">
-        <Icons.spinner />
-      </div>
-    );
+    return <CenterLoadingSpinner />;
   }
 
   if (!auth.user) {

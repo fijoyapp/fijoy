@@ -12,8 +12,9 @@ import (
 )
 
 type FijoyProfile struct {
-	ID         string    `sql:"primary_key" json:"ID"`
-	UserID     string    `json:"UserID"`
-	Currencies string    `json:"Currencies"`
-	CreatedAt  time.Time `json:"CreatedAt"`
+	ID           string    `sql:"primary_key" json:"ID"`
+	UserID       string    `json:"UserID"`
+	Currencies   string    `json:"Currencies"`
+	CreatedAt    time.Time `json:"CreatedAt"`
+	NetWorthGoal float64   `json:"NetWorthGoal"`
 }

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
+	"fijoy/proto/fijoy/v1/fijoyv1connect"
 
 	"github.com/go-chi/chi/v5"
 )

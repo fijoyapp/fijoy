@@ -17,18 +17,20 @@ type fijoyAccountTable struct {
 	postgres.Table
 
 	// Columns
-	ID          postgres.ColumnString
-	ProfileID   postgres.ColumnString
-	Name        postgres.ColumnString
-	AccountType postgres.ColumnString
-	Active      postgres.ColumnBool
-	CreatedAt   postgres.ColumnTimestampz
-	UpdatedAt   postgres.ColumnTimestampz
-	Symbol      postgres.ColumnString
-	Amount      postgres.ColumnFloat
-	Currency    postgres.ColumnString
-	Value       postgres.ColumnFloat
-	FxRate      postgres.ColumnFloat
+	ID                postgres.ColumnString
+	ProfileID         postgres.ColumnString
+	Name              postgres.ColumnString
+	AccountType       postgres.ColumnString
+	Archived          postgres.ColumnBool
+	IncludeInNetWorth postgres.ColumnBool
+	Symbol            postgres.ColumnString
+	SymbolType        postgres.ColumnString
+	Amount            postgres.ColumnFloat
+	Value             postgres.ColumnFloat
+	FxRate            postgres.ColumnFloat
+	Balance           postgres.ColumnFloat
+	CreatedAt         postgres.ColumnTimestampz
+	UpdatedAt         postgres.ColumnTimestampz
 
 	AllColumns     postgres.ColumnList
 	MutableColumns postgres.ColumnList
@@ -69,38 +71,42 @@ func newFijoyAccountTable(schemaName, tableName, alias string) *FijoyAccountTabl
 
 func newFijoyAccountTableImpl(schemaName, tableName, alias string) fijoyAccountTable {
 	var (
-		IDColumn          = postgres.StringColumn("id")
-		ProfileIDColumn   = postgres.StringColumn("profile_id")
-		NameColumn        = postgres.StringColumn("name")
-		AccountTypeColumn = postgres.StringColumn("account_type")
-		ActiveColumn      = postgres.BoolColumn("active")
-		CreatedAtColumn   = postgres.TimestampzColumn("created_at")
-		UpdatedAtColumn   = postgres.TimestampzColumn("updated_at")
-		SymbolColumn      = postgres.StringColumn("symbol")
-		AmountColumn      = postgres.FloatColumn("amount")
-		CurrencyColumn    = postgres.StringColumn("currency")
-		ValueColumn       = postgres.FloatColumn("value")
-		FxRateColumn      = postgres.FloatColumn("fx_rate")
-		allColumns        = postgres.ColumnList{IDColumn, ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, FxRateColumn}
-		mutableColumns    = postgres.ColumnList{ProfileIDColumn, NameColumn, AccountTypeColumn, ActiveColumn, CreatedAtColumn, UpdatedAtColumn, SymbolColumn, AmountColumn, CurrencyColumn, ValueColumn, FxRateColumn}
+		IDColumn                = postgres.StringColumn("id")
+		ProfileIDColumn         = postgres.StringColumn("profile_id")
+		NameColumn              = postgres.StringColumn("name")
+		AccountTypeColumn       = postgres.StringColumn("account_type")
+		ArchivedColumn          = postgres.BoolColumn("archived")
+		IncludeInNetWorthColumn = postgres.BoolColumn("include_in_net_worth")
+		SymbolColumn            = postgres.StringColumn("symbol")
+		SymbolTypeColumn        = postgres.StringColumn("symbol_type")
+		AmountColumn            = postgres.FloatColumn("amount")
+		ValueColumn             = postgres.FloatColumn("value")
+		FxRateColumn            = postgres.FloatColumn("fx_rate")
+		BalanceColumn           = postgres.FloatColumn("balance")
+		CreatedAtColumn         = postgres.TimestampzColumn("created_at")
+		UpdatedAtColumn         = postgres.TimestampzColumn("updated_at")
+		allColumns              = postgres.ColumnList{IDColumn, ProfileIDColumn, NameColumn, AccountTypeColumn, ArchivedColumn, IncludeInNetWorthColumn, SymbolColumn, SymbolTypeColumn, AmountColumn, ValueColumn, FxRateColumn, BalanceColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns          = postgres.ColumnList{ProfileIDColumn, NameColumn, AccountTypeColumn, ArchivedColumn, IncludeInNetWorthColumn, SymbolColumn, SymbolTypeColumn, AmountColumn, ValueColumn, FxRateColumn, BalanceColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fijoyAccountTable{
 		Table: postgres.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		ProfileID:   ProfileIDColumn,
-		Name:        NameColumn,
-		AccountType: AccountTypeColumn,
-		Active:      ActiveColumn,
-		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
-		Symbol:      SymbolColumn,
-		Amount:      AmountColumn,
-		Currency:    CurrencyColumn,
-		Value:       ValueColumn,
-		FxRate:      FxRateColumn,
+		ID:                IDColumn,
+		ProfileID:         ProfileIDColumn,
+		Name:              NameColumn,
+		AccountType:       AccountTypeColumn,
+		Archived:          ArchivedColumn,
+		IncludeInNetWorth: IncludeInNetWorthColumn,
+		Symbol:            SymbolColumn,
+		SymbolType:        SymbolTypeColumn,
+		Amount:            AmountColumn,
+		Value:             ValueColumn,
+		FxRate:            FxRateColumn,
+		Balance:           BalanceColumn,
+		CreatedAt:         CreatedAtColumn,
+		UpdatedAt:         UpdatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

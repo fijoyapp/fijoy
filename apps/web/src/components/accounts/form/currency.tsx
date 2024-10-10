@@ -1,27 +1,37 @@
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import MultiSelectFormField from "@/components/ui/multi-select";
-import { CURRENCIES, currencyCodeToName } from "@/config/currency";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { currencyCodeToName } from "@/config/currency";
+import { useProfile } from "@/hooks/use-profile";
 import { Control, FieldValues, Path } from "react-hook-form";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   label: string;
-  // placeholder: string;
+  description: string;
 };
 
 export function CurrencyField<T extends FieldValues>({
   control,
   name,
   label,
-  // placeholder,
+  description,
 }: CurrencyFieldProps<T>) {
+  const { profile } = useProfile();
+
   return (
     <FormField
       control={control}
@@ -29,17 +39,21 @@ export function CurrencyField<T extends FieldValues>({
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
-          <FormControl>
-            <MultiSelectFormField
-              options={CURRENCIES.map((c) => ({
-                label: `${currencyCodeToName(c)} (${c})`,
-                value: c,
-              }))}
-              defaultValue={field.value}
-              onValueChange={field.onChange}
-              placeholder="Select currencies"
-            />
-          </FormControl>
+          <FormDescription>{description}</FormDescription>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {profile?.currencies.map((currency) => (
+                <SelectItem key={currency} value={currency}>
+                  {currencyCodeToName(currency)} ({currency})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <FormMessage />
         </FormItem>
       )}

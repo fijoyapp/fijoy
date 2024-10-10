@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package fijoy.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message OverallSnapshot {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string profile_id = 2 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp datehour = 3 [(buf.validate.field).required = true];
+
+  string liquidity = 4 [(buf.validate.field).required = true];
+  string investment = 5 [(buf.validate.field).required = true];
+  string property = 6 [(buf.validate.field).required = true];
+  string receivable = 7 [(buf.validate.field).required = true];
+  string liability = 8 [(buf.validate.field).required = true];
+}
+
+message OverallSnapshotList {
+  repeated OverallSnapshot items = 1 [(buf.validate.field).required = true];
+}
+
+message GetOverallSnapshotsRequest {
+  google.protobuf.Timestamp from_datehour = 1 [(buf.validate.field).required = true];
+  // inclusive
+  google.protobuf.Timestamp to_datehour = 2 [(buf.validate.field).required = true];
+}
+
+message AccountSnapshot {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+  string account_id = 2 [(buf.validate.field).string.min_len = 1];
+  google.protobuf.Timestamp datehour = 3 [(buf.validate.field).required = true];
+
+  string balance = 4 [(buf.validate.field).required = true];
+}
+
+message AccountSnapshotList {
+  repeated AccountSnapshot items = 1 [(buf.validate.field).required = true];
+}
+
+message GetAccountSnapshotsRequest {
+  string account_id = 1 [(buf.validate.field).string.min_len = 1];
+
+  google.protobuf.Timestamp from_datehour = 2 [(buf.validate.field).required = true];
+  // inclusive
+  google.protobuf.Timestamp to_datehour = 3 [(buf.validate.field).required = true];
+}
+
+service SnapshotService {
+  rpc GetOverallSnapshots(GetOverallSnapshotsRequest) returns (OverallSnapshotList) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+  rpc GetAccountSnapshots(GetAccountSnapshotsRequest) returns (AccountSnapshotList) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+}

@@ -2,8 +2,10 @@ package handler
 
 import (
 	"context"
+	"errors"
+	"fijoy/constants"
 	"fijoy/internal/domain/profile/usecase"
-	fijoyv1 "fijoy/internal/gen/proto/fijoy/v1"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 	"fijoy/internal/util/auth"
 
 	"connectrpc.com/connect"
@@ -70,9 +72,9 @@ func (h *profileHandler) DeleteProfile(
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
 	profile, err := h.useCase.DeleteProfile(ctx, profileId)
@@ -83,20 +85,20 @@ func (h *profileHandler) DeleteProfile(
 	return connect.NewResponse(profile), nil
 }
 
-func (h *profileHandler) UpdateCurrency(
+func (h *profileHandler) UpdateProfile(
 	ctx context.Context,
-	req *connect.Request[fijoyv1.UpdateCurrencyRequest],
+	req *connect.Request[fijoyv1.UpdateProfileRequest],
 ) (*connect.Response[fijoyv1.Profile], error) {
 	if err := h.protoValidator.Validate(req.Msg); err != nil {
 		return nil, err
 	}
 
-	profileId, err := auth.ExtractProfileIdFromHeader(req.Header())
-	if err != nil {
-		return nil, err
+	profileId := ctx.Value("profileId").(string)
+	if profileId == "" {
+		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
-	profile, err := h.useCase.UpdateCurrency(ctx, profileId, req.Msg)
+	profile, err := h.useCase.UpdateProfile(ctx, profileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}

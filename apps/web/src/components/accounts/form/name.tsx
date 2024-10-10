@@ -29,7 +29,7 @@ export function NameField<T extends FieldValues>({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} />
+            <Input placeholder={placeholder} data-1p-ignore {...field} />
           </FormControl>
           <FormMessage />
         </FormItem>

@@ -31,7 +31,12 @@ export class Profile extends Message<Profile> {
   locale = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 5;
+   * @generated from field: string net_worth_goal = 5;
+   */
+  netWorthGoal = "";
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 6;
    */
   createdAt?: Timestamp;
 
@@ -47,7 +52,8 @@ export class Profile extends Message<Profile> {
     { no: 2, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
     { no: 4, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "created_at", kind: "message", T: Timestamp },
+    { no: 5, name: "net_worth_goal", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "created_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Profile {
@@ -76,6 +82,11 @@ export class CreateProfileRequest extends Message<CreateProfileRequest> {
    */
   currencies: string[] = [];
 
+  /**
+   * @generated from field: string net_worth_goal = 2;
+   */
+  netWorthGoal = "";
+
   constructor(data?: PartialMessage<CreateProfileRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -85,6 +96,7 @@ export class CreateProfileRequest extends Message<CreateProfileRequest> {
   static readonly typeName = "fijoy.v1.CreateProfileRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "net_worth_goal", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateProfileRequest {
@@ -105,39 +117,45 @@ export class CreateProfileRequest extends Message<CreateProfileRequest> {
 }
 
 /**
- * @generated from message fijoy.v1.UpdateCurrencyRequest
+ * @generated from message fijoy.v1.UpdateProfileRequest
  */
-export class UpdateCurrencyRequest extends Message<UpdateCurrencyRequest> {
+export class UpdateProfileRequest extends Message<UpdateProfileRequest> {
   /**
-   * @generated from field: repeated string currencies = 2;
+   * @generated from field: repeated string currencies = 1;
    */
   currencies: string[] = [];
 
-  constructor(data?: PartialMessage<UpdateCurrencyRequest>) {
+  /**
+   * @generated from field: optional string net_worth_goal = 2;
+   */
+  netWorthGoal?: string;
+
+  constructor(data?: PartialMessage<UpdateProfileRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.UpdateCurrencyRequest";
+  static readonly typeName = "fijoy.v1.UpdateProfileRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 2, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 1, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 2, name: "net_worth_goal", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateCurrencyRequest {
-    return new UpdateCurrencyRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateProfileRequest {
+    return new UpdateProfileRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateCurrencyRequest {
-    return new UpdateCurrencyRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateProfileRequest {
+    return new UpdateProfileRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateCurrencyRequest {
-    return new UpdateCurrencyRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateProfileRequest {
+    return new UpdateProfileRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: UpdateCurrencyRequest | PlainMessage<UpdateCurrencyRequest> | undefined, b: UpdateCurrencyRequest | PlainMessage<UpdateCurrencyRequest> | undefined): boolean {
-    return proto3.util.equals(UpdateCurrencyRequest, a, b);
+  static equals(a: UpdateProfileRequest | PlainMessage<UpdateProfileRequest> | undefined, b: UpdateProfileRequest | PlainMessage<UpdateProfileRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateProfileRequest, a, b);
   }
 }
 

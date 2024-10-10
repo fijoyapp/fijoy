@@ -3,7 +3,7 @@ package handler
 import (
 	"fijoy/config"
 	"fijoy/internal/domain/user/usecase"
-	"fijoy/internal/gen/proto/fijoy/v1/fijoyv1connect"
+	"fijoy/proto/fijoy/v1/fijoyv1connect"
 
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/go-chi/chi/v5"
