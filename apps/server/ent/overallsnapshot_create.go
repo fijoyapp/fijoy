@@ -59,19 +59,29 @@ func (osc *OverallSnapshotCreate) SetLiablity(d decimal.Decimal) *OverallSnapsho
 	return osc
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
-func (osc *OverallSnapshotCreate) AddProfileIDs(ids ...int) *OverallSnapshotCreate {
-	osc.mutation.AddProfileIDs(ids...)
+// SetID sets the "id" field.
+func (osc *OverallSnapshotCreate) SetID(s string) *OverallSnapshotCreate {
+	osc.mutation.SetID(s)
 	return osc
 }
 
-// AddProfile adds the "profile" edges to the Profile entity.
-func (osc *OverallSnapshotCreate) AddProfile(p ...*Profile) *OverallSnapshotCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// SetNillableID sets the "id" field if the given value is not nil.
+func (osc *OverallSnapshotCreate) SetNillableID(s *string) *OverallSnapshotCreate {
+	if s != nil {
+		osc.SetID(*s)
 	}
-	return osc.AddProfileIDs(ids...)
+	return osc
+}
+
+// SetProfileID sets the "profile" edge to the Profile entity by ID.
+func (osc *OverallSnapshotCreate) SetProfileID(id string) *OverallSnapshotCreate {
+	osc.mutation.SetProfileID(id)
+	return osc
+}
+
+// SetProfile sets the "profile" edge to the Profile entity.
+func (osc *OverallSnapshotCreate) SetProfile(p *Profile) *OverallSnapshotCreate {
+	return osc.SetProfileID(p.ID)
 }
 
 // Mutation returns the OverallSnapshotMutation object of the builder.
@@ -81,6 +91,7 @@ func (osc *OverallSnapshotCreate) Mutation() *OverallSnapshotMutation {
 
 // Save creates the OverallSnapshot in the database.
 func (osc *OverallSnapshotCreate) Save(ctx context.Context) (*OverallSnapshot, error) {
+	osc.defaults()
 	return withHooks(ctx, osc.sqlSave, osc.mutation, osc.hooks)
 }
 
@@ -103,6 +114,14 @@ func (osc *OverallSnapshotCreate) Exec(ctx context.Context) error {
 func (osc *OverallSnapshotCreate) ExecX(ctx context.Context) {
 	if err := osc.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (osc *OverallSnapshotCreate) defaults() {
+	if _, ok := osc.mutation.ID(); !ok {
+		v := overallsnapshot.DefaultID
+		osc.mutation.SetID(v)
 	}
 }
 
@@ -129,6 +148,9 @@ func (osc *OverallSnapshotCreate) check() error {
 	if _, ok := osc.mutation.Liablity(); !ok {
 		return &ValidationError{Name: "liablity", err: errors.New(`ent: missing required field "OverallSnapshot.liablity"`)}
 	}
+	if len(osc.mutation.ProfileIDs()) == 0 {
+		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "OverallSnapshot.profile"`)}
+	}
 	return nil
 }
 
@@ -143,8 +165,13 @@ func (osc *OverallSnapshotCreate) sqlSave(ctx context.Context) (*OverallSnapshot
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected OverallSnapshot.ID type: %T", _spec.ID.Value)
+		}
+	}
 	osc.mutation.id = &_node.ID
 	osc.mutation.done = true
 	return _node, nil
@@ -153,8 +180,12 @@ func (osc *OverallSnapshotCreate) sqlSave(ctx context.Context) (*OverallSnapshot
 func (osc *OverallSnapshotCreate) createSpec() (*OverallSnapshot, *sqlgraph.CreateSpec) {
 	var (
 		_node = &OverallSnapshot{config: osc.config}
-		_spec = sqlgraph.NewCreateSpec(overallsnapshot.Table, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(overallsnapshot.Table, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString))
 	)
+	if id, ok := osc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := osc.mutation.Datehour(); ok {
 		_spec.SetField(overallsnapshot.FieldDatehour, field.TypeTime, value)
 		_node.Datehour = value
@@ -181,18 +212,19 @@ func (osc *OverallSnapshotCreate) createSpec() (*OverallSnapshot, *sqlgraph.Crea
 	}
 	if nodes := osc.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   overallsnapshot.ProfileTable,
-			Columns: overallsnapshot.ProfilePrimaryKey,
+			Columns: []string{overallsnapshot.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.profile_overall_snapshot = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -216,6 +248,7 @@ func (oscb *OverallSnapshotCreateBulk) Save(ctx context.Context) ([]*OverallSnap
 	for i := range oscb.builders {
 		func(i int, root context.Context) {
 			builder := oscb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*OverallSnapshotMutation)
 				if !ok {
@@ -242,10 +275,6 @@ func (oscb *OverallSnapshotCreateBulk) Save(ctx context.Context) ([]*OverallSnap
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

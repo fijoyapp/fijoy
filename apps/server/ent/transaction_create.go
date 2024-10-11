@@ -109,34 +109,40 @@ func (tc *TransactionCreate) SetNillableUpdatedAt(t *time.Time) *TransactionCrea
 	return tc
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
-func (tc *TransactionCreate) AddProfileIDs(ids ...int) *TransactionCreate {
-	tc.mutation.AddProfileIDs(ids...)
+// SetID sets the "id" field.
+func (tc *TransactionCreate) SetID(s string) *TransactionCreate {
+	tc.mutation.SetID(s)
 	return tc
 }
 
-// AddProfile adds the "profile" edges to the Profile entity.
-func (tc *TransactionCreate) AddProfile(p ...*Profile) *TransactionCreate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
+// SetNillableID sets the "id" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableID(s *string) *TransactionCreate {
+	if s != nil {
+		tc.SetID(*s)
 	}
-	return tc.AddProfileIDs(ids...)
-}
-
-// AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (tc *TransactionCreate) AddAccountIDs(ids ...int) *TransactionCreate {
-	tc.mutation.AddAccountIDs(ids...)
 	return tc
 }
 
-// AddAccount adds the "account" edges to the Account entity.
-func (tc *TransactionCreate) AddAccount(a ...*Account) *TransactionCreate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return tc.AddAccountIDs(ids...)
+// SetProfileID sets the "profile" edge to the Profile entity by ID.
+func (tc *TransactionCreate) SetProfileID(id string) *TransactionCreate {
+	tc.mutation.SetProfileID(id)
+	return tc
+}
+
+// SetProfile sets the "profile" edge to the Profile entity.
+func (tc *TransactionCreate) SetProfile(p *Profile) *TransactionCreate {
+	return tc.SetProfileID(p.ID)
+}
+
+// SetAccountID sets the "account" edge to the Account entity by ID.
+func (tc *TransactionCreate) SetAccountID(id string) *TransactionCreate {
+	tc.mutation.SetAccountID(id)
+	return tc
+}
+
+// SetAccount sets the "account" edge to the Account entity.
+func (tc *TransactionCreate) SetAccount(a *Account) *TransactionCreate {
+	return tc.SetAccountID(a.ID)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
@@ -182,6 +188,10 @@ func (tc *TransactionCreate) defaults() {
 		v := transaction.DefaultUpdatedAt()
 		tc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := tc.mutation.ID(); !ok {
+		v := transaction.DefaultID
+		tc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -207,6 +217,12 @@ func (tc *TransactionCreate) check() error {
 	if _, ok := tc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Transaction.updated_at"`)}
 	}
+	if len(tc.mutation.ProfileIDs()) == 0 {
+		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "Transaction.profile"`)}
+	}
+	if len(tc.mutation.AccountIDs()) == 0 {
+		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "Transaction.account"`)}
+	}
 	return nil
 }
 
@@ -221,8 +237,13 @@ func (tc *TransactionCreate) sqlSave(ctx context.Context) (*Transaction, error) 
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Transaction.ID type: %T", _spec.ID.Value)
+		}
+	}
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
 	return _node, nil
@@ -231,8 +252,12 @@ func (tc *TransactionCreate) sqlSave(ctx context.Context) (*Transaction, error) 
 func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Transaction{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(transaction.Table, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(transaction.Table, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString))
 	)
+	if id, ok := tc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := tc.mutation.Amount(); ok {
 		_spec.SetField(transaction.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
@@ -271,34 +296,36 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	}
 	if nodes := tc.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.ProfileTable,
-			Columns: transaction.ProfilePrimaryKey,
+			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.profile_transaction = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tc.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.AccountTable,
-			Columns: transaction.AccountPrimaryKey,
+			Columns: []string{transaction.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.account_transaction = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -349,10 +376,6 @@ func (tcb *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, err
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fijoy/ent/account"
+	"fijoy/ent/profile"
 	"fmt"
 	"strings"
 	"time"
@@ -17,7 +18,7 @@ import (
 type Account struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// AccountType holds the value of the "account_type" field.
@@ -44,14 +45,15 @@ type Account struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
-	Edges        AccountEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges           AccountEdges `json:"edges"`
+	profile_account *string
+	selectValues    sql.SelectValues
 }
 
 // AccountEdges holds the relations/edges for other nodes in the graph.
 type AccountEdges struct {
 	// Profile holds the value of the profile edge.
-	Profile []*Profile `json:"profile,omitempty"`
+	Profile *Profile `json:"profile,omitempty"`
 	// AccountSnapshot holds the value of the account_snapshot edge.
 	AccountSnapshot []*AccountSnapshot `json:"account_snapshot,omitempty"`
 	// Transaction holds the value of the transaction edge.
@@ -62,10 +64,12 @@ type AccountEdges struct {
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
-// was not loaded in eager-loading.
-func (e AccountEdges) ProfileOrErr() ([]*Profile, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AccountEdges) ProfileOrErr() (*Profile, error) {
+	if e.Profile != nil {
 		return e.Profile, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: profile.Label}
 	}
 	return nil, &NotLoadedError{edge: "profile"}
 }
@@ -97,12 +101,12 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case account.FieldArchived, account.FieldIncludeInNetWorth:
 			values[i] = new(sql.NullBool)
-		case account.FieldID:
-			values[i] = new(sql.NullInt64)
-		case account.FieldName, account.FieldAccountType, account.FieldSymbol, account.FieldSymbolType:
+		case account.FieldID, account.FieldName, account.FieldAccountType, account.FieldSymbol, account.FieldSymbolType:
 			values[i] = new(sql.NullString)
 		case account.FieldCreatedAt, account.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
+		case account.ForeignKeys[0]: // profile_account
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -119,11 +123,11 @@ func (a *Account) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case account.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				a.ID = value.String
 			}
-			a.ID = int(value.Int64)
 		case account.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -195,6 +199,13 @@ func (a *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				a.UpdatedAt = value.Time
+			}
+		case account.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field profile_account", values[i])
+			} else if value.Valid {
+				a.profile_account = new(string)
+				*a.profile_account = value.String
 			}
 		default:
 			a.selectValues.Set(columns[i], values[i])

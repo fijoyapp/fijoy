@@ -317,7 +317,7 @@ func (c *AccountClient) UpdateOne(a *Account) *AccountUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AccountClient) UpdateOneID(id int) *AccountUpdateOne {
+func (c *AccountClient) UpdateOneID(id string) *AccountUpdateOne {
 	mutation := newAccountMutation(c.config, OpUpdateOne, withAccountID(id))
 	return &AccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -334,7 +334,7 @@ func (c *AccountClient) DeleteOne(a *Account) *AccountDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AccountClient) DeleteOneID(id int) *AccountDeleteOne {
+func (c *AccountClient) DeleteOneID(id string) *AccountDeleteOne {
 	builder := c.Delete().Where(account.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -351,12 +351,12 @@ func (c *AccountClient) Query() *AccountQuery {
 }
 
 // Get returns a Account entity by its id.
-func (c *AccountClient) Get(ctx context.Context, id int) (*Account, error) {
+func (c *AccountClient) Get(ctx context.Context, id string) (*Account, error) {
 	return c.Query().Where(account.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AccountClient) GetX(ctx context.Context, id int) *Account {
+func (c *AccountClient) GetX(ctx context.Context, id string) *Account {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -372,7 +372,7 @@ func (c *AccountClient) QueryProfile(a *Account) *ProfileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, id),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, account.ProfileTable, account.ProfilePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, account.ProfileTable, account.ProfileColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -388,7 +388,7 @@ func (c *AccountClient) QueryAccountSnapshot(a *Account) *AccountSnapshotQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, id),
 			sqlgraph.To(accountsnapshot.Table, accountsnapshot.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, account.AccountSnapshotTable, account.AccountSnapshotPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.AccountSnapshotTable, account.AccountSnapshotColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -404,7 +404,7 @@ func (c *AccountClient) QueryTransaction(a *Account) *TransactionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, id),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, account.TransactionTable, account.TransactionPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionTable, account.TransactionColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -498,7 +498,7 @@ func (c *AccountSnapshotClient) UpdateOne(as *AccountSnapshot) *AccountSnapshotU
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AccountSnapshotClient) UpdateOneID(id int) *AccountSnapshotUpdateOne {
+func (c *AccountSnapshotClient) UpdateOneID(id string) *AccountSnapshotUpdateOne {
 	mutation := newAccountSnapshotMutation(c.config, OpUpdateOne, withAccountSnapshotID(id))
 	return &AccountSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -515,7 +515,7 @@ func (c *AccountSnapshotClient) DeleteOne(as *AccountSnapshot) *AccountSnapshotD
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AccountSnapshotClient) DeleteOneID(id int) *AccountSnapshotDeleteOne {
+func (c *AccountSnapshotClient) DeleteOneID(id string) *AccountSnapshotDeleteOne {
 	builder := c.Delete().Where(accountsnapshot.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -532,12 +532,12 @@ func (c *AccountSnapshotClient) Query() *AccountSnapshotQuery {
 }
 
 // Get returns a AccountSnapshot entity by its id.
-func (c *AccountSnapshotClient) Get(ctx context.Context, id int) (*AccountSnapshot, error) {
+func (c *AccountSnapshotClient) Get(ctx context.Context, id string) (*AccountSnapshot, error) {
 	return c.Query().Where(accountsnapshot.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AccountSnapshotClient) GetX(ctx context.Context, id int) *AccountSnapshot {
+func (c *AccountSnapshotClient) GetX(ctx context.Context, id string) *AccountSnapshot {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -553,7 +553,7 @@ func (c *AccountSnapshotClient) QueryAccount(as *AccountSnapshot) *AccountQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(accountsnapshot.Table, accountsnapshot.FieldID, id),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, accountsnapshot.AccountTable, accountsnapshot.AccountPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, accountsnapshot.AccountTable, accountsnapshot.AccountColumn),
 		)
 		fromV = sqlgraph.Neighbors(as.driver.Dialect(), step)
 		return fromV, nil
@@ -647,7 +647,7 @@ func (c *OverallSnapshotClient) UpdateOne(os *OverallSnapshot) *OverallSnapshotU
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *OverallSnapshotClient) UpdateOneID(id int) *OverallSnapshotUpdateOne {
+func (c *OverallSnapshotClient) UpdateOneID(id string) *OverallSnapshotUpdateOne {
 	mutation := newOverallSnapshotMutation(c.config, OpUpdateOne, withOverallSnapshotID(id))
 	return &OverallSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -664,7 +664,7 @@ func (c *OverallSnapshotClient) DeleteOne(os *OverallSnapshot) *OverallSnapshotD
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *OverallSnapshotClient) DeleteOneID(id int) *OverallSnapshotDeleteOne {
+func (c *OverallSnapshotClient) DeleteOneID(id string) *OverallSnapshotDeleteOne {
 	builder := c.Delete().Where(overallsnapshot.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -681,12 +681,12 @@ func (c *OverallSnapshotClient) Query() *OverallSnapshotQuery {
 }
 
 // Get returns a OverallSnapshot entity by its id.
-func (c *OverallSnapshotClient) Get(ctx context.Context, id int) (*OverallSnapshot, error) {
+func (c *OverallSnapshotClient) Get(ctx context.Context, id string) (*OverallSnapshot, error) {
 	return c.Query().Where(overallsnapshot.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *OverallSnapshotClient) GetX(ctx context.Context, id int) *OverallSnapshot {
+func (c *OverallSnapshotClient) GetX(ctx context.Context, id string) *OverallSnapshot {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -702,7 +702,7 @@ func (c *OverallSnapshotClient) QueryProfile(os *OverallSnapshot) *ProfileQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(overallsnapshot.Table, overallsnapshot.FieldID, id),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, overallsnapshot.ProfileTable, overallsnapshot.ProfilePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, overallsnapshot.ProfileTable, overallsnapshot.ProfileColumn),
 		)
 		fromV = sqlgraph.Neighbors(os.driver.Dialect(), step)
 		return fromV, nil
@@ -796,7 +796,7 @@ func (c *ProfileClient) UpdateOne(pr *Profile) *ProfileUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ProfileClient) UpdateOneID(id int) *ProfileUpdateOne {
+func (c *ProfileClient) UpdateOneID(id string) *ProfileUpdateOne {
 	mutation := newProfileMutation(c.config, OpUpdateOne, withProfileID(id))
 	return &ProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -813,7 +813,7 @@ func (c *ProfileClient) DeleteOne(pr *Profile) *ProfileDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ProfileClient) DeleteOneID(id int) *ProfileDeleteOne {
+func (c *ProfileClient) DeleteOneID(id string) *ProfileDeleteOne {
 	builder := c.Delete().Where(profile.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -830,12 +830,12 @@ func (c *ProfileClient) Query() *ProfileQuery {
 }
 
 // Get returns a Profile entity by its id.
-func (c *ProfileClient) Get(ctx context.Context, id int) (*Profile, error) {
+func (c *ProfileClient) Get(ctx context.Context, id string) (*Profile, error) {
 	return c.Query().Where(profile.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ProfileClient) GetX(ctx context.Context, id int) *Profile {
+func (c *ProfileClient) GetX(ctx context.Context, id string) *Profile {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -867,7 +867,7 @@ func (c *ProfileClient) QueryAccount(pr *Profile) *AccountQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, profile.AccountTable, profile.AccountPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.AccountTable, profile.AccountColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 		return fromV, nil
@@ -883,7 +883,7 @@ func (c *ProfileClient) QueryTransaction(pr *Profile) *TransactionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, profile.TransactionTable, profile.TransactionPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionTable, profile.TransactionColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 		return fromV, nil
@@ -899,7 +899,7 @@ func (c *ProfileClient) QueryOverallSnapshot(pr *Profile) *OverallSnapshotQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(overallsnapshot.Table, overallsnapshot.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 		return fromV, nil
@@ -993,7 +993,7 @@ func (c *TransactionClient) UpdateOne(t *Transaction) *TransactionUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *TransactionClient) UpdateOneID(id int) *TransactionUpdateOne {
+func (c *TransactionClient) UpdateOneID(id string) *TransactionUpdateOne {
 	mutation := newTransactionMutation(c.config, OpUpdateOne, withTransactionID(id))
 	return &TransactionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1010,7 +1010,7 @@ func (c *TransactionClient) DeleteOne(t *Transaction) *TransactionDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *TransactionClient) DeleteOneID(id int) *TransactionDeleteOne {
+func (c *TransactionClient) DeleteOneID(id string) *TransactionDeleteOne {
 	builder := c.Delete().Where(transaction.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1027,12 +1027,12 @@ func (c *TransactionClient) Query() *TransactionQuery {
 }
 
 // Get returns a Transaction entity by its id.
-func (c *TransactionClient) Get(ctx context.Context, id int) (*Transaction, error) {
+func (c *TransactionClient) Get(ctx context.Context, id string) (*Transaction, error) {
 	return c.Query().Where(transaction.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *TransactionClient) GetX(ctx context.Context, id int) *Transaction {
+func (c *TransactionClient) GetX(ctx context.Context, id string) *Transaction {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1048,7 +1048,7 @@ func (c *TransactionClient) QueryProfile(t *Transaction) *ProfileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(transaction.Table, transaction.FieldID, id),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, transaction.ProfileTable, transaction.ProfilePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, transaction.ProfileTable, transaction.ProfileColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -1064,7 +1064,7 @@ func (c *TransactionClient) QueryAccount(t *Transaction) *AccountQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(transaction.Table, transaction.FieldID, id),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, transaction.AccountTable, transaction.AccountPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, transaction.AccountTable, transaction.AccountColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -1158,7 +1158,7 @@ func (c *UserClient) UpdateOne(u *User) *UserUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *UserClient) UpdateOneID(id int) *UserUpdateOne {
+func (c *UserClient) UpdateOneID(id string) *UserUpdateOne {
 	mutation := newUserMutation(c.config, OpUpdateOne, withUserID(id))
 	return &UserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1175,7 +1175,7 @@ func (c *UserClient) DeleteOne(u *User) *UserDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *UserClient) DeleteOneID(id int) *UserDeleteOne {
+func (c *UserClient) DeleteOneID(id string) *UserDeleteOne {
 	builder := c.Delete().Where(user.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1192,12 +1192,12 @@ func (c *UserClient) Query() *UserQuery {
 }
 
 // Get returns a User entity by its id.
-func (c *UserClient) Get(ctx context.Context, id int) (*User, error) {
+func (c *UserClient) Get(ctx context.Context, id string) (*User, error) {
 	return c.Query().Where(user.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *UserClient) GetX(ctx context.Context, id int) *User {
+func (c *UserClient) GetX(ctx context.Context, id string) *User {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1213,7 +1213,7 @@ func (c *UserClient) QueryUserKey(u *User) *UserKeyQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(userkey.Table, userkey.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.UserKeyTable, user.UserKeyPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeyTable, user.UserKeyColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -1323,7 +1323,7 @@ func (c *UserKeyClient) UpdateOne(uk *UserKey) *UserKeyUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *UserKeyClient) UpdateOneID(id int) *UserKeyUpdateOne {
+func (c *UserKeyClient) UpdateOneID(id string) *UserKeyUpdateOne {
 	mutation := newUserKeyMutation(c.config, OpUpdateOne, withUserKeyID(id))
 	return &UserKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -1340,7 +1340,7 @@ func (c *UserKeyClient) DeleteOne(uk *UserKey) *UserKeyDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *UserKeyClient) DeleteOneID(id int) *UserKeyDeleteOne {
+func (c *UserKeyClient) DeleteOneID(id string) *UserKeyDeleteOne {
 	builder := c.Delete().Where(userkey.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -1357,12 +1357,12 @@ func (c *UserKeyClient) Query() *UserKeyQuery {
 }
 
 // Get returns a UserKey entity by its id.
-func (c *UserKeyClient) Get(ctx context.Context, id int) (*UserKey, error) {
+func (c *UserKeyClient) Get(ctx context.Context, id string) (*UserKey, error) {
 	return c.Query().Where(userkey.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *UserKeyClient) GetX(ctx context.Context, id int) *UserKey {
+func (c *UserKeyClient) GetX(ctx context.Context, id string) *UserKey {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -1378,7 +1378,7 @@ func (c *UserKeyClient) QueryUser(uk *UserKey) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(userkey.Table, userkey.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, userkey.UserTable, userkey.UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, userkey.UserTable, userkey.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(uk.driver.Dialect(), step)
 		return fromV, nil

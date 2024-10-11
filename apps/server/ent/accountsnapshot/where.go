@@ -12,48 +12,58 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.AccountSnapshot {
+func ID(id string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.AccountSnapshot {
+func IDEQ(id string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.AccountSnapshot {
+func IDNEQ(id string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.AccountSnapshot {
+func IDIn(ids ...string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.AccountSnapshot {
+func IDNotIn(ids ...string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.AccountSnapshot {
+func IDGT(id string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.AccountSnapshot {
+func IDGTE(id string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.AccountSnapshot {
+func IDLT(id string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.AccountSnapshot {
+func IDLTE(id string) predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(sql.FieldLTE(FieldID, id))
+}
+
+// IDEqualFold applies the EqualFold predicate on the ID field.
+func IDEqualFold(id string) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldEqualFold(FieldID, id))
+}
+
+// IDContainsFold applies the ContainsFold predicate on the ID field.
+func IDContainsFold(id string) predicate.AccountSnapshot {
+	return predicate.AccountSnapshot(sql.FieldContainsFold(FieldID, id))
 }
 
 // Datehour applies equality check predicate on the "datehour" field. It's identical to DatehourEQ.
@@ -151,7 +161,7 @@ func HasAccount() predicate.AccountSnapshot {
 	return predicate.AccountSnapshot(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, AccountTable, AccountPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

@@ -29,6 +29,7 @@ type AccountQuery struct {
 	withProfile         *ProfileQuery
 	withAccountSnapshot *AccountSnapshotQuery
 	withTransaction     *TransactionQuery
+	withFKs             bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -79,7 +80,7 @@ func (aq *AccountQuery) QueryProfile() *ProfileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, account.ProfileTable, account.ProfilePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, account.ProfileTable, account.ProfileColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -101,7 +102,7 @@ func (aq *AccountQuery) QueryAccountSnapshot() *AccountSnapshotQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(accountsnapshot.Table, accountsnapshot.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, account.AccountSnapshotTable, account.AccountSnapshotPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.AccountSnapshotTable, account.AccountSnapshotColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -123,7 +124,7 @@ func (aq *AccountQuery) QueryTransaction() *TransactionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, account.TransactionTable, account.TransactionPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionTable, account.TransactionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -155,8 +156,8 @@ func (aq *AccountQuery) FirstX(ctx context.Context) *Account {
 
 // FirstID returns the first Account ID from the query.
 // Returns a *NotFoundError when no Account ID was found.
-func (aq *AccountQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (aq *AccountQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = aq.Limit(1).IDs(setContextOp(ctx, aq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -168,7 +169,7 @@ func (aq *AccountQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (aq *AccountQuery) FirstIDX(ctx context.Context) int {
+func (aq *AccountQuery) FirstIDX(ctx context.Context) string {
 	id, err := aq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -206,8 +207,8 @@ func (aq *AccountQuery) OnlyX(ctx context.Context) *Account {
 // OnlyID is like Only, but returns the only Account ID in the query.
 // Returns a *NotSingularError when more than one Account ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (aq *AccountQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (aq *AccountQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = aq.Limit(2).IDs(setContextOp(ctx, aq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -223,7 +224,7 @@ func (aq *AccountQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (aq *AccountQuery) OnlyIDX(ctx context.Context) int {
+func (aq *AccountQuery) OnlyIDX(ctx context.Context) string {
 	id, err := aq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -251,7 +252,7 @@ func (aq *AccountQuery) AllX(ctx context.Context) []*Account {
 }
 
 // IDs executes the query and returns a list of Account IDs.
-func (aq *AccountQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (aq *AccountQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if aq.ctx.Unique == nil && aq.path != nil {
 		aq.Unique(true)
 	}
@@ -263,7 +264,7 @@ func (aq *AccountQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (aq *AccountQuery) IDsX(ctx context.Context) []int {
+func (aq *AccountQuery) IDsX(ctx context.Context) []string {
 	ids, err := aq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -442,6 +443,7 @@ func (aq *AccountQuery) prepareQuery(ctx context.Context) error {
 func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Account, error) {
 	var (
 		nodes       = []*Account{}
+		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
 		loadedTypes = [3]bool{
 			aq.withProfile != nil,
@@ -449,6 +451,12 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			aq.withTransaction != nil,
 		}
 	)
+	if aq.withProfile != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, account.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Account).scanValues(nil, columns)
 	}
@@ -468,9 +476,8 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		return nodes, nil
 	}
 	if query := aq.withProfile; query != nil {
-		if err := aq.loadProfile(ctx, query, nodes,
-			func(n *Account) { n.Edges.Profile = []*Profile{} },
-			func(n *Account, e *Profile) { n.Edges.Profile = append(n.Edges.Profile, e) }); err != nil {
+		if err := aq.loadProfile(ctx, query, nodes, nil,
+			func(n *Account, e *Profile) { n.Edges.Profile = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -492,185 +499,96 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 }
 
 func (aq *AccountQuery) loadProfile(ctx context.Context, query *ProfileQuery, nodes []*Account, init func(*Account), assign func(*Account, *Profile)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Account)
-	nids := make(map[int]map[*Account]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Account)
+	for i := range nodes {
+		if nodes[i].profile_account == nil {
+			continue
 		}
+		fk := *nodes[i].profile_account
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(account.ProfileTable)
-		s.Join(joinT).On(s.C(profile.FieldID), joinT.C(account.ProfilePrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(account.ProfilePrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(account.ProfilePrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(ids) == 0 {
+		return nil
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Account]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Profile](ctx, query, qr, query.inters)
+	query.Where(profile.IDIn(ids...))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "profile" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "profile_account" returned %v`, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil
 }
 func (aq *AccountQuery) loadAccountSnapshot(ctx context.Context, query *AccountSnapshotQuery, nodes []*Account, init func(*Account), assign func(*Account, *AccountSnapshot)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Account)
-	nids := make(map[int]map[*Account]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Account)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 		if init != nil {
-			init(node)
+			init(nodes[i])
 		}
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(account.AccountSnapshotTable)
-		s.Join(joinT).On(s.C(accountsnapshot.FieldID), joinT.C(account.AccountSnapshotPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(account.AccountSnapshotPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(account.AccountSnapshotPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Account]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*AccountSnapshot](ctx, query, qr, query.inters)
+	query.withFKs = true
+	query.Where(predicate.AccountSnapshot(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(account.AccountSnapshotColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		fk := n.account_account_snapshot
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "account_account_snapshot" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected "account_snapshot" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "account_account_snapshot" returned %v for node %v`, *fk, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
 func (aq *AccountQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Account, init func(*Account), assign func(*Account, *Transaction)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Account)
-	nids := make(map[int]map[*Account]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Account)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 		if init != nil {
-			init(node)
+			init(nodes[i])
 		}
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(account.TransactionTable)
-		s.Join(joinT).On(s.C(transaction.FieldID), joinT.C(account.TransactionPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(account.TransactionPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(account.TransactionPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Account]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Transaction](ctx, query, qr, query.inters)
+	query.withFKs = true
+	query.Where(predicate.Transaction(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(account.TransactionColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		fk := n.account_transaction
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "account_transaction" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected "transaction" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "account_transaction" returned %v for node %v`, *fk, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -685,7 +603,7 @@ func (aq *AccountQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (aq *AccountQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(account.Table, account.Columns, sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(account.Table, account.Columns, sqlgraph.NewFieldSpec(account.FieldID, field.TypeString))
 	_spec.From = aq.sql
 	if unique := aq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

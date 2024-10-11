@@ -43,3 +43,5 @@ ent-new name:
 ent-generate:
   just apps/server/ent-generate
 
+ent-drop:
+  just apps/server/ent-drop

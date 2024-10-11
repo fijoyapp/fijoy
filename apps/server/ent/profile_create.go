@@ -4,15 +4,18 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fijoy/ent/account"
 	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
 )
 
 // ProfileCreate is the builder for creating a Profile entity.
@@ -22,17 +25,55 @@ type ProfileCreate struct {
 	hooks    []Hook
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (pc *ProfileCreate) SetUserID(id int) *ProfileCreate {
-	pc.mutation.SetUserID(id)
+// SetLocale sets the "locale" field.
+func (pc *ProfileCreate) SetLocale(s string) *ProfileCreate {
+	pc.mutation.SetLocale(s)
 	return pc
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (pc *ProfileCreate) SetNillableUserID(id *int) *ProfileCreate {
-	if id != nil {
-		pc = pc.SetUserID(*id)
+// SetCurrencies sets the "currencies" field.
+func (pc *ProfileCreate) SetCurrencies(s string) *ProfileCreate {
+	pc.mutation.SetCurrencies(s)
+	return pc
+}
+
+// SetNetWorthGoal sets the "net_worth_goal" field.
+func (pc *ProfileCreate) SetNetWorthGoal(d decimal.Decimal) *ProfileCreate {
+	pc.mutation.SetNetWorthGoal(d)
+	return pc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (pc *ProfileCreate) SetCreatedAt(t time.Time) *ProfileCreate {
+	pc.mutation.SetCreatedAt(t)
+	return pc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableCreatedAt(t *time.Time) *ProfileCreate {
+	if t != nil {
+		pc.SetCreatedAt(*t)
 	}
+	return pc
+}
+
+// SetID sets the "id" field.
+func (pc *ProfileCreate) SetID(s string) *ProfileCreate {
+	pc.mutation.SetID(s)
+	return pc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableID(s *string) *ProfileCreate {
+	if s != nil {
+		pc.SetID(*s)
+	}
+	return pc
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (pc *ProfileCreate) SetUserID(id string) *ProfileCreate {
+	pc.mutation.SetUserID(id)
 	return pc
 }
 
@@ -42,14 +83,14 @@ func (pc *ProfileCreate) SetUser(u *User) *ProfileCreate {
 }
 
 // AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (pc *ProfileCreate) AddAccountIDs(ids ...int) *ProfileCreate {
+func (pc *ProfileCreate) AddAccountIDs(ids ...string) *ProfileCreate {
 	pc.mutation.AddAccountIDs(ids...)
 	return pc
 }
 
 // AddAccount adds the "account" edges to the Account entity.
 func (pc *ProfileCreate) AddAccount(a ...*Account) *ProfileCreate {
-	ids := make([]int, len(a))
+	ids := make([]string, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -57,14 +98,14 @@ func (pc *ProfileCreate) AddAccount(a ...*Account) *ProfileCreate {
 }
 
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
-func (pc *ProfileCreate) AddTransactionIDs(ids ...int) *ProfileCreate {
+func (pc *ProfileCreate) AddTransactionIDs(ids ...string) *ProfileCreate {
 	pc.mutation.AddTransactionIDs(ids...)
 	return pc
 }
 
 // AddTransaction adds the "transaction" edges to the Transaction entity.
 func (pc *ProfileCreate) AddTransaction(t ...*Transaction) *ProfileCreate {
-	ids := make([]int, len(t))
+	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -72,14 +113,14 @@ func (pc *ProfileCreate) AddTransaction(t ...*Transaction) *ProfileCreate {
 }
 
 // AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
-func (pc *ProfileCreate) AddOverallSnapshotIDs(ids ...int) *ProfileCreate {
+func (pc *ProfileCreate) AddOverallSnapshotIDs(ids ...string) *ProfileCreate {
 	pc.mutation.AddOverallSnapshotIDs(ids...)
 	return pc
 }
 
 // AddOverallSnapshot adds the "overall_snapshot" edges to the OverallSnapshot entity.
 func (pc *ProfileCreate) AddOverallSnapshot(o ...*OverallSnapshot) *ProfileCreate {
-	ids := make([]int, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -93,6 +134,7 @@ func (pc *ProfileCreate) Mutation() *ProfileMutation {
 
 // Save creates the Profile in the database.
 func (pc *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
+	pc.defaults()
 	return withHooks(ctx, pc.sqlSave, pc.mutation, pc.hooks)
 }
 
@@ -118,8 +160,35 @@ func (pc *ProfileCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (pc *ProfileCreate) defaults() {
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		v := profile.DefaultCreatedAt()
+		pc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := pc.mutation.ID(); !ok {
+		v := profile.DefaultID
+		pc.mutation.SetID(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (pc *ProfileCreate) check() error {
+	if _, ok := pc.mutation.Locale(); !ok {
+		return &ValidationError{Name: "locale", err: errors.New(`ent: missing required field "Profile.locale"`)}
+	}
+	if _, ok := pc.mutation.Currencies(); !ok {
+		return &ValidationError{Name: "currencies", err: errors.New(`ent: missing required field "Profile.currencies"`)}
+	}
+	if _, ok := pc.mutation.NetWorthGoal(); !ok {
+		return &ValidationError{Name: "net_worth_goal", err: errors.New(`ent: missing required field "Profile.net_worth_goal"`)}
+	}
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Profile.created_at"`)}
+	}
+	if len(pc.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Profile.user"`)}
+	}
 	return nil
 }
 
@@ -134,8 +203,13 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Profile.ID type: %T", _spec.ID.Value)
+		}
+	}
 	pc.mutation.id = &_node.ID
 	pc.mutation.done = true
 	return _node, nil
@@ -144,8 +218,28 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Profile{config: pc.config}
-		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
 	)
+	if id, ok := pc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
+	if value, ok := pc.mutation.Locale(); ok {
+		_spec.SetField(profile.FieldLocale, field.TypeString, value)
+		_node.Locale = value
+	}
+	if value, ok := pc.mutation.Currencies(); ok {
+		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)
+		_node.Currencies = value
+	}
+	if value, ok := pc.mutation.NetWorthGoal(); ok {
+		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
+		_node.NetWorthGoal = value
+	}
+	if value, ok := pc.mutation.CreatedAt(); ok {
+		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
 	if nodes := pc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -154,7 +248,7 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 			Columns: []string{profile.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -165,13 +259,13 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	}
 	if nodes := pc.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.AccountTable,
-			Columns: profile.AccountPrimaryKey,
+			Columns: []string{profile.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -181,13 +275,13 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	}
 	if nodes := pc.mutation.TransactionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.TransactionTable,
-			Columns: profile.TransactionPrimaryKey,
+			Columns: []string{profile.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -197,13 +291,13 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	}
 	if nodes := pc.mutation.OverallSnapshotIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.OverallSnapshotTable,
-			Columns: profile.OverallSnapshotPrimaryKey,
+			Columns: []string{profile.OverallSnapshotColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -232,6 +326,7 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 	for i := range pcb.builders {
 		func(i int, root context.Context) {
 			builder := pcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ProfileMutation)
 				if !ok {
@@ -258,10 +353,6 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

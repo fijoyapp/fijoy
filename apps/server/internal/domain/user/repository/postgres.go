@@ -2,141 +2,85 @@ package repository
 
 import (
 	"context"
-	"database/sql"
-	"fijoy/constants"
-	"fijoy/internal/gen/postgres/model"
-	"time"
-
-	. "fijoy/internal/gen/postgres/table"
-
-	. "github.com/go-jet/jet/v2/postgres"
-	"github.com/nrednav/cuid2"
+	"fijoy/ent"
 )
 
 type UserRepository interface {
-	CreateUser(ctx context.Context, email string) (*model.FijoyUser, error)
-	GetUser(ctx context.Context, id string) (*model.FijoyUser, error)
-	DeleteUser(ctx context.Context, id string) (*model.FijoyUser, error)
+	CreateUser(ctx context.Context, client *ent.Client, email string) (*ent.User, error)
+	GetUser(ctx context.Context, client *ent.Client, id string) (*ent.User, error)
+	DeleteUser(ctx context.Context, client *ent.Client, id string) error
 }
 
-type userRepository struct {
-	db *sql.DB
-}
+type userRepository struct{}
 
-func NewUserRepository(db *sql.DB) *userRepository {
-	return &userRepository{db: db}
+func NewUserRepository() *userRepository {
+	return &userRepository{}
 }
 
 type UserKeyRepository interface {
-	CreateUserKey(ctx context.Context, id string, userId string) (*model.FijoyUserKey, error)
-	GetUserKey(ctx context.Context, id string) (*model.FijoyUserKey, error)
-	DeleteUserKey(ctx context.Context, id string) (*model.FijoyUserKey, error)
+	CreateUserKey(ctx context.Context, client *ent.Client, id string, user *ent.User) (*ent.UserKey, error)
+	GetUserKey(ctx context.Context, client *ent.Client, id string) (*ent.UserKey, error)
+	DeleteUserKey(ctx context.Context, client *ent.Client, id string) error
 }
 
-type userKeyRepository struct {
-	db *sql.DB
+type userKeyRepository struct{}
+
+func NewUserKeyRepository() *userKeyRepository {
+	return &userKeyRepository{}
 }
 
-func NewUserKeyRepository(db *sql.DB) *userKeyRepository {
-	return &userKeyRepository{db: db}
-}
-
-func (r *userRepository) CreateUser(ctx context.Context, email string) (*model.FijoyUser, error) {
-	userId := constants.UserPrefix + cuid2.Generate()
-
-	user := model.FijoyUser{
-		ID:        userId,
-		Email:     email,
-		CreatedAt: time.Now(),
-	}
-	stmt := FijoyUser.
-		INSERT(FijoyUser.AllColumns).
-		MODEL(user).RETURNING(FijoyUser.AllColumns)
-
-	dest := model.FijoyUser{}
-
-	err := stmt.QueryContext(ctx, r.db, &dest)
+func (r *userRepository) CreateUser(ctx context.Context, client *ent.Client, email string) (*ent.User, error) {
+	user, err := client.User.Create().SetEmail(email).Save(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return user, nil
 }
 
-func (r *userRepository) GetUser(ctx context.Context, id string) (*model.FijoyUser, error) {
-	stmt := SELECT(FijoyUser.AllColumns).
-		FROM(FijoyUser).
-		WHERE(FijoyUser.ID.EQ(String(id)))
-
-	dest := model.FijoyUser{}
-
-	err := stmt.QueryContext(ctx, r.db, &dest)
+func (r *userRepository) GetUser(ctx context.Context, client *ent.Client, id string) (*ent.User, error) {
+	user, err := client.User.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return user, nil
 }
 
-func (r *userRepository) DeleteUser(ctx context.Context, id string) (*model.FijoyUser, error) {
-	stmt := FijoyUser.DELETE().
-		WHERE(FijoyUser.ID.EQ(String(id))).
-		RETURNING(FijoyUser.AllColumns)
+func (r *userRepository) DeleteUser(ctx context.Context, client *ent.Client, id string) error {
+	err := client.User.DeleteOneID(id).Exec(ctx)
+	if err != nil {
+		return err
+	}
 
-	dest := model.FijoyUser{}
+	return nil
+}
 
-	err := stmt.QueryContext(ctx, r.db, &dest)
+func (r *userKeyRepository) CreateUserKey(ctx context.Context, client *ent.Client, id string, user *ent.User) (*ent.UserKey, error) {
+	userKey, err := client.UserKey.
+		Create().SetUser(user).SetID(id).Save(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return userKey, nil
 }
 
-func (r *userKeyRepository) CreateUserKey(ctx context.Context, id string, userId string) (*model.FijoyUserKey, error) {
-	userKey := model.FijoyUserKey{
-		ID:     id,
-		UserID: userId,
-	}
-
-	stmt := FijoyUserKey.
-		INSERT(FijoyUserKey.AllColumns).
-		MODEL(userKey).
-		RETURNING(FijoyUserKey.AllColumns)
-
-	dest := model.FijoyUserKey{}
-	err := stmt.QueryContext(ctx, r.db, &dest)
+func (r *userKeyRepository) GetUserKey(ctx context.Context, client *ent.Client, id string) (*ent.UserKey, error) {
+	userKey, err := client.
+		UserKey.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return userKey, nil
 }
 
-func (r *userKeyRepository) GetUserKey(ctx context.Context, id string) (*model.FijoyUserKey, error) {
-	stmt := SELECT(FijoyUserKey.AllColumns).
-		FROM(FijoyUserKey).
-		WHERE(FijoyUserKey.ID.EQ(String(id)))
-
-	dest := model.FijoyUserKey{}
-	err := stmt.QueryContext(ctx, r.db, &dest)
+func (r *userKeyRepository) DeleteUserKey(ctx context.Context, client *ent.Client, id string) error {
+	err := client.UserKey.DeleteOneID(id).Exec(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &dest, nil
-}
-
-func (r *userKeyRepository) DeleteUserKey(ctx context.Context, id string) (*model.FijoyUserKey, error) {
-	stmt := FijoyUserKey.DELETE().
-		WHERE(FijoyUserKey.ID.EQ(String(id))).
-		RETURNING(FijoyUserKey.AllColumns)
-
-	dest := model.FijoyUserKey{}
-	err := stmt.QueryContext(ctx, r.db, &dest)
-	if err != nil {
-		return nil, err
-	}
-
-	return &dest, nil
+	return nil
 }

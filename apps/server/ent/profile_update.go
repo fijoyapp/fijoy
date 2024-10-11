@@ -12,10 +12,12 @@ import (
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shopspring/decimal"
 )
 
 // ProfileUpdate is the builder for updating Profile entities.
@@ -31,17 +33,72 @@ func (pu *ProfileUpdate) Where(ps ...predicate.Profile) *ProfileUpdate {
 	return pu
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (pu *ProfileUpdate) SetUserID(id int) *ProfileUpdate {
-	pu.mutation.SetUserID(id)
+// SetLocale sets the "locale" field.
+func (pu *ProfileUpdate) SetLocale(s string) *ProfileUpdate {
+	pu.mutation.SetLocale(s)
 	return pu
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableUserID(id *int) *ProfileUpdate {
-	if id != nil {
-		pu = pu.SetUserID(*id)
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableLocale(s *string) *ProfileUpdate {
+	if s != nil {
+		pu.SetLocale(*s)
 	}
+	return pu
+}
+
+// SetCurrencies sets the "currencies" field.
+func (pu *ProfileUpdate) SetCurrencies(s string) *ProfileUpdate {
+	pu.mutation.SetCurrencies(s)
+	return pu
+}
+
+// SetNillableCurrencies sets the "currencies" field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableCurrencies(s *string) *ProfileUpdate {
+	if s != nil {
+		pu.SetCurrencies(*s)
+	}
+	return pu
+}
+
+// SetNetWorthGoal sets the "net_worth_goal" field.
+func (pu *ProfileUpdate) SetNetWorthGoal(d decimal.Decimal) *ProfileUpdate {
+	pu.mutation.ResetNetWorthGoal()
+	pu.mutation.SetNetWorthGoal(d)
+	return pu
+}
+
+// SetNillableNetWorthGoal sets the "net_worth_goal" field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableNetWorthGoal(d *decimal.Decimal) *ProfileUpdate {
+	if d != nil {
+		pu.SetNetWorthGoal(*d)
+	}
+	return pu
+}
+
+// AddNetWorthGoal adds d to the "net_worth_goal" field.
+func (pu *ProfileUpdate) AddNetWorthGoal(d decimal.Decimal) *ProfileUpdate {
+	pu.mutation.AddNetWorthGoal(d)
+	return pu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (pu *ProfileUpdate) SetCreatedAt(t time.Time) *ProfileUpdate {
+	pu.mutation.SetCreatedAt(t)
+	return pu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableCreatedAt(t *time.Time) *ProfileUpdate {
+	if t != nil {
+		pu.SetCreatedAt(*t)
+	}
+	return pu
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (pu *ProfileUpdate) SetUserID(id string) *ProfileUpdate {
+	pu.mutation.SetUserID(id)
 	return pu
 }
 
@@ -51,14 +108,14 @@ func (pu *ProfileUpdate) SetUser(u *User) *ProfileUpdate {
 }
 
 // AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (pu *ProfileUpdate) AddAccountIDs(ids ...int) *ProfileUpdate {
+func (pu *ProfileUpdate) AddAccountIDs(ids ...string) *ProfileUpdate {
 	pu.mutation.AddAccountIDs(ids...)
 	return pu
 }
 
 // AddAccount adds the "account" edges to the Account entity.
 func (pu *ProfileUpdate) AddAccount(a ...*Account) *ProfileUpdate {
-	ids := make([]int, len(a))
+	ids := make([]string, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -66,14 +123,14 @@ func (pu *ProfileUpdate) AddAccount(a ...*Account) *ProfileUpdate {
 }
 
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
-func (pu *ProfileUpdate) AddTransactionIDs(ids ...int) *ProfileUpdate {
+func (pu *ProfileUpdate) AddTransactionIDs(ids ...string) *ProfileUpdate {
 	pu.mutation.AddTransactionIDs(ids...)
 	return pu
 }
 
 // AddTransaction adds the "transaction" edges to the Transaction entity.
 func (pu *ProfileUpdate) AddTransaction(t ...*Transaction) *ProfileUpdate {
-	ids := make([]int, len(t))
+	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -81,14 +138,14 @@ func (pu *ProfileUpdate) AddTransaction(t ...*Transaction) *ProfileUpdate {
 }
 
 // AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
-func (pu *ProfileUpdate) AddOverallSnapshotIDs(ids ...int) *ProfileUpdate {
+func (pu *ProfileUpdate) AddOverallSnapshotIDs(ids ...string) *ProfileUpdate {
 	pu.mutation.AddOverallSnapshotIDs(ids...)
 	return pu
 }
 
 // AddOverallSnapshot adds the "overall_snapshot" edges to the OverallSnapshot entity.
 func (pu *ProfileUpdate) AddOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdate {
-	ids := make([]int, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -113,14 +170,14 @@ func (pu *ProfileUpdate) ClearAccount() *ProfileUpdate {
 }
 
 // RemoveAccountIDs removes the "account" edge to Account entities by IDs.
-func (pu *ProfileUpdate) RemoveAccountIDs(ids ...int) *ProfileUpdate {
+func (pu *ProfileUpdate) RemoveAccountIDs(ids ...string) *ProfileUpdate {
 	pu.mutation.RemoveAccountIDs(ids...)
 	return pu
 }
 
 // RemoveAccount removes "account" edges to Account entities.
 func (pu *ProfileUpdate) RemoveAccount(a ...*Account) *ProfileUpdate {
-	ids := make([]int, len(a))
+	ids := make([]string, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -134,14 +191,14 @@ func (pu *ProfileUpdate) ClearTransaction() *ProfileUpdate {
 }
 
 // RemoveTransactionIDs removes the "transaction" edge to Transaction entities by IDs.
-func (pu *ProfileUpdate) RemoveTransactionIDs(ids ...int) *ProfileUpdate {
+func (pu *ProfileUpdate) RemoveTransactionIDs(ids ...string) *ProfileUpdate {
 	pu.mutation.RemoveTransactionIDs(ids...)
 	return pu
 }
 
 // RemoveTransaction removes "transaction" edges to Transaction entities.
 func (pu *ProfileUpdate) RemoveTransaction(t ...*Transaction) *ProfileUpdate {
-	ids := make([]int, len(t))
+	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -155,14 +212,14 @@ func (pu *ProfileUpdate) ClearOverallSnapshot() *ProfileUpdate {
 }
 
 // RemoveOverallSnapshotIDs removes the "overall_snapshot" edge to OverallSnapshot entities by IDs.
-func (pu *ProfileUpdate) RemoveOverallSnapshotIDs(ids ...int) *ProfileUpdate {
+func (pu *ProfileUpdate) RemoveOverallSnapshotIDs(ids ...string) *ProfileUpdate {
 	pu.mutation.RemoveOverallSnapshotIDs(ids...)
 	return pu
 }
 
 // RemoveOverallSnapshot removes "overall_snapshot" edges to OverallSnapshot entities.
 func (pu *ProfileUpdate) RemoveOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdate {
-	ids := make([]int, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -196,14 +253,40 @@ func (pu *ProfileUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (pu *ProfileUpdate) check() error {
+	if pu.mutation.UserCleared() && len(pu.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Profile.user"`)
+	}
+	return nil
+}
+
 func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
+	if err := pu.check(); err != nil {
+		return n, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
 	if ps := pu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := pu.mutation.Locale(); ok {
+		_spec.SetField(profile.FieldLocale, field.TypeString, value)
+	}
+	if value, ok := pu.mutation.Currencies(); ok {
+		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)
+	}
+	if value, ok := pu.mutation.NetWorthGoal(); ok {
+		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
+	}
+	if value, ok := pu.mutation.AddedNetWorthGoal(); ok {
+		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
+	}
+	if value, ok := pu.mutation.CreatedAt(); ok {
+		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
 	}
 	if pu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -213,7 +296,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{profile.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -226,7 +309,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{profile.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -236,26 +319,26 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if pu.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.AccountTable,
-			Columns: profile.AccountPrimaryKey,
+			Columns: []string{profile.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := pu.mutation.RemovedAccountIDs(); len(nodes) > 0 && !pu.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.AccountTable,
-			Columns: profile.AccountPrimaryKey,
+			Columns: []string{profile.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -265,13 +348,13 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := pu.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.AccountTable,
-			Columns: profile.AccountPrimaryKey,
+			Columns: []string{profile.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -281,26 +364,26 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if pu.mutation.TransactionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.TransactionTable,
-			Columns: profile.TransactionPrimaryKey,
+			Columns: []string{profile.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := pu.mutation.RemovedTransactionIDs(); len(nodes) > 0 && !pu.mutation.TransactionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.TransactionTable,
-			Columns: profile.TransactionPrimaryKey,
+			Columns: []string{profile.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -310,13 +393,13 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := pu.mutation.TransactionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.TransactionTable,
-			Columns: profile.TransactionPrimaryKey,
+			Columns: []string{profile.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -326,26 +409,26 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if pu.mutation.OverallSnapshotCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.OverallSnapshotTable,
-			Columns: profile.OverallSnapshotPrimaryKey,
+			Columns: []string{profile.OverallSnapshotColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := pu.mutation.RemovedOverallSnapshotIDs(); len(nodes) > 0 && !pu.mutation.OverallSnapshotCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.OverallSnapshotTable,
-			Columns: profile.OverallSnapshotPrimaryKey,
+			Columns: []string{profile.OverallSnapshotColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -355,13 +438,13 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := pu.mutation.OverallSnapshotIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.OverallSnapshotTable,
-			Columns: profile.OverallSnapshotPrimaryKey,
+			Columns: []string{profile.OverallSnapshotColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -389,17 +472,72 @@ type ProfileUpdateOne struct {
 	mutation *ProfileMutation
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (puo *ProfileUpdateOne) SetUserID(id int) *ProfileUpdateOne {
-	puo.mutation.SetUserID(id)
+// SetLocale sets the "locale" field.
+func (puo *ProfileUpdateOne) SetLocale(s string) *ProfileUpdateOne {
+	puo.mutation.SetLocale(s)
 	return puo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableUserID(id *int) *ProfileUpdateOne {
-	if id != nil {
-		puo = puo.SetUserID(*id)
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableLocale(s *string) *ProfileUpdateOne {
+	if s != nil {
+		puo.SetLocale(*s)
 	}
+	return puo
+}
+
+// SetCurrencies sets the "currencies" field.
+func (puo *ProfileUpdateOne) SetCurrencies(s string) *ProfileUpdateOne {
+	puo.mutation.SetCurrencies(s)
+	return puo
+}
+
+// SetNillableCurrencies sets the "currencies" field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableCurrencies(s *string) *ProfileUpdateOne {
+	if s != nil {
+		puo.SetCurrencies(*s)
+	}
+	return puo
+}
+
+// SetNetWorthGoal sets the "net_worth_goal" field.
+func (puo *ProfileUpdateOne) SetNetWorthGoal(d decimal.Decimal) *ProfileUpdateOne {
+	puo.mutation.ResetNetWorthGoal()
+	puo.mutation.SetNetWorthGoal(d)
+	return puo
+}
+
+// SetNillableNetWorthGoal sets the "net_worth_goal" field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableNetWorthGoal(d *decimal.Decimal) *ProfileUpdateOne {
+	if d != nil {
+		puo.SetNetWorthGoal(*d)
+	}
+	return puo
+}
+
+// AddNetWorthGoal adds d to the "net_worth_goal" field.
+func (puo *ProfileUpdateOne) AddNetWorthGoal(d decimal.Decimal) *ProfileUpdateOne {
+	puo.mutation.AddNetWorthGoal(d)
+	return puo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (puo *ProfileUpdateOne) SetCreatedAt(t time.Time) *ProfileUpdateOne {
+	puo.mutation.SetCreatedAt(t)
+	return puo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableCreatedAt(t *time.Time) *ProfileUpdateOne {
+	if t != nil {
+		puo.SetCreatedAt(*t)
+	}
+	return puo
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (puo *ProfileUpdateOne) SetUserID(id string) *ProfileUpdateOne {
+	puo.mutation.SetUserID(id)
 	return puo
 }
 
@@ -409,14 +547,14 @@ func (puo *ProfileUpdateOne) SetUser(u *User) *ProfileUpdateOne {
 }
 
 // AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (puo *ProfileUpdateOne) AddAccountIDs(ids ...int) *ProfileUpdateOne {
+func (puo *ProfileUpdateOne) AddAccountIDs(ids ...string) *ProfileUpdateOne {
 	puo.mutation.AddAccountIDs(ids...)
 	return puo
 }
 
 // AddAccount adds the "account" edges to the Account entity.
 func (puo *ProfileUpdateOne) AddAccount(a ...*Account) *ProfileUpdateOne {
-	ids := make([]int, len(a))
+	ids := make([]string, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -424,14 +562,14 @@ func (puo *ProfileUpdateOne) AddAccount(a ...*Account) *ProfileUpdateOne {
 }
 
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
-func (puo *ProfileUpdateOne) AddTransactionIDs(ids ...int) *ProfileUpdateOne {
+func (puo *ProfileUpdateOne) AddTransactionIDs(ids ...string) *ProfileUpdateOne {
 	puo.mutation.AddTransactionIDs(ids...)
 	return puo
 }
 
 // AddTransaction adds the "transaction" edges to the Transaction entity.
 func (puo *ProfileUpdateOne) AddTransaction(t ...*Transaction) *ProfileUpdateOne {
-	ids := make([]int, len(t))
+	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -439,14 +577,14 @@ func (puo *ProfileUpdateOne) AddTransaction(t ...*Transaction) *ProfileUpdateOne
 }
 
 // AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
-func (puo *ProfileUpdateOne) AddOverallSnapshotIDs(ids ...int) *ProfileUpdateOne {
+func (puo *ProfileUpdateOne) AddOverallSnapshotIDs(ids ...string) *ProfileUpdateOne {
 	puo.mutation.AddOverallSnapshotIDs(ids...)
 	return puo
 }
 
 // AddOverallSnapshot adds the "overall_snapshot" edges to the OverallSnapshot entity.
 func (puo *ProfileUpdateOne) AddOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdateOne {
-	ids := make([]int, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -471,14 +609,14 @@ func (puo *ProfileUpdateOne) ClearAccount() *ProfileUpdateOne {
 }
 
 // RemoveAccountIDs removes the "account" edge to Account entities by IDs.
-func (puo *ProfileUpdateOne) RemoveAccountIDs(ids ...int) *ProfileUpdateOne {
+func (puo *ProfileUpdateOne) RemoveAccountIDs(ids ...string) *ProfileUpdateOne {
 	puo.mutation.RemoveAccountIDs(ids...)
 	return puo
 }
 
 // RemoveAccount removes "account" edges to Account entities.
 func (puo *ProfileUpdateOne) RemoveAccount(a ...*Account) *ProfileUpdateOne {
-	ids := make([]int, len(a))
+	ids := make([]string, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -492,14 +630,14 @@ func (puo *ProfileUpdateOne) ClearTransaction() *ProfileUpdateOne {
 }
 
 // RemoveTransactionIDs removes the "transaction" edge to Transaction entities by IDs.
-func (puo *ProfileUpdateOne) RemoveTransactionIDs(ids ...int) *ProfileUpdateOne {
+func (puo *ProfileUpdateOne) RemoveTransactionIDs(ids ...string) *ProfileUpdateOne {
 	puo.mutation.RemoveTransactionIDs(ids...)
 	return puo
 }
 
 // RemoveTransaction removes "transaction" edges to Transaction entities.
 func (puo *ProfileUpdateOne) RemoveTransaction(t ...*Transaction) *ProfileUpdateOne {
-	ids := make([]int, len(t))
+	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -513,14 +651,14 @@ func (puo *ProfileUpdateOne) ClearOverallSnapshot() *ProfileUpdateOne {
 }
 
 // RemoveOverallSnapshotIDs removes the "overall_snapshot" edge to OverallSnapshot entities by IDs.
-func (puo *ProfileUpdateOne) RemoveOverallSnapshotIDs(ids ...int) *ProfileUpdateOne {
+func (puo *ProfileUpdateOne) RemoveOverallSnapshotIDs(ids ...string) *ProfileUpdateOne {
 	puo.mutation.RemoveOverallSnapshotIDs(ids...)
 	return puo
 }
 
 // RemoveOverallSnapshot removes "overall_snapshot" edges to OverallSnapshot entities.
 func (puo *ProfileUpdateOne) RemoveOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdateOne {
-	ids := make([]int, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -567,8 +705,19 @@ func (puo *ProfileUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (puo *ProfileUpdateOne) check() error {
+	if puo.mutation.UserCleared() && len(puo.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Profile.user"`)
+	}
+	return nil
+}
+
 func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err error) {
-	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
+	if err := puo.check(); err != nil {
+		return _node, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
 	id, ok := puo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Profile.id" for update`)}
@@ -593,6 +742,21 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 			}
 		}
 	}
+	if value, ok := puo.mutation.Locale(); ok {
+		_spec.SetField(profile.FieldLocale, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.Currencies(); ok {
+		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.NetWorthGoal(); ok {
+		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
+	}
+	if value, ok := puo.mutation.AddedNetWorthGoal(); ok {
+		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
+	}
+	if value, ok := puo.mutation.CreatedAt(); ok {
+		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
+	}
 	if puo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -601,7 +765,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 			Columns: []string{profile.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -614,7 +778,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 			Columns: []string{profile.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -624,26 +788,26 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if puo.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.AccountTable,
-			Columns: profile.AccountPrimaryKey,
+			Columns: []string{profile.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := puo.mutation.RemovedAccountIDs(); len(nodes) > 0 && !puo.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.AccountTable,
-			Columns: profile.AccountPrimaryKey,
+			Columns: []string{profile.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -653,13 +817,13 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if nodes := puo.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.AccountTable,
-			Columns: profile.AccountPrimaryKey,
+			Columns: []string{profile.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -669,26 +833,26 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if puo.mutation.TransactionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.TransactionTable,
-			Columns: profile.TransactionPrimaryKey,
+			Columns: []string{profile.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := puo.mutation.RemovedTransactionIDs(); len(nodes) > 0 && !puo.mutation.TransactionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.TransactionTable,
-			Columns: profile.TransactionPrimaryKey,
+			Columns: []string{profile.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -698,13 +862,13 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if nodes := puo.mutation.TransactionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.TransactionTable,
-			Columns: profile.TransactionPrimaryKey,
+			Columns: []string{profile.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -714,26 +878,26 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if puo.mutation.OverallSnapshotCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.OverallSnapshotTable,
-			Columns: profile.OverallSnapshotPrimaryKey,
+			Columns: []string{profile.OverallSnapshotColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := puo.mutation.RemovedOverallSnapshotIDs(); len(nodes) > 0 && !puo.mutation.OverallSnapshotCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.OverallSnapshotTable,
-			Columns: profile.OverallSnapshotPrimaryKey,
+			Columns: []string{profile.OverallSnapshotColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -743,13 +907,13 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if nodes := puo.mutation.OverallSnapshotIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   profile.OverallSnapshotTable,
-			Columns: profile.OverallSnapshotPrimaryKey,
+			Columns: []string{profile.OverallSnapshotColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

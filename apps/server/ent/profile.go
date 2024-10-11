@@ -7,20 +7,30 @@ import (
 	"fijoy/ent/user"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/shopspring/decimal"
 )
 
 // Profile is the model entity for the Profile schema.
 type Profile struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
+	// Locale holds the value of the "locale" field.
+	Locale string `json:"locale,omitempty"`
+	// Currencies holds the value of the "currencies" field.
+	Currencies string `json:"currencies,omitempty"`
+	// NetWorthGoal holds the value of the "net_worth_goal" field.
+	NetWorthGoal decimal.Decimal `json:"net_worth_goal,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProfileQuery when eager-loading is set.
 	Edges        ProfileEdges `json:"edges"`
-	user_profile *int
+	user_profile *string
 	selectValues sql.SelectValues
 }
 
@@ -82,10 +92,14 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case profile.FieldID:
-			values[i] = new(sql.NullInt64)
+		case profile.FieldNetWorthGoal:
+			values[i] = new(decimal.Decimal)
+		case profile.FieldID, profile.FieldLocale, profile.FieldCurrencies:
+			values[i] = new(sql.NullString)
+		case profile.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		case profile.ForeignKeys[0]: // user_profile
-			values[i] = new(sql.NullInt64)
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -102,17 +116,41 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case profile.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
-			}
-			pr.ID = int(value.Int64)
-		case profile.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_profile", value)
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
-				pr.user_profile = new(int)
-				*pr.user_profile = int(value.Int64)
+				pr.ID = value.String
+			}
+		case profile.FieldLocale:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field locale", values[i])
+			} else if value.Valid {
+				pr.Locale = value.String
+			}
+		case profile.FieldCurrencies:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field currencies", values[i])
+			} else if value.Valid {
+				pr.Currencies = value.String
+			}
+		case profile.FieldNetWorthGoal:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field net_worth_goal", values[i])
+			} else if value != nil {
+				pr.NetWorthGoal = *value
+			}
+		case profile.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				pr.CreatedAt = value.Time
+			}
+		case profile.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_profile", values[i])
+			} else if value.Valid {
+				pr.user_profile = new(string)
+				*pr.user_profile = value.String
 			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
@@ -169,7 +207,18 @@ func (pr *Profile) Unwrap() *Profile {
 func (pr *Profile) String() string {
 	var builder strings.Builder
 	builder.WriteString("Profile(")
-	builder.WriteString(fmt.Sprintf("id=%v", pr.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", pr.ID))
+	builder.WriteString("locale=")
+	builder.WriteString(pr.Locale)
+	builder.WriteString(", ")
+	builder.WriteString("currencies=")
+	builder.WriteString(pr.Currencies)
+	builder.WriteString(", ")
+	builder.WriteString("net_worth_goal=")
+	builder.WriteString(fmt.Sprintf("%v", pr.NetWorthGoal))
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(pr.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

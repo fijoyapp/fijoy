@@ -47,21 +47,27 @@ const (
 	EdgeTransaction = "transaction"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
-	// ProfileTable is the table that holds the profile relation/edge. The primary key declared below.
-	ProfileTable = "profile_account"
+	// ProfileTable is the table that holds the profile relation/edge.
+	ProfileTable = "accounts"
 	// ProfileInverseTable is the table name for the Profile entity.
 	// It exists in this package in order to avoid circular dependency with the "profile" package.
 	ProfileInverseTable = "profiles"
-	// AccountSnapshotTable is the table that holds the account_snapshot relation/edge. The primary key declared below.
-	AccountSnapshotTable = "account_account_snapshot"
+	// ProfileColumn is the table column denoting the profile relation/edge.
+	ProfileColumn = "profile_account"
+	// AccountSnapshotTable is the table that holds the account_snapshot relation/edge.
+	AccountSnapshotTable = "account_snapshots"
 	// AccountSnapshotInverseTable is the table name for the AccountSnapshot entity.
 	// It exists in this package in order to avoid circular dependency with the "accountsnapshot" package.
 	AccountSnapshotInverseTable = "account_snapshots"
-	// TransactionTable is the table that holds the transaction relation/edge. The primary key declared below.
-	TransactionTable = "account_transaction"
+	// AccountSnapshotColumn is the table column denoting the account_snapshot relation/edge.
+	AccountSnapshotColumn = "account_account_snapshot"
+	// TransactionTable is the table that holds the transaction relation/edge.
+	TransactionTable = "transactions"
 	// TransactionInverseTable is the table name for the Transaction entity.
 	// It exists in this package in order to avoid circular dependency with the "transaction" package.
 	TransactionInverseTable = "transactions"
+	// TransactionColumn is the table column denoting the transaction relation/edge.
+	TransactionColumn = "account_transaction"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -81,22 +87,21 @@ var Columns = []string{
 	FieldUpdatedAt,
 }
 
-var (
-	// ProfilePrimaryKey and ProfileColumn2 are the table columns denoting the
-	// primary key for the profile relation (M2M).
-	ProfilePrimaryKey = []string{"profile_id", "account_id"}
-	// AccountSnapshotPrimaryKey and AccountSnapshotColumn2 are the table columns denoting the
-	// primary key for the account_snapshot relation (M2M).
-	AccountSnapshotPrimaryKey = []string{"account_id", "account_snapshot_id"}
-	// TransactionPrimaryKey and TransactionColumn2 are the table columns denoting the
-	// primary key for the transaction relation (M2M).
-	TransactionPrimaryKey = []string{"account_id", "transaction_id"}
-)
+// ForeignKeys holds the SQL foreign-keys that are owned by the "accounts"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"profile_account",
+}
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -116,6 +121,8 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID string
 )
 
 // AccountType defines the type for the "account_type" enum field.
@@ -236,17 +243,10 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByProfileCount orders the results by profile count.
-func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProfileField orders the results by profile field.
+func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
-	}
-}
-
-// ByProfile orders the results by profile terms.
-func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -281,20 +281,20 @@ func newProfileStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfileInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
 	)
 }
 func newAccountSnapshotStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountSnapshotInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, AccountSnapshotTable, AccountSnapshotPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, AccountSnapshotTable, AccountSnapshotColumn),
 	)
 }
 func newTransactionStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, TransactionTable, TransactionPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionTable, TransactionColumn),
 	)
 }

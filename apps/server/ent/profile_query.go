@@ -104,7 +104,7 @@ func (pq *ProfileQuery) QueryAccount() *AccountQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, profile.AccountTable, profile.AccountPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.AccountTable, profile.AccountColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -126,7 +126,7 @@ func (pq *ProfileQuery) QueryTransaction() *TransactionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, profile.TransactionTable, profile.TransactionPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionTable, profile.TransactionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -148,7 +148,7 @@ func (pq *ProfileQuery) QueryOverallSnapshot() *OverallSnapshotQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(overallsnapshot.Table, overallsnapshot.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -180,8 +180,8 @@ func (pq *ProfileQuery) FirstX(ctx context.Context) *Profile {
 
 // FirstID returns the first Profile ID from the query.
 // Returns a *NotFoundError when no Profile ID was found.
-func (pq *ProfileQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (pq *ProfileQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = pq.Limit(1).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -193,7 +193,7 @@ func (pq *ProfileQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (pq *ProfileQuery) FirstIDX(ctx context.Context) int {
+func (pq *ProfileQuery) FirstIDX(ctx context.Context) string {
 	id, err := pq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -231,8 +231,8 @@ func (pq *ProfileQuery) OnlyX(ctx context.Context) *Profile {
 // OnlyID is like Only, but returns the only Profile ID in the query.
 // Returns a *NotSingularError when more than one Profile ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (pq *ProfileQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (pq *ProfileQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = pq.Limit(2).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -248,7 +248,7 @@ func (pq *ProfileQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (pq *ProfileQuery) OnlyIDX(ctx context.Context) int {
+func (pq *ProfileQuery) OnlyIDX(ctx context.Context) string {
 	id, err := pq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -276,7 +276,7 @@ func (pq *ProfileQuery) AllX(ctx context.Context) []*Profile {
 }
 
 // IDs executes the query and returns a list of Profile IDs.
-func (pq *ProfileQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (pq *ProfileQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if pq.ctx.Unique == nil && pq.path != nil {
 		pq.Unique(true)
 	}
@@ -288,7 +288,7 @@ func (pq *ProfileQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (pq *ProfileQuery) IDsX(ctx context.Context) []int {
+func (pq *ProfileQuery) IDsX(ctx context.Context) []string {
 	ids, err := pq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -404,6 +404,18 @@ func (pq *ProfileQuery) WithOverallSnapshot(opts ...func(*OverallSnapshotQuery))
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		Locale string `json:"locale,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Profile.Query().
+//		GroupBy(profile.FieldLocale).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (pq *ProfileQuery) GroupBy(field string, fields ...string) *ProfileGroupBy {
 	pq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &ProfileGroupBy{build: pq}
@@ -415,6 +427,16 @@ func (pq *ProfileQuery) GroupBy(field string, fields ...string) *ProfileGroupBy 
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		Locale string `json:"locale,omitempty"`
+//	}
+//
+//	client.Profile.Query().
+//		Select(profile.FieldLocale).
+//		Scan(ctx, &v)
 func (pq *ProfileQuery) Select(fields ...string) *ProfileSelect {
 	pq.ctx.Fields = append(pq.ctx.Fields, fields...)
 	sbuild := &ProfileSelect{ProfileQuery: pq}
@@ -521,8 +543,8 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 }
 
 func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *User)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Profile)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Profile)
 	for i := range nodes {
 		if nodes[i].user_profile == nil {
 			continue
@@ -553,185 +575,95 @@ func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	return nil
 }
 func (pq *ProfileQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Account)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Profile)
-	nids := make(map[int]map[*Profile]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Profile)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 		if init != nil {
-			init(node)
+			init(nodes[i])
 		}
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(profile.AccountTable)
-		s.Join(joinT).On(s.C(account.FieldID), joinT.C(profile.AccountPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(profile.AccountPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(profile.AccountPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Profile]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Account](ctx, query, qr, query.inters)
+	query.withFKs = true
+	query.Where(predicate.Account(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(profile.AccountColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		fk := n.profile_account
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "profile_account" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected "account" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_account" returned %v for node %v`, *fk, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
 func (pq *ProfileQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Transaction)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Profile)
-	nids := make(map[int]map[*Profile]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Profile)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 		if init != nil {
-			init(node)
+			init(nodes[i])
 		}
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(profile.TransactionTable)
-		s.Join(joinT).On(s.C(transaction.FieldID), joinT.C(profile.TransactionPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(profile.TransactionPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(profile.TransactionPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Profile]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Transaction](ctx, query, qr, query.inters)
+	query.withFKs = true
+	query.Where(predicate.Transaction(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(profile.TransactionColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		fk := n.profile_transaction
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "profile_transaction" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected "transaction" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_transaction" returned %v for node %v`, *fk, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
 func (pq *ProfileQuery) loadOverallSnapshot(ctx context.Context, query *OverallSnapshotQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *OverallSnapshot)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*Profile)
-	nids := make(map[int]map[*Profile]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Profile)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 		if init != nil {
-			init(node)
+			init(nodes[i])
 		}
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(profile.OverallSnapshotTable)
-		s.Join(joinT).On(s.C(overallsnapshot.FieldID), joinT.C(profile.OverallSnapshotPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(profile.OverallSnapshotPrimaryKey[0]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(profile.OverallSnapshotPrimaryKey[0]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
-	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*Profile]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*OverallSnapshot](ctx, query, qr, query.inters)
+	query.withFKs = true
+	query.Where(predicate.OverallSnapshot(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(profile.OverallSnapshotColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		fk := n.profile_overall_snapshot
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "profile_overall_snapshot" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected "overall_snapshot" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_overall_snapshot" returned %v for node %v`, *fk, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -746,7 +678,7 @@ func (pq *ProfileQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (pq *ProfileQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
 	_spec.From = pq.sql
 	if unique := pq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

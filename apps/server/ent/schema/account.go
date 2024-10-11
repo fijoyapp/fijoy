@@ -1,12 +1,14 @@
 package schema
 
 import (
+	"fijoy/constants"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
 
@@ -18,6 +20,8 @@ type Account struct {
 // Fields of the Account.
 func (Account) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("id").Default(constants.AccountPrefix + cuid2.Generate()),
+
 		field.String("name").NotEmpty(),
 		field.Enum("account_type").
 			Values("liquidity", "investment", "property", "receivable", "liability"),
@@ -61,7 +65,7 @@ func (Account) Fields() []ent.Field {
 // Edges of the Account.
 func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profile", Profile.Type).Ref("account"),
+		edge.From("profile", Profile.Type).Ref("account").Required().Unique(),
 
 		edge.To("account_snapshot", AccountSnapshot.Type),
 		edge.To("transaction", Transaction.Type),

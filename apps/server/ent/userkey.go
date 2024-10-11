@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
 	"strings"
@@ -15,29 +16,32 @@ import (
 type UserKey struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// HashedPassword holds the value of the "hashed_password" field.
 	HashedPassword string `json:"hashed_password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserKeyQuery when eager-loading is set.
-	Edges        UserKeyEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges         UserKeyEdges `json:"edges"`
+	user_user_key *string
+	selectValues  sql.SelectValues
 }
 
 // UserKeyEdges holds the relations/edges for other nodes in the graph.
 type UserKeyEdges struct {
 	// User holds the value of the user edge.
-	User []*User `json:"user,omitempty"`
+	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserKeyEdges) UserOrErr() ([]*User, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserKeyEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
 		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
 }
@@ -47,9 +51,9 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userkey.FieldID:
-			values[i] = new(sql.NullInt64)
-		case userkey.FieldHashedPassword:
+		case userkey.FieldID, userkey.FieldHashedPassword:
+			values[i] = new(sql.NullString)
+		case userkey.ForeignKeys[0]: // user_user_key
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -67,16 +71,23 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case userkey.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				uk.ID = value.String
 			}
-			uk.ID = int(value.Int64)
 		case userkey.FieldHashedPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field hashed_password", values[i])
 			} else if value.Valid {
 				uk.HashedPassword = value.String
+			}
+		case userkey.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_user_key", values[i])
+			} else if value.Valid {
+				uk.user_user_key = new(string)
+				*uk.user_user_key = value.String
 			}
 		default:
 			uk.selectValues.Set(columns[i], values[i])

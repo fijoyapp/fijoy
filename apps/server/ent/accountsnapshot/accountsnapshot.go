@@ -20,11 +20,13 @@ const (
 	EdgeAccount = "account"
 	// Table holds the table name of the accountsnapshot in the database.
 	Table = "account_snapshots"
-	// AccountTable is the table that holds the account relation/edge. The primary key declared below.
-	AccountTable = "account_account_snapshot"
+	// AccountTable is the table that holds the account relation/edge.
+	AccountTable = "account_snapshots"
 	// AccountInverseTable is the table name for the Account entity.
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
+	// AccountColumn is the table column denoting the account relation/edge.
+	AccountColumn = "account_account_snapshot"
 )
 
 // Columns holds all SQL columns for accountsnapshot fields.
@@ -34,11 +36,11 @@ var Columns = []string{
 	FieldBalance,
 }
 
-var (
-	// AccountPrimaryKey and AccountColumn2 are the table columns denoting the
-	// primary key for the account relation (M2M).
-	AccountPrimaryKey = []string{"account_id", "account_snapshot_id"}
-)
+// ForeignKeys holds the SQL foreign-keys that are owned by the "account_snapshots"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"account_account_snapshot",
+}
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -47,8 +49,18 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
+			return true
+		}
+	}
 	return false
 }
+
+var (
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID string
+)
 
 // OrderOption defines the ordering options for the AccountSnapshot queries.
 type OrderOption func(*sql.Selector)
@@ -68,23 +80,16 @@ func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
 }
 
-// ByAccountCount orders the results by account count.
-func ByAccountCount(opts ...sql.OrderTermOption) OrderOption {
+// ByAccountField orders the results by account field.
+func ByAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAccountStep(), opts...)
-	}
-}
-
-// ByAccount orders the results by account terms.
-func ByAccount(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newAccountStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, AccountTable, AccountPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
 	)
 }

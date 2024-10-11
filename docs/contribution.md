@@ -29,7 +29,7 @@ and generate migrations.
 To add a new entity, you can run:
 
 ```bash
-just ent-new <entity-name>
+just ent-new <EntityName>
 ```
 
 then your new entity will be created in `apps/server/ent/schema`.
@@ -43,9 +43,8 @@ After you make the modifications you need, just run
 
 ```bash
 just ent-generate
+just migrate-diff <migration_name>
 ```
-
-which generates all the migration files for you.
 
 **The migration will automatically be applied when the application reloads.**
 

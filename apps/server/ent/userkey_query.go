@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fijoy/ent/predicate"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
@@ -25,6 +24,7 @@ type UserKeyQuery struct {
 	inters     []Interceptor
 	predicates []predicate.UserKey
 	withUser   *UserQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,7 +75,7 @@ func (ukq *UserKeyQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(userkey.Table, userkey.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, userkey.UserTable, userkey.UserPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, userkey.UserTable, userkey.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ukq.driver.Dialect(), step)
 		return fromU, nil
@@ -107,8 +107,8 @@ func (ukq *UserKeyQuery) FirstX(ctx context.Context) *UserKey {
 
 // FirstID returns the first UserKey ID from the query.
 // Returns a *NotFoundError when no UserKey ID was found.
-func (ukq *UserKeyQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (ukq *UserKeyQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = ukq.Limit(1).IDs(setContextOp(ctx, ukq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -120,7 +120,7 @@ func (ukq *UserKeyQuery) FirstID(ctx context.Context) (id int, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (ukq *UserKeyQuery) FirstIDX(ctx context.Context) int {
+func (ukq *UserKeyQuery) FirstIDX(ctx context.Context) string {
 	id, err := ukq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -158,8 +158,8 @@ func (ukq *UserKeyQuery) OnlyX(ctx context.Context) *UserKey {
 // OnlyID is like Only, but returns the only UserKey ID in the query.
 // Returns a *NotSingularError when more than one UserKey ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (ukq *UserKeyQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (ukq *UserKeyQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = ukq.Limit(2).IDs(setContextOp(ctx, ukq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -175,7 +175,7 @@ func (ukq *UserKeyQuery) OnlyID(ctx context.Context) (id int, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (ukq *UserKeyQuery) OnlyIDX(ctx context.Context) int {
+func (ukq *UserKeyQuery) OnlyIDX(ctx context.Context) string {
 	id, err := ukq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -203,7 +203,7 @@ func (ukq *UserKeyQuery) AllX(ctx context.Context) []*UserKey {
 }
 
 // IDs executes the query and returns a list of UserKey IDs.
-func (ukq *UserKeyQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (ukq *UserKeyQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if ukq.ctx.Unique == nil && ukq.path != nil {
 		ukq.Unique(true)
 	}
@@ -215,7 +215,7 @@ func (ukq *UserKeyQuery) IDs(ctx context.Context) (ids []int, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (ukq *UserKeyQuery) IDsX(ctx context.Context) []int {
+func (ukq *UserKeyQuery) IDsX(ctx context.Context) []string {
 	ids, err := ukq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -370,11 +370,18 @@ func (ukq *UserKeyQuery) prepareQuery(ctx context.Context) error {
 func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*UserKey, error) {
 	var (
 		nodes       = []*UserKey{}
+		withFKs     = ukq.withFKs
 		_spec       = ukq.querySpec()
 		loadedTypes = [1]bool{
 			ukq.withUser != nil,
 		}
 	)
+	if ukq.withUser != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, userkey.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*UserKey).scanValues(nil, columns)
 	}
@@ -394,9 +401,8 @@ func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Use
 		return nodes, nil
 	}
 	if query := ukq.withUser; query != nil {
-		if err := ukq.loadUser(ctx, query, nodes,
-			func(n *UserKey) { n.Edges.User = []*User{} },
-			func(n *UserKey, e *User) { n.Edges.User = append(n.Edges.User, e) }); err != nil {
+		if err := ukq.loadUser(ctx, query, nodes, nil,
+			func(n *UserKey, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -404,62 +410,33 @@ func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Use
 }
 
 func (ukq *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*UserKey, init func(*UserKey), assign func(*UserKey, *User)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*UserKey)
-	nids := make(map[int]map[*UserKey]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*UserKey)
+	for i := range nodes {
+		if nodes[i].user_user_key == nil {
+			continue
 		}
+		fk := *nodes[i].user_user_key
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(userkey.UserTable)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(userkey.UserPrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(userkey.UserPrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(userkey.UserPrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(ids) == 0 {
+		return nil
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*UserKey]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "user" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_user_key" returned %v`, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil
@@ -475,7 +452,7 @@ func (ukq *UserKeyQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (ukq *UserKeyQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString))
 	_spec.From = ukq.sql
 	if unique := ukq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

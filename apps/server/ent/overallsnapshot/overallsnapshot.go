@@ -28,11 +28,13 @@ const (
 	EdgeProfile = "profile"
 	// Table holds the table name of the overallsnapshot in the database.
 	Table = "overall_snapshots"
-	// ProfileTable is the table that holds the profile relation/edge. The primary key declared below.
-	ProfileTable = "profile_overall_snapshot"
+	// ProfileTable is the table that holds the profile relation/edge.
+	ProfileTable = "overall_snapshots"
 	// ProfileInverseTable is the table name for the Profile entity.
 	// It exists in this package in order to avoid circular dependency with the "profile" package.
 	ProfileInverseTable = "profiles"
+	// ProfileColumn is the table column denoting the profile relation/edge.
+	ProfileColumn = "profile_overall_snapshot"
 )
 
 // Columns holds all SQL columns for overallsnapshot fields.
@@ -46,11 +48,11 @@ var Columns = []string{
 	FieldLiablity,
 }
 
-var (
-	// ProfilePrimaryKey and ProfileColumn2 are the table columns denoting the
-	// primary key for the profile relation (M2M).
-	ProfilePrimaryKey = []string{"profile_id", "overall_snapshot_id"}
-)
+// ForeignKeys holds the SQL foreign-keys that are owned by the "overall_snapshots"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"profile_overall_snapshot",
+}
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -59,8 +61,18 @@ func ValidColumn(column string) bool {
 			return true
 		}
 	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
+			return true
+		}
+	}
 	return false
 }
+
+var (
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID string
+)
 
 // OrderOption defines the ordering options for the OverallSnapshot queries.
 type OrderOption func(*sql.Selector)
@@ -100,23 +112,16 @@ func ByLiablity(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLiablity, opts...).ToFunc()
 }
 
-// ByProfileCount orders the results by profile count.
-func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProfileField orders the results by profile field.
+func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
-	}
-}
-
-// ByProfile orders the results by profile terms.
-func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newProfileStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfileInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
 	)
 }
