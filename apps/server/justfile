@@ -38,3 +38,6 @@ ent-new name:
 
 ent-generate:
   go generate ./ent
+
+ent-drop:
+  go run ./cmd/ent/main.go

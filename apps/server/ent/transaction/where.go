@@ -12,48 +12,58 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int) predicate.Transaction {
+func ID(id string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int) predicate.Transaction {
+func IDEQ(id string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int) predicate.Transaction {
+func IDNEQ(id string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int) predicate.Transaction {
+func IDIn(ids ...string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int) predicate.Transaction {
+func IDNotIn(ids ...string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int) predicate.Transaction {
+func IDGT(id string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int) predicate.Transaction {
+func IDGTE(id string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int) predicate.Transaction {
+func IDLT(id string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int) predicate.Transaction {
+func IDLTE(id string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldID, id))
+}
+
+// IDEqualFold applies the EqualFold predicate on the ID field.
+func IDEqualFold(id string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEqualFold(FieldID, id))
+}
+
+// IDContainsFold applies the ContainsFold predicate on the ID field.
+func IDContainsFold(id string) predicate.Transaction {
+	return predicate.Transaction(sql.FieldContainsFold(FieldID, id))
 }
 
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
@@ -511,7 +521,7 @@ func HasProfile() predicate.Transaction {
 	return predicate.Transaction(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -534,7 +544,7 @@ func HasAccount() predicate.Transaction {
 	return predicate.Transaction(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, AccountTable, AccountPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

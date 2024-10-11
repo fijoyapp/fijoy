@@ -3,6 +3,8 @@
 package profile
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -12,6 +14,14 @@ const (
 	Label = "profile"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldLocale holds the string denoting the locale field in the database.
+	FieldLocale = "locale"
+	// FieldCurrencies holds the string denoting the currencies field in the database.
+	FieldCurrencies = "currencies"
+	// FieldNetWorthGoal holds the string denoting the net_worth_goal field in the database.
+	FieldNetWorthGoal = "net_worth_goal"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeAccount holds the string denoting the account edge name in mutations.
@@ -29,26 +39,36 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_profile"
-	// AccountTable is the table that holds the account relation/edge. The primary key declared below.
-	AccountTable = "profile_account"
+	// AccountTable is the table that holds the account relation/edge.
+	AccountTable = "accounts"
 	// AccountInverseTable is the table name for the Account entity.
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
-	// TransactionTable is the table that holds the transaction relation/edge. The primary key declared below.
-	TransactionTable = "profile_transaction"
+	// AccountColumn is the table column denoting the account relation/edge.
+	AccountColumn = "profile_account"
+	// TransactionTable is the table that holds the transaction relation/edge.
+	TransactionTable = "transactions"
 	// TransactionInverseTable is the table name for the Transaction entity.
 	// It exists in this package in order to avoid circular dependency with the "transaction" package.
 	TransactionInverseTable = "transactions"
-	// OverallSnapshotTable is the table that holds the overall_snapshot relation/edge. The primary key declared below.
-	OverallSnapshotTable = "profile_overall_snapshot"
+	// TransactionColumn is the table column denoting the transaction relation/edge.
+	TransactionColumn = "profile_transaction"
+	// OverallSnapshotTable is the table that holds the overall_snapshot relation/edge.
+	OverallSnapshotTable = "overall_snapshots"
 	// OverallSnapshotInverseTable is the table name for the OverallSnapshot entity.
 	// It exists in this package in order to avoid circular dependency with the "overallsnapshot" package.
 	OverallSnapshotInverseTable = "overall_snapshots"
+	// OverallSnapshotColumn is the table column denoting the overall_snapshot relation/edge.
+	OverallSnapshotColumn = "profile_overall_snapshot"
 )
 
 // Columns holds all SQL columns for profile fields.
 var Columns = []string{
 	FieldID,
+	FieldLocale,
+	FieldCurrencies,
+	FieldNetWorthGoal,
+	FieldCreatedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "profiles"
@@ -56,18 +76,6 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"user_profile",
 }
-
-var (
-	// AccountPrimaryKey and AccountColumn2 are the table columns denoting the
-	// primary key for the account relation (M2M).
-	AccountPrimaryKey = []string{"profile_id", "account_id"}
-	// TransactionPrimaryKey and TransactionColumn2 are the table columns denoting the
-	// primary key for the transaction relation (M2M).
-	TransactionPrimaryKey = []string{"profile_id", "transaction_id"}
-	// OverallSnapshotPrimaryKey and OverallSnapshotColumn2 are the table columns denoting the
-	// primary key for the overall_snapshot relation (M2M).
-	OverallSnapshotPrimaryKey = []string{"profile_id", "overall_snapshot_id"}
-)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -84,12 +92,39 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID string
+)
+
 // OrderOption defines the ordering options for the Profile queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByLocale orders the results by the locale field.
+func ByLocale(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocale, opts...).ToFunc()
+}
+
+// ByCurrencies orders the results by the currencies field.
+func ByCurrencies(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencies, opts...).ToFunc()
+}
+
+// ByNetWorthGoal orders the results by the net_worth_goal field.
+func ByNetWorthGoal(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNetWorthGoal, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.
@@ -151,20 +186,20 @@ func newAccountStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, AccountTable, AccountPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, AccountTable, AccountColumn),
 	)
 }
 func newTransactionStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, TransactionTable, TransactionPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionTable, TransactionColumn),
 	)
 }
 func newOverallSnapshotStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OverallSnapshotInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, OverallSnapshotTable, OverallSnapshotPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, OverallSnapshotTable, OverallSnapshotColumn),
 	)
 }

@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"database/sql/driver"
 	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
@@ -25,6 +24,7 @@ type OverallSnapshotQuery struct {
 	inters      []Interceptor
 	predicates  []predicate.OverallSnapshot
 	withProfile *ProfileQuery
+	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,7 +75,7 @@ func (osq *OverallSnapshotQuery) QueryProfile() *ProfileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(overallsnapshot.Table, overallsnapshot.FieldID, selector),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, overallsnapshot.ProfileTable, overallsnapshot.ProfilePrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2O, true, overallsnapshot.ProfileTable, overallsnapshot.ProfileColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(osq.driver.Dialect(), step)
 		return fromU, nil
@@ -107,8 +107,8 @@ func (osq *OverallSnapshotQuery) FirstX(ctx context.Context) *OverallSnapshot {
 
 // FirstID returns the first OverallSnapshot ID from the query.
 // Returns a *NotFoundError when no OverallSnapshot ID was found.
-func (osq *OverallSnapshotQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (osq *OverallSnapshotQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = osq.Limit(1).IDs(setContextOp(ctx, osq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -120,7 +120,7 @@ func (osq *OverallSnapshotQuery) FirstID(ctx context.Context) (id int, err error
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (osq *OverallSnapshotQuery) FirstIDX(ctx context.Context) int {
+func (osq *OverallSnapshotQuery) FirstIDX(ctx context.Context) string {
 	id, err := osq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -158,8 +158,8 @@ func (osq *OverallSnapshotQuery) OnlyX(ctx context.Context) *OverallSnapshot {
 // OnlyID is like Only, but returns the only OverallSnapshot ID in the query.
 // Returns a *NotSingularError when more than one OverallSnapshot ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (osq *OverallSnapshotQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (osq *OverallSnapshotQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = osq.Limit(2).IDs(setContextOp(ctx, osq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -175,7 +175,7 @@ func (osq *OverallSnapshotQuery) OnlyID(ctx context.Context) (id int, err error)
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (osq *OverallSnapshotQuery) OnlyIDX(ctx context.Context) int {
+func (osq *OverallSnapshotQuery) OnlyIDX(ctx context.Context) string {
 	id, err := osq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -203,7 +203,7 @@ func (osq *OverallSnapshotQuery) AllX(ctx context.Context) []*OverallSnapshot {
 }
 
 // IDs executes the query and returns a list of OverallSnapshot IDs.
-func (osq *OverallSnapshotQuery) IDs(ctx context.Context) (ids []int, err error) {
+func (osq *OverallSnapshotQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if osq.ctx.Unique == nil && osq.path != nil {
 		osq.Unique(true)
 	}
@@ -215,7 +215,7 @@ func (osq *OverallSnapshotQuery) IDs(ctx context.Context) (ids []int, err error)
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (osq *OverallSnapshotQuery) IDsX(ctx context.Context) []int {
+func (osq *OverallSnapshotQuery) IDsX(ctx context.Context) []string {
 	ids, err := osq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -370,11 +370,18 @@ func (osq *OverallSnapshotQuery) prepareQuery(ctx context.Context) error {
 func (osq *OverallSnapshotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*OverallSnapshot, error) {
 	var (
 		nodes       = []*OverallSnapshot{}
+		withFKs     = osq.withFKs
 		_spec       = osq.querySpec()
 		loadedTypes = [1]bool{
 			osq.withProfile != nil,
 		}
 	)
+	if osq.withProfile != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, overallsnapshot.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*OverallSnapshot).scanValues(nil, columns)
 	}
@@ -394,9 +401,8 @@ func (osq *OverallSnapshotQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		return nodes, nil
 	}
 	if query := osq.withProfile; query != nil {
-		if err := osq.loadProfile(ctx, query, nodes,
-			func(n *OverallSnapshot) { n.Edges.Profile = []*Profile{} },
-			func(n *OverallSnapshot, e *Profile) { n.Edges.Profile = append(n.Edges.Profile, e) }); err != nil {
+		if err := osq.loadProfile(ctx, query, nodes, nil,
+			func(n *OverallSnapshot, e *Profile) { n.Edges.Profile = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -404,62 +410,33 @@ func (osq *OverallSnapshotQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 }
 
 func (osq *OverallSnapshotQuery) loadProfile(ctx context.Context, query *ProfileQuery, nodes []*OverallSnapshot, init func(*OverallSnapshot), assign func(*OverallSnapshot, *Profile)) error {
-	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[int]*OverallSnapshot)
-	nids := make(map[int]map[*OverallSnapshot]struct{})
-	for i, node := range nodes {
-		edgeIDs[i] = node.ID
-		byID[node.ID] = node
-		if init != nil {
-			init(node)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*OverallSnapshot)
+	for i := range nodes {
+		if nodes[i].profile_overall_snapshot == nil {
+			continue
 		}
+		fk := *nodes[i].profile_overall_snapshot
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(overallsnapshot.ProfileTable)
-		s.Join(joinT).On(s.C(profile.FieldID), joinT.C(overallsnapshot.ProfilePrimaryKey[0]))
-		s.Where(sql.InValues(joinT.C(overallsnapshot.ProfilePrimaryKey[1]), edgeIDs...))
-		columns := s.SelectedColumns()
-		s.Select(joinT.C(overallsnapshot.ProfilePrimaryKey[1]))
-		s.AppendSelect(columns...)
-		s.SetDistinct(false)
-	})
-	if err := query.prepareQuery(ctx); err != nil {
-		return err
+	if len(ids) == 0 {
+		return nil
 	}
-	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
-		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
-			assign := spec.Assign
-			values := spec.ScanValues
-			spec.ScanValues = func(columns []string) ([]any, error) {
-				values, err := values(columns[1:])
-				if err != nil {
-					return nil, err
-				}
-				return append([]any{new(sql.NullInt64)}, values...), nil
-			}
-			spec.Assign = func(columns []string, values []any) error {
-				outValue := int(values[0].(*sql.NullInt64).Int64)
-				inValue := int(values[1].(*sql.NullInt64).Int64)
-				if nids[inValue] == nil {
-					nids[inValue] = map[*OverallSnapshot]struct{}{byID[outValue]: {}}
-					return assign(columns[1:], values[1:])
-				}
-				nids[inValue][byID[outValue]] = struct{}{}
-				return nil
-			}
-		})
-	})
-	neighbors, err := withInterceptors[[]*Profile](ctx, query, qr, query.inters)
+	query.Where(profile.IDIn(ids...))
+	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nids[n.ID]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "profile" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "profile_overall_snapshot" returned %v`, n.ID)
 		}
-		for kn := range nodes {
-			assign(kn, n)
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil
@@ -475,7 +452,7 @@ func (osq *OverallSnapshotQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (osq *OverallSnapshotQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(overallsnapshot.Table, overallsnapshot.Columns, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(overallsnapshot.Table, overallsnapshot.Columns, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString))
 	_spec.From = osq.sql
 	if unique := osq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

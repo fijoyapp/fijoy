@@ -14,13 +14,14 @@ type UserKey struct {
 // Fields of the UserKey.
 func (UserKey) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("hashed_password"),
+		field.String("id"),
+		field.String("hashed_password").Optional(),
 	}
 }
 
 // Edges of the UserKey.
 func (UserKey) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("user_key"),
+		edge.From("user", User.Type).Ref("user_key").Required().Unique(),
 	}
 }

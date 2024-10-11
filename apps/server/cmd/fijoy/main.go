@@ -70,10 +70,10 @@ func main() {
 
 	analyticsService := analytics_usecase.New(cfg.Analytics)
 
-	userRepo := user_repository.NewUserRepository(db)
-	userKeyRepo := user_repository.NewUserKeyRepository(db)
-	userUseCase := user_usecase.New(userRepo)
-	authUseCase := auth_usecase.New(userRepo, userKeyRepo)
+	userRepo := user_repository.NewUserRepository()
+	userKeyRepo := user_repository.NewUserKeyRepository()
+	userUseCase := user_usecase.New(userRepo, client)
+	authUseCase := auth_usecase.New(userRepo, userKeyRepo, client)
 
 	profileRepo := profile_repository.NewProfileRepository(db)
 	profileUseCase := profile_usecase.New(validator, db, profileRepo)

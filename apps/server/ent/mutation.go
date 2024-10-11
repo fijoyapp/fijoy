@@ -45,7 +45,7 @@ type AccountMutation struct {
 	config
 	op                      Op
 	typ                     string
-	id                      *int
+	id                      *string
 	name                    *string
 	account_type            *account.AccountType
 	archived                *bool
@@ -63,14 +63,13 @@ type AccountMutation struct {
 	created_at              *time.Time
 	updated_at              *time.Time
 	clearedFields           map[string]struct{}
-	profile                 map[int]struct{}
-	removedprofile          map[int]struct{}
+	profile                 *string
 	clearedprofile          bool
-	account_snapshot        map[int]struct{}
-	removedaccount_snapshot map[int]struct{}
+	account_snapshot        map[string]struct{}
+	removedaccount_snapshot map[string]struct{}
 	clearedaccount_snapshot bool
-	transaction             map[int]struct{}
-	removedtransaction      map[int]struct{}
+	transaction             map[string]struct{}
+	removedtransaction      map[string]struct{}
 	clearedtransaction      bool
 	done                    bool
 	oldValue                func(context.Context) (*Account, error)
@@ -97,7 +96,7 @@ func newAccountMutation(c config, op Op, opts ...accountOption) *AccountMutation
 }
 
 // withAccountID sets the ID field of the mutation.
-func withAccountID(id int) accountOption {
+func withAccountID(id string) accountOption {
 	return func(m *AccountMutation) {
 		var (
 			err   error
@@ -147,9 +146,15 @@ func (m AccountMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Account entities.
+func (m *AccountMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AccountMutation) ID() (id int, exists bool) {
+func (m *AccountMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -160,12 +165,12 @@ func (m *AccountMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AccountMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *AccountMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -701,14 +706,9 @@ func (m *AccountMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by ids.
-func (m *AccountMutation) AddProfileIDs(ids ...int) {
-	if m.profile == nil {
-		m.profile = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.profile[ids[i]] = struct{}{}
-	}
+// SetProfileID sets the "profile" edge to the Profile entity by id.
+func (m *AccountMutation) SetProfileID(id string) {
+	m.profile = &id
 }
 
 // ClearProfile clears the "profile" edge to the Profile entity.
@@ -721,29 +721,20 @@ func (m *AccountMutation) ProfileCleared() bool {
 	return m.clearedprofile
 }
 
-// RemoveProfileIDs removes the "profile" edge to the Profile entity by IDs.
-func (m *AccountMutation) RemoveProfileIDs(ids ...int) {
-	if m.removedprofile == nil {
-		m.removedprofile = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.profile, ids[i])
-		m.removedprofile[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedProfile returns the removed IDs of the "profile" edge to the Profile entity.
-func (m *AccountMutation) RemovedProfileIDs() (ids []int) {
-	for id := range m.removedprofile {
-		ids = append(ids, id)
+// ProfileID returns the "profile" edge ID in the mutation.
+func (m *AccountMutation) ProfileID() (id string, exists bool) {
+	if m.profile != nil {
+		return *m.profile, true
 	}
 	return
 }
 
 // ProfileIDs returns the "profile" edge IDs in the mutation.
-func (m *AccountMutation) ProfileIDs() (ids []int) {
-	for id := range m.profile {
-		ids = append(ids, id)
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ProfileID instead. It exists only for internal usage by the builders.
+func (m *AccountMutation) ProfileIDs() (ids []string) {
+	if id := m.profile; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -752,13 +743,12 @@ func (m *AccountMutation) ProfileIDs() (ids []int) {
 func (m *AccountMutation) ResetProfile() {
 	m.profile = nil
 	m.clearedprofile = false
-	m.removedprofile = nil
 }
 
 // AddAccountSnapshotIDs adds the "account_snapshot" edge to the AccountSnapshot entity by ids.
-func (m *AccountMutation) AddAccountSnapshotIDs(ids ...int) {
+func (m *AccountMutation) AddAccountSnapshotIDs(ids ...string) {
 	if m.account_snapshot == nil {
-		m.account_snapshot = make(map[int]struct{})
+		m.account_snapshot = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.account_snapshot[ids[i]] = struct{}{}
@@ -776,9 +766,9 @@ func (m *AccountMutation) AccountSnapshotCleared() bool {
 }
 
 // RemoveAccountSnapshotIDs removes the "account_snapshot" edge to the AccountSnapshot entity by IDs.
-func (m *AccountMutation) RemoveAccountSnapshotIDs(ids ...int) {
+func (m *AccountMutation) RemoveAccountSnapshotIDs(ids ...string) {
 	if m.removedaccount_snapshot == nil {
-		m.removedaccount_snapshot = make(map[int]struct{})
+		m.removedaccount_snapshot = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.account_snapshot, ids[i])
@@ -787,7 +777,7 @@ func (m *AccountMutation) RemoveAccountSnapshotIDs(ids ...int) {
 }
 
 // RemovedAccountSnapshot returns the removed IDs of the "account_snapshot" edge to the AccountSnapshot entity.
-func (m *AccountMutation) RemovedAccountSnapshotIDs() (ids []int) {
+func (m *AccountMutation) RemovedAccountSnapshotIDs() (ids []string) {
 	for id := range m.removedaccount_snapshot {
 		ids = append(ids, id)
 	}
@@ -795,7 +785,7 @@ func (m *AccountMutation) RemovedAccountSnapshotIDs() (ids []int) {
 }
 
 // AccountSnapshotIDs returns the "account_snapshot" edge IDs in the mutation.
-func (m *AccountMutation) AccountSnapshotIDs() (ids []int) {
+func (m *AccountMutation) AccountSnapshotIDs() (ids []string) {
 	for id := range m.account_snapshot {
 		ids = append(ids, id)
 	}
@@ -810,9 +800,9 @@ func (m *AccountMutation) ResetAccountSnapshot() {
 }
 
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by ids.
-func (m *AccountMutation) AddTransactionIDs(ids ...int) {
+func (m *AccountMutation) AddTransactionIDs(ids ...string) {
 	if m.transaction == nil {
-		m.transaction = make(map[int]struct{})
+		m.transaction = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.transaction[ids[i]] = struct{}{}
@@ -830,9 +820,9 @@ func (m *AccountMutation) TransactionCleared() bool {
 }
 
 // RemoveTransactionIDs removes the "transaction" edge to the Transaction entity by IDs.
-func (m *AccountMutation) RemoveTransactionIDs(ids ...int) {
+func (m *AccountMutation) RemoveTransactionIDs(ids ...string) {
 	if m.removedtransaction == nil {
-		m.removedtransaction = make(map[int]struct{})
+		m.removedtransaction = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.transaction, ids[i])
@@ -841,7 +831,7 @@ func (m *AccountMutation) RemoveTransactionIDs(ids ...int) {
 }
 
 // RemovedTransaction returns the removed IDs of the "transaction" edge to the Transaction entity.
-func (m *AccountMutation) RemovedTransactionIDs() (ids []int) {
+func (m *AccountMutation) RemovedTransactionIDs() (ids []string) {
 	for id := range m.removedtransaction {
 		ids = append(ids, id)
 	}
@@ -849,7 +839,7 @@ func (m *AccountMutation) RemovedTransactionIDs() (ids []int) {
 }
 
 // TransactionIDs returns the "transaction" edge IDs in the mutation.
-func (m *AccountMutation) TransactionIDs() (ids []int) {
+func (m *AccountMutation) TransactionIDs() (ids []string) {
 	for id := range m.transaction {
 		ids = append(ids, id)
 	}
@@ -1261,11 +1251,9 @@ func (m *AccountMutation) AddedEdges() []string {
 func (m *AccountMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case account.EdgeProfile:
-		ids := make([]ent.Value, 0, len(m.profile))
-		for id := range m.profile {
-			ids = append(ids, id)
+		if id := m.profile; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case account.EdgeAccountSnapshot:
 		ids := make([]ent.Value, 0, len(m.account_snapshot))
 		for id := range m.account_snapshot {
@@ -1285,9 +1273,6 @@ func (m *AccountMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AccountMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 3)
-	if m.removedprofile != nil {
-		edges = append(edges, account.EdgeProfile)
-	}
 	if m.removedaccount_snapshot != nil {
 		edges = append(edges, account.EdgeAccountSnapshot)
 	}
@@ -1301,12 +1286,6 @@ func (m *AccountMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *AccountMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case account.EdgeProfile:
-		ids := make([]ent.Value, 0, len(m.removedprofile))
-		for id := range m.removedprofile {
-			ids = append(ids, id)
-		}
-		return ids
 	case account.EdgeAccountSnapshot:
 		ids := make([]ent.Value, 0, len(m.removedaccount_snapshot))
 		for id := range m.removedaccount_snapshot {
@@ -1356,6 +1335,9 @@ func (m *AccountMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *AccountMutation) ClearEdge(name string) error {
 	switch name {
+	case account.EdgeProfile:
+		m.ClearProfile()
+		return nil
 	}
 	return fmt.Errorf("unknown Account unique edge %s", name)
 }
@@ -1382,13 +1364,12 @@ type AccountSnapshotMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *int
+	id             *string
 	datehour       *time.Time
 	balance        *decimal.Decimal
 	addbalance     *decimal.Decimal
 	clearedFields  map[string]struct{}
-	account        map[int]struct{}
-	removedaccount map[int]struct{}
+	account        *string
 	clearedaccount bool
 	done           bool
 	oldValue       func(context.Context) (*AccountSnapshot, error)
@@ -1415,7 +1396,7 @@ func newAccountSnapshotMutation(c config, op Op, opts ...accountsnapshotOption) 
 }
 
 // withAccountSnapshotID sets the ID field of the mutation.
-func withAccountSnapshotID(id int) accountsnapshotOption {
+func withAccountSnapshotID(id string) accountsnapshotOption {
 	return func(m *AccountSnapshotMutation) {
 		var (
 			err   error
@@ -1465,9 +1446,15 @@ func (m AccountSnapshotMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AccountSnapshot entities.
+func (m *AccountSnapshotMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AccountSnapshotMutation) ID() (id int, exists bool) {
+func (m *AccountSnapshotMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1478,12 +1465,12 @@ func (m *AccountSnapshotMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AccountSnapshotMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *AccountSnapshotMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1585,14 +1572,9 @@ func (m *AccountSnapshotMutation) ResetBalance() {
 	m.addbalance = nil
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by ids.
-func (m *AccountSnapshotMutation) AddAccountIDs(ids ...int) {
-	if m.account == nil {
-		m.account = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.account[ids[i]] = struct{}{}
-	}
+// SetAccountID sets the "account" edge to the Account entity by id.
+func (m *AccountSnapshotMutation) SetAccountID(id string) {
+	m.account = &id
 }
 
 // ClearAccount clears the "account" edge to the Account entity.
@@ -1605,29 +1587,20 @@ func (m *AccountSnapshotMutation) AccountCleared() bool {
 	return m.clearedaccount
 }
 
-// RemoveAccountIDs removes the "account" edge to the Account entity by IDs.
-func (m *AccountSnapshotMutation) RemoveAccountIDs(ids ...int) {
-	if m.removedaccount == nil {
-		m.removedaccount = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.account, ids[i])
-		m.removedaccount[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedAccount returns the removed IDs of the "account" edge to the Account entity.
-func (m *AccountSnapshotMutation) RemovedAccountIDs() (ids []int) {
-	for id := range m.removedaccount {
-		ids = append(ids, id)
+// AccountID returns the "account" edge ID in the mutation.
+func (m *AccountSnapshotMutation) AccountID() (id string, exists bool) {
+	if m.account != nil {
+		return *m.account, true
 	}
 	return
 }
 
 // AccountIDs returns the "account" edge IDs in the mutation.
-func (m *AccountSnapshotMutation) AccountIDs() (ids []int) {
-	for id := range m.account {
-		ids = append(ids, id)
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AccountID instead. It exists only for internal usage by the builders.
+func (m *AccountSnapshotMutation) AccountIDs() (ids []string) {
+	if id := m.account; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -1636,7 +1609,6 @@ func (m *AccountSnapshotMutation) AccountIDs() (ids []int) {
 func (m *AccountSnapshotMutation) ResetAccount() {
 	m.account = nil
 	m.clearedaccount = false
-	m.removedaccount = nil
 }
 
 // Where appends a list predicates to the AccountSnapshotMutation builder.
@@ -1816,11 +1788,9 @@ func (m *AccountSnapshotMutation) AddedEdges() []string {
 func (m *AccountSnapshotMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case accountsnapshot.EdgeAccount:
-		ids := make([]ent.Value, 0, len(m.account))
-		for id := range m.account {
-			ids = append(ids, id)
+		if id := m.account; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -1828,23 +1798,12 @@ func (m *AccountSnapshotMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AccountSnapshotMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedaccount != nil {
-		edges = append(edges, accountsnapshot.EdgeAccount)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *AccountSnapshotMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case accountsnapshot.EdgeAccount:
-		ids := make([]ent.Value, 0, len(m.removedaccount))
-		for id := range m.removedaccount {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -1871,6 +1830,9 @@ func (m *AccountSnapshotMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *AccountSnapshotMutation) ClearEdge(name string) error {
 	switch name {
+	case accountsnapshot.EdgeAccount:
+		m.ClearAccount()
+		return nil
 	}
 	return fmt.Errorf("unknown AccountSnapshot unique edge %s", name)
 }
@@ -1891,7 +1853,7 @@ type OverallSnapshotMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *int
+	id             *string
 	datehour       *time.Time
 	liquidity      *decimal.Decimal
 	addliquidity   *decimal.Decimal
@@ -1904,8 +1866,7 @@ type OverallSnapshotMutation struct {
 	liablity       *decimal.Decimal
 	addliablity    *decimal.Decimal
 	clearedFields  map[string]struct{}
-	profile        map[int]struct{}
-	removedprofile map[int]struct{}
+	profile        *string
 	clearedprofile bool
 	done           bool
 	oldValue       func(context.Context) (*OverallSnapshot, error)
@@ -1932,7 +1893,7 @@ func newOverallSnapshotMutation(c config, op Op, opts ...overallsnapshotOption) 
 }
 
 // withOverallSnapshotID sets the ID field of the mutation.
-func withOverallSnapshotID(id int) overallsnapshotOption {
+func withOverallSnapshotID(id string) overallsnapshotOption {
 	return func(m *OverallSnapshotMutation) {
 		var (
 			err   error
@@ -1982,9 +1943,15 @@ func (m OverallSnapshotMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of OverallSnapshot entities.
+func (m *OverallSnapshotMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *OverallSnapshotMutation) ID() (id int, exists bool) {
+func (m *OverallSnapshotMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1995,12 +1962,12 @@ func (m *OverallSnapshotMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *OverallSnapshotMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *OverallSnapshotMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -2326,14 +2293,9 @@ func (m *OverallSnapshotMutation) ResetLiablity() {
 	m.addliablity = nil
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by ids.
-func (m *OverallSnapshotMutation) AddProfileIDs(ids ...int) {
-	if m.profile == nil {
-		m.profile = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.profile[ids[i]] = struct{}{}
-	}
+// SetProfileID sets the "profile" edge to the Profile entity by id.
+func (m *OverallSnapshotMutation) SetProfileID(id string) {
+	m.profile = &id
 }
 
 // ClearProfile clears the "profile" edge to the Profile entity.
@@ -2346,29 +2308,20 @@ func (m *OverallSnapshotMutation) ProfileCleared() bool {
 	return m.clearedprofile
 }
 
-// RemoveProfileIDs removes the "profile" edge to the Profile entity by IDs.
-func (m *OverallSnapshotMutation) RemoveProfileIDs(ids ...int) {
-	if m.removedprofile == nil {
-		m.removedprofile = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.profile, ids[i])
-		m.removedprofile[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedProfile returns the removed IDs of the "profile" edge to the Profile entity.
-func (m *OverallSnapshotMutation) RemovedProfileIDs() (ids []int) {
-	for id := range m.removedprofile {
-		ids = append(ids, id)
+// ProfileID returns the "profile" edge ID in the mutation.
+func (m *OverallSnapshotMutation) ProfileID() (id string, exists bool) {
+	if m.profile != nil {
+		return *m.profile, true
 	}
 	return
 }
 
 // ProfileIDs returns the "profile" edge IDs in the mutation.
-func (m *OverallSnapshotMutation) ProfileIDs() (ids []int) {
-	for id := range m.profile {
-		ids = append(ids, id)
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ProfileID instead. It exists only for internal usage by the builders.
+func (m *OverallSnapshotMutation) ProfileIDs() (ids []string) {
+	if id := m.profile; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -2377,7 +2330,6 @@ func (m *OverallSnapshotMutation) ProfileIDs() (ids []int) {
 func (m *OverallSnapshotMutation) ResetProfile() {
 	m.profile = nil
 	m.clearedprofile = false
-	m.removedprofile = nil
 }
 
 // Where appends a list predicates to the OverallSnapshotMutation builder.
@@ -2673,11 +2625,9 @@ func (m *OverallSnapshotMutation) AddedEdges() []string {
 func (m *OverallSnapshotMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case overallsnapshot.EdgeProfile:
-		ids := make([]ent.Value, 0, len(m.profile))
-		for id := range m.profile {
-			ids = append(ids, id)
+		if id := m.profile; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -2685,23 +2635,12 @@ func (m *OverallSnapshotMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OverallSnapshotMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedprofile != nil {
-		edges = append(edges, overallsnapshot.EdgeProfile)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *OverallSnapshotMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case overallsnapshot.EdgeProfile:
-		ids := make([]ent.Value, 0, len(m.removedprofile))
-		for id := range m.removedprofile {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -2728,6 +2667,9 @@ func (m *OverallSnapshotMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *OverallSnapshotMutation) ClearEdge(name string) error {
 	switch name {
+	case overallsnapshot.EdgeProfile:
+		m.ClearProfile()
+		return nil
 	}
 	return fmt.Errorf("unknown OverallSnapshot unique edge %s", name)
 }
@@ -2748,18 +2690,23 @@ type ProfileMutation struct {
 	config
 	op                      Op
 	typ                     string
-	id                      *int
+	id                      *string
+	locale                  *string
+	currencies              *string
+	net_worth_goal          *decimal.Decimal
+	addnet_worth_goal       *decimal.Decimal
+	created_at              *time.Time
 	clearedFields           map[string]struct{}
-	user                    *int
+	user                    *string
 	cleareduser             bool
-	account                 map[int]struct{}
-	removedaccount          map[int]struct{}
+	account                 map[string]struct{}
+	removedaccount          map[string]struct{}
 	clearedaccount          bool
-	transaction             map[int]struct{}
-	removedtransaction      map[int]struct{}
+	transaction             map[string]struct{}
+	removedtransaction      map[string]struct{}
 	clearedtransaction      bool
-	overall_snapshot        map[int]struct{}
-	removedoverall_snapshot map[int]struct{}
+	overall_snapshot        map[string]struct{}
+	removedoverall_snapshot map[string]struct{}
 	clearedoverall_snapshot bool
 	done                    bool
 	oldValue                func(context.Context) (*Profile, error)
@@ -2786,7 +2733,7 @@ func newProfileMutation(c config, op Op, opts ...profileOption) *ProfileMutation
 }
 
 // withProfileID sets the ID field of the mutation.
-func withProfileID(id int) profileOption {
+func withProfileID(id string) profileOption {
 	return func(m *ProfileMutation) {
 		var (
 			err   error
@@ -2836,9 +2783,15 @@ func (m ProfileMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Profile entities.
+func (m *ProfileMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *ProfileMutation) ID() (id int, exists bool) {
+func (m *ProfileMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2849,12 +2802,12 @@ func (m *ProfileMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *ProfileMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *ProfileMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -2864,8 +2817,172 @@ func (m *ProfileMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
+// SetLocale sets the "locale" field.
+func (m *ProfileMutation) SetLocale(s string) {
+	m.locale = &s
+}
+
+// Locale returns the value of the "locale" field in the mutation.
+func (m *ProfileMutation) Locale() (r string, exists bool) {
+	v := m.locale
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocale returns the old "locale" field's value of the Profile entity.
+// If the Profile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProfileMutation) OldLocale(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocale is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocale requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocale: %w", err)
+	}
+	return oldValue.Locale, nil
+}
+
+// ResetLocale resets all changes to the "locale" field.
+func (m *ProfileMutation) ResetLocale() {
+	m.locale = nil
+}
+
+// SetCurrencies sets the "currencies" field.
+func (m *ProfileMutation) SetCurrencies(s string) {
+	m.currencies = &s
+}
+
+// Currencies returns the value of the "currencies" field in the mutation.
+func (m *ProfileMutation) Currencies() (r string, exists bool) {
+	v := m.currencies
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrencies returns the old "currencies" field's value of the Profile entity.
+// If the Profile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProfileMutation) OldCurrencies(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrencies is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrencies requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrencies: %w", err)
+	}
+	return oldValue.Currencies, nil
+}
+
+// ResetCurrencies resets all changes to the "currencies" field.
+func (m *ProfileMutation) ResetCurrencies() {
+	m.currencies = nil
+}
+
+// SetNetWorthGoal sets the "net_worth_goal" field.
+func (m *ProfileMutation) SetNetWorthGoal(d decimal.Decimal) {
+	m.net_worth_goal = &d
+	m.addnet_worth_goal = nil
+}
+
+// NetWorthGoal returns the value of the "net_worth_goal" field in the mutation.
+func (m *ProfileMutation) NetWorthGoal() (r decimal.Decimal, exists bool) {
+	v := m.net_worth_goal
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNetWorthGoal returns the old "net_worth_goal" field's value of the Profile entity.
+// If the Profile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProfileMutation) OldNetWorthGoal(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNetWorthGoal is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNetWorthGoal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNetWorthGoal: %w", err)
+	}
+	return oldValue.NetWorthGoal, nil
+}
+
+// AddNetWorthGoal adds d to the "net_worth_goal" field.
+func (m *ProfileMutation) AddNetWorthGoal(d decimal.Decimal) {
+	if m.addnet_worth_goal != nil {
+		*m.addnet_worth_goal = m.addnet_worth_goal.Add(d)
+	} else {
+		m.addnet_worth_goal = &d
+	}
+}
+
+// AddedNetWorthGoal returns the value that was added to the "net_worth_goal" field in this mutation.
+func (m *ProfileMutation) AddedNetWorthGoal() (r decimal.Decimal, exists bool) {
+	v := m.addnet_worth_goal
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetNetWorthGoal resets all changes to the "net_worth_goal" field.
+func (m *ProfileMutation) ResetNetWorthGoal() {
+	m.net_worth_goal = nil
+	m.addnet_worth_goal = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ProfileMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ProfileMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Profile entity.
+// If the Profile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProfileMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ProfileMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
 // SetUserID sets the "user" edge to the User entity by id.
-func (m *ProfileMutation) SetUserID(id int) {
+func (m *ProfileMutation) SetUserID(id string) {
 	m.user = &id
 }
 
@@ -2880,7 +2997,7 @@ func (m *ProfileMutation) UserCleared() bool {
 }
 
 // UserID returns the "user" edge ID in the mutation.
-func (m *ProfileMutation) UserID() (id int, exists bool) {
+func (m *ProfileMutation) UserID() (id string, exists bool) {
 	if m.user != nil {
 		return *m.user, true
 	}
@@ -2890,7 +3007,7 @@ func (m *ProfileMutation) UserID() (id int, exists bool) {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *ProfileMutation) UserIDs() (ids []int) {
+func (m *ProfileMutation) UserIDs() (ids []string) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2904,9 +3021,9 @@ func (m *ProfileMutation) ResetUser() {
 }
 
 // AddAccountIDs adds the "account" edge to the Account entity by ids.
-func (m *ProfileMutation) AddAccountIDs(ids ...int) {
+func (m *ProfileMutation) AddAccountIDs(ids ...string) {
 	if m.account == nil {
-		m.account = make(map[int]struct{})
+		m.account = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.account[ids[i]] = struct{}{}
@@ -2924,9 +3041,9 @@ func (m *ProfileMutation) AccountCleared() bool {
 }
 
 // RemoveAccountIDs removes the "account" edge to the Account entity by IDs.
-func (m *ProfileMutation) RemoveAccountIDs(ids ...int) {
+func (m *ProfileMutation) RemoveAccountIDs(ids ...string) {
 	if m.removedaccount == nil {
-		m.removedaccount = make(map[int]struct{})
+		m.removedaccount = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.account, ids[i])
@@ -2935,7 +3052,7 @@ func (m *ProfileMutation) RemoveAccountIDs(ids ...int) {
 }
 
 // RemovedAccount returns the removed IDs of the "account" edge to the Account entity.
-func (m *ProfileMutation) RemovedAccountIDs() (ids []int) {
+func (m *ProfileMutation) RemovedAccountIDs() (ids []string) {
 	for id := range m.removedaccount {
 		ids = append(ids, id)
 	}
@@ -2943,7 +3060,7 @@ func (m *ProfileMutation) RemovedAccountIDs() (ids []int) {
 }
 
 // AccountIDs returns the "account" edge IDs in the mutation.
-func (m *ProfileMutation) AccountIDs() (ids []int) {
+func (m *ProfileMutation) AccountIDs() (ids []string) {
 	for id := range m.account {
 		ids = append(ids, id)
 	}
@@ -2958,9 +3075,9 @@ func (m *ProfileMutation) ResetAccount() {
 }
 
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by ids.
-func (m *ProfileMutation) AddTransactionIDs(ids ...int) {
+func (m *ProfileMutation) AddTransactionIDs(ids ...string) {
 	if m.transaction == nil {
-		m.transaction = make(map[int]struct{})
+		m.transaction = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.transaction[ids[i]] = struct{}{}
@@ -2978,9 +3095,9 @@ func (m *ProfileMutation) TransactionCleared() bool {
 }
 
 // RemoveTransactionIDs removes the "transaction" edge to the Transaction entity by IDs.
-func (m *ProfileMutation) RemoveTransactionIDs(ids ...int) {
+func (m *ProfileMutation) RemoveTransactionIDs(ids ...string) {
 	if m.removedtransaction == nil {
-		m.removedtransaction = make(map[int]struct{})
+		m.removedtransaction = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.transaction, ids[i])
@@ -2989,7 +3106,7 @@ func (m *ProfileMutation) RemoveTransactionIDs(ids ...int) {
 }
 
 // RemovedTransaction returns the removed IDs of the "transaction" edge to the Transaction entity.
-func (m *ProfileMutation) RemovedTransactionIDs() (ids []int) {
+func (m *ProfileMutation) RemovedTransactionIDs() (ids []string) {
 	for id := range m.removedtransaction {
 		ids = append(ids, id)
 	}
@@ -2997,7 +3114,7 @@ func (m *ProfileMutation) RemovedTransactionIDs() (ids []int) {
 }
 
 // TransactionIDs returns the "transaction" edge IDs in the mutation.
-func (m *ProfileMutation) TransactionIDs() (ids []int) {
+func (m *ProfileMutation) TransactionIDs() (ids []string) {
 	for id := range m.transaction {
 		ids = append(ids, id)
 	}
@@ -3012,9 +3129,9 @@ func (m *ProfileMutation) ResetTransaction() {
 }
 
 // AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by ids.
-func (m *ProfileMutation) AddOverallSnapshotIDs(ids ...int) {
+func (m *ProfileMutation) AddOverallSnapshotIDs(ids ...string) {
 	if m.overall_snapshot == nil {
-		m.overall_snapshot = make(map[int]struct{})
+		m.overall_snapshot = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.overall_snapshot[ids[i]] = struct{}{}
@@ -3032,9 +3149,9 @@ func (m *ProfileMutation) OverallSnapshotCleared() bool {
 }
 
 // RemoveOverallSnapshotIDs removes the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
-func (m *ProfileMutation) RemoveOverallSnapshotIDs(ids ...int) {
+func (m *ProfileMutation) RemoveOverallSnapshotIDs(ids ...string) {
 	if m.removedoverall_snapshot == nil {
-		m.removedoverall_snapshot = make(map[int]struct{})
+		m.removedoverall_snapshot = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.overall_snapshot, ids[i])
@@ -3043,7 +3160,7 @@ func (m *ProfileMutation) RemoveOverallSnapshotIDs(ids ...int) {
 }
 
 // RemovedOverallSnapshot returns the removed IDs of the "overall_snapshot" edge to the OverallSnapshot entity.
-func (m *ProfileMutation) RemovedOverallSnapshotIDs() (ids []int) {
+func (m *ProfileMutation) RemovedOverallSnapshotIDs() (ids []string) {
 	for id := range m.removedoverall_snapshot {
 		ids = append(ids, id)
 	}
@@ -3051,7 +3168,7 @@ func (m *ProfileMutation) RemovedOverallSnapshotIDs() (ids []int) {
 }
 
 // OverallSnapshotIDs returns the "overall_snapshot" edge IDs in the mutation.
-func (m *ProfileMutation) OverallSnapshotIDs() (ids []int) {
+func (m *ProfileMutation) OverallSnapshotIDs() (ids []string) {
 	for id := range m.overall_snapshot {
 		ids = append(ids, id)
 	}
@@ -3099,7 +3216,19 @@ func (m *ProfileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProfileMutation) Fields() []string {
-	fields := make([]string, 0, 0)
+	fields := make([]string, 0, 4)
+	if m.locale != nil {
+		fields = append(fields, profile.FieldLocale)
+	}
+	if m.currencies != nil {
+		fields = append(fields, profile.FieldCurrencies)
+	}
+	if m.net_worth_goal != nil {
+		fields = append(fields, profile.FieldNetWorthGoal)
+	}
+	if m.created_at != nil {
+		fields = append(fields, profile.FieldCreatedAt)
+	}
 	return fields
 }
 
@@ -3107,6 +3236,16 @@ func (m *ProfileMutation) Fields() []string {
 // return value indicates that this field was not set, or was not defined in the
 // schema.
 func (m *ProfileMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case profile.FieldLocale:
+		return m.Locale()
+	case profile.FieldCurrencies:
+		return m.Currencies()
+	case profile.FieldNetWorthGoal:
+		return m.NetWorthGoal()
+	case profile.FieldCreatedAt:
+		return m.CreatedAt()
+	}
 	return nil, false
 }
 
@@ -3114,6 +3253,16 @@ func (m *ProfileMutation) Field(name string) (ent.Value, bool) {
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
 func (m *ProfileMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case profile.FieldLocale:
+		return m.OldLocale(ctx)
+	case profile.FieldCurrencies:
+		return m.OldCurrencies(ctx)
+	case profile.FieldNetWorthGoal:
+		return m.OldNetWorthGoal(ctx)
+	case profile.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	}
 	return nil, fmt.Errorf("unknown Profile field %s", name)
 }
 
@@ -3122,6 +3271,34 @@ func (m *ProfileMutation) OldField(ctx context.Context, name string) (ent.Value,
 // type.
 func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case profile.FieldLocale:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocale(v)
+		return nil
+	case profile.FieldCurrencies:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrencies(v)
+		return nil
+	case profile.FieldNetWorthGoal:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNetWorthGoal(v)
+		return nil
+	case profile.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Profile field %s", name)
 }
@@ -3129,13 +3306,21 @@ func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *ProfileMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addnet_worth_goal != nil {
+		fields = append(fields, profile.FieldNetWorthGoal)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *ProfileMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case profile.FieldNetWorthGoal:
+		return m.AddedNetWorthGoal()
+	}
 	return nil, false
 }
 
@@ -3143,6 +3328,15 @@ func (m *ProfileMutation) AddedField(name string) (ent.Value, bool) {
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
 func (m *ProfileMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case profile.FieldNetWorthGoal:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddNetWorthGoal(v)
+		return nil
+	}
 	return fmt.Errorf("unknown Profile numeric field %s", name)
 }
 
@@ -3168,6 +3362,20 @@ func (m *ProfileMutation) ClearField(name string) error {
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *ProfileMutation) ResetField(name string) error {
+	switch name {
+	case profile.FieldLocale:
+		m.ResetLocale()
+		return nil
+	case profile.FieldCurrencies:
+		m.ResetCurrencies()
+		return nil
+	case profile.FieldNetWorthGoal:
+		m.ResetNetWorthGoal()
+		return nil
+	case profile.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	}
 	return fmt.Errorf("unknown Profile field %s", name)
 }
 
@@ -3330,7 +3538,7 @@ type TransactionMutation struct {
 	config
 	op               Op
 	typ              string
-	id               *int
+	id               *string
 	amount           *decimal.Decimal
 	addamount        *decimal.Decimal
 	amount_delta     *decimal.Decimal
@@ -3347,11 +3555,9 @@ type TransactionMutation struct {
 	created_at       *time.Time
 	updated_at       *time.Time
 	clearedFields    map[string]struct{}
-	profile          map[int]struct{}
-	removedprofile   map[int]struct{}
+	profile          *string
 	clearedprofile   bool
-	account          map[int]struct{}
-	removedaccount   map[int]struct{}
+	account          *string
 	clearedaccount   bool
 	done             bool
 	oldValue         func(context.Context) (*Transaction, error)
@@ -3378,7 +3584,7 @@ func newTransactionMutation(c config, op Op, opts ...transactionOption) *Transac
 }
 
 // withTransactionID sets the ID field of the mutation.
-func withTransactionID(id int) transactionOption {
+func withTransactionID(id string) transactionOption {
 	return func(m *TransactionMutation) {
 		var (
 			err   error
@@ -3428,9 +3634,15 @@ func (m TransactionMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Transaction entities.
+func (m *TransactionMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *TransactionMutation) ID() (id int, exists bool) {
+func (m *TransactionMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -3441,12 +3653,12 @@ func (m *TransactionMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *TransactionMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *TransactionMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -3927,14 +4139,9 @@ func (m *TransactionMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by ids.
-func (m *TransactionMutation) AddProfileIDs(ids ...int) {
-	if m.profile == nil {
-		m.profile = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.profile[ids[i]] = struct{}{}
-	}
+// SetProfileID sets the "profile" edge to the Profile entity by id.
+func (m *TransactionMutation) SetProfileID(id string) {
+	m.profile = &id
 }
 
 // ClearProfile clears the "profile" edge to the Profile entity.
@@ -3947,29 +4154,20 @@ func (m *TransactionMutation) ProfileCleared() bool {
 	return m.clearedprofile
 }
 
-// RemoveProfileIDs removes the "profile" edge to the Profile entity by IDs.
-func (m *TransactionMutation) RemoveProfileIDs(ids ...int) {
-	if m.removedprofile == nil {
-		m.removedprofile = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.profile, ids[i])
-		m.removedprofile[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedProfile returns the removed IDs of the "profile" edge to the Profile entity.
-func (m *TransactionMutation) RemovedProfileIDs() (ids []int) {
-	for id := range m.removedprofile {
-		ids = append(ids, id)
+// ProfileID returns the "profile" edge ID in the mutation.
+func (m *TransactionMutation) ProfileID() (id string, exists bool) {
+	if m.profile != nil {
+		return *m.profile, true
 	}
 	return
 }
 
 // ProfileIDs returns the "profile" edge IDs in the mutation.
-func (m *TransactionMutation) ProfileIDs() (ids []int) {
-	for id := range m.profile {
-		ids = append(ids, id)
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ProfileID instead. It exists only for internal usage by the builders.
+func (m *TransactionMutation) ProfileIDs() (ids []string) {
+	if id := m.profile; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -3978,17 +4176,11 @@ func (m *TransactionMutation) ProfileIDs() (ids []int) {
 func (m *TransactionMutation) ResetProfile() {
 	m.profile = nil
 	m.clearedprofile = false
-	m.removedprofile = nil
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by ids.
-func (m *TransactionMutation) AddAccountIDs(ids ...int) {
-	if m.account == nil {
-		m.account = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.account[ids[i]] = struct{}{}
-	}
+// SetAccountID sets the "account" edge to the Account entity by id.
+func (m *TransactionMutation) SetAccountID(id string) {
+	m.account = &id
 }
 
 // ClearAccount clears the "account" edge to the Account entity.
@@ -4001,29 +4193,20 @@ func (m *TransactionMutation) AccountCleared() bool {
 	return m.clearedaccount
 }
 
-// RemoveAccountIDs removes the "account" edge to the Account entity by IDs.
-func (m *TransactionMutation) RemoveAccountIDs(ids ...int) {
-	if m.removedaccount == nil {
-		m.removedaccount = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.account, ids[i])
-		m.removedaccount[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedAccount returns the removed IDs of the "account" edge to the Account entity.
-func (m *TransactionMutation) RemovedAccountIDs() (ids []int) {
-	for id := range m.removedaccount {
-		ids = append(ids, id)
+// AccountID returns the "account" edge ID in the mutation.
+func (m *TransactionMutation) AccountID() (id string, exists bool) {
+	if m.account != nil {
+		return *m.account, true
 	}
 	return
 }
 
 // AccountIDs returns the "account" edge IDs in the mutation.
-func (m *TransactionMutation) AccountIDs() (ids []int) {
-	for id := range m.account {
-		ids = append(ids, id)
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AccountID instead. It exists only for internal usage by the builders.
+func (m *TransactionMutation) AccountIDs() (ids []string) {
+	if id := m.account; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -4032,7 +4215,6 @@ func (m *TransactionMutation) AccountIDs() (ids []int) {
 func (m *TransactionMutation) ResetAccount() {
 	m.account = nil
 	m.clearedaccount = false
-	m.removedaccount = nil
 }
 
 // Where appends a list predicates to the TransactionMutation builder.
@@ -4409,17 +4591,13 @@ func (m *TransactionMutation) AddedEdges() []string {
 func (m *TransactionMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case transaction.EdgeProfile:
-		ids := make([]ent.Value, 0, len(m.profile))
-		for id := range m.profile {
-			ids = append(ids, id)
+		if id := m.profile; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case transaction.EdgeAccount:
-		ids := make([]ent.Value, 0, len(m.account))
-		for id := range m.account {
-			ids = append(ids, id)
+		if id := m.account; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -4427,32 +4605,12 @@ func (m *TransactionMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TransactionMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 2)
-	if m.removedprofile != nil {
-		edges = append(edges, transaction.EdgeProfile)
-	}
-	if m.removedaccount != nil {
-		edges = append(edges, transaction.EdgeAccount)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *TransactionMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case transaction.EdgeProfile:
-		ids := make([]ent.Value, 0, len(m.removedprofile))
-		for id := range m.removedprofile {
-			ids = append(ids, id)
-		}
-		return ids
-	case transaction.EdgeAccount:
-		ids := make([]ent.Value, 0, len(m.removedaccount))
-		for id := range m.removedaccount {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -4484,6 +4642,12 @@ func (m *TransactionMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *TransactionMutation) ClearEdge(name string) error {
 	switch name {
+	case transaction.EdgeProfile:
+		m.ClearProfile()
+		return nil
+	case transaction.EdgeAccount:
+		m.ClearAccount()
+		return nil
 	}
 	return fmt.Errorf("unknown Transaction unique edge %s", name)
 }
@@ -4507,15 +4671,15 @@ type UserMutation struct {
 	config
 	op              Op
 	typ             string
-	id              *int
+	id              *string
 	email           *string
 	created_at      *time.Time
 	clearedFields   map[string]struct{}
-	user_key        map[int]struct{}
-	removeduser_key map[int]struct{}
+	user_key        map[string]struct{}
+	removeduser_key map[string]struct{}
 	cleareduser_key bool
-	profile         map[int]struct{}
-	removedprofile  map[int]struct{}
+	profile         map[string]struct{}
+	removedprofile  map[string]struct{}
 	clearedprofile  bool
 	done            bool
 	oldValue        func(context.Context) (*User, error)
@@ -4542,7 +4706,7 @@ func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 }
 
 // withUserID sets the ID field of the mutation.
-func withUserID(id int) userOption {
+func withUserID(id string) userOption {
 	return func(m *UserMutation) {
 		var (
 			err   error
@@ -4592,9 +4756,15 @@ func (m UserMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of User entities.
+func (m *UserMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserMutation) ID() (id int, exists bool) {
+func (m *UserMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -4605,12 +4775,12 @@ func (m *UserMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *UserMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -4693,9 +4863,9 @@ func (m *UserMutation) ResetCreatedAt() {
 }
 
 // AddUserKeyIDs adds the "user_key" edge to the UserKey entity by ids.
-func (m *UserMutation) AddUserKeyIDs(ids ...int) {
+func (m *UserMutation) AddUserKeyIDs(ids ...string) {
 	if m.user_key == nil {
-		m.user_key = make(map[int]struct{})
+		m.user_key = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.user_key[ids[i]] = struct{}{}
@@ -4713,9 +4883,9 @@ func (m *UserMutation) UserKeyCleared() bool {
 }
 
 // RemoveUserKeyIDs removes the "user_key" edge to the UserKey entity by IDs.
-func (m *UserMutation) RemoveUserKeyIDs(ids ...int) {
+func (m *UserMutation) RemoveUserKeyIDs(ids ...string) {
 	if m.removeduser_key == nil {
-		m.removeduser_key = make(map[int]struct{})
+		m.removeduser_key = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.user_key, ids[i])
@@ -4724,7 +4894,7 @@ func (m *UserMutation) RemoveUserKeyIDs(ids ...int) {
 }
 
 // RemovedUserKey returns the removed IDs of the "user_key" edge to the UserKey entity.
-func (m *UserMutation) RemovedUserKeyIDs() (ids []int) {
+func (m *UserMutation) RemovedUserKeyIDs() (ids []string) {
 	for id := range m.removeduser_key {
 		ids = append(ids, id)
 	}
@@ -4732,7 +4902,7 @@ func (m *UserMutation) RemovedUserKeyIDs() (ids []int) {
 }
 
 // UserKeyIDs returns the "user_key" edge IDs in the mutation.
-func (m *UserMutation) UserKeyIDs() (ids []int) {
+func (m *UserMutation) UserKeyIDs() (ids []string) {
 	for id := range m.user_key {
 		ids = append(ids, id)
 	}
@@ -4747,9 +4917,9 @@ func (m *UserMutation) ResetUserKey() {
 }
 
 // AddProfileIDs adds the "profile" edge to the Profile entity by ids.
-func (m *UserMutation) AddProfileIDs(ids ...int) {
+func (m *UserMutation) AddProfileIDs(ids ...string) {
 	if m.profile == nil {
-		m.profile = make(map[int]struct{})
+		m.profile = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.profile[ids[i]] = struct{}{}
@@ -4767,9 +4937,9 @@ func (m *UserMutation) ProfileCleared() bool {
 }
 
 // RemoveProfileIDs removes the "profile" edge to the Profile entity by IDs.
-func (m *UserMutation) RemoveProfileIDs(ids ...int) {
+func (m *UserMutation) RemoveProfileIDs(ids ...string) {
 	if m.removedprofile == nil {
-		m.removedprofile = make(map[int]struct{})
+		m.removedprofile = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.profile, ids[i])
@@ -4778,7 +4948,7 @@ func (m *UserMutation) RemoveProfileIDs(ids ...int) {
 }
 
 // RemovedProfile returns the removed IDs of the "profile" edge to the Profile entity.
-func (m *UserMutation) RemovedProfileIDs() (ids []int) {
+func (m *UserMutation) RemovedProfileIDs() (ids []string) {
 	for id := range m.removedprofile {
 		ids = append(ids, id)
 	}
@@ -4786,7 +4956,7 @@ func (m *UserMutation) RemovedProfileIDs() (ids []int) {
 }
 
 // ProfileIDs returns the "profile" edge IDs in the mutation.
-func (m *UserMutation) ProfileIDs() (ids []int) {
+func (m *UserMutation) ProfileIDs() (ids []string) {
 	for id := range m.profile {
 		ids = append(ids, id)
 	}
@@ -5063,11 +5233,10 @@ type UserKeyMutation struct {
 	config
 	op              Op
 	typ             string
-	id              *int
+	id              *string
 	hashed_password *string
 	clearedFields   map[string]struct{}
-	user            map[int]struct{}
-	removeduser     map[int]struct{}
+	user            *string
 	cleareduser     bool
 	done            bool
 	oldValue        func(context.Context) (*UserKey, error)
@@ -5094,7 +5263,7 @@ func newUserKeyMutation(c config, op Op, opts ...userkeyOption) *UserKeyMutation
 }
 
 // withUserKeyID sets the ID field of the mutation.
-func withUserKeyID(id int) userkeyOption {
+func withUserKeyID(id string) userkeyOption {
 	return func(m *UserKeyMutation) {
 		var (
 			err   error
@@ -5144,9 +5313,15 @@ func (m UserKeyMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of UserKey entities.
+func (m *UserKeyMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserKeyMutation) ID() (id int, exists bool) {
+func (m *UserKeyMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -5157,12 +5332,12 @@ func (m *UserKeyMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserKeyMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *UserKeyMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -5203,19 +5378,27 @@ func (m *UserKeyMutation) OldHashedPassword(ctx context.Context) (v string, err 
 	return oldValue.HashedPassword, nil
 }
 
+// ClearHashedPassword clears the value of the "hashed_password" field.
+func (m *UserKeyMutation) ClearHashedPassword() {
+	m.hashed_password = nil
+	m.clearedFields[userkey.FieldHashedPassword] = struct{}{}
+}
+
+// HashedPasswordCleared returns if the "hashed_password" field was cleared in this mutation.
+func (m *UserKeyMutation) HashedPasswordCleared() bool {
+	_, ok := m.clearedFields[userkey.FieldHashedPassword]
+	return ok
+}
+
 // ResetHashedPassword resets all changes to the "hashed_password" field.
 func (m *UserKeyMutation) ResetHashedPassword() {
 	m.hashed_password = nil
+	delete(m.clearedFields, userkey.FieldHashedPassword)
 }
 
-// AddUserIDs adds the "user" edge to the User entity by ids.
-func (m *UserKeyMutation) AddUserIDs(ids ...int) {
-	if m.user == nil {
-		m.user = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.user[ids[i]] = struct{}{}
-	}
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *UserKeyMutation) SetUserID(id string) {
+	m.user = &id
 }
 
 // ClearUser clears the "user" edge to the User entity.
@@ -5228,29 +5411,20 @@ func (m *UserKeyMutation) UserCleared() bool {
 	return m.cleareduser
 }
 
-// RemoveUserIDs removes the "user" edge to the User entity by IDs.
-func (m *UserKeyMutation) RemoveUserIDs(ids ...int) {
-	if m.removeduser == nil {
-		m.removeduser = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.user, ids[i])
-		m.removeduser[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedUser returns the removed IDs of the "user" edge to the User entity.
-func (m *UserKeyMutation) RemovedUserIDs() (ids []int) {
-	for id := range m.removeduser {
-		ids = append(ids, id)
+// UserID returns the "user" edge ID in the mutation.
+func (m *UserKeyMutation) UserID() (id string, exists bool) {
+	if m.user != nil {
+		return *m.user, true
 	}
 	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
-func (m *UserKeyMutation) UserIDs() (ids []int) {
-	for id := range m.user {
-		ids = append(ids, id)
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *UserKeyMutation) UserIDs() (ids []string) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -5259,7 +5433,6 @@ func (m *UserKeyMutation) UserIDs() (ids []int) {
 func (m *UserKeyMutation) ResetUser() {
 	m.user = nil
 	m.cleareduser = false
-	m.removeduser = nil
 }
 
 // Where appends a list predicates to the UserKeyMutation builder.
@@ -5366,7 +5539,11 @@ func (m *UserKeyMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserKeyMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(userkey.FieldHashedPassword) {
+		fields = append(fields, userkey.FieldHashedPassword)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -5379,6 +5556,11 @@ func (m *UserKeyMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserKeyMutation) ClearField(name string) error {
+	switch name {
+	case userkey.FieldHashedPassword:
+		m.ClearHashedPassword()
+		return nil
+	}
 	return fmt.Errorf("unknown UserKey nullable field %s", name)
 }
 
@@ -5407,11 +5589,9 @@ func (m *UserKeyMutation) AddedEdges() []string {
 func (m *UserKeyMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case userkey.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.user))
-		for id := range m.user {
-			ids = append(ids, id)
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -5419,23 +5599,12 @@ func (m *UserKeyMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserKeyMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removeduser != nil {
-		edges = append(edges, userkey.EdgeUser)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *UserKeyMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case userkey.EdgeUser:
-		ids := make([]ent.Value, 0, len(m.removeduser))
-		for id := range m.removeduser {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -5462,6 +5631,9 @@ func (m *UserKeyMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UserKeyMutation) ClearEdge(name string) error {
 	switch name {
+	case userkey.EdgeUser:
+		m.ClearUser()
+		return nil
 	}
 	return fmt.Errorf("unknown UserKey unique edge %s", name)
 }

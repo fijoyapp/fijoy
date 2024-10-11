@@ -24,11 +24,13 @@ const (
 	EdgeProfile = "profile"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// UserKeyTable is the table that holds the user_key relation/edge. The primary key declared below.
-	UserKeyTable = "user_user_key"
+	// UserKeyTable is the table that holds the user_key relation/edge.
+	UserKeyTable = "user_keys"
 	// UserKeyInverseTable is the table name for the UserKey entity.
 	// It exists in this package in order to avoid circular dependency with the "userkey" package.
 	UserKeyInverseTable = "user_keys"
+	// UserKeyColumn is the table column denoting the user_key relation/edge.
+	UserKeyColumn = "user_user_key"
 	// ProfileTable is the table that holds the profile relation/edge.
 	ProfileTable = "profiles"
 	// ProfileInverseTable is the table name for the Profile entity.
@@ -45,12 +47,6 @@ var Columns = []string{
 	FieldCreatedAt,
 }
 
-var (
-	// UserKeyPrimaryKey and UserKeyColumn2 are the table columns denoting the
-	// primary key for the user_key relation (M2M).
-	UserKeyPrimaryKey = []string{"user_id", "user_key_id"}
-)
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
@@ -66,6 +62,8 @@ var (
 	EmailValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID string
 )
 
 // OrderOption defines the ordering options for the User queries.
@@ -117,7 +115,7 @@ func newUserKeyStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UserKeyInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, UserKeyTable, UserKeyPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.O2M, false, UserKeyTable, UserKeyColumn),
 	)
 }
 func newProfileStep() *sqlgraph.Step {

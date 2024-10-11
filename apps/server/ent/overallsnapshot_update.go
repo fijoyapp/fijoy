@@ -149,19 +149,15 @@ func (osu *OverallSnapshotUpdate) AddLiablity(d decimal.Decimal) *OverallSnapsho
 	return osu
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
-func (osu *OverallSnapshotUpdate) AddProfileIDs(ids ...int) *OverallSnapshotUpdate {
-	osu.mutation.AddProfileIDs(ids...)
+// SetProfileID sets the "profile" edge to the Profile entity by ID.
+func (osu *OverallSnapshotUpdate) SetProfileID(id string) *OverallSnapshotUpdate {
+	osu.mutation.SetProfileID(id)
 	return osu
 }
 
-// AddProfile adds the "profile" edges to the Profile entity.
-func (osu *OverallSnapshotUpdate) AddProfile(p ...*Profile) *OverallSnapshotUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return osu.AddProfileIDs(ids...)
+// SetProfile sets the "profile" edge to the Profile entity.
+func (osu *OverallSnapshotUpdate) SetProfile(p *Profile) *OverallSnapshotUpdate {
+	return osu.SetProfileID(p.ID)
 }
 
 // Mutation returns the OverallSnapshotMutation object of the builder.
@@ -169,25 +165,10 @@ func (osu *OverallSnapshotUpdate) Mutation() *OverallSnapshotMutation {
 	return osu.mutation
 }
 
-// ClearProfile clears all "profile" edges to the Profile entity.
+// ClearProfile clears the "profile" edge to the Profile entity.
 func (osu *OverallSnapshotUpdate) ClearProfile() *OverallSnapshotUpdate {
 	osu.mutation.ClearProfile()
 	return osu
-}
-
-// RemoveProfileIDs removes the "profile" edge to Profile entities by IDs.
-func (osu *OverallSnapshotUpdate) RemoveProfileIDs(ids ...int) *OverallSnapshotUpdate {
-	osu.mutation.RemoveProfileIDs(ids...)
-	return osu
-}
-
-// RemoveProfile removes "profile" edges to Profile entities.
-func (osu *OverallSnapshotUpdate) RemoveProfile(p ...*Profile) *OverallSnapshotUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return osu.RemoveProfileIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -217,8 +198,19 @@ func (osu *OverallSnapshotUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (osu *OverallSnapshotUpdate) check() error {
+	if osu.mutation.ProfileCleared() && len(osu.mutation.ProfileIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "OverallSnapshot.profile"`)
+	}
+	return nil
+}
+
 func (osu *OverallSnapshotUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(overallsnapshot.Table, overallsnapshot.Columns, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt))
+	if err := osu.check(); err != nil {
+		return n, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(overallsnapshot.Table, overallsnapshot.Columns, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString))
 	if ps := osu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -261,42 +253,26 @@ func (osu *OverallSnapshotUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if osu.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   overallsnapshot.ProfileTable,
-			Columns: overallsnapshot.ProfilePrimaryKey,
+			Columns: []string{overallsnapshot.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := osu.mutation.RemovedProfileIDs(); len(nodes) > 0 && !osu.mutation.ProfileCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   overallsnapshot.ProfileTable,
-			Columns: overallsnapshot.ProfilePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := osu.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   overallsnapshot.ProfileTable,
-			Columns: overallsnapshot.ProfilePrimaryKey,
+			Columns: []string{overallsnapshot.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -443,19 +419,15 @@ func (osuo *OverallSnapshotUpdateOne) AddLiablity(d decimal.Decimal) *OverallSna
 	return osuo
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
-func (osuo *OverallSnapshotUpdateOne) AddProfileIDs(ids ...int) *OverallSnapshotUpdateOne {
-	osuo.mutation.AddProfileIDs(ids...)
+// SetProfileID sets the "profile" edge to the Profile entity by ID.
+func (osuo *OverallSnapshotUpdateOne) SetProfileID(id string) *OverallSnapshotUpdateOne {
+	osuo.mutation.SetProfileID(id)
 	return osuo
 }
 
-// AddProfile adds the "profile" edges to the Profile entity.
-func (osuo *OverallSnapshotUpdateOne) AddProfile(p ...*Profile) *OverallSnapshotUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return osuo.AddProfileIDs(ids...)
+// SetProfile sets the "profile" edge to the Profile entity.
+func (osuo *OverallSnapshotUpdateOne) SetProfile(p *Profile) *OverallSnapshotUpdateOne {
+	return osuo.SetProfileID(p.ID)
 }
 
 // Mutation returns the OverallSnapshotMutation object of the builder.
@@ -463,25 +435,10 @@ func (osuo *OverallSnapshotUpdateOne) Mutation() *OverallSnapshotMutation {
 	return osuo.mutation
 }
 
-// ClearProfile clears all "profile" edges to the Profile entity.
+// ClearProfile clears the "profile" edge to the Profile entity.
 func (osuo *OverallSnapshotUpdateOne) ClearProfile() *OverallSnapshotUpdateOne {
 	osuo.mutation.ClearProfile()
 	return osuo
-}
-
-// RemoveProfileIDs removes the "profile" edge to Profile entities by IDs.
-func (osuo *OverallSnapshotUpdateOne) RemoveProfileIDs(ids ...int) *OverallSnapshotUpdateOne {
-	osuo.mutation.RemoveProfileIDs(ids...)
-	return osuo
-}
-
-// RemoveProfile removes "profile" edges to Profile entities.
-func (osuo *OverallSnapshotUpdateOne) RemoveProfile(p ...*Profile) *OverallSnapshotUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return osuo.RemoveProfileIDs(ids...)
 }
 
 // Where appends a list predicates to the OverallSnapshotUpdate builder.
@@ -524,8 +481,19 @@ func (osuo *OverallSnapshotUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (osuo *OverallSnapshotUpdateOne) check() error {
+	if osuo.mutation.ProfileCleared() && len(osuo.mutation.ProfileIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "OverallSnapshot.profile"`)
+	}
+	return nil
+}
+
 func (osuo *OverallSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *OverallSnapshot, err error) {
-	_spec := sqlgraph.NewUpdateSpec(overallsnapshot.Table, overallsnapshot.Columns, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt))
+	if err := osuo.check(); err != nil {
+		return _node, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(overallsnapshot.Table, overallsnapshot.Columns, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString))
 	id, ok := osuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "OverallSnapshot.id" for update`)}
@@ -585,42 +553,26 @@ func (osuo *OverallSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *Overa
 	}
 	if osuo.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   overallsnapshot.ProfileTable,
-			Columns: overallsnapshot.ProfilePrimaryKey,
+			Columns: []string{overallsnapshot.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := osuo.mutation.RemovedProfileIDs(); len(nodes) > 0 && !osuo.mutation.ProfileCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   overallsnapshot.ProfileTable,
-			Columns: overallsnapshot.ProfilePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := osuo.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   overallsnapshot.ProfileTable,
-			Columns: overallsnapshot.ProfilePrimaryKey,
+			Columns: []string{overallsnapshot.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

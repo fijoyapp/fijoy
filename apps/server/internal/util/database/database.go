@@ -28,6 +28,3 @@ func WithTx(ctx context.Context, client *ent.Client, fn func(tx *ent.Tx) error) 
 	}
 	return nil
 }
-
-func main() {
-}

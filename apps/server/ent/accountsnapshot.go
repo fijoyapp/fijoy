@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"fijoy/ent/account"
 	"fijoy/ent/accountsnapshot"
 	"fmt"
 	"strings"
@@ -17,31 +18,34 @@ import (
 type AccountSnapshot struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// Datehour holds the value of the "datehour" field.
 	Datehour time.Time `json:"datehour,omitempty"`
 	// Balance holds the value of the "balance" field.
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountSnapshotQuery when eager-loading is set.
-	Edges        AccountSnapshotEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                    AccountSnapshotEdges `json:"edges"`
+	account_account_snapshot *string
+	selectValues             sql.SelectValues
 }
 
 // AccountSnapshotEdges holds the relations/edges for other nodes in the graph.
 type AccountSnapshotEdges struct {
 	// Account holds the value of the account edge.
-	Account []*Account `json:"account,omitempty"`
+	Account *Account `json:"account,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // AccountOrErr returns the Account value or an error if the edge
-// was not loaded in eager-loading.
-func (e AccountSnapshotEdges) AccountOrErr() ([]*Account, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AccountSnapshotEdges) AccountOrErr() (*Account, error) {
+	if e.Account != nil {
 		return e.Account, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: account.Label}
 	}
 	return nil, &NotLoadedError{edge: "account"}
 }
@@ -54,9 +58,11 @@ func (*AccountSnapshot) scanValues(columns []string) ([]any, error) {
 		case accountsnapshot.FieldBalance:
 			values[i] = new(decimal.Decimal)
 		case accountsnapshot.FieldID:
-			values[i] = new(sql.NullInt64)
+			values[i] = new(sql.NullString)
 		case accountsnapshot.FieldDatehour:
 			values[i] = new(sql.NullTime)
+		case accountsnapshot.ForeignKeys[0]: // account_account_snapshot
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -73,11 +79,11 @@ func (as *AccountSnapshot) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case accountsnapshot.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				as.ID = value.String
 			}
-			as.ID = int(value.Int64)
 		case accountsnapshot.FieldDatehour:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field datehour", values[i])
@@ -89,6 +95,13 @@ func (as *AccountSnapshot) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value != nil {
 				as.Balance = *value
+			}
+		case accountsnapshot.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field account_account_snapshot", values[i])
+			} else if value.Valid {
+				as.account_account_snapshot = new(string)
+				*as.account_account_snapshot = value.String
 			}
 		default:
 			as.selectValues.Set(columns[i], values[i])

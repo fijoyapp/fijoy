@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fijoy/ent/overallsnapshot"
+	"fijoy/ent/profile"
 	"fmt"
 	"strings"
 	"time"
@@ -17,7 +18,7 @@ import (
 type OverallSnapshot struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// Datehour holds the value of the "datehour" field.
 	Datehour time.Time `json:"datehour,omitempty"`
 	// Liquidity holds the value of the "liquidity" field.
@@ -32,24 +33,27 @@ type OverallSnapshot struct {
 	Liablity decimal.Decimal `json:"liablity,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OverallSnapshotQuery when eager-loading is set.
-	Edges        OverallSnapshotEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                    OverallSnapshotEdges `json:"edges"`
+	profile_overall_snapshot *string
+	selectValues             sql.SelectValues
 }
 
 // OverallSnapshotEdges holds the relations/edges for other nodes in the graph.
 type OverallSnapshotEdges struct {
 	// Profile holds the value of the profile edge.
-	Profile []*Profile `json:"profile,omitempty"`
+	Profile *Profile `json:"profile,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
-// was not loaded in eager-loading.
-func (e OverallSnapshotEdges) ProfileOrErr() ([]*Profile, error) {
-	if e.loadedTypes[0] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OverallSnapshotEdges) ProfileOrErr() (*Profile, error) {
+	if e.Profile != nil {
 		return e.Profile, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: profile.Label}
 	}
 	return nil, &NotLoadedError{edge: "profile"}
 }
@@ -62,9 +66,11 @@ func (*OverallSnapshot) scanValues(columns []string) ([]any, error) {
 		case overallsnapshot.FieldLiquidity, overallsnapshot.FieldInvestment, overallsnapshot.FieldProperty, overallsnapshot.FieldReceivable, overallsnapshot.FieldLiablity:
 			values[i] = new(decimal.Decimal)
 		case overallsnapshot.FieldID:
-			values[i] = new(sql.NullInt64)
+			values[i] = new(sql.NullString)
 		case overallsnapshot.FieldDatehour:
 			values[i] = new(sql.NullTime)
+		case overallsnapshot.ForeignKeys[0]: // profile_overall_snapshot
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -81,11 +87,11 @@ func (os *OverallSnapshot) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case overallsnapshot.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value.Valid {
+				os.ID = value.String
 			}
-			os.ID = int(value.Int64)
 		case overallsnapshot.FieldDatehour:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field datehour", values[i])
@@ -121,6 +127,13 @@ func (os *OverallSnapshot) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field liablity", values[i])
 			} else if value != nil {
 				os.Liablity = *value
+			}
+		case overallsnapshot.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field profile_overall_snapshot", values[i])
+			} else if value.Valid {
+				os.profile_overall_snapshot = new(string)
+				*os.profile_overall_snapshot = value.String
 			}
 		default:
 			os.selectValues.Set(columns[i], values[i])

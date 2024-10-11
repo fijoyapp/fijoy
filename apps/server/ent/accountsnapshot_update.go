@@ -65,19 +65,15 @@ func (asu *AccountSnapshotUpdate) AddBalance(d decimal.Decimal) *AccountSnapshot
 	return asu
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (asu *AccountSnapshotUpdate) AddAccountIDs(ids ...int) *AccountSnapshotUpdate {
-	asu.mutation.AddAccountIDs(ids...)
+// SetAccountID sets the "account" edge to the Account entity by ID.
+func (asu *AccountSnapshotUpdate) SetAccountID(id string) *AccountSnapshotUpdate {
+	asu.mutation.SetAccountID(id)
 	return asu
 }
 
-// AddAccount adds the "account" edges to the Account entity.
-func (asu *AccountSnapshotUpdate) AddAccount(a ...*Account) *AccountSnapshotUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return asu.AddAccountIDs(ids...)
+// SetAccount sets the "account" edge to the Account entity.
+func (asu *AccountSnapshotUpdate) SetAccount(a *Account) *AccountSnapshotUpdate {
+	return asu.SetAccountID(a.ID)
 }
 
 // Mutation returns the AccountSnapshotMutation object of the builder.
@@ -85,25 +81,10 @@ func (asu *AccountSnapshotUpdate) Mutation() *AccountSnapshotMutation {
 	return asu.mutation
 }
 
-// ClearAccount clears all "account" edges to the Account entity.
+// ClearAccount clears the "account" edge to the Account entity.
 func (asu *AccountSnapshotUpdate) ClearAccount() *AccountSnapshotUpdate {
 	asu.mutation.ClearAccount()
 	return asu
-}
-
-// RemoveAccountIDs removes the "account" edge to Account entities by IDs.
-func (asu *AccountSnapshotUpdate) RemoveAccountIDs(ids ...int) *AccountSnapshotUpdate {
-	asu.mutation.RemoveAccountIDs(ids...)
-	return asu
-}
-
-// RemoveAccount removes "account" edges to Account entities.
-func (asu *AccountSnapshotUpdate) RemoveAccount(a ...*Account) *AccountSnapshotUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return asu.RemoveAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -133,8 +114,19 @@ func (asu *AccountSnapshotUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (asu *AccountSnapshotUpdate) check() error {
+	if asu.mutation.AccountCleared() && len(asu.mutation.AccountIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "AccountSnapshot.account"`)
+	}
+	return nil
+}
+
 func (asu *AccountSnapshotUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(accountsnapshot.Table, accountsnapshot.Columns, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeInt))
+	if err := asu.check(); err != nil {
+		return n, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(accountsnapshot.Table, accountsnapshot.Columns, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString))
 	if ps := asu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -153,42 +145,26 @@ func (asu *AccountSnapshotUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if asu.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   accountsnapshot.AccountTable,
-			Columns: accountsnapshot.AccountPrimaryKey,
+			Columns: []string{accountsnapshot.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := asu.mutation.RemovedAccountIDs(); len(nodes) > 0 && !asu.mutation.AccountCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   accountsnapshot.AccountTable,
-			Columns: accountsnapshot.AccountPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := asu.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   accountsnapshot.AccountTable,
-			Columns: accountsnapshot.AccountPrimaryKey,
+			Columns: []string{accountsnapshot.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -251,19 +227,15 @@ func (asuo *AccountSnapshotUpdateOne) AddBalance(d decimal.Decimal) *AccountSnap
 	return asuo
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (asuo *AccountSnapshotUpdateOne) AddAccountIDs(ids ...int) *AccountSnapshotUpdateOne {
-	asuo.mutation.AddAccountIDs(ids...)
+// SetAccountID sets the "account" edge to the Account entity by ID.
+func (asuo *AccountSnapshotUpdateOne) SetAccountID(id string) *AccountSnapshotUpdateOne {
+	asuo.mutation.SetAccountID(id)
 	return asuo
 }
 
-// AddAccount adds the "account" edges to the Account entity.
-func (asuo *AccountSnapshotUpdateOne) AddAccount(a ...*Account) *AccountSnapshotUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return asuo.AddAccountIDs(ids...)
+// SetAccount sets the "account" edge to the Account entity.
+func (asuo *AccountSnapshotUpdateOne) SetAccount(a *Account) *AccountSnapshotUpdateOne {
+	return asuo.SetAccountID(a.ID)
 }
 
 // Mutation returns the AccountSnapshotMutation object of the builder.
@@ -271,25 +243,10 @@ func (asuo *AccountSnapshotUpdateOne) Mutation() *AccountSnapshotMutation {
 	return asuo.mutation
 }
 
-// ClearAccount clears all "account" edges to the Account entity.
+// ClearAccount clears the "account" edge to the Account entity.
 func (asuo *AccountSnapshotUpdateOne) ClearAccount() *AccountSnapshotUpdateOne {
 	asuo.mutation.ClearAccount()
 	return asuo
-}
-
-// RemoveAccountIDs removes the "account" edge to Account entities by IDs.
-func (asuo *AccountSnapshotUpdateOne) RemoveAccountIDs(ids ...int) *AccountSnapshotUpdateOne {
-	asuo.mutation.RemoveAccountIDs(ids...)
-	return asuo
-}
-
-// RemoveAccount removes "account" edges to Account entities.
-func (asuo *AccountSnapshotUpdateOne) RemoveAccount(a ...*Account) *AccountSnapshotUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return asuo.RemoveAccountIDs(ids...)
 }
 
 // Where appends a list predicates to the AccountSnapshotUpdate builder.
@@ -332,8 +289,19 @@ func (asuo *AccountSnapshotUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (asuo *AccountSnapshotUpdateOne) check() error {
+	if asuo.mutation.AccountCleared() && len(asuo.mutation.AccountIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "AccountSnapshot.account"`)
+	}
+	return nil
+}
+
 func (asuo *AccountSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *AccountSnapshot, err error) {
-	_spec := sqlgraph.NewUpdateSpec(accountsnapshot.Table, accountsnapshot.Columns, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeInt))
+	if err := asuo.check(); err != nil {
+		return _node, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(accountsnapshot.Table, accountsnapshot.Columns, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString))
 	id, ok := asuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AccountSnapshot.id" for update`)}
@@ -369,42 +337,26 @@ func (asuo *AccountSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *Accou
 	}
 	if asuo.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   accountsnapshot.AccountTable,
-			Columns: accountsnapshot.AccountPrimaryKey,
+			Columns: []string{accountsnapshot.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := asuo.mutation.RemovedAccountIDs(); len(nodes) > 0 && !asuo.mutation.AccountCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   accountsnapshot.AccountTable,
-			Columns: accountsnapshot.AccountPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := asuo.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   accountsnapshot.AccountTable,
-			Columns: accountsnapshot.AccountPrimaryKey,
+			Columns: []string{accountsnapshot.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

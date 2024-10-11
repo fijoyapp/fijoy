@@ -38,16 +38,20 @@ const (
 	EdgeAccount = "account"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
-	// ProfileTable is the table that holds the profile relation/edge. The primary key declared below.
-	ProfileTable = "profile_transaction"
+	// ProfileTable is the table that holds the profile relation/edge.
+	ProfileTable = "transactions"
 	// ProfileInverseTable is the table name for the Profile entity.
 	// It exists in this package in order to avoid circular dependency with the "profile" package.
 	ProfileInverseTable = "profiles"
-	// AccountTable is the table that holds the account relation/edge. The primary key declared below.
-	AccountTable = "account_transaction"
+	// ProfileColumn is the table column denoting the profile relation/edge.
+	ProfileColumn = "profile_transaction"
+	// AccountTable is the table that holds the account relation/edge.
+	AccountTable = "transactions"
 	// AccountInverseTable is the table name for the Account entity.
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
+	// AccountColumn is the table column denoting the account relation/edge.
+	AccountColumn = "account_transaction"
 )
 
 // Columns holds all SQL columns for transaction fields.
@@ -64,19 +68,22 @@ var Columns = []string{
 	FieldUpdatedAt,
 }
 
-var (
-	// ProfilePrimaryKey and ProfileColumn2 are the table columns denoting the
-	// primary key for the profile relation (M2M).
-	ProfilePrimaryKey = []string{"profile_id", "transaction_id"}
-	// AccountPrimaryKey and AccountColumn2 are the table columns denoting the
-	// primary key for the account relation (M2M).
-	AccountPrimaryKey = []string{"account_id", "transaction_id"}
-)
+// ForeignKeys holds the SQL foreign-keys that are owned by the "transactions"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"account_transaction",
+	"profile_transaction",
+}
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -88,6 +95,8 @@ var (
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID string
 )
 
 // OrderOption defines the ordering options for the Transaction queries.
@@ -143,44 +152,30 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByProfileCount orders the results by profile count.
-func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProfileField orders the results by profile field.
+func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByProfile orders the results by profile terms.
-func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByAccountField orders the results by account field.
+func ByAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByAccountCount orders the results by account count.
-func ByAccountCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAccountStep(), opts...)
-	}
-}
-
-// ByAccount orders the results by account terms.
-func ByAccount(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newProfileStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfileInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, ProfileTable, ProfilePrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
 	)
 }
 func newAccountStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, AccountTable, AccountPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
 	)
 }

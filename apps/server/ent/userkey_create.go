@@ -26,19 +26,29 @@ func (ukc *UserKeyCreate) SetHashedPassword(s string) *UserKeyCreate {
 	return ukc
 }
 
-// AddUserIDs adds the "user" edge to the User entity by IDs.
-func (ukc *UserKeyCreate) AddUserIDs(ids ...int) *UserKeyCreate {
-	ukc.mutation.AddUserIDs(ids...)
+// SetNillableHashedPassword sets the "hashed_password" field if the given value is not nil.
+func (ukc *UserKeyCreate) SetNillableHashedPassword(s *string) *UserKeyCreate {
+	if s != nil {
+		ukc.SetHashedPassword(*s)
+	}
 	return ukc
 }
 
-// AddUser adds the "user" edges to the User entity.
-func (ukc *UserKeyCreate) AddUser(u ...*User) *UserKeyCreate {
-	ids := make([]int, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return ukc.AddUserIDs(ids...)
+// SetID sets the "id" field.
+func (ukc *UserKeyCreate) SetID(s string) *UserKeyCreate {
+	ukc.mutation.SetID(s)
+	return ukc
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (ukc *UserKeyCreate) SetUserID(id string) *UserKeyCreate {
+	ukc.mutation.SetUserID(id)
+	return ukc
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (ukc *UserKeyCreate) SetUser(u *User) *UserKeyCreate {
+	return ukc.SetUserID(u.ID)
 }
 
 // Mutation returns the UserKeyMutation object of the builder.
@@ -75,8 +85,8 @@ func (ukc *UserKeyCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (ukc *UserKeyCreate) check() error {
-	if _, ok := ukc.mutation.HashedPassword(); !ok {
-		return &ValidationError{Name: "hashed_password", err: errors.New(`ent: missing required field "UserKey.hashed_password"`)}
+	if len(ukc.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "UserKey.user"`)}
 	}
 	return nil
 }
@@ -92,8 +102,13 @@ func (ukc *UserKeyCreate) sqlSave(ctx context.Context) (*UserKey, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected UserKey.ID type: %T", _spec.ID.Value)
+		}
+	}
 	ukc.mutation.id = &_node.ID
 	ukc.mutation.done = true
 	return _node, nil
@@ -102,26 +117,31 @@ func (ukc *UserKeyCreate) sqlSave(ctx context.Context) (*UserKey, error) {
 func (ukc *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserKey{config: ukc.config}
-		_spec = sqlgraph.NewCreateSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString))
 	)
+	if id, ok := ukc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := ukc.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
 		_node.HashedPassword = value
 	}
 	if nodes := ukc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   userkey.UserTable,
-			Columns: userkey.UserPrimaryKey,
+			Columns: []string{userkey.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.user_user_key = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -171,10 +191,6 @@ func (ukcb *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

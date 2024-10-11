@@ -42,15 +42,29 @@ func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 	return uc
 }
 
+// SetID sets the "id" field.
+func (uc *UserCreate) SetID(s string) *UserCreate {
+	uc.mutation.SetID(s)
+	return uc
+}
+
+// SetNillableID sets the "id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetID(*s)
+	}
+	return uc
+}
+
 // AddUserKeyIDs adds the "user_key" edge to the UserKey entity by IDs.
-func (uc *UserCreate) AddUserKeyIDs(ids ...int) *UserCreate {
+func (uc *UserCreate) AddUserKeyIDs(ids ...string) *UserCreate {
 	uc.mutation.AddUserKeyIDs(ids...)
 	return uc
 }
 
 // AddUserKey adds the "user_key" edges to the UserKey entity.
 func (uc *UserCreate) AddUserKey(u ...*UserKey) *UserCreate {
-	ids := make([]int, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -58,14 +72,14 @@ func (uc *UserCreate) AddUserKey(u ...*UserKey) *UserCreate {
 }
 
 // AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
-func (uc *UserCreate) AddProfileIDs(ids ...int) *UserCreate {
+func (uc *UserCreate) AddProfileIDs(ids ...string) *UserCreate {
 	uc.mutation.AddProfileIDs(ids...)
 	return uc
 }
 
 // AddProfile adds the "profile" edges to the Profile entity.
 func (uc *UserCreate) AddProfile(p ...*Profile) *UserCreate {
-	ids := make([]int, len(p))
+	ids := make([]string, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -111,6 +125,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := uc.mutation.ID(); !ok {
+		v := user.DefaultID
+		uc.mutation.SetID(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -140,8 +158,13 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected User.ID type: %T", _spec.ID.Value)
+		}
+	}
 	uc.mutation.id = &_node.ID
 	uc.mutation.done = true
 	return _node, nil
@@ -150,8 +173,12 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	var (
 		_node = &User{config: uc.config}
-		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeString))
 	)
+	if id, ok := uc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
@@ -162,13 +189,13 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if nodes := uc.mutation.UserKeyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.UserKeyTable,
-			Columns: user.UserKeyPrimaryKey,
+			Columns: []string{user.UserKeyColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -184,7 +211,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -240,10 +267,6 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

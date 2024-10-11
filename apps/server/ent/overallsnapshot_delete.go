@@ -40,7 +40,7 @@ func (osd *OverallSnapshotDelete) ExecX(ctx context.Context) int {
 }
 
 func (osd *OverallSnapshotDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(overallsnapshot.Table, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(overallsnapshot.Table, sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString))
 	if ps := osd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

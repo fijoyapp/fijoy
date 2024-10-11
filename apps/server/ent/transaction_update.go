@@ -211,34 +211,26 @@ func (tu *TransactionUpdate) SetNillableUpdatedAt(t *time.Time) *TransactionUpda
 	return tu
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
-func (tu *TransactionUpdate) AddProfileIDs(ids ...int) *TransactionUpdate {
-	tu.mutation.AddProfileIDs(ids...)
+// SetProfileID sets the "profile" edge to the Profile entity by ID.
+func (tu *TransactionUpdate) SetProfileID(id string) *TransactionUpdate {
+	tu.mutation.SetProfileID(id)
 	return tu
 }
 
-// AddProfile adds the "profile" edges to the Profile entity.
-func (tu *TransactionUpdate) AddProfile(p ...*Profile) *TransactionUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return tu.AddProfileIDs(ids...)
+// SetProfile sets the "profile" edge to the Profile entity.
+func (tu *TransactionUpdate) SetProfile(p *Profile) *TransactionUpdate {
+	return tu.SetProfileID(p.ID)
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (tu *TransactionUpdate) AddAccountIDs(ids ...int) *TransactionUpdate {
-	tu.mutation.AddAccountIDs(ids...)
+// SetAccountID sets the "account" edge to the Account entity by ID.
+func (tu *TransactionUpdate) SetAccountID(id string) *TransactionUpdate {
+	tu.mutation.SetAccountID(id)
 	return tu
 }
 
-// AddAccount adds the "account" edges to the Account entity.
-func (tu *TransactionUpdate) AddAccount(a ...*Account) *TransactionUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return tu.AddAccountIDs(ids...)
+// SetAccount sets the "account" edge to the Account entity.
+func (tu *TransactionUpdate) SetAccount(a *Account) *TransactionUpdate {
+	return tu.SetAccountID(a.ID)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
@@ -246,46 +238,16 @@ func (tu *TransactionUpdate) Mutation() *TransactionMutation {
 	return tu.mutation
 }
 
-// ClearProfile clears all "profile" edges to the Profile entity.
+// ClearProfile clears the "profile" edge to the Profile entity.
 func (tu *TransactionUpdate) ClearProfile() *TransactionUpdate {
 	tu.mutation.ClearProfile()
 	return tu
 }
 
-// RemoveProfileIDs removes the "profile" edge to Profile entities by IDs.
-func (tu *TransactionUpdate) RemoveProfileIDs(ids ...int) *TransactionUpdate {
-	tu.mutation.RemoveProfileIDs(ids...)
-	return tu
-}
-
-// RemoveProfile removes "profile" edges to Profile entities.
-func (tu *TransactionUpdate) RemoveProfile(p ...*Profile) *TransactionUpdate {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return tu.RemoveProfileIDs(ids...)
-}
-
-// ClearAccount clears all "account" edges to the Account entity.
+// ClearAccount clears the "account" edge to the Account entity.
 func (tu *TransactionUpdate) ClearAccount() *TransactionUpdate {
 	tu.mutation.ClearAccount()
 	return tu
-}
-
-// RemoveAccountIDs removes the "account" edge to Account entities by IDs.
-func (tu *TransactionUpdate) RemoveAccountIDs(ids ...int) *TransactionUpdate {
-	tu.mutation.RemoveAccountIDs(ids...)
-	return tu
-}
-
-// RemoveAccount removes "account" edges to Account entities.
-func (tu *TransactionUpdate) RemoveAccount(a ...*Account) *TransactionUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return tu.RemoveAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -315,8 +277,22 @@ func (tu *TransactionUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tu *TransactionUpdate) check() error {
+	if tu.mutation.ProfileCleared() && len(tu.mutation.ProfileIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.profile"`)
+	}
+	if tu.mutation.AccountCleared() && len(tu.mutation.AccountIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.account"`)
+	}
+	return nil
+}
+
 func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
+	if err := tu.check(); err != nil {
+		return n, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString))
 	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -377,42 +353,26 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.ProfileTable,
-			Columns: transaction.ProfilePrimaryKey,
+			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.RemovedProfileIDs(); len(nodes) > 0 && !tu.mutation.ProfileCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   transaction.ProfileTable,
-			Columns: transaction.ProfilePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tu.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.ProfileTable,
-			Columns: transaction.ProfilePrimaryKey,
+			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -422,42 +382,26 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.AccountTable,
-			Columns: transaction.AccountPrimaryKey,
+			Columns: []string{transaction.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tu.mutation.RemovedAccountIDs(); len(nodes) > 0 && !tu.mutation.AccountCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   transaction.AccountTable,
-			Columns: transaction.AccountPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tu.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.AccountTable,
-			Columns: transaction.AccountPrimaryKey,
+			Columns: []string{transaction.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -665,34 +609,26 @@ func (tuo *TransactionUpdateOne) SetNillableUpdatedAt(t *time.Time) *Transaction
 	return tuo
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
-func (tuo *TransactionUpdateOne) AddProfileIDs(ids ...int) *TransactionUpdateOne {
-	tuo.mutation.AddProfileIDs(ids...)
+// SetProfileID sets the "profile" edge to the Profile entity by ID.
+func (tuo *TransactionUpdateOne) SetProfileID(id string) *TransactionUpdateOne {
+	tuo.mutation.SetProfileID(id)
 	return tuo
 }
 
-// AddProfile adds the "profile" edges to the Profile entity.
-func (tuo *TransactionUpdateOne) AddProfile(p ...*Profile) *TransactionUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return tuo.AddProfileIDs(ids...)
+// SetProfile sets the "profile" edge to the Profile entity.
+func (tuo *TransactionUpdateOne) SetProfile(p *Profile) *TransactionUpdateOne {
+	return tuo.SetProfileID(p.ID)
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (tuo *TransactionUpdateOne) AddAccountIDs(ids ...int) *TransactionUpdateOne {
-	tuo.mutation.AddAccountIDs(ids...)
+// SetAccountID sets the "account" edge to the Account entity by ID.
+func (tuo *TransactionUpdateOne) SetAccountID(id string) *TransactionUpdateOne {
+	tuo.mutation.SetAccountID(id)
 	return tuo
 }
 
-// AddAccount adds the "account" edges to the Account entity.
-func (tuo *TransactionUpdateOne) AddAccount(a ...*Account) *TransactionUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return tuo.AddAccountIDs(ids...)
+// SetAccount sets the "account" edge to the Account entity.
+func (tuo *TransactionUpdateOne) SetAccount(a *Account) *TransactionUpdateOne {
+	return tuo.SetAccountID(a.ID)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
@@ -700,46 +636,16 @@ func (tuo *TransactionUpdateOne) Mutation() *TransactionMutation {
 	return tuo.mutation
 }
 
-// ClearProfile clears all "profile" edges to the Profile entity.
+// ClearProfile clears the "profile" edge to the Profile entity.
 func (tuo *TransactionUpdateOne) ClearProfile() *TransactionUpdateOne {
 	tuo.mutation.ClearProfile()
 	return tuo
 }
 
-// RemoveProfileIDs removes the "profile" edge to Profile entities by IDs.
-func (tuo *TransactionUpdateOne) RemoveProfileIDs(ids ...int) *TransactionUpdateOne {
-	tuo.mutation.RemoveProfileIDs(ids...)
-	return tuo
-}
-
-// RemoveProfile removes "profile" edges to Profile entities.
-func (tuo *TransactionUpdateOne) RemoveProfile(p ...*Profile) *TransactionUpdateOne {
-	ids := make([]int, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return tuo.RemoveProfileIDs(ids...)
-}
-
-// ClearAccount clears all "account" edges to the Account entity.
+// ClearAccount clears the "account" edge to the Account entity.
 func (tuo *TransactionUpdateOne) ClearAccount() *TransactionUpdateOne {
 	tuo.mutation.ClearAccount()
 	return tuo
-}
-
-// RemoveAccountIDs removes the "account" edge to Account entities by IDs.
-func (tuo *TransactionUpdateOne) RemoveAccountIDs(ids ...int) *TransactionUpdateOne {
-	tuo.mutation.RemoveAccountIDs(ids...)
-	return tuo
-}
-
-// RemoveAccount removes "account" edges to Account entities.
-func (tuo *TransactionUpdateOne) RemoveAccount(a ...*Account) *TransactionUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return tuo.RemoveAccountIDs(ids...)
 }
 
 // Where appends a list predicates to the TransactionUpdate builder.
@@ -782,8 +688,22 @@ func (tuo *TransactionUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tuo *TransactionUpdateOne) check() error {
+	if tuo.mutation.ProfileCleared() && len(tuo.mutation.ProfileIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.profile"`)
+	}
+	if tuo.mutation.AccountCleared() && len(tuo.mutation.AccountIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.account"`)
+	}
+	return nil
+}
+
 func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction, err error) {
-	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
+	if err := tuo.check(); err != nil {
+		return _node, err
+	}
+	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString))
 	id, ok := tuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Transaction.id" for update`)}
@@ -861,42 +781,26 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if tuo.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.ProfileTable,
-			Columns: transaction.ProfilePrimaryKey,
+			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.RemovedProfileIDs(); len(nodes) > 0 && !tuo.mutation.ProfileCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   transaction.ProfileTable,
-			Columns: transaction.ProfilePrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tuo.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.ProfileTable,
-			Columns: transaction.ProfilePrimaryKey,
+			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -906,42 +810,26 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if tuo.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.AccountTable,
-			Columns: transaction.AccountPrimaryKey,
+			Columns: []string{transaction.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := tuo.mutation.RemovedAccountIDs(); len(nodes) > 0 && !tuo.mutation.AccountCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   transaction.AccountTable,
-			Columns: transaction.AccountPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := tuo.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   transaction.AccountTable,
-			Columns: transaction.AccountPrimaryKey,
+			Columns: []string{transaction.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

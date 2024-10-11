@@ -1,11 +1,14 @@
 package schema
 
 import (
+	"fijoy/constants"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
 
@@ -17,6 +20,8 @@ type OverallSnapshot struct {
 // Fields of the OverallSnapshot.
 func (OverallSnapshot) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("id").Default(constants.OverallSnapshotPrefix + cuid2.Generate()),
+
 		field.Time("datehour").
 			Annotations(
 				entsql.DefaultExprs(map[string]string{
@@ -60,6 +65,6 @@ func (OverallSnapshot) Fields() []ent.Field {
 // Edges of the OverallSnapshot.
 func (OverallSnapshot) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profile", Profile.Type).Ref("overall_snapshot"),
+		edge.From("profile", Profile.Type).Ref("overall_snapshot").Required().Unique(),
 	}
 }

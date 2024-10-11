@@ -1,12 +1,14 @@
 package schema
 
 import (
+	"fijoy/constants"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
 
@@ -18,6 +20,8 @@ type Transaction struct {
 // Fields of the Transaction.
 func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("id").Default(constants.TransactionPrefix + cuid2.Generate()),
+
 		field.Float("amount").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -65,7 +69,7 @@ func (Transaction) Fields() []ent.Field {
 // Edges of the Transaction.
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profile", Profile.Type).Ref("transaction"),
-		edge.From("account", Account.Type).Ref("transaction"),
+		edge.From("profile", Profile.Type).Ref("transaction").Required().Unique(),
+		edge.From("account", Account.Type).Ref("transaction").Required().Unique(),
 	}
 }

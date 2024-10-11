@@ -35,19 +35,29 @@ func (asc *AccountSnapshotCreate) SetBalance(d decimal.Decimal) *AccountSnapshot
 	return asc
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by IDs.
-func (asc *AccountSnapshotCreate) AddAccountIDs(ids ...int) *AccountSnapshotCreate {
-	asc.mutation.AddAccountIDs(ids...)
+// SetID sets the "id" field.
+func (asc *AccountSnapshotCreate) SetID(s string) *AccountSnapshotCreate {
+	asc.mutation.SetID(s)
 	return asc
 }
 
-// AddAccount adds the "account" edges to the Account entity.
-func (asc *AccountSnapshotCreate) AddAccount(a ...*Account) *AccountSnapshotCreate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+// SetNillableID sets the "id" field if the given value is not nil.
+func (asc *AccountSnapshotCreate) SetNillableID(s *string) *AccountSnapshotCreate {
+	if s != nil {
+		asc.SetID(*s)
 	}
-	return asc.AddAccountIDs(ids...)
+	return asc
+}
+
+// SetAccountID sets the "account" edge to the Account entity by ID.
+func (asc *AccountSnapshotCreate) SetAccountID(id string) *AccountSnapshotCreate {
+	asc.mutation.SetAccountID(id)
+	return asc
+}
+
+// SetAccount sets the "account" edge to the Account entity.
+func (asc *AccountSnapshotCreate) SetAccount(a *Account) *AccountSnapshotCreate {
+	return asc.SetAccountID(a.ID)
 }
 
 // Mutation returns the AccountSnapshotMutation object of the builder.
@@ -57,6 +67,7 @@ func (asc *AccountSnapshotCreate) Mutation() *AccountSnapshotMutation {
 
 // Save creates the AccountSnapshot in the database.
 func (asc *AccountSnapshotCreate) Save(ctx context.Context) (*AccountSnapshot, error) {
+	asc.defaults()
 	return withHooks(ctx, asc.sqlSave, asc.mutation, asc.hooks)
 }
 
@@ -82,6 +93,14 @@ func (asc *AccountSnapshotCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (asc *AccountSnapshotCreate) defaults() {
+	if _, ok := asc.mutation.ID(); !ok {
+		v := accountsnapshot.DefaultID
+		asc.mutation.SetID(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (asc *AccountSnapshotCreate) check() error {
 	switch asc.driver.Dialect() {
@@ -92,6 +111,9 @@ func (asc *AccountSnapshotCreate) check() error {
 	}
 	if _, ok := asc.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "AccountSnapshot.balance"`)}
+	}
+	if len(asc.mutation.AccountIDs()) == 0 {
+		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "AccountSnapshot.account"`)}
 	}
 	return nil
 }
@@ -107,8 +129,13 @@ func (asc *AccountSnapshotCreate) sqlSave(ctx context.Context) (*AccountSnapshot
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != nil {
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected AccountSnapshot.ID type: %T", _spec.ID.Value)
+		}
+	}
 	asc.mutation.id = &_node.ID
 	asc.mutation.done = true
 	return _node, nil
@@ -117,8 +144,12 @@ func (asc *AccountSnapshotCreate) sqlSave(ctx context.Context) (*AccountSnapshot
 func (asc *AccountSnapshotCreate) createSpec() (*AccountSnapshot, *sqlgraph.CreateSpec) {
 	var (
 		_node = &AccountSnapshot{config: asc.config}
-		_spec = sqlgraph.NewCreateSpec(accountsnapshot.Table, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeInt))
+		_spec = sqlgraph.NewCreateSpec(accountsnapshot.Table, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString))
 	)
+	if id, ok := asc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
+	}
 	if value, ok := asc.mutation.Datehour(); ok {
 		_spec.SetField(accountsnapshot.FieldDatehour, field.TypeTime, value)
 		_node.Datehour = value
@@ -129,18 +160,19 @@ func (asc *AccountSnapshotCreate) createSpec() (*AccountSnapshot, *sqlgraph.Crea
 	}
 	if nodes := asc.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   accountsnapshot.AccountTable,
-			Columns: accountsnapshot.AccountPrimaryKey,
+			Columns: []string{accountsnapshot.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.account_account_snapshot = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -164,6 +196,7 @@ func (ascb *AccountSnapshotCreateBulk) Save(ctx context.Context) ([]*AccountSnap
 	for i := range ascb.builders {
 		func(i int, root context.Context) {
 			builder := ascb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AccountSnapshotMutation)
 				if !ok {
@@ -190,10 +223,6 @@ func (ascb *AccountSnapshotCreateBulk) Save(ctx context.Context) ([]*AccountSnap
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
-					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int(id)
-				}
 				mutation.done = true
 				return nodes[i], nil
 			})

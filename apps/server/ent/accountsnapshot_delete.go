@@ -40,7 +40,7 @@ func (asd *AccountSnapshotDelete) ExecX(ctx context.Context) int {
 }
 
 func (asd *AccountSnapshotDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(accountsnapshot.Table, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(accountsnapshot.Table, sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString))
 	if ps := asd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
