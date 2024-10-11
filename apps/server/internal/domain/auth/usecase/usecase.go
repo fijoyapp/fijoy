@@ -7,7 +7,6 @@ import (
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/util/database"
 	fijoyv1 "fijoy/proto/fijoy/v1"
-	"fmt"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -46,13 +45,11 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 		if err != nil {
 			if ent.IsNotFound(err) {
 				user, err := u.userRepo.CreateUser(ctx, tx.Client(), constants.LocalLoginEmail)
-				fmt.Println("user", user)
 				if err != nil {
 					return err
 				}
 
 				userKey, err = u.userKeyRepo.CreateUserKey(ctx, tx.Client(), constants.LocalUserKey, user)
-				fmt.Println("userKey", userKey)
 				if err != nil {
 					return err
 				}
