@@ -49,7 +49,7 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 					return err
 				}
 
-				userKey, err = u.userKeyRepo.CreateUserKey(ctx, tx.Client(), constants.LocalUserKey, user)
+				userKey, err = u.userKeyRepo.CreateUserKey(ctx, tx.Client(), constants.LocalUserKey, user.ID)
 				if err != nil {
 					return err
 				}
@@ -87,7 +87,7 @@ func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId st
 					return err
 				}
 
-				userKey, err = u.userKeyRepo.CreateUserKey(ctx, tx.Client(), constants.GoogleUserKey+googleId, user)
+				userKey, err = u.userKeyRepo.CreateUserKey(ctx, tx.Client(), constants.GoogleUserKey+googleId, user.ID)
 				if err != nil {
 					return err
 				}
