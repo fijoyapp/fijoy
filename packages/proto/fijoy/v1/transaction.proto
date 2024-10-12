@@ -8,20 +8,19 @@ import "google/protobuf/timestamp.proto";
 
 message Transaction {
   string id = 1 [(buf.validate.field).string.min_len = 1];
-  string profile_id = 2 [(buf.validate.field).string.min_len = 1];
-  string account_id = 3 [(buf.validate.field).string.min_len = 1];
+  string account_id = 2 [(buf.validate.field).string.min_len = 1];
 
-  string amount = 4;
-  string amount_delta = 5;
-  string value = 6;
-  string fx_rate = 7;
-  string balance = 8;
-  string balance_delta = 9;
+  string amount = 3;
+  string amount_delta = 4;
+  string value = 5;
+  string fx_rate = 6;
+  string balance = 7;
+  string balance_delta = 8;
 
-  string note = 10;
+  string note = 9;
 
-  google.protobuf.Timestamp created_at = 11 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 12 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp created_at = 10 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 11 [(buf.validate.field).required = true];
 }
 
 message TransactionList {
@@ -38,32 +37,32 @@ message CreateTransactionRequest {
   string note = 5;
 }
 
-message GetTransactionByIdRequest {
+message GetTransactionRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
-
-message GetTransactionsByAccountIdRequest {
+message GetTransactionsRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+}
+message GetTransactionsByAccountRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
-message DeleteTransactionByIdRequest {
+message DeleteTransactionRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 service TransactionService {
   rpc CreateTransaction(CreateTransactionRequest) returns (Transaction);
 
-  rpc GetTransactionById(GetTransactionByIdRequest) returns (Transaction) {
+  rpc GetTransaction(GetTransactionRequest) returns (Transaction) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
-
-  rpc GetTransactionsByAccountId(GetTransactionsByAccountIdRequest) returns (TransactionList) {
+  rpc GetTransactionsByAccount(GetTransactionsByAccountRequest) returns (TransactionList) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
-
   rpc GetTransactions(google.protobuf.Empty) returns (TransactionList) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  rpc DeleteTransactionById(DeleteTransactionByIdRequest) returns (google.protobuf.Empty);
+  rpc DeleteTransaction(DeleteTransactionRequest) returns (google.protobuf.Empty);
 }

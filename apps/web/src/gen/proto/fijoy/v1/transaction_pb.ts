@@ -16,57 +16,52 @@ export class Transaction extends Message<Transaction> {
   id = "";
 
   /**
-   * @generated from field: string profile_id = 2;
-   */
-  profileId = "";
-
-  /**
-   * @generated from field: string account_id = 3;
+   * @generated from field: string account_id = 2;
    */
   accountId = "";
 
   /**
-   * @generated from field: string amount = 4;
+   * @generated from field: string amount = 3;
    */
   amount = "";
 
   /**
-   * @generated from field: string amount_delta = 5;
+   * @generated from field: string amount_delta = 4;
    */
   amountDelta = "";
 
   /**
-   * @generated from field: string value = 6;
+   * @generated from field: string value = 5;
    */
   value = "";
 
   /**
-   * @generated from field: string fx_rate = 7;
+   * @generated from field: string fx_rate = 6;
    */
   fxRate = "";
 
   /**
-   * @generated from field: string balance = 8;
+   * @generated from field: string balance = 7;
    */
   balance = "";
 
   /**
-   * @generated from field: string balance_delta = 9;
+   * @generated from field: string balance_delta = 8;
    */
   balanceDelta = "";
 
   /**
-   * @generated from field: string note = 10;
+   * @generated from field: string note = 9;
    */
   note = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 11;
+   * @generated from field: google.protobuf.Timestamp created_at = 10;
    */
   createdAt?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 12;
+   * @generated from field: google.protobuf.Timestamp updated_at = 11;
    */
   updatedAt?: Timestamp;
 
@@ -79,17 +74,16 @@ export class Transaction extends Message<Transaction> {
   static readonly typeName = "fijoy.v1.Transaction";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "profile_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "amount_delta", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "balance_delta", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "created_at", kind: "message", T: Timestamp },
-    { no: 12, name: "updated_at", kind: "message", T: Timestamp },
+    { no: 2, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "amount_delta", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "balance_delta", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "created_at", kind: "message", T: Timestamp },
+    { no: 11, name: "updated_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Transaction {
@@ -208,113 +202,150 @@ export class CreateTransactionRequest extends Message<CreateTransactionRequest> 
 }
 
 /**
- * @generated from message fijoy.v1.GetTransactionByIdRequest
+ * @generated from message fijoy.v1.GetTransactionRequest
  */
-export class GetTransactionByIdRequest extends Message<GetTransactionByIdRequest> {
+export class GetTransactionRequest extends Message<GetTransactionRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<GetTransactionByIdRequest>) {
+  constructor(data?: PartialMessage<GetTransactionRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.GetTransactionByIdRequest";
+  static readonly typeName = "fijoy.v1.GetTransactionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTransactionByIdRequest {
-    return new GetTransactionByIdRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTransactionRequest {
+    return new GetTransactionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTransactionByIdRequest {
-    return new GetTransactionByIdRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTransactionRequest {
+    return new GetTransactionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTransactionByIdRequest {
-    return new GetTransactionByIdRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTransactionRequest {
+    return new GetTransactionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetTransactionByIdRequest | PlainMessage<GetTransactionByIdRequest> | undefined, b: GetTransactionByIdRequest | PlainMessage<GetTransactionByIdRequest> | undefined): boolean {
-    return proto3.util.equals(GetTransactionByIdRequest, a, b);
+  static equals(a: GetTransactionRequest | PlainMessage<GetTransactionRequest> | undefined, b: GetTransactionRequest | PlainMessage<GetTransactionRequest> | undefined): boolean {
+    return proto3.util.equals(GetTransactionRequest, a, b);
   }
 }
 
 /**
- * @generated from message fijoy.v1.GetTransactionsByAccountIdRequest
+ * @generated from message fijoy.v1.GetTransactionsRequest
  */
-export class GetTransactionsByAccountIdRequest extends Message<GetTransactionsByAccountIdRequest> {
+export class GetTransactionsRequest extends Message<GetTransactionsRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  constructor(data?: PartialMessage<GetTransactionsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.GetTransactionsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTransactionsRequest {
+    return new GetTransactionsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTransactionsRequest {
+    return new GetTransactionsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTransactionsRequest {
+    return new GetTransactionsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetTransactionsRequest | PlainMessage<GetTransactionsRequest> | undefined, b: GetTransactionsRequest | PlainMessage<GetTransactionsRequest> | undefined): boolean {
+    return proto3.util.equals(GetTransactionsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message fijoy.v1.GetTransactionsByAccountRequest
+ */
+export class GetTransactionsByAccountRequest extends Message<GetTransactionsByAccountRequest> {
   /**
    * @generated from field: string account_id = 1;
    */
   accountId = "";
 
-  constructor(data?: PartialMessage<GetTransactionsByAccountIdRequest>) {
+  constructor(data?: PartialMessage<GetTransactionsByAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.GetTransactionsByAccountIdRequest";
+  static readonly typeName = "fijoy.v1.GetTransactionsByAccountRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "account_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTransactionsByAccountIdRequest {
-    return new GetTransactionsByAccountIdRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTransactionsByAccountRequest {
+    return new GetTransactionsByAccountRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTransactionsByAccountIdRequest {
-    return new GetTransactionsByAccountIdRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTransactionsByAccountRequest {
+    return new GetTransactionsByAccountRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTransactionsByAccountIdRequest {
-    return new GetTransactionsByAccountIdRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTransactionsByAccountRequest {
+    return new GetTransactionsByAccountRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetTransactionsByAccountIdRequest | PlainMessage<GetTransactionsByAccountIdRequest> | undefined, b: GetTransactionsByAccountIdRequest | PlainMessage<GetTransactionsByAccountIdRequest> | undefined): boolean {
-    return proto3.util.equals(GetTransactionsByAccountIdRequest, a, b);
+  static equals(a: GetTransactionsByAccountRequest | PlainMessage<GetTransactionsByAccountRequest> | undefined, b: GetTransactionsByAccountRequest | PlainMessage<GetTransactionsByAccountRequest> | undefined): boolean {
+    return proto3.util.equals(GetTransactionsByAccountRequest, a, b);
   }
 }
 
 /**
- * @generated from message fijoy.v1.DeleteTransactionByIdRequest
+ * @generated from message fijoy.v1.DeleteTransactionRequest
  */
-export class DeleteTransactionByIdRequest extends Message<DeleteTransactionByIdRequest> {
+export class DeleteTransactionRequest extends Message<DeleteTransactionRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<DeleteTransactionByIdRequest>) {
+  constructor(data?: PartialMessage<DeleteTransactionRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.DeleteTransactionByIdRequest";
+  static readonly typeName = "fijoy.v1.DeleteTransactionRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteTransactionByIdRequest {
-    return new DeleteTransactionByIdRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteTransactionRequest {
+    return new DeleteTransactionRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteTransactionByIdRequest {
-    return new DeleteTransactionByIdRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteTransactionRequest {
+    return new DeleteTransactionRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteTransactionByIdRequest {
-    return new DeleteTransactionByIdRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteTransactionRequest {
+    return new DeleteTransactionRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: DeleteTransactionByIdRequest | PlainMessage<DeleteTransactionByIdRequest> | undefined, b: DeleteTransactionByIdRequest | PlainMessage<DeleteTransactionByIdRequest> | undefined): boolean {
-    return proto3.util.equals(DeleteTransactionByIdRequest, a, b);
+  static equals(a: DeleteTransactionRequest | PlainMessage<DeleteTransactionRequest> | undefined, b: DeleteTransactionRequest | PlainMessage<DeleteTransactionRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteTransactionRequest, a, b);
   }
 }
 
