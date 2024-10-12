@@ -8,6 +8,7 @@ build:
 update:
   go mod tidy
   go get -u all
+  go mod tidy
 
 test:
   go test ./...
