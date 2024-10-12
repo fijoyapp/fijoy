@@ -79,7 +79,7 @@ func main() {
 	profileUseCase := profile_usecase.New(validator, client, profileRepo)
 
 	accountRepo := account_repository.NewAccountRepository()
-	transactionRepo := transaction_repository.NewTransactionRepository(db)
+	transactionRepo := transaction_repository.NewTransactionRepository()
 	accountUseCase := account_usecase.New(validator, client, accountRepo, transactionRepo)
 
 	r := chi.NewRouter()

@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { CreateTransactionRequest, DeleteTransactionByIdRequest, GetTransactionByIdRequest, GetTransactionsByAccountIdRequest, Transaction, TransactionList } from "./transaction_pb.js";
+import { CreateTransactionRequest, DeleteTransactionRequest, GetTransactionRequest, GetTransactionsByAccountRequest, Transaction, TransactionList } from "./transaction_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.TransactionService.CreateTransaction
@@ -21,13 +21,13 @@ export const createTransaction = {
 } as const;
 
 /**
- * @generated from rpc fijoy.v1.TransactionService.GetTransactionById
+ * @generated from rpc fijoy.v1.TransactionService.GetTransaction
  */
-export const getTransactionById = {
-  localName: "getTransactionById",
-  name: "GetTransactionById",
+export const getTransaction = {
+  localName: "getTransaction",
+  name: "GetTransaction",
   kind: MethodKind.Unary,
-  I: GetTransactionByIdRequest,
+  I: GetTransactionRequest,
   O: Transaction,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
@@ -36,13 +36,13 @@ export const getTransactionById = {
 } as const;
 
 /**
- * @generated from rpc fijoy.v1.TransactionService.GetTransactionsByAccountId
+ * @generated from rpc fijoy.v1.TransactionService.GetTransactionsByAccount
  */
-export const getTransactionsByAccountId = {
-  localName: "getTransactionsByAccountId",
-  name: "GetTransactionsByAccountId",
+export const getTransactionsByAccount = {
+  localName: "getTransactionsByAccount",
+  name: "GetTransactionsByAccount",
   kind: MethodKind.Unary,
-  I: GetTransactionsByAccountIdRequest,
+  I: GetTransactionsByAccountRequest,
   O: TransactionList,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
@@ -66,13 +66,13 @@ export const getTransactions = {
 } as const;
 
 /**
- * @generated from rpc fijoy.v1.TransactionService.DeleteTransactionById
+ * @generated from rpc fijoy.v1.TransactionService.DeleteTransaction
  */
-export const deleteTransactionById = {
-  localName: "deleteTransactionById",
-  name: "DeleteTransactionById",
+export const deleteTransaction = {
+  localName: "deleteTransaction",
+  name: "DeleteTransaction",
   kind: MethodKind.Unary,
-  I: DeleteTransactionByIdRequest,
+  I: DeleteTransactionRequest,
   O: Empty,
   service: {
     typeName: "fijoy.v1.TransactionService"

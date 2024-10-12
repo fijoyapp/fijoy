@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateTransactionRequest, DeleteTransactionByIdRequest, GetTransactionByIdRequest, GetTransactionsByAccountIdRequest, Transaction, TransactionList } from "./transaction_pb.js";
+import { CreateTransactionRequest, DeleteTransactionRequest, GetTransactionRequest, GetTransactionsByAccountRequest, Transaction, TransactionList } from "./transaction_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -22,21 +22,21 @@ export const TransactionService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc fijoy.v1.TransactionService.GetTransactionById
+     * @generated from rpc fijoy.v1.TransactionService.GetTransaction
      */
-    getTransactionById: {
-      name: "GetTransactionById",
-      I: GetTransactionByIdRequest,
+    getTransaction: {
+      name: "GetTransaction",
+      I: GetTransactionRequest,
       O: Transaction,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
     },
     /**
-     * @generated from rpc fijoy.v1.TransactionService.GetTransactionsByAccountId
+     * @generated from rpc fijoy.v1.TransactionService.GetTransactionsByAccount
      */
-    getTransactionsByAccountId: {
-      name: "GetTransactionsByAccountId",
-      I: GetTransactionsByAccountIdRequest,
+    getTransactionsByAccount: {
+      name: "GetTransactionsByAccount",
+      I: GetTransactionsByAccountRequest,
       O: TransactionList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
@@ -52,11 +52,11 @@ export const TransactionService = {
       idempotency: MethodIdempotency.NoSideEffects,
     },
     /**
-     * @generated from rpc fijoy.v1.TransactionService.DeleteTransactionById
+     * @generated from rpc fijoy.v1.TransactionService.DeleteTransaction
      */
-    deleteTransactionById: {
-      name: "DeleteTransactionById",
-      I: DeleteTransactionByIdRequest,
+    deleteTransaction: {
+      name: "DeleteTransaction",
+      I: DeleteTransactionRequest,
       O: Empty,
       kind: MethodKind.Unary,
     },
