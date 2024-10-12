@@ -73,8 +73,7 @@ func (u *userUseCase) GetUser(ctx context.Context, userId string) (*fijoyv1.User
 
 func (u *userUseCase) DeleteUser(ctx context.Context, userId string) error {
 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
-		var err error
-		err = u.userRepo.DeleteUser(ctx, tx.Client(), userId)
+		err := u.userRepo.DeleteUser(ctx, tx.Client(), userId)
 		if err != nil {
 			return nil
 		}

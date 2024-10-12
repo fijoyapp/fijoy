@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/internal/domain/profile/usecase"
-	fijoyv1 "fijoy/proto/fijoy/v1"
 	"fijoy/internal/util/auth"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
@@ -35,7 +35,7 @@ func (h *profileHandler) GetProfile(
 		return nil, err
 	}
 
-	profile, err := h.useCase.GetProfileByUserId(ctx, userId)
+	profile, err := h.useCase.GetProfileByUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (h *profileHandler) CreateProfile(
 func (h *profileHandler) DeleteProfile(
 	ctx context.Context,
 	req *connect.Request[emptypb.Empty],
-) (*connect.Response[fijoyv1.Profile], error) {
+) (*connect.Response[emptypb.Empty], error) {
 	if err := h.protoValidator.Validate(req.Msg); err != nil {
 		return nil, err
 	}
@@ -77,12 +77,12 @@ func (h *profileHandler) DeleteProfile(
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
-	profile, err := h.useCase.DeleteProfile(ctx, profileId)
+	err := h.useCase.DeleteProfile(ctx, profileId)
 	if err != nil {
 		return nil, err
 	}
 
-	return connect.NewResponse(profile), nil
+	return connect.NewResponse(&emptypb.Empty{}), nil
 }
 
 func (h *profileHandler) UpdateProfile(

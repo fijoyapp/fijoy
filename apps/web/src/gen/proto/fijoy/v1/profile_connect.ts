@@ -46,7 +46,7 @@ export const ProfileService = {
     deleteProfile: {
       name: "DeleteProfile",
       I: Empty,
-      O: Profile,
+      O: Empty,
       kind: MethodKind.Unary,
     },
   }

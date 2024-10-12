@@ -75,8 +75,8 @@ func main() {
 	userUseCase := user_usecase.New(userRepo, client)
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo, client)
 
-	profileRepo := profile_repository.NewProfileRepository(db)
-	profileUseCase := profile_usecase.New(validator, db, profileRepo)
+	profileRepo := profile_repository.NewProfileRepository()
+	profileUseCase := profile_usecase.New(validator, client, profileRepo)
 
 	accountRepo := account_repository.NewAccountRepository(db)
 	transactionRepo := transaction_repository.NewTransactionRepository(db)
