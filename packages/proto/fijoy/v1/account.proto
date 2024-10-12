@@ -25,23 +25,22 @@ enum AccountSymbolType {
 message Account {
   // the standard stuff
   string id = 1 [(buf.validate.field).string.min_len = 1];
-  string profile_id = 2 [(buf.validate.field).string.min_len = 1];
-  string name = 3 [(buf.validate.field).string.min_len = 1];
-  AccountType account_type = 4 [(buf.validate.field).required = true];
+  string name = 2 [(buf.validate.field).string.min_len = 1];
+  AccountType account_type = 3 [(buf.validate.field).required = true];
 
-  bool archived = 5 [(buf.validate.field).required = false];
-  bool include_in_net_worth = 6 [(buf.validate.field).required = false];
+  bool archived = 4 [(buf.validate.field).required = false];
+  bool include_in_net_worth = 5 [(buf.validate.field).required = false];
 
-  string symbol = 7 [(buf.validate.field).string.min_len = 1];
-  AccountSymbolType symbol_type = 8 [(buf.validate.field).required = true];
+  string symbol = 6 [(buf.validate.field).string.min_len = 1];
+  AccountSymbolType symbol_type = 7 [(buf.validate.field).required = true];
 
-  string amount = 9 [(buf.validate.field).required = true];
-  string value = 10 [(buf.validate.field).required = true];
-  string fx_rate = 11;
-  string balance = 12 [(buf.validate.field).required = true];
+  string amount = 8 [(buf.validate.field).required = true];
+  string value = 9 [(buf.validate.field).required = true];
+  string fx_rate = 10;
+  string balance = 11 [(buf.validate.field).required = true];
 
-  google.protobuf.Timestamp created_at = 13 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 14 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp created_at = 12 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 13 [(buf.validate.field).required = true];
 }
 
 message AccountList {
@@ -68,11 +67,11 @@ message UpdateAccountRequest {
   optional bool include_in_net_worth = 4;
 }
 
-message GetAccountByIdRequest {
+message GetAccountRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
-message DeleteAccountByIdRequest {
+message DeleteAccountRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
@@ -83,11 +82,11 @@ service AccountService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
-  rpc GetAccountById(GetAccountByIdRequest) returns (Account) {
+  rpc GetAccount(GetAccountRequest) returns (Account) {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
   rpc UpdateAccount(UpdateAccountRequest) returns (Account);
 
-  rpc DeleteAccountById(DeleteAccountByIdRequest) returns (Account) {}
+  rpc DeleteAccount(DeleteAccountRequest) returns (google.protobuf.Empty) {}
 }

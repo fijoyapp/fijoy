@@ -65,17 +65,7 @@ func (u *profileUseCase) CreateProfile(ctx context.Context, userId string, req *
 }
 
 func (u *profileUseCase) GetProfile(ctx context.Context, id string) (*fijoyv1.Profile, error) {
-	var profile *ent.Profile
-
-	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
-		var err error
-		profile, err = u.repo.GetProfile(ctx, tx.Client(), id)
-		if err != nil {
-			return nil
-		}
-
-		return err
-	})
+	profile, err := u.repo.GetProfile(ctx, u.client, id)
 	if err != nil {
 		return nil, err
 	}

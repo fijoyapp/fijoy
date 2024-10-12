@@ -94,67 +94,62 @@ export class Account extends Message<Account> {
   id = "";
 
   /**
-   * @generated from field: string profile_id = 2;
-   */
-  profileId = "";
-
-  /**
-   * @generated from field: string name = 3;
+   * @generated from field: string name = 2;
    */
   name = "";
 
   /**
-   * @generated from field: fijoy.v1.AccountType account_type = 4;
+   * @generated from field: fijoy.v1.AccountType account_type = 3;
    */
   accountType = AccountType.UNSPECIFIED;
 
   /**
-   * @generated from field: bool archived = 5;
+   * @generated from field: bool archived = 4;
    */
   archived = false;
 
   /**
-   * @generated from field: bool include_in_net_worth = 6;
+   * @generated from field: bool include_in_net_worth = 5;
    */
   includeInNetWorth = false;
 
   /**
-   * @generated from field: string symbol = 7;
+   * @generated from field: string symbol = 6;
    */
   symbol = "";
 
   /**
-   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 8;
+   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 7;
    */
   symbolType = AccountSymbolType.UNSPECIFIED;
 
   /**
-   * @generated from field: string amount = 9;
+   * @generated from field: string amount = 8;
    */
   amount = "";
 
   /**
-   * @generated from field: string value = 10;
+   * @generated from field: string value = 9;
    */
   value = "";
 
   /**
-   * @generated from field: string fx_rate = 11;
+   * @generated from field: string fx_rate = 10;
    */
   fxRate = "";
 
   /**
-   * @generated from field: string balance = 12;
+   * @generated from field: string balance = 11;
    */
   balance = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 13;
+   * @generated from field: google.protobuf.Timestamp created_at = 12;
    */
   createdAt?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 14;
+   * @generated from field: google.protobuf.Timestamp updated_at = 13;
    */
   updatedAt?: Timestamp;
 
@@ -167,19 +162,18 @@ export class Account extends Message<Account> {
   static readonly typeName = "fijoy.v1.Account";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "profile_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 4, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 5, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 6, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 7, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
-    { no: 9, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 12, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 13, name: "created_at", kind: "message", T: Timestamp },
-    { no: 14, name: "updated_at", kind: "message", T: Timestamp },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
+    { no: 4, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 5, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
+    { no: 8, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 12, name: "created_at", kind: "message", T: Timestamp },
+    { no: 13, name: "updated_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -359,76 +353,76 @@ export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
 }
 
 /**
- * @generated from message fijoy.v1.GetAccountByIdRequest
+ * @generated from message fijoy.v1.GetAccountRequest
  */
-export class GetAccountByIdRequest extends Message<GetAccountByIdRequest> {
+export class GetAccountRequest extends Message<GetAccountRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<GetAccountByIdRequest>) {
+  constructor(data?: PartialMessage<GetAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.GetAccountByIdRequest";
+  static readonly typeName = "fijoy.v1.GetAccountRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAccountByIdRequest {
-    return new GetAccountByIdRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetAccountRequest {
+    return new GetAccountRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAccountByIdRequest {
-    return new GetAccountByIdRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetAccountRequest {
+    return new GetAccountRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAccountByIdRequest {
-    return new GetAccountByIdRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetAccountRequest {
+    return new GetAccountRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: GetAccountByIdRequest | PlainMessage<GetAccountByIdRequest> | undefined, b: GetAccountByIdRequest | PlainMessage<GetAccountByIdRequest> | undefined): boolean {
-    return proto3.util.equals(GetAccountByIdRequest, a, b);
+  static equals(a: GetAccountRequest | PlainMessage<GetAccountRequest> | undefined, b: GetAccountRequest | PlainMessage<GetAccountRequest> | undefined): boolean {
+    return proto3.util.equals(GetAccountRequest, a, b);
   }
 }
 
 /**
- * @generated from message fijoy.v1.DeleteAccountByIdRequest
+ * @generated from message fijoy.v1.DeleteAccountRequest
  */
-export class DeleteAccountByIdRequest extends Message<DeleteAccountByIdRequest> {
+export class DeleteAccountRequest extends Message<DeleteAccountRequest> {
   /**
    * @generated from field: string id = 1;
    */
   id = "";
 
-  constructor(data?: PartialMessage<DeleteAccountByIdRequest>) {
+  constructor(data?: PartialMessage<DeleteAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
   }
 
   static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.DeleteAccountByIdRequest";
+  static readonly typeName = "fijoy.v1.DeleteAccountRequest";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteAccountByIdRequest {
-    return new DeleteAccountByIdRequest().fromBinary(bytes, options);
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteAccountRequest {
+    return new DeleteAccountRequest().fromBinary(bytes, options);
   }
 
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteAccountByIdRequest {
-    return new DeleteAccountByIdRequest().fromJson(jsonValue, options);
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteAccountRequest {
+    return new DeleteAccountRequest().fromJson(jsonValue, options);
   }
 
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteAccountByIdRequest {
-    return new DeleteAccountByIdRequest().fromJsonString(jsonString, options);
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteAccountRequest {
+    return new DeleteAccountRequest().fromJsonString(jsonString, options);
   }
 
-  static equals(a: DeleteAccountByIdRequest | PlainMessage<DeleteAccountByIdRequest> | undefined, b: DeleteAccountByIdRequest | PlainMessage<DeleteAccountByIdRequest> | undefined): boolean {
-    return proto3.util.equals(DeleteAccountByIdRequest, a, b);
+  static equals(a: DeleteAccountRequest | PlainMessage<DeleteAccountRequest> | undefined, b: DeleteAccountRequest | PlainMessage<DeleteAccountRequest> | undefined): boolean {
+    return proto3.util.equals(DeleteAccountRequest, a, b);
   }
 }
 

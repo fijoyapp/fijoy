@@ -42,9 +42,9 @@ func (h *accountHandler) CreateAccount(
 	return connect.NewResponse(account), nil
 }
 
-func (h *accountHandler) GetAccountById(
+func (h *accountHandler) GetAccount(
 	ctx context.Context,
-	req *connect.Request[fijoyv1.GetAccountByIdRequest],
+	req *connect.Request[fijoyv1.GetAccountRequest],
 ) (*connect.Response[fijoyv1.Account], error) {
 	if err := h.protoValidator.Validate(req.Msg); err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (h *accountHandler) GetAccountById(
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
-	account, err := h.useCase.GetAccountById(ctx, profileId, req.Msg)
+	account, err := h.useCase.GetAccount(ctx, profileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -105,10 +105,10 @@ func (h *accountHandler) UpdateAccount(
 	return connect.NewResponse(account), nil
 }
 
-func (h *accountHandler) DeleteAccountById(
+func (h *accountHandler) DeleteAccount(
 	ctx context.Context,
-	req *connect.Request[fijoyv1.DeleteAccountByIdRequest],
-) (*connect.Response[fijoyv1.Account], error) {
+	req *connect.Request[fijoyv1.DeleteAccountRequest],
+) (*connect.Response[emptypb.Empty], error) {
 	if err := h.protoValidator.Validate(req.Msg); err != nil {
 		return nil, err
 	}
@@ -118,10 +118,10 @@ func (h *accountHandler) DeleteAccountById(
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
 
-	account, err := h.useCase.DeleteAccountById(ctx, profileId, req.Msg)
+	err := h.useCase.DeleteAccount(ctx, profileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
 
-	return connect.NewResponse(account), nil
+	return connect.NewResponse(&emptypb.Empty{}), nil
 }

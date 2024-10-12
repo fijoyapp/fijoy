@@ -2,45 +2,46 @@ package usecase
 
 import (
 	"context"
-	"database/sql"
-	"fijoy/internal/domain/account"
+	"errors"
+	"fijoy/constants"
+	"fijoy/ent"
+	"fijoy/ent/account"
 	account_repository "fijoy/internal/domain/account/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
-	"fijoy/internal/gen/postgres/model"
+	"fijoy/internal/util/database"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type AccountUseCase interface {
 	CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error)
 
-	GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error)
+	GetAccount(ctx context.Context, profileId string, req *fijoyv1.GetAccountRequest) (*fijoyv1.Account, error)
 	GetAccounts(ctx context.Context, profileId string) (*fijoyv1.AccountList, error)
 
 	UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error)
 
-	DeleteAccountById(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountByIdRequest) (*fijoyv1.Account, error)
+	DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error
 }
 
 type accountUseCase struct {
 	validator *validator.Validate
 
-	db              *sql.DB
+	client *ent.Client
+
 	accountRepo     account_repository.AccountRepository
 	transactionRepo transaction_repository.TransactionRepository
 }
 
-func New(validator *validator.Validate, db *sql.DB, accountRepo account_repository.AccountRepository, transactionRepo transaction_repository.TransactionRepository) AccountUseCase {
-	return &accountUseCase{validator: validator, db: db, accountRepo: accountRepo, transactionRepo: transactionRepo}
+func New(validator *validator.Validate, client *ent.Client, accountRepo account_repository.AccountRepository, transactionRepo transaction_repository.TransactionRepository) AccountUseCase {
+	return &accountUseCase{validator: validator, client: client, accountRepo: accountRepo, transactionRepo: transactionRepo}
 }
 
-func accountModelToProto(account *account.FijoyAccount) *fijoyv1.Account {
+func accountModelToProto(account *ent.Account) *fijoyv1.Account {
 	return &fijoyv1.Account{
 		Id:                account.ID,
-		ProfileId:         account.ProfileID,
 		Name:              account.Name,
 		AccountType:       accountTypeModelToProto(account.AccountType),
 		Archived:          account.Archived,
@@ -59,7 +60,7 @@ func accountModelToProto(account *account.FijoyAccount) *fijoyv1.Account {
 	}
 }
 
-func accountsModelToProto(accounts []*account.FijoyAccount) *fijoyv1.AccountList {
+func accountsModelToProto(accounts []*ent.Account) *fijoyv1.AccountList {
 	protoAccounts := make([]*fijoyv1.Account, len(accounts))
 	for i, account := range accounts {
 		protoAccounts[i] = accountModelToProto(account)
@@ -69,97 +70,60 @@ func accountsModelToProto(accounts []*account.FijoyAccount) *fijoyv1.AccountList
 	}
 }
 
-func accountTypeModelToProto(accountType model.FijoyAccountType) fijoyv1.AccountType {
+func accountTypeModelToProto(accountType account.AccountType) fijoyv1.AccountType {
 	switch accountType {
-	case model.FijoyAccountType_Liquidity:
+	case account.AccountTypeLiquidity:
 		return fijoyv1.AccountType_ACCOUNT_TYPE_LIQUIDITY
-	case model.FijoyAccountType_Investment:
+	case account.AccountTypeInvestment:
 		return fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT
-	case model.FijoyAccountType_Property:
+	case account.AccountTypeProperty:
 		return fijoyv1.AccountType_ACCOUNT_TYPE_PROPERTY
-	case model.FijoyAccountType_Receivable:
+	case account.AccountTypeReceivable:
 		return fijoyv1.AccountType_ACCOUNT_TYPE_RECEIVABLE
-	case model.FijoyAccountType_Liability:
+	case account.AccountTypeLiability:
 		return fijoyv1.AccountType_ACCOUNT_TYPE_LIABILITY
 	default:
-		return fijoyv1.AccountType_ACCOUNT_TYPE_UNSPECIFIED
+		panic("unknown account type")
 	}
 }
 
-func accountSymbolTypeModelToProto(accountSymbolType model.FijoyAccountSymbolType) fijoyv1.AccountSymbolType {
+func accountSymbolTypeModelToProto(accountSymbolType account.SymbolType) fijoyv1.AccountSymbolType {
 	switch accountSymbolType {
-	case model.FijoyAccountSymbolType_Currency:
+	case account.SymbolTypeCurrency:
 		return fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CURRENCY
-	case model.FijoyAccountSymbolType_Crypto:
+	case account.SymbolTypeCrypto:
 		return fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CRYPTO
-	case model.FijoyAccountSymbolType_Stock:
+	case account.SymbolTypeStock:
 		return fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_STOCK
 	default:
-		return fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_UNSPECIFIED
+		panic("unknown account symbol type")
 	}
 }
 
 func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error) {
-	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelDefault})
-	if err != nil {
-		return nil, err
-	}
-
-	// Defer a rollback in case anything fails.
-	defer func() {
-		if p := recover(); p != nil {
-			tx.Rollback()
-			panic(p) // re-throw panic after rollback
-		} else if err != nil {
-			tx.Rollback() // rollback on error
-		} else {
-			err = tx.Commit() // commit on success
-		}
-	}()
-
-	createdAccount, err := u.accountRepo.CreateAccountTX(ctx, tx, profileId, req)
-	if err != nil {
-		return nil, err
-	}
-
-	// FIXME: Broken
-
-	transactionReq := &fijoyv1.CreateTransactionRequest{
-		AccountId:   createdAccount.ID,
-		AmountDelta: req.Amount,
-		Value:       createdAccount.Value.String(),
-		FxRate:      createdAccount.FxRate.String(),
-		Note:        "Initial balance",
-	}
-
-	_, err = u.transactionRepo.CreateTransactionTX(ctx, tx, profileId, transactionReq, decimal.Zero, decimal.Zero)
-	if err != nil {
-		return nil, err
-	}
-
-	updateAccountReq := &fijoyv1.UpdateAccountRequest{
-		Id: createdAccount.ID,
-	}
-
-	_, err = u.accountRepo.UpdateAccountByIdTX(ctx, tx, profileId, updateAccountReq)
-	if err != nil {
-		return nil, err
-	}
-
-	return accountModelToProto(createdAccount), nil
+	// TODO: Implement this method
+	return nil, nil
 }
 
-func (u *accountUseCase) GetAccountById(ctx context.Context, profileId string, req *fijoyv1.GetAccountByIdRequest) (*fijoyv1.Account, error) {
-	account, err := u.accountRepo.GetAccountById(ctx, profileId, req.Id)
+func (u *accountUseCase) GetAccount(ctx context.Context, profileId string, req *fijoyv1.GetAccountRequest) (*fijoyv1.Account, error) {
+	account, err := u.accountRepo.GetAccount(ctx, u.client, req.Id)
 	if err != nil {
 		return nil, err
+	}
+
+	id, err := account.QueryProfile().OnlyID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if id != profileId {
+		return nil, errors.New(constants.ErrAccountNotFound)
 	}
 
 	return accountModelToProto(account), nil
 }
 
 func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fijoyv1.AccountList, error) {
-	accounts, err := u.accountRepo.GetAccounts(ctx, profileId)
+	accounts, err := u.accountRepo.GetAccounts(ctx, u.client, profileId)
 	if err != nil {
 		return nil, err
 	}
@@ -168,53 +132,36 @@ func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fi
 }
 
 func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error) {
-	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelDefault})
-	if err != nil {
-		return nil, err
-	}
-
-	// Defer a rollback in case anything fails.
-	defer func() {
-		if p := recover(); p != nil {
-			tx.Rollback()
-			panic(p) // re-throw panic after rollback
-		} else if err != nil {
-			tx.Rollback() // rollback on error
-		} else {
-			err = tx.Commit() // commit on success
-		}
-	}()
-
-	updatedAccount, err := u.accountRepo.UpdateAccountByIdTX(ctx, tx, profileId, req)
-	if err != nil {
-		return nil, err
-	}
-
-	return accountModelToProto(updatedAccount), nil
+	// TODO: Implement this method
+	return nil, nil
 }
 
-func (u *accountUseCase) DeleteAccountById(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountByIdRequest) (*fijoyv1.Account, error) {
-	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelDefault})
-	if err != nil {
-		return nil, err
-	}
-
-	// Defer a rollback in case anything fails.
-	defer func() {
-		if p := recover(); p != nil {
-			tx.Rollback()
-			panic(p) // re-throw panic after rollback
-		} else if err != nil {
-			tx.Rollback() // rollback on error
-		} else {
-			err = tx.Commit() // commit on success
+func (u *accountUseCase) DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error {
+	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
+		var err error
+		account, err := u.accountRepo.GetAccount(ctx, tx.Client(), req.Id)
+		if err != nil {
+			return err
 		}
-	}()
 
-	deletedAccount, err := u.accountRepo.DeleteAccountByIdTX(ctx, tx, profileId, req.Id)
+		id, err := account.QueryProfile().OnlyID(ctx)
+		if err != nil {
+			return err
+		}
+		if id != profileId {
+			return errors.New(constants.ErrAccountNotFound)
+		}
+
+		err = u.accountRepo.DeleteAccount(ctx, tx.Client(), req.Id)
+		if err != nil {
+			return nil
+		}
+
+		return err
+	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return accountModelToProto(deletedAccount), nil
+	return nil
 }

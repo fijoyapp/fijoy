@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { Account, AccountList, CreateAccountRequest, DeleteAccountByIdRequest, GetAccountByIdRequest, UpdateAccountRequest } from "./account_pb.js";
+import { Account, AccountList, CreateAccountRequest, DeleteAccountRequest, GetAccountRequest, UpdateAccountRequest } from "./account_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.AccountService.CreateAccount
@@ -36,13 +36,13 @@ export const getAccounts = {
 } as const;
 
 /**
- * @generated from rpc fijoy.v1.AccountService.GetAccountById
+ * @generated from rpc fijoy.v1.AccountService.GetAccount
  */
-export const getAccountById = {
-  localName: "getAccountById",
-  name: "GetAccountById",
+export const getAccount = {
+  localName: "getAccount",
+  name: "GetAccount",
   kind: MethodKind.Unary,
-  I: GetAccountByIdRequest,
+  I: GetAccountRequest,
   O: Account,
       idempotency: MethodIdempotency.NoSideEffects,
   service: {
@@ -65,14 +65,14 @@ export const updateAccount = {
 } as const;
 
 /**
- * @generated from rpc fijoy.v1.AccountService.DeleteAccountById
+ * @generated from rpc fijoy.v1.AccountService.DeleteAccount
  */
-export const deleteAccountById = {
-  localName: "deleteAccountById",
-  name: "DeleteAccountById",
+export const deleteAccount = {
+  localName: "deleteAccount",
+  name: "DeleteAccount",
   kind: MethodKind.Unary,
-  I: DeleteAccountByIdRequest,
-  O: Account,
+  I: DeleteAccountRequest,
+  O: Empty,
   service: {
     typeName: "fijoy.v1.AccountService"
   }
