@@ -18,7 +18,7 @@ func NewUserRepository() *userRepository {
 }
 
 type UserKeyRepository interface {
-	CreateUserKey(ctx context.Context, client *ent.Client, id string, user *ent.User) (*ent.UserKey, error)
+	CreateUserKey(ctx context.Context, client *ent.Client, id string, userId string) (*ent.UserKey, error)
 	GetUserKey(ctx context.Context, client *ent.Client, id string) (*ent.UserKey, error)
 	DeleteUserKey(ctx context.Context, client *ent.Client, id string) error
 }
@@ -56,9 +56,9 @@ func (r *userRepository) DeleteUser(ctx context.Context, client *ent.Client, id 
 	return nil
 }
 
-func (r *userKeyRepository) CreateUserKey(ctx context.Context, client *ent.Client, id string, user *ent.User) (*ent.UserKey, error) {
+func (r *userKeyRepository) CreateUserKey(ctx context.Context, client *ent.Client, id string, userId string) (*ent.UserKey, error) {
 	userKey, err := client.UserKey.
-		Create().SetUser(user).SetID(id).Save(ctx)
+		Create().SetUserID(userId).SetID(id).Save(ctx)
 	if err != nil {
 		return nil, err
 	}
