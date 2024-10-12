@@ -2,222 +2,152 @@ package repository
 
 import (
 	"context"
-	"database/sql"
-	"fijoy/constants"
-	"fijoy/internal/domain/account"
-	"fijoy/internal/gen/postgres/model"
+	"fijoy/ent"
+	"fijoy/ent/account"
+	"fijoy/ent/profile"
 
-	. "fijoy/internal/gen/postgres/table"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
-	. "github.com/go-jet/jet/v2/postgres"
-	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
 
 type AccountRepository interface {
-	CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error)
+	CreateAccount(ctx context.Context, client *ent.Client, profileId string, req *fijoyv1.CreateAccountRequest) (*ent.Account, error)
 
-	GetAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, id string) (*account.FijoyAccount, error)
-	GetAccountById(ctx context.Context, profileId string, id string) (*account.FijoyAccount, error)
-	GetAccounts(ctx context.Context, profileId string) ([]*account.FijoyAccount, error)
+	GetAccount(ctx context.Context, client *ent.Client, id string) (*ent.Account, error)
+	GetAccounts(ctx context.Context, client *ent.Client, profileId string) ([]*ent.Account, error)
 
-	UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.UpdateAccountRequest) (*account.FijoyAccount, error)
+	UpdateAccount(ctx context.Context, client *ent.Client, id string, req UpdateAccountRequest) (*ent.Account, error)
 
-	DeleteAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, id string) (*account.FijoyAccount, error)
+	DeleteAccount(ctx context.Context, client *ent.Client, id string) error
 }
 
-type accountRepository struct {
-	db *sql.DB
+type accountRepository struct{}
+
+func NewAccountRepository() *accountRepository {
+	return &accountRepository{}
 }
 
-func NewAccountRepository(db *sql.DB) *accountRepository {
-	return &accountRepository{db: db}
-}
-
-func accountTypeProtoToModel(accountType fijoyv1.AccountType) model.FijoyAccountType {
+func accountTypeProtoToModel(accountType fijoyv1.AccountType) account.AccountType {
 	switch accountType {
 	case fijoyv1.AccountType_ACCOUNT_TYPE_LIQUIDITY:
-		return model.FijoyAccountType_Liquidity
+		return account.AccountTypeLiquidity
 	case fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT:
-		return model.FijoyAccountType_Investment
+		return account.AccountTypeInvestment
 	case fijoyv1.AccountType_ACCOUNT_TYPE_PROPERTY:
-		return model.FijoyAccountType_Property
+		return account.AccountTypeProperty
 	case fijoyv1.AccountType_ACCOUNT_TYPE_RECEIVABLE:
-		return model.FijoyAccountType_Receivable
+		return account.AccountTypeReceivable
 	case fijoyv1.AccountType_ACCOUNT_TYPE_LIABILITY:
-		return model.FijoyAccountType_Liability
+		return account.AccountTypeLiability
 	default:
 		panic("unknown account type")
 	}
 }
 
-func accountSymbolTypeProtoToModel(accountSymbolType fijoyv1.AccountSymbolType) model.FijoyAccountSymbolType {
+func accountSymbolTypeProtoToModel(accountSymbolType fijoyv1.AccountSymbolType) account.SymbolType {
 	switch accountSymbolType {
 	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CURRENCY:
-		return model.FijoyAccountSymbolType_Currency
+		return account.SymbolTypeCurrency
 	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CRYPTO:
-		return model.FijoyAccountSymbolType_Crypto
+		return account.SymbolTypeCrypto
 	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_STOCK:
-		return model.FijoyAccountSymbolType_Stock
+		return account.SymbolTypeStock
 	default:
 		panic("unknown account symbol type")
 	}
 }
 
-func (r *accountRepository) CreateAccountTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.CreateAccountRequest) (*account.FijoyAccount, error) {
-	newAccount := account.FijoyAccount{
-		FijoyAccount: model.FijoyAccount{
-			ID:          constants.AccountPrefix + cuid2.Generate(),
-			ProfileID:   profileId,
-			Name:        req.Name,
-			AccountType: accountTypeProtoToModel(req.AccountType),
-
-			Archived:          false,
-			IncludeInNetWorth: true,
-
-			Symbol:     req.Symbol,
-			SymbolType: accountSymbolTypeProtoToModel(req.SymbolType),
-		},
-		Amount:  decimal.Zero,
-		Value:   decimal.Zero,
-		FxRate:  decimal.Zero,
-		Balance: decimal.Zero,
-	}
-
-	dest := account.FijoyAccount{}
-
-	stmt := FijoyAccount.
-		INSERT(FijoyAccount.AllColumns).
-		MODEL(newAccount).RETURNING(FijoyAccount.AllColumns)
-
-	err := stmt.QueryContext(ctx, tx, &dest)
+func (r *accountRepository) CreateAccount(ctx context.Context, client *ent.Client, profileId string, req *fijoyv1.CreateAccountRequest) (*ent.Account, error) {
+	account, err := client.Account.
+		Create().
+		SetProfileID(profileId).
+		SetName(req.Name).
+		SetAccountType(accountTypeProtoToModel(req.AccountType)).
+		SetSymbol(req.Symbol).
+		SetSymbolType(accountSymbolTypeProtoToModel(req.SymbolType)).
+		SetAmount(decimal.Zero).
+		SetValue(decimal.Zero).
+		SetFxRate(decimal.Zero).
+		SetBalance(decimal.Zero).
+		Save(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &dest, nil
+
+	return account, nil
 }
 
-func (r *accountRepository) GetAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*account.FijoyAccount, error) {
-	stmt := SELECT(FijoyAccount.AllColumns).
-		FROM(FijoyAccount).
-		WHERE(
-			AND(
-				FijoyAccount.ID.EQ(String(id)),
-				FijoyAccount.ProfileID.EQ(String(profileId)),
-			),
-		)
-
-	dest := account.FijoyAccount{}
-
-	err := stmt.QueryContext(ctx, tx, &dest)
+func (r *accountRepository) GetAccount(ctx context.Context, client *ent.Client, id string) (*ent.Account, error) {
+	account, err := client.Account.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return account, nil
 }
 
-func (r *accountRepository) GetAccountById(ctx context.Context, profileId, id string) (*account.FijoyAccount, error) {
-	stmt := SELECT(FijoyAccount.AllColumns).
-		FROM(FijoyAccount).
-		WHERE(
-			AND(
-				FijoyAccount.ID.EQ(String(id)),
-				FijoyAccount.ProfileID.EQ(String(profileId)),
-			),
-		)
-
-	dest := account.FijoyAccount{}
-
-	err := stmt.QueryContext(ctx, r.db, &dest)
+func (r *accountRepository) GetAccounts(ctx context.Context, client *ent.Client, profileId string) ([]*ent.Account, error) {
+	account, err := client.Account.Query().
+		Where(account.HasProfileWith(profile.ID(profileId))).
+		All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return account, nil
 }
 
-func (r *accountRepository) GetAccounts(ctx context.Context, profileId string) ([]*account.FijoyAccount, error) {
-	stmt := SELECT(FijoyAccount.AllColumns).
-		FROM(FijoyAccount).
-		WHERE(FijoyAccount.ProfileID.EQ(String(profileId)))
+type UpdateAccountRequest struct {
+	Name              string
+	Archived          *bool
+	IncludeInNetWorth *bool
 
-	dest := []*account.FijoyAccount{}
-
-	err := stmt.QueryContext(ctx, r.db, &dest)
-	if err != nil {
-		return nil, err
-	}
-
-	return dest, nil
+	Amount  *decimal.Decimal
+	Value   *decimal.Decimal
+	FxRate  *decimal.Decimal
+	Balance *decimal.Decimal
 }
 
-func (r *accountRepository) UpdateAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId string, req *fijoyv1.UpdateAccountRequest) (*account.FijoyAccount, error) {
-	newAccount, err := r.GetAccountByIdTX(ctx, tx, profileId, req.Id)
-	if err != nil {
-		return nil, err
-	}
+func (r *accountRepository) UpdateAccount(ctx context.Context, client *ent.Client, id string, req UpdateAccountRequest) (*ent.Account, error) {
+	update := client.Account.UpdateOneID(id)
 
-	columnList := ColumnList{}
-
-	if req.Name != nil {
-		newAccount.Name = *req.Name
-		columnList = append(columnList, FijoyAccount.Name)
+	if req.Name != "" {
+		update = update.SetName(req.Name)
 	}
 	if req.Archived != nil {
-		newAccount.Archived = *req.Archived
-		columnList = append(columnList, FijoyAccount.Archived)
+		update = update.SetArchived(*req.Archived)
 	}
 	if req.IncludeInNetWorth != nil {
-		newAccount.IncludeInNetWorth = *req.IncludeInNetWorth
-		columnList = append(columnList, FijoyAccount.IncludeInNetWorth)
+		update = update.SetIncludeInNetWorth(*req.IncludeInNetWorth)
 	}
 
-	newBalance := newAccount.Amount.Mul(newAccount.Value).Mul(newAccount.FxRate)
-	if newBalance.Cmp(newAccount.Balance) != 0 {
-		newAccount.Balance = newBalance
-		columnList = append(columnList, FijoyAccount.Balance)
+	if req.Amount != nil {
+		update = update.SetAmount(*req.Amount)
+	}
+	if req.Value != nil {
+		update = update.SetValue(*req.Value)
+	}
+	if req.FxRate != nil {
+		update = update.SetFxRate(*req.FxRate)
+	}
+	if req.Balance != nil {
+		update = update.SetBalance(*req.Balance)
 	}
 
-	stmt := FijoyAccount.
-		UPDATE(columnList).
-		MODEL(newAccount).
-		WHERE(
-			AND(
-				FijoyAccount.ID.EQ(String(req.Id)),
-				FijoyAccount.ProfileID.EQ(String(profileId)),
-			),
-		).
-		RETURNING(FijoyAccount.AllColumns)
-
-	dest := account.FijoyAccount{}
-
-	err = stmt.QueryContext(ctx, tx, &dest)
+	account, err := update.Save(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return account, nil
 }
 
-func (r *accountRepository) DeleteAccountByIdTX(ctx context.Context, tx *sql.Tx, profileId, id string) (*account.FijoyAccount, error) {
-	stmt := FijoyAccount.
-		DELETE().
-		WHERE(
-			AND(
-				FijoyAccount.ID.EQ(String(id)),
-				FijoyAccount.ProfileID.EQ(String(profileId)),
-			),
-		).
-		RETURNING(FijoyAccount.AllColumns)
-
-	dest := account.FijoyAccount{}
-
-	err := stmt.QueryContext(ctx, tx, &dest)
+func (r *accountRepository) DeleteAccount(ctx context.Context, client *ent.Client, id string) error {
+	err := client.Account.DeleteOneID(id).Exec(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &dest, nil
+	return nil
 }

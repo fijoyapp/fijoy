@@ -53,17 +53,7 @@ func (u *userUseCase) CreateUser(ctx context.Context, email string) (*fijoyv1.Us
 }
 
 func (u *userUseCase) GetUser(ctx context.Context, userId string) (*fijoyv1.User, error) {
-	var user *ent.User
-
-	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
-		var err error
-		user, err = u.userRepo.GetUser(ctx, tx.Client(), userId)
-		if err != nil {
-			return nil
-		}
-
-		return err
-	})
+	user, err := u.userRepo.GetUser(ctx, u.client, userId)
 	if err != nil {
 		return nil, err
 	}

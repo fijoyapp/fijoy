@@ -1,7 +1,7 @@
 import { Transport } from "@connectrpc/connect";
 import { createQueryOptions } from "@connectrpc/connect-query";
 import {
-  getAccountById,
+  getAccount,
   getAccounts,
 } from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
 import { getProfileHeader } from "../headers";
@@ -40,7 +40,7 @@ export const getAccountByIdQueryOptions = ({
   context,
 }: getAccountByIdProps) => {
   return createQueryOptions(
-    getAccountById,
+    getAccount,
     { id },
     {
       transport: context.transport,

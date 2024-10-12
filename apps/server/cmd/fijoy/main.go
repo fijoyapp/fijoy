@@ -78,9 +78,9 @@ func main() {
 	profileRepo := profile_repository.NewProfileRepository()
 	profileUseCase := profile_usecase.New(validator, client, profileRepo)
 
-	accountRepo := account_repository.NewAccountRepository(db)
+	accountRepo := account_repository.NewAccountRepository()
 	transactionRepo := transaction_repository.NewTransactionRepository(db)
-	accountUseCase := account_usecase.New(validator, db, accountRepo, transactionRepo)
+	accountUseCase := account_usecase.New(validator, client, accountRepo, transactionRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

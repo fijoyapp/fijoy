@@ -67,8 +67,7 @@ func (r *userKeyRepository) CreateUserKey(ctx context.Context, client *ent.Clien
 }
 
 func (r *userKeyRepository) GetUserKey(ctx context.Context, client *ent.Client, id string) (*ent.UserKey, error) {
-	userKey, err := client.
-		UserKey.Get(ctx, id)
+	userKey, err := client.UserKey.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
