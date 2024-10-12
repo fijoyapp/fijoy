@@ -141,6 +141,16 @@ func LocaleHasSuffix(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldHasSuffix(FieldLocale, v))
 }
 
+// LocaleIsNil applies the IsNil predicate on the "locale" field.
+func LocaleIsNil() predicate.Profile {
+	return predicate.Profile(sql.FieldIsNull(FieldLocale))
+}
+
+// LocaleNotNil applies the NotNil predicate on the "locale" field.
+func LocaleNotNil() predicate.Profile {
+	return predicate.Profile(sql.FieldNotNull(FieldLocale))
+}
+
 // LocaleEqualFold applies the EqualFold predicate on the "locale" field.
 func LocaleEqualFold(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldEqualFold(FieldLocale, v))

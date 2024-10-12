@@ -62,7 +62,7 @@ type ProfileServiceClient interface {
 	CreateProfile(context.Context, *connect.Request[v1.CreateProfileRequest]) (*connect.Response[v1.Profile], error)
 	GetProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 	UpdateProfile(context.Context, *connect.Request[v1.UpdateProfileRequest]) (*connect.Response[v1.Profile], error)
-	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
+	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[emptypb.Empty], error)
 }
 
 // NewProfileServiceClient constructs a client for the fijoy.v1.ProfileService service. By default,
@@ -94,7 +94,7 @@ func NewProfileServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(profileServiceUpdateProfileMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
-		deleteProfile: connect.NewClient[emptypb.Empty, v1.Profile](
+		deleteProfile: connect.NewClient[emptypb.Empty, emptypb.Empty](
 			httpClient,
 			baseURL+ProfileServiceDeleteProfileProcedure,
 			connect.WithSchema(profileServiceDeleteProfileMethodDescriptor),
@@ -108,7 +108,7 @@ type profileServiceClient struct {
 	createProfile *connect.Client[v1.CreateProfileRequest, v1.Profile]
 	getProfile    *connect.Client[emptypb.Empty, v1.Profile]
 	updateProfile *connect.Client[v1.UpdateProfileRequest, v1.Profile]
-	deleteProfile *connect.Client[emptypb.Empty, v1.Profile]
+	deleteProfile *connect.Client[emptypb.Empty, emptypb.Empty]
 }
 
 // CreateProfile calls fijoy.v1.ProfileService.CreateProfile.
@@ -127,7 +127,7 @@ func (c *profileServiceClient) UpdateProfile(ctx context.Context, req *connect.R
 }
 
 // DeleteProfile calls fijoy.v1.ProfileService.DeleteProfile.
-func (c *profileServiceClient) DeleteProfile(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error) {
+func (c *profileServiceClient) DeleteProfile(ctx context.Context, req *connect.Request[emptypb.Empty]) (*connect.Response[emptypb.Empty], error) {
 	return c.deleteProfile.CallUnary(ctx, req)
 }
 
@@ -136,7 +136,7 @@ type ProfileServiceHandler interface {
 	CreateProfile(context.Context, *connect.Request[v1.CreateProfileRequest]) (*connect.Response[v1.Profile], error)
 	GetProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
 	UpdateProfile(context.Context, *connect.Request[v1.UpdateProfileRequest]) (*connect.Response[v1.Profile], error)
-	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error)
+	DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[emptypb.Empty], error)
 }
 
 // NewProfileServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -201,6 +201,6 @@ func (UnimplementedProfileServiceHandler) UpdateProfile(context.Context, *connec
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.ProfileService.UpdateProfile is not implemented"))
 }
 
-func (UnimplementedProfileServiceHandler) DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.Profile], error) {
+func (UnimplementedProfileServiceHandler) DeleteProfile(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[emptypb.Empty], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.ProfileService.DeleteProfile is not implemented"))
 }

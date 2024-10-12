@@ -16,27 +16,22 @@ export class Profile extends Message<Profile> {
   id = "";
 
   /**
-   * @generated from field: string user_id = 2;
-   */
-  userId = "";
-
-  /**
-   * @generated from field: repeated string currencies = 3;
+   * @generated from field: repeated string currencies = 2;
    */
   currencies: string[] = [];
 
   /**
-   * @generated from field: string locale = 4;
+   * @generated from field: string locale = 3;
    */
   locale = "";
 
   /**
-   * @generated from field: string net_worth_goal = 5;
+   * @generated from field: string net_worth_goal = 4;
    */
   netWorthGoal = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 6;
+   * @generated from field: google.protobuf.Timestamp created_at = 5;
    */
   createdAt?: Timestamp;
 
@@ -49,11 +44,10 @@ export class Profile extends Message<Profile> {
   static readonly typeName = "fijoy.v1.Profile";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "user_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
-    { no: 4, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "net_worth_goal", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "created_at", kind: "message", T: Timestamp },
+    { no: 2, name: "currencies", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 3, name: "locale", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "net_worth_goal", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "created_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Profile {

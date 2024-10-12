@@ -88,7 +88,7 @@ var (
 	// ProfilesColumns holds the columns for the "profiles" table.
 	ProfilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
-		{Name: "locale", Type: field.TypeString},
+		{Name: "locale", Type: field.TypeString, Nullable: true},
 		{Name: "currencies", Type: field.TypeString},
 		{Name: "net_worth_goal", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 		{Name: "created_at", Type: field.TypeTime},

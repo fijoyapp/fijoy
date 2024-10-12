@@ -57,7 +57,7 @@ export const deleteProfile = {
   name: "DeleteProfile",
   kind: MethodKind.Unary,
   I: Empty,
-  O: Profile,
+  O: Empty,
   service: {
     typeName: "fijoy.v1.ProfileService"
   }
