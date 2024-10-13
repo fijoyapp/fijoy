@@ -53,9 +53,9 @@ func (osc *OverallSnapshotCreate) SetReceivable(d decimal.Decimal) *OverallSnaps
 	return osc
 }
 
-// SetLiablity sets the "liablity" field.
-func (osc *OverallSnapshotCreate) SetLiablity(d decimal.Decimal) *OverallSnapshotCreate {
-	osc.mutation.SetLiablity(d)
+// SetLiability sets the "liability" field.
+func (osc *OverallSnapshotCreate) SetLiability(d decimal.Decimal) *OverallSnapshotCreate {
+	osc.mutation.SetLiability(d)
 	return osc
 }
 
@@ -145,8 +145,8 @@ func (osc *OverallSnapshotCreate) check() error {
 	if _, ok := osc.mutation.Receivable(); !ok {
 		return &ValidationError{Name: "receivable", err: errors.New(`ent: missing required field "OverallSnapshot.receivable"`)}
 	}
-	if _, ok := osc.mutation.Liablity(); !ok {
-		return &ValidationError{Name: "liablity", err: errors.New(`ent: missing required field "OverallSnapshot.liablity"`)}
+	if _, ok := osc.mutation.Liability(); !ok {
+		return &ValidationError{Name: "liability", err: errors.New(`ent: missing required field "OverallSnapshot.liability"`)}
 	}
 	if len(osc.mutation.ProfileIDs()) == 0 {
 		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "OverallSnapshot.profile"`)}
@@ -206,9 +206,9 @@ func (osc *OverallSnapshotCreate) createSpec() (*OverallSnapshot, *sqlgraph.Crea
 		_spec.SetField(overallsnapshot.FieldReceivable, field.TypeFloat64, value)
 		_node.Receivable = value
 	}
-	if value, ok := osc.mutation.Liablity(); ok {
-		_spec.SetField(overallsnapshot.FieldLiablity, field.TypeFloat64, value)
-		_node.Liablity = value
+	if value, ok := osc.mutation.Liability(); ok {
+		_spec.SetField(overallsnapshot.FieldLiability, field.TypeFloat64, value)
+		_node.Liability = value
 	}
 	if nodes := osc.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

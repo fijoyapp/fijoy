@@ -35,6 +35,10 @@ import (
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	transaction_usecase "fijoy/internal/domain/transaction/usecase"
 
+	snapshot_handler "fijoy/internal/domain/snapshot/handler"
+	snapshot_repository "fijoy/internal/domain/snapshot/repository"
+	snapshot_usecase "fijoy/internal/domain/snapshot/usecase"
+
 	currency_handler "fijoy/internal/domain/currency/handler"
 
 	"github.com/bufbuild/protovalidate-go"
@@ -87,6 +91,9 @@ func main() {
 	transactionRepo := transaction_repository.NewTransactionRepository()
 	transctionUseCase := transaction_usecase.New(validator, client, transactionRepo)
 
+	snapshotRepo := snapshot_repository.NewSnapshotRepository()
+	snapshotUseCase := snapshot_usecase.New(validator, client, snapshotRepo)
+
 	accountRepo := account_repository.NewAccountRepository()
 	accountUseCase := account_usecase.New(validator, client, accountRepo, transactionRepo)
 
@@ -112,6 +119,7 @@ func main() {
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
 	transaction_handler.RegisterConnect(r, protoValidator, cfg.Auth, transctionUseCase)
+	snapshot_handler.RegisterConnect(r, protoValidator, cfg.Auth, snapshotUseCase)
 
 	currency_handler.RegisterConnect(r)
 

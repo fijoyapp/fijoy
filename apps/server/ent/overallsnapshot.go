@@ -29,8 +29,8 @@ type OverallSnapshot struct {
 	Property decimal.Decimal `json:"property,omitempty"`
 	// Receivable holds the value of the "receivable" field.
 	Receivable decimal.Decimal `json:"receivable,omitempty"`
-	// Liablity holds the value of the "liablity" field.
-	Liablity decimal.Decimal `json:"liablity,omitempty"`
+	// Liability holds the value of the "liability" field.
+	Liability decimal.Decimal `json:"liability,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OverallSnapshotQuery when eager-loading is set.
 	Edges                    OverallSnapshotEdges `json:"edges"`
@@ -63,7 +63,7 @@ func (*OverallSnapshot) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case overallsnapshot.FieldLiquidity, overallsnapshot.FieldInvestment, overallsnapshot.FieldProperty, overallsnapshot.FieldReceivable, overallsnapshot.FieldLiablity:
+		case overallsnapshot.FieldLiquidity, overallsnapshot.FieldInvestment, overallsnapshot.FieldProperty, overallsnapshot.FieldReceivable, overallsnapshot.FieldLiability:
 			values[i] = new(decimal.Decimal)
 		case overallsnapshot.FieldID:
 			values[i] = new(sql.NullString)
@@ -122,11 +122,11 @@ func (os *OverallSnapshot) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				os.Receivable = *value
 			}
-		case overallsnapshot.FieldLiablity:
+		case overallsnapshot.FieldLiability:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field liablity", values[i])
+				return fmt.Errorf("unexpected type %T for field liability", values[i])
 			} else if value != nil {
-				os.Liablity = *value
+				os.Liability = *value
 			}
 		case overallsnapshot.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -191,8 +191,8 @@ func (os *OverallSnapshot) String() string {
 	builder.WriteString("receivable=")
 	builder.WriteString(fmt.Sprintf("%v", os.Receivable))
 	builder.WriteString(", ")
-	builder.WriteString("liablity=")
-	builder.WriteString(fmt.Sprintf("%v", os.Liablity))
+	builder.WriteString("liability=")
+	builder.WriteString(fmt.Sprintf("%v", os.Liability))
 	builder.WriteByte(')')
 	return builder.String()
 }

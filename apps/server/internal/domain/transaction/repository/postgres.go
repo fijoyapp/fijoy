@@ -6,6 +6,8 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
+
+	"github.com/shopspring/decimal"
 )
 
 type TransactionRepository interface {
@@ -25,12 +27,33 @@ func NewTransactionRepository() *transactionRepository {
 }
 
 type CreateTransactionRequest struct {
-	// TODO: implement
+	OldAmount   decimal.Decimal
+	AmountDelta decimal.Decimal
+	Value       decimal.Decimal
+	FxRate      decimal.Decimal
+	OldBalance  decimal.Decimal
+
+	Note string
 }
 
 func (r *transactionRepository) CreateTransaction(ctx context.Context, client *ent.Client, req CreateTransactionRequest) (*ent.Transaction, error) {
-	// TODO: implement
-	return nil, nil
+	balanceDelta := req.AmountDelta.Mul(req.Value).Mul(req.FxRate)
+	newBalance := req.OldBalance.Add(balanceDelta)
+	newAmount := req.OldAmount.Add(req.AmountDelta)
+
+	transaction, err := client.Transaction.Create().
+		SetAmount(newAmount).
+		SetAmountDelta(req.AmountDelta).
+		SetValue(req.Value).
+		SetFxRate(req.FxRate).
+		SetBalance(newBalance).
+		SetBalanceDelta(balanceDelta).
+		SetNote(req.Note).Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return transaction, nil
 }
 
 func (r *transactionRepository) GetTransaction(ctx context.Context, client *ent.Client, id string) (*ent.Transaction, error) {
