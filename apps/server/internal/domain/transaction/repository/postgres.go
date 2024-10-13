@@ -37,7 +37,7 @@ func (r *transactionRepository) GetTransaction(ctx context.Context, client *ent.
 	transaction, err := client.Transaction.Query().
 		Where(transaction.ID(id)).
 		WithAccount(func(q *ent.AccountQuery) {
-			q.Select(account.FieldID)
+			q.Select(account.FieldID).Select(account.FieldName)
 		}).
 		Only(ctx)
 	if err != nil {
@@ -51,7 +51,7 @@ func (r *transactionRepository) GetTransactions(ctx context.Context, client *ent
 	transaction, err := client.Transaction.Query().
 		Where(transaction.HasProfileWith(profile.ID(profileId))).
 		WithAccount(func(q *ent.AccountQuery) {
-			q.Select(account.FieldID)
+			q.Select(account.FieldID).Select(account.FieldName)
 		}).
 		All(ctx)
 	if err != nil {
@@ -65,7 +65,7 @@ func (r *transactionRepository) GetTransactionsByAccount(ctx context.Context, cl
 	transaction, err := client.Transaction.Query().
 		Where(transaction.HasAccountWith(account.ID(accountId))).
 		WithAccount(func(q *ent.AccountQuery) {
-			q.Select(account.FieldID)
+			q.Select(account.FieldID).Select(account.FieldName)
 		}).
 		All(ctx)
 	if err != nil {
@@ -76,6 +76,9 @@ func (r *transactionRepository) GetTransactionsByAccount(ctx context.Context, cl
 }
 
 func (r *transactionRepository) DeleteTransaction(ctx context.Context, client *ent.Client, id string) error {
-	// TODO: implement
+	err := client.Transaction.DeleteOneID(id).Exec(ctx)
+	if err != nil {
+		return err
+	}
 	return nil
 }
