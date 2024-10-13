@@ -128,24 +128,24 @@ func (osu *OverallSnapshotUpdate) AddReceivable(d decimal.Decimal) *OverallSnaps
 	return osu
 }
 
-// SetLiablity sets the "liablity" field.
-func (osu *OverallSnapshotUpdate) SetLiablity(d decimal.Decimal) *OverallSnapshotUpdate {
-	osu.mutation.ResetLiablity()
-	osu.mutation.SetLiablity(d)
+// SetLiability sets the "liability" field.
+func (osu *OverallSnapshotUpdate) SetLiability(d decimal.Decimal) *OverallSnapshotUpdate {
+	osu.mutation.ResetLiability()
+	osu.mutation.SetLiability(d)
 	return osu
 }
 
-// SetNillableLiablity sets the "liablity" field if the given value is not nil.
-func (osu *OverallSnapshotUpdate) SetNillableLiablity(d *decimal.Decimal) *OverallSnapshotUpdate {
+// SetNillableLiability sets the "liability" field if the given value is not nil.
+func (osu *OverallSnapshotUpdate) SetNillableLiability(d *decimal.Decimal) *OverallSnapshotUpdate {
 	if d != nil {
-		osu.SetLiablity(*d)
+		osu.SetLiability(*d)
 	}
 	return osu
 }
 
-// AddLiablity adds d to the "liablity" field.
-func (osu *OverallSnapshotUpdate) AddLiablity(d decimal.Decimal) *OverallSnapshotUpdate {
-	osu.mutation.AddLiablity(d)
+// AddLiability adds d to the "liability" field.
+func (osu *OverallSnapshotUpdate) AddLiability(d decimal.Decimal) *OverallSnapshotUpdate {
+	osu.mutation.AddLiability(d)
 	return osu
 }
 
@@ -245,11 +245,11 @@ func (osu *OverallSnapshotUpdate) sqlSave(ctx context.Context) (n int, err error
 	if value, ok := osu.mutation.AddedReceivable(); ok {
 		_spec.AddField(overallsnapshot.FieldReceivable, field.TypeFloat64, value)
 	}
-	if value, ok := osu.mutation.Liablity(); ok {
-		_spec.SetField(overallsnapshot.FieldLiablity, field.TypeFloat64, value)
+	if value, ok := osu.mutation.Liability(); ok {
+		_spec.SetField(overallsnapshot.FieldLiability, field.TypeFloat64, value)
 	}
-	if value, ok := osu.mutation.AddedLiablity(); ok {
-		_spec.AddField(overallsnapshot.FieldLiablity, field.TypeFloat64, value)
+	if value, ok := osu.mutation.AddedLiability(); ok {
+		_spec.AddField(overallsnapshot.FieldLiability, field.TypeFloat64, value)
 	}
 	if osu.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -398,24 +398,24 @@ func (osuo *OverallSnapshotUpdateOne) AddReceivable(d decimal.Decimal) *OverallS
 	return osuo
 }
 
-// SetLiablity sets the "liablity" field.
-func (osuo *OverallSnapshotUpdateOne) SetLiablity(d decimal.Decimal) *OverallSnapshotUpdateOne {
-	osuo.mutation.ResetLiablity()
-	osuo.mutation.SetLiablity(d)
+// SetLiability sets the "liability" field.
+func (osuo *OverallSnapshotUpdateOne) SetLiability(d decimal.Decimal) *OverallSnapshotUpdateOne {
+	osuo.mutation.ResetLiability()
+	osuo.mutation.SetLiability(d)
 	return osuo
 }
 
-// SetNillableLiablity sets the "liablity" field if the given value is not nil.
-func (osuo *OverallSnapshotUpdateOne) SetNillableLiablity(d *decimal.Decimal) *OverallSnapshotUpdateOne {
+// SetNillableLiability sets the "liability" field if the given value is not nil.
+func (osuo *OverallSnapshotUpdateOne) SetNillableLiability(d *decimal.Decimal) *OverallSnapshotUpdateOne {
 	if d != nil {
-		osuo.SetLiablity(*d)
+		osuo.SetLiability(*d)
 	}
 	return osuo
 }
 
-// AddLiablity adds d to the "liablity" field.
-func (osuo *OverallSnapshotUpdateOne) AddLiablity(d decimal.Decimal) *OverallSnapshotUpdateOne {
-	osuo.mutation.AddLiablity(d)
+// AddLiability adds d to the "liability" field.
+func (osuo *OverallSnapshotUpdateOne) AddLiability(d decimal.Decimal) *OverallSnapshotUpdateOne {
+	osuo.mutation.AddLiability(d)
 	return osuo
 }
 
@@ -545,11 +545,11 @@ func (osuo *OverallSnapshotUpdateOne) sqlSave(ctx context.Context) (_node *Overa
 	if value, ok := osuo.mutation.AddedReceivable(); ok {
 		_spec.AddField(overallsnapshot.FieldReceivable, field.TypeFloat64, value)
 	}
-	if value, ok := osuo.mutation.Liablity(); ok {
-		_spec.SetField(overallsnapshot.FieldLiablity, field.TypeFloat64, value)
+	if value, ok := osuo.mutation.Liability(); ok {
+		_spec.SetField(overallsnapshot.FieldLiability, field.TypeFloat64, value)
 	}
-	if value, ok := osuo.mutation.AddedLiablity(); ok {
-		_spec.AddField(overallsnapshot.FieldLiablity, field.TypeFloat64, value)
+	if value, ok := osuo.mutation.AddedLiability(); ok {
+		_spec.AddField(overallsnapshot.FieldLiability, field.TypeFloat64, value)
 	}
 	if osuo.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{

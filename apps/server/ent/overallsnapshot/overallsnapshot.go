@@ -22,8 +22,8 @@ const (
 	FieldProperty = "property"
 	// FieldReceivable holds the string denoting the receivable field in the database.
 	FieldReceivable = "receivable"
-	// FieldLiablity holds the string denoting the liablity field in the database.
-	FieldLiablity = "liablity"
+	// FieldLiability holds the string denoting the liability field in the database.
+	FieldLiability = "liability"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
 	EdgeProfile = "profile"
 	// Table holds the table name of the overallsnapshot in the database.
@@ -45,7 +45,7 @@ var Columns = []string{
 	FieldInvestment,
 	FieldProperty,
 	FieldReceivable,
-	FieldLiablity,
+	FieldLiability,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "overall_snapshots"
@@ -107,9 +107,9 @@ func ByReceivable(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldReceivable, opts...).ToFunc()
 }
 
-// ByLiablity orders the results by the liablity field.
-func ByLiablity(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLiablity, opts...).ToFunc()
+// ByLiability orders the results by the liability field.
+func ByLiability(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLiability, opts...).ToFunc()
 }
 
 // ByProfileField orders the results by profile field.

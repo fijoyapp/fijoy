@@ -91,9 +91,9 @@ func Receivable(v decimal.Decimal) predicate.OverallSnapshot {
 	return predicate.OverallSnapshot(sql.FieldEQ(FieldReceivable, v))
 }
 
-// Liablity applies equality check predicate on the "liablity" field. It's identical to LiablityEQ.
-func Liablity(v decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldEQ(FieldLiablity, v))
+// Liability applies equality check predicate on the "liability" field. It's identical to LiabilityEQ.
+func Liability(v decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldEQ(FieldLiability, v))
 }
 
 // DatehourEQ applies the EQ predicate on the "datehour" field.
@@ -296,44 +296,44 @@ func ReceivableLTE(v decimal.Decimal) predicate.OverallSnapshot {
 	return predicate.OverallSnapshot(sql.FieldLTE(FieldReceivable, v))
 }
 
-// LiablityEQ applies the EQ predicate on the "liablity" field.
-func LiablityEQ(v decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldEQ(FieldLiablity, v))
+// LiabilityEQ applies the EQ predicate on the "liability" field.
+func LiabilityEQ(v decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldEQ(FieldLiability, v))
 }
 
-// LiablityNEQ applies the NEQ predicate on the "liablity" field.
-func LiablityNEQ(v decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldNEQ(FieldLiablity, v))
+// LiabilityNEQ applies the NEQ predicate on the "liability" field.
+func LiabilityNEQ(v decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldNEQ(FieldLiability, v))
 }
 
-// LiablityIn applies the In predicate on the "liablity" field.
-func LiablityIn(vs ...decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldIn(FieldLiablity, vs...))
+// LiabilityIn applies the In predicate on the "liability" field.
+func LiabilityIn(vs ...decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldIn(FieldLiability, vs...))
 }
 
-// LiablityNotIn applies the NotIn predicate on the "liablity" field.
-func LiablityNotIn(vs ...decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldNotIn(FieldLiablity, vs...))
+// LiabilityNotIn applies the NotIn predicate on the "liability" field.
+func LiabilityNotIn(vs ...decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldNotIn(FieldLiability, vs...))
 }
 
-// LiablityGT applies the GT predicate on the "liablity" field.
-func LiablityGT(v decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldGT(FieldLiablity, v))
+// LiabilityGT applies the GT predicate on the "liability" field.
+func LiabilityGT(v decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldGT(FieldLiability, v))
 }
 
-// LiablityGTE applies the GTE predicate on the "liablity" field.
-func LiablityGTE(v decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldGTE(FieldLiablity, v))
+// LiabilityGTE applies the GTE predicate on the "liability" field.
+func LiabilityGTE(v decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldGTE(FieldLiability, v))
 }
 
-// LiablityLT applies the LT predicate on the "liablity" field.
-func LiablityLT(v decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldLT(FieldLiablity, v))
+// LiabilityLT applies the LT predicate on the "liability" field.
+func LiabilityLT(v decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldLT(FieldLiability, v))
 }
 
-// LiablityLTE applies the LTE predicate on the "liablity" field.
-func LiablityLTE(v decimal.Decimal) predicate.OverallSnapshot {
-	return predicate.OverallSnapshot(sql.FieldLTE(FieldLiablity, v))
+// LiabilityLTE applies the LTE predicate on the "liability" field.
+func LiabilityLTE(v decimal.Decimal) predicate.OverallSnapshot {
+	return predicate.OverallSnapshot(sql.FieldLTE(FieldLiability, v))
 }
 
 // HasProfile applies the HasEdge predicate on the "profile" edge.

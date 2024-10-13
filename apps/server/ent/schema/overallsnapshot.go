@@ -53,7 +53,7 @@ func (OverallSnapshot) Fields() []ent.Field {
 				dialect.MySQL:    "decimal(38,18)",
 				dialect.Postgres: "numeric(38,18)",
 			}),
-		field.Float("liablity").
+		field.Float("liability").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(38,18)",

@@ -1863,8 +1863,8 @@ type OverallSnapshotMutation struct {
 	addproperty    *decimal.Decimal
 	receivable     *decimal.Decimal
 	addreceivable  *decimal.Decimal
-	liablity       *decimal.Decimal
-	addliablity    *decimal.Decimal
+	liability      *decimal.Decimal
+	addliability   *decimal.Decimal
 	clearedFields  map[string]struct{}
 	profile        *string
 	clearedprofile bool
@@ -2237,60 +2237,60 @@ func (m *OverallSnapshotMutation) ResetReceivable() {
 	m.addreceivable = nil
 }
 
-// SetLiablity sets the "liablity" field.
-func (m *OverallSnapshotMutation) SetLiablity(d decimal.Decimal) {
-	m.liablity = &d
-	m.addliablity = nil
+// SetLiability sets the "liability" field.
+func (m *OverallSnapshotMutation) SetLiability(d decimal.Decimal) {
+	m.liability = &d
+	m.addliability = nil
 }
 
-// Liablity returns the value of the "liablity" field in the mutation.
-func (m *OverallSnapshotMutation) Liablity() (r decimal.Decimal, exists bool) {
-	v := m.liablity
+// Liability returns the value of the "liability" field in the mutation.
+func (m *OverallSnapshotMutation) Liability() (r decimal.Decimal, exists bool) {
+	v := m.liability
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLiablity returns the old "liablity" field's value of the OverallSnapshot entity.
+// OldLiability returns the old "liability" field's value of the OverallSnapshot entity.
 // If the OverallSnapshot object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OverallSnapshotMutation) OldLiablity(ctx context.Context) (v decimal.Decimal, err error) {
+func (m *OverallSnapshotMutation) OldLiability(ctx context.Context) (v decimal.Decimal, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLiablity is only allowed on UpdateOne operations")
+		return v, errors.New("OldLiability is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLiablity requires an ID field in the mutation")
+		return v, errors.New("OldLiability requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLiablity: %w", err)
+		return v, fmt.Errorf("querying old value for OldLiability: %w", err)
 	}
-	return oldValue.Liablity, nil
+	return oldValue.Liability, nil
 }
 
-// AddLiablity adds d to the "liablity" field.
-func (m *OverallSnapshotMutation) AddLiablity(d decimal.Decimal) {
-	if m.addliablity != nil {
-		*m.addliablity = m.addliablity.Add(d)
+// AddLiability adds d to the "liability" field.
+func (m *OverallSnapshotMutation) AddLiability(d decimal.Decimal) {
+	if m.addliability != nil {
+		*m.addliability = m.addliability.Add(d)
 	} else {
-		m.addliablity = &d
+		m.addliability = &d
 	}
 }
 
-// AddedLiablity returns the value that was added to the "liablity" field in this mutation.
-func (m *OverallSnapshotMutation) AddedLiablity() (r decimal.Decimal, exists bool) {
-	v := m.addliablity
+// AddedLiability returns the value that was added to the "liability" field in this mutation.
+func (m *OverallSnapshotMutation) AddedLiability() (r decimal.Decimal, exists bool) {
+	v := m.addliability
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetLiablity resets all changes to the "liablity" field.
-func (m *OverallSnapshotMutation) ResetLiablity() {
-	m.liablity = nil
-	m.addliablity = nil
+// ResetLiability resets all changes to the "liability" field.
+func (m *OverallSnapshotMutation) ResetLiability() {
+	m.liability = nil
+	m.addliability = nil
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by id.
@@ -2382,8 +2382,8 @@ func (m *OverallSnapshotMutation) Fields() []string {
 	if m.receivable != nil {
 		fields = append(fields, overallsnapshot.FieldReceivable)
 	}
-	if m.liablity != nil {
-		fields = append(fields, overallsnapshot.FieldLiablity)
+	if m.liability != nil {
+		fields = append(fields, overallsnapshot.FieldLiability)
 	}
 	return fields
 }
@@ -2403,8 +2403,8 @@ func (m *OverallSnapshotMutation) Field(name string) (ent.Value, bool) {
 		return m.Property()
 	case overallsnapshot.FieldReceivable:
 		return m.Receivable()
-	case overallsnapshot.FieldLiablity:
-		return m.Liablity()
+	case overallsnapshot.FieldLiability:
+		return m.Liability()
 	}
 	return nil, false
 }
@@ -2424,8 +2424,8 @@ func (m *OverallSnapshotMutation) OldField(ctx context.Context, name string) (en
 		return m.OldProperty(ctx)
 	case overallsnapshot.FieldReceivable:
 		return m.OldReceivable(ctx)
-	case overallsnapshot.FieldLiablity:
-		return m.OldLiablity(ctx)
+	case overallsnapshot.FieldLiability:
+		return m.OldLiability(ctx)
 	}
 	return nil, fmt.Errorf("unknown OverallSnapshot field %s", name)
 }
@@ -2470,12 +2470,12 @@ func (m *OverallSnapshotMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetReceivable(v)
 		return nil
-	case overallsnapshot.FieldLiablity:
+	case overallsnapshot.FieldLiability:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLiablity(v)
+		m.SetLiability(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OverallSnapshot field %s", name)
@@ -2497,8 +2497,8 @@ func (m *OverallSnapshotMutation) AddedFields() []string {
 	if m.addreceivable != nil {
 		fields = append(fields, overallsnapshot.FieldReceivable)
 	}
-	if m.addliablity != nil {
-		fields = append(fields, overallsnapshot.FieldLiablity)
+	if m.addliability != nil {
+		fields = append(fields, overallsnapshot.FieldLiability)
 	}
 	return fields
 }
@@ -2516,8 +2516,8 @@ func (m *OverallSnapshotMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedProperty()
 	case overallsnapshot.FieldReceivable:
 		return m.AddedReceivable()
-	case overallsnapshot.FieldLiablity:
-		return m.AddedLiablity()
+	case overallsnapshot.FieldLiability:
+		return m.AddedLiability()
 	}
 	return nil, false
 }
@@ -2555,12 +2555,12 @@ func (m *OverallSnapshotMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddReceivable(v)
 		return nil
-	case overallsnapshot.FieldLiablity:
+	case overallsnapshot.FieldLiability:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddLiablity(v)
+		m.AddLiability(v)
 		return nil
 	}
 	return fmt.Errorf("unknown OverallSnapshot numeric field %s", name)
@@ -2604,8 +2604,8 @@ func (m *OverallSnapshotMutation) ResetField(name string) error {
 	case overallsnapshot.FieldReceivable:
 		m.ResetReceivable()
 		return nil
-	case overallsnapshot.FieldLiablity:
-		m.ResetLiablity()
+	case overallsnapshot.FieldLiability:
+		m.ResetLiability()
 		return nil
 	}
 	return fmt.Errorf("unknown OverallSnapshot field %s", name)

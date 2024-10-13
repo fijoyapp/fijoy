@@ -68,7 +68,7 @@ var (
 		{Name: "investment", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 		{Name: "property", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 		{Name: "receivable", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "liablity", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
+		{Name: "liability", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 		{Name: "profile_overall_snapshot", Type: field.TypeString},
 	}
 	// OverallSnapshotsTable holds the schema information for the "overall_snapshots" table.
