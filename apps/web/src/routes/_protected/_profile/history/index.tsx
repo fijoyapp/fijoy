@@ -55,7 +55,6 @@ function Page() {
       {/* <NewTransaction */}
       {/*   accounts={accounts} */}
       {/*   workspace={context.workspace} */}
-      {/*   categories={[]} // FIXME: load categories */}
       {/* /> */}
     </div>
   );
