@@ -31,14 +31,31 @@ func NewSnapshotRepository() *snapshotRepository {
 }
 
 type CreateAccountSnapshotRequest struct {
-	Datehour time.Time
-	Balance  decimal.Decimal
+	AccountId string
+	Datehour  time.Time
+	Balance   decimal.Decimal
 }
 
 func (r *snapshotRepository) CreateAccountSnapshot(ctx context.Context, client *ent.Client, req CreateAccountSnapshotRequest) (*ent.AccountSnapshot, error) {
+	latestSnapshot, err := r.GetLatestAccountSnapshot(ctx, client, req.AccountId)
+	if err != nil {
+		return nil, err
+	}
+
+	if latestSnapshot.Datehour.Truncate(time.Hour).Equal(req.Datehour.Truncate(time.Hour)) {
+		// Last snapshot already exists for the same hour, update it instead!
+		snapshot, err := client.AccountSnapshot.UpdateOneID(latestSnapshot.ID).SetBalance(req.Balance).Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		return snapshot, nil
+	}
+
 	snapshot, err := client.AccountSnapshot.Create().
-		SetBalance(req.Balance).
 		SetDatehour(req.Datehour.Truncate(time.Hour)).
+		SetAccountID(req.AccountId).
+		SetBalance(req.Balance).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -48,7 +65,8 @@ func (r *snapshotRepository) CreateAccountSnapshot(ctx context.Context, client *
 }
 
 type CreateOverallSnapshotRequest struct {
-	Datehour time.Time
+	ProfileId string
+	Datehour  time.Time
 
 	Liquidity  decimal.Decimal
 	Investment decimal.Decimal
@@ -58,8 +76,30 @@ type CreateOverallSnapshotRequest struct {
 }
 
 func (r *snapshotRepository) CreateOverallSnapshot(ctx context.Context, client *ent.Client, req CreateOverallSnapshotRequest) (*ent.OverallSnapshot, error) {
+	latestSnapshot, err := r.GetLatestOverallSnapshot(ctx, client, req.ProfileId)
+	if err != nil {
+		return nil, err
+	}
+
+	if latestSnapshot.Datehour.Truncate(time.Hour).Equal(req.Datehour.Truncate(time.Hour)) {
+		// Last snapshot already exists for the same hour, update it instead!
+		snapshot, err := client.OverallSnapshot.UpdateOneID(latestSnapshot.ID).
+			SetLiquidity(req.Liquidity).
+			SetInvestment(req.Investment).
+			SetProperty(req.Property).
+			SetReceivable(req.Receivable).
+			SetLiability(req.Liability).
+			Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		return snapshot, nil
+	}
+
 	snapshot, err := client.OverallSnapshot.Create().
 		SetDatehour(req.Datehour.Truncate(time.Hour)).
+		SetProfileID(req.ProfileId).
 		SetLiquidity(req.Liquidity).
 		SetInvestment(req.Investment).
 		SetProperty(req.Property).
