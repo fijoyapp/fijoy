@@ -99,7 +99,7 @@ func (r *accountRepository) GetAccounts(ctx context.Context, client *ent.Client,
 }
 
 type UpdateAccountRequest struct {
-	Name              string
+	Name              *string
 	Archived          *bool
 	IncludeInNetWorth *bool
 
@@ -112,8 +112,8 @@ type UpdateAccountRequest struct {
 func (r *accountRepository) UpdateAccount(ctx context.Context, client *ent.Client, id string, req UpdateAccountRequest) (*ent.Account, error) {
 	update := client.Account.UpdateOneID(id)
 
-	if req.Name != "" {
-		update = update.SetName(req.Name)
+	if req.Name != nil && *req.Name != "" {
+		update = update.SetName(*req.Name)
 	}
 	if req.Archived != nil {
 		update = update.SetArchived(*req.Archived)

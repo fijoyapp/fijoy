@@ -51,12 +51,8 @@ message CreateAccountRequest {
   string name = 1 [(buf.validate.field).string.min_len = 1];
   AccountType account_type = 2 [(buf.validate.field).required = true];
 
-  bool include_in_net_worth = 3 [(buf.validate.field).required = false];
-
-  string symbol = 4 [(buf.validate.field).string.min_len = 1];
-  AccountSymbolType symbol_type = 5 [(buf.validate.field).required = true];
-
-  string amount = 6 [(buf.validate.field).required = true];
+  string symbol = 3 [(buf.validate.field).string.min_len = 1];
+  AccountSymbolType symbol_type = 4 [(buf.validate.field).required = true];
 }
 
 message UpdateAccountRequest {

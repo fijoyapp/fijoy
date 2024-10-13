@@ -259,11 +259,6 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
    */
   symbolType = AccountSymbolType.UNSPECIFIED;
 
-  /**
-   * @generated from field: string amount = 6;
-   */
-  amount = "";
-
   constructor(data?: PartialMessage<CreateAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -277,7 +272,6 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
     { no: 3, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 4, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
-    { no: 6, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {
