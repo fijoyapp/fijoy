@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateTransactionRequest, DeleteTransactionRequest, GetTransactionRequest, GetTransactionsByAccountRequest, Transaction, TransactionList } from "./transaction_pb.js";
+import { CreateTransactionRequest, DeleteTransactionRequest, GetTransactionRequest, GetTransactionsByAccountRequest, Transaction, TransactionList, UpdateTransactionRequest } from "./transaction_pb.js";
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -50,6 +50,15 @@ export const TransactionService = {
       O: TransactionList,
       kind: MethodKind.Unary,
       idempotency: MethodIdempotency.NoSideEffects,
+    },
+    /**
+     * @generated from rpc fijoy.v1.TransactionService.UpdateTransaction
+     */
+    updateTransaction: {
+      name: "UpdateTransaction",
+      I: UpdateTransactionRequest,
+      O: Transaction,
+      kind: MethodKind.Unary,
     },
     /**
      * @generated from rpc fijoy.v1.TransactionService.DeleteTransaction

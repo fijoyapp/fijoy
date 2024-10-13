@@ -46,6 +46,9 @@ const (
 	// TransactionServiceGetTransactionsProcedure is the fully-qualified name of the
 	// TransactionService's GetTransactions RPC.
 	TransactionServiceGetTransactionsProcedure = "/fijoy.v1.TransactionService/GetTransactions"
+	// TransactionServiceUpdateTransactionProcedure is the fully-qualified name of the
+	// TransactionService's UpdateTransaction RPC.
+	TransactionServiceUpdateTransactionProcedure = "/fijoy.v1.TransactionService/UpdateTransaction"
 	// TransactionServiceDeleteTransactionProcedure is the fully-qualified name of the
 	// TransactionService's DeleteTransaction RPC.
 	TransactionServiceDeleteTransactionProcedure = "/fijoy.v1.TransactionService/DeleteTransaction"
@@ -58,6 +61,7 @@ var (
 	transactionServiceGetTransactionMethodDescriptor           = transactionServiceServiceDescriptor.Methods().ByName("GetTransaction")
 	transactionServiceGetTransactionsByAccountMethodDescriptor = transactionServiceServiceDescriptor.Methods().ByName("GetTransactionsByAccount")
 	transactionServiceGetTransactionsMethodDescriptor          = transactionServiceServiceDescriptor.Methods().ByName("GetTransactions")
+	transactionServiceUpdateTransactionMethodDescriptor        = transactionServiceServiceDescriptor.Methods().ByName("UpdateTransaction")
 	transactionServiceDeleteTransactionMethodDescriptor        = transactionServiceServiceDescriptor.Methods().ByName("DeleteTransaction")
 )
 
@@ -67,6 +71,7 @@ type TransactionServiceClient interface {
 	GetTransaction(context.Context, *connect.Request[v1.GetTransactionRequest]) (*connect.Response[v1.Transaction], error)
 	GetTransactionsByAccount(context.Context, *connect.Request[v1.GetTransactionsByAccountRequest]) (*connect.Response[v1.TransactionList], error)
 	GetTransactions(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.TransactionList], error)
+	UpdateTransaction(context.Context, *connect.Request[v1.UpdateTransactionRequest]) (*connect.Response[v1.Transaction], error)
 	DeleteTransaction(context.Context, *connect.Request[v1.DeleteTransactionRequest]) (*connect.Response[emptypb.Empty], error)
 }
 
@@ -107,6 +112,12 @@ func NewTransactionServiceClient(httpClient connect.HTTPClient, baseURL string, 
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
+		updateTransaction: connect.NewClient[v1.UpdateTransactionRequest, v1.Transaction](
+			httpClient,
+			baseURL+TransactionServiceUpdateTransactionProcedure,
+			connect.WithSchema(transactionServiceUpdateTransactionMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 		deleteTransaction: connect.NewClient[v1.DeleteTransactionRequest, emptypb.Empty](
 			httpClient,
 			baseURL+TransactionServiceDeleteTransactionProcedure,
@@ -122,6 +133,7 @@ type transactionServiceClient struct {
 	getTransaction           *connect.Client[v1.GetTransactionRequest, v1.Transaction]
 	getTransactionsByAccount *connect.Client[v1.GetTransactionsByAccountRequest, v1.TransactionList]
 	getTransactions          *connect.Client[emptypb.Empty, v1.TransactionList]
+	updateTransaction        *connect.Client[v1.UpdateTransactionRequest, v1.Transaction]
 	deleteTransaction        *connect.Client[v1.DeleteTransactionRequest, emptypb.Empty]
 }
 
@@ -145,6 +157,11 @@ func (c *transactionServiceClient) GetTransactions(ctx context.Context, req *con
 	return c.getTransactions.CallUnary(ctx, req)
 }
 
+// UpdateTransaction calls fijoy.v1.TransactionService.UpdateTransaction.
+func (c *transactionServiceClient) UpdateTransaction(ctx context.Context, req *connect.Request[v1.UpdateTransactionRequest]) (*connect.Response[v1.Transaction], error) {
+	return c.updateTransaction.CallUnary(ctx, req)
+}
+
 // DeleteTransaction calls fijoy.v1.TransactionService.DeleteTransaction.
 func (c *transactionServiceClient) DeleteTransaction(ctx context.Context, req *connect.Request[v1.DeleteTransactionRequest]) (*connect.Response[emptypb.Empty], error) {
 	return c.deleteTransaction.CallUnary(ctx, req)
@@ -156,6 +173,7 @@ type TransactionServiceHandler interface {
 	GetTransaction(context.Context, *connect.Request[v1.GetTransactionRequest]) (*connect.Response[v1.Transaction], error)
 	GetTransactionsByAccount(context.Context, *connect.Request[v1.GetTransactionsByAccountRequest]) (*connect.Response[v1.TransactionList], error)
 	GetTransactions(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.TransactionList], error)
+	UpdateTransaction(context.Context, *connect.Request[v1.UpdateTransactionRequest]) (*connect.Response[v1.Transaction], error)
 	DeleteTransaction(context.Context, *connect.Request[v1.DeleteTransactionRequest]) (*connect.Response[emptypb.Empty], error)
 }
 
@@ -192,6 +210,12 @@ func NewTransactionServiceHandler(svc TransactionServiceHandler, opts ...connect
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
+	transactionServiceUpdateTransactionHandler := connect.NewUnaryHandler(
+		TransactionServiceUpdateTransactionProcedure,
+		svc.UpdateTransaction,
+		connect.WithSchema(transactionServiceUpdateTransactionMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	transactionServiceDeleteTransactionHandler := connect.NewUnaryHandler(
 		TransactionServiceDeleteTransactionProcedure,
 		svc.DeleteTransaction,
@@ -208,6 +232,8 @@ func NewTransactionServiceHandler(svc TransactionServiceHandler, opts ...connect
 			transactionServiceGetTransactionsByAccountHandler.ServeHTTP(w, r)
 		case TransactionServiceGetTransactionsProcedure:
 			transactionServiceGetTransactionsHandler.ServeHTTP(w, r)
+		case TransactionServiceUpdateTransactionProcedure:
+			transactionServiceUpdateTransactionHandler.ServeHTTP(w, r)
 		case TransactionServiceDeleteTransactionProcedure:
 			transactionServiceDeleteTransactionHandler.ServeHTTP(w, r)
 		default:
@@ -233,6 +259,10 @@ func (UnimplementedTransactionServiceHandler) GetTransactionsByAccount(context.C
 
 func (UnimplementedTransactionServiceHandler) GetTransactions(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[v1.TransactionList], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.TransactionService.GetTransactions is not implemented"))
+}
+
+func (UnimplementedTransactionServiceHandler) UpdateTransaction(context.Context, *connect.Request[v1.UpdateTransactionRequest]) (*connect.Response[v1.Transaction], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("fijoy.v1.TransactionService.UpdateTransaction is not implemented"))
 }
 
 func (UnimplementedTransactionServiceHandler) DeleteTransaction(context.Context, *connect.Request[v1.DeleteTransactionRequest]) (*connect.Response[emptypb.Empty], error) {

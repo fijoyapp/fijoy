@@ -19,6 +19,8 @@ type TransactionUseCase interface {
 	GetTransactionsByAccount(ctx context.Context, profileId string, req *fijoyv1.GetTransactionsByAccountRequest) (*fijoyv1.TransactionList, error)
 	GetTransactions(ctx context.Context, profileId string) (*fijoyv1.TransactionList, error)
 
+	UpdateTransaction(ctx context.Context, profileId string, req *fijoyv1.UpdateTransactionRequest) (*fijoyv1.Transaction, error)
+
 	DeleteTransaction(ctx context.Context, profileId string, req *fijoyv1.DeleteTransactionRequest) error
 }
 
@@ -99,6 +101,11 @@ func (u *transactionUseCase) GetTransactionsByAccount(ctx context.Context, profi
 	}
 
 	return transactionsModelToProto(transactions), nil
+}
+
+func (u *transactionUseCase) UpdateTransaction(ctx context.Context, profileId string, req *fijoyv1.UpdateTransactionRequest) (*fijoyv1.Transaction, error) {
+	// TODO: Implement this method
+	return nil, nil
 }
 
 func (u *transactionUseCase) DeleteTransaction(ctx context.Context, profileId string, req *fijoyv1.DeleteTransactionRequest) error {

@@ -15,9 +15,11 @@ import (
 
 	auth_handler "fijoy/internal/domain/auth/handler"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
+
 	profile_handler "fijoy/internal/domain/profile/handler"
 	profile_repository "fijoy/internal/domain/profile/repository"
 	profile_usecase "fijoy/internal/domain/profile/usecase"
+
 	user_handler "fijoy/internal/domain/user/handler"
 	user_repository "fijoy/internal/domain/user/repository"
 	user_usecase "fijoy/internal/domain/user/usecase"
@@ -25,9 +27,13 @@ import (
 	account_handler "fijoy/internal/domain/account/handler"
 	account_repository "fijoy/internal/domain/account/repository"
 	account_usecase "fijoy/internal/domain/account/usecase"
+
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 	health_handler "fijoy/internal/domain/health/handler"
+
+	transaction_handler "fijoy/internal/domain/transaction/handler"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
+	transaction_usecase "fijoy/internal/domain/transaction/usecase"
 
 	currency_handler "fijoy/internal/domain/currency/handler"
 
@@ -78,8 +84,10 @@ func main() {
 	profileRepo := profile_repository.NewProfileRepository()
 	profileUseCase := profile_usecase.New(validator, client, profileRepo)
 
-	accountRepo := account_repository.NewAccountRepository()
 	transactionRepo := transaction_repository.NewTransactionRepository()
+	transctionUseCase := transaction_usecase.New(validator, client, transactionRepo)
+
+	accountRepo := account_repository.NewAccountRepository()
 	accountUseCase := account_usecase.New(validator, client, accountRepo, transactionRepo)
 
 	r := chi.NewRouter()
@@ -103,6 +111,8 @@ func main() {
 	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
+	transaction_handler.RegisterConnect(r, protoValidator, cfg.Auth, transctionUseCase)
+
 	currency_handler.RegisterConnect(r)
 
 	health_handler.RegisterHTTPEndpoints(r)

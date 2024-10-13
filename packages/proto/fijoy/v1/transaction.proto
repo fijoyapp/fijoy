@@ -47,6 +47,16 @@ message GetTransactionsByAccountRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
+message UpdateTransactionRequest {
+  string id = 1 [(buf.validate.field).string.min_len = 1];
+
+  optional string amount_delta = 2;
+  optional string value = 3;
+  optional string fx_rate = 4;
+
+  optional string note = 5;
+}
+
 message DeleteTransactionRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 }
@@ -64,5 +74,6 @@ service TransactionService {
     option idempotency_level = NO_SIDE_EFFECTS;
   }
 
+  rpc UpdateTransaction(UpdateTransactionRequest) returns (Transaction);
   rpc DeleteTransaction(DeleteTransactionRequest) returns (google.protobuf.Empty);
 }
