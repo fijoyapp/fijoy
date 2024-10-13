@@ -27,7 +27,6 @@ import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getProfileHeader } from "@/lib/headers";
 import { useQueryClient } from "@tanstack/react-query";
-import currency from "currency.js";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -74,8 +73,6 @@ export function NewLiability() {
         includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
-
-        amount: currency(values.balance).multiply(-1).toString(),
       }),
       {
         success: () => {
