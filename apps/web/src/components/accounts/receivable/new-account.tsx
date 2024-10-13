@@ -70,7 +70,6 @@ export function NewReceivable() {
         name: values.name,
         accountType: AccountType.RECEIVABLE,
 
-        includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
       }),
