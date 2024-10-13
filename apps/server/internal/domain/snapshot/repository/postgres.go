@@ -7,17 +7,21 @@ import (
 	"fijoy/ent/accountsnapshot"
 	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/profile"
+	"time"
+
+	"entgo.io/ent/dialect/sql"
+	"github.com/shopspring/decimal"
 )
 
 type SnapshotRepository interface {
-	// CreateSnapshot(ctx context.Context, client *ent.Client, req CreateSnapshotRequest) (*ent.Snapshot, error)
+	CreateAccountSnapshot(ctx context.Context, client *ent.Client, req CreateAccountSnapshotRequest) (*ent.AccountSnapshot, error)
+	CreateOverallSnapshot(ctx context.Context, client *ent.Client, req CreateOverallSnapshotRequest) (*ent.OverallSnapshot, error)
 
-	// GetSnapshot(ctx context.Context, client *ent.Client, id string) (*ent.Snapshot, error)
 	GetOverallSnapshots(ctx context.Context, client *ent.Client, profileId string) ([]*ent.OverallSnapshot, error)
 	GetAccountSnapshots(ctx context.Context, client *ent.Client, accountId string) ([]*ent.AccountSnapshot, error)
-	// GetSnapshotsByAccount(ctx context.Context, client *ent.Client, accountId string) ([]*ent.Snapshot, error)
 
-	// DeleteSnapshot(ctx context.Context, client *ent.Client, id string) error
+	GetLatestOverallSnapshot(ctx context.Context, client *ent.Client, profileId string) (*ent.OverallSnapshot, error)
+	GetLatestAccountSnapshot(ctx context.Context, client *ent.Client, accountId string) (*ent.AccountSnapshot, error)
 }
 
 type snapshotRepository struct{}
@@ -26,49 +30,48 @@ func NewSnapshotRepository() *snapshotRepository {
 	return &snapshotRepository{}
 }
 
-// type CreateSnapshotRequest struct {
-// 	OldAmount   decimal.Decimal
-// 	AmountDelta decimal.Decimal
-// 	Value       decimal.Decimal
-// 	FxRate      decimal.Decimal
-// 	OldBalance  decimal.Decimal
-//
-// 	Note string
-// }
-//
-// func (r *snapshotRepository) CreateSnapshot(ctx context.Context, client *ent.Client, req CreateSnapshotRequest) (*ent.Snapshot, error) {
-// 	balanceDelta := req.AmountDelta.Mul(req.Value).Mul(req.FxRate)
-// 	newBalance := req.OldBalance.Add(balanceDelta)
-// 	newAmount := req.OldAmount.Add(req.AmountDelta)
-//
-// 	snapshot, err := client.Snapshot.Create().
-// 		SetAmount(newAmount).
-// 		SetAmountDelta(req.AmountDelta).
-// 		SetValue(req.Value).
-// 		SetFxRate(req.FxRate).
-// 		SetBalance(newBalance).
-// 		SetBalanceDelta(balanceDelta).
-// 		SetNote(req.Note).Save(ctx)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	return snapshot, nil
-// }
+type CreateAccountSnapshotRequest struct {
+	Datehour time.Time
+	Balance  decimal.Decimal
+}
 
-// func (r *snapshotRepository) GetSnapshot(ctx context.Context, client *ent.Client, id string) (*ent.Snapshot, error) {
-// 	snapshot, err := client.Snapshot.Query().
-// 		Where(snapshot.ID(id)).
-// 		WithAccount(func(q *ent.AccountQuery) {
-// 			q.Select(account.FieldID).Select(account.FieldName)
-// 		}).
-// 		Only(ctx)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	return snapshot, nil
-// }
+func (r *snapshotRepository) CreateAccountSnapshot(ctx context.Context, client *ent.Client, req CreateAccountSnapshotRequest) (*ent.AccountSnapshot, error) {
+	snapshot, err := client.AccountSnapshot.Create().
+		SetBalance(req.Balance).
+		SetDatehour(req.Datehour.Truncate(time.Hour)).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return snapshot, nil
+}
+
+type CreateOverallSnapshotRequest struct {
+	Datehour time.Time
+
+	Liquidity  decimal.Decimal
+	Investment decimal.Decimal
+	Property   decimal.Decimal
+	Receivable decimal.Decimal
+	Liability  decimal.Decimal
+}
+
+func (r *snapshotRepository) CreateOverallSnapshot(ctx context.Context, client *ent.Client, req CreateOverallSnapshotRequest) (*ent.OverallSnapshot, error) {
+	snapshot, err := client.OverallSnapshot.Create().
+		SetDatehour(req.Datehour.Truncate(time.Hour)).
+		SetLiquidity(req.Liquidity).
+		SetInvestment(req.Investment).
+		SetProperty(req.Property).
+		SetReceivable(req.Receivable).
+		SetLiability(req.Liability).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return snapshot, nil
+}
 
 func (r *snapshotRepository) GetOverallSnapshots(ctx context.Context, client *ent.Client, profileId string) ([]*ent.OverallSnapshot, error) {
 	snapshot, err := client.OverallSnapshot.Query().
@@ -92,24 +95,26 @@ func (r *snapshotRepository) GetAccountSnapshots(ctx context.Context, client *en
 	return snapshot, nil
 }
 
-// func (r *snapshotRepository) GetSnapshotsByAccount(ctx context.Context, client *ent.Client, accountId string) ([]*ent.Snapshot, error) {
-// 	snapshot, err := client.Snapshot.Query().
-// 		Where(snapshot.HasAccountWith(account.ID(accountId))).
-// 		WithAccount(func(q *ent.AccountQuery) {
-// 			q.Select(account.FieldID).Select(account.FieldName)
-// 		}).
-// 		All(ctx)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	return snapshot, nil
-// }
-//
-// func (r *snapshotRepository) DeleteSnapshot(ctx context.Context, client *ent.Client, id string) error {
-// 	err := client.Snapshot.DeleteOneID(id).Exec(ctx)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+func (r *snapshotRepository) GetLatestOverallSnapshot(ctx context.Context, client *ent.Client, profileId string) (*ent.OverallSnapshot, error) {
+	snapshot, err := client.OverallSnapshot.Query().
+		Order(overallsnapshot.ByDatehour(sql.OrderDesc())).
+		Where(overallsnapshot.HasProfileWith(profile.ID(profileId))).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return snapshot, nil
+}
+
+func (r *snapshotRepository) GetLatestAccountSnapshot(ctx context.Context, client *ent.Client, accountId string) (*ent.AccountSnapshot, error) {
+	snapshot, err := client.AccountSnapshot.Query().
+		Order(accountsnapshot.ByDatehour(sql.OrderDesc())).
+		Where(accountsnapshot.HasAccountWith(account.ID(accountId))).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return snapshot, nil
+}
