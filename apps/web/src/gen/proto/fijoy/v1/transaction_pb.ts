@@ -313,6 +313,67 @@ export class GetTransactionsByAccountRequest extends Message<GetTransactionsByAc
 }
 
 /**
+ * @generated from message fijoy.v1.UpdateTransactionRequest
+ */
+export class UpdateTransactionRequest extends Message<UpdateTransactionRequest> {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id = "";
+
+  /**
+   * @generated from field: optional string amount_delta = 2;
+   */
+  amountDelta?: string;
+
+  /**
+   * @generated from field: optional string value = 3;
+   */
+  value?: string;
+
+  /**
+   * @generated from field: optional string fx_rate = 4;
+   */
+  fxRate?: string;
+
+  /**
+   * @generated from field: optional string note = 5;
+   */
+  note?: string;
+
+  constructor(data?: PartialMessage<UpdateTransactionRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "fijoy.v1.UpdateTransactionRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "amount_delta", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 3, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 4, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 5, name: "note", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateTransactionRequest {
+    return new UpdateTransactionRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateTransactionRequest {
+    return new UpdateTransactionRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateTransactionRequest {
+    return new UpdateTransactionRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateTransactionRequest | PlainMessage<UpdateTransactionRequest> | undefined, b: UpdateTransactionRequest | PlainMessage<UpdateTransactionRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateTransactionRequest, a, b);
+  }
+}
+
+/**
  * @generated from message fijoy.v1.DeleteTransactionRequest
  */
 export class DeleteTransactionRequest extends Message<DeleteTransactionRequest> {

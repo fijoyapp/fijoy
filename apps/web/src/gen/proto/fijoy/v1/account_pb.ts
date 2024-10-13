@@ -245,17 +245,12 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   accountType = AccountType.UNSPECIFIED;
 
   /**
-   * @generated from field: bool include_in_net_worth = 3;
-   */
-  includeInNetWorth = false;
-
-  /**
-   * @generated from field: string symbol = 4;
+   * @generated from field: string symbol = 3;
    */
   symbol = "";
 
   /**
-   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 5;
+   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 4;
    */
   symbolType = AccountSymbolType.UNSPECIFIED;
 
@@ -269,9 +264,8 @@ export class CreateAccountRequest extends Message<CreateAccountRequest> {
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
     { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
-    { no: 3, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 4, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
+    { no: 3, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): CreateAccountRequest {
