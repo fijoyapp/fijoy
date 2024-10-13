@@ -70,7 +70,6 @@ export function NewLiquidity() {
         name: values.name,
         accountType: AccountType.LIQUIDITY,
 
-        includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
       }),

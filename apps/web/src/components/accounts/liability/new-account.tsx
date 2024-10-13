@@ -70,7 +70,6 @@ export function NewLiability() {
         name: values.name,
         accountType: AccountType.LIABILITY,
 
-        includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
       }),

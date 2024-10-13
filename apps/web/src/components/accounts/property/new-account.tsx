@@ -70,7 +70,6 @@ export function NewProperty() {
         name: values.name,
         accountType: AccountType.PROPERTY,
 
-        includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
       }),
