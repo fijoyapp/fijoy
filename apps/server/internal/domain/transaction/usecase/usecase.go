@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/ent"
+	account_repository "fijoy/internal/domain/account/repository"
+	snapshot_repository "fijoy/internal/domain/snapshot/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
@@ -29,10 +31,21 @@ type transactionUseCase struct {
 
 	client          *ent.Client
 	transactionRepo transaction_repository.TransactionRepository
+	accountRepo     account_repository.AccountRepository
+	snapshotRepo    snapshot_repository.SnapshotRepository
 }
 
-func New(validator *validator.Validate, client *ent.Client, transactionRepo transaction_repository.TransactionRepository) TransactionUseCase {
-	return &transactionUseCase{validator: validator, client: client, transactionRepo: transactionRepo}
+func New(validator *validator.Validate, client *ent.Client,
+	transactionRepo transaction_repository.TransactionRepository,
+	snapshotRepo snapshot_repository.SnapshotRepository,
+	accountRepo account_repository.AccountRepository,
+) TransactionUseCase {
+	return &transactionUseCase{
+		validator: validator, client: client,
+		transactionRepo: transactionRepo,
+		accountRepo:     accountRepo,
+		snapshotRepo:    snapshotRepo,
+	}
 }
 
 func transactionModelToProto(transaction *ent.Transaction) *fijoyv1.Transaction {
