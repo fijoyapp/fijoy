@@ -73,8 +73,6 @@ export function NewProperty() {
         includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
-
-        amount: values.balance,
       }),
       {
         success: () => {

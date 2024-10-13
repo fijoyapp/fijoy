@@ -73,8 +73,6 @@ export function NewLiquidity() {
         includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
-
-        amount: values.balance,
       }),
       {
         success: () => {

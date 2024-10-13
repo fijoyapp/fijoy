@@ -73,8 +73,6 @@ export function NewReceivable() {
         includeInNetWorth: true,
         symbol: values.symbol,
         symbolType: AccountSymbolType.CURRENCY,
-
-        amount: values.balance,
       }),
       {
         success: () => {
