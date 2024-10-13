@@ -22,7 +22,7 @@ func (Profile) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").Default(constants.ProfilePrefix + cuid2.Generate()),
 
-		field.String("locale").Optional(), // TODO: Let user set locale in the future
+		field.String("locale").Optional(),
 		field.String("currencies"),
 
 		field.Float("net_worth_goal").
