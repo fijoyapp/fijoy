@@ -101,8 +101,12 @@ func accountSymbolTypeModelToProto(accountSymbolType account.SymbolType) fijoyv1
 }
 
 func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error) {
-	// TODO: Implement this method
-	return nil, nil
+	account, err := u.accountRepo.CreateAccount(ctx, u.client, profileId, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return accountModelToProto(account), nil
 }
 
 func (u *accountUseCase) GetAccount(ctx context.Context, profileId string, req *fijoyv1.GetAccountRequest) (*fijoyv1.Account, error) {
@@ -132,8 +136,27 @@ func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fi
 }
 
 func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error) {
-	// TODO: Implement this method
-	return nil, nil
+	var account *ent.Account
+
+	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
+		var err error
+
+		account, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), req.Id, account_repository.UpdateAccountRequest{
+			Name:              req.Name,
+			IncludeInNetWorth: req.IncludeInNetWorth,
+			Archived:          req.Archived,
+		})
+		if err != nil {
+			return nil
+		}
+
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return accountModelToProto(account), nil
 }
 
 func (u *accountUseCase) DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error {
