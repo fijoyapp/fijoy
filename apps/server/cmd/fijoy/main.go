@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fijoy/config"
 	"fijoy/ent"
 	"fijoy/ent/migrate"
@@ -60,13 +59,6 @@ func main() {
 		panic(err)
 	}
 
-	// Setup Postgres
-	db, err := setupDB("postgres", cfg.Database.DB_URL)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-
 	client, err := ent.Open("postgres", cfg.Database.DB_URL)
 	ctx := context.Background()
 	if err := client.Schema.Create(ctx, migrate.WithGlobalUniqueID(true)); err != nil {
@@ -83,20 +75,17 @@ func main() {
 
 	userRepo := user_repository.NewUserRepository()
 	userKeyRepo := user_repository.NewUserKeyRepository()
-	userUseCase := user_usecase.New(userRepo, client)
-	authUseCase := auth_usecase.New(userRepo, userKeyRepo, client)
-
 	profileRepo := profile_repository.NewProfileRepository()
-	profileUseCase := profile_usecase.New(validator, client, profileRepo)
-
-	transactionRepo := transaction_repository.NewTransactionRepository()
-	transctionUseCase := transaction_usecase.New(validator, client, transactionRepo)
-
-	snapshotRepo := snapshot_repository.NewSnapshotRepository()
-	snapshotUseCase := snapshot_usecase.New(validator, client, snapshotRepo)
-
 	accountRepo := account_repository.NewAccountRepository()
+	snapshotRepo := snapshot_repository.NewSnapshotRepository()
+	transactionRepo := transaction_repository.NewTransactionRepository()
+
+	authUseCase := auth_usecase.New(userRepo, userKeyRepo, client)
+	userUseCase := user_usecase.New(userRepo, client)
+	profileUseCase := profile_usecase.New(validator, client, profileRepo)
 	accountUseCase := account_usecase.New(validator, client, accountRepo, transactionRepo)
+	snapshotUseCase := snapshot_usecase.New(validator, client, snapshotRepo)
+	transctionUseCase := transaction_usecase.New(validator, client, transactionRepo, snapshotRepo, accountRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -172,39 +161,4 @@ func newServer(addr string, r *chi.Mux) *http.Server {
 		Addr:    addr,
 		Handler: r,
 	}
-}
-
-// func waitForShutdown(server *http.Server) {
-// 	// How does this function work?
-//
-// 	// We first deflare a Go channel named sig to receive a os.Signal
-// 	sig := make(chan os.Signal, 1)
-// 	// What Notify does is that it registers the signals to the channel
-// 	// In this case, it registers Interrupt and SIGTERM
-// 	// In this case, when one of these 2 gets triggered, it will send a signal to the channel
-// 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
-// 	<-sig // this blocks the executation until the signal is received
-//
-// 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-// 	defer cancel() // making sure that we cancel the context
-//
-// 	// Very nice graceful shutdown
-// 	if err := server.Shutdown(ctx); err != nil {
-// 		panic(err)
-// 	}
-// }
-
-// setupDB initiates the database connection
-func setupDB(driver, url string) (*sql.DB, error) {
-	db, err := sql.Open(driver, url)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := db.Ping(); err != nil {
-		db.Close()
-		return nil, err
-	}
-
-	return db, nil
 }
