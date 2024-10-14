@@ -1,11 +1,5 @@
 # Fijoy - Joyful Net Worth Tracking
 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-![All Contributors](https://img.shields.io/github/all-contributors/fijoyapp/fijoy?style=for-the-badge&color=yellow)
-
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
-
 Personal finance made simple.
 Track your net worth, manage your assets, and grow your wealth.
 
