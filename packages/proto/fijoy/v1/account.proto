@@ -29,18 +29,19 @@ message Account {
   AccountType account_type = 3 [(buf.validate.field).required = true];
 
   bool archived = 4 [(buf.validate.field).required = false];
-  bool include_in_net_worth = 5 [(buf.validate.field).required = false];
+  bool include_in_stats = 5 [(buf.validate.field).required = false];
+  bool include_in_charts = 6 [(buf.validate.field).required = false];
 
-  string symbol = 6 [(buf.validate.field).string.min_len = 1];
-  AccountSymbolType symbol_type = 7 [(buf.validate.field).required = true];
+  string symbol = 7 [(buf.validate.field).string.min_len = 1];
+  AccountSymbolType symbol_type = 8 [(buf.validate.field).required = true];
 
-  string amount = 8 [(buf.validate.field).required = true];
-  string value = 9 [(buf.validate.field).required = true];
-  string fx_rate = 10;
-  string balance = 11 [(buf.validate.field).required = true];
+  string amount = 9 [(buf.validate.field).required = true];
+  string value = 10 [(buf.validate.field).required = true];
+  string fx_rate = 11;
+  string balance = 12 [(buf.validate.field).required = true];
 
-  google.protobuf.Timestamp created_at = 12 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 13 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp created_at = 13 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 14 [(buf.validate.field).required = true];
 }
 
 message AccountList {
@@ -60,7 +61,8 @@ message UpdateAccountRequest {
   optional string name = 2;
 
   optional bool archived = 3;
-  optional bool include_in_net_worth = 4;
+  optional bool include_in_stats = 4;
+  optional bool include_in_charts = 5;
 }
 
 message GetAccountRequest {

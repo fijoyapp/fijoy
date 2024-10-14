@@ -50,16 +50,30 @@ func (ac *AccountCreate) SetNillableArchived(b *bool) *AccountCreate {
 	return ac
 }
 
-// SetIncludeInNetWorth sets the "include_in_net_worth" field.
-func (ac *AccountCreate) SetIncludeInNetWorth(b bool) *AccountCreate {
-	ac.mutation.SetIncludeInNetWorth(b)
+// SetIncludeInStats sets the "include_in_stats" field.
+func (ac *AccountCreate) SetIncludeInStats(b bool) *AccountCreate {
+	ac.mutation.SetIncludeInStats(b)
 	return ac
 }
 
-// SetNillableIncludeInNetWorth sets the "include_in_net_worth" field if the given value is not nil.
-func (ac *AccountCreate) SetNillableIncludeInNetWorth(b *bool) *AccountCreate {
+// SetNillableIncludeInStats sets the "include_in_stats" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableIncludeInStats(b *bool) *AccountCreate {
 	if b != nil {
-		ac.SetIncludeInNetWorth(*b)
+		ac.SetIncludeInStats(*b)
+	}
+	return ac
+}
+
+// SetIncludeInCharts sets the "include_in_charts" field.
+func (ac *AccountCreate) SetIncludeInCharts(b bool) *AccountCreate {
+	ac.mutation.SetIncludeInCharts(b)
+	return ac
+}
+
+// SetNillableIncludeInCharts sets the "include_in_charts" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableIncludeInCharts(b *bool) *AccountCreate {
+	if b != nil {
+		ac.SetIncludeInCharts(*b)
 	}
 	return ac
 }
@@ -230,9 +244,13 @@ func (ac *AccountCreate) defaults() {
 		v := account.DefaultArchived
 		ac.mutation.SetArchived(v)
 	}
-	if _, ok := ac.mutation.IncludeInNetWorth(); !ok {
-		v := account.DefaultIncludeInNetWorth
-		ac.mutation.SetIncludeInNetWorth(v)
+	if _, ok := ac.mutation.IncludeInStats(); !ok {
+		v := account.DefaultIncludeInStats
+		ac.mutation.SetIncludeInStats(v)
+	}
+	if _, ok := ac.mutation.IncludeInCharts(); !ok {
+		v := account.DefaultIncludeInCharts
+		ac.mutation.SetIncludeInCharts(v)
 	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		v := account.DefaultCreatedAt()
@@ -269,8 +287,11 @@ func (ac *AccountCreate) check() error {
 	if _, ok := ac.mutation.Archived(); !ok {
 		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Account.archived"`)}
 	}
-	if _, ok := ac.mutation.IncludeInNetWorth(); !ok {
-		return &ValidationError{Name: "include_in_net_worth", err: errors.New(`ent: missing required field "Account.include_in_net_worth"`)}
+	if _, ok := ac.mutation.IncludeInStats(); !ok {
+		return &ValidationError{Name: "include_in_stats", err: errors.New(`ent: missing required field "Account.include_in_stats"`)}
+	}
+	if _, ok := ac.mutation.IncludeInCharts(); !ok {
+		return &ValidationError{Name: "include_in_charts", err: errors.New(`ent: missing required field "Account.include_in_charts"`)}
 	}
 	if _, ok := ac.mutation.Symbol(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`ent: missing required field "Account.symbol"`)}
@@ -353,9 +374,13 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 		_node.Archived = value
 	}
-	if value, ok := ac.mutation.IncludeInNetWorth(); ok {
-		_spec.SetField(account.FieldIncludeInNetWorth, field.TypeBool, value)
-		_node.IncludeInNetWorth = value
+	if value, ok := ac.mutation.IncludeInStats(); ok {
+		_spec.SetField(account.FieldIncludeInStats, field.TypeBool, value)
+		_node.IncludeInStats = value
+	}
+	if value, ok := ac.mutation.IncludeInCharts(); ok {
+		_spec.SetField(account.FieldIncludeInCharts, field.TypeBool, value)
+		_node.IncludeInCharts = value
 	}
 	if value, ok := ac.mutation.Symbol(); ok {
 		_spec.SetField(account.FieldSymbol, field.TypeString, value)

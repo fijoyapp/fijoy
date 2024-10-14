@@ -109,47 +109,52 @@ export class Account extends Message<Account> {
   archived = false;
 
   /**
-   * @generated from field: bool include_in_net_worth = 5;
+   * @generated from field: bool include_in_stats = 5;
    */
-  includeInNetWorth = false;
+  includeInStats = false;
 
   /**
-   * @generated from field: string symbol = 6;
+   * @generated from field: bool include_in_charts = 6;
+   */
+  includeInCharts = false;
+
+  /**
+   * @generated from field: string symbol = 7;
    */
   symbol = "";
 
   /**
-   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 7;
+   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 8;
    */
   symbolType = AccountSymbolType.UNSPECIFIED;
 
   /**
-   * @generated from field: string amount = 8;
+   * @generated from field: string amount = 9;
    */
   amount = "";
 
   /**
-   * @generated from field: string value = 9;
+   * @generated from field: string value = 10;
    */
   value = "";
 
   /**
-   * @generated from field: string fx_rate = 10;
+   * @generated from field: string fx_rate = 11;
    */
   fxRate = "";
 
   /**
-   * @generated from field: string balance = 11;
+   * @generated from field: string balance = 12;
    */
   balance = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 12;
+   * @generated from field: google.protobuf.Timestamp created_at = 13;
    */
   createdAt?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 13;
+   * @generated from field: google.protobuf.Timestamp updated_at = 14;
    */
   updatedAt?: Timestamp;
 
@@ -165,15 +170,16 @@ export class Account extends Message<Account> {
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
     { no: 4, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 5, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 6, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 7, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
-    { no: 8, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 9, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 12, name: "created_at", kind: "message", T: Timestamp },
-    { no: 13, name: "updated_at", kind: "message", T: Timestamp },
+    { no: 5, name: "include_in_stats", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 6, name: "include_in_charts", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 7, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
+    { no: 9, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 12, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 13, name: "created_at", kind: "message", T: Timestamp },
+    { no: 14, name: "updated_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -305,9 +311,14 @@ export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
   archived?: boolean;
 
   /**
-   * @generated from field: optional bool include_in_net_worth = 4;
+   * @generated from field: optional bool include_in_stats = 4;
    */
-  includeInNetWorth?: boolean;
+  includeInStats?: boolean;
+
+  /**
+   * @generated from field: optional bool include_in_charts = 5;
+   */
+  includeInCharts?: boolean;
 
   constructor(data?: PartialMessage<UpdateAccountRequest>) {
     super();
@@ -320,7 +331,8 @@ export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 3, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
-    { no: 4, name: "include_in_net_worth", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+    { no: 4, name: "include_in_stats", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
+    { no: 5, name: "include_in_charts", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateAccountRequest {

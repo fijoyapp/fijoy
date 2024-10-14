@@ -21,8 +21,10 @@ const (
 	FieldAccountType = "account_type"
 	// FieldArchived holds the string denoting the archived field in the database.
 	FieldArchived = "archived"
-	// FieldIncludeInNetWorth holds the string denoting the include_in_net_worth field in the database.
-	FieldIncludeInNetWorth = "include_in_net_worth"
+	// FieldIncludeInStats holds the string denoting the include_in_stats field in the database.
+	FieldIncludeInStats = "include_in_stats"
+	// FieldIncludeInCharts holds the string denoting the include_in_charts field in the database.
+	FieldIncludeInCharts = "include_in_charts"
 	// FieldSymbol holds the string denoting the symbol field in the database.
 	FieldSymbol = "symbol"
 	// FieldSymbolType holds the string denoting the symbol_type field in the database.
@@ -76,7 +78,8 @@ var Columns = []string{
 	FieldName,
 	FieldAccountType,
 	FieldArchived,
-	FieldIncludeInNetWorth,
+	FieldIncludeInStats,
+	FieldIncludeInCharts,
 	FieldSymbol,
 	FieldSymbolType,
 	FieldAmount,
@@ -113,8 +116,10 @@ var (
 	NameValidator func(string) error
 	// DefaultArchived holds the default value on creation for the "archived" field.
 	DefaultArchived bool
-	// DefaultIncludeInNetWorth holds the default value on creation for the "include_in_net_worth" field.
-	DefaultIncludeInNetWorth bool
+	// DefaultIncludeInStats holds the default value on creation for the "include_in_stats" field.
+	DefaultIncludeInStats bool
+	// DefaultIncludeInCharts holds the default value on creation for the "include_in_charts" field.
+	DefaultIncludeInCharts bool
 	// SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
 	SymbolValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -198,9 +203,14 @@ func ByArchived(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldArchived, opts...).ToFunc()
 }
 
-// ByIncludeInNetWorth orders the results by the include_in_net_worth field.
-func ByIncludeInNetWorth(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIncludeInNetWorth, opts...).ToFunc()
+// ByIncludeInStats orders the results by the include_in_stats field.
+func ByIncludeInStats(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIncludeInStats, opts...).ToFunc()
+}
+
+// ByIncludeInCharts orders the results by the include_in_charts field.
+func ByIncludeInCharts(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIncludeInCharts, opts...).ToFunc()
 }
 
 // BySymbol orders the results by the symbol field.

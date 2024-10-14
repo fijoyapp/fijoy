@@ -41,11 +41,13 @@ func New(validator *validator.Validate, client *ent.Client, accountRepo account_
 
 func accountModelToProto(account *ent.Account) *fijoyv1.Account {
 	return &fijoyv1.Account{
-		Id:                account.ID,
-		Name:              account.Name,
-		AccountType:       accountTypeModelToProto(account.AccountType),
-		Archived:          account.Archived,
-		IncludeInNetWorth: account.IncludeInNetWorth,
+		Id:          account.ID,
+		Name:        account.Name,
+		AccountType: accountTypeModelToProto(account.AccountType),
+
+		Archived:        account.Archived,
+		IncludeInCharts: account.IncludeInCharts,
+		IncludeInStats:  account.IncludeInStats,
 
 		Symbol:     account.Symbol,
 		SymbolType: accountSymbolTypeModelToProto(account.SymbolType),
@@ -142,9 +144,10 @@ func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, re
 		var err error
 
 		account, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), req.Id, account_repository.UpdateAccountRequest{
-			Name:              req.Name,
-			IncludeInNetWorth: req.IncludeInNetWorth,
-			Archived:          req.Archived,
+			Name:            req.Name,
+			IncludeInStats:  req.IncludeInStats,
+			IncludeInCharts: req.IncludeInCharts,
+			Archived:        req.Archived,
 		})
 		if err != nil {
 			return err

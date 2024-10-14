@@ -99,9 +99,10 @@ func (r *accountRepository) GetAccounts(ctx context.Context, client *ent.Client,
 }
 
 type UpdateAccountRequest struct {
-	Name              *string
-	Archived          *bool
-	IncludeInNetWorth *bool
+	Name            *string
+	Archived        *bool
+	IncludeInStats  *bool
+	IncludeInCharts *bool
 
 	Amount  *decimal.Decimal
 	Value   *decimal.Decimal
@@ -118,8 +119,11 @@ func (r *accountRepository) UpdateAccount(ctx context.Context, client *ent.Clien
 	if req.Archived != nil {
 		update = update.SetArchived(*req.Archived)
 	}
-	if req.IncludeInNetWorth != nil {
-		update = update.SetIncludeInNetWorth(*req.IncludeInNetWorth)
+	if req.IncludeInStats != nil {
+		update = update.SetIncludeInStats(*req.IncludeInStats)
+	}
+	if req.IncludeInCharts != nil {
+		update = update.SetIncludeInCharts(*req.IncludeInCharts)
 	}
 
 	if req.Amount != nil {

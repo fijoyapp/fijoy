@@ -49,7 +49,8 @@ type AccountMutation struct {
 	name                    *string
 	account_type            *account.AccountType
 	archived                *bool
-	include_in_net_worth    *bool
+	include_in_stats        *bool
+	include_in_charts       *bool
 	symbol                  *string
 	symbol_type             *account.SymbolType
 	amount                  *decimal.Decimal
@@ -288,40 +289,76 @@ func (m *AccountMutation) ResetArchived() {
 	m.archived = nil
 }
 
-// SetIncludeInNetWorth sets the "include_in_net_worth" field.
-func (m *AccountMutation) SetIncludeInNetWorth(b bool) {
-	m.include_in_net_worth = &b
+// SetIncludeInStats sets the "include_in_stats" field.
+func (m *AccountMutation) SetIncludeInStats(b bool) {
+	m.include_in_stats = &b
 }
 
-// IncludeInNetWorth returns the value of the "include_in_net_worth" field in the mutation.
-func (m *AccountMutation) IncludeInNetWorth() (r bool, exists bool) {
-	v := m.include_in_net_worth
+// IncludeInStats returns the value of the "include_in_stats" field in the mutation.
+func (m *AccountMutation) IncludeInStats() (r bool, exists bool) {
+	v := m.include_in_stats
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIncludeInNetWorth returns the old "include_in_net_worth" field's value of the Account entity.
+// OldIncludeInStats returns the old "include_in_stats" field's value of the Account entity.
 // If the Account object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccountMutation) OldIncludeInNetWorth(ctx context.Context) (v bool, err error) {
+func (m *AccountMutation) OldIncludeInStats(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIncludeInNetWorth is only allowed on UpdateOne operations")
+		return v, errors.New("OldIncludeInStats is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIncludeInNetWorth requires an ID field in the mutation")
+		return v, errors.New("OldIncludeInStats requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIncludeInNetWorth: %w", err)
+		return v, fmt.Errorf("querying old value for OldIncludeInStats: %w", err)
 	}
-	return oldValue.IncludeInNetWorth, nil
+	return oldValue.IncludeInStats, nil
 }
 
-// ResetIncludeInNetWorth resets all changes to the "include_in_net_worth" field.
-func (m *AccountMutation) ResetIncludeInNetWorth() {
-	m.include_in_net_worth = nil
+// ResetIncludeInStats resets all changes to the "include_in_stats" field.
+func (m *AccountMutation) ResetIncludeInStats() {
+	m.include_in_stats = nil
+}
+
+// SetIncludeInCharts sets the "include_in_charts" field.
+func (m *AccountMutation) SetIncludeInCharts(b bool) {
+	m.include_in_charts = &b
+}
+
+// IncludeInCharts returns the value of the "include_in_charts" field in the mutation.
+func (m *AccountMutation) IncludeInCharts() (r bool, exists bool) {
+	v := m.include_in_charts
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIncludeInCharts returns the old "include_in_charts" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldIncludeInCharts(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIncludeInCharts is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIncludeInCharts requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIncludeInCharts: %w", err)
+	}
+	return oldValue.IncludeInCharts, nil
+}
+
+// ResetIncludeInCharts resets all changes to the "include_in_charts" field.
+func (m *AccountMutation) ResetIncludeInCharts() {
+	m.include_in_charts = nil
 }
 
 // SetSymbol sets the "symbol" field.
@@ -887,7 +924,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.name != nil {
 		fields = append(fields, account.FieldName)
 	}
@@ -897,8 +934,11 @@ func (m *AccountMutation) Fields() []string {
 	if m.archived != nil {
 		fields = append(fields, account.FieldArchived)
 	}
-	if m.include_in_net_worth != nil {
-		fields = append(fields, account.FieldIncludeInNetWorth)
+	if m.include_in_stats != nil {
+		fields = append(fields, account.FieldIncludeInStats)
+	}
+	if m.include_in_charts != nil {
+		fields = append(fields, account.FieldIncludeInCharts)
 	}
 	if m.symbol != nil {
 		fields = append(fields, account.FieldSymbol)
@@ -938,8 +978,10 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.AccountType()
 	case account.FieldArchived:
 		return m.Archived()
-	case account.FieldIncludeInNetWorth:
-		return m.IncludeInNetWorth()
+	case account.FieldIncludeInStats:
+		return m.IncludeInStats()
+	case account.FieldIncludeInCharts:
+		return m.IncludeInCharts()
 	case account.FieldSymbol:
 		return m.Symbol()
 	case account.FieldSymbolType:
@@ -971,8 +1013,10 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldAccountType(ctx)
 	case account.FieldArchived:
 		return m.OldArchived(ctx)
-	case account.FieldIncludeInNetWorth:
-		return m.OldIncludeInNetWorth(ctx)
+	case account.FieldIncludeInStats:
+		return m.OldIncludeInStats(ctx)
+	case account.FieldIncludeInCharts:
+		return m.OldIncludeInCharts(ctx)
 	case account.FieldSymbol:
 		return m.OldSymbol(ctx)
 	case account.FieldSymbolType:
@@ -1019,12 +1063,19 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetArchived(v)
 		return nil
-	case account.FieldIncludeInNetWorth:
+	case account.FieldIncludeInStats:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIncludeInNetWorth(v)
+		m.SetIncludeInStats(v)
+		return nil
+	case account.FieldIncludeInCharts:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIncludeInCharts(v)
 		return nil
 	case account.FieldSymbol:
 		v, ok := value.(string)
@@ -1200,8 +1251,11 @@ func (m *AccountMutation) ResetField(name string) error {
 	case account.FieldArchived:
 		m.ResetArchived()
 		return nil
-	case account.FieldIncludeInNetWorth:
-		m.ResetIncludeInNetWorth()
+	case account.FieldIncludeInStats:
+		m.ResetIncludeInStats()
+		return nil
+	case account.FieldIncludeInCharts:
+		m.ResetIncludeInCharts()
 		return nil
 	case account.FieldSymbol:
 		m.ResetSymbol()

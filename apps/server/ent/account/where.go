@@ -76,9 +76,14 @@ func Archived(v bool) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldArchived, v))
 }
 
-// IncludeInNetWorth applies equality check predicate on the "include_in_net_worth" field. It's identical to IncludeInNetWorthEQ.
-func IncludeInNetWorth(v bool) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldIncludeInNetWorth, v))
+// IncludeInStats applies equality check predicate on the "include_in_stats" field. It's identical to IncludeInStatsEQ.
+func IncludeInStats(v bool) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIncludeInStats, v))
+}
+
+// IncludeInCharts applies equality check predicate on the "include_in_charts" field. It's identical to IncludeInChartsEQ.
+func IncludeInCharts(v bool) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIncludeInCharts, v))
 }
 
 // Symbol applies equality check predicate on the "symbol" field. It's identical to SymbolEQ.
@@ -211,14 +216,24 @@ func ArchivedNEQ(v bool) predicate.Account {
 	return predicate.Account(sql.FieldNEQ(FieldArchived, v))
 }
 
-// IncludeInNetWorthEQ applies the EQ predicate on the "include_in_net_worth" field.
-func IncludeInNetWorthEQ(v bool) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldIncludeInNetWorth, v))
+// IncludeInStatsEQ applies the EQ predicate on the "include_in_stats" field.
+func IncludeInStatsEQ(v bool) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIncludeInStats, v))
 }
 
-// IncludeInNetWorthNEQ applies the NEQ predicate on the "include_in_net_worth" field.
-func IncludeInNetWorthNEQ(v bool) predicate.Account {
-	return predicate.Account(sql.FieldNEQ(FieldIncludeInNetWorth, v))
+// IncludeInStatsNEQ applies the NEQ predicate on the "include_in_stats" field.
+func IncludeInStatsNEQ(v bool) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldIncludeInStats, v))
+}
+
+// IncludeInChartsEQ applies the EQ predicate on the "include_in_charts" field.
+func IncludeInChartsEQ(v bool) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIncludeInCharts, v))
+}
+
+// IncludeInChartsNEQ applies the NEQ predicate on the "include_in_charts" field.
+func IncludeInChartsNEQ(v bool) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldIncludeInCharts, v))
 }
 
 // SymbolEQ applies the EQ predicate on the "symbol" field.

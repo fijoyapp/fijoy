@@ -74,16 +74,30 @@ func (au *AccountUpdate) SetNillableArchived(b *bool) *AccountUpdate {
 	return au
 }
 
-// SetIncludeInNetWorth sets the "include_in_net_worth" field.
-func (au *AccountUpdate) SetIncludeInNetWorth(b bool) *AccountUpdate {
-	au.mutation.SetIncludeInNetWorth(b)
+// SetIncludeInStats sets the "include_in_stats" field.
+func (au *AccountUpdate) SetIncludeInStats(b bool) *AccountUpdate {
+	au.mutation.SetIncludeInStats(b)
 	return au
 }
 
-// SetNillableIncludeInNetWorth sets the "include_in_net_worth" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableIncludeInNetWorth(b *bool) *AccountUpdate {
+// SetNillableIncludeInStats sets the "include_in_stats" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableIncludeInStats(b *bool) *AccountUpdate {
 	if b != nil {
-		au.SetIncludeInNetWorth(*b)
+		au.SetIncludeInStats(*b)
+	}
+	return au
+}
+
+// SetIncludeInCharts sets the "include_in_charts" field.
+func (au *AccountUpdate) SetIncludeInCharts(b bool) *AccountUpdate {
+	au.mutation.SetIncludeInCharts(b)
+	return au
+}
+
+// SetNillableIncludeInCharts sets the "include_in_charts" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableIncludeInCharts(b *bool) *AccountUpdate {
+	if b != nil {
+		au.SetIncludeInCharts(*b)
 	}
 	return au
 }
@@ -404,8 +418,11 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := au.mutation.Archived(); ok {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 	}
-	if value, ok := au.mutation.IncludeInNetWorth(); ok {
-		_spec.SetField(account.FieldIncludeInNetWorth, field.TypeBool, value)
+	if value, ok := au.mutation.IncludeInStats(); ok {
+		_spec.SetField(account.FieldIncludeInStats, field.TypeBool, value)
+	}
+	if value, ok := au.mutation.IncludeInCharts(); ok {
+		_spec.SetField(account.FieldIncludeInCharts, field.TypeBool, value)
 	}
 	if value, ok := au.mutation.Symbol(); ok {
 		_spec.SetField(account.FieldSymbol, field.TypeString, value)
@@ -627,16 +644,30 @@ func (auo *AccountUpdateOne) SetNillableArchived(b *bool) *AccountUpdateOne {
 	return auo
 }
 
-// SetIncludeInNetWorth sets the "include_in_net_worth" field.
-func (auo *AccountUpdateOne) SetIncludeInNetWorth(b bool) *AccountUpdateOne {
-	auo.mutation.SetIncludeInNetWorth(b)
+// SetIncludeInStats sets the "include_in_stats" field.
+func (auo *AccountUpdateOne) SetIncludeInStats(b bool) *AccountUpdateOne {
+	auo.mutation.SetIncludeInStats(b)
 	return auo
 }
 
-// SetNillableIncludeInNetWorth sets the "include_in_net_worth" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableIncludeInNetWorth(b *bool) *AccountUpdateOne {
+// SetNillableIncludeInStats sets the "include_in_stats" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableIncludeInStats(b *bool) *AccountUpdateOne {
 	if b != nil {
-		auo.SetIncludeInNetWorth(*b)
+		auo.SetIncludeInStats(*b)
+	}
+	return auo
+}
+
+// SetIncludeInCharts sets the "include_in_charts" field.
+func (auo *AccountUpdateOne) SetIncludeInCharts(b bool) *AccountUpdateOne {
+	auo.mutation.SetIncludeInCharts(b)
+	return auo
+}
+
+// SetNillableIncludeInCharts sets the "include_in_charts" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableIncludeInCharts(b *bool) *AccountUpdateOne {
+	if b != nil {
+		auo.SetIncludeInCharts(*b)
 	}
 	return auo
 }
@@ -987,8 +1018,11 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	if value, ok := auo.mutation.Archived(); ok {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 	}
-	if value, ok := auo.mutation.IncludeInNetWorth(); ok {
-		_spec.SetField(account.FieldIncludeInNetWorth, field.TypeBool, value)
+	if value, ok := auo.mutation.IncludeInStats(); ok {
+		_spec.SetField(account.FieldIncludeInStats, field.TypeBool, value)
+	}
+	if value, ok := auo.mutation.IncludeInCharts(); ok {
+		_spec.SetField(account.FieldIncludeInCharts, field.TypeBool, value)
 	}
 	if value, ok := auo.mutation.Symbol(); ok {
 		_spec.SetField(account.FieldSymbol, field.TypeString, value)
