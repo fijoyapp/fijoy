@@ -96,7 +96,7 @@ func (asc *AccountSnapshotCreate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (asc *AccountSnapshotCreate) defaults() {
 	if _, ok := asc.mutation.ID(); !ok {
-		v := accountsnapshot.DefaultID
+		v := accountsnapshot.DefaultID()
 		asc.mutation.SetID(v)
 	}
 }

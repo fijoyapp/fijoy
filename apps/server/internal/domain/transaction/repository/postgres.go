@@ -27,6 +27,8 @@ func NewTransactionRepository() *transactionRepository {
 }
 
 type CreateTransactionRequest struct {
+	ProfileId   string
+	AccountId   string
 	OldAmount   decimal.Decimal
 	AmountDelta decimal.Decimal
 	Value       decimal.Decimal
@@ -42,6 +44,8 @@ func (r *transactionRepository) CreateTransaction(ctx context.Context, client *e
 	newAmount := req.OldAmount.Add(req.AmountDelta)
 
 	transaction, err := client.Transaction.Create().
+		SetProfileID(req.ProfileId).
+		SetAccountID(req.AccountId).
 		SetAmount(newAmount).
 		SetAmountDelta(req.AmountDelta).
 		SetValue(req.Value).

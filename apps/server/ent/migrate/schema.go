@@ -59,6 +59,13 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "accountsnapshot_datehour_account_account_snapshot",
+				Unique:  true,
+				Columns: []*schema.Column{AccountSnapshotsColumns[1], AccountSnapshotsColumns[3]},
+			},
+		},
 	}
 	// OverallSnapshotsColumns holds the columns for the "overall_snapshots" table.
 	OverallSnapshotsColumns = []*schema.Column{
@@ -82,6 +89,13 @@ var (
 				Columns:    []*schema.Column{OverallSnapshotsColumns[7]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "overallsnapshot_datehour_profile_overall_snapshot",
+				Unique:  true,
+				Columns: []*schema.Column{OverallSnapshotsColumns[1], OverallSnapshotsColumns[7]},
 			},
 		},
 	}

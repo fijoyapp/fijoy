@@ -46,19 +46,19 @@ func init() {
 	// accountDescID is the schema descriptor for id field.
 	accountDescID := accountFields[0].Descriptor()
 	// account.DefaultID holds the default value on creation for the id field.
-	account.DefaultID = accountDescID.Default.(string)
+	account.DefaultID = accountDescID.Default.(func() string)
 	accountsnapshotFields := schema.AccountSnapshot{}.Fields()
 	_ = accountsnapshotFields
 	// accountsnapshotDescID is the schema descriptor for id field.
 	accountsnapshotDescID := accountsnapshotFields[0].Descriptor()
 	// accountsnapshot.DefaultID holds the default value on creation for the id field.
-	accountsnapshot.DefaultID = accountsnapshotDescID.Default.(string)
+	accountsnapshot.DefaultID = accountsnapshotDescID.Default.(func() string)
 	overallsnapshotFields := schema.OverallSnapshot{}.Fields()
 	_ = overallsnapshotFields
 	// overallsnapshotDescID is the schema descriptor for id field.
 	overallsnapshotDescID := overallsnapshotFields[0].Descriptor()
 	// overallsnapshot.DefaultID holds the default value on creation for the id field.
-	overallsnapshot.DefaultID = overallsnapshotDescID.Default.(string)
+	overallsnapshot.DefaultID = overallsnapshotDescID.Default.(func() string)
 	profileFields := schema.Profile{}.Fields()
 	_ = profileFields
 	// profileDescCreatedAt is the schema descriptor for created_at field.
@@ -68,7 +68,7 @@ func init() {
 	// profileDescID is the schema descriptor for id field.
 	profileDescID := profileFields[0].Descriptor()
 	// profile.DefaultID holds the default value on creation for the id field.
-	profile.DefaultID = profileDescID.Default.(string)
+	profile.DefaultID = profileDescID.Default.(func() string)
 	transactionFields := schema.Transaction{}.Fields()
 	_ = transactionFields
 	// transactionDescCreatedAt is the schema descriptor for created_at field.
@@ -82,7 +82,7 @@ func init() {
 	// transactionDescID is the schema descriptor for id field.
 	transactionDescID := transactionFields[0].Descriptor()
 	// transaction.DefaultID holds the default value on creation for the id field.
-	transaction.DefaultID = transactionDescID.Default.(string)
+	transaction.DefaultID = transactionDescID.Default.(func() string)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.
@@ -96,5 +96,5 @@ func init() {
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
-	user.DefaultID = userDescID.Default.(string)
+	user.DefaultID = userDescID.Default.(func() string)
 }

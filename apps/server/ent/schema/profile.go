@@ -20,7 +20,7 @@ type Profile struct {
 // Fields of the Profile.
 func (Profile) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").Default(constants.ProfilePrefix + cuid2.Generate()),
+		field.String("id").DefaultFunc(func() string { return constants.ProfilePrefix + cuid2.Generate() }),
 
 		field.String("locale").Optional(),
 		field.String("currencies"),

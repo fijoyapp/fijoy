@@ -122,7 +122,7 @@ var (
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID string
+	DefaultID func() string
 )
 
 // AccountType defines the type for the "account_type" enum field.

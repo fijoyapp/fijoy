@@ -40,10 +40,10 @@ func (u *userUseCase) CreateUser(ctx context.Context, email string) (*fijoyv1.Us
 		var err error
 		user, err = u.userRepo.CreateUser(ctx, tx.Client(), email)
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -65,10 +65,10 @@ func (u *userUseCase) DeleteUser(ctx context.Context, userId string) error {
 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
 		err := u.userRepo.DeleteUser(ctx, tx.Client(), userId)
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return err

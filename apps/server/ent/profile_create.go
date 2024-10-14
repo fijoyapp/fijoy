@@ -175,7 +175,7 @@ func (pc *ProfileCreate) defaults() {
 		pc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := pc.mutation.ID(); !ok {
-		v := profile.DefaultID
+		v := profile.DefaultID()
 		pc.mutation.SetID(v)
 	}
 }

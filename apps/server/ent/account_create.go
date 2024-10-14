@@ -243,7 +243,7 @@ func (ac *AccountCreate) defaults() {
 		ac.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ac.mutation.ID(); !ok {
-		v := account.DefaultID
+		v := account.DefaultID()
 		ac.mutation.SetID(v)
 	}
 }

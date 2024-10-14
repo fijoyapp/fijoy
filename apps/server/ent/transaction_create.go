@@ -189,7 +189,7 @@ func (tc *TransactionCreate) defaults() {
 		tc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := tc.mutation.ID(); !ok {
-		v := transaction.DefaultID
+		v := transaction.DefaultID()
 		tc.mutation.SetID(v)
 	}
 }

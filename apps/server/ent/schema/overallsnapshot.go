@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
@@ -20,7 +21,7 @@ type OverallSnapshot struct {
 // Fields of the OverallSnapshot.
 func (OverallSnapshot) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").Default(constants.OverallSnapshotPrefix + cuid2.Generate()),
+		field.String("id").DefaultFunc(func() string { return constants.OverallSnapshotPrefix + cuid2.Generate() }),
 
 		field.Time("datehour").
 			Annotations(
@@ -66,5 +67,11 @@ func (OverallSnapshot) Fields() []ent.Field {
 func (OverallSnapshot) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("profile", Profile.Type).Ref("overall_snapshot").Required().Unique(),
+	}
+}
+
+func (OverallSnapshot) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("datehour").Edges("profile").Unique(),
 	}
 }
