@@ -56,6 +56,12 @@ To start a local Postgres instance with Docker, you can use:
 just postgres
 ```
 
+If you want to nuke the database and start fresh, you can use:
+
+```bash
+just postgres-nuke
+```
+
 ## Web
 
 Nothing special here for the moment. Just a plain old React front end.
