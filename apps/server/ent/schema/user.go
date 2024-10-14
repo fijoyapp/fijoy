@@ -18,7 +18,7 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").Default(constants.UserPrefix + cuid2.Generate()),
+		field.String("id").DefaultFunc(func() string { return constants.UserPrefix + cuid2.Generate() }),
 		field.String("email").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now),
 	}

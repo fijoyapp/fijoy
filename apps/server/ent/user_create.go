@@ -126,7 +126,7 @@ func (uc *UserCreate) defaults() {
 		uc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := uc.mutation.ID(); !ok {
-		v := user.DefaultID
+		v := user.DefaultID()
 		uc.mutation.SetID(v)
 	}
 }

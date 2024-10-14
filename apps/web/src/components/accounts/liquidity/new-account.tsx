@@ -27,6 +27,10 @@ import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getProfileHeader } from "@/lib/headers";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  createTransaction,
+  getTransactions,
+} from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -54,11 +58,20 @@ export function NewLiquidity() {
       headers: getProfileHeader(profile?.id ?? ""),
     },
     onSuccess: async () => {
+      // We will invalidate all together when transaction is created
+    },
+  });
+
+  const createTransactionMut = useMutation(createTransaction, {
+    callOptions: {
+      headers: getProfileHeader(profile?.id ?? ""),
+    },
+    onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: createConnectQueryKey(getAccounts),
       });
-      router.navigate({
-        to: "/accounts",
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getTransactions),
       });
     },
   });
@@ -66,15 +79,29 @@ export function NewLiquidity() {
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     toast.promise(
-      createAccountMut.mutateAsync({
-        name: values.name,
-        accountType: AccountType.LIQUIDITY,
+      async () => {
+        const account = await createAccountMut.mutateAsync({
+          name: values.name,
+          accountType: AccountType.LIQUIDITY,
 
-        symbol: values.symbol,
-        symbolType: AccountSymbolType.CURRENCY,
-      }),
+          symbol: values.symbol,
+          symbolType: AccountSymbolType.CURRENCY,
+        });
+
+        await createTransactionMut.mutateAsync({
+          accountId: account.id,
+          amountDelta: values.balance,
+          value: "1",
+          fxRate: "1", // TODO: Replace with actual fx rate
+          note: "Initial balance",
+        });
+        return account;
+      },
       {
         success: () => {
+          router.navigate({
+            to: "/accounts",
+          });
           return "Account created";
         },
         loading: "Creating account...",

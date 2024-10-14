@@ -120,7 +120,7 @@ func (osc *OverallSnapshotCreate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (osc *OverallSnapshotCreate) defaults() {
 	if _, ok := osc.mutation.ID(); !ok {
-		v := overallsnapshot.DefaultID
+		v := overallsnapshot.DefaultID()
 		osc.mutation.SetID(v)
 	}
 }

@@ -52,10 +52,10 @@ func (u *profileUseCase) CreateProfile(ctx context.Context, userId string, req *
 		var err error
 		profile, err = u.repo.CreateProfile(ctx, tx.Client(), userId, req)
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -80,10 +80,10 @@ func (u *profileUseCase) GetProfileByUser(ctx context.Context, userId string) (*
 		var err error
 		profile, err = u.repo.GetProfileByUser(ctx, tx.Client(), userId)
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -94,13 +94,12 @@ func (u *profileUseCase) GetProfileByUser(ctx context.Context, userId string) (*
 
 func (u *profileUseCase) DeleteProfile(ctx context.Context, id string) error {
 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
-		var err error
-		err = u.repo.DeleteProfile(ctx, tx.Client(), id)
+		err := u.repo.DeleteProfile(ctx, tx.Client(), id)
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return err
@@ -116,10 +115,10 @@ func (u *profileUseCase) UpdateProfile(ctx context.Context, id string, req *fijo
 		var err error
 		profile, err = u.repo.UpdateProfile(ctx, tx.Client(), id, req)
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return nil, err

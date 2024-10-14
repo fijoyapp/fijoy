@@ -11,6 +11,7 @@ import (
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	"fijoy/internal/util/database"
 	fijoyv1 "fijoy/proto/fijoy/v1"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/shopspring/decimal"
@@ -86,6 +87,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
 		var err error
 
+		// Make sure we have the proper permission
 		targetAccount, err := u.accountRepo.GetAccount(ctx, tx.Client(), req.AccountId)
 		if err != nil {
 			return err
@@ -99,7 +101,10 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 			return errors.New(constants.ErrAccountNotFound)
 		}
 
+		// Creating the transction
 		transaction, err = u.transactionRepo.CreateTransaction(ctx, tx.Client(), transaction_repository.CreateTransactionRequest{
+			ProfileId:   profileId,
+			AccountId:   targetAccount.ID,
 			OldAmount:   targetAccount.Amount,
 			AmountDelta: decimal.RequireFromString(req.AmountDelta),
 			Value:       decimal.RequireFromString(req.Value),
@@ -108,20 +113,58 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 			Note:        req.Note,
 		})
 		if err != nil {
-			return nil
+			return err
 		}
 
-		_, err = u.snapshotRepo.CreateAccountSnapshot(ctx, tx.Client(), snapshot_repository.CreateAccountSnapshotRequest{
-			Datehour: transaction.CreatedAt,
-			Balance:  transaction.Balance,
+		// Update the account entity
+		_, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), targetAccount.ID, account_repository.UpdateAccountRequest{
+			Amount:  &transaction.Amount,
+			Value:   &transaction.Value,
+			FxRate:  &transaction.FxRate,
+			Balance: &transaction.Balance,
 		})
 		if err != nil {
-			return nil
+			return err
 		}
 
-		lastestOverallSnapshot, err := u.snapshotRepo.GetLatestOverallSnapshot(ctx, tx.Client(), profileId)
+		// Compute the snapshot for graph
+
+		latestAccountSnapshot, err := u.snapshotRepo.GetLatestAccountSnapshot(ctx, tx.Client(), targetAccount.ID)
+		if err != nil {
+			if !ent.IsNotFound(err) {
+				return err
+			}
+		}
+		if latestAccountSnapshot != nil && latestAccountSnapshot.Datehour.Truncate(time.Hour).Equal(transaction.CreatedAt.Truncate(time.Hour)) {
+			_, err = u.snapshotRepo.UpdateAccountSnapshot(ctx, tx.Client(), snapshot_repository.UpdateAccountSnapshotRequest{
+				Id:      latestAccountSnapshot.ID,
+				Balance: transaction.Balance,
+			})
+		} else {
+			_, err = u.snapshotRepo.CreateAccountSnapshot(ctx, tx.Client(), snapshot_repository.CreateAccountSnapshotRequest{
+				AccountId: targetAccount.ID,
+				Datehour:  transaction.CreatedAt,
+				Balance:   transaction.Balance,
+			})
+		}
 		if err != nil {
 			return err
+		}
+
+		newSnapshot := false
+		lastestOverallSnapshot, err := u.snapshotRepo.GetLatestOverallSnapshot(ctx, tx.Client(), profileId)
+		if err != nil {
+			if !ent.IsNotFound(err) {
+				return err
+			}
+			newSnapshot = true
+			lastestOverallSnapshot = &ent.OverallSnapshot{
+				Liquidity:  decimal.Zero,
+				Investment: decimal.Zero,
+				Property:   decimal.Zero,
+				Receivable: decimal.Zero,
+				Liability:  decimal.Zero,
+			}
 		}
 
 		switch targetAccount.AccountType {
@@ -137,15 +180,40 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 			lastestOverallSnapshot.Liability = lastestOverallSnapshot.Liability.Add(transaction.BalanceDelta)
 		}
 
-		_, err = u.snapshotRepo.CreateOverallSnapshot(
-			ctx, tx.Client(), snapshot_repository.CreateOverallSnapshotRequest{
-				Datehour:   transaction.CreatedAt,
-				Liquidity:  lastestOverallSnapshot.Liquidity,
-				Investment: lastestOverallSnapshot.Investment,
-				Property:   lastestOverallSnapshot.Property,
-				Receivable: lastestOverallSnapshot.Receivable,
-				Liability:  lastestOverallSnapshot.Liability,
-			})
+		if !newSnapshot && lastestOverallSnapshot.Datehour.Truncate(time.Hour).Equal(transaction.CreatedAt.Truncate(time.Hour)) {
+			_, err = u.snapshotRepo.UpdateOverallSnapshot(
+				ctx, tx.Client(), snapshot_repository.UpdateOverallSnapshotRequest{
+					Id:         lastestOverallSnapshot.ID,
+					Liquidity:  lastestOverallSnapshot.Liquidity,
+					Investment: lastestOverallSnapshot.Investment,
+					Property:   lastestOverallSnapshot.Property,
+					Receivable: lastestOverallSnapshot.Receivable,
+					Liability:  lastestOverallSnapshot.Liability,
+				})
+		} else {
+			lastestOverallSnapshot = &ent.OverallSnapshot{
+				Liquidity:  decimal.Zero,
+				Investment: decimal.Zero,
+				Property:   decimal.Zero,
+				Receivable: decimal.Zero,
+				Liability:  decimal.Zero,
+			}
+			_, err = u.snapshotRepo.CreateOverallSnapshot(
+				ctx, tx.Client(), snapshot_repository.CreateOverallSnapshotRequest{
+					Datehour:   transaction.CreatedAt,
+					ProfileId:  profileId,
+					Liquidity:  lastestOverallSnapshot.Liquidity,
+					Investment: lastestOverallSnapshot.Investment,
+					Property:   lastestOverallSnapshot.Property,
+					Receivable: lastestOverallSnapshot.Receivable,
+					Liability:  lastestOverallSnapshot.Liability,
+				})
+		}
+		if err != nil {
+			return err
+		}
+
+		transaction, err = u.transactionRepo.GetTransaction(ctx, tx.Client(), transaction.ID)
 		if err != nil {
 			return err
 		}

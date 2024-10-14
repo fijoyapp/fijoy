@@ -20,6 +20,9 @@ type SnapshotRepository interface {
 	GetOverallSnapshots(ctx context.Context, client *ent.Client, profileId string) ([]*ent.OverallSnapshot, error)
 	GetAccountSnapshots(ctx context.Context, client *ent.Client, accountId string) ([]*ent.AccountSnapshot, error)
 
+	UpdateAccountSnapshot(ctx context.Context, client *ent.Client, req UpdateAccountSnapshotRequest) (*ent.AccountSnapshot, error)
+	UpdateOverallSnapshot(ctx context.Context, client *ent.Client, req UpdateOverallSnapshotRequest) (*ent.OverallSnapshot, error)
+
 	GetLatestOverallSnapshot(ctx context.Context, client *ent.Client, profileId string) (*ent.OverallSnapshot, error)
 	GetLatestAccountSnapshot(ctx context.Context, client *ent.Client, accountId string) (*ent.AccountSnapshot, error)
 }
@@ -37,21 +40,6 @@ type CreateAccountSnapshotRequest struct {
 }
 
 func (r *snapshotRepository) CreateAccountSnapshot(ctx context.Context, client *ent.Client, req CreateAccountSnapshotRequest) (*ent.AccountSnapshot, error) {
-	latestSnapshot, err := r.GetLatestAccountSnapshot(ctx, client, req.AccountId)
-	if err != nil {
-		return nil, err
-	}
-
-	if latestSnapshot.Datehour.Truncate(time.Hour).Equal(req.Datehour.Truncate(time.Hour)) {
-		// Last snapshot already exists for the same hour, update it instead!
-		snapshot, err := client.AccountSnapshot.UpdateOneID(latestSnapshot.ID).SetBalance(req.Balance).Save(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		return snapshot, nil
-	}
-
 	snapshot, err := client.AccountSnapshot.Create().
 		SetDatehour(req.Datehour.Truncate(time.Hour)).
 		SetAccountID(req.AccountId).
@@ -75,28 +63,20 @@ type CreateOverallSnapshotRequest struct {
 	Liability  decimal.Decimal
 }
 
-func (r *snapshotRepository) CreateOverallSnapshot(ctx context.Context, client *ent.Client, req CreateOverallSnapshotRequest) (*ent.OverallSnapshot, error) {
-	latestSnapshot, err := r.GetLatestOverallSnapshot(ctx, client, req.ProfileId)
+type UpdateAccountSnapshotRequest struct {
+	Id      string
+	Balance decimal.Decimal
+}
+
+func (r *snapshotRepository) UpdateAccountSnapshot(ctx context.Context, client *ent.Client, req UpdateAccountSnapshotRequest) (*ent.AccountSnapshot, error) {
+	snapshot, err := client.AccountSnapshot.UpdateOneID(req.Id).SetBalance(req.Balance).Save(ctx)
 	if err != nil {
 		return nil, err
 	}
+	return snapshot, nil
+}
 
-	if latestSnapshot.Datehour.Truncate(time.Hour).Equal(req.Datehour.Truncate(time.Hour)) {
-		// Last snapshot already exists for the same hour, update it instead!
-		snapshot, err := client.OverallSnapshot.UpdateOneID(latestSnapshot.ID).
-			SetLiquidity(req.Liquidity).
-			SetInvestment(req.Investment).
-			SetProperty(req.Property).
-			SetReceivable(req.Receivable).
-			SetLiability(req.Liability).
-			Save(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		return snapshot, nil
-	}
-
+func (r *snapshotRepository) CreateOverallSnapshot(ctx context.Context, client *ent.Client, req CreateOverallSnapshotRequest) (*ent.OverallSnapshot, error) {
 	snapshot, err := client.OverallSnapshot.Create().
 		SetDatehour(req.Datehour.Truncate(time.Hour)).
 		SetProfileID(req.ProfileId).
@@ -110,6 +90,29 @@ func (r *snapshotRepository) CreateOverallSnapshot(ctx context.Context, client *
 		return nil, err
 	}
 
+	return snapshot, nil
+}
+
+type UpdateOverallSnapshotRequest struct {
+	Id         string
+	Liquidity  decimal.Decimal
+	Investment decimal.Decimal
+	Property   decimal.Decimal
+	Receivable decimal.Decimal
+	Liability  decimal.Decimal
+}
+
+func (r *snapshotRepository) UpdateOverallSnapshot(ctx context.Context, client *ent.Client, req UpdateOverallSnapshotRequest) (*ent.OverallSnapshot, error) {
+	snapshot, err := client.OverallSnapshot.UpdateOneID(req.Id).
+		SetLiquidity(req.Liquidity).
+		SetInvestment(req.Investment).
+		SetProperty(req.Property).
+		SetReceivable(req.Receivable).
+		SetLiability(req.Liability).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return snapshot, nil
 }
 

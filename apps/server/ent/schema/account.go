@@ -20,7 +20,7 @@ type Account struct {
 // Fields of the Account.
 func (Account) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").Default(constants.AccountPrefix + cuid2.Generate()),
+		field.String("id").DefaultFunc(func() string { return constants.AccountPrefix + cuid2.Generate() }),
 
 		field.String("name").NotEmpty(),
 		field.Enum("account_type").

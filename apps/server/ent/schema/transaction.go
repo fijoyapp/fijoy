@@ -20,7 +20,7 @@ type Transaction struct {
 // Fields of the Transaction.
 func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").Default(constants.TransactionPrefix + cuid2.Generate()),
+		field.String("id").DefaultFunc(func() string { return constants.TransactionPrefix + cuid2.Generate() }),
 
 		field.Float("amount").
 			GoType(decimal.Decimal{}).

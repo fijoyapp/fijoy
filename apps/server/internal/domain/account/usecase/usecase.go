@@ -147,10 +147,10 @@ func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, re
 			Archived:          req.Archived,
 		})
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return nil, err
@@ -177,10 +177,10 @@ func (u *accountUseCase) DeleteAccount(ctx context.Context, profileId string, re
 
 		err = u.accountRepo.DeleteAccount(ctx, tx.Client(), req.Id)
 		if err != nil {
-			return nil
+			return err
 		}
 
-		return err
+		return nil
 	})
 	if err != nil {
 		return err

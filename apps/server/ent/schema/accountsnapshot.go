@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
@@ -20,7 +21,7 @@ type AccountSnapshot struct {
 // Fields of the AccountSnapshot.
 func (AccountSnapshot) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").Default(constants.AccountSnapshotPrefix + cuid2.Generate()),
+		field.String("id").DefaultFunc(func() string { return constants.AccountSnapshotPrefix + cuid2.Generate() }),
 
 		field.Time("datehour").
 			Annotations(
@@ -41,5 +42,11 @@ func (AccountSnapshot) Fields() []ent.Field {
 func (AccountSnapshot) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("account", Account.Type).Ref("account_snapshot").Required().Unique(),
+	}
+}
+
+func (AccountSnapshot) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("datehour").Edges("account").Unique(),
 	}
 }

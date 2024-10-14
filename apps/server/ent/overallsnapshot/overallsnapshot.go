@@ -71,7 +71,7 @@ func ValidColumn(column string) bool {
 
 var (
 	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID string
+	DefaultID func() string
 )
 
 // OrderOption defines the ordering options for the OverallSnapshot queries.
