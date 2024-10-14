@@ -28,6 +28,9 @@ format:
 postgres:
   docker compose -f docker-compose.dev.yml up
 
+postgres-nuke:
+  docker compose -f docker-compose.dev.yml down -v
+
 psql:
   psql -h 127.0.0.1 -p 2345 -U user -d fijoy
 
@@ -43,5 +46,3 @@ ent-new name:
 ent-generate:
   just apps/server/ent-generate
 
-ent-drop:
-  just apps/server/ent-drop
