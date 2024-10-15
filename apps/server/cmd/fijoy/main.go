@@ -134,7 +134,7 @@ func main() {
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   connectcors.AllowedMethods(),
-		AllowedHeaders:   append(connectcors.AllowedHeaders(), "Fijoy-Profile-Id"),
+		AllowedHeaders:   append(connectcors.AllowedHeaders(), "Fijoy-Profile-Id", "sentry-trace", "baggage"),
 		ExposedHeaders:   connectcors.ExposedHeaders(),
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
