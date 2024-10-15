@@ -33,7 +33,6 @@ export function accountsGroupBy(accounts: Account[]) {
 }
 
 export function getOverallStats(accounts: Account[]) {
-  accounts = accounts.filter((account) => account.includeInStats);
   const asset = accounts.reduce((acc, account) => {
     if (
       account.accountType === AccountType.LIQUIDITY ||
