@@ -14,6 +14,7 @@ import (
 
 	auth_handler "fijoy/internal/domain/auth/handler"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
+	fijoy_middleware "fijoy/internal/middleware"
 
 	profile_handler "fijoy/internal/domain/profile/handler"
 	profile_repository "fijoy/internal/domain/profile/repository"
@@ -44,6 +45,7 @@ import (
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -53,11 +55,19 @@ import (
 	_ "github.com/rs/cors"
 )
 
+var logger *zap.Logger
+
 func main() {
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		panic(err)
 	}
+
+	logger, err = zap.NewProduction()
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Sync()
 
 	client, err := ent.Open("postgres", cfg.Database.DB_URL)
 	ctx := context.Background()
@@ -91,6 +101,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
+	r.Use(fijoy_middleware.LoggerMiddleware(logger))
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
 		// AllowedOrigins: []string{"https://*", "http://*"},

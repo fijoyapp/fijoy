@@ -9,6 +9,7 @@ import (
 	account_repository "fijoy/internal/domain/account/repository"
 	snapshot_repository "fijoy/internal/domain/snapshot/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
+	"fijoy/internal/middleware"
 	"fijoy/internal/util/database"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 	"time"
@@ -82,6 +83,7 @@ func transactionsModelToProto(transactions []*ent.Transaction) *fijoyv1.Transact
 }
 
 func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId string, req *fijoyv1.CreateTransactionRequest) (*fijoyv1.Transaction, error) {
+	logger := middleware.GetLogger(ctx)
 	var transaction *ent.Transaction
 
 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
@@ -90,11 +92,13 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 		// Make sure we have the proper permission
 		targetAccount, err := u.accountRepo.GetAccount(ctx, tx.Client(), req.AccountId)
 		if err != nil {
+			logger.Error(err.Error())
 			return err
 		}
 
 		id, err := targetAccount.QueryProfile().OnlyID(ctx)
 		if err != nil {
+			logger.Error(err.Error())
 			return err
 		}
 		if id != profileId {
@@ -113,6 +117,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 			Note:        req.Note,
 		})
 		if err != nil {
+			logger.Error(err.Error())
 			return err
 		}
 
@@ -124,6 +129,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 			Balance: &transaction.Balance,
 		})
 		if err != nil {
+			logger.Error(err.Error())
 			return err
 		}
 
@@ -132,6 +138,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 		latestAccountSnapshot, err := u.snapshotRepo.GetLatestAccountSnapshot(ctx, tx.Client(), targetAccount.ID)
 		if err != nil {
 			if !ent.IsNotFound(err) {
+				logger.Error(err.Error())
 				return err
 			}
 		}
@@ -148,6 +155,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 			})
 		}
 		if err != nil {
+			logger.Error(err.Error())
 			return err
 		}
 
@@ -155,6 +163,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 		lastestOverallSnapshot, err := u.snapshotRepo.GetLatestOverallSnapshot(ctx, tx.Client(), profileId)
 		if err != nil {
 			if !ent.IsNotFound(err) {
+				logger.Error(err.Error())
 				return err
 			}
 			newSnapshot = true
@@ -210,11 +219,13 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 				})
 		}
 		if err != nil {
+			logger.Error(err.Error())
 			return err
 		}
 
 		transaction, err = u.transactionRepo.GetTransaction(ctx, tx.Client(), transaction.ID)
 		if err != nil {
+			logger.Error(err.Error())
 			return err
 		}
 

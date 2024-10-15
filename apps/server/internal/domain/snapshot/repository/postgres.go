@@ -9,7 +9,6 @@ import (
 	"fijoy/ent/profile"
 	"time"
 
-	"entgo.io/ent/dialect/sql"
 	"github.com/shopspring/decimal"
 )
 
@@ -140,9 +139,9 @@ func (r *snapshotRepository) GetAccountSnapshots(ctx context.Context, client *en
 
 func (r *snapshotRepository) GetLatestOverallSnapshot(ctx context.Context, client *ent.Client, profileId string) (*ent.OverallSnapshot, error) {
 	snapshot, err := client.OverallSnapshot.Query().
-		Order(overallsnapshot.ByDatehour(sql.OrderDesc())).
+		Order(ent.Desc(overallsnapshot.FieldDatehour)).
 		Where(overallsnapshot.HasProfileWith(profile.ID(profileId))).
-		Only(ctx)
+		First(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -152,9 +151,9 @@ func (r *snapshotRepository) GetLatestOverallSnapshot(ctx context.Context, clien
 
 func (r *snapshotRepository) GetLatestAccountSnapshot(ctx context.Context, client *ent.Client, accountId string) (*ent.AccountSnapshot, error) {
 	snapshot, err := client.AccountSnapshot.Query().
-		Order(accountsnapshot.ByDatehour(sql.OrderDesc())).
+		Order(ent.Desc(accountsnapshot.FieldDatehour)).
 		Where(accountsnapshot.HasAccountWith(account.ID(accountId))).
-		Only(ctx)
+		First(ctx)
 	if err != nil {
 		return nil, err
 	}

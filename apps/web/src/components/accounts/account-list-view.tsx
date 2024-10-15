@@ -2,7 +2,7 @@ import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { LiquidityCard } from "./liquidity/card";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import { accountsGroupBy } from "@/lib/account";
 import { LiabilityCard } from "./liability/card";
 import { PropertyCard } from "./property/card";
@@ -54,9 +54,9 @@ export default function AccountListView({ accounts }: AccountListProps) {
     <div className="flex-col space-y-4">
       {sections
         .filter((section) => section.accounts.length > 0)
-        .map((section, idx) => {
+        .map((section) => {
           return (
-            <div key={idx}>
+            <div key={section.name}>
               <div className="font-semibold">{section.name}</div>
               <div className="py-1"></div>
 
@@ -67,10 +67,10 @@ export default function AccountListView({ accounts }: AccountListProps) {
                   }
 
                   return (
-                    <>
+                    <Fragment key={account.id}>
                       <Separator className="" />
-                      <section.card key={account.id} account={account} />
-                    </>
+                      <section.card account={account} />
+                    </Fragment>
                   );
                 })}
               </Card>

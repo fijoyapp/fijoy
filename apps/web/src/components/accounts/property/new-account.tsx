@@ -27,6 +27,10 @@ import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getProfileHeader } from "@/lib/headers";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  createTransaction,
+  getTransactions,
+} from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -63,16 +67,40 @@ export function NewProperty() {
     },
   });
 
-  // 2. Define a submit handler.
+  const createTransactionMut = useMutation(createTransaction, {
+    callOptions: {
+      headers: getProfileHeader(profile?.id ?? ""),
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getAccounts),
+      });
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey(getTransactions),
+      });
+    },
+  });
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     toast.promise(
-      createAccountMut.mutateAsync({
-        name: values.name,
-        accountType: AccountType.PROPERTY,
+      async () => {
+        const account = await createAccountMut.mutateAsync({
+          name: values.name,
+          accountType: AccountType.PROPERTY,
 
-        symbol: values.symbol,
-        symbolType: AccountSymbolType.CURRENCY,
-      }),
+          symbol: values.symbol,
+          symbolType: AccountSymbolType.CURRENCY,
+        });
+
+        await createTransactionMut.mutateAsync({
+          accountId: account.id,
+          amountDelta: values.balance,
+          value: "1",
+          fxRate: "1", // TODO: Replace with actual fx rate
+          note: "Initial balance",
+        });
+        return account;
+      },
       {
         success: () => {
           return "Account created";
@@ -82,7 +110,6 @@ export function NewProperty() {
       },
     );
   }
-
   return (
     <div className="flex max-w-lg flex-col space-y-4">
       <Form {...form}>
