@@ -109,52 +109,42 @@ export class Account extends Message<Account> {
   archived = false;
 
   /**
-   * @generated from field: bool include_in_stats = 5;
-   */
-  includeInStats = false;
-
-  /**
-   * @generated from field: bool include_in_charts = 6;
-   */
-  includeInCharts = false;
-
-  /**
-   * @generated from field: string symbol = 7;
+   * @generated from field: string symbol = 5;
    */
   symbol = "";
 
   /**
-   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 8;
+   * @generated from field: fijoy.v1.AccountSymbolType symbol_type = 6;
    */
   symbolType = AccountSymbolType.UNSPECIFIED;
 
   /**
-   * @generated from field: string amount = 9;
+   * @generated from field: string amount = 7;
    */
   amount = "";
 
   /**
-   * @generated from field: string value = 10;
+   * @generated from field: string value = 8;
    */
   value = "";
 
   /**
-   * @generated from field: string fx_rate = 11;
+   * @generated from field: string fx_rate = 9;
    */
   fxRate = "";
 
   /**
-   * @generated from field: string balance = 12;
+   * @generated from field: string balance = 10;
    */
   balance = "";
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 13;
+   * @generated from field: google.protobuf.Timestamp created_at = 11;
    */
   createdAt?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 14;
+   * @generated from field: google.protobuf.Timestamp updated_at = 12;
    */
   updatedAt?: Timestamp;
 
@@ -170,16 +160,14 @@ export class Account extends Message<Account> {
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 3, name: "account_type", kind: "enum", T: proto3.getEnumType(AccountType) },
     { no: 4, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 5, name: "include_in_stats", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 6, name: "include_in_charts", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
-    { no: 7, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
-    { no: 9, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 10, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 11, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 12, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 13, name: "created_at", kind: "message", T: Timestamp },
-    { no: 14, name: "updated_at", kind: "message", T: Timestamp },
+    { no: 5, name: "symbol", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "symbol_type", kind: "enum", T: proto3.getEnumType(AccountSymbolType) },
+    { no: 7, name: "amount", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "value", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "fx_rate", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "balance", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "created_at", kind: "message", T: Timestamp },
+    { no: 12, name: "updated_at", kind: "message", T: Timestamp },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -310,16 +298,6 @@ export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
    */
   archived?: boolean;
 
-  /**
-   * @generated from field: optional bool include_in_stats = 4;
-   */
-  includeInStats?: boolean;
-
-  /**
-   * @generated from field: optional bool include_in_charts = 5;
-   */
-  includeInCharts?: boolean;
-
   constructor(data?: PartialMessage<UpdateAccountRequest>) {
     super();
     proto3.util.initPartial(data, this);
@@ -331,8 +309,6 @@ export class UpdateAccountRequest extends Message<UpdateAccountRequest> {
     { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
     { no: 3, name: "archived", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
-    { no: 4, name: "include_in_stats", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
-    { no: 5, name: "include_in_charts", kind: "scalar", T: 8 /* ScalarType.BOOL */, opt: true },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateAccountRequest {
@@ -386,43 +362,6 @@ export class GetAccountRequest extends Message<GetAccountRequest> {
 
   static equals(a: GetAccountRequest | PlainMessage<GetAccountRequest> | undefined, b: GetAccountRequest | PlainMessage<GetAccountRequest> | undefined): boolean {
     return proto3.util.equals(GetAccountRequest, a, b);
-  }
-}
-
-/**
- * @generated from message fijoy.v1.DeleteAccountRequest
- */
-export class DeleteAccountRequest extends Message<DeleteAccountRequest> {
-  /**
-   * @generated from field: string id = 1;
-   */
-  id = "";
-
-  constructor(data?: PartialMessage<DeleteAccountRequest>) {
-    super();
-    proto3.util.initPartial(data, this);
-  }
-
-  static readonly runtime: typeof proto3 = proto3;
-  static readonly typeName = "fijoy.v1.DeleteAccountRequest";
-  static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-  ]);
-
-  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DeleteAccountRequest {
-    return new DeleteAccountRequest().fromBinary(bytes, options);
-  }
-
-  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): DeleteAccountRequest {
-    return new DeleteAccountRequest().fromJson(jsonValue, options);
-  }
-
-  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): DeleteAccountRequest {
-    return new DeleteAccountRequest().fromJsonString(jsonString, options);
-  }
-
-  static equals(a: DeleteAccountRequest | PlainMessage<DeleteAccountRequest> | undefined, b: DeleteAccountRequest | PlainMessage<DeleteAccountRequest> | undefined): boolean {
-    return proto3.util.equals(DeleteAccountRequest, a, b);
   }
 }
 

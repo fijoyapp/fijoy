@@ -19,7 +19,7 @@ type AccountRepository interface {
 
 	UpdateAccount(ctx context.Context, client *ent.Client, id string, req UpdateAccountRequest) (*ent.Account, error)
 
-	DeleteAccount(ctx context.Context, client *ent.Client, id string) error
+	// DeleteAccount(ctx context.Context, client *ent.Client, id string) error
 }
 
 type accountRepository struct{}
@@ -119,12 +119,6 @@ func (r *accountRepository) UpdateAccount(ctx context.Context, client *ent.Clien
 	if req.Archived != nil {
 		update = update.SetArchived(*req.Archived)
 	}
-	if req.IncludeInStats != nil {
-		update = update.SetIncludeInStats(*req.IncludeInStats)
-	}
-	if req.IncludeInCharts != nil {
-		update = update.SetIncludeInCharts(*req.IncludeInCharts)
-	}
 
 	if req.Amount != nil {
 		update = update.SetAmount(*req.Amount)
@@ -147,11 +141,11 @@ func (r *accountRepository) UpdateAccount(ctx context.Context, client *ent.Clien
 	return account, nil
 }
 
-func (r *accountRepository) DeleteAccount(ctx context.Context, client *ent.Client, id string) error {
-	err := client.Account.DeleteOneID(id).Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+// func (r *accountRepository) DeleteAccount(ctx context.Context, client *ent.Client, id string) error {
+// 	err := client.Account.DeleteOneID(id).Exec(ctx)
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	return nil
+// }

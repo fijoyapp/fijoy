@@ -25,10 +25,6 @@ type Account struct {
 	AccountType account.AccountType `json:"account_type,omitempty"`
 	// Archived holds the value of the "archived" field.
 	Archived bool `json:"archived,omitempty"`
-	// IncludeInStats holds the value of the "include_in_stats" field.
-	IncludeInStats bool `json:"include_in_stats,omitempty"`
-	// IncludeInCharts holds the value of the "include_in_charts" field.
-	IncludeInCharts bool `json:"include_in_charts,omitempty"`
 	// Symbol holds the value of the "symbol" field.
 	Symbol string `json:"symbol,omitempty"`
 	// SymbolType holds the value of the "symbol_type" field.
@@ -101,7 +97,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case account.FieldAmount, account.FieldValue, account.FieldFxRate, account.FieldBalance:
 			values[i] = new(decimal.Decimal)
-		case account.FieldArchived, account.FieldIncludeInStats, account.FieldIncludeInCharts:
+		case account.FieldArchived:
 			values[i] = new(sql.NullBool)
 		case account.FieldID, account.FieldName, account.FieldAccountType, account.FieldSymbol, account.FieldSymbolType:
 			values[i] = new(sql.NullString)
@@ -147,18 +143,6 @@ func (a *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field archived", values[i])
 			} else if value.Valid {
 				a.Archived = value.Bool
-			}
-		case account.FieldIncludeInStats:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field include_in_stats", values[i])
-			} else if value.Valid {
-				a.IncludeInStats = value.Bool
-			}
-		case account.FieldIncludeInCharts:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field include_in_charts", values[i])
-			} else if value.Valid {
-				a.IncludeInCharts = value.Bool
 			}
 		case account.FieldSymbol:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -274,12 +258,6 @@ func (a *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("archived=")
 	builder.WriteString(fmt.Sprintf("%v", a.Archived))
-	builder.WriteString(", ")
-	builder.WriteString("include_in_stats=")
-	builder.WriteString(fmt.Sprintf("%v", a.IncludeInStats))
-	builder.WriteString(", ")
-	builder.WriteString("include_in_charts=")
-	builder.WriteString(fmt.Sprintf("%v", a.IncludeInCharts))
 	builder.WriteString(", ")
 	builder.WriteString("symbol=")
 	builder.WriteString(a.Symbol)

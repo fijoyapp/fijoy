@@ -27,8 +27,6 @@ func (Account) Fields() []ent.Field {
 			Values("liquidity", "investment", "property", "receivable", "liability"),
 
 		field.Bool("archived").Default(false),
-		field.Bool("include_in_stats").Default(true),
-		field.Bool("include_in_charts").Default(true),
 
 		field.String("symbol").NotEmpty(),
 		field.Enum("symbol_type").Values("currency", "stock", "crypto"),

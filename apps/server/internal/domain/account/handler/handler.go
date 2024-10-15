@@ -105,23 +105,23 @@ func (h *accountHandler) UpdateAccount(
 	return connect.NewResponse(account), nil
 }
 
-func (h *accountHandler) DeleteAccount(
-	ctx context.Context,
-	req *connect.Request[fijoyv1.DeleteAccountRequest],
-) (*connect.Response[emptypb.Empty], error) {
-	if err := h.protoValidator.Validate(req.Msg); err != nil {
-		return nil, err
-	}
-
-	profileId := ctx.Value("profileId").(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
-	}
-
-	err := h.useCase.DeleteAccount(ctx, profileId, req.Msg)
-	if err != nil {
-		return nil, err
-	}
-
-	return connect.NewResponse(&emptypb.Empty{}), nil
-}
+// func (h *accountHandler) DeleteAccount(
+// 	ctx context.Context,
+// 	req *connect.Request[fijoyv1.DeleteAccountRequest],
+// ) (*connect.Response[emptypb.Empty], error) {
+// 	if err := h.protoValidator.Validate(req.Msg); err != nil {
+// 		return nil, err
+// 	}
+//
+// 	profileId := ctx.Value("profileId").(string)
+// 	if profileId == "" {
+// 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+// 	}
+//
+// 	err := h.useCase.DeleteAccount(ctx, profileId, req.Msg)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	return connect.NewResponse(&emptypb.Empty{}), nil
+// }

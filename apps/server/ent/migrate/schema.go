@@ -14,8 +14,6 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "account_type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
 		{Name: "archived", Type: field.TypeBool, Default: false},
-		{Name: "include_in_stats", Type: field.TypeBool, Default: true},
-		{Name: "include_in_charts", Type: field.TypeBool, Default: true},
 		{Name: "symbol", Type: field.TypeString},
 		{Name: "symbol_type", Type: field.TypeEnum, Enums: []string{"currency", "stock", "crypto"}},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
@@ -34,7 +32,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "accounts_profiles_account",
-				Columns:    []*schema.Column{AccountsColumns[14]},
+				Columns:    []*schema.Column{AccountsColumns[12]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

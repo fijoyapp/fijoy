@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { Empty, MethodIdempotency, MethodKind } from "@bufbuild/protobuf";
-import { Account, AccountList, CreateAccountRequest, DeleteAccountRequest, GetAccountRequest, UpdateAccountRequest } from "./account_pb.js";
+import { Account, AccountList, CreateAccountRequest, GetAccountRequest, UpdateAccountRequest } from "./account_pb.js";
 
 /**
  * @generated from rpc fijoy.v1.AccountService.CreateAccount
@@ -59,20 +59,6 @@ export const updateAccount = {
   kind: MethodKind.Unary,
   I: UpdateAccountRequest,
   O: Account,
-  service: {
-    typeName: "fijoy.v1.AccountService"
-  }
-} as const;
-
-/**
- * @generated from rpc fijoy.v1.AccountService.DeleteAccount
- */
-export const deleteAccount = {
-  localName: "deleteAccount",
-  name: "DeleteAccount",
-  kind: MethodKind.Unary,
-  I: DeleteAccountRequest,
-  O: Empty,
   service: {
     typeName: "fijoy.v1.AccountService"
   }

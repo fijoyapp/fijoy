@@ -23,7 +23,7 @@ type AccountUseCase interface {
 
 	UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error)
 
-	DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error
+	// DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error
 }
 
 type accountUseCase struct {
@@ -45,9 +45,7 @@ func accountModelToProto(account *ent.Account) *fijoyv1.Account {
 		Name:        account.Name,
 		AccountType: accountTypeModelToProto(account.AccountType),
 
-		Archived:        account.Archived,
-		IncludeInCharts: account.IncludeInCharts,
-		IncludeInStats:  account.IncludeInStats,
+		Archived: account.Archived,
 
 		Symbol:     account.Symbol,
 		SymbolType: accountSymbolTypeModelToProto(account.SymbolType),
@@ -144,10 +142,8 @@ func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, re
 		var err error
 
 		account, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), req.Id, account_repository.UpdateAccountRequest{
-			Name:            req.Name,
-			IncludeInStats:  req.IncludeInStats,
-			IncludeInCharts: req.IncludeInCharts,
-			Archived:        req.Archived,
+			Name:     req.Name,
+			Archived: req.Archived,
 		})
 		if err != nil {
 			return err
@@ -162,32 +158,32 @@ func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, re
 	return accountModelToProto(account), nil
 }
 
-func (u *accountUseCase) DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error {
-	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
-		var err error
-		account, err := u.accountRepo.GetAccount(ctx, tx.Client(), req.Id)
-		if err != nil {
-			return err
-		}
-
-		id, err := account.QueryProfile().OnlyID(ctx)
-		if err != nil {
-			return err
-		}
-		if id != profileId {
-			return errors.New(constants.ErrAccountNotFound)
-		}
-
-		err = u.accountRepo.DeleteAccount(ctx, tx.Client(), req.Id)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+// func (u *accountUseCase) DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error {
+// 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
+// 		var err error
+// 		account, err := u.accountRepo.GetAccount(ctx, tx.Client(), req.Id)
+// 		if err != nil {
+// 			return err
+// 		}
+//
+// 		id, err := account.QueryProfile().OnlyID(ctx)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		if id != profileId {
+// 			return errors.New(constants.ErrAccountNotFound)
+// 		}
+//
+// 		err = u.accountRepo.DeleteAccount(ctx, tx.Client(), req.Id)
+// 		if err != nil {
+// 			return err
+// 		}
+//
+// 		return nil
+// 	})
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	return nil
+// }
