@@ -35,8 +35,6 @@ Sentry.init({
   release: packageJson.version,
 });
 
-lmaode();
-
 // Render the app
 const rootElement = document.getElementById("app")!;
 if (!rootElement.innerHTML) {
