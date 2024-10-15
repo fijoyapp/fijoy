@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fijoy/config"
 	"fijoy/ent"
 	"fijoy/ent/migrate"
@@ -65,6 +66,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	version, err := getVersionFromPackageJSON()
+	if err != nil {
+		panic(err)
+	}
 
 	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
 	if err := sentry.Init(sentry.ClientOptions{
@@ -74,6 +79,7 @@ func main() {
 		// We recommend adjusting this value in production,
 		TracesSampleRate: 1.0,
 		AttachStacktrace: true,
+		Release:          version,
 	}); err != nil {
 		fmt.Printf("Sentry initialization failed: %v\n", err)
 	}
@@ -201,4 +207,24 @@ func newServer(addr string, r *chi.Mux) *http.Server {
 		Addr:    addr,
 		Handler: r,
 	}
+}
+
+// Struct to hold the version
+type PackageJSON struct {
+	Version string `json:"version"`
+}
+
+func getVersionFromPackageJSON() (string, error) {
+	file, err := os.ReadFile("package.json")
+	if err != nil {
+		return "", err
+	}
+
+	var pkg PackageJSON
+	err = json.Unmarshal(file, &pkg)
+	if err != nil {
+		return "", err
+	}
+
+	return pkg.Version, nil
 }
