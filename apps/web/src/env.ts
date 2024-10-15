@@ -10,6 +10,7 @@ export const env = createEnv({
 
   client: {
     VITE_SERVER_URL: z.string().url().default("http://localhost:3000"),
+    VITE_SENTRY_DSN_WEB: z.string().url().optional(),
   },
 
   /**
