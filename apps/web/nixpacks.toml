@@ -1,10 +1,10 @@
 [phases.setup]
 nixPkgs = ['nodejs_20', 'corepack_20']
 
-[install]
+[phases.install]
 cmd = "pnpm install"
 
-[build]
+[phases.build]
 cmd = "pnpm build"
 
 [start]
