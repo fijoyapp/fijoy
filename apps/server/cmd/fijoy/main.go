@@ -5,6 +5,7 @@ import (
 	"fijoy/config"
 	"fijoy/ent"
 	"fijoy/ent/migrate"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -52,6 +53,8 @@ import (
 	"github.com/go-chi/cors"
 
 	connectcors "connectrpc.com/cors"
+	"github.com/getsentry/sentry-go"
+	sentryhttp "github.com/getsentry/sentry-go/http"
 	_ "github.com/rs/cors"
 )
 
@@ -62,6 +65,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn: cfg.Sentry.SENTRY_DSN_SERVER,
+		// Set TracesSampleRate to 1.0 to capture 100%
+		// of transactions for tracing.
+		// We recommend adjusting this value in production,
+		TracesSampleRate: 1.0,
+		AttachStacktrace: true,
+	}); err != nil {
+		fmt.Printf("Sentry initialization failed: %v\n", err)
+	}
+	defer sentry.Flush(2 * time.Second)
 
 	logger, err = zap.NewProduction()
 	if err != nil {
@@ -80,6 +96,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	sentryMiddleware := sentryhttp.New(sentryhttp.Options{
+		Repanic: true,
+	})
 
 	analyticsService := analytics_usecase.New(cfg.Analytics)
 
@@ -102,6 +122,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(fijoy_middleware.LoggerMiddleware(logger))
+	r.Use(sentryMiddleware.Handle)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
 		// AllowedOrigins: []string{"https://*", "http://*"},
@@ -113,6 +134,14 @@ func main() {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 		Debug:            false,
 	}))
+
+	// r.Get("/error", func(w http.ResponseWriter, r *http.Request) {
+	// 	hub := sentry.GetHubFromContext(r.Context())
+	// 	hub.CaptureException(errors.New("test error"))
+	// })
+	// r.Get("/panic", func(w http.ResponseWriter, r *http.Request) {
+	// 	panic("server panic")
+	// })
 
 	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
 

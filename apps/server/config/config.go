@@ -16,6 +16,7 @@ type Config struct {
 	Database  *DatabaseConfig
 	Analytics *AnalyticsConfig
 	Server    *ServerConfig
+	Sentry    *SentryConfig
 }
 
 func LoadConfig() (*Config, error) {
@@ -46,11 +47,17 @@ func LoadConfig() (*Config, error) {
 		return &Config{}, fmt.Errorf("error loading server config: %w", err)
 	}
 
+	sentry, err := LoadSentryConfig()
+	if err != nil {
+		return &Config{}, fmt.Errorf("error loading sentry config: %w", err)
+	}
+
 	cfg := &Config{
 		Auth:      auth,
 		Database:  database,
 		Analytics: analytics,
 		Server:    server,
+		Sentry:    sentry,
 	}
 
 	return cfg, nil
