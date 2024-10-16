@@ -35,6 +35,16 @@ Sentry.init({
   release: packageJson.version,
 });
 
+BigInt.prototype["toJSON"] = function (): string {
+  return this.toString();
+};
+
+declare global {
+  interface BigInt {
+    toJSON(): string;
+  }
+}
+
 // Render the app
 const rootElement = document.getElementById("app")!;
 if (!rootElement.innerHTML) {
