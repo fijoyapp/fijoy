@@ -84,7 +84,7 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
     <div className={cn("flex min-h-full w-full", isDesktop ? "" : "")}>
       <div
         className={cn(
-          "w-full p-4 lg:p-6",
+          "scrollbar h-full w-full overflow-y-scroll p-4 lg:p-6",
           sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
         )}
       >
@@ -142,11 +142,11 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
         <AccountListView accounts={accounts} />
       </div>
 
-      {isDesktop && <Separator orientation="vertical" className="h-full" />}
+      {isDesktop && <Separator orientation="vertical" className="min-h-full" />}
 
       <div
         className={cn(
-          "w-full p-4 lg:p-6",
+          "scrollbar h-full w-full overflow-y-scroll p-4 lg:p-6",
           !sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
         )}
       >
