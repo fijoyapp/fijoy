@@ -1,52 +1,38 @@
 import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { Timestamp } from "@bufbuild/protobuf";
 import currency from "currency.js";
+import _ from "lodash";
 
 export function accountsGroupBy(accounts: Account[]) {
-  const liquidities = accounts.filter(
-    (account) => account.accountType === AccountType.LIQUIDITY,
-  );
-
-  const investments = accounts.filter(
-    (account) => account.accountType === AccountType.INVESTMENT,
-  );
-
-  const properties = accounts.filter(
-    (account) => account.accountType === AccountType.PROPERTY,
-  );
-
-  const receivables = accounts.filter(
-    (account) => account.accountType === AccountType.RECEIVABLE,
-  );
-
-  const liabilities = accounts.filter(
-    (account) => account.accountType === AccountType.LIABILITY,
-  );
+  const groups = _.groupBy(accounts, (account) => account.accountType);
 
   return {
-    liquidities,
-    investments,
-    properties,
-    receivables,
-    liabilities,
+    liquidities: groups[AccountType.LIQUIDITY] || [],
+    investments: groups[AccountType.INVESTMENT] || [],
+    properties: groups[AccountType.PROPERTY] || [],
+    receivables: groups[AccountType.RECEIVABLE] || [],
+    liabilities: groups[AccountType.LIABILITY] || [],
   };
 }
 
+export const POSITIVE_ACCOUNT_TYPES = [
+  AccountType.LIQUIDITY,
+  AccountType.INVESTMENT,
+  AccountType.PROPERTY,
+  AccountType.RECEIVABLE,
+];
+export const NEGATIVE_ACCOUNT_TYPES = [AccountType.LIABILITY];
+
 export function getOverallStats(accounts: Account[]) {
   const asset = accounts.reduce((acc, account) => {
-    if (
-      account.accountType === AccountType.LIQUIDITY ||
-      account.accountType === AccountType.INVESTMENT ||
-      account.accountType === AccountType.PROPERTY ||
-      account.accountType === AccountType.RECEIVABLE
-    ) {
+    if (POSITIVE_ACCOUNT_TYPES.includes(account.accountType)) {
       return acc.add(currency(account.balance));
     }
     return acc;
   }, currency(0));
 
   const liability = accounts.reduce((acc, account) => {
-    if (account.accountType === AccountType.LIABILITY) {
+    if (NEGATIVE_ACCOUNT_TYPES.includes(account.accountType)) {
       return acc.add(currency(account.balance));
     }
     return acc;

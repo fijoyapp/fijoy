@@ -75,14 +75,14 @@
   }
 
   .scrollbar::-webkit-scrollbar-track {
-    @apply rounded-full bg-muted;
+    @apply rounded-full bg-background;
   }
 
   .scrollbar::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-foreground;
+    @apply rounded-full bg-background;
   }
 
   .scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-foreground;
+    @apply bg-muted;
   }
 }

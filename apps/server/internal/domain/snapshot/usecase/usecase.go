@@ -4,6 +4,7 @@ import (
 	"context"
 	"fijoy/ent"
 	snapshot_repository "fijoy/internal/domain/snapshot/repository"
+	"fijoy/internal/middleware"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"github.com/go-playground/validator/v10"
@@ -69,8 +70,11 @@ func accountSnapshotsModelToProto(snapshots []*ent.AccountSnapshot) *fijoyv1.Acc
 }
 
 func (u *snapshotUseCase) GetOverallSnapshots(ctx context.Context, profileId string, req *fijoyv1.GetOverallSnapshotsRequest) (*fijoyv1.OverallSnapshotList, error) {
+	logger := middleware.GetLogger(ctx)
+
 	snapshots, err := u.snapshotRepo.GetOverallSnapshots(ctx, u.client, profileId)
 	if err != nil {
+		logger.Error(err.Error())
 		return nil, err
 	}
 
