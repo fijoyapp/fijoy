@@ -7,7 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 const homeRouteSchema = z.object({
-  range: ChartTimeRange.default("1M"),
+  range: ChartTimeRange.default("1M").optional(),
 });
 
 export const Route = createFileRoute("/_protected/_profile/home/")({
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_protected/_profile/home/")({
   loaderDeps: ({ search: { range } }) => ({ range }),
   loader: (opts) => {
     const { fromDatehour, toDatehour } = chartTimeRangeToInterval(
-      opts.deps.range,
+      opts.deps.range || "1M",
     );
     return opts.context.queryClient.ensureQueryData(
       getOverallSnapshotsQueryOptions({
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_protected/_profile/home/")({
 function HomePage() {
   const { range } = Route.useSearch();
   const context = Route.useRouteContext();
-  const { fromDatehour, toDatehour } = chartTimeRangeToInterval(range);
+  const { fromDatehour, toDatehour } = chartTimeRangeToInterval(range || "1M");
   const { data } = useSuspenseQuery(
     getOverallSnapshotsQueryOptions({
       fromDatehour,
