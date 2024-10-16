@@ -43,3 +43,13 @@ export const getPrettyTime = (givenDate: Date): string => {
   if (days === 1) return `${days} day ago`;
   return `${days} days ago`;
 };
+
+export const getFormattedDate = (date: Date): string => {
+  // Extract the year, month, and day
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed, so add 1
+  const day = String(date.getDate()).padStart(2, "0");
+
+  // Format the date as yyyy-mm-dd
+  return `${year}-${month}-${day}`;
+};
