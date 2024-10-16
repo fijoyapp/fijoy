@@ -1,21 +1,13 @@
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
+import { chartTimeRangeToInterval } from "@/lib/chart";
 import { getOverallSnapshotsQueryOptions } from "@/lib/queries/snapshot";
-import { getFormattedDate } from "@/lib/time";
-import { Timestamp } from "@bufbuild/protobuf";
+import { ChartTimeRange } from "@/types/chart";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
 const homeRouteSchema = z.object({
-  fromDatehour: z
-    .string()
-    .date()
-    .default(() => {
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      return getFormattedDate(oneMonthAgo);
-    }),
-  toDatehour: z.string().date().default(getFormattedDate(new Date())),
+  range: ChartTimeRange.default("1M"),
 });
 
 export const Route = createFileRoute("/_protected/_profile/home/")({
@@ -23,15 +15,15 @@ export const Route = createFileRoute("/_protected/_profile/home/")({
   validateSearch: (search) => {
     return homeRouteSchema.parse(search);
   },
-  loaderDeps: ({ search: { fromDatehour, toDatehour } }) => ({
-    fromDatehour,
-    toDatehour,
-  }),
+  loaderDeps: ({ search: { range } }) => ({ range }),
   loader: (opts) => {
-    opts.context.queryClient.ensureQueryData(
+    const { fromDatehour, toDatehour } = chartTimeRangeToInterval(
+      opts.deps.range,
+    );
+    return opts.context.queryClient.ensureQueryData(
       getOverallSnapshotsQueryOptions({
-        fromDatehour: Timestamp.fromDate(new Date(opts.deps.fromDatehour)),
-        toDatehour: Timestamp.fromDate(new Date(opts.deps.toDatehour)),
+        fromDatehour,
+        toDatehour,
         context: opts.context,
       }),
     );
@@ -40,12 +32,13 @@ export const Route = createFileRoute("/_protected/_profile/home/")({
 });
 
 function HomePage() {
-  const { fromDatehour, toDatehour } = Route.useSearch();
+  const { range } = Route.useSearch();
   const context = Route.useRouteContext();
+  const { fromDatehour, toDatehour } = chartTimeRangeToInterval(range);
   const { data } = useSuspenseQuery(
     getOverallSnapshotsQueryOptions({
-      fromDatehour: Timestamp.fromDate(new Date(fromDatehour)),
-      toDatehour: Timestamp.fromDate(new Date(toDatehour)),
+      fromDatehour,
+      toDatehour,
       context,
     }),
   );
