@@ -46,21 +46,25 @@ const ProtectedRouteRoute = ProtectedRouteImport.update({
 } as any)
 
 const PublicIndexLazyRoute = PublicIndexLazyImport.update({
+  id: '/',
   path: '/',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/index.lazy').then((d) => d.Route))
 
 const PublicWhyLazyRoute = PublicWhyLazyImport.update({
+  id: '/why',
   path: '/why',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/why.lazy').then((d) => d.Route))
 
 const PublicStackLazyRoute = PublicStackLazyImport.update({
+  id: '/stack',
   path: '/stack',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/stack.lazy').then((d) => d.Route))
 
 const PublicSignupLazyRoute = PublicSignupLazyImport.update({
+  id: '/signup',
   path: '/signup',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() =>
@@ -68,6 +72,7 @@ const PublicSignupLazyRoute = PublicSignupLazyImport.update({
 )
 
 const PublicPricingLazyRoute = PublicPricingLazyImport.update({
+  id: '/pricing',
   path: '/pricing',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() =>
@@ -75,11 +80,13 @@ const PublicPricingLazyRoute = PublicPricingLazyImport.update({
 )
 
 const PublicLoginLazyRoute = PublicLoginLazyImport.update({
+  id: '/login',
   path: '/login',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/login.lazy').then((d) => d.Route))
 
 const PublicFeaturesLazyRoute = PublicFeaturesLazyImport.update({
+  id: '/features',
   path: '/features',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() =>
@@ -87,6 +94,7 @@ const PublicFeaturesLazyRoute = PublicFeaturesLazyImport.update({
 )
 
 const ProtectedSetupRoute = ProtectedSetupImport.update({
+  id: '/setup',
   path: '/setup',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
@@ -98,29 +106,34 @@ const ProtectedProfileRouteRoute = ProtectedProfileRouteImport.update({
 
 const ProtectedProfileSettingsIndexRoute =
   ProtectedProfileSettingsIndexImport.update({
+    id: '/settings/',
     path: '/settings/',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
 const ProtectedProfileHomeIndexRoute = ProtectedProfileHomeIndexImport.update({
+  id: '/home/',
   path: '/home/',
   getParentRoute: () => ProtectedProfileRouteRoute,
 } as any)
 
 const ProtectedProfileHistoryIndexRoute =
   ProtectedProfileHistoryIndexImport.update({
+    id: '/history/',
     path: '/history/',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
 const ProtectedProfileAccountsIndexRoute =
   ProtectedProfileAccountsIndexImport.update({
+    id: '/accounts/',
     path: '/accounts/',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
 const ProtectedProfileSettingsCurrencyIndexRoute =
   ProtectedProfileSettingsCurrencyIndexImport.update({
+    id: '/settings/currency/',
     path: '/settings/currency/',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
