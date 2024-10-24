@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_protected/_profile/home/")({
     const { fromDatehour, toDatehour } = chartTimeRangeToInterval(
       opts.deps.range || "1M",
     );
-    return opts.context.queryClient.ensureQueryData(
+    opts.context.queryClient.ensureQueryData(
       getOverallSnapshotsQueryOptions({
         fromDatehour,
         toDatehour,
