@@ -16,7 +16,7 @@ Make sure you have the following dependencies installed:
 - [Just](https://github.com/casey/just)
 - [Atlas](https://atlasgo.io/docs)
 - [Docker](https://docs.docker.com/get-started/get-docker/) or [OrbStack](https://orbstack.dev/)
-  (Recommanded)
+  (Recommended)
 
 Then you can do a quick
 
@@ -45,5 +45,7 @@ just dev # Make sure Docker/OrbStack is running!
 More details on how to get started can be found in [docs/contribution.md](docs/contribution.md).
 Please also give [docs/design-choices.md](docs/design-choices.md) a read to understand
 why things are done in the way they are :)
+
+You can also visit our FAQ in [docs/faq.md](docs/faq.md) to find answers to common questions.
 
 Happy coding!
