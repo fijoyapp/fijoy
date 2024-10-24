@@ -11,6 +11,7 @@ init:
   pnpm install
   just packages/proto/init
   just apps/server/init
+  @echo "You are good to go!"
 
 update:
   pnpm update -r
