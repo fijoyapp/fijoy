@@ -21,6 +21,7 @@ kill:
 
 init:
   go install github.com/air-verse/air@latest
+  @command -v air >/dev/null 2>&1 || { echo "Cannot find air in PATH, please make sure your GOPATH is configured correctly! You can check that with the `go env` command"; exit 1; }
 
 migrate-diff name:
   atlas migrate diff {{name}} \
