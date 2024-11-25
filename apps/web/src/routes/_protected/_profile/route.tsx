@@ -38,7 +38,6 @@ import {
 } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { env } from "@/env";
 import { ModeToggle } from "@/components/mode-toggle";
 import {
   PageHeader,
@@ -49,6 +48,7 @@ import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useState } from "react";
 import { getProfileQueryOptions } from "@/lib/queries/profile";
 import { motion } from "framer-motion";
+import { logout } from "@/lib/auth";
 
 export const Route = createFileRoute("/_protected/_profile")({
   beforeLoad: async ({ context }) => {
@@ -124,7 +124,6 @@ const navLinks: NavLink[] = [
 
 function Page() {
   const matchRoute = useMatchRoute();
-  const { queryClient } = Route.useRouteContext();
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -264,10 +263,7 @@ function Page() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={() => {
-                  queryClient.removeQueries();
-                  window.location.replace(
-                    env.VITE_SERVER_URL + "/v1/auth/logout",
-                  );
+                  logout();
                 }}
               >
                 Logout
