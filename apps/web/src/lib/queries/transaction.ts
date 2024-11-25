@@ -1,7 +1,6 @@
 import { Transport } from "@connectrpc/connect";
 import { createQueryOptions } from "@connectrpc/connect-query";
 import { getTransactions } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
-import { getProfileHeader } from "@/lib/headers";
 import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 
 type getTransactionsProps = {
@@ -19,9 +18,6 @@ export const getTransactionsQueryOptions = ({
     {},
     {
       transport: context.transport,
-      callOptions: {
-        headers: getProfileHeader(context.profile.id),
-      },
     },
   );
 };

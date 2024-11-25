@@ -15,6 +15,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { OverallSnapshotList } from "@/gen/proto/fijoy/v1/snapshot_pb";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 
 type Props = {
   data: OverallSnapshotList;
@@ -51,15 +52,16 @@ const OverallChart = ({ data }: Props) => {
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey={(value) => {
-                const lmao = value.datehour
-                  .toDate()
-                  .toLocaleDateString("en-CA", {
+                const lmao = timestampDate(value.datehour).toLocaleDateString(
+                  "en-CA",
+                  {
                     year: "numeric",
                     month: "2-digit",
                     day: "2-digit",
                     hour: "2-digit",
                     hour12: false,
-                  });
+                  },
+                );
                 console.log(lmao);
                 return lmao;
               }}

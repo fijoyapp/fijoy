@@ -1,8 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 
-import { createPromiseClient } from "@connectrpc/connect";
+import { createClient } from "@connectrpc/connect";
 import { User } from "./gen/proto/fijoy/v1/user_pb";
-import { UserService } from "./gen/proto/fijoy/v1/user_connect";
+import { UserService } from "./gen/proto/fijoy/v1/user_pb";
 import { finalTransport } from "./lib/connect";
 
 export interface AuthContext {
@@ -10,7 +10,7 @@ export interface AuthContext {
   isLoading: boolean;
 }
 
-const userClient = createPromiseClient(UserService, finalTransport);
+const userClient = createClient(UserService, finalTransport);
 
 export const AuthContext = createContext<AuthContext | null>(null);
 

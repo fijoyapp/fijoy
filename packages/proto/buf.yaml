@@ -1,9 +1,16 @@
-version: v1
-breaking:
-  use:
-    - FILE
+version: v2
+deps:
+  - buf.build/bufbuild/protovalidate
 lint:
   use:
     - DEFAULT
-deps:
-  - buf.build/bufbuild/protovalidate
+  except:
+    - FIELD_NOT_REQUIRED
+    - PACKAGE_NO_IMPORT_CYCLE
+  disallow_comment_ignores: true
+breaking:
+  use:
+    - FILE
+  except:
+    - EXTENSION_NO_DELETE
+    - FIELD_SAME_DEFAULT

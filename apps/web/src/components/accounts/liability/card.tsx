@@ -3,6 +3,7 @@ import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { CreditCard } from "lucide-react";
 
 type LiabilityCardProps = {
@@ -36,7 +37,7 @@ export function LiabilityCard({ account }: LiabilityCardProps) {
           })}
         </div>
         <div className="text-xs text-muted-foreground">
-          {getPrettyTime(account.updatedAt!.toDate())}
+          {getPrettyTime(timestampDate(account.updatedAt!))}
         </div>
       </div>
     </CardContent>

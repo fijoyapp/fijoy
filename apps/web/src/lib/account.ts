@@ -1,5 +1,5 @@
 import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
-import { Timestamp } from "@bufbuild/protobuf";
+import { timestampFromMs } from "@bufbuild/protobuf/wkt";
 import currency from "currency.js";
 import _ from "lodash";
 
@@ -48,7 +48,7 @@ export function getOverallStats(accounts: Account[]) {
       return acc;
     }
     return acc;
-  }, new Timestamp());
+  }, timestampFromMs(0));
 
   return {
     asset,
