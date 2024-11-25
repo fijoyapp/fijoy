@@ -7,14 +7,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { env } from "@/env";
 import { useAuth } from "@/hooks/use-auth";
-import { useQueryClient } from "@tanstack/react-query";
-// import { useRouter } from "@tanstack/react-router";
+import { logout } from "@/lib/auth";
 
 function UserButton() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
 
   if (!user) {
     return null;
@@ -37,8 +34,7 @@ function UserButton() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {
-            queryClient.clear();
-            window.location.replace(env.VITE_SERVER_URL + "/v1/auth/logout");
+            logout();
           }}
         >
           Logout
