@@ -1,12 +1,11 @@
 import { Transport } from "@connectrpc/connect";
 import { createQueryOptions } from "@connectrpc/connect-query";
-import { getProfileHeader } from "../headers";
 import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 import {
   getAccountSnapshots,
   getOverallSnapshots,
 } from "@/gen/proto/fijoy/v1/snapshot-SnapshotService_connectquery";
-import { Timestamp } from "@bufbuild/protobuf";
+import { type Timestamp } from "@bufbuild/protobuf/wkt";
 
 type getOverallSnapshotsProps = {
   fromDatehour: Timestamp;
@@ -30,9 +29,6 @@ export const getOverallSnapshotsQueryOptions = ({
     },
     {
       transport: context.transport,
-      callOptions: {
-        headers: getProfileHeader(context.profile.id),
-      },
     },
   );
 };
@@ -62,9 +58,6 @@ export const getAccountSnapshotsQueryOptions = ({
     },
     {
       transport: context.transport,
-      callOptions: {
-        headers: getProfileHeader(context.profile.id),
-      },
     },
   );
 };

@@ -1,23 +1,24 @@
-version: v1
+version: v2
 managed:
   enabled: true
-  go_package_prefix:
-    default: fijoy/proto
-    except:
-      - buf.build/bufbuild/protovalidate
+  disable:
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate
+  override:
+    - file_option: go_package_prefix
+      value: fijoy/proto
 plugins:
-  - name: go
+  - local: protoc-gen-go
     out: ../../apps/server/proto
     opt: paths=source_relative
-  - name: connect-go
+  - local: protoc-gen-connect-go
     out: ../../apps/server/proto
     opt: paths=source_relative
-  - name: es
+  - local: protoc-gen-es
     out: ../../apps/web/src/gen/proto
     opt: target=ts
-  - name: connect-query
+    include_imports: true
+  - local: protoc-gen-connect-query
     out: ../../apps/web/src/gen/proto
     opt: target=ts
-  - name: connect-es
-    out: ../../apps/web/src/gen/proto
-    opt: target=ts
+    include_imports: true

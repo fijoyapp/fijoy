@@ -17,7 +17,6 @@ import { Form, FormMessage } from "@/components/ui/form";
 import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
-import { getProfileHeader } from "@/lib/headers";
 import {
   getProfile,
   updateProfile,
@@ -70,15 +69,15 @@ function Page() {
   const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getProfile),
+        queryKey: createConnectQueryKey({
+          schema: getProfile,
+          cardinality: "finite",
+        }),
       });
       toast.success("Currency settings updated");
     },
     onError(error) {
       toast.error(error.message);
-    },
-    callOptions: {
-      headers: getProfileHeader(profile.id),
     },
   });
 

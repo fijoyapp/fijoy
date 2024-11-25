@@ -1,5 +1,5 @@
 import { ChartTimeRange } from "@/types/chart";
-import { Timestamp } from "@bufbuild/protobuf";
+import { timestampFromDate, type Timestamp } from "@bufbuild/protobuf/wkt";
 import { match } from "ts-pattern";
 
 export function chartTimeRangeToInterval(chartTimeRange: ChartTimeRange): {
@@ -49,8 +49,8 @@ function buildInterval(
   toDatehour: Timestamp;
 } {
   return {
-    fromDatehour: Timestamp.fromDate(from),
-    toDatehour: Timestamp.fromDate(to),
+    fromDatehour: timestampFromDate(from),
+    toDatehour: timestampFromDate(to),
   };
 }
 

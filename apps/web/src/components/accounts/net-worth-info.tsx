@@ -6,6 +6,7 @@ import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
 import { getPrettyTime } from "@/lib/time";
 import { useMemo } from "react";
+import { timestampDate } from "@bufbuild/protobuf/wkt";
 
 type Props = {
   accounts: Account[];
@@ -76,7 +77,9 @@ const NetWorthInfo = ({ accounts }: Props) => {
       </Card>
       <Card className="flex items-center">
         <CardHeader>
-          <CardTitle>{getPrettyTime(lastUpdatedTimestamp.toDate())}</CardTitle>
+          <CardTitle>
+            {getPrettyTime(timestampDate(lastUpdatedTimestamp))}
+          </CardTitle>
           <CardDescription>Last Updated</CardDescription>
         </CardHeader>
 

@@ -4,7 +4,6 @@ import {
   getAccount,
   getAccounts,
 } from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
-import { getProfileHeader } from "../headers";
 import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 
 type getAccountsProps = {
@@ -20,9 +19,6 @@ export const getAccountsQueryOptions = ({ context }: getAccountsProps) => {
     {},
     {
       transport: context.transport,
-      callOptions: {
-        headers: getProfileHeader(context.profile.id),
-      },
     },
   );
 };
@@ -44,9 +40,6 @@ export const getAccountByIdQueryOptions = ({
     { id },
     {
       transport: context.transport,
-      callOptions: {
-        headers: getProfileHeader(context.profile.id),
-      },
     },
   );
 };

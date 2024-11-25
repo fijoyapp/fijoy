@@ -25,7 +25,6 @@ import {
 } from "@/gen/proto/fijoy/v1/account_pb";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getProfileHeader } from "@/lib/headers";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createTransaction,
@@ -54,24 +53,32 @@ export function NewLiquidity() {
   });
 
   const createAccountMut = useMutation(createAccount, {
-    callOptions: {
-      headers: getProfileHeader(profile?.id ?? ""),
-    },
     onSuccess: async () => {
-      // We will invalidate all together when transaction is created
+      queryClient.invalidateQueries({
+        queryKey: createConnectQueryKey({
+          schema: getAccounts,
+          cardinality: "finite",
+        }),
+      });
+      router.navigate({
+        to: "/accounts",
+      });
     },
   });
 
   const createTransactionMut = useMutation(createTransaction, {
-    callOptions: {
-      headers: getProfileHeader(profile?.id ?? ""),
-    },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getAccounts),
+        queryKey: createConnectQueryKey({
+          schema: getAccounts,
+          cardinality: "finite",
+        }),
       });
       queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey(getTransactions),
+        queryKey: createConnectQueryKey({
+          schema: getTransactions,
+          cardinality: "finite",
+        }),
       });
     },
   });
