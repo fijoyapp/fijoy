@@ -17,7 +17,7 @@ func LoadServerConfig() (*ServerConfig, error) {
 		return &ServerConfig{}, fmt.Errorf("%+v", err)
 	}
 
-	if !IsOnRailway() {
+	if !IsProd() {
 		cfg.PORT = "3000"
 	}
 
