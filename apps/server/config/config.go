@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func IsOnRailway() bool {
+func IsProd() bool {
 	return os.Getenv("RAILWAY_PUBLIC_DOMAIN") != ""
 }
 
@@ -17,10 +17,11 @@ type Config struct {
 	Analytics *AnalyticsConfig
 	Server    *ServerConfig
 	Sentry    *SentryConfig
+	Data      *DataConfig
 }
 
 func LoadConfig() (*Config, error) {
-	if !IsOnRailway() {
+	if !IsProd() {
 		err := godotenv.Load()
 		if err != nil {
 			return &Config{}, fmt.Errorf("error loading .env file: %w", err)
@@ -52,12 +53,18 @@ func LoadConfig() (*Config, error) {
 		return &Config{}, fmt.Errorf("error loading sentry config: %w", err)
 	}
 
+	data, err := LoadDataConfig()
+	if err != nil {
+		return &Config{}, fmt.Errorf("error loading data config: %w", err)
+	}
+
 	cfg := &Config{
 		Auth:      auth,
 		Database:  database,
 		Analytics: analytics,
 		Server:    server,
 		Sentry:    sentry,
+		Data:      data,
 	}
 
 	return cfg, nil
