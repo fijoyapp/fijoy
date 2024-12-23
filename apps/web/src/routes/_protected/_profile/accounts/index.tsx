@@ -100,7 +100,7 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
         <div className="py-2"></div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
             <Button>New Account</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
