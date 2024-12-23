@@ -4,7 +4,6 @@ import { immer } from "zustand/middleware/immer";
 
 type State = {
   currencyStepData: CurrencyStepData | undefined;
-
   goalStepData: GoalStepData | undefined;
 };
 

@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 import { Profile } from "./gen/proto/fijoy/v1/profile_pb";
 import { ProfileService } from "./gen/proto/fijoy/v1/profile_pb";
 import { createClient } from "@connectrpc/connect";
-
+import { useShallow } from "zustand/shallow";
 import { finalTransport } from "./lib/connect";
 import { useProfileStore } from "./store/profile";
 
@@ -19,10 +19,12 @@ export const ProfileContext = createContext<ProfileContext | null>(null);
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
-  const { profile, setProfile } = useProfileStore((state) => ({
-    profile: state.profile,
-    setProfile: state.setProfile,
-  }));
+  const { profile, setProfile } = useProfileStore(
+    useShallow((state) => ({
+      profile: state.profile,
+      setProfile: state.setProfile,
+    })),
+  );
 
   const refresh = useCallback(() => {
     setIsLoading(true);

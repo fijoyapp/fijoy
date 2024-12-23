@@ -5,6 +5,7 @@ import { Form } from "@/components/ui/form";
 import { useRouter } from "@tanstack/react-router";
 import { CurrencyStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
+import { useShallow } from "zustand/shallow";
 import { type TypeOf } from "zod";
 import { CurrencyField } from "./form/currency";
 import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
@@ -18,10 +19,12 @@ type CurrencyStepProps = {
 const CurrencyStep = ({ currencies }: CurrencyStepProps) => {
   const router = useRouter();
 
-  const { currencyStepData, setCurrencyStepData } = useSetupStore((state) => ({
-    currencyStepData: state.currencyStepData,
-    setCurrencyStepData: state.setCurrencyStepData,
-  }));
+  const { currencyStepData, setCurrencyStepData } = useSetupStore(
+    useShallow((state) => ({
+      currencyStepData: state.currencyStepData,
+      setCurrencyStepData: state.setCurrencyStepData,
+    })),
+  );
 
   const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),

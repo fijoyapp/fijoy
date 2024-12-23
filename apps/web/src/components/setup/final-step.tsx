@@ -7,6 +7,7 @@ import { useMutation } from "@connectrpc/connect-query";
 import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
+import { useShallow } from "zustand/shallow";
 import { useEffect, useRef } from "react";
 import { createProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { useProfile } from "@/hooks/use-profile";
@@ -20,11 +21,13 @@ const FinalStep = () => {
   const router = useRouter();
   const { refresh } = useProfile();
 
-  const { currencyStepData, goalStepData, reset } = useSetupStore((state) => ({
-    currencyStepData: state.currencyStepData,
-    goalStepData: state.goalStepData,
-    reset: state.reset,
-  }));
+  const { currencyStepData, goalStepData, reset } = useSetupStore(
+    useShallow((state) => ({
+      currencyStepData: state.currencyStepData,
+      goalStepData: state.goalStepData,
+      reset: state.reset,
+    })),
+  );
 
   const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),

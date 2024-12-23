@@ -5,6 +5,7 @@ import { Form } from "@/components/ui/form";
 import { Navigate, useRouter } from "@tanstack/react-router";
 import { GoalStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
+import { useShallow } from "zustand/shallow";
 import { type TypeOf } from "zod";
 import { MoneyField } from "./form/money";
 import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
@@ -19,11 +20,11 @@ const GoalStep = ({ currencies }: GoalStepProps) => {
   const router = useRouter();
 
   const { currencyStepData, goalStepData, setGoalStepData } = useSetupStore(
-    (state) => ({
+    useShallow((state) => ({
       goalStepData: state.goalStepData,
       setGoalStepData: state.setGoalStepData,
       currencyStepData: state.currencyStepData,
-    }),
+    })),
   );
 
   const form = useForm<TypeOf<typeof formSchema>>({
