@@ -98,7 +98,7 @@
     "@vitest/coverage-istanbul": "^2.1.8",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.17.0",
-    "eslint-plugin-react-hooks": "5.1.0-rc-fb9a90fa48-20240614",
+    "eslint-plugin-react-hooks": "5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "postcss": "^8.4.49",
