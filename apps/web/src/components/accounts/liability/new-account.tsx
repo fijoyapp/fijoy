@@ -96,7 +96,7 @@ export function NewLiability() {
 
         await createTransactionMut.mutateAsync({
           accountId: account.id,
-          amountDelta: "-" + values.balance,
+          amount: "-" + values.balance,
           value: "1",
           fxRate: "1", // TODO: Replace with actual fx rate
           note: "Initial balance",

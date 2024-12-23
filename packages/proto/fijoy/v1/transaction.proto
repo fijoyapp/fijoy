@@ -11,16 +11,14 @@ message Transaction {
   string account_id = 2 [(buf.validate.field).string.min_len = 1];
 
   string amount = 3;
-  string amount_delta = 4;
-  string value = 5;
-  string fx_rate = 6;
-  string balance = 7;
-  string balance_delta = 8;
+  string value = 4;
+  string fx_rate = 5;
+  string balance = 6;
 
-  string note = 9;
+  string note = 7;
 
-  google.protobuf.Timestamp created_at = 10 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 11 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp created_at = 8 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 9 [(buf.validate.field).required = true];
 }
 
 message TransactionList {
@@ -30,7 +28,7 @@ message TransactionList {
 message CreateTransactionRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
 
-  string amount_delta = 2;
+  string amount = 2;
   string value = 3;
   string fx_rate = 4;
 
@@ -50,7 +48,7 @@ message GetTransactionsByAccountRequest {
 message UpdateTransactionRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 
-  optional string amount_delta = 2;
+  optional string amount = 2;
   optional string value = 3;
   optional string fx_rate = 4;
 

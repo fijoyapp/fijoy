@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
-	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
@@ -118,21 +117,6 @@ func (pc *ProfileCreate) AddTransaction(t ...*Transaction) *ProfileCreate {
 		ids[i] = t[i].ID
 	}
 	return pc.AddTransactionIDs(ids...)
-}
-
-// AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
-func (pc *ProfileCreate) AddOverallSnapshotIDs(ids ...string) *ProfileCreate {
-	pc.mutation.AddOverallSnapshotIDs(ids...)
-	return pc
-}
-
-// AddOverallSnapshot adds the "overall_snapshot" edges to the OverallSnapshot entity.
-func (pc *ProfileCreate) AddOverallSnapshot(o ...*OverallSnapshot) *ProfileCreate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return pc.AddOverallSnapshotIDs(ids...)
 }
 
 // Mutation returns the ProfileMutation object of the builder.
@@ -287,22 +271,6 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := pc.mutation.OverallSnapshotIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.OverallSnapshotTable,
-			Columns: []string{profile.OverallSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

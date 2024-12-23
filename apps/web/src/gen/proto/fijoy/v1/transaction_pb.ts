@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file fijoy/v1/transaction.proto.
  */
 export const file_fijoy_v1_transaction: GenFile = /*@__PURE__*/
-  fileDesc("ChpmaWpveS92MS90cmFuc2FjdGlvbi5wcm90bxIIZmlqb3kudjEiqwIKC1RyYW5zYWN0aW9uEhMKAmlkGAEgASgJQge6SARyAhABEhsKCmFjY291bnRfaWQYAiABKAlCB7pIBHICEAESDgoGYW1vdW50GAMgASgJEhQKDGFtb3VudF9kZWx0YRgEIAEoCRINCgV2YWx1ZRgFIAEoCRIPCgdmeF9yYXRlGAYgASgJEg8KB2JhbGFuY2UYByABKAkSFQoNYmFsYW5jZV9kZWx0YRgIIAEoCRIMCgRub3RlGAkgASgJEjYKCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wQga6SAPIAQESNgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBASI/Cg9UcmFuc2FjdGlvbkxpc3QSLAoFaXRlbXMYASADKAsyFS5maWpveS52MS5UcmFuc2FjdGlvbkIGukgDyAEBInsKGENyZWF0ZVRyYW5zYWN0aW9uUmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABEhQKDGFtb3VudF9kZWx0YRgCIAEoCRINCgV2YWx1ZRgDIAEoCRIPCgdmeF9yYXRlGAQgASgJEgwKBG5vdGUYBSABKAkiLAoVR2V0VHJhbnNhY3Rpb25SZXF1ZXN0EhMKAmlkGAEgASgJQge6SARyAhABIi0KFkdldFRyYW5zYWN0aW9uc1JlcXVlc3QSEwoCaWQYASABKAlCB7pIBHICEAEiPgofR2V0VHJhbnNhY3Rpb25zQnlBY2NvdW50UmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABIrcBChhVcGRhdGVUcmFuc2FjdGlvblJlcXVlc3QSEwoCaWQYASABKAlCB7pIBHICEAESGQoMYW1vdW50X2RlbHRhGAIgASgJSACIAQESEgoFdmFsdWUYAyABKAlIAYgBARIUCgdmeF9yYXRlGAQgASgJSAKIAQESEQoEbm90ZRgFIAEoCUgDiAEBQg8KDV9hbW91bnRfZGVsdGFCCAoGX3ZhbHVlQgoKCF9meF9yYXRlQgcKBV9ub3RlIi8KGERlbGV0ZVRyYW5zYWN0aW9uUmVxdWVzdBITCgJpZBgBIAEoCUIHukgEcgIQATKGBAoSVHJhbnNhY3Rpb25TZXJ2aWNlEk4KEUNyZWF0ZVRyYW5zYWN0aW9uEiIuZmlqb3kudjEuQ3JlYXRlVHJhbnNhY3Rpb25SZXF1ZXN0GhUuZmlqb3kudjEuVHJhbnNhY3Rpb24STQoOR2V0VHJhbnNhY3Rpb24SHy5maWpveS52MS5HZXRUcmFuc2FjdGlvblJlcXVlc3QaFS5maWpveS52MS5UcmFuc2FjdGlvbiIDkAIBEmUKGEdldFRyYW5zYWN0aW9uc0J5QWNjb3VudBIpLmZpam95LnYxLkdldFRyYW5zYWN0aW9uc0J5QWNjb3VudFJlcXVlc3QaGS5maWpveS52MS5UcmFuc2FjdGlvbkxpc3QiA5ACARJJCg9HZXRUcmFuc2FjdGlvbnMSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaGS5maWpveS52MS5UcmFuc2FjdGlvbkxpc3QiA5ACARJOChFVcGRhdGVUcmFuc2FjdGlvbhIiLmZpam95LnYxLlVwZGF0ZVRyYW5zYWN0aW9uUmVxdWVzdBoVLmZpam95LnYxLlRyYW5zYWN0aW9uEk8KEURlbGV0ZVRyYW5zYWN0aW9uEiIuZmlqb3kudjEuRGVsZXRlVHJhbnNhY3Rpb25SZXF1ZXN0GhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Qn8KDGNvbS5maWpveS52MUIQVHJhbnNhY3Rpb25Qcm90b1ABWhxmaWpveS9wcm90by9maWpveS92MTtmaWpveXYxogIDRlhYqgIIRmlqb3kuVjHKAghGaWpveVxWMeICFEZpam95XFYxXEdQQk1ldGFkYXRh6gIJRmlqb3k6OlYxYgZwcm90bzM", [file_buf_validate_validate, file_google_protobuf_empty, file_google_protobuf_timestamp]);
+  fileDesc("ChpmaWpveS92MS90cmFuc2FjdGlvbi5wcm90bxIIZmlqb3kudjEi/gEKC1RyYW5zYWN0aW9uEhMKAmlkGAEgASgJQge6SARyAhABEhsKCmFjY291bnRfaWQYAiABKAlCB7pIBHICEAESDgoGYW1vdW50GAMgASgJEg0KBXZhbHVlGAQgASgJEg8KB2Z4X3JhdGUYBSABKAkSDwoHYmFsYW5jZRgGIAEoCRIMCgRub3RlGAcgASgJEjYKCmNyZWF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wQga6SAPIAQESNgoKdXBkYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCBrpIA8gBASI/Cg9UcmFuc2FjdGlvbkxpc3QSLAoFaXRlbXMYASADKAsyFS5maWpveS52MS5UcmFuc2FjdGlvbkIGukgDyAEBInUKGENyZWF0ZVRyYW5zYWN0aW9uUmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABEg4KBmFtb3VudBgCIAEoCRINCgV2YWx1ZRgDIAEoCRIPCgdmeF9yYXRlGAQgASgJEgwKBG5vdGUYBSABKAkiLAoVR2V0VHJhbnNhY3Rpb25SZXF1ZXN0EhMKAmlkGAEgASgJQge6SARyAhABIi0KFkdldFRyYW5zYWN0aW9uc1JlcXVlc3QSEwoCaWQYASABKAlCB7pIBHICEAEiPgofR2V0VHJhbnNhY3Rpb25zQnlBY2NvdW50UmVxdWVzdBIbCgphY2NvdW50X2lkGAEgASgJQge6SARyAhABIqsBChhVcGRhdGVUcmFuc2FjdGlvblJlcXVlc3QSEwoCaWQYASABKAlCB7pIBHICEAESEwoGYW1vdW50GAIgASgJSACIAQESEgoFdmFsdWUYAyABKAlIAYgBARIUCgdmeF9yYXRlGAQgASgJSAKIAQESEQoEbm90ZRgFIAEoCUgDiAEBQgkKB19hbW91bnRCCAoGX3ZhbHVlQgoKCF9meF9yYXRlQgcKBV9ub3RlIi8KGERlbGV0ZVRyYW5zYWN0aW9uUmVxdWVzdBITCgJpZBgBIAEoCUIHukgEcgIQATKGBAoSVHJhbnNhY3Rpb25TZXJ2aWNlEk4KEUNyZWF0ZVRyYW5zYWN0aW9uEiIuZmlqb3kudjEuQ3JlYXRlVHJhbnNhY3Rpb25SZXF1ZXN0GhUuZmlqb3kudjEuVHJhbnNhY3Rpb24STQoOR2V0VHJhbnNhY3Rpb24SHy5maWpveS52MS5HZXRUcmFuc2FjdGlvblJlcXVlc3QaFS5maWpveS52MS5UcmFuc2FjdGlvbiIDkAIBEmUKGEdldFRyYW5zYWN0aW9uc0J5QWNjb3VudBIpLmZpam95LnYxLkdldFRyYW5zYWN0aW9uc0J5QWNjb3VudFJlcXVlc3QaGS5maWpveS52MS5UcmFuc2FjdGlvbkxpc3QiA5ACARJJCg9HZXRUcmFuc2FjdGlvbnMSFi5nb29nbGUucHJvdG9idWYuRW1wdHkaGS5maWpveS52MS5UcmFuc2FjdGlvbkxpc3QiA5ACARJOChFVcGRhdGVUcmFuc2FjdGlvbhIiLmZpam95LnYxLlVwZGF0ZVRyYW5zYWN0aW9uUmVxdWVzdBoVLmZpam95LnYxLlRyYW5zYWN0aW9uEk8KEURlbGV0ZVRyYW5zYWN0aW9uEiIuZmlqb3kudjEuRGVsZXRlVHJhbnNhY3Rpb25SZXF1ZXN0GhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5Qn8KDGNvbS5maWpveS52MUIQVHJhbnNhY3Rpb25Qcm90b1ABWhxmaWpveS9wcm90by9maWpveS92MTtmaWpveXYxogIDRlhYqgIIRmlqb3kuVjHKAghGaWpveVxWMeICFEZpam95XFYxXEdQQk1ldGFkYXRh6gIJRmlqb3k6OlYxYgZwcm90bzM", [file_buf_validate_validate, file_google_protobuf_empty, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message fijoy.v1.Transaction
@@ -35,42 +35,32 @@ export type Transaction = Message<"fijoy.v1.Transaction"> & {
   amount: string;
 
   /**
-   * @generated from field: string amount_delta = 4;
-   */
-  amountDelta: string;
-
-  /**
-   * @generated from field: string value = 5;
+   * @generated from field: string value = 4;
    */
   value: string;
 
   /**
-   * @generated from field: string fx_rate = 6;
+   * @generated from field: string fx_rate = 5;
    */
   fxRate: string;
 
   /**
-   * @generated from field: string balance = 7;
+   * @generated from field: string balance = 6;
    */
   balance: string;
 
   /**
-   * @generated from field: string balance_delta = 8;
-   */
-  balanceDelta: string;
-
-  /**
-   * @generated from field: string note = 9;
+   * @generated from field: string note = 7;
    */
   note: string;
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 10;
+   * @generated from field: google.protobuf.Timestamp created_at = 8;
    */
   createdAt?: Timestamp;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 11;
+   * @generated from field: google.protobuf.Timestamp updated_at = 9;
    */
   updatedAt?: Timestamp;
 };
@@ -109,9 +99,9 @@ export type CreateTransactionRequest = Message<"fijoy.v1.CreateTransactionReques
   accountId: string;
 
   /**
-   * @generated from field: string amount_delta = 2;
+   * @generated from field: string amount = 2;
    */
-  amountDelta: string;
+  amount: string;
 
   /**
    * @generated from field: string value = 3;
@@ -197,9 +187,9 @@ export type UpdateTransactionRequest = Message<"fijoy.v1.UpdateTransactionReques
   id: string;
 
   /**
-   * @generated from field: optional string amount_delta = 2;
+   * @generated from field: optional string amount = 2;
    */
-  amountDelta?: string;
+  amount?: string;
 
   /**
    * @generated from field: optional string value = 3;

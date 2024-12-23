@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
-	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
@@ -143,21 +142,6 @@ func (pu *ProfileUpdate) AddTransaction(t ...*Transaction) *ProfileUpdate {
 	return pu.AddTransactionIDs(ids...)
 }
 
-// AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
-func (pu *ProfileUpdate) AddOverallSnapshotIDs(ids ...string) *ProfileUpdate {
-	pu.mutation.AddOverallSnapshotIDs(ids...)
-	return pu
-}
-
-// AddOverallSnapshot adds the "overall_snapshot" edges to the OverallSnapshot entity.
-func (pu *ProfileUpdate) AddOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return pu.AddOverallSnapshotIDs(ids...)
-}
-
 // Mutation returns the ProfileMutation object of the builder.
 func (pu *ProfileUpdate) Mutation() *ProfileMutation {
 	return pu.mutation
@@ -209,27 +193,6 @@ func (pu *ProfileUpdate) RemoveTransaction(t ...*Transaction) *ProfileUpdate {
 		ids[i] = t[i].ID
 	}
 	return pu.RemoveTransactionIDs(ids...)
-}
-
-// ClearOverallSnapshot clears all "overall_snapshot" edges to the OverallSnapshot entity.
-func (pu *ProfileUpdate) ClearOverallSnapshot() *ProfileUpdate {
-	pu.mutation.ClearOverallSnapshot()
-	return pu
-}
-
-// RemoveOverallSnapshotIDs removes the "overall_snapshot" edge to OverallSnapshot entities by IDs.
-func (pu *ProfileUpdate) RemoveOverallSnapshotIDs(ids ...string) *ProfileUpdate {
-	pu.mutation.RemoveOverallSnapshotIDs(ids...)
-	return pu
-}
-
-// RemoveOverallSnapshot removes "overall_snapshot" edges to OverallSnapshot entities.
-func (pu *ProfileUpdate) RemoveOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return pu.RemoveOverallSnapshotIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -416,51 +379,6 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if pu.mutation.OverallSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.OverallSnapshotTable,
-			Columns: []string{profile.OverallSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pu.mutation.RemovedOverallSnapshotIDs(); len(nodes) > 0 && !pu.mutation.OverallSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.OverallSnapshotTable,
-			Columns: []string{profile.OverallSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := pu.mutation.OverallSnapshotIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.OverallSnapshotTable,
-			Columns: []string{profile.OverallSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profile.Label}
@@ -591,21 +509,6 @@ func (puo *ProfileUpdateOne) AddTransaction(t ...*Transaction) *ProfileUpdateOne
 	return puo.AddTransactionIDs(ids...)
 }
 
-// AddOverallSnapshotIDs adds the "overall_snapshot" edge to the OverallSnapshot entity by IDs.
-func (puo *ProfileUpdateOne) AddOverallSnapshotIDs(ids ...string) *ProfileUpdateOne {
-	puo.mutation.AddOverallSnapshotIDs(ids...)
-	return puo
-}
-
-// AddOverallSnapshot adds the "overall_snapshot" edges to the OverallSnapshot entity.
-func (puo *ProfileUpdateOne) AddOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdateOne {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return puo.AddOverallSnapshotIDs(ids...)
-}
-
 // Mutation returns the ProfileMutation object of the builder.
 func (puo *ProfileUpdateOne) Mutation() *ProfileMutation {
 	return puo.mutation
@@ -657,27 +560,6 @@ func (puo *ProfileUpdateOne) RemoveTransaction(t ...*Transaction) *ProfileUpdate
 		ids[i] = t[i].ID
 	}
 	return puo.RemoveTransactionIDs(ids...)
-}
-
-// ClearOverallSnapshot clears all "overall_snapshot" edges to the OverallSnapshot entity.
-func (puo *ProfileUpdateOne) ClearOverallSnapshot() *ProfileUpdateOne {
-	puo.mutation.ClearOverallSnapshot()
-	return puo
-}
-
-// RemoveOverallSnapshotIDs removes the "overall_snapshot" edge to OverallSnapshot entities by IDs.
-func (puo *ProfileUpdateOne) RemoveOverallSnapshotIDs(ids ...string) *ProfileUpdateOne {
-	puo.mutation.RemoveOverallSnapshotIDs(ids...)
-	return puo
-}
-
-// RemoveOverallSnapshot removes "overall_snapshot" edges to OverallSnapshot entities.
-func (puo *ProfileUpdateOne) RemoveOverallSnapshot(o ...*OverallSnapshot) *ProfileUpdateOne {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return puo.RemoveOverallSnapshotIDs(ids...)
 }
 
 // Where appends a list predicates to the ProfileUpdate builder.
@@ -887,51 +769,6 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if puo.mutation.OverallSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.OverallSnapshotTable,
-			Columns: []string{profile.OverallSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := puo.mutation.RemovedOverallSnapshotIDs(); len(nodes) > 0 && !puo.mutation.OverallSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.OverallSnapshotTable,
-			Columns: []string{profile.OverallSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := puo.mutation.OverallSnapshotIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.OverallSnapshotTable,
-			Columns: []string{profile.OverallSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(overallsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

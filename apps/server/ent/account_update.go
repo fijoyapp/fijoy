@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
-	"fijoy/ent/accountsnapshot"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
@@ -231,21 +230,6 @@ func (au *AccountUpdate) SetProfile(p *Profile) *AccountUpdate {
 	return au.SetProfileID(p.ID)
 }
 
-// AddAccountSnapshotIDs adds the "account_snapshot" edge to the AccountSnapshot entity by IDs.
-func (au *AccountUpdate) AddAccountSnapshotIDs(ids ...string) *AccountUpdate {
-	au.mutation.AddAccountSnapshotIDs(ids...)
-	return au
-}
-
-// AddAccountSnapshot adds the "account_snapshot" edges to the AccountSnapshot entity.
-func (au *AccountUpdate) AddAccountSnapshot(a ...*AccountSnapshot) *AccountUpdate {
-	ids := make([]string, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return au.AddAccountSnapshotIDs(ids...)
-}
-
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
 func (au *AccountUpdate) AddTransactionIDs(ids ...string) *AccountUpdate {
 	au.mutation.AddTransactionIDs(ids...)
@@ -270,27 +254,6 @@ func (au *AccountUpdate) Mutation() *AccountMutation {
 func (au *AccountUpdate) ClearProfile() *AccountUpdate {
 	au.mutation.ClearProfile()
 	return au
-}
-
-// ClearAccountSnapshot clears all "account_snapshot" edges to the AccountSnapshot entity.
-func (au *AccountUpdate) ClearAccountSnapshot() *AccountUpdate {
-	au.mutation.ClearAccountSnapshot()
-	return au
-}
-
-// RemoveAccountSnapshotIDs removes the "account_snapshot" edge to AccountSnapshot entities by IDs.
-func (au *AccountUpdate) RemoveAccountSnapshotIDs(ids ...string) *AccountUpdate {
-	au.mutation.RemoveAccountSnapshotIDs(ids...)
-	return au
-}
-
-// RemoveAccountSnapshot removes "account_snapshot" edges to AccountSnapshot entities.
-func (au *AccountUpdate) RemoveAccountSnapshot(a ...*AccountSnapshot) *AccountUpdate {
-	ids := make([]string, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return au.RemoveAccountSnapshotIDs(ids...)
 }
 
 // ClearTransaction clears all "transaction" edges to the Transaction entity.
@@ -451,51 +414,6 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if au.mutation.AccountSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.AccountSnapshotTable,
-			Columns: []string{account.AccountSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := au.mutation.RemovedAccountSnapshotIDs(); len(nodes) > 0 && !au.mutation.AccountSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.AccountSnapshotTable,
-			Columns: []string{account.AccountSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := au.mutation.AccountSnapshotIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.AccountSnapshotTable,
-			Columns: []string{account.AccountSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -767,21 +685,6 @@ func (auo *AccountUpdateOne) SetProfile(p *Profile) *AccountUpdateOne {
 	return auo.SetProfileID(p.ID)
 }
 
-// AddAccountSnapshotIDs adds the "account_snapshot" edge to the AccountSnapshot entity by IDs.
-func (auo *AccountUpdateOne) AddAccountSnapshotIDs(ids ...string) *AccountUpdateOne {
-	auo.mutation.AddAccountSnapshotIDs(ids...)
-	return auo
-}
-
-// AddAccountSnapshot adds the "account_snapshot" edges to the AccountSnapshot entity.
-func (auo *AccountUpdateOne) AddAccountSnapshot(a ...*AccountSnapshot) *AccountUpdateOne {
-	ids := make([]string, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return auo.AddAccountSnapshotIDs(ids...)
-}
-
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
 func (auo *AccountUpdateOne) AddTransactionIDs(ids ...string) *AccountUpdateOne {
 	auo.mutation.AddTransactionIDs(ids...)
@@ -806,27 +709,6 @@ func (auo *AccountUpdateOne) Mutation() *AccountMutation {
 func (auo *AccountUpdateOne) ClearProfile() *AccountUpdateOne {
 	auo.mutation.ClearProfile()
 	return auo
-}
-
-// ClearAccountSnapshot clears all "account_snapshot" edges to the AccountSnapshot entity.
-func (auo *AccountUpdateOne) ClearAccountSnapshot() *AccountUpdateOne {
-	auo.mutation.ClearAccountSnapshot()
-	return auo
-}
-
-// RemoveAccountSnapshotIDs removes the "account_snapshot" edge to AccountSnapshot entities by IDs.
-func (auo *AccountUpdateOne) RemoveAccountSnapshotIDs(ids ...string) *AccountUpdateOne {
-	auo.mutation.RemoveAccountSnapshotIDs(ids...)
-	return auo
-}
-
-// RemoveAccountSnapshot removes "account_snapshot" edges to AccountSnapshot entities.
-func (auo *AccountUpdateOne) RemoveAccountSnapshot(a ...*AccountSnapshot) *AccountUpdateOne {
-	ids := make([]string, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return auo.RemoveAccountSnapshotIDs(ids...)
 }
 
 // ClearTransaction clears all "transaction" edges to the Transaction entity.
@@ -1017,51 +899,6 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if auo.mutation.AccountSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.AccountSnapshotTable,
-			Columns: []string{account.AccountSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := auo.mutation.RemovedAccountSnapshotIDs(); len(nodes) > 0 && !auo.mutation.AccountSnapshotCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.AccountSnapshotTable,
-			Columns: []string{account.AccountSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := auo.mutation.AccountSnapshotIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.AccountSnapshotTable,
-			Columns: []string{account.AccountSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

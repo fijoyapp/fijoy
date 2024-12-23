@@ -20,30 +20,6 @@ func (f AccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountMutation", m)
 }
 
-// The AccountSnapshotFunc type is an adapter to allow the use of ordinary
-// function as AccountSnapshot mutator.
-type AccountSnapshotFunc func(context.Context, *ent.AccountSnapshotMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f AccountSnapshotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.AccountSnapshotMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountSnapshotMutation", m)
-}
-
-// The OverallSnapshotFunc type is an adapter to allow the use of ordinary
-// function as OverallSnapshot mutator.
-type OverallSnapshotFunc func(context.Context, *ent.OverallSnapshotMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f OverallSnapshotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.OverallSnapshotMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OverallSnapshotMutation", m)
-}
-
 // The ProfileFunc type is an adapter to allow the use of ordinary
 // function as Profile mutator.
 type ProfileFunc func(context.Context, *ent.ProfileMutation) (ent.Value, error)

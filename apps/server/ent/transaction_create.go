@@ -29,12 +29,6 @@ func (tc *TransactionCreate) SetAmount(d decimal.Decimal) *TransactionCreate {
 	return tc
 }
 
-// SetAmountDelta sets the "amount_delta" field.
-func (tc *TransactionCreate) SetAmountDelta(d decimal.Decimal) *TransactionCreate {
-	tc.mutation.SetAmountDelta(d)
-	return tc
-}
-
 // SetValue sets the "value" field.
 func (tc *TransactionCreate) SetValue(d decimal.Decimal) *TransactionCreate {
 	tc.mutation.SetValue(d)
@@ -58,12 +52,6 @@ func (tc *TransactionCreate) SetNillableFxRate(d *decimal.Decimal) *TransactionC
 // SetBalance sets the "balance" field.
 func (tc *TransactionCreate) SetBalance(d decimal.Decimal) *TransactionCreate {
 	tc.mutation.SetBalance(d)
-	return tc
-}
-
-// SetBalanceDelta sets the "balance_delta" field.
-func (tc *TransactionCreate) SetBalanceDelta(d decimal.Decimal) *TransactionCreate {
-	tc.mutation.SetBalanceDelta(d)
 	return tc
 }
 
@@ -199,17 +187,11 @@ func (tc *TransactionCreate) check() error {
 	if _, ok := tc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Transaction.amount"`)}
 	}
-	if _, ok := tc.mutation.AmountDelta(); !ok {
-		return &ValidationError{Name: "amount_delta", err: errors.New(`ent: missing required field "Transaction.amount_delta"`)}
-	}
 	if _, ok := tc.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Transaction.value"`)}
 	}
 	if _, ok := tc.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Transaction.balance"`)}
-	}
-	if _, ok := tc.mutation.BalanceDelta(); !ok {
-		return &ValidationError{Name: "balance_delta", err: errors.New(`ent: missing required field "Transaction.balance_delta"`)}
 	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transaction.created_at"`)}
@@ -262,10 +244,6 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		_spec.SetField(transaction.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
 	}
-	if value, ok := tc.mutation.AmountDelta(); ok {
-		_spec.SetField(transaction.FieldAmountDelta, field.TypeFloat64, value)
-		_node.AmountDelta = value
-	}
 	if value, ok := tc.mutation.Value(); ok {
 		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
 		_node.Value = value
@@ -277,10 +255,6 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
-	}
-	if value, ok := tc.mutation.BalanceDelta(); ok {
-		_spec.SetField(transaction.FieldBalanceDelta, field.TypeFloat64, value)
-		_node.BalanceDelta = value
 	}
 	if value, ok := tc.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)

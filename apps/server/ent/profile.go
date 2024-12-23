@@ -42,11 +42,9 @@ type ProfileEdges struct {
 	Account []*Account `json:"account,omitempty"`
 	// Transaction holds the value of the transaction edge.
 	Transaction []*Transaction `json:"transaction,omitempty"`
-	// OverallSnapshot holds the value of the overall_snapshot edge.
-	OverallSnapshot []*OverallSnapshot `json:"overall_snapshot,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [3]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -76,15 +74,6 @@ func (e ProfileEdges) TransactionOrErr() ([]*Transaction, error) {
 		return e.Transaction, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction"}
-}
-
-// OverallSnapshotOrErr returns the OverallSnapshot value or an error if the edge
-// was not loaded in eager-loading.
-func (e ProfileEdges) OverallSnapshotOrErr() ([]*OverallSnapshot, error) {
-	if e.loadedTypes[3] {
-		return e.OverallSnapshot, nil
-	}
-	return nil, &NotLoadedError{edge: "overall_snapshot"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -178,11 +167,6 @@ func (pr *Profile) QueryAccount() *AccountQuery {
 // QueryTransaction queries the "transaction" edge of the Profile entity.
 func (pr *Profile) QueryTransaction() *TransactionQuery {
 	return NewProfileClient(pr.config).QueryTransaction(pr)
-}
-
-// QueryOverallSnapshot queries the "overall_snapshot" edge of the Profile entity.
-func (pr *Profile) QueryOverallSnapshot() *OverallSnapshotQuery {
-	return NewProfileClient(pr.config).QueryOverallSnapshot(pr)
 }
 
 // Update returns a builder for updating this Profile.

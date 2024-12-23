@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
-	"fijoy/ent/accountsnapshot"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fmt"
@@ -145,21 +144,6 @@ func (ac *AccountCreate) SetProfileID(id string) *AccountCreate {
 // SetProfile sets the "profile" edge to the Profile entity.
 func (ac *AccountCreate) SetProfile(p *Profile) *AccountCreate {
 	return ac.SetProfileID(p.ID)
-}
-
-// AddAccountSnapshotIDs adds the "account_snapshot" edge to the AccountSnapshot entity by IDs.
-func (ac *AccountCreate) AddAccountSnapshotIDs(ids ...string) *AccountCreate {
-	ac.mutation.AddAccountSnapshotIDs(ids...)
-	return ac
-}
-
-// AddAccountSnapshot adds the "account_snapshot" edges to the AccountSnapshot entity.
-func (ac *AccountCreate) AddAccountSnapshot(a ...*AccountSnapshot) *AccountCreate {
-	ids := make([]string, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return ac.AddAccountSnapshotIDs(ids...)
 }
 
 // AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
@@ -379,22 +363,6 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.profile_account = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ac.mutation.AccountSnapshotIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.AccountSnapshotTable,
-			Columns: []string{account.AccountSnapshotColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accountsnapshot.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := ac.mutation.TransactionIDs(); len(nodes) > 0 {

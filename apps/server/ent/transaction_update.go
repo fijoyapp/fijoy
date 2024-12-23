@@ -52,27 +52,6 @@ func (tu *TransactionUpdate) AddAmount(d decimal.Decimal) *TransactionUpdate {
 	return tu
 }
 
-// SetAmountDelta sets the "amount_delta" field.
-func (tu *TransactionUpdate) SetAmountDelta(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.ResetAmountDelta()
-	tu.mutation.SetAmountDelta(d)
-	return tu
-}
-
-// SetNillableAmountDelta sets the "amount_delta" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableAmountDelta(d *decimal.Decimal) *TransactionUpdate {
-	if d != nil {
-		tu.SetAmountDelta(*d)
-	}
-	return tu
-}
-
-// AddAmountDelta adds d to the "amount_delta" field.
-func (tu *TransactionUpdate) AddAmountDelta(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.AddAmountDelta(d)
-	return tu
-}
-
 // SetValue sets the "value" field.
 func (tu *TransactionUpdate) SetValue(d decimal.Decimal) *TransactionUpdate {
 	tu.mutation.ResetValue()
@@ -139,27 +118,6 @@ func (tu *TransactionUpdate) SetNillableBalance(d *decimal.Decimal) *Transaction
 // AddBalance adds d to the "balance" field.
 func (tu *TransactionUpdate) AddBalance(d decimal.Decimal) *TransactionUpdate {
 	tu.mutation.AddBalance(d)
-	return tu
-}
-
-// SetBalanceDelta sets the "balance_delta" field.
-func (tu *TransactionUpdate) SetBalanceDelta(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.ResetBalanceDelta()
-	tu.mutation.SetBalanceDelta(d)
-	return tu
-}
-
-// SetNillableBalanceDelta sets the "balance_delta" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableBalanceDelta(d *decimal.Decimal) *TransactionUpdate {
-	if d != nil {
-		tu.SetBalanceDelta(*d)
-	}
-	return tu
-}
-
-// AddBalanceDelta adds d to the "balance_delta" field.
-func (tu *TransactionUpdate) AddBalanceDelta(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.AddBalanceDelta(d)
 	return tu
 }
 
@@ -306,12 +264,6 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedAmount(); ok {
 		_spec.AddField(transaction.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.AmountDelta(); ok {
-		_spec.SetField(transaction.FieldAmountDelta, field.TypeFloat64, value)
-	}
-	if value, ok := tu.mutation.AddedAmountDelta(); ok {
-		_spec.AddField(transaction.FieldAmountDelta, field.TypeFloat64, value)
-	}
 	if value, ok := tu.mutation.Value(); ok {
 		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
 	}
@@ -332,12 +284,6 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.AddedBalance(); ok {
 		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
-	if value, ok := tu.mutation.BalanceDelta(); ok {
-		_spec.SetField(transaction.FieldBalanceDelta, field.TypeFloat64, value)
-	}
-	if value, ok := tu.mutation.AddedBalanceDelta(); ok {
-		_spec.AddField(transaction.FieldBalanceDelta, field.TypeFloat64, value)
 	}
 	if value, ok := tu.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
@@ -450,27 +396,6 @@ func (tuo *TransactionUpdateOne) AddAmount(d decimal.Decimal) *TransactionUpdate
 	return tuo
 }
 
-// SetAmountDelta sets the "amount_delta" field.
-func (tuo *TransactionUpdateOne) SetAmountDelta(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.ResetAmountDelta()
-	tuo.mutation.SetAmountDelta(d)
-	return tuo
-}
-
-// SetNillableAmountDelta sets the "amount_delta" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableAmountDelta(d *decimal.Decimal) *TransactionUpdateOne {
-	if d != nil {
-		tuo.SetAmountDelta(*d)
-	}
-	return tuo
-}
-
-// AddAmountDelta adds d to the "amount_delta" field.
-func (tuo *TransactionUpdateOne) AddAmountDelta(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.AddAmountDelta(d)
-	return tuo
-}
-
 // SetValue sets the "value" field.
 func (tuo *TransactionUpdateOne) SetValue(d decimal.Decimal) *TransactionUpdateOne {
 	tuo.mutation.ResetValue()
@@ -537,27 +462,6 @@ func (tuo *TransactionUpdateOne) SetNillableBalance(d *decimal.Decimal) *Transac
 // AddBalance adds d to the "balance" field.
 func (tuo *TransactionUpdateOne) AddBalance(d decimal.Decimal) *TransactionUpdateOne {
 	tuo.mutation.AddBalance(d)
-	return tuo
-}
-
-// SetBalanceDelta sets the "balance_delta" field.
-func (tuo *TransactionUpdateOne) SetBalanceDelta(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.ResetBalanceDelta()
-	tuo.mutation.SetBalanceDelta(d)
-	return tuo
-}
-
-// SetNillableBalanceDelta sets the "balance_delta" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableBalanceDelta(d *decimal.Decimal) *TransactionUpdateOne {
-	if d != nil {
-		tuo.SetBalanceDelta(*d)
-	}
-	return tuo
-}
-
-// AddBalanceDelta adds d to the "balance_delta" field.
-func (tuo *TransactionUpdateOne) AddBalanceDelta(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.AddBalanceDelta(d)
 	return tuo
 }
 
@@ -734,12 +638,6 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	if value, ok := tuo.mutation.AddedAmount(); ok {
 		_spec.AddField(transaction.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := tuo.mutation.AmountDelta(); ok {
-		_spec.SetField(transaction.FieldAmountDelta, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.AddedAmountDelta(); ok {
-		_spec.AddField(transaction.FieldAmountDelta, field.TypeFloat64, value)
-	}
 	if value, ok := tuo.mutation.Value(); ok {
 		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
 	}
@@ -760,12 +658,6 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if value, ok := tuo.mutation.AddedBalance(); ok {
 		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.BalanceDelta(); ok {
-		_spec.SetField(transaction.FieldBalanceDelta, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.AddedBalanceDelta(); ok {
-		_spec.AddField(transaction.FieldBalanceDelta, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)

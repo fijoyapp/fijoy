@@ -4,8 +4,6 @@ package ent
 
 import (
 	"fijoy/ent/account"
-	"fijoy/ent/accountsnapshot"
-	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/profile"
 	"fijoy/ent/schema"
 	"fijoy/ent/transaction"
@@ -43,18 +41,6 @@ func init() {
 	accountDescID := accountFields[0].Descriptor()
 	// account.DefaultID holds the default value on creation for the id field.
 	account.DefaultID = accountDescID.Default.(func() string)
-	accountsnapshotFields := schema.AccountSnapshot{}.Fields()
-	_ = accountsnapshotFields
-	// accountsnapshotDescID is the schema descriptor for id field.
-	accountsnapshotDescID := accountsnapshotFields[0].Descriptor()
-	// accountsnapshot.DefaultID holds the default value on creation for the id field.
-	accountsnapshot.DefaultID = accountsnapshotDescID.Default.(func() string)
-	overallsnapshotFields := schema.OverallSnapshot{}.Fields()
-	_ = overallsnapshotFields
-	// overallsnapshotDescID is the schema descriptor for id field.
-	overallsnapshotDescID := overallsnapshotFields[0].Descriptor()
-	// overallsnapshot.DefaultID holds the default value on creation for the id field.
-	overallsnapshot.DefaultID = overallsnapshotDescID.Default.(func() string)
 	profileFields := schema.Profile{}.Fields()
 	_ = profileFields
 	// profileDescCreatedAt is the schema descriptor for created_at field.
@@ -68,11 +54,11 @@ func init() {
 	transactionFields := schema.Transaction{}.Fields()
 	_ = transactionFields
 	// transactionDescCreatedAt is the schema descriptor for created_at field.
-	transactionDescCreatedAt := transactionFields[8].Descriptor()
+	transactionDescCreatedAt := transactionFields[6].Descriptor()
 	// transaction.DefaultCreatedAt holds the default value on creation for the created_at field.
 	transaction.DefaultCreatedAt = transactionDescCreatedAt.Default.(func() time.Time)
 	// transactionDescUpdatedAt is the schema descriptor for updated_at field.
-	transactionDescUpdatedAt := transactionFields[9].Descriptor()
+	transactionDescUpdatedAt := transactionFields[7].Descriptor()
 	// transaction.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	transaction.DefaultUpdatedAt = transactionDescUpdatedAt.Default.(func() time.Time)
 	// transactionDescID is the schema descriptor for id field.

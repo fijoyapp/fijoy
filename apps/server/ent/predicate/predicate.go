@@ -9,12 +9,6 @@ import (
 // Account is the predicate function for account builders.
 type Account func(*sql.Selector)
 
-// AccountSnapshot is the predicate function for accountsnapshot builders.
-type AccountSnapshot func(*sql.Selector)
-
-// OverallSnapshot is the predicate function for overallsnapshot builders.
-type OverallSnapshot func(*sql.Selector)
-
 // Profile is the predicate function for profile builders.
 type Profile func(*sql.Selector)
 

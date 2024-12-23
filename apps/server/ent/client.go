@@ -12,8 +12,6 @@ import (
 	"fijoy/ent/migrate"
 
 	"fijoy/ent/account"
-	"fijoy/ent/accountsnapshot"
-	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
@@ -32,10 +30,6 @@ type Client struct {
 	Schema *migrate.Schema
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
-	// AccountSnapshot is the client for interacting with the AccountSnapshot builders.
-	AccountSnapshot *AccountSnapshotClient
-	// OverallSnapshot is the client for interacting with the OverallSnapshot builders.
-	OverallSnapshot *OverallSnapshotClient
 	// Profile is the client for interacting with the Profile builders.
 	Profile *ProfileClient
 	// Transaction is the client for interacting with the Transaction builders.
@@ -56,8 +50,6 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Account = NewAccountClient(c.config)
-	c.AccountSnapshot = NewAccountSnapshotClient(c.config)
-	c.OverallSnapshot = NewOverallSnapshotClient(c.config)
 	c.Profile = NewProfileClient(c.config)
 	c.Transaction = NewTransactionClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -152,15 +144,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:             ctx,
-		config:          cfg,
-		Account:         NewAccountClient(cfg),
-		AccountSnapshot: NewAccountSnapshotClient(cfg),
-		OverallSnapshot: NewOverallSnapshotClient(cfg),
-		Profile:         NewProfileClient(cfg),
-		Transaction:     NewTransactionClient(cfg),
-		User:            NewUserClient(cfg),
-		UserKey:         NewUserKeyClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Account:     NewAccountClient(cfg),
+		Profile:     NewProfileClient(cfg),
+		Transaction: NewTransactionClient(cfg),
+		User:        NewUserClient(cfg),
+		UserKey:     NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -178,15 +168,13 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:             ctx,
-		config:          cfg,
-		Account:         NewAccountClient(cfg),
-		AccountSnapshot: NewAccountSnapshotClient(cfg),
-		OverallSnapshot: NewOverallSnapshotClient(cfg),
-		Profile:         NewProfileClient(cfg),
-		Transaction:     NewTransactionClient(cfg),
-		User:            NewUserClient(cfg),
-		UserKey:         NewUserKeyClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Account:     NewAccountClient(cfg),
+		Profile:     NewProfileClient(cfg),
+		Transaction: NewTransactionClient(cfg),
+		User:        NewUserClient(cfg),
+		UserKey:     NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -215,23 +203,21 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	for _, n := range []interface{ Use(...Hook) }{
-		c.Account, c.AccountSnapshot, c.OverallSnapshot, c.Profile, c.Transaction,
-		c.User, c.UserKey,
-	} {
-		n.Use(hooks...)
-	}
+	c.Account.Use(hooks...)
+	c.Profile.Use(hooks...)
+	c.Transaction.Use(hooks...)
+	c.User.Use(hooks...)
+	c.UserKey.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Account, c.AccountSnapshot, c.OverallSnapshot, c.Profile, c.Transaction,
-		c.User, c.UserKey,
-	} {
-		n.Intercept(interceptors...)
-	}
+	c.Account.Intercept(interceptors...)
+	c.Profile.Intercept(interceptors...)
+	c.Transaction.Intercept(interceptors...)
+	c.User.Intercept(interceptors...)
+	c.UserKey.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -239,10 +225,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AccountMutation:
 		return c.Account.mutate(ctx, m)
-	case *AccountSnapshotMutation:
-		return c.AccountSnapshot.mutate(ctx, m)
-	case *OverallSnapshotMutation:
-		return c.OverallSnapshot.mutate(ctx, m)
 	case *ProfileMutation:
 		return c.Profile.mutate(ctx, m)
 	case *TransactionMutation:
@@ -380,22 +362,6 @@ func (c *AccountClient) QueryProfile(a *Account) *ProfileQuery {
 	return query
 }
 
-// QueryAccountSnapshot queries the account_snapshot edge of a Account.
-func (c *AccountClient) QueryAccountSnapshot(a *Account) *AccountSnapshotQuery {
-	query := (&AccountSnapshotClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := a.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(account.Table, account.FieldID, id),
-			sqlgraph.To(accountsnapshot.Table, accountsnapshot.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, account.AccountSnapshotTable, account.AccountSnapshotColumn),
-		)
-		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryTransaction queries the transaction edge of a Account.
 func (c *AccountClient) QueryTransaction(a *Account) *TransactionQuery {
 	query := (&TransactionClient{config: c.config}).Query()
@@ -434,304 +400,6 @@ func (c *AccountClient) mutate(ctx context.Context, m *AccountMutation) (Value, 
 		return (&AccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Account mutation op: %q", m.Op())
-	}
-}
-
-// AccountSnapshotClient is a client for the AccountSnapshot schema.
-type AccountSnapshotClient struct {
-	config
-}
-
-// NewAccountSnapshotClient returns a client for the AccountSnapshot from the given config.
-func NewAccountSnapshotClient(c config) *AccountSnapshotClient {
-	return &AccountSnapshotClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `accountsnapshot.Hooks(f(g(h())))`.
-func (c *AccountSnapshotClient) Use(hooks ...Hook) {
-	c.hooks.AccountSnapshot = append(c.hooks.AccountSnapshot, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `accountsnapshot.Intercept(f(g(h())))`.
-func (c *AccountSnapshotClient) Intercept(interceptors ...Interceptor) {
-	c.inters.AccountSnapshot = append(c.inters.AccountSnapshot, interceptors...)
-}
-
-// Create returns a builder for creating a AccountSnapshot entity.
-func (c *AccountSnapshotClient) Create() *AccountSnapshotCreate {
-	mutation := newAccountSnapshotMutation(c.config, OpCreate)
-	return &AccountSnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of AccountSnapshot entities.
-func (c *AccountSnapshotClient) CreateBulk(builders ...*AccountSnapshotCreate) *AccountSnapshotCreateBulk {
-	return &AccountSnapshotCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *AccountSnapshotClient) MapCreateBulk(slice any, setFunc func(*AccountSnapshotCreate, int)) *AccountSnapshotCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &AccountSnapshotCreateBulk{err: fmt.Errorf("calling to AccountSnapshotClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*AccountSnapshotCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &AccountSnapshotCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for AccountSnapshot.
-func (c *AccountSnapshotClient) Update() *AccountSnapshotUpdate {
-	mutation := newAccountSnapshotMutation(c.config, OpUpdate)
-	return &AccountSnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *AccountSnapshotClient) UpdateOne(as *AccountSnapshot) *AccountSnapshotUpdateOne {
-	mutation := newAccountSnapshotMutation(c.config, OpUpdateOne, withAccountSnapshot(as))
-	return &AccountSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *AccountSnapshotClient) UpdateOneID(id string) *AccountSnapshotUpdateOne {
-	mutation := newAccountSnapshotMutation(c.config, OpUpdateOne, withAccountSnapshotID(id))
-	return &AccountSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for AccountSnapshot.
-func (c *AccountSnapshotClient) Delete() *AccountSnapshotDelete {
-	mutation := newAccountSnapshotMutation(c.config, OpDelete)
-	return &AccountSnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *AccountSnapshotClient) DeleteOne(as *AccountSnapshot) *AccountSnapshotDeleteOne {
-	return c.DeleteOneID(as.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AccountSnapshotClient) DeleteOneID(id string) *AccountSnapshotDeleteOne {
-	builder := c.Delete().Where(accountsnapshot.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &AccountSnapshotDeleteOne{builder}
-}
-
-// Query returns a query builder for AccountSnapshot.
-func (c *AccountSnapshotClient) Query() *AccountSnapshotQuery {
-	return &AccountSnapshotQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeAccountSnapshot},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a AccountSnapshot entity by its id.
-func (c *AccountSnapshotClient) Get(ctx context.Context, id string) (*AccountSnapshot, error) {
-	return c.Query().Where(accountsnapshot.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *AccountSnapshotClient) GetX(ctx context.Context, id string) *AccountSnapshot {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryAccount queries the account edge of a AccountSnapshot.
-func (c *AccountSnapshotClient) QueryAccount(as *AccountSnapshot) *AccountQuery {
-	query := (&AccountClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := as.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(accountsnapshot.Table, accountsnapshot.FieldID, id),
-			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, accountsnapshot.AccountTable, accountsnapshot.AccountColumn),
-		)
-		fromV = sqlgraph.Neighbors(as.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *AccountSnapshotClient) Hooks() []Hook {
-	return c.hooks.AccountSnapshot
-}
-
-// Interceptors returns the client interceptors.
-func (c *AccountSnapshotClient) Interceptors() []Interceptor {
-	return c.inters.AccountSnapshot
-}
-
-func (c *AccountSnapshotClient) mutate(ctx context.Context, m *AccountSnapshotMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&AccountSnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&AccountSnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&AccountSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&AccountSnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown AccountSnapshot mutation op: %q", m.Op())
-	}
-}
-
-// OverallSnapshotClient is a client for the OverallSnapshot schema.
-type OverallSnapshotClient struct {
-	config
-}
-
-// NewOverallSnapshotClient returns a client for the OverallSnapshot from the given config.
-func NewOverallSnapshotClient(c config) *OverallSnapshotClient {
-	return &OverallSnapshotClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `overallsnapshot.Hooks(f(g(h())))`.
-func (c *OverallSnapshotClient) Use(hooks ...Hook) {
-	c.hooks.OverallSnapshot = append(c.hooks.OverallSnapshot, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `overallsnapshot.Intercept(f(g(h())))`.
-func (c *OverallSnapshotClient) Intercept(interceptors ...Interceptor) {
-	c.inters.OverallSnapshot = append(c.inters.OverallSnapshot, interceptors...)
-}
-
-// Create returns a builder for creating a OverallSnapshot entity.
-func (c *OverallSnapshotClient) Create() *OverallSnapshotCreate {
-	mutation := newOverallSnapshotMutation(c.config, OpCreate)
-	return &OverallSnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of OverallSnapshot entities.
-func (c *OverallSnapshotClient) CreateBulk(builders ...*OverallSnapshotCreate) *OverallSnapshotCreateBulk {
-	return &OverallSnapshotCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *OverallSnapshotClient) MapCreateBulk(slice any, setFunc func(*OverallSnapshotCreate, int)) *OverallSnapshotCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &OverallSnapshotCreateBulk{err: fmt.Errorf("calling to OverallSnapshotClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*OverallSnapshotCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &OverallSnapshotCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for OverallSnapshot.
-func (c *OverallSnapshotClient) Update() *OverallSnapshotUpdate {
-	mutation := newOverallSnapshotMutation(c.config, OpUpdate)
-	return &OverallSnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *OverallSnapshotClient) UpdateOne(os *OverallSnapshot) *OverallSnapshotUpdateOne {
-	mutation := newOverallSnapshotMutation(c.config, OpUpdateOne, withOverallSnapshot(os))
-	return &OverallSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *OverallSnapshotClient) UpdateOneID(id string) *OverallSnapshotUpdateOne {
-	mutation := newOverallSnapshotMutation(c.config, OpUpdateOne, withOverallSnapshotID(id))
-	return &OverallSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for OverallSnapshot.
-func (c *OverallSnapshotClient) Delete() *OverallSnapshotDelete {
-	mutation := newOverallSnapshotMutation(c.config, OpDelete)
-	return &OverallSnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *OverallSnapshotClient) DeleteOne(os *OverallSnapshot) *OverallSnapshotDeleteOne {
-	return c.DeleteOneID(os.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *OverallSnapshotClient) DeleteOneID(id string) *OverallSnapshotDeleteOne {
-	builder := c.Delete().Where(overallsnapshot.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &OverallSnapshotDeleteOne{builder}
-}
-
-// Query returns a query builder for OverallSnapshot.
-func (c *OverallSnapshotClient) Query() *OverallSnapshotQuery {
-	return &OverallSnapshotQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeOverallSnapshot},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a OverallSnapshot entity by its id.
-func (c *OverallSnapshotClient) Get(ctx context.Context, id string) (*OverallSnapshot, error) {
-	return c.Query().Where(overallsnapshot.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *OverallSnapshotClient) GetX(ctx context.Context, id string) *OverallSnapshot {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryProfile queries the profile edge of a OverallSnapshot.
-func (c *OverallSnapshotClient) QueryProfile(os *OverallSnapshot) *ProfileQuery {
-	query := (&ProfileClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := os.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(overallsnapshot.Table, overallsnapshot.FieldID, id),
-			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, overallsnapshot.ProfileTable, overallsnapshot.ProfileColumn),
-		)
-		fromV = sqlgraph.Neighbors(os.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *OverallSnapshotClient) Hooks() []Hook {
-	return c.hooks.OverallSnapshot
-}
-
-// Interceptors returns the client interceptors.
-func (c *OverallSnapshotClient) Interceptors() []Interceptor {
-	return c.inters.OverallSnapshot
-}
-
-func (c *OverallSnapshotClient) mutate(ctx context.Context, m *OverallSnapshotMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&OverallSnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&OverallSnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&OverallSnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&OverallSnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown OverallSnapshot mutation op: %q", m.Op())
 	}
 }
 
@@ -884,22 +552,6 @@ func (c *ProfileClient) QueryTransaction(pr *Profile) *TransactionQuery {
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionTable, profile.TransactionColumn),
-		)
-		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryOverallSnapshot queries the overall_snapshot edge of a Profile.
-func (c *ProfileClient) QueryOverallSnapshot(pr *Profile) *OverallSnapshotQuery {
-	query := (&OverallSnapshotClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := pr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(profile.Table, profile.FieldID, id),
-			sqlgraph.To(overallsnapshot.Table, overallsnapshot.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 		return fromV, nil
@@ -1414,11 +1066,9 @@ func (c *UserKeyClient) mutate(ctx context.Context, m *UserKeyMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, AccountSnapshot, OverallSnapshot, Profile, Transaction, User,
-		UserKey []ent.Hook
+		Account, Profile, Transaction, User, UserKey []ent.Hook
 	}
 	inters struct {
-		Account, AccountSnapshot, OverallSnapshot, Profile, Transaction, User,
-		UserKey []ent.Interceptor
+		Account, Profile, Transaction, User, UserKey []ent.Interceptor
 	}
 )

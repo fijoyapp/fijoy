@@ -33,16 +33,10 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import NetWorthInfo from "@/components/accounts/net-worth-info";
 import AccountListView from "@/components/accounts/account-list-view";
-import { chartTimeRangeToInterval } from "@/lib/chart";
-import { getOverallSnapshotsQueryOptions } from "@/lib/queries/snapshot";
-import { ChartTimeRange } from "@/types/chart";
-import { OverallSnapshotList } from "@/gen/proto/fijoy/v1/snapshot_pb";
-import OverallChart from "@/components/accounts/overall-chart";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
   detail: z.string().startsWith("account_").optional(),
-  range: ChartTimeRange.default("1M").optional(),
 });
 
 export const Route = createFileRoute("/_protected/_profile/accounts/")({
@@ -50,18 +44,7 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
   validateSearch: (search) => {
     return accountsRouteSchema.parse(search);
   },
-  loaderDeps: ({ search: { range } }) => ({ range }),
   loader: (opts) => {
-    const { fromDatehour, toDatehour } = chartTimeRangeToInterval(
-      opts.deps.range || "1M",
-    );
-    opts.context.queryClient.ensureQueryData(
-      getOverallSnapshotsQueryOptions({
-        fromDatehour,
-        toDatehour,
-        context: opts.context,
-      }),
-    );
     opts.context.queryClient.ensureQueryData(
       getAccountsQueryOptions({
         context: opts.context,
@@ -79,26 +62,12 @@ function Page() {
   );
   const { add, detail } = Route.useSearch();
 
-  const { range } = Route.useSearch();
-  const { fromDatehour, toDatehour } = chartTimeRangeToInterval(range || "1M");
-  const { data: overallSnapshotList } = useSuspenseQuery(
-    getOverallSnapshotsQueryOptions({
-      fromDatehour,
-      toDatehour,
-      context,
-    }),
-  );
-
   return (
     <>
       {add ? (
         <AddAccount type={add} />
       ) : (
-        <AccountsView
-          accounts={accountList.items}
-          detail={detail}
-          overallSnapshotList={overallSnapshotList}
-        />
+        <AccountsView accounts={accountList.items} detail={detail} />
       )}
     </>
   );
@@ -107,14 +76,9 @@ function Page() {
 type AccountsViewProps = {
   accounts: Account[];
   detail?: string;
-  overallSnapshotList: OverallSnapshotList;
 };
 
-function AccountsView({
-  accounts,
-  detail,
-  overallSnapshotList,
-}: AccountsViewProps) {
+function AccountsView({ accounts, detail }: AccountsViewProps) {
   const isDesktop = useMediaQuery(WIDTH_OPTIONS.lg);
   const sidePanelActive = detail !== undefined;
 
@@ -189,8 +153,7 @@ function AccountsView({
         )}
       >
         <NetWorthInfo accounts={accounts} />
-        <div className="py-2"></div>
-        <OverallChart data={overallSnapshotList} />
+        {/* <div className="py-2"></div> */}
       </div>
     </div>
   );

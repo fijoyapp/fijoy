@@ -14,10 +14,6 @@ type Tx struct {
 	config
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
-	// AccountSnapshot is the client for interacting with the AccountSnapshot builders.
-	AccountSnapshot *AccountSnapshotClient
-	// OverallSnapshot is the client for interacting with the OverallSnapshot builders.
-	OverallSnapshot *OverallSnapshotClient
 	// Profile is the client for interacting with the Profile builders.
 	Profile *ProfileClient
 	// Transaction is the client for interacting with the Transaction builders.
@@ -158,8 +154,6 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
-	tx.AccountSnapshot = NewAccountSnapshotClient(tx.config)
-	tx.OverallSnapshot = NewOverallSnapshotClient(tx.config)
 	tx.Profile = NewProfileClient(tx.config)
 	tx.Transaction = NewTransactionClient(tx.config)
 	tx.User = NewUserClient(tx.config)

@@ -38,66 +38,6 @@ var (
 			},
 		},
 	}
-	// AccountSnapshotsColumns holds the columns for the "account_snapshots" table.
-	AccountSnapshotsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "datehour", Type: field.TypeTime, Default: map[string]schema.Expr{"postgres": "date_trunc('hour', now())"}},
-		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "account_account_snapshot", Type: field.TypeString},
-	}
-	// AccountSnapshotsTable holds the schema information for the "account_snapshots" table.
-	AccountSnapshotsTable = &schema.Table{
-		Name:       "account_snapshots",
-		Columns:    AccountSnapshotsColumns,
-		PrimaryKey: []*schema.Column{AccountSnapshotsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "account_snapshots_accounts_account_snapshot",
-				Columns:    []*schema.Column{AccountSnapshotsColumns[3]},
-				RefColumns: []*schema.Column{AccountsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "accountsnapshot_datehour_account_account_snapshot",
-				Unique:  true,
-				Columns: []*schema.Column{AccountSnapshotsColumns[1], AccountSnapshotsColumns[3]},
-			},
-		},
-	}
-	// OverallSnapshotsColumns holds the columns for the "overall_snapshots" table.
-	OverallSnapshotsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "datehour", Type: field.TypeTime, Default: map[string]schema.Expr{"postgres": "date_trunc('hour', now())"}},
-		{Name: "liquidity", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "investment", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "property", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "receivable", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "liability", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "profile_overall_snapshot", Type: field.TypeString},
-	}
-	// OverallSnapshotsTable holds the schema information for the "overall_snapshots" table.
-	OverallSnapshotsTable = &schema.Table{
-		Name:       "overall_snapshots",
-		Columns:    OverallSnapshotsColumns,
-		PrimaryKey: []*schema.Column{OverallSnapshotsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "overall_snapshots_profiles_overall_snapshot",
-				Columns:    []*schema.Column{OverallSnapshotsColumns[7]},
-				RefColumns: []*schema.Column{ProfilesColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "overallsnapshot_datehour_profile_overall_snapshot",
-				Unique:  true,
-				Columns: []*schema.Column{OverallSnapshotsColumns[1], OverallSnapshotsColumns[7]},
-			},
-		},
-	}
 	// ProfilesColumns holds the columns for the "profiles" table.
 	ProfilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -125,11 +65,9 @@ var (
 	TransactionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "amount_delta", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "fx_rate", Type: field.TypeFloat64, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
-		{Name: "balance_delta", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(38,18)", "postgres": "numeric(38,18)"}},
 		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
@@ -144,13 +82,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "transactions_accounts_transaction",
-				Columns:    []*schema.Column{TransactionsColumns[10]},
+				Columns:    []*schema.Column{TransactionsColumns[8]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transactions_profiles_transaction",
-				Columns:    []*schema.Column{TransactionsColumns[11]},
+				Columns:    []*schema.Column{TransactionsColumns[9]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -191,8 +129,6 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
-		AccountSnapshotsTable,
-		OverallSnapshotsTable,
 		ProfilesTable,
 		TransactionsTable,
 		UsersTable,
@@ -202,8 +138,6 @@ var (
 
 func init() {
 	AccountsTable.ForeignKeys[0].RefTable = ProfilesTable
-	AccountSnapshotsTable.ForeignKeys[0].RefTable = AccountsTable
-	OverallSnapshotsTable.ForeignKeys[0].RefTable = ProfilesTable
 	ProfilesTable.ForeignKeys[0].RefTable = UsersTable
 	TransactionsTable.ForeignKeys[0].RefTable = AccountsTable
 	TransactionsTable.ForeignKeys[1].RefTable = ProfilesTable

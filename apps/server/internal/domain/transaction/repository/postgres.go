@@ -27,31 +27,27 @@ func NewTransactionRepository() *transactionRepository {
 }
 
 type CreateTransactionRequest struct {
-	ProfileId   string
-	AccountId   string
-	OldAmount   decimal.Decimal
-	AmountDelta decimal.Decimal
-	Value       decimal.Decimal
-	FxRate      decimal.Decimal
-	OldBalance  decimal.Decimal
+	ProfileId  string
+	AccountId  string
+	OldAmount  decimal.Decimal
+	Amount     decimal.Decimal
+	Value      decimal.Decimal
+	FxRate     decimal.Decimal
+	OldBalance decimal.Decimal
 
 	Note string
 }
 
 func (r *transactionRepository) CreateTransaction(ctx context.Context, client *ent.Client, req CreateTransactionRequest) (*ent.Transaction, error) {
-	balanceDelta := req.AmountDelta.Mul(req.Value).Mul(req.FxRate)
-	newBalance := req.OldBalance.Add(balanceDelta)
-	newAmount := req.OldAmount.Add(req.AmountDelta)
+	balance := req.Amount.Mul(req.Value).Mul(req.FxRate)
 
 	transaction, err := client.Transaction.Create().
 		SetProfileID(req.ProfileId).
 		SetAccountID(req.AccountId).
-		SetAmount(newAmount).
-		SetAmountDelta(req.AmountDelta).
+		SetAmount(req.Amount).
 		SetValue(req.Value).
 		SetFxRate(req.FxRate).
-		SetBalance(newBalance).
-		SetBalanceDelta(balanceDelta).
+		SetBalance(balance).
 		SetNote(req.Note).Save(ctx)
 	if err != nil {
 		return nil, err

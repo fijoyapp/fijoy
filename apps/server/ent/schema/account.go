@@ -66,7 +66,6 @@ func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("profile", Profile.Type).Ref("account").Required().Unique(),
 
-		edge.To("account_snapshot", AccountSnapshot.Type),
 		edge.To("transaction", Transaction.Type),
 	}
 }

@@ -5,6 +5,8 @@ build:
   pnpm build
 
 buf:
+  rm -rf apps/server/proto
+  rm -rf apps/web/src/gen/proto
   just packages/proto/buf
 
 init:

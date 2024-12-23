@@ -6,7 +6,6 @@ import (
 	"context"
 	"database/sql/driver"
 	"fijoy/ent/account"
-	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
@@ -23,15 +22,14 @@ import (
 // ProfileQuery is the builder for querying Profile entities.
 type ProfileQuery struct {
 	config
-	ctx                 *QueryContext
-	order               []profile.OrderOption
-	inters              []Interceptor
-	predicates          []predicate.Profile
-	withUser            *UserQuery
-	withAccount         *AccountQuery
-	withTransaction     *TransactionQuery
-	withOverallSnapshot *OverallSnapshotQuery
-	withFKs             bool
+	ctx             *QueryContext
+	order           []profile.OrderOption
+	inters          []Interceptor
+	predicates      []predicate.Profile
+	withUser        *UserQuery
+	withAccount     *AccountQuery
+	withTransaction *TransactionQuery
+	withFKs         bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -127,28 +125,6 @@ func (pq *ProfileQuery) QueryTransaction() *TransactionQuery {
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionTable, profile.TransactionColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryOverallSnapshot chains the current query on the "overall_snapshot" edge.
-func (pq *ProfileQuery) QueryOverallSnapshot() *OverallSnapshotQuery {
-	query := (&OverallSnapshotClient{config: pq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := pq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := pq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(profile.Table, profile.FieldID, selector),
-			sqlgraph.To(overallsnapshot.Table, overallsnapshot.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, profile.OverallSnapshotTable, profile.OverallSnapshotColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -343,15 +319,14 @@ func (pq *ProfileQuery) Clone() *ProfileQuery {
 		return nil
 	}
 	return &ProfileQuery{
-		config:              pq.config,
-		ctx:                 pq.ctx.Clone(),
-		order:               append([]profile.OrderOption{}, pq.order...),
-		inters:              append([]Interceptor{}, pq.inters...),
-		predicates:          append([]predicate.Profile{}, pq.predicates...),
-		withUser:            pq.withUser.Clone(),
-		withAccount:         pq.withAccount.Clone(),
-		withTransaction:     pq.withTransaction.Clone(),
-		withOverallSnapshot: pq.withOverallSnapshot.Clone(),
+		config:          pq.config,
+		ctx:             pq.ctx.Clone(),
+		order:           append([]profile.OrderOption{}, pq.order...),
+		inters:          append([]Interceptor{}, pq.inters...),
+		predicates:      append([]predicate.Profile{}, pq.predicates...),
+		withUser:        pq.withUser.Clone(),
+		withAccount:     pq.withAccount.Clone(),
+		withTransaction: pq.withTransaction.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
@@ -388,17 +363,6 @@ func (pq *ProfileQuery) WithTransaction(opts ...func(*TransactionQuery)) *Profil
 		opt(query)
 	}
 	pq.withTransaction = query
-	return pq
-}
-
-// WithOverallSnapshot tells the query-builder to eager-load the nodes that are connected to
-// the "overall_snapshot" edge. The optional arguments are used to configure the query builder of the edge.
-func (pq *ProfileQuery) WithOverallSnapshot(opts ...func(*OverallSnapshotQuery)) *ProfileQuery {
-	query := (&OverallSnapshotClient{config: pq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	pq.withOverallSnapshot = query
 	return pq
 }
 
@@ -481,11 +445,10 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 		nodes       = []*Profile{}
 		withFKs     = pq.withFKs
 		_spec       = pq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [3]bool{
 			pq.withUser != nil,
 			pq.withAccount != nil,
 			pq.withTransaction != nil,
-			pq.withOverallSnapshot != nil,
 		}
 	)
 	if pq.withUser != nil {
@@ -529,13 +492,6 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 		if err := pq.loadTransaction(ctx, query, nodes,
 			func(n *Profile) { n.Edges.Transaction = []*Transaction{} },
 			func(n *Profile, e *Transaction) { n.Edges.Transaction = append(n.Edges.Transaction, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := pq.withOverallSnapshot; query != nil {
-		if err := pq.loadOverallSnapshot(ctx, query, nodes,
-			func(n *Profile) { n.Edges.OverallSnapshot = []*OverallSnapshot{} },
-			func(n *Profile, e *OverallSnapshot) { n.Edges.OverallSnapshot = append(n.Edges.OverallSnapshot, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -631,37 +587,6 @@ func (pq *ProfileQuery) loadTransaction(ctx context.Context, query *TransactionQ
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "profile_transaction" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (pq *ProfileQuery) loadOverallSnapshot(ctx context.Context, query *OverallSnapshotQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *OverallSnapshot)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[string]*Profile)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.OverallSnapshot(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(profile.OverallSnapshotColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.profile_overall_snapshot
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "profile_overall_snapshot" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "profile_overall_snapshot" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

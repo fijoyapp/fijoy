@@ -39,8 +39,6 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
 	EdgeProfile = "profile"
-	// EdgeAccountSnapshot holds the string denoting the account_snapshot edge name in mutations.
-	EdgeAccountSnapshot = "account_snapshot"
 	// EdgeTransaction holds the string denoting the transaction edge name in mutations.
 	EdgeTransaction = "transaction"
 	// Table holds the table name of the account in the database.
@@ -52,13 +50,6 @@ const (
 	ProfileInverseTable = "profiles"
 	// ProfileColumn is the table column denoting the profile relation/edge.
 	ProfileColumn = "profile_account"
-	// AccountSnapshotTable is the table that holds the account_snapshot relation/edge.
-	AccountSnapshotTable = "account_snapshots"
-	// AccountSnapshotInverseTable is the table name for the AccountSnapshot entity.
-	// It exists in this package in order to avoid circular dependency with the "accountsnapshot" package.
-	AccountSnapshotInverseTable = "account_snapshots"
-	// AccountSnapshotColumn is the table column denoting the account_snapshot relation/edge.
-	AccountSnapshotColumn = "account_account_snapshot"
 	// TransactionTable is the table that holds the transaction relation/edge.
 	TransactionTable = "transactions"
 	// TransactionInverseTable is the table name for the Transaction entity.
@@ -240,20 +231,6 @@ func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByAccountSnapshotCount orders the results by account_snapshot count.
-func ByAccountSnapshotCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAccountSnapshotStep(), opts...)
-	}
-}
-
-// ByAccountSnapshot orders the results by account_snapshot terms.
-func ByAccountSnapshot(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccountSnapshotStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByTransactionCount orders the results by transaction count.
 func ByTransactionCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -272,13 +249,6 @@ func newProfileStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfileInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
-	)
-}
-func newAccountSnapshotStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AccountSnapshotInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, AccountSnapshotTable, AccountSnapshotColumn),
 	)
 }
 func newTransactionStep() *sqlgraph.Step {

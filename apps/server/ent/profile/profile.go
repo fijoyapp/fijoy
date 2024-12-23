@@ -28,8 +28,6 @@ const (
 	EdgeAccount = "account"
 	// EdgeTransaction holds the string denoting the transaction edge name in mutations.
 	EdgeTransaction = "transaction"
-	// EdgeOverallSnapshot holds the string denoting the overall_snapshot edge name in mutations.
-	EdgeOverallSnapshot = "overall_snapshot"
 	// Table holds the table name of the profile in the database.
 	Table = "profiles"
 	// UserTable is the table that holds the user relation/edge.
@@ -53,13 +51,6 @@ const (
 	TransactionInverseTable = "transactions"
 	// TransactionColumn is the table column denoting the transaction relation/edge.
 	TransactionColumn = "profile_transaction"
-	// OverallSnapshotTable is the table that holds the overall_snapshot relation/edge.
-	OverallSnapshotTable = "overall_snapshots"
-	// OverallSnapshotInverseTable is the table name for the OverallSnapshot entity.
-	// It exists in this package in order to avoid circular dependency with the "overallsnapshot" package.
-	OverallSnapshotInverseTable = "overall_snapshots"
-	// OverallSnapshotColumn is the table column denoting the overall_snapshot relation/edge.
-	OverallSnapshotColumn = "profile_overall_snapshot"
 )
 
 // Columns holds all SQL columns for profile fields.
@@ -161,20 +152,6 @@ func ByTransaction(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newTransactionStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByOverallSnapshotCount orders the results by overall_snapshot count.
-func ByOverallSnapshotCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newOverallSnapshotStep(), opts...)
-	}
-}
-
-// ByOverallSnapshot orders the results by overall_snapshot terms.
-func ByOverallSnapshot(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOverallSnapshotStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -194,12 +171,5 @@ func newTransactionStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionTable, TransactionColumn),
-	)
-}
-func newOverallSnapshotStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OverallSnapshotInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, OverallSnapshotTable, OverallSnapshotColumn),
 	)
 }

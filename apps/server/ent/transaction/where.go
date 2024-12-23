@@ -71,11 +71,6 @@ func Amount(v decimal.Decimal) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldAmount, v))
 }
 
-// AmountDelta applies equality check predicate on the "amount_delta" field. It's identical to AmountDeltaEQ.
-func AmountDelta(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldAmountDelta, v))
-}
-
 // Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
 func Value(v decimal.Decimal) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldValue, v))
@@ -89,11 +84,6 @@ func FxRate(v decimal.Decimal) predicate.Transaction {
 // Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
 func Balance(v decimal.Decimal) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldBalance, v))
-}
-
-// BalanceDelta applies equality check predicate on the "balance_delta" field. It's identical to BalanceDeltaEQ.
-func BalanceDelta(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldBalanceDelta, v))
 }
 
 // Note applies equality check predicate on the "note" field. It's identical to NoteEQ.
@@ -149,46 +139,6 @@ func AmountLT(v decimal.Decimal) predicate.Transaction {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v decimal.Decimal) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldAmount, v))
-}
-
-// AmountDeltaEQ applies the EQ predicate on the "amount_delta" field.
-func AmountDeltaEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldAmountDelta, v))
-}
-
-// AmountDeltaNEQ applies the NEQ predicate on the "amount_delta" field.
-func AmountDeltaNEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNEQ(FieldAmountDelta, v))
-}
-
-// AmountDeltaIn applies the In predicate on the "amount_delta" field.
-func AmountDeltaIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldIn(FieldAmountDelta, vs...))
-}
-
-// AmountDeltaNotIn applies the NotIn predicate on the "amount_delta" field.
-func AmountDeltaNotIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNotIn(FieldAmountDelta, vs...))
-}
-
-// AmountDeltaGT applies the GT predicate on the "amount_delta" field.
-func AmountDeltaGT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGT(FieldAmountDelta, v))
-}
-
-// AmountDeltaGTE applies the GTE predicate on the "amount_delta" field.
-func AmountDeltaGTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGTE(FieldAmountDelta, v))
-}
-
-// AmountDeltaLT applies the LT predicate on the "amount_delta" field.
-func AmountDeltaLT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLT(FieldAmountDelta, v))
-}
-
-// AmountDeltaLTE applies the LTE predicate on the "amount_delta" field.
-func AmountDeltaLTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLTE(FieldAmountDelta, v))
 }
 
 // ValueEQ applies the EQ predicate on the "value" field.
@@ -319,46 +269,6 @@ func BalanceLT(v decimal.Decimal) predicate.Transaction {
 // BalanceLTE applies the LTE predicate on the "balance" field.
 func BalanceLTE(v decimal.Decimal) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldBalance, v))
-}
-
-// BalanceDeltaEQ applies the EQ predicate on the "balance_delta" field.
-func BalanceDeltaEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldBalanceDelta, v))
-}
-
-// BalanceDeltaNEQ applies the NEQ predicate on the "balance_delta" field.
-func BalanceDeltaNEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNEQ(FieldBalanceDelta, v))
-}
-
-// BalanceDeltaIn applies the In predicate on the "balance_delta" field.
-func BalanceDeltaIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldIn(FieldBalanceDelta, vs...))
-}
-
-// BalanceDeltaNotIn applies the NotIn predicate on the "balance_delta" field.
-func BalanceDeltaNotIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNotIn(FieldBalanceDelta, vs...))
-}
-
-// BalanceDeltaGT applies the GT predicate on the "balance_delta" field.
-func BalanceDeltaGT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGT(FieldBalanceDelta, v))
-}
-
-// BalanceDeltaGTE applies the GTE predicate on the "balance_delta" field.
-func BalanceDeltaGTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGTE(FieldBalanceDelta, v))
-}
-
-// BalanceDeltaLT applies the LT predicate on the "balance_delta" field.
-func BalanceDeltaLT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLT(FieldBalanceDelta, v))
-}
-
-// BalanceDeltaLTE applies the LTE predicate on the "balance_delta" field.
-func BalanceDeltaLTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLTE(FieldBalanceDelta, v))
 }
 
 // NoteEQ applies the EQ predicate on the "note" field.

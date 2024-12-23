@@ -16,16 +16,12 @@ const (
 	FieldID = "id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
-	// FieldAmountDelta holds the string denoting the amount_delta field in the database.
-	FieldAmountDelta = "amount_delta"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
 	// FieldFxRate holds the string denoting the fx_rate field in the database.
 	FieldFxRate = "fx_rate"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
-	// FieldBalanceDelta holds the string denoting the balance_delta field in the database.
-	FieldBalanceDelta = "balance_delta"
 	// FieldNote holds the string denoting the note field in the database.
 	FieldNote = "note"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -58,11 +54,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldAmount,
-	FieldAmountDelta,
 	FieldValue,
 	FieldFxRate,
 	FieldBalance,
-	FieldBalanceDelta,
 	FieldNote,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -112,11 +106,6 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
 }
 
-// ByAmountDelta orders the results by the amount_delta field.
-func ByAmountDelta(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAmountDelta, opts...).ToFunc()
-}
-
 // ByValue orders the results by the value field.
 func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
@@ -130,11 +119,6 @@ func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
 // ByBalance orders the results by the balance field.
 func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
-}
-
-// ByBalanceDelta orders the results by the balance_delta field.
-func ByBalanceDelta(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldBalanceDelta, opts...).ToFunc()
 }
 
 // ByNote orders the results by the note field.

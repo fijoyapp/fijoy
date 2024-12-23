@@ -34,10 +34,6 @@ import (
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	transaction_usecase "fijoy/internal/domain/transaction/usecase"
 
-	snapshot_handler "fijoy/internal/domain/snapshot/handler"
-	snapshot_repository "fijoy/internal/domain/snapshot/repository"
-	snapshot_usecase "fijoy/internal/domain/snapshot/usecase"
-
 	currency_handler "fijoy/internal/domain/currency/handler"
 
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
@@ -113,15 +109,13 @@ func main() {
 	userKeyRepo := user_repository.NewUserKeyRepository()
 	profileRepo := profile_repository.NewProfileRepository()
 	accountRepo := account_repository.NewAccountRepository()
-	snapshotRepo := snapshot_repository.NewSnapshotRepository()
 	transactionRepo := transaction_repository.NewTransactionRepository()
 
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo, client)
 	userUseCase := user_usecase.New(userRepo, client)
 	profileUseCase := profile_usecase.New(validator, client, profileRepo)
 	accountUseCase := account_usecase.New(validator, client, accountRepo, transactionRepo)
-	snapshotUseCase := snapshot_usecase.New(validator, client, snapshotRepo)
-	transctionUseCase := transaction_usecase.New(validator, client, transactionRepo, snapshotRepo, accountRepo)
+	transctionUseCase := transaction_usecase.New(validator, client, transactionRepo, accountRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -155,7 +149,6 @@ func main() {
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
 	transaction_handler.RegisterConnect(r, protoValidator, cfg.Auth, transctionUseCase)
-	snapshot_handler.RegisterConnect(r, protoValidator, cfg.Auth, snapshotUseCase)
 
 	currency_handler.RegisterConnect(r)
 

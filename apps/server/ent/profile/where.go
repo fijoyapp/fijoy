@@ -375,29 +375,6 @@ func HasTransactionWith(preds ...predicate.Transaction) predicate.Profile {
 	})
 }
 
-// HasOverallSnapshot applies the HasEdge predicate on the "overall_snapshot" edge.
-func HasOverallSnapshot() predicate.Profile {
-	return predicate.Profile(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, OverallSnapshotTable, OverallSnapshotColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasOverallSnapshotWith applies the HasEdge predicate on the "overall_snapshot" edge with a given conditions (other predicates).
-func HasOverallSnapshotWith(preds ...predicate.OverallSnapshot) predicate.Profile {
-	return predicate.Profile(func(s *sql.Selector) {
-		step := newOverallSnapshotStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Profile) predicate.Profile {
 	return predicate.Profile(sql.AndPredicates(predicates...))

@@ -6,8 +6,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
-	"fijoy/ent/accountsnapshot"
-	"fijoy/ent/overallsnapshot"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
@@ -79,13 +77,11 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			account.Table:         account.ValidColumn,
-			accountsnapshot.Table: accountsnapshot.ValidColumn,
-			overallsnapshot.Table: overallsnapshot.ValidColumn,
-			profile.Table:         profile.ValidColumn,
-			transaction.Table:     transaction.ValidColumn,
-			user.Table:            user.ValidColumn,
-			userkey.Table:         userkey.ValidColumn,
+			account.Table:     account.ValidColumn,
+			profile.Table:     profile.ValidColumn,
+			transaction.Table: transaction.ValidColumn,
+			user.Table:        user.ValidColumn,
+			userkey.Table:     userkey.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

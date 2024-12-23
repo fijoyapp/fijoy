@@ -564,29 +564,6 @@ func HasProfileWith(preds ...predicate.Profile) predicate.Account {
 	})
 }
 
-// HasAccountSnapshot applies the HasEdge predicate on the "account_snapshot" edge.
-func HasAccountSnapshot() predicate.Account {
-	return predicate.Account(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, AccountSnapshotTable, AccountSnapshotColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasAccountSnapshotWith applies the HasEdge predicate on the "account_snapshot" edge with a given conditions (other predicates).
-func HasAccountSnapshotWith(preds ...predicate.AccountSnapshot) predicate.Account {
-	return predicate.Account(func(s *sql.Selector) {
-		step := newAccountSnapshotStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasTransaction applies the HasEdge predicate on the "transaction" edge.
 func HasTransaction() predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {

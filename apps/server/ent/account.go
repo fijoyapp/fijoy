@@ -52,13 +52,11 @@ type Account struct {
 type AccountEdges struct {
 	// Profile holds the value of the profile edge.
 	Profile *Profile `json:"profile,omitempty"`
-	// AccountSnapshot holds the value of the account_snapshot edge.
-	AccountSnapshot []*AccountSnapshot `json:"account_snapshot,omitempty"`
 	// Transaction holds the value of the transaction edge.
 	Transaction []*Transaction `json:"transaction,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [2]bool
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
@@ -72,19 +70,10 @@ func (e AccountEdges) ProfileOrErr() (*Profile, error) {
 	return nil, &NotLoadedError{edge: "profile"}
 }
 
-// AccountSnapshotOrErr returns the AccountSnapshot value or an error if the edge
-// was not loaded in eager-loading.
-func (e AccountEdges) AccountSnapshotOrErr() ([]*AccountSnapshot, error) {
-	if e.loadedTypes[1] {
-		return e.AccountSnapshot, nil
-	}
-	return nil, &NotLoadedError{edge: "account_snapshot"}
-}
-
 // TransactionOrErr returns the Transaction value or an error if the edge
 // was not loaded in eager-loading.
 func (e AccountEdges) TransactionOrErr() ([]*Transaction, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		return e.Transaction, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction"}
@@ -215,11 +204,6 @@ func (a *Account) GetValue(name string) (ent.Value, error) {
 // QueryProfile queries the "profile" edge of the Account entity.
 func (a *Account) QueryProfile() *ProfileQuery {
 	return NewAccountClient(a.config).QueryProfile(a)
-}
-
-// QueryAccountSnapshot queries the "account_snapshot" edge of the Account entity.
-func (a *Account) QueryAccountSnapshot() *AccountSnapshotQuery {
-	return NewAccountClient(a.config).QueryAccountSnapshot(a)
 }
 
 // QueryTransaction queries the "transaction" edge of the Account entity.
