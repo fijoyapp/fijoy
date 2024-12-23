@@ -1,19 +1,18 @@
 import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Clock, Coins, CreditCard, Wallet } from "lucide-react";
+import { Coins, CreditCard, PiggyBank, Wallet } from "lucide-react";
 import { getOverallStats } from "@/lib/account";
 import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
-import { getPrettyTime } from "@/lib/time";
 import { useMemo } from "react";
-import { timestampDate } from "@bufbuild/protobuf/wkt";
+import currency from "currency.js";
 
 type Props = {
   accounts: Account[];
 };
 
 const NetWorthInfo = ({ accounts }: Props) => {
-  const { asset, netWorth, liability, lastUpdatedTimestamp } = useMemo(
+  const { asset, netWorth, liability } = useMemo(
     () => getOverallStats(accounts),
     [accounts],
   );
@@ -78,13 +77,25 @@ const NetWorthInfo = ({ accounts }: Props) => {
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
-            {getPrettyTime(timestampDate(lastUpdatedTimestamp))}
+            {netWorth
+              .multiply(100)
+              .divide(currency(profile.netWorthGoal))
+              .toString()}
+            %
           </CardTitle>
-          <CardDescription>Last Updated</CardDescription>
+          <CardDescription>
+            {getCurrencyDisplay(
+              profile.netWorthGoal.toString(),
+              profile.currencies[0],
+              profile.locale,
+              { compact: false, isDebt: false },
+            )}{" "}
+            Goal
+          </CardDescription>
         </CardHeader>
 
         <div className="grow"></div>
-        <Clock />
+        <PiggyBank />
         <div className="px-4"></div>
       </Card>
     </div>

@@ -1,5 +1,4 @@
 import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
-import { timestampFromMs } from "@bufbuild/protobuf/wkt";
 import currency from "currency.js";
 import _ from "lodash";
 
@@ -40,20 +39,9 @@ export function getOverallStats(accounts: Account[]) {
 
   const netWorth = asset.add(liability);
 
-  const lastUpdatedTimestamp = accounts.reduce((acc, account) => {
-    if (account.updatedAt) {
-      if (acc.nanos < account.updatedAt.nanos) {
-        return account.updatedAt;
-      }
-      return acc;
-    }
-    return acc;
-  }, timestampFromMs(0));
-
   return {
     asset,
     liability,
     netWorth,
-    lastUpdatedTimestamp,
   };
 }
