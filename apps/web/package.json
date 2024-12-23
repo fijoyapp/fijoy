@@ -63,7 +63,7 @@
     "framer-motion": "^11.15.0",
     "immer": "^10.1.1",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.447.0",
+    "lucide-react": "^0.469.0",
     "neverthrow": "^8.1.1",
     "react": "^18.3.1",
     "react-currency-input-field": "^3.9.0",
@@ -107,7 +107,8 @@
     "serve": "^14.2.4",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11",
+    "typescript-eslint": "^8.18.2",
+    "vite": "^6.0.5",
     "vitest": "^2.1.8"
   }
 }
