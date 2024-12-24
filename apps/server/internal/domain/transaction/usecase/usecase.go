@@ -52,10 +52,8 @@ func transactionModelToProto(transaction *ent.Transaction) *fijoyv1.Transaction 
 		Id:        transaction.ID,
 		AccountId: transaction.Edges.Account.ID,
 
-		Amount:  transaction.Amount.String(),
-		Value:   transaction.Value.String(),
-		FxRate:  transaction.FxRate.String(),
-		Balance: transaction.Balance.String(),
+		Amount: transaction.Amount.String(),
+		Value:  transaction.Value.String(),
 
 		Note: transaction.Note,
 
@@ -99,14 +97,12 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 
 		// Creating the transction
 		transaction, err = u.transactionRepo.CreateTransaction(ctx, tx.Client(), transaction_repository.CreateTransactionRequest{
-			ProfileId:  profileId,
-			AccountId:  targetAccount.ID,
-			OldAmount:  targetAccount.Amount,
-			Amount:     decimal.RequireFromString(req.Amount),
-			Value:      decimal.RequireFromString(req.Value),
-			FxRate:     decimal.RequireFromString(req.FxRate),
-			OldBalance: targetAccount.Balance,
-			Note:       req.Note,
+			ProfileId: profileId,
+			AccountId: targetAccount.ID,
+			OldAmount: targetAccount.Amount,
+			Amount:    decimal.RequireFromString(req.Amount),
+			Value:     decimal.RequireFromString(req.Value),
+			Note:      req.Note,
 		})
 		if err != nil {
 			logger.Error(err.Error())
@@ -115,10 +111,8 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 
 		// Update the account entity
 		_, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), targetAccount.ID, account_repository.UpdateAccountRequest{
-			Amount:  &transaction.Amount,
-			Value:   &transaction.Value,
-			FxRate:  &transaction.FxRate,
-			Balance: &transaction.Balance,
+			Amount: &transaction.Amount,
+			Value:  &transaction.Value,
 		})
 		if err != nil {
 			logger.Error(err.Error())

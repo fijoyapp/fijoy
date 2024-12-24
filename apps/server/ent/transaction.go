@@ -24,10 +24,6 @@ type Transaction struct {
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Value holds the value of the "value" field.
 	Value decimal.Decimal `json:"value,omitempty"`
-	// FxRate holds the value of the "fx_rate" field.
-	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
-	// Balance holds the value of the "balance" field.
-	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Note holds the value of the "note" field.
 	Note string `json:"note,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -80,7 +76,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transaction.FieldAmount, transaction.FieldValue, transaction.FieldFxRate, transaction.FieldBalance:
+		case transaction.FieldAmount, transaction.FieldValue:
 			values[i] = new(decimal.Decimal)
 		case transaction.FieldID, transaction.FieldNote:
 			values[i] = new(sql.NullString)
@@ -122,18 +118,6 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value != nil {
 				t.Value = *value
-			}
-		case transaction.FieldFxRate:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
-			} else if value != nil {
-				t.FxRate = *value
-			}
-		case transaction.FieldBalance:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field balance", values[i])
-			} else if value != nil {
-				t.Balance = *value
 			}
 		case transaction.FieldNote:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -218,12 +202,6 @@ func (t *Transaction) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(fmt.Sprintf("%v", t.Value))
-	builder.WriteString(", ")
-	builder.WriteString("fx_rate=")
-	builder.WriteString(fmt.Sprintf("%v", t.FxRate))
-	builder.WriteString(", ")
-	builder.WriteString("balance=")
-	builder.WriteString(fmt.Sprintf("%v", t.Balance))
 	builder.WriteString(", ")
 	builder.WriteString("note=")
 	builder.WriteString(t.Note)

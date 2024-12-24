@@ -73,54 +73,6 @@ func (tu *TransactionUpdate) AddValue(d decimal.Decimal) *TransactionUpdate {
 	return tu
 }
 
-// SetFxRate sets the "fx_rate" field.
-func (tu *TransactionUpdate) SetFxRate(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.ResetFxRate()
-	tu.mutation.SetFxRate(d)
-	return tu
-}
-
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableFxRate(d *decimal.Decimal) *TransactionUpdate {
-	if d != nil {
-		tu.SetFxRate(*d)
-	}
-	return tu
-}
-
-// AddFxRate adds d to the "fx_rate" field.
-func (tu *TransactionUpdate) AddFxRate(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.AddFxRate(d)
-	return tu
-}
-
-// ClearFxRate clears the value of the "fx_rate" field.
-func (tu *TransactionUpdate) ClearFxRate() *TransactionUpdate {
-	tu.mutation.ClearFxRate()
-	return tu
-}
-
-// SetBalance sets the "balance" field.
-func (tu *TransactionUpdate) SetBalance(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.ResetBalance()
-	tu.mutation.SetBalance(d)
-	return tu
-}
-
-// SetNillableBalance sets the "balance" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableBalance(d *decimal.Decimal) *TransactionUpdate {
-	if d != nil {
-		tu.SetBalance(*d)
-	}
-	return tu
-}
-
-// AddBalance adds d to the "balance" field.
-func (tu *TransactionUpdate) AddBalance(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.AddBalance(d)
-	return tu
-}
-
 // SetNote sets the "note" field.
 func (tu *TransactionUpdate) SetNote(s string) *TransactionUpdate {
 	tu.mutation.SetNote(s)
@@ -270,21 +222,6 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedValue(); ok {
 		_spec.AddField(transaction.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.FxRate(); ok {
-		_spec.SetField(transaction.FieldFxRate, field.TypeFloat64, value)
-	}
-	if value, ok := tu.mutation.AddedFxRate(); ok {
-		_spec.AddField(transaction.FieldFxRate, field.TypeFloat64, value)
-	}
-	if tu.mutation.FxRateCleared() {
-		_spec.ClearField(transaction.FieldFxRate, field.TypeFloat64)
-	}
-	if value, ok := tu.mutation.Balance(); ok {
-		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
-	if value, ok := tu.mutation.AddedBalance(); ok {
-		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
 	if value, ok := tu.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 	}
@@ -414,54 +351,6 @@ func (tuo *TransactionUpdateOne) SetNillableValue(d *decimal.Decimal) *Transacti
 // AddValue adds d to the "value" field.
 func (tuo *TransactionUpdateOne) AddValue(d decimal.Decimal) *TransactionUpdateOne {
 	tuo.mutation.AddValue(d)
-	return tuo
-}
-
-// SetFxRate sets the "fx_rate" field.
-func (tuo *TransactionUpdateOne) SetFxRate(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.ResetFxRate()
-	tuo.mutation.SetFxRate(d)
-	return tuo
-}
-
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableFxRate(d *decimal.Decimal) *TransactionUpdateOne {
-	if d != nil {
-		tuo.SetFxRate(*d)
-	}
-	return tuo
-}
-
-// AddFxRate adds d to the "fx_rate" field.
-func (tuo *TransactionUpdateOne) AddFxRate(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.AddFxRate(d)
-	return tuo
-}
-
-// ClearFxRate clears the value of the "fx_rate" field.
-func (tuo *TransactionUpdateOne) ClearFxRate() *TransactionUpdateOne {
-	tuo.mutation.ClearFxRate()
-	return tuo
-}
-
-// SetBalance sets the "balance" field.
-func (tuo *TransactionUpdateOne) SetBalance(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.ResetBalance()
-	tuo.mutation.SetBalance(d)
-	return tuo
-}
-
-// SetNillableBalance sets the "balance" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableBalance(d *decimal.Decimal) *TransactionUpdateOne {
-	if d != nil {
-		tuo.SetBalance(*d)
-	}
-	return tuo
-}
-
-// AddBalance adds d to the "balance" field.
-func (tuo *TransactionUpdateOne) AddBalance(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.AddBalance(d)
 	return tuo
 }
 
@@ -643,21 +532,6 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if value, ok := tuo.mutation.AddedValue(); ok {
 		_spec.AddField(transaction.FieldValue, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.FxRate(); ok {
-		_spec.SetField(transaction.FieldFxRate, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.AddedFxRate(); ok {
-		_spec.AddField(transaction.FieldFxRate, field.TypeFloat64, value)
-	}
-	if tuo.mutation.FxRateCleared() {
-		_spec.ClearField(transaction.FieldFxRate, field.TypeFloat64)
-	}
-	if value, ok := tuo.mutation.Balance(); ok {
-		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.AddedBalance(); ok {
-		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)

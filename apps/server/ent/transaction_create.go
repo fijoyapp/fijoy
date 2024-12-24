@@ -35,26 +35,6 @@ func (tc *TransactionCreate) SetValue(d decimal.Decimal) *TransactionCreate {
 	return tc
 }
 
-// SetFxRate sets the "fx_rate" field.
-func (tc *TransactionCreate) SetFxRate(d decimal.Decimal) *TransactionCreate {
-	tc.mutation.SetFxRate(d)
-	return tc
-}
-
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableFxRate(d *decimal.Decimal) *TransactionCreate {
-	if d != nil {
-		tc.SetFxRate(*d)
-	}
-	return tc
-}
-
-// SetBalance sets the "balance" field.
-func (tc *TransactionCreate) SetBalance(d decimal.Decimal) *TransactionCreate {
-	tc.mutation.SetBalance(d)
-	return tc
-}
-
 // SetNote sets the "note" field.
 func (tc *TransactionCreate) SetNote(s string) *TransactionCreate {
 	tc.mutation.SetNote(s)
@@ -190,9 +170,6 @@ func (tc *TransactionCreate) check() error {
 	if _, ok := tc.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Transaction.value"`)}
 	}
-	if _, ok := tc.mutation.Balance(); !ok {
-		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Transaction.balance"`)}
-	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transaction.created_at"`)}
 	}
@@ -247,14 +224,6 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Value(); ok {
 		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
 		_node.Value = value
-	}
-	if value, ok := tc.mutation.FxRate(); ok {
-		_spec.SetField(transaction.FieldFxRate, field.TypeFloat64, value)
-		_node.FxRate = value
-	}
-	if value, ok := tc.mutation.Balance(); ok {
-		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
-		_node.Balance = value
 	}
 	if value, ok := tc.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)

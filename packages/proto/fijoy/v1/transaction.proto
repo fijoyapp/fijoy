@@ -12,8 +12,6 @@ message Transaction {
 
   string amount = 3;
   string value = 4;
-  string fx_rate = 5;
-  string balance = 6;
 
   string note = 7;
 
@@ -30,9 +28,8 @@ message CreateTransactionRequest {
 
   string amount = 2;
   string value = 3;
-  string fx_rate = 4;
 
-  string note = 5;
+  string note = 4;
 }
 
 message GetTransactionRequest {
@@ -50,9 +47,8 @@ message UpdateTransactionRequest {
 
   optional string amount = 2;
   optional string value = 3;
-  optional string fx_rate = 4;
 
-  optional string note = 5;
+  optional string note = 4;
 }
 
 message DeleteTransactionRequest {

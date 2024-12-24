@@ -2015,10 +2015,6 @@ type TransactionMutation struct {
 	addamount      *decimal.Decimal
 	value          *decimal.Decimal
 	addvalue       *decimal.Decimal
-	fx_rate        *decimal.Decimal
-	addfx_rate     *decimal.Decimal
-	balance        *decimal.Decimal
-	addbalance     *decimal.Decimal
 	note           *string
 	created_at     *time.Time
 	updated_at     *time.Time
@@ -2246,132 +2242,6 @@ func (m *TransactionMutation) AddedValue() (r decimal.Decimal, exists bool) {
 func (m *TransactionMutation) ResetValue() {
 	m.value = nil
 	m.addvalue = nil
-}
-
-// SetFxRate sets the "fx_rate" field.
-func (m *TransactionMutation) SetFxRate(d decimal.Decimal) {
-	m.fx_rate = &d
-	m.addfx_rate = nil
-}
-
-// FxRate returns the value of the "fx_rate" field in the mutation.
-func (m *TransactionMutation) FxRate() (r decimal.Decimal, exists bool) {
-	v := m.fx_rate
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldFxRate returns the old "fx_rate" field's value of the Transaction entity.
-// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TransactionMutation) OldFxRate(ctx context.Context) (v decimal.Decimal, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldFxRate is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldFxRate requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFxRate: %w", err)
-	}
-	return oldValue.FxRate, nil
-}
-
-// AddFxRate adds d to the "fx_rate" field.
-func (m *TransactionMutation) AddFxRate(d decimal.Decimal) {
-	if m.addfx_rate != nil {
-		*m.addfx_rate = m.addfx_rate.Add(d)
-	} else {
-		m.addfx_rate = &d
-	}
-}
-
-// AddedFxRate returns the value that was added to the "fx_rate" field in this mutation.
-func (m *TransactionMutation) AddedFxRate() (r decimal.Decimal, exists bool) {
-	v := m.addfx_rate
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ClearFxRate clears the value of the "fx_rate" field.
-func (m *TransactionMutation) ClearFxRate() {
-	m.fx_rate = nil
-	m.addfx_rate = nil
-	m.clearedFields[transaction.FieldFxRate] = struct{}{}
-}
-
-// FxRateCleared returns if the "fx_rate" field was cleared in this mutation.
-func (m *TransactionMutation) FxRateCleared() bool {
-	_, ok := m.clearedFields[transaction.FieldFxRate]
-	return ok
-}
-
-// ResetFxRate resets all changes to the "fx_rate" field.
-func (m *TransactionMutation) ResetFxRate() {
-	m.fx_rate = nil
-	m.addfx_rate = nil
-	delete(m.clearedFields, transaction.FieldFxRate)
-}
-
-// SetBalance sets the "balance" field.
-func (m *TransactionMutation) SetBalance(d decimal.Decimal) {
-	m.balance = &d
-	m.addbalance = nil
-}
-
-// Balance returns the value of the "balance" field in the mutation.
-func (m *TransactionMutation) Balance() (r decimal.Decimal, exists bool) {
-	v := m.balance
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldBalance returns the old "balance" field's value of the Transaction entity.
-// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TransactionMutation) OldBalance(ctx context.Context) (v decimal.Decimal, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldBalance is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldBalance requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBalance: %w", err)
-	}
-	return oldValue.Balance, nil
-}
-
-// AddBalance adds d to the "balance" field.
-func (m *TransactionMutation) AddBalance(d decimal.Decimal) {
-	if m.addbalance != nil {
-		*m.addbalance = m.addbalance.Add(d)
-	} else {
-		m.addbalance = &d
-	}
-}
-
-// AddedBalance returns the value that was added to the "balance" field in this mutation.
-func (m *TransactionMutation) AddedBalance() (r decimal.Decimal, exists bool) {
-	v := m.addbalance
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetBalance resets all changes to the "balance" field.
-func (m *TransactionMutation) ResetBalance() {
-	m.balance = nil
-	m.addbalance = nil
 }
 
 // SetNote sets the "note" field.
@@ -2607,18 +2477,12 @@ func (m *TransactionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransactionMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 5)
 	if m.amount != nil {
 		fields = append(fields, transaction.FieldAmount)
 	}
 	if m.value != nil {
 		fields = append(fields, transaction.FieldValue)
-	}
-	if m.fx_rate != nil {
-		fields = append(fields, transaction.FieldFxRate)
-	}
-	if m.balance != nil {
-		fields = append(fields, transaction.FieldBalance)
 	}
 	if m.note != nil {
 		fields = append(fields, transaction.FieldNote)
@@ -2641,10 +2505,6 @@ func (m *TransactionMutation) Field(name string) (ent.Value, bool) {
 		return m.Amount()
 	case transaction.FieldValue:
 		return m.Value()
-	case transaction.FieldFxRate:
-		return m.FxRate()
-	case transaction.FieldBalance:
-		return m.Balance()
 	case transaction.FieldNote:
 		return m.Note()
 	case transaction.FieldCreatedAt:
@@ -2664,10 +2524,6 @@ func (m *TransactionMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldAmount(ctx)
 	case transaction.FieldValue:
 		return m.OldValue(ctx)
-	case transaction.FieldFxRate:
-		return m.OldFxRate(ctx)
-	case transaction.FieldBalance:
-		return m.OldBalance(ctx)
 	case transaction.FieldNote:
 		return m.OldNote(ctx)
 	case transaction.FieldCreatedAt:
@@ -2696,20 +2552,6 @@ func (m *TransactionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetValue(v)
-		return nil
-	case transaction.FieldFxRate:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetFxRate(v)
-		return nil
-	case transaction.FieldBalance:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetBalance(v)
 		return nil
 	case transaction.FieldNote:
 		v, ok := value.(string)
@@ -2746,12 +2588,6 @@ func (m *TransactionMutation) AddedFields() []string {
 	if m.addvalue != nil {
 		fields = append(fields, transaction.FieldValue)
 	}
-	if m.addfx_rate != nil {
-		fields = append(fields, transaction.FieldFxRate)
-	}
-	if m.addbalance != nil {
-		fields = append(fields, transaction.FieldBalance)
-	}
 	return fields
 }
 
@@ -2764,10 +2600,6 @@ func (m *TransactionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedAmount()
 	case transaction.FieldValue:
 		return m.AddedValue()
-	case transaction.FieldFxRate:
-		return m.AddedFxRate()
-	case transaction.FieldBalance:
-		return m.AddedBalance()
 	}
 	return nil, false
 }
@@ -2791,20 +2623,6 @@ func (m *TransactionMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddValue(v)
 		return nil
-	case transaction.FieldFxRate:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddFxRate(v)
-		return nil
-	case transaction.FieldBalance:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddBalance(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Transaction numeric field %s", name)
 }
@@ -2813,9 +2631,6 @@ func (m *TransactionMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *TransactionMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(transaction.FieldFxRate) {
-		fields = append(fields, transaction.FieldFxRate)
-	}
 	if m.FieldCleared(transaction.FieldNote) {
 		fields = append(fields, transaction.FieldNote)
 	}
@@ -2833,9 +2648,6 @@ func (m *TransactionMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *TransactionMutation) ClearField(name string) error {
 	switch name {
-	case transaction.FieldFxRate:
-		m.ClearFxRate()
-		return nil
 	case transaction.FieldNote:
 		m.ClearNote()
 		return nil
@@ -2852,12 +2664,6 @@ func (m *TransactionMutation) ResetField(name string) error {
 		return nil
 	case transaction.FieldValue:
 		m.ResetValue()
-		return nil
-	case transaction.FieldFxRate:
-		m.ResetFxRate()
-		return nil
-	case transaction.FieldBalance:
-		m.ResetBalance()
 		return nil
 	case transaction.FieldNote:
 		m.ResetNote()

@@ -18,10 +18,6 @@ const (
 	FieldAmount = "amount"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
-	// FieldFxRate holds the string denoting the fx_rate field in the database.
-	FieldFxRate = "fx_rate"
-	// FieldBalance holds the string denoting the balance field in the database.
-	FieldBalance = "balance"
 	// FieldNote holds the string denoting the note field in the database.
 	FieldNote = "note"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -55,8 +51,6 @@ var Columns = []string{
 	FieldID,
 	FieldAmount,
 	FieldValue,
-	FieldFxRate,
-	FieldBalance,
 	FieldNote,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -109,16 +103,6 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByValue orders the results by the value field.
 func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
-}
-
-// ByFxRate orders the results by the fx_rate field.
-func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldFxRate, opts...).ToFunc()
-}
-
-// ByBalance orders the results by the balance field.
-func ByBalance(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldBalance, opts...).ToFunc()
 }
 
 // ByNote orders the results by the note field.

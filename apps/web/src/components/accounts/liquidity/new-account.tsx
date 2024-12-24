@@ -99,7 +99,6 @@ export function NewLiquidity() {
           accountId: account.id,
           amount: values.balance,
           value: "1",
-          fxRate: "1", // TODO: Replace with actual fx rate
           note: "Initial balance",
         });
         return account;

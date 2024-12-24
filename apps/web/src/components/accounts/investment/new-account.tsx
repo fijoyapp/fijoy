@@ -89,7 +89,6 @@ export function NewInvestment() {
           accountId: account.id,
           amount: values.amount,
           value: "1", // TODO: Replace with actual value
-          fxRate: "1", // TODO: Replace with actual fx rate
           note: "Initial balance",
         });
         return account;

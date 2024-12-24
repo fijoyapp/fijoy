@@ -39,15 +39,11 @@ type CreateTransactionRequest struct {
 }
 
 func (r *transactionRepository) CreateTransaction(ctx context.Context, client *ent.Client, req CreateTransactionRequest) (*ent.Transaction, error) {
-	balance := req.Amount.Mul(req.Value).Mul(req.FxRate)
-
 	transaction, err := client.Transaction.Create().
 		SetProfileID(req.ProfileId).
 		SetAccountID(req.AccountId).
 		SetAmount(req.Amount).
 		SetValue(req.Value).
-		SetFxRate(req.FxRate).
-		SetBalance(balance).
 		SetNote(req.Note).Save(ctx)
 	if err != nil {
 		return nil, err
