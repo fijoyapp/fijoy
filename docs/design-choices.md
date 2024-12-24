@@ -7,15 +7,31 @@ decisions as certainly they are not perfect :)
 
 ## What I want to achieve with Fijoy
 
-There are a couple things I would like to achive with Fijoy
+A great **semi-auto** net worth tracking experience.
 
-- The account balance is traceable at all time. Meaning if an account has X amount
-  of money, it is the sum of all the transactions (`balance_delta` field).
-  Everything always adds up at all time.
-- A great **semi-auto** net worth tracking experience, I have no interest at the
-  moment for providers like Plaid or Flink, as they are quite unreliable
-  based on my own testing, and most importantly, I think the habit of logging
-  things down manually gives you a better sense of your own financial situation.
+### What do I mean by semi-auto?
+
+#### Manual
+
+Transactions such as making a purchase, receiving a paycheck, transfer
+between accounts, buy/sell shares of a given stock will be logged manually.
+
+I have no interest at the moment to use data aggregators like Plaid or Flink to
+log these transactions automatically as they are quite unreliable and
+not easy to maintain with just myself alone. And most importantly, I think
+the habit of logging your transactions down manually gives you a better sense
+of your own financial situation.
+
+#### Auto
+
+Once Fijoy knows how much shares of a given stock you own, the total value of
+your portfolio can be calculated automatically by fetching the latest price.
+
+We will also handle all your foreign currency account and display your net
+worth in the default currency you set.
+
+TLDR: everything related to asset price and foreign exchange rate will be handled
+automatically. You will just make sure to manually log your transactions down!
 
 ---
 
@@ -35,45 +51,15 @@ In the account object, there are a couple fields worth mentioning:
 - `balance`: The displayed balance of the account, this is calculated
   by `amount * value * fx_rate`.
 
-When creating an account, we will first insert an empty account. Then based on
-the initial data provided, we will insert a transaction to record it.
+When creating an account, we will first insert an empty account with the correct
+`value` and `fx_rate`. Then based on the initial data provided,
+we will insert a transaction to record the initial `amount`.
 
 ## Transactions
 
 In the transaction object, there are a couple fields worth mentioning:
 
-- `amount`: The amount of money or share after the transaction is done.
-- `amount_delta`: The amount of money or share changed in the transaction.
-- `value`: This is the new value of each unit.
-- `fx_rate`: This is the new fx rate.
-- `balance`: This is the new balance of the account after the transaction.
-- `balance_delta`: This is the change in balance caused by this transaction.
+- `amount`: The amount of money or share this transaction added or removed
+- `value`: This field is only used for investment, this is essentially the price
 
-To create a transaction, we need to fetch the previous transaction
-in order to calculate the `amount`, `balance` and `balance_delta` fields.
-
-Every time we create a transaction, we will also update the snapshot (Explained later)!
-
-**Important** things to keep in mind for transactions:
-
-- You can ONLY delete the latest transaction in a given account! You CANNOT
-  delete a transaction in the middle of the account history. This restriction
-  is placed to ensure a consistent history of each account.
-
-## Snapshot
-
-Snapshots are essentially data points for account balance (`account_snapshot`)
-and overall balance (`overall_snapshot`) over time.
-This is used to visualize the account balance and total balance by plotting it
-on a graph.
-
-For example, assume I made 2 updates to my account, 1st time at 12:23 and 2nd
-time at 12:46. The 1st time, a new snapshot row will be inserted in `account_snapshot`
-and `overall_snapshot`. The 2nd time, since it is within the same hour, we do not
-insert a new row, but we update the existing row.
-
-Every time we add or remove a transaction, we will need to update the snapshot
-of that given account and the total balance snapshot.
-
-Snapshot are grouped by hours. We cannot group it by days since that does not play
-well when different time zones are involved.
+Every time we create a transaction, we will also update the account balance.
