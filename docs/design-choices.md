@@ -13,14 +13,21 @@ A great **semi-auto** net worth tracking experience.
 
 #### Manual
 
-Transactions such as making a purchase, receiving a paycheck, transfer
-between accounts, buy/sell shares of a given stock will be logged manually.
+Transactions such as
+
+- making a purchase
+- receiving a paycheck
+- transfer between accounts
+- buy/sell shares of a given stock
+
+will be logged manually.
 
 I have no interest at the moment to use data aggregators like Plaid or Flink to
-log these transactions automatically as they are quite unreliable and
-not easy to maintain with just myself alone. And most importantly, I think
-the habit of logging your transactions down manually gives you a better sense
-of your own financial situation.
+automate these as they are quite unreliable and not easy to maintain with myself
+alone.
+
+And most importantly, I think the habit of logging your transactions down
+manually gives you a better sense of your own financial situation.
 
 #### Auto
 
