@@ -17,7 +17,7 @@ type Config struct {
 	Analytics *AnalyticsConfig
 	Server    *ServerConfig
 	Sentry    *SentryConfig
-	Data      *DataConfig
+	Market    *MarketConfig
 }
 
 func LoadConfig() (*Config, error) {
@@ -53,7 +53,7 @@ func LoadConfig() (*Config, error) {
 		return &Config{}, fmt.Errorf("error loading sentry config: %w", err)
 	}
 
-	data, err := LoadDataConfig()
+	market, err := LoadMarketConfig()
 	if err != nil {
 		return &Config{}, fmt.Errorf("error loading data config: %w", err)
 	}
@@ -64,7 +64,7 @@ func LoadConfig() (*Config, error) {
 		Analytics: analytics,
 		Server:    server,
 		Sentry:    sentry,
-		Data:      data,
+		Market:    market,
 	}
 
 	return cfg, nil

@@ -113,10 +113,10 @@ func main() {
 	analyticsService := analytics_usecase.New(cfg.Analytics)
 
 	var marketDataClient market.MarketDataClient
-	if cfg.Data.TWELVE_DATA_SECRET_KEY == "" {
+	if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
 		marketDataClient = market_client.NewMockMarketDataClient()
 	} else {
-		marketDataClient = market_client.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Data.TWELVE_DATA_SECRET_KEY)
+		marketDataClient = market_client.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
 	}
 
 	userRepo := user_repository.NewUserRepository()
