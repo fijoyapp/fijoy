@@ -9,6 +9,7 @@ import (
 	account_repository "fijoy/internal/domain/account/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	"fijoy/internal/util/database"
+	"fijoy/internal/util/market"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"github.com/go-playground/validator/v10"
@@ -29,14 +30,20 @@ type AccountUseCase interface {
 type accountUseCase struct {
 	validator *validator.Validate
 
-	client *ent.Client
+	entClient        *ent.Client
+	marketDataClient market.MarketDataClient
 
 	accountRepo     account_repository.AccountRepository
 	transactionRepo transaction_repository.TransactionRepository
 }
 
-func New(validator *validator.Validate, client *ent.Client, accountRepo account_repository.AccountRepository, transactionRepo transaction_repository.TransactionRepository) AccountUseCase {
-	return &accountUseCase{validator: validator, client: client, accountRepo: accountRepo, transactionRepo: transactionRepo}
+func New(validator *validator.Validate, entClient *ent.Client, marketDataClient market.MarketDataClient,
+	accountRepo account_repository.AccountRepository, transactionRepo transaction_repository.TransactionRepository,
+) AccountUseCase {
+	return &accountUseCase{
+		validator: validator, entClient: entClient, marketDataClient: marketDataClient,
+		accountRepo: accountRepo, transactionRepo: transactionRepo,
+	}
 }
 
 func accountModelToProto(account *ent.Account) *fijoyv1.Account {
@@ -101,7 +108,7 @@ func accountSymbolTypeModelToProto(accountSymbolType account.SymbolType) fijoyv1
 }
 
 func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error) {
-	account, err := u.accountRepo.CreateAccount(ctx, u.client, profileId, req)
+	account, err := u.accountRepo.CreateAccount(ctx, u.entClient, profileId, req)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +117,7 @@ func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, re
 }
 
 func (u *accountUseCase) GetAccount(ctx context.Context, profileId string, req *fijoyv1.GetAccountRequest) (*fijoyv1.Account, error) {
-	account, err := u.accountRepo.GetAccount(ctx, u.client, req.Id)
+	account, err := u.accountRepo.GetAccount(ctx, u.entClient, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +134,7 @@ func (u *accountUseCase) GetAccount(ctx context.Context, profileId string, req *
 }
 
 func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fijoyv1.AccountList, error) {
-	accounts, err := u.accountRepo.GetAccounts(ctx, u.client, profileId)
+	accounts, err := u.accountRepo.GetAccounts(ctx, u.entClient, profileId)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +145,7 @@ func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fi
 func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error) {
 	var account *ent.Account
 
-	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
+	err := database.WithTx(ctx, u.entClient, func(tx *ent.Tx) error {
 		var err error
 
 		account, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), req.Id, account_repository.UpdateAccountRequest{

@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"fijoy/internal/util/market"
 	"io"
@@ -47,7 +48,7 @@ func (r *AssetInfoResponse) ToAssetInfo() *market.AssetInfo {
 	}
 }
 
-func (c *TwelveMarketDataClient) GetAssetInfo(symbol string) (*market.AssetInfo, error) {
+func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol string) (*market.AssetInfo, error) {
 	u, err := url.Parse(c.baseURL)
 	if err != nil {
 		return nil, err
@@ -91,7 +92,7 @@ func (c *TwelveMarketDataClient) GetAssetInfo(symbol string) (*market.AssetInfo,
 	return result.ToAssetInfo(), nil
 }
 
-func (c *TwelveMarketDataClient) GetFxRate(fromCurrency, toCurrency string) (*market.FXRate, error) {
+func (c *TwelveMarketDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*market.FXRate, error) {
 	// TODO: Implement this
 	return &market.FXRate{}, nil
 }

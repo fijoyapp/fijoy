@@ -4,8 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fijoy/config"
+	"fijoy/constants"
 	"fijoy/ent"
 	"fijoy/ent/migrate"
+	"fijoy/internal/util/market"
+	market_client "fijoy/internal/util/market/client"
 	"fmt"
 	"log"
 	"net/http"
@@ -87,9 +90,13 @@ func main() {
 	}
 	defer logger.Sync()
 
-	client, err := ent.Open("postgres", cfg.Database.DB_URL)
+	entClient, err := ent.Open("postgres", cfg.Database.DB_URL)
+	if err != nil {
+		panic(err)
+	}
+
 	ctx := context.Background()
-	if err := client.Schema.Create(ctx, migrate.WithGlobalUniqueID(true)); err != nil {
+	if err := entClient.Schema.Create(ctx, migrate.WithGlobalUniqueID(true)); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
@@ -105,17 +112,24 @@ func main() {
 
 	analyticsService := analytics_usecase.New(cfg.Analytics)
 
+	var marketDataClient market.MarketDataClient
+	if cfg.Data.TWELVE_DATA_SECRET_KEY == "" {
+		marketDataClient = market_client.NewMockMarketDataClient()
+	} else {
+		marketDataClient = market_client.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Data.TWELVE_DATA_SECRET_KEY)
+	}
+
 	userRepo := user_repository.NewUserRepository()
 	userKeyRepo := user_repository.NewUserKeyRepository()
 	profileRepo := profile_repository.NewProfileRepository()
 	accountRepo := account_repository.NewAccountRepository()
 	transactionRepo := transaction_repository.NewTransactionRepository()
 
-	authUseCase := auth_usecase.New(userRepo, userKeyRepo, client)
-	userUseCase := user_usecase.New(userRepo, client)
-	profileUseCase := profile_usecase.New(validator, client, profileRepo)
-	accountUseCase := account_usecase.New(validator, client, accountRepo, transactionRepo)
-	transctionUseCase := transaction_usecase.New(validator, client, transactionRepo, accountRepo)
+	authUseCase := auth_usecase.New(userRepo, userKeyRepo, entClient)
+	userUseCase := user_usecase.New(userRepo, entClient)
+	profileUseCase := profile_usecase.New(validator, entClient, profileRepo)
+	accountUseCase := account_usecase.New(validator, entClient, marketDataClient, accountRepo, transactionRepo)
+	transctionUseCase := transaction_usecase.New(validator, entClient, transactionRepo, accountRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

@@ -31,17 +31,17 @@ type TransactionUseCase interface {
 type transactionUseCase struct {
 	validator *validator.Validate
 
-	client          *ent.Client
+	entClient       *ent.Client
 	transactionRepo transaction_repository.TransactionRepository
 	accountRepo     account_repository.AccountRepository
 }
 
-func New(validator *validator.Validate, client *ent.Client,
+func New(validator *validator.Validate, entClient *ent.Client,
 	transactionRepo transaction_repository.TransactionRepository,
 	accountRepo account_repository.AccountRepository,
 ) TransactionUseCase {
 	return &transactionUseCase{
-		validator: validator, client: client,
+		validator: validator, entClient: entClient,
 		transactionRepo: transactionRepo,
 		accountRepo:     accountRepo,
 	}
@@ -78,7 +78,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 	logger := middleware.GetLogger(ctx)
 	var transaction *ent.Transaction
 
-	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
+	err := database.WithTx(ctx, u.entClient, func(tx *ent.Tx) error {
 		var err error
 
 		// Make sure we have the proper permission
@@ -141,7 +141,7 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 }
 
 func (u *transactionUseCase) GetTransaction(ctx context.Context, profileId string, req *fijoyv1.GetTransactionRequest) (*fijoyv1.Transaction, error) {
-	transaction, err := u.transactionRepo.GetTransaction(ctx, u.client, req.Id)
+	transaction, err := u.transactionRepo.GetTransaction(ctx, u.entClient, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func (u *transactionUseCase) GetTransaction(ctx context.Context, profileId strin
 }
 
 func (u *transactionUseCase) GetTransactions(ctx context.Context, profileId string) (*fijoyv1.TransactionList, error) {
-	transactions, err := u.transactionRepo.GetTransactions(ctx, u.client, profileId)
+	transactions, err := u.transactionRepo.GetTransactions(ctx, u.entClient, profileId)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +166,7 @@ func (u *transactionUseCase) GetTransactions(ctx context.Context, profileId stri
 }
 
 func (u *transactionUseCase) GetTransactionsByAccount(ctx context.Context, profileId string, req *fijoyv1.GetTransactionsByAccountRequest) (*fijoyv1.TransactionList, error) {
-	transactions, err := u.transactionRepo.GetTransactionsByAccount(ctx, u.client, req.AccountId)
+	transactions, err := u.transactionRepo.GetTransactionsByAccount(ctx, u.entClient, req.AccountId)
 	if err != nil {
 		return nil, err
 	}
