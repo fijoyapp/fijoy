@@ -1,43 +1,42 @@
-set fallback
-
+set fallback := true
 set dotenv-load := true
 
 build:
-  go build -o ./tmp/main ./cmd/fijoy/main.go
+    go build -o ./tmp/main ./cmd/fijoy/main.go
 
 update:
-  go mod tidy
-  go get -u all
-  go mod tidy
+    go mod tidy
+    go get -u all
+    go mod tidy
 
 test:
-  go test ./...
+    go test ./...
 
 format:
-  pnpm format
+    just --fmt --unstable
+    pnpm format
 
 kill:
-  pids=$(lsof -t -i :3000) && [ -n "$pids" ] && kill -9 $pids
+    pids=$(lsof -t -i :3000) && [ -n "$pids" ] && kill -9 $pids
 
 init:
-  go install github.com/air-verse/air@latest
-  @command -v air >/dev/null 2>&1 || { echo "Cannot find air in PATH, please make sure your GOPATH is configured correctly! You can check that with the `go env` command"; exit 1; }
+    go install github.com/air-verse/air@latest
+    @command -v air >/dev/null 2>&1 || { echo "Cannot find air in PATH, please make sure your GOPATH is configured correctly! You can check that with the `go env` command"; exit 1; }
 
 migrate-diff name:
-  atlas migrate diff {{name}} \
-  --dir "file://ent/migrate/migrations" \
-  --to "ent://ent/schema" \
-  --dev-url "docker://postgres/15/test?search_path=public"
+    atlas migrate diff {{ name }} \
+    --dir "file://ent/migrate/migrations" \
+    --to "ent://ent/schema" \
+    --dev-url "docker://postgres/15/test?search_path=public"
 
 migrate-lint:
-  atlas migrate lint \
-  --dev-url="docker://postgres/15/test?search_path=public" \
-  --dir="file://ent/migrate/migrations" \
-  --latest=1
+    atlas migrate lint \
+    --dev-url="docker://postgres/15/test?search_path=public" \
+    --dir="file://ent/migrate/migrations" \
+    --latest=1
 
 ent-new name:
-  go run -mod=mod entgo.io/ent/cmd/ent new {{name}}
+    go run -mod=mod entgo.io/ent/cmd/ent new {{ name }}
 
 ent-generate:
-  go generate ./ent
-
+    go generate ./ent

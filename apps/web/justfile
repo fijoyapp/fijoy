@@ -1,7 +1,8 @@
-set fallback
+set fallback := true
 
 test:
-  pnpm test
+    pnpm test
 
 format:
-  pnpm format
+    just --fmt --unstable
+    pnpm format

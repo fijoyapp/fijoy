@@ -1,1 +1,4 @@
-set fallback
+set fallback := true
+
+format:
+    just --fmt --unstable
