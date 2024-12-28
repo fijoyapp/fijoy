@@ -98,7 +98,6 @@ export function NewLiquidity() {
         await createTransactionMut.mutateAsync({
           accountId: account.id,
           amount: values.balance,
-          value: "1",
           note: "Initial balance",
         });
         return account;

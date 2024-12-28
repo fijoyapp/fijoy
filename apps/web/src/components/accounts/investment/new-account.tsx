@@ -28,7 +28,6 @@ import {
   getTransactions,
 } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 import { AmountField } from "../form/amount";
-import { MoneyField } from "../form/money";
 
 const formSchema = z.object({
   symbol: z.string(),
@@ -90,7 +89,6 @@ export function NewInvestment() {
         await createTransactionMut.mutateAsync({
           accountId: account.id,
           amount: values.amount,
-          value: "1", // TODO: Replace with actual value
           note: "Initial balance",
         });
         return account;
