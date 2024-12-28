@@ -11,12 +11,11 @@ message Transaction {
   string account_id = 2 [(buf.validate.field).string.min_len = 1];
 
   string amount = 3;
-  string value = 4;
 
-  string note = 7;
+  string note = 4;
 
-  google.protobuf.Timestamp created_at = 8 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 9 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
+  google.protobuf.Timestamp updated_at = 6 [(buf.validate.field).required = true];
 }
 
 message TransactionList {
@@ -27,9 +26,8 @@ message CreateTransactionRequest {
   string account_id = 1 [(buf.validate.field).string.min_len = 1];
 
   string amount = 2;
-  string value = 3;
 
-  string note = 4;
+  string note = 3;
 }
 
 message GetTransactionRequest {
@@ -46,9 +44,8 @@ message UpdateTransactionRequest {
   string id = 1 [(buf.validate.field).string.min_len = 1];
 
   optional string amount = 2;
-  optional string value = 3;
 
-  optional string note = 4;
+  optional string note = 3;
 }
 
 message DeleteTransactionRequest {

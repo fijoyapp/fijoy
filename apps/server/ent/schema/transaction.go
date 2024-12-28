@@ -28,12 +28,6 @@ func (Transaction) Fields() []ent.Field {
 				dialect.MySQL:    "decimal(38,18)",
 				dialect.Postgres: "numeric(38,18)",
 			}),
-		field.Float("value").
-			GoType(decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL:    "decimal(18,10)",
-				dialect.Postgres: "numeric(18,10)",
-			}),
 
 		field.Text("note").Optional(),
 

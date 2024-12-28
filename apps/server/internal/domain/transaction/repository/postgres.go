@@ -43,7 +43,6 @@ func (r *transactionRepository) CreateTransaction(ctx context.Context, client *e
 		SetProfileID(req.ProfileId).
 		SetAccountID(req.AccountId).
 		SetAmount(req.Amount).
-		SetValue(req.Value).
 		SetNote(req.Note).Save(ctx)
 	if err != nil {
 		return nil, err

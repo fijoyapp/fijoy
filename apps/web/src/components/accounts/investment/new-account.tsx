@@ -28,10 +28,12 @@ import {
   getTransactions,
 } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 import { AmountField } from "../form/amount";
+import { MoneyField } from "../form/money";
 
 const formSchema = z.object({
   symbol: z.string(),
   amount: z.string(),
+  value: z.string(), // book value
 });
 
 export function NewInvestment() {

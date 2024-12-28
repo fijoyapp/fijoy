@@ -22,8 +22,6 @@ type Transaction struct {
 	ID string `json:"id,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
-	// Value holds the value of the "value" field.
-	Value decimal.Decimal `json:"value,omitempty"`
 	// Note holds the value of the "note" field.
 	Note string `json:"note,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -76,7 +74,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transaction.FieldAmount, transaction.FieldValue:
+		case transaction.FieldAmount:
 			values[i] = new(decimal.Decimal)
 		case transaction.FieldID, transaction.FieldNote:
 			values[i] = new(sql.NullString)
@@ -112,12 +110,6 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value != nil {
 				t.Amount = *value
-			}
-		case transaction.FieldValue:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field value", values[i])
-			} else if value != nil {
-				t.Value = *value
 			}
 		case transaction.FieldNote:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -158,9 +150,9 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// GetValue returns the ent.Value that was dynamically selected and assigned to the Transaction.
+// Value returns the ent.Value that was dynamically selected and assigned to the Transaction.
 // This includes values selected through modifiers, order, etc.
-func (t *Transaction) GetValue(name string) (ent.Value, error) {
+func (t *Transaction) Value(name string) (ent.Value, error) {
 	return t.selectValues.Get(name)
 }
 
@@ -199,9 +191,6 @@ func (t *Transaction) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", t.Amount))
-	builder.WriteString(", ")
-	builder.WriteString("value=")
-	builder.WriteString(fmt.Sprintf("%v", t.Value))
 	builder.WriteString(", ")
 	builder.WriteString("note=")
 	builder.WriteString(t.Note)

@@ -52,27 +52,6 @@ func (tu *TransactionUpdate) AddAmount(d decimal.Decimal) *TransactionUpdate {
 	return tu
 }
 
-// SetValue sets the "value" field.
-func (tu *TransactionUpdate) SetValue(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.ResetValue()
-	tu.mutation.SetValue(d)
-	return tu
-}
-
-// SetNillableValue sets the "value" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableValue(d *decimal.Decimal) *TransactionUpdate {
-	if d != nil {
-		tu.SetValue(*d)
-	}
-	return tu
-}
-
-// AddValue adds d to the "value" field.
-func (tu *TransactionUpdate) AddValue(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.AddValue(d)
-	return tu
-}
-
 // SetNote sets the "note" field.
 func (tu *TransactionUpdate) SetNote(s string) *TransactionUpdate {
 	tu.mutation.SetNote(s)
@@ -216,12 +195,6 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedAmount(); ok {
 		_spec.AddField(transaction.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.Value(); ok {
-		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
-	}
-	if value, ok := tu.mutation.AddedValue(); ok {
-		_spec.AddField(transaction.FieldValue, field.TypeFloat64, value)
-	}
 	if value, ok := tu.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 	}
@@ -330,27 +303,6 @@ func (tuo *TransactionUpdateOne) SetNillableAmount(d *decimal.Decimal) *Transact
 // AddAmount adds d to the "amount" field.
 func (tuo *TransactionUpdateOne) AddAmount(d decimal.Decimal) *TransactionUpdateOne {
 	tuo.mutation.AddAmount(d)
-	return tuo
-}
-
-// SetValue sets the "value" field.
-func (tuo *TransactionUpdateOne) SetValue(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.ResetValue()
-	tuo.mutation.SetValue(d)
-	return tuo
-}
-
-// SetNillableValue sets the "value" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableValue(d *decimal.Decimal) *TransactionUpdateOne {
-	if d != nil {
-		tuo.SetValue(*d)
-	}
-	return tuo
-}
-
-// AddValue adds d to the "value" field.
-func (tuo *TransactionUpdateOne) AddValue(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.AddValue(d)
 	return tuo
 }
 
@@ -526,12 +478,6 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if value, ok := tuo.mutation.AddedAmount(); ok {
 		_spec.AddField(transaction.FieldAmount, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.Value(); ok {
-		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
-	}
-	if value, ok := tuo.mutation.AddedValue(); ok {
-		_spec.AddField(transaction.FieldValue, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)

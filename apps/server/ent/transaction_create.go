@@ -29,12 +29,6 @@ func (tc *TransactionCreate) SetAmount(d decimal.Decimal) *TransactionCreate {
 	return tc
 }
 
-// SetValue sets the "value" field.
-func (tc *TransactionCreate) SetValue(d decimal.Decimal) *TransactionCreate {
-	tc.mutation.SetValue(d)
-	return tc
-}
-
 // SetNote sets the "note" field.
 func (tc *TransactionCreate) SetNote(s string) *TransactionCreate {
 	tc.mutation.SetNote(s)
@@ -167,9 +161,6 @@ func (tc *TransactionCreate) check() error {
 	if _, ok := tc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Transaction.amount"`)}
 	}
-	if _, ok := tc.mutation.Value(); !ok {
-		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Transaction.value"`)}
-	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transaction.created_at"`)}
 	}
@@ -220,10 +211,6 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Amount(); ok {
 		_spec.SetField(transaction.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
-	}
-	if value, ok := tc.mutation.Value(); ok {
-		_spec.SetField(transaction.FieldValue, field.TypeFloat64, value)
-		_node.Value = value
 	}
 	if value, ok := tc.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)

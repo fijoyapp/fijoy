@@ -71,11 +71,6 @@ func Amount(v decimal.Decimal) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldAmount, v))
 }
 
-// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
-func Value(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldValue, v))
-}
-
 // Note applies equality check predicate on the "note" field. It's identical to NoteEQ.
 func Note(v string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldNote, v))
@@ -129,46 +124,6 @@ func AmountLT(v decimal.Decimal) predicate.Transaction {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v decimal.Decimal) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldAmount, v))
-}
-
-// ValueEQ applies the EQ predicate on the "value" field.
-func ValueEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldValue, v))
-}
-
-// ValueNEQ applies the NEQ predicate on the "value" field.
-func ValueNEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNEQ(FieldValue, v))
-}
-
-// ValueIn applies the In predicate on the "value" field.
-func ValueIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldIn(FieldValue, vs...))
-}
-
-// ValueNotIn applies the NotIn predicate on the "value" field.
-func ValueNotIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNotIn(FieldValue, vs...))
-}
-
-// ValueGT applies the GT predicate on the "value" field.
-func ValueGT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGT(FieldValue, v))
-}
-
-// ValueGTE applies the GTE predicate on the "value" field.
-func ValueGTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGTE(FieldValue, v))
-}
-
-// ValueLT applies the LT predicate on the "value" field.
-func ValueLT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLT(FieldValue, v))
-}
-
-// ValueLTE applies the LTE predicate on the "value" field.
-func ValueLTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLTE(FieldValue, v))
 }
 
 // NoteEQ applies the EQ predicate on the "note" field.

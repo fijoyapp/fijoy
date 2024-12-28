@@ -53,7 +53,6 @@ func transactionModelToProto(transaction *ent.Transaction) *fijoyv1.Transaction 
 		AccountId: transaction.Edges.Account.ID,
 
 		Amount: transaction.Amount.String(),
-		Value:  transaction.Value.String(),
 
 		Note: transaction.Note,
 
@@ -101,7 +100,6 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 			AccountId: targetAccount.ID,
 			OldAmount: targetAccount.Amount,
 			Amount:    decimal.RequireFromString(req.Amount),
-			Value:     decimal.RequireFromString(req.Value),
 			Note:      req.Note,
 		})
 		if err != nil {
@@ -112,7 +110,6 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 		// Update the account entity
 		_, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), targetAccount.ID, account_repository.UpdateAccountRequest{
 			Amount: &transaction.Amount,
-			Value:  &transaction.Value,
 		})
 		if err != nil {
 			logger.Error(err.Error())

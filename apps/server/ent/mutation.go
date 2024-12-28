@@ -2013,8 +2013,6 @@ type TransactionMutation struct {
 	id             *string
 	amount         *decimal.Decimal
 	addamount      *decimal.Decimal
-	value          *decimal.Decimal
-	addvalue       *decimal.Decimal
 	note           *string
 	created_at     *time.Time
 	updated_at     *time.Time
@@ -2186,62 +2184,6 @@ func (m *TransactionMutation) AddedAmount() (r decimal.Decimal, exists bool) {
 func (m *TransactionMutation) ResetAmount() {
 	m.amount = nil
 	m.addamount = nil
-}
-
-// SetValue sets the "value" field.
-func (m *TransactionMutation) SetValue(d decimal.Decimal) {
-	m.value = &d
-	m.addvalue = nil
-}
-
-// Value returns the value of the "value" field in the mutation.
-func (m *TransactionMutation) Value() (r decimal.Decimal, exists bool) {
-	v := m.value
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldValue returns the old "value" field's value of the Transaction entity.
-// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TransactionMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldValue is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldValue requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldValue: %w", err)
-	}
-	return oldValue.Value, nil
-}
-
-// AddValue adds d to the "value" field.
-func (m *TransactionMutation) AddValue(d decimal.Decimal) {
-	if m.addvalue != nil {
-		*m.addvalue = m.addvalue.Add(d)
-	} else {
-		m.addvalue = &d
-	}
-}
-
-// AddedValue returns the value that was added to the "value" field in this mutation.
-func (m *TransactionMutation) AddedValue() (r decimal.Decimal, exists bool) {
-	v := m.addvalue
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetValue resets all changes to the "value" field.
-func (m *TransactionMutation) ResetValue() {
-	m.value = nil
-	m.addvalue = nil
 }
 
 // SetNote sets the "note" field.
@@ -2477,12 +2419,9 @@ func (m *TransactionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransactionMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 4)
 	if m.amount != nil {
 		fields = append(fields, transaction.FieldAmount)
-	}
-	if m.value != nil {
-		fields = append(fields, transaction.FieldValue)
 	}
 	if m.note != nil {
 		fields = append(fields, transaction.FieldNote)
@@ -2503,8 +2442,6 @@ func (m *TransactionMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case transaction.FieldAmount:
 		return m.Amount()
-	case transaction.FieldValue:
-		return m.Value()
 	case transaction.FieldNote:
 		return m.Note()
 	case transaction.FieldCreatedAt:
@@ -2522,8 +2459,6 @@ func (m *TransactionMutation) OldField(ctx context.Context, name string) (ent.Va
 	switch name {
 	case transaction.FieldAmount:
 		return m.OldAmount(ctx)
-	case transaction.FieldValue:
-		return m.OldValue(ctx)
 	case transaction.FieldNote:
 		return m.OldNote(ctx)
 	case transaction.FieldCreatedAt:
@@ -2545,13 +2480,6 @@ func (m *TransactionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount(v)
-		return nil
-	case transaction.FieldValue:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetValue(v)
 		return nil
 	case transaction.FieldNote:
 		v, ok := value.(string)
@@ -2585,9 +2513,6 @@ func (m *TransactionMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, transaction.FieldAmount)
 	}
-	if m.addvalue != nil {
-		fields = append(fields, transaction.FieldValue)
-	}
 	return fields
 }
 
@@ -2598,8 +2523,6 @@ func (m *TransactionMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case transaction.FieldAmount:
 		return m.AddedAmount()
-	case transaction.FieldValue:
-		return m.AddedValue()
 	}
 	return nil, false
 }
@@ -2615,13 +2538,6 @@ func (m *TransactionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
-		return nil
-	case transaction.FieldValue:
-		v, ok := value.(decimal.Decimal)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddValue(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Transaction numeric field %s", name)
@@ -2661,9 +2577,6 @@ func (m *TransactionMutation) ResetField(name string) error {
 	switch name {
 	case transaction.FieldAmount:
 		m.ResetAmount()
-		return nil
-	case transaction.FieldValue:
-		m.ResetValue()
 		return nil
 	case transaction.FieldNote:
 		m.ResetNote()
