@@ -32,7 +32,6 @@ import { AmountField } from "../form/amount";
 const formSchema = z.object({
   symbol: z.string(),
   amount: z.string(),
-  value: z.string(), // book value
 });
 
 export function NewInvestment() {

@@ -98,7 +98,6 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 		transaction, err = u.transactionRepo.CreateTransaction(ctx, tx.Client(), transaction_repository.CreateTransactionRequest{
 			ProfileId: profileId,
 			AccountId: targetAccount.ID,
-			OldAmount: targetAccount.Amount,
 			Amount:    decimal.RequireFromString(req.Amount),
 			Note:      req.Note,
 		})
@@ -108,8 +107,11 @@ func (u *transactionUseCase) CreateTransaction(ctx context.Context, profileId st
 		}
 
 		// Update the account entity
+		newAmount := transaction.Amount.Add(targetAccount.Amount)
+		newBalance := newAmount.Mul(targetAccount.Value).Mul(targetAccount.FxRate)
 		_, err = u.accountRepo.UpdateAccount(ctx, tx.Client(), targetAccount.ID, account_repository.UpdateAccountRequest{
-			Amount: &transaction.Amount,
+			Amount:  &newAmount,
+			Balance: &newBalance,
 		})
 		if err != nil {
 			logger.Error(err.Error())

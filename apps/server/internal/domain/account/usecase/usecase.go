@@ -7,12 +7,15 @@ import (
 	"fijoy/ent"
 	"fijoy/ent/account"
 	account_repository "fijoy/internal/domain/account/repository"
+	profile_repository "fijoy/internal/domain/profile/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	"fijoy/internal/util/database"
 	"fijoy/internal/util/market"
 	fijoyv1 "fijoy/proto/fijoy/v1"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/shopspring/decimal"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -33,15 +36,19 @@ type accountUseCase struct {
 	entClient        *ent.Client
 	marketDataClient market.MarketDataClient
 
+	profileRepo profile_repository.ProfileRepository
+
 	accountRepo     account_repository.AccountRepository
 	transactionRepo transaction_repository.TransactionRepository
 }
 
 func New(validator *validator.Validate, entClient *ent.Client, marketDataClient market.MarketDataClient,
+	profileRepo profile_repository.ProfileRepository,
 	accountRepo account_repository.AccountRepository, transactionRepo transaction_repository.TransactionRepository,
 ) AccountUseCase {
 	return &accountUseCase{
 		validator: validator, entClient: entClient, marketDataClient: marketDataClient,
+		profileRepo: profileRepo,
 		accountRepo: accountRepo, transactionRepo: transactionRepo,
 	}
 }
@@ -109,6 +116,59 @@ func accountSymbolTypeModelToProto(accountSymbolType account.SymbolType) fijoyv1
 
 func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, req *fijoyv1.CreateAccountRequest) (*fijoyv1.Account, error) {
 	account, err := u.accountRepo.CreateAccount(ctx, u.entClient, profileId, req)
+	if err != nil {
+		return nil, err
+	}
+
+	profile, err := u.profileRepo.GetProfile(ctx, u.entClient, profileId)
+	if err != nil {
+		return nil, err
+	}
+	currencies := strings.Split(profile.Currencies, ",")
+
+	updateAccountRequest := &account_repository.UpdateAccountRequest{}
+
+	switch req.SymbolType {
+	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_UNSPECIFIED:
+		return nil, errors.New(constants.ErrAccountSymbolTypeMissing)
+	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CURRENCY:
+		if currencies[0] == req.Symbol {
+			fxRate := decimal.NewFromInt(1)
+			updateAccountRequest.FxRate = &fxRate
+		} else {
+			fxRate, err := u.marketDataClient.GetFxRate(ctx, req.Symbol, currencies[0])
+			if err != nil {
+				return nil, err
+			}
+
+			updateAccountRequest.FxRate = &fxRate.Rate
+		}
+		value := decimal.NewFromInt(1)
+		updateAccountRequest.Value = &value
+	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_STOCK:
+		assetInfo, err := u.marketDataClient.GetAssetInfo(ctx, req.Symbol)
+		if err != nil {
+			return nil, err
+		}
+		updateAccountRequest.Value = &assetInfo.CurrentPrice
+
+		if assetInfo.Currency == currencies[0] {
+			fxRate := decimal.NewFromInt(1)
+			updateAccountRequest.FxRate = &fxRate
+		} else {
+			fxRate, err := u.marketDataClient.GetFxRate(ctx, assetInfo.Currency, currencies[0])
+			if err != nil {
+				return nil, err
+			}
+
+			updateAccountRequest.FxRate = &fxRate.Rate
+		}
+
+	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CRYPTO:
+		// TODO: implement this
+	}
+
+	account, err = u.accountRepo.UpdateAccount(ctx, u.entClient, account.ID, *updateAccountRequest)
 	if err != nil {
 		return nil, err
 	}

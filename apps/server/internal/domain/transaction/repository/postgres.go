@@ -27,13 +27,9 @@ func NewTransactionRepository() *transactionRepository {
 }
 
 type CreateTransactionRequest struct {
-	ProfileId  string
-	AccountId  string
-	OldAmount  decimal.Decimal
-	Amount     decimal.Decimal
-	Value      decimal.Decimal
-	FxRate     decimal.Decimal
-	OldBalance decimal.Decimal
+	ProfileId string
+	AccountId string
+	Amount    decimal.Decimal
 
 	Note string
 }

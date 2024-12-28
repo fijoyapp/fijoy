@@ -7,6 +7,7 @@ import { accountsGroupBy } from "@/lib/account";
 import { LiabilityCard } from "./liability/card";
 import { PropertyCard } from "./property/card";
 import { ReceivableCard } from "./receivable/card";
+import { InvestmentCard } from "./investment/card";
 
 type AccountListProps = {
   accounts: Account[];
@@ -31,7 +32,7 @@ export default function AccountListView({ accounts }: AccountListProps) {
     {
       name: "Investment",
       accounts: investments,
-      card: LiquidityCard,
+      card: InvestmentCard,
     },
     {
       name: "Property",

@@ -1,8 +1,6 @@
 package market
 
 import (
-	"time"
-
 	"github.com/shopspring/decimal"
 )
 
@@ -12,12 +10,10 @@ type AssetInfo struct {
 	Exchange     string
 	Currency     string
 	CurrentPrice decimal.Decimal
-	LastUpdated  time.Time
+	// LastUpdated  time.Time
 }
 
 type FXRate struct {
-	FromCurrency string
-	ToCurrency   string
-	Rate         decimal.Decimal
-	LastUpdated  time.Time
+	Rate decimal.Decimal
+	// LastUpdated time.Time
 }

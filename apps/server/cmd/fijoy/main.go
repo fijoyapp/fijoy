@@ -114,8 +114,10 @@ func main() {
 
 	var marketDataClient market.MarketDataClient
 	if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
+		log.Println("Using mock market data client")
 		marketDataClient = market_client.NewMockMarketDataClient()
 	} else {
+		log.Println("Using Twelve Data market data client")
 		marketDataClient = market_client.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
 	}
 
@@ -128,7 +130,7 @@ func main() {
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo, entClient)
 	userUseCase := user_usecase.New(userRepo, entClient)
 	profileUseCase := profile_usecase.New(validator, entClient, profileRepo)
-	accountUseCase := account_usecase.New(validator, entClient, marketDataClient, accountRepo, transactionRepo)
+	accountUseCase := account_usecase.New(validator, entClient, marketDataClient, profileRepo, accountRepo, transactionRepo)
 	transctionUseCase := transaction_usecase.New(validator, entClient, transactionRepo, accountRepo)
 
 	r := chi.NewRouter()
