@@ -5,22 +5,22 @@ import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
-} from "@/components/small-header";
+} from '@/components/small-header'
 // import { accountsQueryOptions } from "@/lib/queries/account";
 // import { categoriesQueryOptions } from "@/lib/queries/category";
 // import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 // import { getAccountsQueryOptions } from "@/lib/queries/account";
-import CenterLoadingSpinner from "@/components/center-loading-spinner";
+import CenterLoadingSpinner from '@/components/center-loading-spinner'
 
-export const Route = createFileRoute("/_protected/_profile/history/")({
+export const Route = createFileRoute('/_protected/_profile/transactions/')({
   // loader: (opts) =>
   //   opts.context.queryClient.ensureQueryData(
   //     getTransactionsQueryOptions({ context: opts.context }),
   //   ),
   pendingComponent: CenterLoadingSpinner,
   component: Page,
-});
+})
 
 function Page() {
   // const context = Route.useRouteContext();
@@ -46,9 +46,9 @@ function Page() {
   return (
     <div className="p-4 lg:p-6">
       <PageHeader>
-        <PageHeaderHeading>History</PageHeaderHeading>
+        <PageHeaderHeading>Transactions</PageHeaderHeading>
         <PageHeaderDescription>
-          See all the modifications made to your accounts
+          See all the transactions made to your accounts
         </PageHeaderDescription>
       </PageHeader>
 
@@ -57,5 +57,5 @@ function Page() {
       {/*   workspace={context.workspace} */}
       {/* /> */}
     </div>
-  );
+  )
 }
