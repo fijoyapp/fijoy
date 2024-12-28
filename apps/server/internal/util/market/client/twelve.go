@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"encoding/json"
+	"fijoy/internal/middleware"
 	"fijoy/internal/util/market"
 	"fmt"
 	"io"
@@ -61,6 +62,8 @@ func (r *AssetInfoResponse) ToAssetInfo() *market.AssetInfo {
 }
 
 func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol string) (*market.AssetInfo, error) {
+	logger := middleware.GetLogger(context)
+
 	u, err := url.Parse(c.baseURL + "quote")
 	if err != nil {
 		return nil, err
@@ -70,6 +73,8 @@ func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol st
 	q.Add("apikey", c.apiKey)
 	q.Add("symbol", symbol)
 	u.RawQuery = q.Encode()
+
+	logger.Info(u.String())
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
@@ -105,6 +110,8 @@ func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol st
 }
 
 func (c *TwelveMarketDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*market.FXRate, error) {
+	logger := middleware.GetLogger(context)
+
 	u, err := url.Parse(c.baseURL + "exchange_rate")
 	if err != nil {
 		return nil, err
@@ -114,6 +121,8 @@ func (c *TwelveMarketDataClient) GetFxRate(context context.Context, fromCurrency
 	q.Add("apikey", c.apiKey)
 	q.Add("symbol", fmt.Sprintf("%s/%s", fromCurrency, toCurrency))
 	u.RawQuery = q.Encode()
+
+	logger.Info(u.String())
 
 	req, err := http.NewRequest("GET", u.String(), nil)
 	if err != nil {
