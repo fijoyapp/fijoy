@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Card,
   CardContent,
@@ -6,7 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,10 +36,12 @@ import {
   getTransactions,
 } from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 import { AmountField } from "../form/amount";
+import { match } from "ts-pattern";
 
 const formSchema = z.object({
   symbol: z.string(),
   amount: z.string(),
+  type: z.enum(["crypto", "stock"]),
 });
 
 export function NewInvestment() {
@@ -40,7 +50,9 @@ export function NewInvestment() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {},
+    defaultValues: {
+      type: "stock",
+    },
   });
 
   const createAccountMut = useMutation(createAccount, {
@@ -82,7 +94,10 @@ export function NewInvestment() {
           accountType: AccountType.INVESTMENT,
 
           symbol: values.symbol,
-          symbolType: AccountSymbolType.STOCK,
+          symbolType: match(values.type)
+            .with("stock", () => AccountSymbolType.STOCK)
+            .with("crypto", () => AccountSymbolType.CRYPTO)
+            .exhaustive(),
         });
 
         await createTransactionMut.mutateAsync({
@@ -111,12 +126,58 @@ export function NewInvestment() {
               <CardTitle>New Investment Account</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <NameField
-                control={form.control}
-                name="symbol"
-                label="Symbol"
-                placeholder="What is the symbol? e.g. AAPL"
-              />
+              <div className="flex gap-2">
+                <div className="grow">
+                  <NameField
+                    control={form.control}
+                    name="symbol"
+                    label="Symbol"
+                    placeholder="What is the symbol? e.g. AAPL"
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name={"type"}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Type</FormLabel>
+                      <FormControl>
+                        <ToggleGroup
+                          type="single"
+                          value={field.value}
+                          onValueChange={(value) => {
+                            match(value)
+                              .with("stock", () => {
+                                form.setValue("type", "stock");
+                              })
+                              .with("crypto", () => {
+                                form.setValue("type", "crypto");
+                              })
+                              .otherwise(() => {
+                                alert("Invalid type value");
+                              });
+                          }}
+                        >
+                          <ToggleGroupItem
+                            value="stock"
+                            aria-label="Toggle Stock"
+                          >
+                            Stock
+                          </ToggleGroupItem>
+                          <ToggleGroupItem
+                            value="crypto"
+                            aria-label="Toggle Crypto"
+                          >
+                            Crypto
+                          </ToggleGroupItem>
+                        </ToggleGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <AmountField
                 control={form.control}
