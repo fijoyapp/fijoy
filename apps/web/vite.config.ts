@@ -16,6 +16,7 @@ export default defineConfig({
       release: {
         name: packageJson.version,
       },
+      telemetry: false,
     }),
   ],
   resolve: {
