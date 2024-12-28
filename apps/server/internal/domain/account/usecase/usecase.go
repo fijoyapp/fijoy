@@ -12,6 +12,7 @@ import (
 	"fijoy/internal/util/database"
 	"fijoy/internal/util/market"
 	fijoyv1 "fijoy/proto/fijoy/v1"
+	"fmt"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -165,7 +166,14 @@ func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, re
 		}
 
 	case fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CRYPTO:
-		// TODO: implement this
+		assetInfo, err := u.marketDataClient.GetAssetInfo(ctx, fmt.Sprintf("%s/%s", req.Symbol, currencies[0]))
+		if err != nil {
+			return nil, err
+		}
+		updateAccountRequest.Value = &assetInfo.CurrentPrice
+
+		fxRate := decimal.NewFromInt(1)
+		updateAccountRequest.FxRate = &fxRate
 	}
 
 	account, err = u.accountRepo.UpdateAccount(ctx, u.entClient, account.ID, *updateAccountRequest)
