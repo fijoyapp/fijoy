@@ -5,10 +5,10 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/ent"
-	"fijoy/ent/account"
 	account_repository "fijoy/internal/domain/account/repository"
 	profile_repository "fijoy/internal/domain/profile/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
+	"fijoy/internal/util/convert"
 	"fijoy/internal/util/database"
 	"fijoy/internal/util/market"
 	fijoyv1 "fijoy/proto/fijoy/v1"
@@ -17,7 +17,6 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/shopspring/decimal"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type AccountUseCase interface {
@@ -51,67 +50,6 @@ func New(validator *validator.Validate, entClient *ent.Client, marketDataClient 
 		validator: validator, entClient: entClient, marketDataClient: marketDataClient,
 		profileRepo: profileRepo,
 		accountRepo: accountRepo, transactionRepo: transactionRepo,
-	}
-}
-
-func accountModelToProto(account *ent.Account) *fijoyv1.Account {
-	return &fijoyv1.Account{
-		Id:          account.ID,
-		Name:        account.Name,
-		AccountType: accountTypeModelToProto(account.AccountType),
-
-		Archived: account.Archived,
-
-		Symbol:     account.Symbol,
-		SymbolType: accountSymbolTypeModelToProto(account.SymbolType),
-
-		Amount:  account.Amount.String(),
-		Value:   account.Value.String(),
-		FxRate:  account.FxRate.String(),
-		Balance: account.Balance.String(),
-
-		CreatedAt: timestamppb.New(account.CreatedAt),
-		UpdatedAt: timestamppb.New(account.UpdatedAt),
-	}
-}
-
-func accountsModelToProto(accounts []*ent.Account) *fijoyv1.AccountList {
-	protoAccounts := make([]*fijoyv1.Account, len(accounts))
-	for i, account := range accounts {
-		protoAccounts[i] = accountModelToProto(account)
-	}
-	return &fijoyv1.AccountList{
-		Items: protoAccounts,
-	}
-}
-
-func accountTypeModelToProto(accountType account.AccountType) fijoyv1.AccountType {
-	switch accountType {
-	case account.AccountTypeLiquidity:
-		return fijoyv1.AccountType_ACCOUNT_TYPE_LIQUIDITY
-	case account.AccountTypeInvestment:
-		return fijoyv1.AccountType_ACCOUNT_TYPE_INVESTMENT
-	case account.AccountTypeProperty:
-		return fijoyv1.AccountType_ACCOUNT_TYPE_PROPERTY
-	case account.AccountTypeReceivable:
-		return fijoyv1.AccountType_ACCOUNT_TYPE_RECEIVABLE
-	case account.AccountTypeLiability:
-		return fijoyv1.AccountType_ACCOUNT_TYPE_LIABILITY
-	default:
-		panic("unknown account type")
-	}
-}
-
-func accountSymbolTypeModelToProto(accountSymbolType account.SymbolType) fijoyv1.AccountSymbolType {
-	switch accountSymbolType {
-	case account.SymbolTypeCurrency:
-		return fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CURRENCY
-	case account.SymbolTypeCrypto:
-		return fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_CRYPTO
-	case account.SymbolTypeStock:
-		return fijoyv1.AccountSymbolType_ACCOUNT_SYMBOL_TYPE_STOCK
-	default:
-		panic("unknown account symbol type")
 	}
 }
 
@@ -181,7 +119,7 @@ func (u *accountUseCase) CreateAccount(ctx context.Context, profileId string, re
 		return nil, err
 	}
 
-	return accountModelToProto(account), nil
+	return convert.AccountModelToProto(account), nil
 }
 
 func (u *accountUseCase) GetAccount(ctx context.Context, profileId string, req *fijoyv1.GetAccountRequest) (*fijoyv1.Account, error) {
@@ -198,7 +136,7 @@ func (u *accountUseCase) GetAccount(ctx context.Context, profileId string, req *
 		return nil, errors.New(constants.ErrAccountNotFound)
 	}
 
-	return accountModelToProto(account), nil
+	return convert.AccountModelToProto(account), nil
 }
 
 func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fijoyv1.AccountList, error) {
@@ -207,7 +145,7 @@ func (u *accountUseCase) GetAccounts(ctx context.Context, profileId string) (*fi
 		return nil, err
 	}
 
-	return accountsModelToProto(accounts), nil
+	return convert.AccountsModelToProto(accounts), nil
 }
 
 func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, req *fijoyv1.UpdateAccountRequest) (*fijoyv1.Account, error) {
@@ -230,7 +168,7 @@ func (u *accountUseCase) UpdateAccount(ctx context.Context, profileId string, re
 		return nil, err
 	}
 
-	return accountModelToProto(account), nil
+	return convert.AccountModelToProto(account), nil
 }
 
 // func (u *accountUseCase) DeleteAccount(ctx context.Context, profileId string, req *fijoyv1.DeleteAccountRequest) error {

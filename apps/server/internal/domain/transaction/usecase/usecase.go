@@ -8,6 +8,7 @@ import (
 	account_repository "fijoy/internal/domain/account/repository"
 	transaction_repository "fijoy/internal/domain/transaction/repository"
 	"fijoy/internal/middleware"
+	"fijoy/internal/util/convert"
 	"fijoy/internal/util/database"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
@@ -49,8 +50,8 @@ func New(validator *validator.Validate, entClient *ent.Client,
 
 func transactionModelToProto(transaction *ent.Transaction) *fijoyv1.Transaction {
 	return &fijoyv1.Transaction{
-		Id:        transaction.ID,
-		AccountId: transaction.Edges.Account.ID,
+		Id:      transaction.ID,
+		Account: convert.AccountModelToProto(transaction.Edges.Account),
 
 		Amount: transaction.Amount.String(),
 

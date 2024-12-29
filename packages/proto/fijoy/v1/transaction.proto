@@ -3,12 +3,13 @@ syntax = "proto3";
 package fijoy.v1;
 
 import "buf/validate/validate.proto";
+import "fijoy/v1/account.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 message Transaction {
   string id = 1 [(buf.validate.field).string.min_len = 1];
-  string account_id = 2 [(buf.validate.field).string.min_len = 1];
+  fijoy.v1.Account account = 2;
 
   string amount = 3;
 

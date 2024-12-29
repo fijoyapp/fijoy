@@ -50,9 +50,8 @@ func (r *transactionRepository) CreateTransaction(ctx context.Context, client *e
 func (r *transactionRepository) GetTransaction(ctx context.Context, client *ent.Client, id string) (*ent.Transaction, error) {
 	transaction, err := client.Transaction.Query().
 		Where(transaction.ID(id)).
-		WithAccount(func(q *ent.AccountQuery) {
-			q.Select(account.FieldID).Select(account.FieldName)
-		}).
+		WithAccount().
+		Order(ent.Desc(transaction.FieldCreatedAt)).
 		Only(ctx)
 	if err != nil {
 		return nil, err
@@ -64,9 +63,8 @@ func (r *transactionRepository) GetTransaction(ctx context.Context, client *ent.
 func (r *transactionRepository) GetTransactions(ctx context.Context, client *ent.Client, profileId string) ([]*ent.Transaction, error) {
 	transaction, err := client.Transaction.Query().
 		Where(transaction.HasProfileWith(profile.ID(profileId))).
-		WithAccount(func(q *ent.AccountQuery) {
-			q.Select(account.FieldID).Select(account.FieldName)
-		}).
+		WithAccount().
+		Order(ent.Desc(transaction.FieldCreatedAt)).
 		All(ctx)
 	if err != nil {
 		return nil, err
@@ -78,9 +76,8 @@ func (r *transactionRepository) GetTransactions(ctx context.Context, client *ent
 func (r *transactionRepository) GetTransactionsByAccount(ctx context.Context, client *ent.Client, accountId string) ([]*ent.Transaction, error) {
 	transaction, err := client.Transaction.Query().
 		Where(transaction.HasAccountWith(account.ID(accountId))).
-		WithAccount(func(q *ent.AccountQuery) {
-			q.Select(account.FieldID).Select(account.FieldName)
-		}).
+		WithAccount().
+		Order(ent.Desc(transaction.FieldCreatedAt)).
 		All(ctx)
 	if err != nil {
 		return nil, err
