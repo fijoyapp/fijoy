@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Settings } from "lucide-react";
 
 export const Route = createFileRoute("/_protected/_profile/settings/")({
   component: Page,
@@ -30,11 +30,26 @@ function Page() {
       <div className="py-2"></div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <Link from={Route.fullPath} to={"/settings/general"}>
+          <Card className="h-full transition-all hover:bg-secondary">
+            <div className="flex h-full items-center">
+              <CardHeader>
+                <CardTitle>General</CardTitle>
+                <CardDescription>
+                  General settings for your profile
+                </CardDescription>
+              </CardHeader>
+              <div className="grow"></div>
+              <Settings className="flex-shrink-0" />
+              <div className="px-4"></div>
+            </div>
+          </Card>
+        </Link>
         <Link from={Route.fullPath} to={"/settings/currency"}>
           <Card className="h-full transition-all hover:bg-secondary">
             <div className="flex h-full items-center">
               <CardHeader>
-                <CardTitle>Currency </CardTitle>
+                <CardTitle>Currency</CardTitle>
                 <CardDescription>
                   Configure how things are displayed
                 </CardDescription>
