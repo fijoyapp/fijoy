@@ -3,5 +3,6 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "just postgres"
-  }
+  },
+  "packageManager": "pnpm@9.15.2"
 }

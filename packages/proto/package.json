@@ -7,5 +7,6 @@
   "devDependencies": {
     "@bufbuild/protoc-gen-es": "^2.2.3",
     "@connectrpc/protoc-gen-connect-query": "^2.0.1"
-  }
+  },
+  "packageManager": "pnpm@9.15.2"
 }
