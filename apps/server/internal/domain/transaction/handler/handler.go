@@ -14,10 +14,10 @@ import (
 
 type transactionHandler struct {
 	useCase        usecase.TransactionUseCase
-	protoValidator *protovalidate.Validator
+	protoValidator protovalidate.Validator
 }
 
-func NewTransactionHandler(protoValidator *protovalidate.Validator, useCase usecase.TransactionUseCase) *transactionHandler {
+func NewTransactionHandler(protoValidator protovalidate.Validator, useCase usecase.TransactionUseCase) *transactionHandler {
 	return &transactionHandler{useCase: useCase, protoValidator: protoValidator}
 }
 

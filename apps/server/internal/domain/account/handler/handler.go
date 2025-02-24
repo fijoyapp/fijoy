@@ -14,10 +14,10 @@ import (
 
 type accountHandler struct {
 	useCase        usecase.AccountUseCase
-	protoValidator *protovalidate.Validator
+	protoValidator protovalidate.Validator
 }
 
-func NewAccountHandler(protoValidator *protovalidate.Validator, useCase usecase.AccountUseCase) *accountHandler {
+func NewAccountHandler(protoValidator protovalidate.Validator, useCase usecase.AccountUseCase) *accountHandler {
 	return &accountHandler{useCase: useCase, protoValidator: protoValidator}
 }
 

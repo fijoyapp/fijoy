@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	"fijoy/internal/domain/user/usecase"
-	fijoyv1 "fijoy/proto/fijoy/v1"
 	"fijoy/internal/util/auth"
+	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
 	"github.com/bufbuild/protovalidate-go"
@@ -13,10 +13,10 @@ import (
 
 type userHandler struct {
 	useCase        usecase.UserUseCase
-	protoValidator *protovalidate.Validator
+	protoValidator protovalidate.Validator
 }
 
-func NewUserHandler(protoValidator *protovalidate.Validator, useCase usecase.UserUseCase) *userHandler {
+func NewUserHandler(protoValidator protovalidate.Validator, useCase usecase.UserUseCase) *userHandler {
 	return &userHandler{useCase: useCase, protoValidator: protoValidator}
 }
 

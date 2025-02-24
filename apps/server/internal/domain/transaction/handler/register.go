@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-func RegisterConnect(r *chi.Mux, protoValidator *protovalidate.Validator, authConfig *config.AuthConfig, useCase usecase.TransactionUseCase) {
+func RegisterConnect(r *chi.Mux, protoValidator protovalidate.Validator, authConfig *config.AuthConfig, useCase usecase.TransactionUseCase) {
 	transactionServer := NewTransactionHandler(protoValidator, useCase)
 
 	path, handler := fijoyv1connect.NewTransactionServiceHandler(transactionServer)

@@ -15,10 +15,10 @@ import (
 
 type profileHandler struct {
 	useCase        usecase.ProfileUseCase
-	protoValidator *protovalidate.Validator
+	protoValidator protovalidate.Validator
 }
 
-func NewProfileHandler(protoValidator *protovalidate.Validator, useCase usecase.ProfileUseCase) *profileHandler {
+func NewProfileHandler(protoValidator protovalidate.Validator, useCase usecase.ProfileUseCase) *profileHandler {
 	return &profileHandler{useCase: useCase, protoValidator: protoValidator}
 }
 
