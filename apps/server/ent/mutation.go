@@ -44,7 +44,6 @@ type AccountMutation struct {
 	id                 *string
 	name               *string
 	account_type       *account.AccountType
-	archived           *bool
 	symbol             *string
 	symbol_type        *account.SymbolType
 	amount             *decimal.Decimal
@@ -55,6 +54,7 @@ type AccountMutation struct {
 	addfx_rate         *decimal.Decimal
 	balance            *decimal.Decimal
 	addbalance         *decimal.Decimal
+	archived           *bool
 	created_at         *time.Time
 	updated_at         *time.Time
 	clearedFields      map[string]struct{}
@@ -242,42 +242,6 @@ func (m *AccountMutation) OldAccountType(ctx context.Context) (v account.Account
 // ResetAccountType resets all changes to the "account_type" field.
 func (m *AccountMutation) ResetAccountType() {
 	m.account_type = nil
-}
-
-// SetArchived sets the "archived" field.
-func (m *AccountMutation) SetArchived(b bool) {
-	m.archived = &b
-}
-
-// Archived returns the value of the "archived" field in the mutation.
-func (m *AccountMutation) Archived() (r bool, exists bool) {
-	v := m.archived
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldArchived returns the old "archived" field's value of the Account entity.
-// If the Account object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccountMutation) OldArchived(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldArchived is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldArchived requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldArchived: %w", err)
-	}
-	return oldValue.Archived, nil
-}
-
-// ResetArchived resets all changes to the "archived" field.
-func (m *AccountMutation) ResetArchived() {
-	m.archived = nil
 }
 
 // SetSymbol sets the "symbol" field.
@@ -590,6 +554,42 @@ func (m *AccountMutation) ResetBalance() {
 	m.addbalance = nil
 }
 
+// SetArchived sets the "archived" field.
+func (m *AccountMutation) SetArchived(b bool) {
+	m.archived = &b
+}
+
+// Archived returns the value of the "archived" field in the mutation.
+func (m *AccountMutation) Archived() (r bool, exists bool) {
+	v := m.archived
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldArchived returns the old "archived" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldArchived(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldArchived is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldArchived requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldArchived: %w", err)
+	}
+	return oldValue.Archived, nil
+}
+
+// ResetArchived resets all changes to the "archived" field.
+func (m *AccountMutation) ResetArchived() {
+	m.archived = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *AccountMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -796,9 +796,6 @@ func (m *AccountMutation) Fields() []string {
 	if m.account_type != nil {
 		fields = append(fields, account.FieldAccountType)
 	}
-	if m.archived != nil {
-		fields = append(fields, account.FieldArchived)
-	}
 	if m.symbol != nil {
 		fields = append(fields, account.FieldSymbol)
 	}
@@ -816,6 +813,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.balance != nil {
 		fields = append(fields, account.FieldBalance)
+	}
+	if m.archived != nil {
+		fields = append(fields, account.FieldArchived)
 	}
 	if m.created_at != nil {
 		fields = append(fields, account.FieldCreatedAt)
@@ -835,8 +835,6 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case account.FieldAccountType:
 		return m.AccountType()
-	case account.FieldArchived:
-		return m.Archived()
 	case account.FieldSymbol:
 		return m.Symbol()
 	case account.FieldSymbolType:
@@ -849,6 +847,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.FxRate()
 	case account.FieldBalance:
 		return m.Balance()
+	case account.FieldArchived:
+		return m.Archived()
 	case account.FieldCreatedAt:
 		return m.CreatedAt()
 	case account.FieldUpdatedAt:
@@ -866,8 +866,6 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case account.FieldAccountType:
 		return m.OldAccountType(ctx)
-	case account.FieldArchived:
-		return m.OldArchived(ctx)
 	case account.FieldSymbol:
 		return m.OldSymbol(ctx)
 	case account.FieldSymbolType:
@@ -880,6 +878,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldFxRate(ctx)
 	case account.FieldBalance:
 		return m.OldBalance(ctx)
+	case account.FieldArchived:
+		return m.OldArchived(ctx)
 	case account.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case account.FieldUpdatedAt:
@@ -906,13 +906,6 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAccountType(v)
-		return nil
-	case account.FieldArchived:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetArchived(v)
 		return nil
 	case account.FieldSymbol:
 		v, ok := value.(string)
@@ -955,6 +948,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBalance(v)
+		return nil
+	case account.FieldArchived:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetArchived(v)
 		return nil
 	case account.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -1085,9 +1085,6 @@ func (m *AccountMutation) ResetField(name string) error {
 	case account.FieldAccountType:
 		m.ResetAccountType()
 		return nil
-	case account.FieldArchived:
-		m.ResetArchived()
-		return nil
 	case account.FieldSymbol:
 		m.ResetSymbol()
 		return nil
@@ -1105,6 +1102,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldBalance:
 		m.ResetBalance()
+		return nil
+	case account.FieldArchived:
+		m.ResetArchived()
 		return nil
 	case account.FieldCreatedAt:
 		m.ResetCreatedAt()

@@ -23,10 +23,9 @@ func (Account) Fields() []ent.Field {
 		field.String("id").DefaultFunc(func() string { return constants.AccountPrefix + cuid2.Generate() }),
 
 		field.String("name").NotEmpty(),
+
 		field.Enum("account_type").
 			Values("liquidity", "investment", "property", "receivable", "liability"),
-
-		field.Bool("archived").Default(false),
 
 		field.String("symbol").NotEmpty(),
 		field.Enum("symbol_type").Values("currency", "stock", "crypto"),
@@ -34,8 +33,8 @@ func (Account) Fields() []ent.Field {
 		field.Float("amount").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
-				dialect.MySQL:    "decimal(38,18)",
-				dialect.Postgres: "numeric(38,18)",
+				dialect.MySQL:    "decimal(36,18)",
+				dialect.Postgres: "numeric(36,18)",
 			}),
 		field.Float("value").
 			GoType(decimal.Decimal{}).
@@ -52,9 +51,11 @@ func (Account) Fields() []ent.Field {
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
-				dialect.MySQL:    "decimal(38,18)",
-				dialect.Postgres: "numeric(38,18)",
+				dialect.MySQL:    "decimal(36,18)",
+				dialect.Postgres: "numeric(36,18)",
 			}),
+
+		field.Bool("archived").Default(false),
 
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now),

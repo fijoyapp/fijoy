@@ -21,14 +21,14 @@ func init() {
 	accountDescName := accountFields[1].Descriptor()
 	// account.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	account.NameValidator = accountDescName.Validators[0].(func(string) error)
-	// accountDescArchived is the schema descriptor for archived field.
-	accountDescArchived := accountFields[3].Descriptor()
-	// account.DefaultArchived holds the default value on creation for the archived field.
-	account.DefaultArchived = accountDescArchived.Default.(bool)
 	// accountDescSymbol is the schema descriptor for symbol field.
-	accountDescSymbol := accountFields[4].Descriptor()
+	accountDescSymbol := accountFields[3].Descriptor()
 	// account.SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
 	account.SymbolValidator = accountDescSymbol.Validators[0].(func(string) error)
+	// accountDescArchived is the schema descriptor for archived field.
+	accountDescArchived := accountFields[9].Descriptor()
+	// account.DefaultArchived holds the default value on creation for the archived field.
+	account.DefaultArchived = accountDescArchived.Default.(bool)
 	// accountDescCreatedAt is the schema descriptor for created_at field.
 	accountDescCreatedAt := accountFields[10].Descriptor()
 	// account.DefaultCreatedAt holds the default value on creation for the created_at field.

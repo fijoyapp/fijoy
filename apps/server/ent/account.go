@@ -23,8 +23,6 @@ type Account struct {
 	Name string `json:"name,omitempty"`
 	// AccountType holds the value of the "account_type" field.
 	AccountType account.AccountType `json:"account_type,omitempty"`
-	// Archived holds the value of the "archived" field.
-	Archived bool `json:"archived,omitempty"`
 	// Symbol holds the value of the "symbol" field.
 	Symbol string `json:"symbol,omitempty"`
 	// SymbolType holds the value of the "symbol_type" field.
@@ -37,6 +35,8 @@ type Account struct {
 	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
 	// Balance holds the value of the "balance" field.
 	Balance decimal.Decimal `json:"balance,omitempty"`
+	// Archived holds the value of the "archived" field.
+	Archived bool `json:"archived,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -127,12 +127,6 @@ func (a *Account) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.AccountType = account.AccountType(value.String)
 			}
-		case account.FieldArchived:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field archived", values[i])
-			} else if value.Valid {
-				a.Archived = value.Bool
-			}
 		case account.FieldSymbol:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field symbol", values[i])
@@ -168,6 +162,12 @@ func (a *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value != nil {
 				a.Balance = *value
+			}
+		case account.FieldArchived:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field archived", values[i])
+			} else if value.Valid {
+				a.Archived = value.Bool
 			}
 		case account.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -240,9 +240,6 @@ func (a *Account) String() string {
 	builder.WriteString("account_type=")
 	builder.WriteString(fmt.Sprintf("%v", a.AccountType))
 	builder.WriteString(", ")
-	builder.WriteString("archived=")
-	builder.WriteString(fmt.Sprintf("%v", a.Archived))
-	builder.WriteString(", ")
 	builder.WriteString("symbol=")
 	builder.WriteString(a.Symbol)
 	builder.WriteString(", ")
@@ -260,6 +257,9 @@ func (a *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
 	builder.WriteString(fmt.Sprintf("%v", a.Balance))
+	builder.WriteString(", ")
+	builder.WriteString("archived=")
+	builder.WriteString(fmt.Sprintf("%v", a.Archived))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(a.CreatedAt.Format(time.ANSIC))

@@ -59,20 +59,6 @@ func (au *AccountUpdate) SetNillableAccountType(at *account.AccountType) *Accoun
 	return au
 }
 
-// SetArchived sets the "archived" field.
-func (au *AccountUpdate) SetArchived(b bool) *AccountUpdate {
-	au.mutation.SetArchived(b)
-	return au
-}
-
-// SetNillableArchived sets the "archived" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableArchived(b *bool) *AccountUpdate {
-	if b != nil {
-		au.SetArchived(*b)
-	}
-	return au
-}
-
 // SetSymbol sets the "symbol" field.
 func (au *AccountUpdate) SetSymbol(s string) *AccountUpdate {
 	au.mutation.SetSymbol(s)
@@ -188,6 +174,20 @@ func (au *AccountUpdate) SetNillableBalance(d *decimal.Decimal) *AccountUpdate {
 // AddBalance adds d to the "balance" field.
 func (au *AccountUpdate) AddBalance(d decimal.Decimal) *AccountUpdate {
 	au.mutation.AddBalance(d)
+	return au
+}
+
+// SetArchived sets the "archived" field.
+func (au *AccountUpdate) SetArchived(b bool) *AccountUpdate {
+	au.mutation.SetArchived(b)
+	return au
+}
+
+// SetNillableArchived sets the "archived" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableArchived(b *bool) *AccountUpdate {
+	if b != nil {
+		au.SetArchived(*b)
+	}
 	return au
 }
 
@@ -350,9 +350,6 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := au.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 	}
-	if value, ok := au.mutation.Archived(); ok {
-		_spec.SetField(account.FieldArchived, field.TypeBool, value)
-	}
 	if value, ok := au.mutation.Symbol(); ok {
 		_spec.SetField(account.FieldSymbol, field.TypeString, value)
 	}
@@ -385,6 +382,9 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := au.mutation.Archived(); ok {
+		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 	}
 	if value, ok := au.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)
@@ -514,20 +514,6 @@ func (auo *AccountUpdateOne) SetNillableAccountType(at *account.AccountType) *Ac
 	return auo
 }
 
-// SetArchived sets the "archived" field.
-func (auo *AccountUpdateOne) SetArchived(b bool) *AccountUpdateOne {
-	auo.mutation.SetArchived(b)
-	return auo
-}
-
-// SetNillableArchived sets the "archived" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableArchived(b *bool) *AccountUpdateOne {
-	if b != nil {
-		auo.SetArchived(*b)
-	}
-	return auo
-}
-
 // SetSymbol sets the "symbol" field.
 func (auo *AccountUpdateOne) SetSymbol(s string) *AccountUpdateOne {
 	auo.mutation.SetSymbol(s)
@@ -643,6 +629,20 @@ func (auo *AccountUpdateOne) SetNillableBalance(d *decimal.Decimal) *AccountUpda
 // AddBalance adds d to the "balance" field.
 func (auo *AccountUpdateOne) AddBalance(d decimal.Decimal) *AccountUpdateOne {
 	auo.mutation.AddBalance(d)
+	return auo
+}
+
+// SetArchived sets the "archived" field.
+func (auo *AccountUpdateOne) SetArchived(b bool) *AccountUpdateOne {
+	auo.mutation.SetArchived(b)
+	return auo
+}
+
+// SetNillableArchived sets the "archived" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableArchived(b *bool) *AccountUpdateOne {
+	if b != nil {
+		auo.SetArchived(*b)
+	}
 	return auo
 }
 
@@ -835,9 +835,6 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	if value, ok := auo.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 	}
-	if value, ok := auo.mutation.Archived(); ok {
-		_spec.SetField(account.FieldArchived, field.TypeBool, value)
-	}
 	if value, ok := auo.mutation.Symbol(); ok {
 		_spec.SetField(account.FieldSymbol, field.TypeString, value)
 	}
@@ -870,6 +867,9 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if value, ok := auo.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := auo.mutation.Archived(); ok {
+		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 	}
 	if value, ok := auo.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)

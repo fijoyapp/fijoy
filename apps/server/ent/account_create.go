@@ -35,20 +35,6 @@ func (ac *AccountCreate) SetAccountType(at account.AccountType) *AccountCreate {
 	return ac
 }
 
-// SetArchived sets the "archived" field.
-func (ac *AccountCreate) SetArchived(b bool) *AccountCreate {
-	ac.mutation.SetArchived(b)
-	return ac
-}
-
-// SetNillableArchived sets the "archived" field if the given value is not nil.
-func (ac *AccountCreate) SetNillableArchived(b *bool) *AccountCreate {
-	if b != nil {
-		ac.SetArchived(*b)
-	}
-	return ac
-}
-
 // SetSymbol sets the "symbol" field.
 func (ac *AccountCreate) SetSymbol(s string) *AccountCreate {
 	ac.mutation.SetSymbol(s)
@@ -90,6 +76,20 @@ func (ac *AccountCreate) SetNillableFxRate(d *decimal.Decimal) *AccountCreate {
 // SetBalance sets the "balance" field.
 func (ac *AccountCreate) SetBalance(d decimal.Decimal) *AccountCreate {
 	ac.mutation.SetBalance(d)
+	return ac
+}
+
+// SetArchived sets the "archived" field.
+func (ac *AccountCreate) SetArchived(b bool) *AccountCreate {
+	ac.mutation.SetArchived(b)
+	return ac
+}
+
+// SetNillableArchived sets the "archived" field if the given value is not nil.
+func (ac *AccountCreate) SetNillableArchived(b *bool) *AccountCreate {
+	if b != nil {
+		ac.SetArchived(*b)
+	}
 	return ac
 }
 
@@ -232,9 +232,6 @@ func (ac *AccountCreate) check() error {
 			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "Account.account_type": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.Archived(); !ok {
-		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Account.archived"`)}
-	}
 	if _, ok := ac.mutation.Symbol(); !ok {
 		return &ValidationError{Name: "symbol", err: errors.New(`ent: missing required field "Account.symbol"`)}
 	}
@@ -259,6 +256,9 @@ func (ac *AccountCreate) check() error {
 	}
 	if _, ok := ac.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}
+	}
+	if _, ok := ac.mutation.Archived(); !ok {
+		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Account.archived"`)}
 	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Account.created_at"`)}
@@ -312,10 +312,6 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 		_node.AccountType = value
 	}
-	if value, ok := ac.mutation.Archived(); ok {
-		_spec.SetField(account.FieldArchived, field.TypeBool, value)
-		_node.Archived = value
-	}
 	if value, ok := ac.mutation.Symbol(); ok {
 		_spec.SetField(account.FieldSymbol, field.TypeString, value)
 		_node.Symbol = value
@@ -339,6 +335,10 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
+	}
+	if value, ok := ac.mutation.Archived(); ok {
+		_spec.SetField(account.FieldArchived, field.TypeBool, value)
+		_node.Archived = value
 	}
 	if value, ok := ac.mutation.CreatedAt(); ok {
 		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)

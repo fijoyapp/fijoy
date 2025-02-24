@@ -71,11 +71,6 @@ func Name(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldName, v))
 }
 
-// Archived applies equality check predicate on the "archived" field. It's identical to ArchivedEQ.
-func Archived(v bool) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldArchived, v))
-}
-
 // Symbol applies equality check predicate on the "symbol" field. It's identical to SymbolEQ.
 func Symbol(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldSymbol, v))
@@ -99,6 +94,11 @@ func FxRate(v decimal.Decimal) predicate.Account {
 // Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
 func Balance(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldBalance, v))
+}
+
+// Archived applies equality check predicate on the "archived" field. It's identical to ArchivedEQ.
+func Archived(v bool) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldArchived, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -194,16 +194,6 @@ func AccountTypeIn(vs ...AccountType) predicate.Account {
 // AccountTypeNotIn applies the NotIn predicate on the "account_type" field.
 func AccountTypeNotIn(vs ...AccountType) predicate.Account {
 	return predicate.Account(sql.FieldNotIn(FieldAccountType, vs...))
-}
-
-// ArchivedEQ applies the EQ predicate on the "archived" field.
-func ArchivedEQ(v bool) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldArchived, v))
-}
-
-// ArchivedNEQ applies the NEQ predicate on the "archived" field.
-func ArchivedNEQ(v bool) predicate.Account {
-	return predicate.Account(sql.FieldNEQ(FieldArchived, v))
 }
 
 // SymbolEQ applies the EQ predicate on the "symbol" field.
@@ -459,6 +449,16 @@ func BalanceLT(v decimal.Decimal) predicate.Account {
 // BalanceLTE applies the LTE predicate on the "balance" field.
 func BalanceLTE(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldBalance, v))
+}
+
+// ArchivedEQ applies the EQ predicate on the "archived" field.
+func ArchivedEQ(v bool) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldArchived, v))
+}
+
+// ArchivedNEQ applies the NEQ predicate on the "archived" field.
+func ArchivedNEQ(v bool) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldArchived, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

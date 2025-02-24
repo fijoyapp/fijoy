@@ -19,8 +19,6 @@ const (
 	FieldName = "name"
 	// FieldAccountType holds the string denoting the account_type field in the database.
 	FieldAccountType = "account_type"
-	// FieldArchived holds the string denoting the archived field in the database.
-	FieldArchived = "archived"
 	// FieldSymbol holds the string denoting the symbol field in the database.
 	FieldSymbol = "symbol"
 	// FieldSymbolType holds the string denoting the symbol_type field in the database.
@@ -33,6 +31,8 @@ const (
 	FieldFxRate = "fx_rate"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
+	// FieldArchived holds the string denoting the archived field in the database.
+	FieldArchived = "archived"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -64,13 +64,13 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldAccountType,
-	FieldArchived,
 	FieldSymbol,
 	FieldSymbolType,
 	FieldAmount,
 	FieldValue,
 	FieldFxRate,
 	FieldBalance,
+	FieldArchived,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -99,10 +99,10 @@ func ValidColumn(column string) bool {
 var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
-	// DefaultArchived holds the default value on creation for the "archived" field.
-	DefaultArchived bool
 	// SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
 	SymbolValidator func(string) error
+	// DefaultArchived holds the default value on creation for the "archived" field.
+	DefaultArchived bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -179,11 +179,6 @@ func ByAccountType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAccountType, opts...).ToFunc()
 }
 
-// ByArchived orders the results by the archived field.
-func ByArchived(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldArchived, opts...).ToFunc()
-}
-
 // BySymbol orders the results by the symbol field.
 func BySymbol(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSymbol, opts...).ToFunc()
@@ -212,6 +207,11 @@ func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
 // ByBalance orders the results by the balance field.
 func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
+}
+
+// ByArchived orders the results by the archived field.
+func ByArchived(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldArchived, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.
