@@ -6,6 +6,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/nrednav/cuid2"
@@ -57,8 +58,12 @@ func (Account) Fields() []ent.Field {
 
 		field.Bool("archived").Default(false),
 
-		field.Time("created_at").Default(time.Now),
-		field.Time("updated_at").Default(time.Now),
+		field.Time("created_at").Default(time.Now).Annotations(
+			entsql.Default("CURRENT_TIMESTAMP"),
+		),
+		field.Time("updated_at").Default(time.Now).Annotations(
+			entsql.Default("CURRENT_TIMESTAMP"),
+		),
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/nrednav/cuid2"
@@ -31,10 +32,16 @@ func (Transaction) Fields() []ent.Field {
 
 		field.Text("note").Optional(),
 
-		field.Time("datetime").Default(time.Now),
+		field.Time("datetime").Default(time.Now).Annotations(
+			entsql.Default("CURRENT_TIMESTAMP"),
+		),
 
-		field.Time("created_at").Default(time.Now),
-		field.Time("updated_at").Default(time.Now),
+		field.Time("created_at").Default(time.Now).Annotations(
+			entsql.Default("CURRENT_TIMESTAMP"),
+		),
+		field.Time("updated_at").Default(time.Now).Annotations(
+			entsql.Default("CURRENT_TIMESTAMP"),
+		),
 	}
 }
 

@@ -20,8 +20,8 @@ var (
 		{Name: "fx_rate", Type: field.TypeFloat64, Nullable: true, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "archived", Type: field.TypeBool, Default: false},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
+		{Name: "updated_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
 		{Name: "profile_account", Type: field.TypeString},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
@@ -44,8 +44,8 @@ var (
 		{Name: "locale", Type: field.TypeString, Nullable: true},
 		{Name: "currencies", Type: field.TypeString},
 		{Name: "net_worth_goal", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
+		{Name: "updated_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
 		{Name: "user_profile", Type: field.TypeString},
 	}
 	// ProfilesTable holds the schema information for the "profiles" table.
@@ -67,9 +67,9 @@ var (
 		{Name: "id", Type: field.TypeString},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "datetime", Type: field.TypeTime},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "datetime", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
+		{Name: "created_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
+		{Name: "updated_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
 		{Name: "account_transaction", Type: field.TypeString},
 		{Name: "profile_transaction", Type: field.TypeString},
 	}
@@ -97,8 +97,8 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
+		{Name: "updated_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
