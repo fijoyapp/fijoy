@@ -21,6 +21,7 @@ func (User) Fields() []ent.Field {
 		field.String("id").DefaultFunc(func() string { return constants.UserPrefix + cuid2.Generate() }),
 		field.String("email").Unique().NotEmpty(),
 		field.Time("created_at").Default(time.Now),
+		field.Time("updated_at").Default(time.Now),
 	}
 }
 

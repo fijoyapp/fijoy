@@ -24,6 +24,8 @@ type Transaction struct {
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Note holds the value of the "note" field.
 	Note string `json:"note,omitempty"`
+	// Datetime holds the value of the "datetime" field.
+	Datetime time.Time `json:"datetime,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
@@ -78,7 +80,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case transaction.FieldID, transaction.FieldNote:
 			values[i] = new(sql.NullString)
-		case transaction.FieldCreatedAt, transaction.FieldUpdatedAt:
+		case transaction.FieldDatetime, transaction.FieldCreatedAt, transaction.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case transaction.ForeignKeys[0]: // account_transaction
 			values[i] = new(sql.NullString)
@@ -116,6 +118,12 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field note", values[i])
 			} else if value.Valid {
 				t.Note = value.String
+			}
+		case transaction.FieldDatetime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field datetime", values[i])
+			} else if value.Valid {
+				t.Datetime = value.Time
 			}
 		case transaction.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -194,6 +202,9 @@ func (t *Transaction) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("note=")
 	builder.WriteString(t.Note)
+	builder.WriteString(", ")
+	builder.WriteString("datetime=")
+	builder.WriteString(t.Datetime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(t.CreatedAt.Format(time.ANSIC))

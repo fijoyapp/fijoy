@@ -101,6 +101,20 @@ func (pu *ProfileUpdate) SetNillableCreatedAt(t *time.Time) *ProfileUpdate {
 	return pu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (pu *ProfileUpdate) SetUpdatedAt(t time.Time) *ProfileUpdate {
+	pu.mutation.SetUpdatedAt(t)
+	return pu
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (pu *ProfileUpdate) SetNillableUpdatedAt(t *time.Time) *ProfileUpdate {
+	if t != nil {
+		pu.SetUpdatedAt(*t)
+	}
+	return pu
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (pu *ProfileUpdate) SetUserID(id string) *ProfileUpdate {
 	pu.mutation.SetUserID(id)
@@ -259,6 +273,9 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
 		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := pu.mutation.UpdatedAt(); ok {
+		_spec.SetField(profile.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if pu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -468,6 +485,20 @@ func (puo *ProfileUpdateOne) SetNillableCreatedAt(t *time.Time) *ProfileUpdateOn
 	return puo
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (puo *ProfileUpdateOne) SetUpdatedAt(t time.Time) *ProfileUpdateOne {
+	puo.mutation.SetUpdatedAt(t)
+	return puo
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (puo *ProfileUpdateOne) SetNillableUpdatedAt(t *time.Time) *ProfileUpdateOne {
+	if t != nil {
+		puo.SetUpdatedAt(*t)
+	}
+	return puo
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (puo *ProfileUpdateOne) SetUserID(id string) *ProfileUpdateOne {
 	puo.mutation.SetUserID(id)
@@ -656,6 +687,9 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if value, ok := puo.mutation.CreatedAt(); ok {
 		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := puo.mutation.UpdatedAt(); ok {
+		_spec.SetField(profile.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if puo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

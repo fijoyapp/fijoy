@@ -18,6 +18,8 @@ const (
 	FieldAmount = "amount"
 	// FieldNote holds the string denoting the note field in the database.
 	FieldNote = "note"
+	// FieldDatetime holds the string denoting the datetime field in the database.
+	FieldDatetime = "datetime"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -49,6 +51,7 @@ var Columns = []string{
 	FieldID,
 	FieldAmount,
 	FieldNote,
+	FieldDatetime,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -76,6 +79,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultDatetime holds the default value on creation for the "datetime" field.
+	DefaultDatetime func() time.Time
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -100,6 +105,11 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByNote orders the results by the note field.
 func ByNote(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNote, opts...).ToFunc()
+}
+
+// ByDatetime orders the results by the datetime field.
+func ByDatetime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDatetime, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

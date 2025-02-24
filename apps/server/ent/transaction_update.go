@@ -72,6 +72,20 @@ func (tu *TransactionUpdate) ClearNote() *TransactionUpdate {
 	return tu
 }
 
+// SetDatetime sets the "datetime" field.
+func (tu *TransactionUpdate) SetDatetime(t time.Time) *TransactionUpdate {
+	tu.mutation.SetDatetime(t)
+	return tu
+}
+
+// SetNillableDatetime sets the "datetime" field if the given value is not nil.
+func (tu *TransactionUpdate) SetNillableDatetime(t *time.Time) *TransactionUpdate {
+	if t != nil {
+		tu.SetDatetime(*t)
+	}
+	return tu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tu *TransactionUpdate) SetCreatedAt(t time.Time) *TransactionUpdate {
 	tu.mutation.SetCreatedAt(t)
@@ -201,6 +215,9 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.NoteCleared() {
 		_spec.ClearField(transaction.FieldNote, field.TypeString)
 	}
+	if value, ok := tu.mutation.Datetime(); ok {
+		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
+	}
 	if value, ok := tu.mutation.CreatedAt(); ok {
 		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
 	}
@@ -323,6 +340,20 @@ func (tuo *TransactionUpdateOne) SetNillableNote(s *string) *TransactionUpdateOn
 // ClearNote clears the value of the "note" field.
 func (tuo *TransactionUpdateOne) ClearNote() *TransactionUpdateOne {
 	tuo.mutation.ClearNote()
+	return tuo
+}
+
+// SetDatetime sets the "datetime" field.
+func (tuo *TransactionUpdateOne) SetDatetime(t time.Time) *TransactionUpdateOne {
+	tuo.mutation.SetDatetime(t)
+	return tuo
+}
+
+// SetNillableDatetime sets the "datetime" field if the given value is not nil.
+func (tuo *TransactionUpdateOne) SetNillableDatetime(t *time.Time) *TransactionUpdateOne {
+	if t != nil {
+		tuo.SetDatetime(*t)
+	}
 	return tuo
 }
 
@@ -484,6 +515,9 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if tuo.mutation.NoteCleared() {
 		_spec.ClearField(transaction.FieldNote, field.TypeString)
+	}
+	if value, ok := tuo.mutation.Datetime(); ok {
+		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 	}
 	if value, ok := tuo.mutation.CreatedAt(); ok {
 		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)

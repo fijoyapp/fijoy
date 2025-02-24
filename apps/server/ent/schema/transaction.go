@@ -31,6 +31,8 @@ func (Transaction) Fields() []ent.Field {
 
 		field.Text("note").Optional(),
 
+		field.Time("datetime").Default(time.Now),
+
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now),
 	}

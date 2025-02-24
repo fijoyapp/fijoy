@@ -1229,6 +1229,7 @@ type ProfileMutation struct {
 	net_worth_goal     *decimal.Decimal
 	addnet_worth_goal  *decimal.Decimal
 	created_at         *time.Time
+	updated_at         *time.Time
 	clearedFields      map[string]struct{}
 	user               *string
 	cleareduser        bool
@@ -1524,6 +1525,42 @@ func (m *ProfileMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ProfileMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ProfileMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Profile entity.
+// If the Profile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProfileMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ProfileMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
 // SetUserID sets the "user" edge to the User entity by id.
 func (m *ProfileMutation) SetUserID(id string) {
 	m.user = &id
@@ -1705,7 +1742,7 @@ func (m *ProfileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProfileMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.locale != nil {
 		fields = append(fields, profile.FieldLocale)
 	}
@@ -1717,6 +1754,9 @@ func (m *ProfileMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, profile.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, profile.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -1734,6 +1774,8 @@ func (m *ProfileMutation) Field(name string) (ent.Value, bool) {
 		return m.NetWorthGoal()
 	case profile.FieldCreatedAt:
 		return m.CreatedAt()
+	case profile.FieldUpdatedAt:
+		return m.UpdatedAt()
 	}
 	return nil, false
 }
@@ -1751,6 +1793,8 @@ func (m *ProfileMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldNetWorthGoal(ctx)
 	case profile.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case profile.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Profile field %s", name)
 }
@@ -1787,6 +1831,13 @@ func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case profile.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Profile field %s", name)
@@ -1872,6 +1923,9 @@ func (m *ProfileMutation) ResetField(name string) error {
 		return nil
 	case profile.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case profile.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Profile field %s", name)
@@ -2014,6 +2068,7 @@ type TransactionMutation struct {
 	amount         *decimal.Decimal
 	addamount      *decimal.Decimal
 	note           *string
+	datetime       *time.Time
 	created_at     *time.Time
 	updated_at     *time.Time
 	clearedFields  map[string]struct{}
@@ -2235,6 +2290,42 @@ func (m *TransactionMutation) ResetNote() {
 	delete(m.clearedFields, transaction.FieldNote)
 }
 
+// SetDatetime sets the "datetime" field.
+func (m *TransactionMutation) SetDatetime(t time.Time) {
+	m.datetime = &t
+}
+
+// Datetime returns the value of the "datetime" field in the mutation.
+func (m *TransactionMutation) Datetime() (r time.Time, exists bool) {
+	v := m.datetime
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDatetime returns the old "datetime" field's value of the Transaction entity.
+// If the Transaction object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransactionMutation) OldDatetime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDatetime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDatetime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDatetime: %w", err)
+	}
+	return oldValue.Datetime, nil
+}
+
+// ResetDatetime resets all changes to the "datetime" field.
+func (m *TransactionMutation) ResetDatetime() {
+	m.datetime = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *TransactionMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -2419,12 +2510,15 @@ func (m *TransactionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransactionMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.amount != nil {
 		fields = append(fields, transaction.FieldAmount)
 	}
 	if m.note != nil {
 		fields = append(fields, transaction.FieldNote)
+	}
+	if m.datetime != nil {
+		fields = append(fields, transaction.FieldDatetime)
 	}
 	if m.created_at != nil {
 		fields = append(fields, transaction.FieldCreatedAt)
@@ -2444,6 +2538,8 @@ func (m *TransactionMutation) Field(name string) (ent.Value, bool) {
 		return m.Amount()
 	case transaction.FieldNote:
 		return m.Note()
+	case transaction.FieldDatetime:
+		return m.Datetime()
 	case transaction.FieldCreatedAt:
 		return m.CreatedAt()
 	case transaction.FieldUpdatedAt:
@@ -2461,6 +2557,8 @@ func (m *TransactionMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldAmount(ctx)
 	case transaction.FieldNote:
 		return m.OldNote(ctx)
+	case transaction.FieldDatetime:
+		return m.OldDatetime(ctx)
 	case transaction.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case transaction.FieldUpdatedAt:
@@ -2487,6 +2585,13 @@ func (m *TransactionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNote(v)
+		return nil
+	case transaction.FieldDatetime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDatetime(v)
 		return nil
 	case transaction.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -2580,6 +2685,9 @@ func (m *TransactionMutation) ResetField(name string) error {
 		return nil
 	case transaction.FieldNote:
 		m.ResetNote()
+		return nil
+	case transaction.FieldDatetime:
+		m.ResetDatetime()
 		return nil
 	case transaction.FieldCreatedAt:
 		m.ResetCreatedAt()
@@ -2691,6 +2799,7 @@ type UserMutation struct {
 	id              *string
 	email           *string
 	created_at      *time.Time
+	updated_at      *time.Time
 	clearedFields   map[string]struct{}
 	user_key        map[string]struct{}
 	removeduser_key map[string]struct{}
@@ -2879,6 +2988,42 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (m *UserMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *UserMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *UserMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
 // AddUserKeyIDs adds the "user_key" edge to the UserKey entity by ids.
 func (m *UserMutation) AddUserKeyIDs(ids ...string) {
 	if m.user_key == nil {
@@ -3021,12 +3166,15 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, user.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -3040,6 +3188,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Email()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
+	case user.FieldUpdatedAt:
+		return m.UpdatedAt()
 	}
 	return nil, false
 }
@@ -3053,6 +3203,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldEmail(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case user.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -3075,6 +3227,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case user.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -3130,6 +3289,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case user.FieldUpdatedAt:
+		m.ResetUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

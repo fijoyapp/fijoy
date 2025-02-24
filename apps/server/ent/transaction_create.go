@@ -43,6 +43,20 @@ func (tc *TransactionCreate) SetNillableNote(s *string) *TransactionCreate {
 	return tc
 }
 
+// SetDatetime sets the "datetime" field.
+func (tc *TransactionCreate) SetDatetime(t time.Time) *TransactionCreate {
+	tc.mutation.SetDatetime(t)
+	return tc
+}
+
+// SetNillableDatetime sets the "datetime" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableDatetime(t *time.Time) *TransactionCreate {
+	if t != nil {
+		tc.SetDatetime(*t)
+	}
+	return tc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tc *TransactionCreate) SetCreatedAt(t time.Time) *TransactionCreate {
 	tc.mutation.SetCreatedAt(t)
@@ -142,6 +156,10 @@ func (tc *TransactionCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TransactionCreate) defaults() {
+	if _, ok := tc.mutation.Datetime(); !ok {
+		v := transaction.DefaultDatetime()
+		tc.mutation.SetDatetime(v)
+	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		v := transaction.DefaultCreatedAt()
 		tc.mutation.SetCreatedAt(v)
@@ -160,6 +178,9 @@ func (tc *TransactionCreate) defaults() {
 func (tc *TransactionCreate) check() error {
 	if _, ok := tc.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Transaction.amount"`)}
+	}
+	if _, ok := tc.mutation.Datetime(); !ok {
+		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
 	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transaction.created_at"`)}
@@ -215,6 +236,10 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 		_node.Note = value
+	}
+	if value, ok := tc.mutation.Datetime(); ok {
+		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
+		_node.Datetime = value
 	}
 	if value, ok := tc.mutation.CreatedAt(); ok {
 		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)

@@ -27,6 +27,8 @@ type Profile struct {
 	NetWorthGoal decimal.Decimal `json:"net_worth_goal,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProfileQuery when eager-loading is set.
 	Edges        ProfileEdges `json:"edges"`
@@ -85,7 +87,7 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case profile.FieldID, profile.FieldLocale, profile.FieldCurrencies:
 			values[i] = new(sql.NullString)
-		case profile.FieldCreatedAt:
+		case profile.FieldCreatedAt, profile.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case profile.ForeignKeys[0]: // user_profile
 			values[i] = new(sql.NullString)
@@ -133,6 +135,12 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				pr.CreatedAt = value.Time
+			}
+		case profile.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				pr.UpdatedAt = value.Time
 			}
 		case profile.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -203,6 +211,9 @@ func (pr *Profile) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(pr.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(pr.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
