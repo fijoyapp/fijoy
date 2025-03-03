@@ -8,7 +8,7 @@ require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.5-20250219170025-d39267d9df8f.1
 	connectrpc.com/connect v1.18.1
 	connectrpc.com/cors v0.1.0
-	entgo.io/ent v0.14.2
+	entgo.io/ent v0.14.3
 	github.com/bufbuild/protovalidate-go v0.9.2
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/getsentry/sentry-go v0.31.1
@@ -24,17 +24,17 @@ require (
 	github.com/shopspring/decimal v1.4.0
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/oauth2 v0.26.0
+	golang.org/x/oauth2 v0.27.0
 	google.golang.org/protobuf v1.36.5
 )
 
 require (
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
-	github.com/google/cel-go v0.23.2 // indirect
+	github.com/google/cel-go v0.24.1 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
-	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250219182151-9fdb1cabc7b2 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250219182151-9fdb1cabc7b2 // indirect
+	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250227231956-55c901821b1e // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250227231956-55c901821b1e // indirect
 )
 
 require (
@@ -60,7 +60,7 @@ require (
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
 	github.com/lestrrat-go/httprc v1.0.6 // indirect
 	github.com/lestrrat-go/iter v1.0.2 // indirect
-	github.com/lestrrat-go/jwx/v2 v2.1.3 // indirect
+	github.com/lestrrat-go/jwx/v2 v2.1.4 // indirect
 	github.com/lestrrat-go/option v1.0.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
@@ -70,7 +70,7 @@ require (
 	github.com/zclconf/go-cty v1.16.2 // indirect
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.34.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
