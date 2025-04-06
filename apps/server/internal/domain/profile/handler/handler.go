@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/internal/domain/profile/usecase"
+	"fijoy/internal/middleware"
 	"fijoy/internal/util/auth"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
@@ -72,7 +73,7 @@ func (h *profileHandler) DeleteProfile(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -93,7 +94,7 @@ func (h *profileHandler) UpdateProfile(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}

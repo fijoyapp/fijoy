@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/internal/domain/transaction/usecase"
+	"fijoy/internal/middleware"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
@@ -29,7 +30,7 @@ func (h *transactionHandler) CreateTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -50,7 +51,7 @@ func (h *transactionHandler) GetTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -71,7 +72,7 @@ func (h *transactionHandler) GetTransactions(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -92,7 +93,7 @@ func (h *transactionHandler) GetTransactionsByAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -113,7 +114,7 @@ func (h *transactionHandler) UpdateTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -134,7 +135,7 @@ func (h *transactionHandler) DeleteTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}

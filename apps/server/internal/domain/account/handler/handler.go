@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fijoy/constants"
 	"fijoy/internal/domain/account/usecase"
+	"fijoy/internal/middleware"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
@@ -29,7 +30,7 @@ func (h *accountHandler) CreateAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -50,7 +51,7 @@ func (h *accountHandler) GetAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -71,7 +72,7 @@ func (h *accountHandler) GetAccounts(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
@@ -92,7 +93,7 @@ func (h *accountHandler) UpdateAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value("profileId").(string)
+	profileId := ctx.Value(middleware.ProfileIdKey).(string)
 	if profileId == "" {
 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
 	}
