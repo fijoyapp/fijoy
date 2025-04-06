@@ -5,7 +5,7 @@
     "buf": "pnpx @bufbuild/buf generate"
   },
   "devDependencies": {
-    "@bufbuild/protoc-gen-es": "^2.2.3",
+    "@bufbuild/protoc-gen-es": "^2.2.5",
     "@connectrpc/protoc-gen-connect-query": "^2.0.1"
   },
   "packageManager": "pnpm@9.15.2"
