@@ -41,6 +41,8 @@ jobs:
         with:
           run_install: false
 
+      - uses: extractions/setup-just@v3
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -51,7 +53,7 @@ jobs:
         run: pnpm install
 
       - name: Eslint Check
-        run: pnpm lint
+        run: just apps/web/lint
 
   golangci-lint:
     runs-on: ubuntu-latest
