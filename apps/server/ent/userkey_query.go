@@ -25,6 +25,8 @@ type UserKeyQuery struct {
 	predicates []predicate.UserKey
 	withUser   *UserQuery
 	withFKs    bool
+	modifiers  []func(*sql.Selector)
+	loadTotal  []func(context.Context, []*UserKey) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -391,6 +393,9 @@ func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Use
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(ukq.modifiers) > 0 {
+		_spec.Modifiers = ukq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -403,6 +408,11 @@ func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Use
 	if query := ukq.withUser; query != nil {
 		if err := ukq.loadUser(ctx, query, nodes, nil,
 			func(n *UserKey, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range ukq.loadTotal {
+		if err := ukq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -444,6 +454,9 @@ func (ukq *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes [
 
 func (ukq *UserKeyQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := ukq.querySpec()
+	if len(ukq.modifiers) > 0 {
+		_spec.Modifiers = ukq.modifiers
+	}
 	_spec.Node.Columns = ukq.ctx.Fields
 	if len(ukq.ctx.Fields) > 0 {
 		_spec.Unique = ukq.ctx.Unique != nil && *ukq.ctx.Unique

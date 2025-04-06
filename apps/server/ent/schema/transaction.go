@@ -4,9 +4,11 @@ import (
 	"fijoy/constants"
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/nrednav/cuid2"
@@ -16,6 +18,13 @@ import (
 // Transaction holds the schema definition for the Transaction entity.
 type Transaction struct {
 	ent.Schema
+}
+
+func (Transaction) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate()),
+	}
 }
 
 // Fields of the Transaction.

@@ -47,6 +47,11 @@ type ProfileEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
+	// totalCount holds the count of the edges above.
+	totalCount [3]map[string]int
+
+	namedAccount     map[string][]*Account
+	namedTransaction map[string][]*Transaction
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -216,6 +221,54 @@ func (pr *Profile) String() string {
 	builder.WriteString(pr.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedAccount returns the Account named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (pr *Profile) NamedAccount(name string) ([]*Account, error) {
+	if pr.Edges.namedAccount == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := pr.Edges.namedAccount[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (pr *Profile) appendNamedAccount(name string, edges ...*Account) {
+	if pr.Edges.namedAccount == nil {
+		pr.Edges.namedAccount = make(map[string][]*Account)
+	}
+	if len(edges) == 0 {
+		pr.Edges.namedAccount[name] = []*Account{}
+	} else {
+		pr.Edges.namedAccount[name] = append(pr.Edges.namedAccount[name], edges...)
+	}
+}
+
+// NamedTransaction returns the Transaction named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (pr *Profile) NamedTransaction(name string) ([]*Transaction, error) {
+	if pr.Edges.namedTransaction == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := pr.Edges.namedTransaction[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (pr *Profile) appendNamedTransaction(name string, edges ...*Transaction) {
+	if pr.Edges.namedTransaction == nil {
+		pr.Edges.namedTransaction = make(map[string][]*Transaction)
+	}
+	if len(edges) == 0 {
+		pr.Edges.namedTransaction[name] = []*Transaction{}
+	} else {
+		pr.Edges.namedTransaction[name] = append(pr.Edges.namedTransaction[name], edges...)
+	}
 }
 
 // Profiles is a parsable slice of Profile.

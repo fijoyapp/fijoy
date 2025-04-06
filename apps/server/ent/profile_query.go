@@ -22,14 +22,18 @@ import (
 // ProfileQuery is the builder for querying Profile entities.
 type ProfileQuery struct {
 	config
-	ctx             *QueryContext
-	order           []profile.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Profile
-	withUser        *UserQuery
-	withAccount     *AccountQuery
-	withTransaction *TransactionQuery
-	withFKs         bool
+	ctx                  *QueryContext
+	order                []profile.OrderOption
+	inters               []Interceptor
+	predicates           []predicate.Profile
+	withUser             *UserQuery
+	withAccount          *AccountQuery
+	withTransaction      *TransactionQuery
+	withFKs              bool
+	modifiers            []func(*sql.Selector)
+	loadTotal            []func(context.Context, []*Profile) error
+	withNamedAccount     map[string]*AccountQuery
+	withNamedTransaction map[string]*TransactionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -466,6 +470,9 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(pq.modifiers) > 0 {
+		_spec.Modifiers = pq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -492,6 +499,25 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 		if err := pq.loadTransaction(ctx, query, nodes,
 			func(n *Profile) { n.Edges.Transaction = []*Transaction{} },
 			func(n *Profile, e *Transaction) { n.Edges.Transaction = append(n.Edges.Transaction, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range pq.withNamedAccount {
+		if err := pq.loadAccount(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedAccount(name) },
+			func(n *Profile, e *Account) { n.appendNamedAccount(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range pq.withNamedTransaction {
+		if err := pq.loadTransaction(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedTransaction(name) },
+			func(n *Profile, e *Transaction) { n.appendNamedTransaction(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range pq.loadTotal {
+		if err := pq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -595,6 +621,9 @@ func (pq *ProfileQuery) loadTransaction(ctx context.Context, query *TransactionQ
 
 func (pq *ProfileQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := pq.querySpec()
+	if len(pq.modifiers) > 0 {
+		_spec.Modifiers = pq.modifiers
+	}
 	_spec.Node.Columns = pq.ctx.Fields
 	if len(pq.ctx.Fields) > 0 {
 		_spec.Unique = pq.ctx.Unique != nil && *pq.ctx.Unique
@@ -672,6 +701,34 @@ func (pq *ProfileQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedAccount tells the query-builder to eager-load the nodes that are connected to the "account"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithNamedAccount(name string, opts ...func(*AccountQuery)) *ProfileQuery {
+	query := (&AccountClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if pq.withNamedAccount == nil {
+		pq.withNamedAccount = make(map[string]*AccountQuery)
+	}
+	pq.withNamedAccount[name] = query
+	return pq
+}
+
+// WithNamedTransaction tells the query-builder to eager-load the nodes that are connected to the "transaction"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithNamedTransaction(name string, opts ...func(*TransactionQuery)) *ProfileQuery {
+	query := (&TransactionClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if pq.withNamedTransaction == nil {
+		pq.withNamedTransaction = make(map[string]*TransactionQuery)
+	}
+	pq.withNamedTransaction[name] = query
+	return pq
 }
 
 // ProfileGroupBy is the group-by builder for Profile entities.

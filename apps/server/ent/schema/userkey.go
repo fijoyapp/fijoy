@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -9,6 +11,13 @@ import (
 // UserKey holds the schema definition for the UserKey entity.
 type UserKey struct {
 	ent.Schema
+}
+
+func (UserKey) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate()),
+	}
 }
 
 // Fields of the UserKey.

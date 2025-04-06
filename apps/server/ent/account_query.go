@@ -21,13 +21,16 @@ import (
 // AccountQuery is the builder for querying Account entities.
 type AccountQuery struct {
 	config
-	ctx             *QueryContext
-	order           []account.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.Account
-	withProfile     *ProfileQuery
-	withTransaction *TransactionQuery
-	withFKs         bool
+	ctx                  *QueryContext
+	order                []account.OrderOption
+	inters               []Interceptor
+	predicates           []predicate.Account
+	withProfile          *ProfileQuery
+	withTransaction      *TransactionQuery
+	withFKs              bool
+	modifiers            []func(*sql.Selector)
+	loadTotal            []func(context.Context, []*Account) error
+	withNamedTransaction map[string]*TransactionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -429,6 +432,9 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(aq.modifiers) > 0 {
+		_spec.Modifiers = aq.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -448,6 +454,18 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		if err := aq.loadTransaction(ctx, query, nodes,
 			func(n *Account) { n.Edges.Transaction = []*Transaction{} },
 			func(n *Account, e *Transaction) { n.Edges.Transaction = append(n.Edges.Transaction, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range aq.withNamedTransaction {
+		if err := aq.loadTransaction(ctx, query, nodes,
+			func(n *Account) { n.appendNamedTransaction(name) },
+			func(n *Account, e *Transaction) { n.appendNamedTransaction(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range aq.loadTotal {
+		if err := aq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -520,6 +538,9 @@ func (aq *AccountQuery) loadTransaction(ctx context.Context, query *TransactionQ
 
 func (aq *AccountQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := aq.querySpec()
+	if len(aq.modifiers) > 0 {
+		_spec.Modifiers = aq.modifiers
+	}
 	_spec.Node.Columns = aq.ctx.Fields
 	if len(aq.ctx.Fields) > 0 {
 		_spec.Unique = aq.ctx.Unique != nil && *aq.ctx.Unique
@@ -597,6 +618,20 @@ func (aq *AccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedTransaction tells the query-builder to eager-load the nodes that are connected to the "transaction"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (aq *AccountQuery) WithNamedTransaction(name string, opts ...func(*TransactionQuery)) *AccountQuery {
+	query := (&TransactionClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if aq.withNamedTransaction == nil {
+		aq.withNamedTransaction = make(map[string]*TransactionQuery)
+	}
+	aq.withNamedTransaction[name] = query
+	return aq
 }
 
 // AccountGroupBy is the group-by builder for Account entities.

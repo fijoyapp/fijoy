@@ -2,11 +2,11 @@
   "name": "@fijoy/server",
   "version": "0.0.0",
   "scripts": {
-    "dev": "air",
-    "build": "go build -tags netgo -ldflags '-s -w' -o ./dist/app ./cmd/fijoy/main.go",
+    "dev": "just dev",
+    "build": "just build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "golangci-lint run"
+    "lint": "just lint"
   },
   "devDependencies": {
     "prettier": "^3.5.3",

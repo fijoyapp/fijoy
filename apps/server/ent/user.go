@@ -38,6 +38,11 @@ type UserEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedUserKey map[string][]*UserKey
+	namedProfile map[string][]*Profile
 }
 
 // UserKeyOrErr returns the UserKey value or an error if the edge
@@ -162,6 +167,54 @@ func (u *User) String() string {
 	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedUserKey returns the UserKey named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedUserKey(name string) ([]*UserKey, error) {
+	if u.Edges.namedUserKey == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedUserKey[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedUserKey(name string, edges ...*UserKey) {
+	if u.Edges.namedUserKey == nil {
+		u.Edges.namedUserKey = make(map[string][]*UserKey)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedUserKey[name] = []*UserKey{}
+	} else {
+		u.Edges.namedUserKey[name] = append(u.Edges.namedUserKey[name], edges...)
+	}
+}
+
+// NamedProfile returns the Profile named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedProfile(name string) ([]*Profile, error) {
+	if u.Edges.namedProfile == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedProfile[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedProfile(name string, edges ...*Profile) {
+	if u.Edges.namedProfile == nil {
+		u.Edges.namedProfile = make(map[string][]*Profile)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedProfile[name] = []*Profile{}
+	} else {
+		u.Edges.namedProfile[name] = append(u.Edges.namedProfile[name], edges...)
+	}
 }
 
 // Users is a parsable slice of User.

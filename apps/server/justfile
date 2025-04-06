@@ -1,8 +1,12 @@
 set fallback := true
 set dotenv-load := true
 
+dev:
+    go generate .
+    air
+
 build:
-    go build -o ./tmp/main ./cmd/fijoy/main.go
+    go build -tags netgo -ldflags '-s -w' -o ./dist/app ./cmd/fijoy/main.go
 
 update:
     go mod tidy
@@ -17,7 +21,7 @@ format:
     pnpm format
 
 lint:
-    pnpm lint
+    golangci-lint run
 
 kill:
     pids=$(lsof -t -i :3000) && [ -n "$pids" ] && kill -9 $pids

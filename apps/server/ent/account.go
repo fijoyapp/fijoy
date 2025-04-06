@@ -57,6 +57,10 @@ type AccountEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedTransaction map[string][]*Transaction
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
@@ -268,6 +272,30 @@ func (a *Account) String() string {
 	builder.WriteString(a.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedTransaction returns the Transaction named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (a *Account) NamedTransaction(name string) ([]*Transaction, error) {
+	if a.Edges.namedTransaction == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := a.Edges.namedTransaction[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (a *Account) appendNamedTransaction(name string, edges ...*Transaction) {
+	if a.Edges.namedTransaction == nil {
+		a.Edges.namedTransaction = make(map[string][]*Transaction)
+	}
+	if len(edges) == 0 {
+		a.Edges.namedTransaction[name] = []*Transaction{}
+	} else {
+		a.Edges.namedTransaction[name] = append(a.Edges.namedTransaction[name], edges...)
+	}
 }
 
 // Accounts is a parsable slice of Account.

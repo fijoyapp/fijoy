@@ -105,6 +105,17 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
+	// TODO: migrate to this
+	// srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
+	// http.Handle("/",
+	// 	playground.Handler("Fijoy", "/query"),
+	// )
+	// http.Handle("/query", srv)
+	// log.Println("listening on :8081")
+	// if err := http.ListenAndServe(":8081", nil); err != nil {
+	// 	log.Fatal("http server terminated", err)
+	// }
+
 	validator := validator.New(validator.WithRequiredStructEnabled())
 	protoValidator, err := protovalidate.New()
 	if err != nil {
