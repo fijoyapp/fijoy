@@ -40,7 +40,7 @@ function Page() {
                 </CardDescription>
               </CardHeader>
               <div className="grow"></div>
-              <Settings className="flex-shrink-0" />
+              <Settings className="shrink-0" />
               <div className="px-4"></div>
             </div>
           </Card>
@@ -55,7 +55,7 @@ function Page() {
                 </CardDescription>
               </CardHeader>
               <div className="grow"></div>
-              <DollarSign className="flex-shrink-0" />
+              <DollarSign className="shrink-0" />
               <div className="px-4"></div>
             </div>
           </Card>

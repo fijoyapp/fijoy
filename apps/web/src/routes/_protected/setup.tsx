@@ -45,7 +45,7 @@ function Setup() {
   );
 
   return (
-    <div className="container max-w-screen-2xl">
+    <div className="container max-w-(--breakpoint-2xl)">
       <PageHeader>
         <PageHeaderHeading className="">Welcome to Fijoy</PageHeaderHeading>
         <PageHeaderDescription>
