@@ -133,7 +133,7 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(
-		map[string]interface{}{"user_id": user.Id})
+		map[string]any{"user_id": user.Id})
 
 	cookie := &http.Cookie{
 		Name:     "jwt",
@@ -153,7 +153,8 @@ func generateStateOAuthCookie(w http.ResponseWriter) string {
 	expiration := time.Now().Add(20 * time.Minute)
 
 	b := make([]byte, 16)
-	rand.Read(b)
+	rand.Read(b) //nolint:errcheck
+
 	state := base64.URLEncoding.EncodeToString(b)
 	cookie := http.Cookie{Name: "google_oauth_state", Value: state, Expires: expiration, Secure: true, HttpOnly: true}
 
@@ -166,7 +167,13 @@ func getUserDataFromGoogle(token *oauth2.Token) ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed getting user info: %s", err.Error())
 	}
-	defer response.Body.Close()
+
+	defer func() {
+		if err := response.Body.Close(); err != nil {
+			return
+		}
+	}()
+
 	contents, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed read response: %s", err.Error())

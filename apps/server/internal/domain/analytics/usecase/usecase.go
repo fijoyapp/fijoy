@@ -32,7 +32,11 @@ func (s *analyticsUseCase) SendToDiscord(msg string) error {
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			return
+		}
+	}()
 
 	return nil
 }

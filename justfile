@@ -31,6 +31,10 @@ format:
     just apps/database/format
     just packages/proto/format
 
+lint:
+    just apps/server/lint
+    just apps/web/lint
+
 postgres:
     docker compose -f docker-compose.dev.yml up
 

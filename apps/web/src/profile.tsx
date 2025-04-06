@@ -37,10 +37,12 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         setProfile(profile || undefined);
         setIsLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -88,7 +88,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer logger.Sync()
+
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			logger.Error(err.Error())
+		}
+	}()
 
 	entClient, err := ent.Open("postgres", cfg.Database.DB_URL)
 	if err != nil {
@@ -173,32 +178,29 @@ func main() {
 	// Start our server
 	server := newServer(":"+cfg.Server.PORT, r)
 
-	// Server run context
-	serverCtx, serverStopCtx := context.WithCancel(context.Background())
-
 	// Listen for syscall signals for process to interrupt/quit
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	serverCtx, serverStopCtx := signal.NotifyContext(
+		context.Background(),
+		syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT,
+	)
+	defer serverStopCtx()
 
 	go func() {
-		<-sig
+		<-serverCtx.Done()
 
 		// Shutdown signal with grace period of 30 seconds
-		shutdownCtx, _ := context.WithTimeout(serverCtx, 30*time.Second)
-
-		go func() {
-			<-shutdownCtx.Done()
-			if shutdownCtx.Err() == context.DeadlineExceeded {
-				log.Fatal("graceful shutdown timed out.. forcing exit.")
-			}
-		}()
+		shutdownCtx, cancel := context.WithTimeout(serverCtx, 30*time.Second)
+		defer cancel()
 
 		// Trigger graceful shutdown
-		err := server.Shutdown(shutdownCtx)
-		if err != nil {
-			log.Fatal(err)
+		if err := server.Shutdown(shutdownCtx); err != nil {
+			log.Printf("Error during server shutdown: %v", err)
 		}
-		serverStopCtx()
+
+		// Check if shutdown timed out
+		if shutdownCtx.Err() == context.DeadlineExceeded {
+			log.Println("Graceful shutdown timed out, forcing exit.")
+		}
 	}()
 
 	// Run the server

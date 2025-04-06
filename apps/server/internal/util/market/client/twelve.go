@@ -87,7 +87,12 @@ func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol st
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			logger.Error(cerr.Error())
+		}
+	}()
 
 	// Check status code
 	if resp.StatusCode != http.StatusOK {
@@ -135,7 +140,12 @@ func (c *TwelveMarketDataClient) GetFxRate(context context.Context, fromCurrency
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			logger.Error(cerr.Error())
+		}
+	}()
 
 	// Check status code
 	if resp.StatusCode != http.StatusOK {

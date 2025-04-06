@@ -3,6 +3,9 @@ set fallback := true
 test:
     pnpm test
 
+lint:
+    pnpm lint
+
 format:
     just --fmt --unstable
     pnpm format

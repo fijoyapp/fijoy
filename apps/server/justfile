@@ -16,6 +16,9 @@ format:
     just --fmt --unstable
     pnpm format
 
+lint:
+    pnpm lint
+
 kill:
     pids=$(lsof -t -i :3000) && [ -n "$pids" ] && kill -9 $pids
 

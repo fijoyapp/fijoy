@@ -11,6 +11,8 @@ func NewHealthHandler() *HealthHandler {
 func (s *HealthHandler) CheckHealth(
 	w http.ResponseWriter, _ *http.Request,
 ) {
-	w.Write([]byte("OK"))
-	return
+	_, err := w.Write([]byte("OK"))
+	if err != nil {
+		return
+	}
 }
