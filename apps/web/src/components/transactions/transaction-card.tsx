@@ -28,14 +28,14 @@ export const TransactionCard = ({ transaction }: Props) => {
 
       <div>
         <div>{transaction.note}</div>
-        <div className="text-xs text-muted-foreground">{transaction.id}</div>
+        <div className="text-muted-foreground text-xs">{transaction.id}</div>
       </div>
 
       <div className="grow"></div>
 
       <div className="flex flex-col items-end">
         <ValueDisplay transaction={transaction} profile={profile} />
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           {getPrettyTime(timestampDate(transaction.createdAt!))}
         </div>
       </div>

@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
@@ -6,11 +6,11 @@
 
 @theme {
   --font-sans:
-    Geist, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    Geist, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono:
     GeistMono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
+    "Liberation Mono", "Courier New", monospace;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -117,11 +117,11 @@
   }
 
   &::-webkit-scrollbar-track {
-    @apply rounded-full bg-background;
+    @apply bg-background rounded-full;
   }
 
   &::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-background;
+    @apply bg-background rounded-full;
   }
 
   &::-webkit-scrollbar-thumb:hover {

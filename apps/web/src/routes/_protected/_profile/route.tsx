@@ -130,7 +130,7 @@ function Page() {
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
+      <div className="bg-muted/40 hidden border-r md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link
@@ -174,7 +174,7 @@ function Page() {
                     {activeTab === navLink.name ? (
                       <motion.div
                         layoutId="tab-indicator"
-                        className="absolute inset-0 rounded-lg bg-primary/10"
+                        className="bg-primary/10 absolute inset-0 rounded-lg"
                       />
                     ) : null}
                   </Link>
@@ -188,7 +188,7 @@ function Page() {
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+        <header className="bg-muted/40 flex h-14 items-center gap-4 border-b px-4 lg:h-[60px] lg:px-6">
           <Sheet open={sheetOpen} onOpenChange={(open) => setSheetOpen(open)}>
             <SheetTrigger asChild>
               <Button
@@ -216,7 +216,7 @@ function Page() {
                     to={navLink.link.to}
                     onClick={() => setSheetOpen(false)}
                     className={cn(
-                      "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground",
+                      "text-muted-foreground mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2",
                       matchRoute({
                         to: navLink.link.to,
                         fuzzy: navLink.fuzzy,
@@ -238,11 +238,11 @@ function Page() {
           <div className="w-full flex-1">
             <form>
               <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
                 <Input
                   type="search"
                   placeholder="Search..."
-                  className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                  className="bg-background w-full appearance-none pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>
             </form>

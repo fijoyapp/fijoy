@@ -145,7 +145,7 @@ const MultiSelectFormField = React.forwardRef<
                         )}
                         {option?.label}
                         <XCircle
-                          className="ml-2 h-4 w-4 cursor-pointer transition duration-300 ease-in-out hover:text-destructive"
+                          className="hover:text-destructive ml-2 h-4 w-4 cursor-pointer transition duration-300 ease-in-out"
                           onClick={(event) => {
                             event.stopPropagation();
                             toggleOption(value);
@@ -157,7 +157,7 @@ const MultiSelectFormField = React.forwardRef<
                 </div>
                 <div className="flex items-center justify-between">
                   <XIcon
-                    className="mx-2 h-4 cursor-pointer text-muted-foreground"
+                    className="text-muted-foreground mx-2 h-4 cursor-pointer"
                     onClick={(event) => {
                       setSelectedValues([]);
                       selectedValuesSet.current.clear();
@@ -169,7 +169,7 @@ const MultiSelectFormField = React.forwardRef<
                     orientation="vertical"
                     className="flex h-full min-h-5"
                   />
-                  <ChevronDown className="ml-2 h-4 cursor-pointer text-muted-foreground" />
+                  <ChevronDown className="text-muted-foreground ml-2 h-4 cursor-pointer" />
                 </div>
               </div>
             ) : (
@@ -218,7 +218,7 @@ const MultiSelectFormField = React.forwardRef<
                     >
                       <div
                         className={cn(
-                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                          "border-primary mr-2 flex h-4 w-4 items-center justify-center rounded-sm border",
                           isSelected
                             ? "bg-primary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible",
@@ -227,7 +227,7 @@ const MultiSelectFormField = React.forwardRef<
                         <CheckIcon className="h-4 w-4" />
                       </div>
                       {option.icon && (
-                        <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <option.icon className="text-muted-foreground mr-2 h-4 w-4" />
                       )}
                       <span>{option.label}</span>
                     </CommandItem>

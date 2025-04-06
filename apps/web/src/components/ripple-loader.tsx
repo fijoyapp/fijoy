@@ -23,21 +23,21 @@ export default function RippleLoader() {
     <div className="flex items-center justify-center">
       <div className="relative h-10 w-10">
         <motion.div
-          className="absolute h-full w-full rounded-full bg-primary opacity-0"
+          className="bg-primary absolute h-full w-full rounded-full opacity-0"
           variants={rippleVariants}
           initial="start"
           animate="end"
           transition={rippleTransition}
         ></motion.div>
         <motion.div
-          className="absolute h-full w-full rounded-full bg-primary opacity-0"
+          className="bg-primary absolute h-full w-full rounded-full opacity-0"
           variants={rippleVariants}
           initial="start"
           animate="end"
           transition={{ ...rippleTransition, delay: 0.5 }}
         ></motion.div>
         <motion.div
-          className="absolute h-full w-full rounded-full bg-primary opacity-0"
+          className="bg-primary absolute h-full w-full rounded-full opacity-0"
           variants={rippleVariants}
           initial="start"
           animate="end"

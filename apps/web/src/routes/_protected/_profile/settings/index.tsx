@@ -31,7 +31,7 @@ function Page() {
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Link from={Route.fullPath} to={"/settings/general"}>
-          <Card className="h-full transition-all hover:bg-secondary">
+          <Card className="hover:bg-secondary h-full transition-all">
             <div className="flex h-full items-center">
               <CardHeader>
                 <CardTitle>General</CardTitle>
@@ -46,7 +46,7 @@ function Page() {
           </Card>
         </Link>
         <Link from={Route.fullPath} to={"/settings/currency"}>
-          <Card className="h-full transition-all hover:bg-secondary">
+          <Card className="hover:bg-secondary h-full transition-all">
             <div className="flex h-full items-center">
               <CardHeader>
                 <CardTitle>Currency</CardTitle>

@@ -27,7 +27,7 @@ export default function AddAccount({ type }: AddAccountProps) {
   return (
     <div className="max-w-(--breakpoint-sm) p-4 lg:p-6">
       <Breadcrumb>
-        <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
+        <BreadcrumbList className="text-muted-foreground text-lg font-semibold md:text-2xl">
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link to={"/accounts"}>Accounts</Link>
@@ -35,13 +35,13 @@ export default function AddAccount({ type }: AddAccountProps) {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="font-semibold text-foreground">
+            <BreadcrumbPage className="text-foreground font-semibold">
               Add {accountTypeDetail.name}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         {accountTypeDetail.description}
       </p>
 

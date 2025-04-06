@@ -88,7 +88,7 @@ function Page() {
   return (
     <div className="max-w-xl p-4 lg:p-6">
       <Breadcrumb>
-        <BreadcrumbList className="text-lg font-semibold text-muted-foreground md:text-2xl">
+        <BreadcrumbList className="text-muted-foreground text-lg font-semibold md:text-2xl">
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link from={Route.fullPath} to={".."}>
@@ -98,13 +98,13 @@ function Page() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage className="font-semibold text-foreground">
+            <BreadcrumbPage className="text-foreground font-semibold">
               Currency
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Everything related to multi-currency settings.
       </p>
 

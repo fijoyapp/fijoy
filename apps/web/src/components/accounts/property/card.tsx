@@ -24,7 +24,7 @@ export function PropertyCard({ account }: PropertyCardProps) {
 
       <div>
         <div>{account.name}</div>
-        <div className="text-xs text-muted-foreground">{account.symbol}</div>
+        <div className="text-muted-foreground text-xs">{account.symbol}</div>
       </div>
 
       <div className="grow"></div>
@@ -36,7 +36,7 @@ export function PropertyCard({ account }: PropertyCardProps) {
             isDebt: false,
           })}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           {getPrettyTime(timestampDate(account.updatedAt!))}
         </div>
       </div>

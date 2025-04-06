@@ -32,7 +32,7 @@ function PageHeaderDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <Balance
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
   );
