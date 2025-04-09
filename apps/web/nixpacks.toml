@@ -2,7 +2,8 @@
 nixPkgs = ['nodejs_20', 'corepack_20']
 
 [phases.install]
-cmd = "pnpm install"
+# NOTE: https://vercel.com/guides/corepack-errors-github-actions#quick-debug-steps
+cmds = ["pnpm install -g corepack@latest", "corepack enable", "pnpm install"]
 
 [phases.build]
 cmd = "pnpm build"
