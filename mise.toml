@@ -1,0 +1,7 @@
+[tools]
+atlas = "latest"
+go = "1.24"
+golangci-lint = "latest"
+just = "latest"
+mprocs = "latest"
+node = { version = '22', postinstall = 'corepack enable' }

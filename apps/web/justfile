@@ -9,3 +9,6 @@ lint:
 format:
     just --fmt --unstable
     pnpm format
+
+dev:
+    pnpm dev

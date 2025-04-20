@@ -1,0 +1,13 @@
+procs:
+  server:
+    shell: "just apps/server/dev"
+    stop:
+      send-keys: ["<C-c>"]
+  web:
+    shell: "just apps/web/dev"
+    stop:
+      send-keys: ["<C-c>"]
+  database:
+    shell: "just apps/database/dev"
+    stop:
+      send-keys: ["<C-c>"]

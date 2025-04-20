@@ -2,3 +2,6 @@ set fallback := true
 
 format:
     just --fmt --unstable
+
+dev:
+    pnpm dev
