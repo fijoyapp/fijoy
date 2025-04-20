@@ -40,7 +40,8 @@ func (Profile) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
-			}),
+			}).
+			Annotations(entgql.Type("String")),
 
 		field.Time("created_at").Default(time.Now).Annotations(
 			entsql.Default("CURRENT_TIMESTAMP"),

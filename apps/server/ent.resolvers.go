@@ -7,67 +7,58 @@ package fijoy
 import (
 	"context"
 	"fijoy/ent"
+	"fijoy/internal/util/pointer"
 	"fmt"
 )
 
-// ID is the resolver for the id field.
-func (r *accountResolver) ID(ctx context.Context, obj *ent.Account) (int, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
-}
-
 // Amount is the resolver for the amount field.
-func (r *accountResolver) Amount(ctx context.Context, obj *ent.Account) (float64, error) {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+func (r *accountResolver) Amount(ctx context.Context, obj *ent.Account) (string, error) {
+	return obj.Amount.String(), nil
 }
 
 // Value is the resolver for the value field.
-func (r *accountResolver) Value(ctx context.Context, obj *ent.Account) (float64, error) {
-	panic(fmt.Errorf("not implemented: Value - value"))
+func (r *accountResolver) Value(ctx context.Context, obj *ent.Account) (string, error) {
+	return obj.Value.String(), nil
 }
 
 // FxRate is the resolver for the fxRate field.
-func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (*float64, error) {
-	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
+func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (*string, error) {
+	return pointer.To(obj.FxRate.String()), nil
 }
 
 // Balance is the resolver for the balance field.
-func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (float64, error) {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
-}
-
-// ID is the resolver for the id field.
-func (r *profileResolver) ID(ctx context.Context, obj *ent.Profile) (int, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
+func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string, error) {
+	return obj.Balance.String(), nil
 }
 
 // NetWorthGoal is the resolver for the netWorthGoal field.
-func (r *profileResolver) NetWorthGoal(ctx context.Context, obj *ent.Profile) (float64, error) {
-	panic(fmt.Errorf("not implemented: NetWorthGoal - netWorthGoal"))
+func (r *profileResolver) NetWorthGoal(ctx context.Context, obj *ent.Profile) (string, error) {
+	return obj.NetWorthGoal.String(), nil
 }
 
 // Node is the resolver for the node field.
-func (r *queryResolver) Node(ctx context.Context, id int) (ent.Noder, error) {
+func (r *queryResolver) Node(ctx context.Context, id string) (ent.Noder, error) {
 	panic(fmt.Errorf("not implemented: Node - node"))
 }
 
 // Nodes is the resolver for the nodes field.
-func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, error) {
+func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, error) {
 	panic(fmt.Errorf("not implemented: Nodes - nodes"))
 }
 
 // Accounts is the resolver for the accounts field.
 func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
-	panic(fmt.Errorf("not implemented: Accounts - accounts"))
+	return r.client.Account.Query().All(ctx)
 }
 
 // Profiles is the resolver for the profiles field.
 func (r *queryResolver) Profiles(ctx context.Context) ([]*ent.Profile, error) {
-	panic(fmt.Errorf("not implemented: Profiles - profiles"))
+	return r.client.Profile.Query().All(ctx)
 }
 
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
-	panic(fmt.Errorf("not implemented: Transactions - transactions"))
+	return r.client.Transaction.Query().All(ctx)
 }
 
 // Users is the resolver for the users field.
@@ -80,104 +71,39 @@ func (r *queryResolver) UserKeys(ctx context.Context) ([]*ent.UserKey, error) {
 	panic(fmt.Errorf("not implemented: UserKeys - userKeys"))
 }
 
-// ID is the resolver for the id field.
-func (r *transactionResolver) ID(ctx context.Context, obj *ent.Transaction) (int, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
+// Amount is the resolver for the amount field.
+func (r *transactionResolver) Amount(ctx context.Context, obj *ent.Transaction) (string, error) {
+	return obj.Amount.String(), nil
 }
 
 // Amount is the resolver for the amount field.
-func (r *transactionResolver) Amount(ctx context.Context, obj *ent.Transaction) (float64, error) {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
-}
-
-// ID is the resolver for the id field.
-func (r *userResolver) ID(ctx context.Context, obj *ent.User) (int, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
-}
-
-// ID is the resolver for the id field.
-func (r *userKeyResolver) ID(ctx context.Context, obj *ent.UserKey) (int, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
-}
-
-// Amount is the resolver for the amount field.
-func (r *createAccountInputResolver) Amount(ctx context.Context, obj *ent.CreateAccountInput, data float64) error {
+func (r *createAccountInputResolver) Amount(ctx context.Context, obj *ent.CreateAccountInput, data string) error {
 	panic(fmt.Errorf("not implemented: Amount - amount"))
 }
 
 // Value is the resolver for the value field.
-func (r *createAccountInputResolver) Value(ctx context.Context, obj *ent.CreateAccountInput, data float64) error {
+func (r *createAccountInputResolver) Value(ctx context.Context, obj *ent.CreateAccountInput, data string) error {
 	panic(fmt.Errorf("not implemented: Value - value"))
 }
 
 // FxRate is the resolver for the fxRate field.
-func (r *createAccountInputResolver) FxRate(ctx context.Context, obj *ent.CreateAccountInput, data *float64) error {
+func (r *createAccountInputResolver) FxRate(ctx context.Context, obj *ent.CreateAccountInput, data *string) error {
 	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
 }
 
 // Balance is the resolver for the balance field.
-func (r *createAccountInputResolver) Balance(ctx context.Context, obj *ent.CreateAccountInput, data float64) error {
+func (r *createAccountInputResolver) Balance(ctx context.Context, obj *ent.CreateAccountInput, data string) error {
 	panic(fmt.Errorf("not implemented: Balance - balance"))
 }
 
-// ProfileID is the resolver for the profileID field.
-func (r *createAccountInputResolver) ProfileID(ctx context.Context, obj *ent.CreateAccountInput, data int) error {
-	panic(fmt.Errorf("not implemented: ProfileID - profileID"))
-}
-
-// TransactionIDs is the resolver for the transactionIDs field.
-func (r *createAccountInputResolver) TransactionIDs(ctx context.Context, obj *ent.CreateAccountInput, data []int) error {
-	panic(fmt.Errorf("not implemented: TransactionIDs - transactionIDs"))
-}
-
 // NetWorthGoal is the resolver for the netWorthGoal field.
-func (r *createProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.CreateProfileInput, data float64) error {
+func (r *createProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.CreateProfileInput, data string) error {
 	panic(fmt.Errorf("not implemented: NetWorthGoal - netWorthGoal"))
 }
 
-// UserID is the resolver for the userID field.
-func (r *createProfileInputResolver) UserID(ctx context.Context, obj *ent.CreateProfileInput, data int) error {
-	panic(fmt.Errorf("not implemented: UserID - userID"))
-}
-
-// AccountIDs is the resolver for the accountIDs field.
-func (r *createProfileInputResolver) AccountIDs(ctx context.Context, obj *ent.CreateProfileInput, data []int) error {
-	panic(fmt.Errorf("not implemented: AccountIDs - accountIDs"))
-}
-
-// TransactionIDs is the resolver for the transactionIDs field.
-func (r *createProfileInputResolver) TransactionIDs(ctx context.Context, obj *ent.CreateProfileInput, data []int) error {
-	panic(fmt.Errorf("not implemented: TransactionIDs - transactionIDs"))
-}
-
 // Amount is the resolver for the amount field.
-func (r *createTransactionInputResolver) Amount(ctx context.Context, obj *ent.CreateTransactionInput, data float64) error {
+func (r *createTransactionInputResolver) Amount(ctx context.Context, obj *ent.CreateTransactionInput, data string) error {
 	panic(fmt.Errorf("not implemented: Amount - amount"))
-}
-
-// ProfileID is the resolver for the profileID field.
-func (r *createTransactionInputResolver) ProfileID(ctx context.Context, obj *ent.CreateTransactionInput, data int) error {
-	panic(fmt.Errorf("not implemented: ProfileID - profileID"))
-}
-
-// AccountID is the resolver for the accountID field.
-func (r *createTransactionInputResolver) AccountID(ctx context.Context, obj *ent.CreateTransactionInput, data int) error {
-	panic(fmt.Errorf("not implemented: AccountID - accountID"))
-}
-
-// UserKeyIDs is the resolver for the userKeyIDs field.
-func (r *createUserInputResolver) UserKeyIDs(ctx context.Context, obj *ent.CreateUserInput, data []int) error {
-	panic(fmt.Errorf("not implemented: UserKeyIDs - userKeyIDs"))
-}
-
-// ProfileIDs is the resolver for the profileIDs field.
-func (r *createUserInputResolver) ProfileIDs(ctx context.Context, obj *ent.CreateUserInput, data []int) error {
-	panic(fmt.Errorf("not implemented: ProfileIDs - profileIDs"))
-}
-
-// UserID is the resolver for the userID field.
-func (r *createUserKeyInputResolver) UserID(ctx context.Context, obj *ent.CreateUserKeyInput, data int) error {
-	panic(fmt.Errorf("not implemented: UserID - userID"))
 }
 
 // Account returns AccountResolver implementation.
@@ -191,12 +117,6 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 // Transaction returns TransactionResolver implementation.
 func (r *Resolver) Transaction() TransactionResolver { return &transactionResolver{r} }
-
-// User returns UserResolver implementation.
-func (r *Resolver) User() UserResolver { return &userResolver{r} }
-
-// UserKey returns UserKeyResolver implementation.
-func (r *Resolver) UserKey() UserKeyResolver { return &userKeyResolver{r} }
 
 // CreateAccountInput returns CreateAccountInputResolver implementation.
 func (r *Resolver) CreateAccountInput() CreateAccountInputResolver {
@@ -213,22 +133,12 @@ func (r *Resolver) CreateTransactionInput() CreateTransactionInputResolver {
 	return &createTransactionInputResolver{r}
 }
 
-// CreateUserInput returns CreateUserInputResolver implementation.
-func (r *Resolver) CreateUserInput() CreateUserInputResolver { return &createUserInputResolver{r} }
-
-// CreateUserKeyInput returns CreateUserKeyInputResolver implementation.
-func (r *Resolver) CreateUserKeyInput() CreateUserKeyInputResolver {
-	return &createUserKeyInputResolver{r}
-}
-
-type accountResolver struct{ *Resolver }
-type profileResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type transactionResolver struct{ *Resolver }
-type userResolver struct{ *Resolver }
-type userKeyResolver struct{ *Resolver }
-type createAccountInputResolver struct{ *Resolver }
-type createProfileInputResolver struct{ *Resolver }
-type createTransactionInputResolver struct{ *Resolver }
-type createUserInputResolver struct{ *Resolver }
-type createUserKeyInputResolver struct{ *Resolver }
+type (
+	accountResolver                struct{ *Resolver }
+	profileResolver                struct{ *Resolver }
+	queryResolver                  struct{ *Resolver }
+	transactionResolver            struct{ *Resolver }
+	createAccountInputResolver     struct{ *Resolver }
+	createProfileInputResolver     struct{ *Resolver }
+	createTransactionInputResolver struct{ *Resolver }
+)

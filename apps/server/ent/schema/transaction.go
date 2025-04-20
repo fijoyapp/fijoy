@@ -37,7 +37,8 @@ func (Transaction) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
-			}),
+			}).
+			Annotations(entgql.Type("String")),
 
 		field.Text("note").Optional(),
 

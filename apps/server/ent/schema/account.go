@@ -45,25 +45,30 @@ func (Account) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
-			}),
+			}).
+			Annotations(entgql.Type("String")),
 		field.Float("value").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(18,10)",
 				dialect.Postgres: "numeric(18,10)",
-			}),
+			}).
+			Annotations(entgql.Type("String")),
 		field.Float("fx_rate").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(18,10)",
 				dialect.Postgres: "numeric(18,10)",
-			}).Optional(),
+			}).
+			Annotations(entgql.Type("String")).
+			Optional(),
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
-			}),
+			}).
+			Annotations(entgql.Type("String")),
 
 		field.Bool("archived").Default(false),
 
