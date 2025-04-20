@@ -1,5 +1,5 @@
 dev:
-    pnpm dev
+    mprocs
 
 build:
     pnpm build
