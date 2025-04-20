@@ -31,6 +31,10 @@ format:
     just apps/database/format
     just packages/proto/format
 
+format-check:
+    just apps/server/format-check
+    just apps/web/format-check
+
 lint:
     just apps/server/lint
     just apps/web/lint

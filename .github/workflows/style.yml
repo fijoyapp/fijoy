@@ -18,6 +18,8 @@ jobs:
         with:
           run_install: false
 
+      - uses: extractions/setup-just@v3
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -28,7 +30,7 @@ jobs:
         run: pnpm install
 
       - name: Prettier Check
-        run: pnpm format:check
+        run: just format-check
 
   eslint-check:
     runs-on: ubuntu-latest

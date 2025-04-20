@@ -10,5 +10,8 @@ format:
     just --fmt --unstable
     pnpm format
 
+format-check:
+    pnpm format:check
+
 dev:
     pnpm dev
