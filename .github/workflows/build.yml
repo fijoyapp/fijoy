@@ -18,6 +18,8 @@ jobs:
         with:
           run_install: false
 
+      - uses: extractions/setup-just@v3
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -29,5 +31,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build web
-        run: pnpm build
+      - name: Build
+        run: just build
