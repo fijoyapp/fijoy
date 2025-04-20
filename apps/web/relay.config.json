@@ -1,0 +1,6 @@
+{
+  "src": "./src",
+  "language": "typescript",
+  "schema": "../server/ent.graphql",
+  "excludes": ["**/node_modules/**", "**/__mocks__/**", "**/__generated__/**"]
+}
