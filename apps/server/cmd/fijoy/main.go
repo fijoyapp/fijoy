@@ -108,8 +108,10 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// TODO: migrate to this
+	// TODO: migrate to this, also get rid of default server as it is not prod ready
+	// nolint:staticcheck
 	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
+
 	http.Handle("/",
 		playground.Handler("Fijoy", "/query"),
 	)

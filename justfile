@@ -2,7 +2,8 @@ dev:
     mprocs
 
 build:
-    pnpm build
+    just apps/server/build
+    just apps/web/build
 
 buf:
     rm -rf apps/server/proto

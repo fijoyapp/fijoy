@@ -13,5 +13,8 @@ format:
 format-check:
     pnpm format:check
 
+build:
+    pnpm build
+
 dev:
     pnpm dev
