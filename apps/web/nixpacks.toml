@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ['nodejs_20', 'corepack_20']
+nixPkgs = ['nodejs_22', 'corepack_22']
 
 [phases.install]
 # NOTE: https://vercel.com/guides/corepack-errors-github-actions#quick-debug-steps
