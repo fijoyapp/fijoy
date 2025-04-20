@@ -18,3 +18,9 @@ build:
 
 dev:
     pnpm dev
+
+relay:
+    pnpm relay
+
+relay-watch:
+    pnpm relay --watch

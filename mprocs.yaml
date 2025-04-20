@@ -7,6 +7,10 @@ procs:
     shell: "just apps/web/dev"
     stop:
       send-keys: ["<C-c>"]
+  relay:
+    shell: "just apps/web/relay-watch"
+    stop:
+      send-keys: ["<C-c>"]
   database:
     shell: "just apps/database/dev"
     stop:
