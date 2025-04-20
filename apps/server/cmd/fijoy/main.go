@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fijoy"
 	"fijoy/config"
 	"fijoy/constants"
 	"fijoy/ent"
@@ -43,6 +44,8 @@ import (
 
 	health_handler "fijoy/internal/domain/health/handler"
 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
@@ -107,16 +110,16 @@ func main() {
 
 	// TODO: migrate to this, also get rid of default server as it is not prod ready
 	// nolint:staticcheck
-	// srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
-	//
-	// http.Handle("/",
-	// 	playground.Handler("Fijoy", "/query"),
-	// )
-	// http.Handle("/query", srv)
-	// log.Println("listening on :8081")
-	// if err := http.ListenAndServe(":8081", nil); err != nil {
-	// 	log.Fatal("http server terminated", err)
-	// }
+	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
+
+	http.Handle("/",
+		playground.Handler("Fijoy", "/query"),
+	)
+	http.Handle("/query", srv)
+	log.Println("listening on :8081")
+	if err := http.ListenAndServe(":8081", nil); err != nil {
+		log.Fatal("http server terminated", err)
+	}
 
 	validator := validator.New(validator.WithRequiredStructEnabled())
 	protoValidator, err := protovalidate.New()
