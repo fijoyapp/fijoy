@@ -22,6 +22,7 @@ import {
   Outlet,
   ValidateLinkOptions,
   createFileRoute,
+  redirect,
   useMatchRoute,
 } from "@tanstack/react-router";
 import {
@@ -47,8 +48,18 @@ import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
+import { profileQueryOptions } from "@/lib/queries/profile";
 
 export const Route = createFileRoute("/_protected/_profile")({
+  beforeLoad: async ({ context }) => {
+    const profile = await context.queryClient.ensureQueryData(
+      profileQueryOptions(),
+    );
+    if (!profile) {
+      throw redirect({ to: "/setup", search: { step: "currency" } });
+    }
+    return { profile };
+  },
   pendingComponent: CenterLoadingSpinner,
   errorComponent: ({ error }) => (
     <PageHeader>

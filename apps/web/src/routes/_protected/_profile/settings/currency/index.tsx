@@ -54,7 +54,7 @@ function Page() {
   const form = useForm<TypeOf<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),
     defaultValues: {
-      currencies: profile.currencies,
+      currencies: profile.profile.currencies.split(","),
     },
   });
 
@@ -124,7 +124,7 @@ function Page() {
                   control={form.control}
                   name="currencies"
                   currencies={currencyList.items}
-                  defaultValues={profile.currencies}
+                  defaultValues={profile.profile.currencies.split(",")}
                   onValueChange={(value) => {
                     form.setValue("currencies", value);
                   }}

@@ -1,22 +1,21 @@
 import { environment } from "@/environment";
 import { queryOptions } from "@tanstack/react-query";
 import { fetchQuery, graphql } from "relay-runtime";
-import { profileQuery } from "./__generated__/profileQuery.graphql";
+import { userQuery } from "./__generated__/userQuery.graphql";
 
-const ProfileQuery = graphql`
-  query profileQuery {
-    profile {
+const UserQuery = graphql`
+  query userQuery {
+    user {
       id
-      currencies
     }
   }
 `;
 
-export function profileQueryOptions() {
+export function userQueryOptions() {
   return queryOptions({
-    queryKey: ["profile"],
+    queryKey: ["user"],
     queryFn: async () => {
-      return fetchQuery<profileQuery>(environment, ProfileQuery, {})
+      return fetchQuery<userQuery>(environment, UserQuery, {})
         .toPromise()
         .catch(() => null);
     },
