@@ -2,29 +2,33 @@ import {
   Navigate,
   Outlet,
   createFileRoute,
+  redirect,
   useMatchRoute,
 } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
+import { queryClient } from "@/lib/query";
+import { userQueryOptions } from "@/lib/queries/user";
 
 export const Route = createFileRoute("/_protected")({
   pendingComponent: CenterLoadingSpinner,
   component: Protected,
+  beforeLoad: async () => {
+    const user = await queryClient.ensureQueryData(userQueryOptions());
+    if (!user) {
+      throw redirect({ to: "/login" });
+    }
+    return { user };
+  },
 });
 
 function Protected() {
-  const { user, isLoading: isLoadingUser } = useAuth();
-  const { profile, isLoading: isLoadingProfile } = useProfile();
+  const { profile, isLoading } = useProfile();
 
   const matchRoute = useMatchRoute();
 
-  if (isLoadingUser || isLoadingProfile) {
+  if (isLoading) {
     return <CenterLoadingSpinner />;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" />;
   }
 
   if (!profile && !matchRoute({ to: "/setup" })) {

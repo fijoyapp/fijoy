@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<faf852338dbb17d4e2eab23d1077267e>>
+ * @generated SignedSource<<d458532ad97e376e551575b88be1ae57>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 export type profileQuery$variables = Record<PropertyKey, never>;
 export type profileQuery$data = {
   readonly profile: {
+    readonly currencies: string;
     readonly id: string;
   };
 };
@@ -36,6 +37,13 @@ var v0 = [
         "kind": "ScalarField",
         "name": "id",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "currencies",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -59,16 +67,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "39416c0225637122c1cd904bd92dc7d5",
+    "cacheID": "fe54c45a72c26227319484509a7df59f",
     "id": null,
     "metadata": {},
     "name": "profileQuery",
     "operationKind": "query",
-    "text": "query profileQuery {\n  profile {\n    id\n  }\n}\n"
+    "text": "query profileQuery {\n  profile {\n    id\n    currencies\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "602e61a3c654bf1748104b56d16c948e";
+(node as any).hash = "00694df2a7fb3f6c1f17fdffdad90314";
 
 export default node;
