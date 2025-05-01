@@ -1,37 +1,35 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext } from "react";
 
-import { createClient } from "@connectrpc/connect";
-import { User } from "./gen/proto/fijoy/v1/user_pb";
-import { UserService } from "./gen/proto/fijoy/v1/user_pb";
-import { finalTransport } from "./lib/connect";
+import { useQuery } from "@tanstack/react-query";
+import { fetchQuery, graphql } from "relay-runtime";
+import { environment } from "./environment";
+import { authQuery } from "./__generated__/authQuery.graphql";
 
 export interface AuthContext {
-  user: User | undefined;
+  user: authQuery["response"]["user"] | undefined;
   isLoading: boolean;
 }
 
-const userClient = createClient(UserService, finalTransport);
-
 export const AuthContext = createContext<AuthContext | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
+const UserQuery = graphql`
+  query authQuery {
+    user {
+      id
+    }
+  }
+`;
 
-  useEffect(() => {
-    userClient
-      .getUser({})
-      .catch(() => {
-        // console.error(error);
-      })
-      .then((user) => {
-        setUser(user || undefined);
-        setIsLoading(false);
-      });
-  }, []);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => {
+      return fetchQuery<authQuery>(environment, UserQuery, {}).toPromise();
+    },
+  });
 
   return (
-    <AuthContext.Provider value={{ user, isLoading }}>
+    <AuthContext.Provider value={{ user: data?.user, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

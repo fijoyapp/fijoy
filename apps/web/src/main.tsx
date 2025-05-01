@@ -14,6 +14,7 @@ import { TransportProvider } from "@connectrpc/connect-query";
 import { finalTransport } from "./lib/connect";
 import { queryClient } from "./lib/query";
 import { App } from "./app";
+import { ProfileProvider } from "./profile";
 
 import * as Sentry from "@sentry/react";
 import { env } from "./env";
@@ -56,10 +57,14 @@ if (!rootElement.innerHTML) {
         <RelayEnvironment>
           <QueryClientProvider client={queryClient}>
             <AuthProvider>
-              <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-                <App />
-                <Toaster />
-              </ThemeProvider>
+              {/* <Suspense fallback={<CenterLoadingSpinner />}> */}
+              <ProfileProvider>
+                <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+                  <App />
+                  <Toaster />
+                </ThemeProvider>
+              </ProfileProvider>
+              {/* </Suspense> */}
             </AuthProvider>
           </QueryClientProvider>
         </RelayEnvironment>

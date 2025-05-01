@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    TanStackRouterVite({ routeFileIgnorePrefix: "__" }),
+    TanStackRouterVite({ routeFileIgnorePrefix: "__generated__" }),
     sentryVitePlugin({
       org: "fijoy",
       project: "web",
