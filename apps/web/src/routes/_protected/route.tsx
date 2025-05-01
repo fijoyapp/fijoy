@@ -8,25 +8,25 @@ import {
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { graphql } from "relay-runtime";
 import { loadQuery, usePreloadedQuery } from "react-relay";
-import { routeQuery } from "./__generated__/routeQuery.graphql";
 import { environment } from "@/environment";
+import { routeProfileQuery } from "./__generated__/routeProfileQuery.graphql";
 
 export const Route = createFileRoute("/_protected")({
   beforeLoad: async () => {
-    const queryReference = loadQuery<routeQuery>(
+    const profileQueryRef = loadQuery<routeProfileQuery>(
       environment,
-      RouteQuery,
+      ProfileQuery,
       {},
       { fetchPolicy: "store-or-network" },
     );
-    return { queryReference };
+    return { profileQueryRef };
   },
   pendingComponent: CenterLoadingSpinner,
   component: Protected,
 });
 
-const RouteQuery = graphql`
-  query routeQuery {
+const ProfileQuery = graphql`
+  query routeProfileQuery {
     profile {
       id
     }
@@ -35,8 +35,11 @@ const RouteQuery = graphql`
 
 function Protected() {
   const auth = useAuth();
-  const { queryReference } = Route.useRouteContext();
-  const data = usePreloadedQuery<routeQuery>(RouteQuery, queryReference);
+  const { profileQueryRef } = Route.useRouteContext();
+  const data = usePreloadedQuery<routeProfileQuery>(
+    ProfileQuery,
+    profileQueryRef,
+  );
   const matchRoute = useMatchRoute();
 
   if (auth.isLoading || !data) {
