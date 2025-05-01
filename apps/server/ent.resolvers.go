@@ -56,16 +56,6 @@ func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, e
 	return r.client.Transaction.Query().All(ctx)
 }
 
-// Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*ent.User, error) {
-	panic(fmt.Errorf("not implemented: Users - users"))
-}
-
-// UserKeys is the resolver for the userKeys field.
-func (r *queryResolver) UserKeys(ctx context.Context) ([]*ent.UserKey, error) {
-	panic(fmt.Errorf("not implemented: UserKeys - userKeys"))
-}
-
 // Amount is the resolver for the amount field.
 func (r *transactionResolver) Amount(ctx context.Context, obj *ent.Transaction) (string, error) {
 	return obj.Amount.String(), nil
@@ -135,3 +125,18 @@ type transactionResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
 type createProfileInputResolver struct{ *Resolver }
 type createTransactionInputResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *queryResolver) Users(ctx context.Context) ([]*ent.User, error) {
+	panic(fmt.Errorf("not implemented: Users - users"))
+}
+func (r *queryResolver) UserKeys(ctx context.Context) ([]*ent.UserKey, error) {
+	panic(fmt.Errorf("not implemented: UserKeys - userKeys"))
+}
+*/

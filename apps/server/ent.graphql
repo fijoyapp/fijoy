@@ -181,8 +181,6 @@ type Query {
   ): [Node]!
   accounts: [Account!]!
   transactions: [Transaction!]!
-  users: [User!]!
-  userKeys: [UserKey!]!
 }
 """
 The builtin Time type
