@@ -19,9 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Link,
-  LinkProps,
-  // LinkProps,
   Outlet,
+  ValidateLinkOptions,
   createFileRoute,
   useMatchRoute,
 } from "@tanstack/react-router";
@@ -46,18 +45,10 @@ import {
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useState } from "react";
-import { getProfileQueryOptions } from "@/lib/queries/profile";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
 
 export const Route = createFileRoute("/_protected/_profile")({
-  beforeLoad: async ({ context }) => {
-    const profileQueryOpts = getProfileQueryOptions({
-      context,
-    });
-    const profile = await context.queryClient.ensureQueryData(profileQueryOpts);
-    return { profile };
-  },
   pendingComponent: CenterLoadingSpinner,
   errorComponent: ({ error }) => (
     <PageHeader>
@@ -80,7 +71,7 @@ export const Route = createFileRoute("/_protected/_profile")({
 });
 
 type NavLink = {
-  link: LinkProps;
+  link: ValidateLinkOptions;
   name: string;
   icon: LucideIcon;
   fuzzy: boolean;
@@ -156,9 +147,8 @@ function Page() {
                   className="relative"
                 >
                   <Link
+                    {...navLink.link}
                     key={navLink.name}
-                    from={navLink.link.from}
-                    to={navLink.link.to}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all",
                       matchRoute({
@@ -211,9 +201,8 @@ function Page() {
               <nav className="grid gap-2 text-lg font-medium">
                 {navLinks.map((navLink) => (
                   <Link
+                    {...navLink.link}
                     key={navLink.name}
-                    from={navLink.link.from}
-                    to={navLink.link.to}
                     onClick={() => setSheetOpen(false)}
                     className={cn(
                       "text-muted-foreground mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2",
