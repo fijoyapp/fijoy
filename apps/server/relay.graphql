@@ -170,9 +170,10 @@ type Query {
   ): [Node]!
   accounts: [Account!]!
   transactions: [Transaction!]!
+  profile: Profile!
+  user: User!
   users: [User!]!
   userKeys: [UserKey!]!
-  profile: Profile!
 }
 
 """The builtin Time type"""
