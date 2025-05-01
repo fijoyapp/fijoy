@@ -4,6 +4,8 @@ import (
 	"context"
 	"fijoy/constants"
 	"fijoy/ent"
+	"fijoy/ent/profile"
+	"fijoy/ent/user"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/util/database"
 	fijoyv1 "fijoy/proto/fijoy/v1"
@@ -14,6 +16,8 @@ import (
 type AuthUseCase interface {
 	LocalLogin(ctx context.Context) (*fijoyv1.User, error)
 	GoogleLogin(ctx context.Context, email string, googleId string) (*fijoyv1.User, error)
+
+	GetProfileId(ctx context.Context, userId string) (string, error)
 }
 
 type authUseCase struct {
@@ -24,6 +28,18 @@ type authUseCase struct {
 
 func New(userRepo repository.UserRepository, userKeyRepo repository.UserKeyRepository, client *ent.Client) AuthUseCase {
 	return &authUseCase{userRepo: userRepo, userKeyRepo: userKeyRepo, client: client}
+}
+
+func (u *authUseCase) GetProfileId(ctx context.Context, userId string) (string, error) {
+	profile, err := u.client.Profile.Query().Where(profile.HasUserWith(user.ID(userId))).Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return "", nil
+		}
+		return "", err
+	}
+
+	return profile.ID, nil
 }
 
 func userModelToProto(user *ent.User) *fijoyv1.User {
