@@ -22,8 +22,10 @@ const fetchFn: FetchFunction = (params, variables) => {
   return Observable.from(response.then((data) => data.json()));
 };
 
-export function createEnvironment(): IEnvironment {
+function createEnvironment(): IEnvironment {
   const network = Network.create(fetchFn);
   const store = new Store(new RecordSource());
   return new Environment({ store, network });
 }
+
+export const environment = createEnvironment();
