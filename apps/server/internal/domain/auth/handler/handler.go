@@ -7,6 +7,7 @@ import (
 	"fijoy/config"
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
+	"fijoy/internal/util/auth"
 	"fmt"
 	"io"
 	"net/http"
@@ -76,17 +77,8 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 		},
 	)
 
-	cookie := &http.Cookie{
-		Name:     "jwt",
-		Value:    tokenString,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Path:     "/",
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
-	}
+	auth.SetJwtCookie(ctx, tokenString)
 
-	http.SetCookie(w, cookie)
 	http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
 }
 
@@ -152,17 +144,8 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		},
 	)
 
-	cookie := &http.Cookie{
-		Name:     "jwt",
-		Value:    tokenString,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Path:     "/",
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
-	}
+	auth.SetJwtCookie(ctx, tokenString)
 
-	http.SetCookie(w, cookie)
 	http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
 }
 
