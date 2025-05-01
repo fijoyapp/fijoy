@@ -24,7 +24,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: () => {
-      return fetchQuery<authQuery>(environment, UserQuery, {}).toPromise();
+      return fetchQuery<authQuery>(environment, UserQuery, {})
+        .toPromise()
+        .catch(() => null);
     },
   });
 
