@@ -14,10 +14,10 @@ import { TransportProvider } from "@connectrpc/connect-query";
 import { finalTransport } from "./lib/connect";
 import { queryClient } from "./lib/query";
 import { App } from "./app";
-import { ProfileProvider } from "./profile";
 
 import * as Sentry from "@sentry/react";
 import { env } from "./env";
+import { RelayEnvironment } from "./relay";
 
 Sentry.init({
   dsn: env.VITE_SENTRY_DSN_WEB,
@@ -49,19 +49,20 @@ declare global {
 const rootElement = document.getElementById("app")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
+
   root.render(
     <StrictMode>
       <TransportProvider transport={finalTransport}>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <ProfileProvider>
+        <RelayEnvironment>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
               <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
                 <App />
                 <Toaster />
               </ThemeProvider>
-            </ProfileProvider>
-          </AuthProvider>
-        </QueryClientProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </RelayEnvironment>
       </TransportProvider>
     </StrictMode>,
   );

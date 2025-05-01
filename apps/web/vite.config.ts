@@ -6,12 +6,14 @@ import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import packageJson from "./package.json";
 import tailwindcss from "@tailwindcss/vite";
 
+import relay from "vite-plugin-relay";
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    TanStackRouterVite(),
+    TanStackRouterVite({ routeFileIgnorePrefix: "__" }),
     sentryVitePlugin({
       org: "fijoy",
       project: "web",
@@ -20,6 +22,7 @@ export default defineConfig({
       },
       telemetry: false,
     }),
+    relay,
   ],
   resolve: {
     alias: {

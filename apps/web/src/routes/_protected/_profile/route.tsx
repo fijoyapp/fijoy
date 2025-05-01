@@ -49,6 +49,13 @@ import { useState } from "react";
 import { getProfileQueryOptions } from "@/lib/queries/profile";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
+import { graphql } from "relay-runtime";
+
+const routeFragment = graphql`
+  fragment routeFragment on Profile {
+    id
+  }
+`;
 
 export const Route = createFileRoute("/_protected/_profile")({
   beforeLoad: async ({ context }) => {
@@ -56,7 +63,7 @@ export const Route = createFileRoute("/_protected/_profile")({
       context,
     });
     const profile = await context.queryClient.ensureQueryData(profileQueryOpts);
-    return { profile: profile };
+    return { profile };
   },
   pendingComponent: CenterLoadingSpinner,
   errorComponent: ({ error }) => (

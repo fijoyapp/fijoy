@@ -3,14 +3,12 @@ import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./lib/query";
 import { useAuth } from "./hooks/use-auth";
 import { finalTransport } from "./lib/connect";
-import { useProfile } from "./hooks/use-profile";
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
   context: {
     auth: undefined!, // will be set after we wrap the app in AuthProvider
-    profile: undefined!, // will be set after we wrap the app in ProfileProvider
     transport: finalTransport,
     queryClient,
   },
@@ -27,7 +25,6 @@ declare module "@tanstack/react-router" {
 
 export function App() {
   const auth = useAuth();
-  const profile = useProfile();
 
-  return <RouterProvider router={router} context={{ auth, profile }} />;
+  return <RouterProvider router={router} context={{ auth }} />;
 }
