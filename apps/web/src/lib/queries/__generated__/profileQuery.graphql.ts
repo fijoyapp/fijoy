@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d458532ad97e376e551575b88be1ae57>>
+ * @generated SignedSource<<eeab19e3a86b5724082c657fe91163f5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,8 @@ export type profileQuery$data = {
   readonly profile: {
     readonly currencies: string;
     readonly id: string;
+    readonly locale: string | null | undefined;
+    readonly netWorthGoal: string;
   };
 };
 export type profileQuery = {
@@ -44,6 +46,20 @@ var v0 = [
         "kind": "ScalarField",
         "name": "currencies",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "locale",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "netWorthGoal",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -67,16 +83,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "fe54c45a72c26227319484509a7df59f",
+    "cacheID": "6d50a9c1a4a46a8b9522cb7ebdb548c7",
     "id": null,
     "metadata": {},
     "name": "profileQuery",
     "operationKind": "query",
-    "text": "query profileQuery {\n  profile {\n    id\n    currencies\n  }\n}\n"
+    "text": "query profileQuery {\n  profile {\n    id\n    currencies\n    locale\n    netWorthGoal\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "00694df2a7fb3f6c1f17fdffdad90314";
+(node as any).hash = "441a61ad697ec20f153d684c7667571f";
 
 export default node;
