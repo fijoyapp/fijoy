@@ -108,19 +108,6 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// TODO: migrate to this, also get rid of default server as it is not prod ready
-	// nolint:staticcheck
-	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
-
-	http.Handle("/",
-		playground.Handler("Fijoy", "/query"),
-	)
-	http.Handle("/query", srv)
-	log.Println("listening on :8081")
-	if err := http.ListenAndServe(":8081", nil); err != nil {
-		log.Fatal("http server terminated", err)
-	}
-
 	validator := validator.New(validator.WithRequiredStructEnabled())
 	protoValidator, err := protovalidate.New()
 	if err != nil {
@@ -171,6 +158,14 @@ func main() {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 		Debug:            false,
 	}))
+
+	// TODO: migrate to this, also get rid of default server as it is not prod ready
+	// nolint:staticcheck
+	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
+	r.Handle("/",
+		playground.Handler("Fijoy", "/query"),
+	)
+	r.Handle("/query", srv)
 
 	// r.Get("/error", func(w http.ResponseWriter, r *http.Request) {
 	// 	hub := sentry.GetHubFromContext(r.Context())
