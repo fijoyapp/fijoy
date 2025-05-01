@@ -8,6 +8,8 @@ const ProfileQuery = graphql`
     profile {
       id
       currencies
+      locale
+      netWorthGoal
     }
   }
 `;
