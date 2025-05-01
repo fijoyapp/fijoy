@@ -147,6 +147,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(fijoy_middleware.LoggerMiddleware(logger))
+	r.Use(fijoy_middleware.CookieMiddleWare())
 	r.Use(sentryMiddleware.Handle)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts

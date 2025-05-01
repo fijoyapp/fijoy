@@ -3,6 +3,9 @@ package auth
 import (
 	"context"
 	"errors"
+	"fijoy/internal/middleware"
+	"net/http"
+	"time"
 
 	"github.com/go-chi/jwtauth/v5"
 )
@@ -33,4 +36,29 @@ func GetAuthDataFromContext(ctx context.Context) (*AuthData, error) {
 		UserId:    userId,
 		ProfileId: profileId,
 	}, nil
+}
+
+func RemoveJwtCookie(ctx context.Context) {
+	writer, _ := ctx.Value(middleware.CookieKey).(http.ResponseWriter)
+	http.SetCookie(writer, &http.Cookie{
+		HttpOnly: true,
+		MaxAge:   0,
+		Secure:   true,
+		Name:     "jwt",
+	})
+}
+
+func SetJwtCookie(ctx context.Context, tokenString string) {
+	writer, _ := ctx.Value(middleware.CookieKey).(http.ResponseWriter)
+
+	cookie := &http.Cookie{
+		Name:     "jwt",
+		Value:    tokenString,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+	http.SetCookie(writer, cookie)
 }

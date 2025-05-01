@@ -11,7 +11,7 @@ import (
 )
 
 func RegisterConnect(r *chi.Mux, protoValidator protovalidate.Validator, authConfig *config.AuthConfig, useCase usecase.ProfileUseCase) {
-	profileServer := NewProfileHandler(protoValidator, useCase)
+	profileServer := NewProfileHandler(protoValidator, useCase, authConfig)
 
 	path, handler := fijoyv1connect.NewProfileServiceHandler(profileServer)
 

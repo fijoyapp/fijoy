@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fijoy/config"
 	"fijoy/internal/domain/profile/usecase"
 	"fijoy/internal/util/auth"
 	fijoyv1 "fijoy/proto/fijoy/v1"
@@ -14,10 +15,19 @@ import (
 type profileHandler struct {
 	useCase        usecase.ProfileUseCase
 	protoValidator protovalidate.Validator
+	authConfig     *config.AuthConfig
 }
 
-func NewProfileHandler(protoValidator protovalidate.Validator, useCase usecase.ProfileUseCase) *profileHandler {
-	return &profileHandler{useCase: useCase, protoValidator: protoValidator}
+func NewProfileHandler(
+	protoValidator protovalidate.Validator,
+	useCase usecase.ProfileUseCase,
+	authConfig *config.AuthConfig,
+) *profileHandler {
+	return &profileHandler{
+		useCase:        useCase,
+		protoValidator: protoValidator,
+		authConfig:     authConfig,
+	}
 }
 
 func (h *profileHandler) GetProfile(
@@ -58,6 +68,15 @@ func (h *profileHandler) CreateProfile(
 	if err != nil {
 		return nil, err
 	}
+
+	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(
+		map[string]any{
+			"user_id":    authData.UserId,
+			"profile_id": profile.Id,
+		},
+	)
+
+	auth.SetJwtCookie(ctx, tokenString)
 
 	return connect.NewResponse(profile), nil
 }
