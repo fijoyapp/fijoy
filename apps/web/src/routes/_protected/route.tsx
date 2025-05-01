@@ -7,24 +7,36 @@ import {
 } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { graphql } from "relay-runtime";
-import { useLazyLoadQuery } from "react-relay";
+import { loadQuery, usePreloadedQuery } from "react-relay";
 import { routeQuery } from "./__generated__/routeQuery.graphql";
+import { environment } from "@/environment";
 
 export const Route = createFileRoute("/_protected")({
+  beforeLoad: async () => {
+    const queryReference = loadQuery<routeQuery>(
+      environment,
+      RouteQuery,
+      {},
+      { fetchPolicy: "store-or-network" },
+    );
+    return { queryReference };
+  },
+  pendingComponent: CenterLoadingSpinner,
   component: Protected,
 });
 
 const RouteQuery = graphql`
   query routeQuery {
     profile {
-      ...routeFragment
+      id
     }
   }
 `;
 
 function Protected() {
   const auth = useAuth();
-  const data = useLazyLoadQuery<routeQuery>(RouteQuery, {});
+  const { queryReference } = Route.useRouteContext();
+  const data = usePreloadedQuery<routeQuery>(RouteQuery, queryReference);
   const matchRoute = useMatchRoute();
 
   if (auth.isLoading || !data) {
