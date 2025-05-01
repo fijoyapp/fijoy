@@ -1,3 +1,4 @@
 extend type Query {
   profile: Profile!
+  user: User!
 }

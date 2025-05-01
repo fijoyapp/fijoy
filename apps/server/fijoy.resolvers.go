@@ -21,3 +21,13 @@ func (r *queryResolver) Profile(ctx context.Context) (*ent.Profile, error) {
 
 	return r.client.Profile.Query().Where(profile.HasUserWith(user.ID(userId))).Only(ctx)
 }
+
+// User is the resolver for the user field.
+func (r *queryResolver) User(ctx context.Context) (*ent.User, error) {
+	userId, err := auth.GetUserIdFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.client.User.Query().Where(user.ID(userId)).Only(ctx)
+}
