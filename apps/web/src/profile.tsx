@@ -23,11 +23,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { data, isLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: () => {
-      return fetchQuery<profileQuery>(
-        environment,
-        ProfileQuery,
-        {},
-      ).toPromise();
+      return fetchQuery<profileQuery>(environment, ProfileQuery, {})
+        .toPromise()
+        .catch(() => null);
     },
   });
 
