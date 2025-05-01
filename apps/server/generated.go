@@ -95,7 +95,7 @@ type ComplexityRoot struct {
 		Accounts     func(childComplexity int) int
 		Node         func(childComplexity int, id string) int
 		Nodes        func(childComplexity int, ids []string) int
-		Profiles     func(childComplexity int) int
+		Profile      func(childComplexity int) int
 		Transactions func(childComplexity int) int
 		UserKeys     func(childComplexity int) int
 		Users        func(childComplexity int) int
@@ -141,10 +141,10 @@ type QueryResolver interface {
 	Node(ctx context.Context, id string) (ent.Noder, error)
 	Nodes(ctx context.Context, ids []string) ([]ent.Noder, error)
 	Accounts(ctx context.Context) ([]*ent.Account, error)
-	Profiles(ctx context.Context) ([]*ent.Profile, error)
 	Transactions(ctx context.Context) ([]*ent.Transaction, error)
 	Users(ctx context.Context) ([]*ent.User, error)
 	UserKeys(ctx context.Context) ([]*ent.UserKey, error)
+	Profile(ctx context.Context) (*ent.Profile, error)
 }
 type TransactionResolver interface {
 	Amount(ctx context.Context, obj *ent.Transaction) (string, error)
@@ -402,12 +402,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]string)), true
 
-	case "Query.profiles":
-		if e.complexity.Query.Profiles == nil {
+	case "Query.profile":
+		if e.complexity.Query.Profile == nil {
 			break
 		}
 
-		return e.complexity.Query.Profiles(childComplexity), true
+		return e.complexity.Query.Profile(childComplexity), true
 
 	case "Query.transactions":
 		if e.complexity.Query.Transactions == nil {
@@ -643,7 +643,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
-//go:embed "ent.graphql"
+//go:embed "ent.graphql" "fijoy.graphql"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -656,6 +656,7 @@ func sourceData(filename string) string {
 
 var sources = []*ast.Source{
 	{Name: "ent.graphql", Input: sourceData("ent.graphql"), BuiltIn: false},
+	{Name: "fijoy.graphql", Input: sourceData("fijoy.graphql"), BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -2315,70 +2316,6 @@ func (ec *executionContext) fieldContext_Query_accounts(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_profiles(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_profiles(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Profiles(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.Profile)
-	fc.Result = res
-	return ec.marshalNProfile2ᚕᚖfijoyᚋentᚐProfileᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_profiles(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Profile_id(ctx, field)
-			case "locale":
-				return ec.fieldContext_Profile_locale(ctx, field)
-			case "currencies":
-				return ec.fieldContext_Profile_currencies(ctx, field)
-			case "netWorthGoal":
-				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Profile_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Profile_updatedAt(ctx, field)
-			case "user":
-				return ec.fieldContext_Profile_user(ctx, field)
-			case "account":
-				return ec.fieldContext_Profile_account(ctx, field)
-			case "transaction":
-				return ec.fieldContext_Profile_transaction(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_transactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_transactions(ctx, field)
 	if err != nil {
@@ -2546,6 +2483,70 @@ func (ec *executionContext) fieldContext_Query_userKeys(_ context.Context, field
 				return ec.fieldContext_UserKey_user(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserKey", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_profile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_profile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Profile(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Profile)
+	fc.Result = res
+	return ec.marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_profile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Profile_id(ctx, field)
+			case "locale":
+				return ec.fieldContext_Profile_locale(ctx, field)
+			case "currencies":
+				return ec.fieldContext_Profile_currencies(ctx, field)
+			case "netWorthGoal":
+				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Profile_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Profile_updatedAt(ctx, field)
+			case "user":
+				return ec.fieldContext_Profile_user(ctx, field)
+			case "account":
+				return ec.fieldContext_Profile_account(ctx, field)
+			case "transaction":
+				return ec.fieldContext_Profile_transaction(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
 	}
 	return fc, nil
@@ -6468,28 +6469,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "profiles":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_profiles(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "transactions":
 			field := field
 
@@ -6544,6 +6523,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_userKeys(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "profile":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_profile(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -7455,48 +7456,8 @@ func (ec *executionContext) marshalNNode2ᚕfijoyᚋentᚐNoder(ctx context.Cont
 	return ret
 }
 
-func (ec *executionContext) marshalNProfile2ᚕᚖfijoyᚋentᚐProfileᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Profile) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
+func (ec *executionContext) marshalNProfile2fijoyᚋentᚐProfile(ctx context.Context, sel ast.SelectionSet, v ent.Profile) graphql.Marshaler {
+	return ec._Profile(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx context.Context, sel ast.SelectionSet, v *ent.Profile) graphql.Marshaler {

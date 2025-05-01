@@ -74,6 +74,7 @@
     "react-resizable-panels": "^2.1.7",
     "react-wrap-balancer": "^1.1.1",
     "recharts": "^2.15.3",
+    "relay-runtime": "^18.2.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
@@ -95,6 +96,8 @@
     "@types/node": "^20.17.30",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
+    "@types/react-relay": "^18.2.0",
+    "@types/relay-runtime": "^18.2.5",
     "@typescript-eslint/eslint-plugin": "^8.30.1",
     "@typescript-eslint/parser": "^8.30.1",
     "@vitejs/plugin-react": "^4.4.1",
@@ -115,6 +118,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.2",
+    "vite-plugin-relay": "^2.1.0",
     "vitest": "^3.1.1"
   }
 }

@@ -54,6 +54,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/jwtauth/v5"
 
 	connectcors "connectrpc.com/cors"
 	"github.com/getsentry/sentry-go"
@@ -162,10 +163,16 @@ func main() {
 	// TODO: migrate to this, also get rid of default server as it is not prod ready
 	// nolint:staticcheck
 	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
-	r.Handle("/graphql",
-		playground.Handler("Fijoy", "/query"),
-	)
-	r.Handle("/query", srv)
+
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(cfg.Auth.JWT_AUTH))
+		r.Use(jwtauth.Authenticator(cfg.Auth.JWT_AUTH))
+
+		r.Handle("/graphql",
+			playground.Handler("Fijoy", "/query"),
+		)
+		r.Handle("/query", srv)
+	})
 
 	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
 	health_handler.RegisterHTTPEndpoints(r)

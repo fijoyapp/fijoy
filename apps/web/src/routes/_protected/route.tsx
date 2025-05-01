@@ -5,19 +5,29 @@ import {
   createFileRoute,
   useMatchRoute,
 } from "@tanstack/react-router";
-import { useProfile } from "@/hooks/use-profile";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
+import { graphql } from "relay-runtime";
+import { useLazyLoadQuery } from "react-relay";
+import { routeQuery } from "./__generated__/routeQuery.graphql";
 
 export const Route = createFileRoute("/_protected")({
   component: Protected,
 });
 
+const RouteQuery = graphql`
+  query routeQuery {
+    profile {
+      ...routeFragment
+    }
+  }
+`;
+
 function Protected() {
   const auth = useAuth();
-  const profile = useProfile();
+  const data = useLazyLoadQuery<routeQuery>(RouteQuery, {});
   const matchRoute = useMatchRoute();
 
-  if (auth.isLoading || profile.isLoading) {
+  if (auth.isLoading || !data) {
     return <CenterLoadingSpinner />;
   }
 
@@ -25,11 +35,12 @@ function Protected() {
     return <Navigate to="/login" />;
   }
 
-  if (!profile.profile && !matchRoute({ to: "/setup" })) {
+  if (!data.profile && !matchRoute({ to: "/setup" })) {
+    console.log("no profile");
     return <Navigate to="/setup" search={{ step: "currency" }} />;
   }
 
-  if (profile.profile && matchRoute({ to: "/setup" })) {
+  if (data.profile && matchRoute({ to: "/setup" })) {
     return <Navigate to="/home" />;
   }
 

@@ -51,11 +51,6 @@ func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
 	return r.client.Account.Query().All(ctx)
 }
 
-// Profiles is the resolver for the profiles field.
-func (r *queryResolver) Profiles(ctx context.Context) ([]*ent.Profile, error) {
-	return r.client.Profile.Query().All(ctx)
-}
-
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
 	return r.client.Transaction.Query().All(ctx)
