@@ -162,29 +162,20 @@ func main() {
 	// TODO: migrate to this, also get rid of default server as it is not prod ready
 	// nolint:staticcheck
 	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
-	r.Handle("/",
+	r.Handle("/graphql",
 		playground.Handler("Fijoy", "/query"),
 	)
 	r.Handle("/query", srv)
 
-	// r.Get("/error", func(w http.ResponseWriter, r *http.Request) {
-	// 	hub := sentry.GetHubFromContext(r.Context())
-	// 	hub.CaptureException(errors.New("test error"))
-	// })
-	// r.Get("/panic", func(w http.ResponseWriter, r *http.Request) {
-	// 	panic("server panic")
-	// })
-
 	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
+	health_handler.RegisterHTTPEndpoints(r)
 
+	// TODO: remove these
 	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
 	transaction_handler.RegisterConnect(r, protoValidator, cfg.Auth, transctionUseCase)
-
 	currency_handler.RegisterConnect(r)
-
-	health_handler.RegisterHTTPEndpoints(r)
 
 	// Start our server
 	server := newServer(":"+cfg.Server.PORT, r)
