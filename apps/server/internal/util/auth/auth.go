@@ -7,15 +7,30 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-func GetUserIdFromContext(ctx context.Context) (string, error) {
+type AuthData struct {
+	UserId    string
+	ProfileId string
+}
+
+func GetAuthDataFromContext(ctx context.Context) (*AuthData, error) {
 	_, claims, _ := jwtauth.FromContext(ctx)
 	if claims == nil {
-		return "", errors.New("no claims found")
+		return &AuthData{}, errors.New("no claims found")
 	}
 
 	if _, ok := claims["user_id"]; !ok {
-		return "", errors.New("no user_id found in claims")
+		return &AuthData{}, errors.New("no user_id found in claims")
 	}
 
-	return claims["user_id"].(string), nil
+	if _, ok := claims["profile_id"]; !ok {
+		return &AuthData{}, errors.New("no profile_id found in claims")
+	}
+
+	userId := claims["user_id"].(string)
+	profileId := claims["profile_id"].(string)
+
+	return &AuthData{
+		UserId:    userId,
+		ProfileId: profileId,
+	}, nil
 }

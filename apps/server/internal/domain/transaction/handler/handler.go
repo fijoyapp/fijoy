@@ -2,10 +2,8 @@ package handler
 
 import (
 	"context"
-	"errors"
-	"fijoy/constants"
 	"fijoy/internal/domain/transaction/usecase"
-	"fijoy/internal/middleware"
+	"fijoy/internal/util/auth"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
@@ -30,12 +28,12 @@ func (h *transactionHandler) CreateTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	transaction, err := h.useCase.CreateTransaction(ctx, profileId, req.Msg)
+	transaction, err := h.useCase.CreateTransaction(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -51,12 +49,12 @@ func (h *transactionHandler) GetTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	transaction, err := h.useCase.GetTransaction(ctx, profileId, req.Msg)
+	transaction, err := h.useCase.GetTransaction(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +70,12 @@ func (h *transactionHandler) GetTransactions(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	transactions, err := h.useCase.GetTransactions(ctx, profileId)
+	transactions, err := h.useCase.GetTransactions(ctx, authData.ProfileId)
 	if err != nil {
 		return nil, err
 	}
@@ -93,12 +91,12 @@ func (h *transactionHandler) GetTransactionsByAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	transactions, err := h.useCase.GetTransactions(ctx, profileId)
+	transactions, err := h.useCase.GetTransactions(ctx, authData.ProfileId)
 	if err != nil {
 		return nil, err
 	}
@@ -114,12 +112,12 @@ func (h *transactionHandler) UpdateTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	transaction, err := h.useCase.UpdateTransaction(ctx, profileId, req.Msg)
+	transaction, err := h.useCase.UpdateTransaction(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -135,12 +133,12 @@ func (h *transactionHandler) DeleteTransaction(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	err := h.useCase.DeleteTransaction(ctx, profileId, req.Msg)
+	err = h.useCase.DeleteTransaction(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}

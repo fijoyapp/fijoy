@@ -28,12 +28,12 @@ func (h *userHandler) GetUser(
 		return nil, err
 	}
 
-	userId, err := auth.GetUserIdFromContext(ctx)
+	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := h.useCase.GetUser(ctx, userId)
+	user, err := h.useCase.GetUser(ctx, authData.UserId)
 	if err != nil {
 		return nil, err
 	}

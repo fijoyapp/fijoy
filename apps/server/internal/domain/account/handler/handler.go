@@ -2,10 +2,8 @@ package handler
 
 import (
 	"context"
-	"errors"
-	"fijoy/constants"
 	"fijoy/internal/domain/account/usecase"
-	"fijoy/internal/middleware"
+	"fijoy/internal/util/auth"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
@@ -30,12 +28,12 @@ func (h *accountHandler) CreateAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	account, err := h.useCase.CreateAccount(ctx, profileId, req.Msg)
+	account, err := h.useCase.CreateAccount(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -51,12 +49,12 @@ func (h *accountHandler) GetAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	account, err := h.useCase.GetAccount(ctx, profileId, req.Msg)
+	account, err := h.useCase.GetAccount(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -72,12 +70,12 @@ func (h *accountHandler) GetAccounts(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	accounts, err := h.useCase.GetAccounts(ctx, profileId)
+	accounts, err := h.useCase.GetAccounts(ctx, authData.ProfileId)
 	if err != nil {
 		return nil, err
 	}
@@ -93,12 +91,12 @@ func (h *accountHandler) UpdateAccount(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	account, err := h.useCase.UpdateAccount(ctx, profileId, req.Msg)
+	account, err := h.useCase.UpdateAccount(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -114,12 +112,12 @@ func (h *accountHandler) UpdateAccount(
 // 		return nil, err
 // 	}
 //
-// 	profileId := ctx.Value("profileId").(string)
-// 	if profileId == "" {
-// 		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+// 	authData.ProfileId := ctx.Value("authData.ProfileId").(string)
+// 	if authData.ProfileId == "" {
+// 		return nil, errors.New(constants.ErrFijoyauthData.ProfileIdMissing)
 // 	}
 //
-// 	err := h.useCase.DeleteAccount(ctx, profileId, req.Msg)
+// 	err := h.useCase.DeleteAccount(ctx, authData.ProfileId, req.Msg)
 // 	if err != nil {
 // 		return nil, err
 // 	}

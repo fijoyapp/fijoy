@@ -2,10 +2,7 @@ package handler
 
 import (
 	"context"
-	"errors"
-	"fijoy/constants"
 	"fijoy/internal/domain/profile/usecase"
-	"fijoy/internal/middleware"
 	"fijoy/internal/util/auth"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
@@ -31,12 +28,12 @@ func (h *profileHandler) GetProfile(
 		return nil, err
 	}
 
-	userId, err := auth.GetUserIdFromContext(ctx)
+	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	profile, err := h.useCase.GetProfileByUser(ctx, userId)
+	profile, err := h.useCase.GetProfileByUser(ctx, authData.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -52,12 +49,12 @@ func (h *profileHandler) CreateProfile(
 		return nil, err
 	}
 
-	userId, err := auth.GetUserIdFromContext(ctx)
+	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	profile, err := h.useCase.CreateProfile(ctx, userId, req.Msg)
+	profile, err := h.useCase.CreateProfile(ctx, authData.UserId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
@@ -73,12 +70,12 @@ func (h *profileHandler) DeleteProfile(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	err := h.useCase.DeleteProfile(ctx, profileId)
+	err = h.useCase.DeleteProfile(ctx, authData.ProfileId)
 	if err != nil {
 		return nil, err
 	}
@@ -94,12 +91,12 @@ func (h *profileHandler) UpdateProfile(
 		return nil, err
 	}
 
-	profileId := ctx.Value(middleware.ProfileIdKey).(string)
-	if profileId == "" {
-		return nil, errors.New(constants.ErrFijoyProfileIdMissing)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	profile, err := h.useCase.UpdateProfile(ctx, profileId, req.Msg)
+	profile, err := h.useCase.UpdateProfile(ctx, authData.ProfileId, req.Msg)
 	if err != nil {
 		return nil, err
 	}
