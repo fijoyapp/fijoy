@@ -2,7 +2,6 @@ import { CardContent } from "@/components/ui/card";
 import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
-import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { House } from "lucide-react";
 import { cardFragment$key } from "../__generated__/cardFragment.graphql";
 import { CardFragment } from "../card-fragment";
@@ -40,7 +39,7 @@ export function PropertyCard({ account }: PropertyCardProps) {
           })}
         </div>
         <div className="text-muted-foreground text-xs">
-          {getPrettyTime(timestampDate(data.updatedAt!))}
+          {getPrettyTime(new Date(data.updatedAt))}
         </div>
       </div>
     </CardContent>
