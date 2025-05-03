@@ -61,7 +61,7 @@ func (c *AccountCreate) SetInput(i CreateAccountInput) *AccountCreate {
 
 // CreateProfileInput represents a mutation input for creating profiles.
 type CreateProfileInput struct {
-	Locale         *string
+	Locale         string
 	Currencies     string
 	NetWorthGoal   decimal.Decimal
 	CreatedAt      *time.Time
@@ -73,9 +73,7 @@ type CreateProfileInput struct {
 
 // Mutate applies the CreateProfileInput on the ProfileMutation builder.
 func (i *CreateProfileInput) Mutate(m *ProfileMutation) {
-	if v := i.Locale; v != nil {
-		m.SetLocale(*v)
-	}
+	m.SetLocale(i.Locale)
 	m.SetCurrencies(i.Currencies)
 	m.SetNetWorthGoal(i.NetWorthGoal)
 	if v := i.CreatedAt; v != nil {

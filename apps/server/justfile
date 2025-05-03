@@ -50,3 +50,6 @@ ent-new name:
 
 ent-generate:
     go generate ./ent
+
+merge-graphql:
+  watchman-make -p 'ent.graphql' 'fijoy.graphql' --run 'node merge.js'

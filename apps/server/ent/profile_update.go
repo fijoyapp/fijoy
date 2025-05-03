@@ -46,12 +46,6 @@ func (pu *ProfileUpdate) SetNillableLocale(s *string) *ProfileUpdate {
 	return pu
 }
 
-// ClearLocale clears the value of the "locale" field.
-func (pu *ProfileUpdate) ClearLocale() *ProfileUpdate {
-	pu.mutation.ClearLocale()
-	return pu
-}
-
 // SetCurrencies sets the "currencies" field.
 func (pu *ProfileUpdate) SetCurrencies(s string) *ProfileUpdate {
 	pu.mutation.SetCurrencies(s)
@@ -259,9 +253,6 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
-	if pu.mutation.LocaleCleared() {
-		_spec.ClearField(profile.FieldLocale, field.TypeString)
-	}
 	if value, ok := pu.mutation.Currencies(); ok {
 		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)
 	}
@@ -427,12 +418,6 @@ func (puo *ProfileUpdateOne) SetNillableLocale(s *string) *ProfileUpdateOne {
 	if s != nil {
 		puo.SetLocale(*s)
 	}
-	return puo
-}
-
-// ClearLocale clears the value of the "locale" field.
-func (puo *ProfileUpdateOne) ClearLocale() *ProfileUpdateOne {
-	puo.mutation.ClearLocale()
 	return puo
 }
 
@@ -672,9 +657,6 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if value, ok := puo.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
-	}
-	if puo.mutation.LocaleCleared() {
-		_spec.ClearField(profile.FieldLocale, field.TypeString)
 	}
 	if value, ok := puo.mutation.Currencies(); ok {
 		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)

@@ -31,7 +31,7 @@ func (Profile) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").DefaultFunc(func() string { return constants.ProfilePrefix + cuid2.Generate() }),
 
-		field.String("locale").Optional(),
+		field.String("locale"),
 		field.String("currencies"),
 
 		field.Float("net_worth_goal").

@@ -30,6 +30,7 @@ func (r *profileRepository) CreateProfile(ctx context.Context, client *ent.Clien
 		Create().
 		SetCurrencies(strings.Join(req.Currencies, ",")).
 		SetNetWorthGoal(decimal.RequireFromString(req.NetWorthGoal)).
+		SetLocale("en-CA"). // TODO: remove hard coding
 		SetUserID(userId).
 		Save(ctx)
 	if err != nil {

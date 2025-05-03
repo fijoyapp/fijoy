@@ -1379,22 +1379,9 @@ func (m *ProfileMutation) OldLocale(ctx context.Context) (v string, err error) {
 	return oldValue.Locale, nil
 }
 
-// ClearLocale clears the value of the "locale" field.
-func (m *ProfileMutation) ClearLocale() {
-	m.locale = nil
-	m.clearedFields[profile.FieldLocale] = struct{}{}
-}
-
-// LocaleCleared returns if the "locale" field was cleared in this mutation.
-func (m *ProfileMutation) LocaleCleared() bool {
-	_, ok := m.clearedFields[profile.FieldLocale]
-	return ok
-}
-
 // ResetLocale resets all changes to the "locale" field.
 func (m *ProfileMutation) ResetLocale() {
 	m.locale = nil
-	delete(m.clearedFields, profile.FieldLocale)
 }
 
 // SetCurrencies sets the "currencies" field.
@@ -1883,11 +1870,7 @@ func (m *ProfileMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *ProfileMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(profile.FieldLocale) {
-		fields = append(fields, profile.FieldLocale)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1900,11 +1883,6 @@ func (m *ProfileMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ProfileMutation) ClearField(name string) error {
-	switch name {
-	case profile.FieldLocale:
-		m.ClearLocale()
-		return nil
-	}
 	return fmt.Errorf("unknown Profile nullable field %s", name)
 }
 

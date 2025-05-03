@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eeab19e3a86b5724082c657fe91163f5>>
+ * @generated SignedSource<<f0484cc04d0ccb12fe6ab1fa407b9e26>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type profileQuery$data = {
   readonly profile: {
     readonly currencies: string;
     readonly id: string;
-    readonly locale: string | null | undefined;
+    readonly locale: string;
     readonly netWorthGoal: string;
   };
 };
