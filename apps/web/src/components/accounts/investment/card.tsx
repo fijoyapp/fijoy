@@ -33,7 +33,7 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
         <div>
           {getCurrencyDisplay(
             account.balance,
-            profile.currencies[0],
+            profile.currencies.split(",")[0],
             profile.locale,
             {
               compact: false,
