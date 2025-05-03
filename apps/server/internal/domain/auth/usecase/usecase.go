@@ -98,7 +98,7 @@ func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId st
 		userKey, err = u.userKeyRepo.GetUserKey(ctx, tx.Client(), constants.GoogleUserKey+googleId)
 		if err != nil {
 			if ent.IsNotFound(err) {
-				user, err := u.userRepo.CreateUser(ctx, tx.Client(), constants.LocalLoginEmail)
+				user, err := u.userRepo.CreateUser(ctx, tx.Client(), email)
 				if err != nil {
 					return err
 				}
