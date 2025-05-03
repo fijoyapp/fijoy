@@ -38,9 +38,9 @@ const FinalStep = () => {
   const createProfileMut = useMutation(createProfile, {
     onSuccess: async () => {
       router.invalidate();
-      // router.navigate({
-      //   to: "/home",
-      // });
+      router.navigate({
+        to: "/home",
+      });
     },
   });
 
