@@ -1,17 +1,20 @@
 import { CardContent } from "@/components/ui/card";
-import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { ChartCandlestick } from "lucide-react";
+import { cardFragment$key } from "../__generated__/cardFragment.graphql";
+import { CardFragment } from "../card-fragment";
+import { useFragment } from "react-relay";
 
 type InvestmentCardProps = {
-  account: Account;
+  account: cardFragment$key;
 };
 
 export function InvestmentCard({ account }: InvestmentCardProps) {
   const { profile } = useProfile();
+  const data = useFragment(CardFragment, account);
   if (!profile) {
     return null;
   }
@@ -23,8 +26,8 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
       </div>
 
       <div>
-        <div>{account.name}</div>
-        <div className="text-muted-foreground text-xs">{account.symbol}</div>
+        <div>{data.name}</div>
+        <div className="text-muted-foreground text-xs">{data.symbol}</div>
       </div>
 
       <div className="grow"></div>
@@ -32,7 +35,7 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
       <div className="flex flex-col items-end">
         <div>
           {getCurrencyDisplay(
-            account.balance,
+            data.balance,
             profile.currencies.split(",")[0],
             profile.locale,
             {
@@ -42,7 +45,7 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
           )}
         </div>
         <div className="text-muted-foreground text-xs">
-          {getPrettyTime(timestampDate(account.updatedAt!))}
+          {getPrettyTime(timestampDate(data.updatedAt!))}
         </div>
       </div>
     </CardContent>

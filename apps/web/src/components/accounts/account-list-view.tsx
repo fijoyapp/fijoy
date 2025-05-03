@@ -1,4 +1,3 @@
-import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { LiquidityCard } from "./liquidity/card";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
@@ -8,15 +7,16 @@ import { LiabilityCard } from "./liability/card";
 import { PropertyCard } from "./property/card";
 import { ReceivableCard } from "./receivable/card";
 import { InvestmentCard } from "./investment/card";
+import { accountsFragment$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsFragment.graphql";
 
 type AccountListProps = {
-  accounts: Account[];
+  accounts: accountsFragment$data;
 };
 
 type Section = {
   name: string;
-  accounts: Account[];
-  card: React.FC<{ account: Account }>;
+  accounts: accountsFragment$data;
+  card: React.FC<{ account: accountsFragment$data[number] }>;
 };
 
 export default function AccountListView({ accounts }: AccountListProps) {

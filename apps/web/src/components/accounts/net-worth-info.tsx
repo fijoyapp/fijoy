@@ -1,4 +1,3 @@
-import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Coins, CreditCard, PiggyBank, Wallet } from "lucide-react";
 import { getOverallStats } from "@/lib/account";
@@ -6,9 +5,10 @@ import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
 import { useMemo } from "react";
 import currency from "currency.js";
+import { accountsFragment$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsFragment.graphql";
 
 type Props = {
-  accounts: Account[];
+  accounts: accountsFragment$data;
 };
 
 const NetWorthInfo = ({ accounts }: Props) => {
