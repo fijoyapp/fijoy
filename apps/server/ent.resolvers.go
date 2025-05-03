@@ -7,6 +7,10 @@ package fijoy
 import (
 	"context"
 	"fijoy/ent"
+	"fijoy/ent/account"
+	"fijoy/ent/profile"
+	"fijoy/ent/transaction"
+	"fijoy/internal/util/auth"
 	"fijoy/internal/util/pointer"
 	"fmt"
 )
@@ -48,12 +52,22 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, e
 
 // Accounts is the resolver for the accounts field.
 func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
-	return r.client.Account.Query().All(ctx)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.client.Account.Query().Where(account.HasProfileWith(profile.ID(authData.ProfileId))).All(ctx)
 }
 
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
-	return r.client.Transaction.Query().All(ctx)
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.client.Transaction.Query().Where(transaction.HasProfileWith(profile.ID(authData.ProfileId))).All(ctx)
 }
 
 // Amount is the resolver for the amount field.
@@ -118,10 +132,12 @@ func (r *Resolver) CreateTransactionInput() CreateTransactionInputResolver {
 	return &createTransactionInputResolver{r}
 }
 
-type accountResolver struct{ *Resolver }
-type profileResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type transactionResolver struct{ *Resolver }
-type createAccountInputResolver struct{ *Resolver }
-type createProfileInputResolver struct{ *Resolver }
-type createTransactionInputResolver struct{ *Resolver }
+type (
+	accountResolver                struct{ *Resolver }
+	profileResolver                struct{ *Resolver }
+	queryResolver                  struct{ *Resolver }
+	transactionResolver            struct{ *Resolver }
+	createAccountInputResolver     struct{ *Resolver }
+	createProfileInputResolver     struct{ *Resolver }
+	createTransactionInputResolver struct{ *Resolver }
+)
