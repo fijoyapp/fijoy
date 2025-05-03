@@ -20,33 +20,35 @@ type Section = {
 };
 
 export default function AccountListView({ accounts }: AccountListProps) {
-  const { liabilities, liquidities, investments, properties, receivables } =
-    useMemo(() => accountsGroupBy(accounts), [accounts]);
+  const { liability, liquidity, investment, property, receivable } = useMemo(
+    () => accountsGroupBy(accounts),
+    [accounts],
+  );
 
   const sections: Section[] = [
     {
       name: "Liquidity",
-      accounts: liquidities,
+      accounts: liquidity,
       card: LiquidityCard,
     },
     {
       name: "Investment",
-      accounts: investments,
+      accounts: investment,
       card: InvestmentCard,
     },
     {
       name: "Property",
-      accounts: properties,
+      accounts: property,
       card: PropertyCard,
     },
     {
       name: "Receivable",
-      accounts: receivables,
+      accounts: receivable,
       card: ReceivableCard,
     },
     {
       name: "Liability",
-      accounts: liabilities,
+      accounts: liability,
       card: LiabilityCard,
     },
   ];

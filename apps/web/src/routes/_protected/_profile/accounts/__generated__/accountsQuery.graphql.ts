@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fa769cc1df62291113e83b6a71947c63>>
+ * @generated SignedSource<<1ed2db58cd6613482d0ef99dd863bebc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -110,12 +110,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "c2ba8178eac18044e42fff772400146b",
+    "cacheID": "f41a611d4541c7e42917751bb3522a06",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery {\n  accounts {\n    ...accountsFragment\n    id\n  }\n}\n\nfragment accountsFragment on Account {\n  ...cardFragment\n  accountType\n  balance\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n"
+    "text": "query accountsQuery {\n  accounts {\n    ...accountsFragment\n    id\n  }\n}\n\nfragment accountsFragment on Account {\n  ...cardFragment\n  id\n  accountType\n  balance\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n"
   }
 };
 

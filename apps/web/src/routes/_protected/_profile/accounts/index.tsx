@@ -88,6 +88,7 @@ function Page() {
 const AccountsFragment = graphql`
   fragment accountsFragment on Account @relay(plural: true) {
     ...cardFragment
+    id
     accountType
     balance
   }
