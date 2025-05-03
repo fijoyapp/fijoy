@@ -10,7 +10,6 @@ import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
 import { useEffect, useRef } from "react";
 import { createProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
-import { useProfile } from "@/hooks/use-profile";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
@@ -19,7 +18,6 @@ const formSchema = z.object({
 
 const FinalStep = () => {
   const router = useRouter();
-  const { refresh } = useProfile();
 
   const { currencyStepData, goalStepData, reset } = useSetupStore(
     useShallow((state) => ({
@@ -39,7 +37,7 @@ const FinalStep = () => {
 
   const createProfileMut = useMutation(createProfile, {
     onSuccess: async () => {
-      refresh();
+      router.invalidate();
       // router.navigate({
       //   to: "/home",
       // });
