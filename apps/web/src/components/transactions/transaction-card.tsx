@@ -7,8 +7,8 @@ import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { useProfile } from "@/hooks/use-profile";
 import { match } from "ts-pattern";
 import { AccountSymbolType } from "@/gen/proto/fijoy/v1/account_pb";
-import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 import { Fragment } from "react/jsx-runtime";
+import { profileQuery } from "@/lib/queries/__generated__/profileQuery.graphql";
 
 type Props = {
   transaction: Transaction;
@@ -48,7 +48,7 @@ function ValueDisplay({
   profile,
 }: {
   transaction: Transaction;
-  profile: Profile;
+  profile: profileQuery["response"]["profile"];
 }) {
   return (
     <Fragment>

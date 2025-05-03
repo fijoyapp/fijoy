@@ -2,7 +2,6 @@ import { CardContent } from "@/components/ui/card";
 import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
-import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { PiggyBank } from "lucide-react";
 import { useFragment } from "react-relay";
 import { CardFragment } from "../card-fragment";
@@ -41,7 +40,7 @@ export function LiquidityCard({ account }: LiquidityCardProps) {
           })}
         </div>
         <div className="text-muted-foreground text-xs">
-          {getPrettyTime(timestampDate(data.updatedAt!))}
+          {getPrettyTime(new Date(data.updatedAt))}
         </div>
       </div>
     </CardContent>
