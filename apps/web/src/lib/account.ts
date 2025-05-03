@@ -1,28 +1,28 @@
-import { Account, AccountType } from "@/gen/proto/fijoy/v1/account_pb";
+import { accountsFragment$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsFragment.graphql";
 import currency from "currency.js";
 import _ from "lodash";
 
-export function accountsGroupBy(accounts: Account[]) {
+export function accountsGroupBy(accounts: accountsFragment$data) {
   const groups = _.groupBy(accounts, (account) => account.accountType);
 
   return {
-    liquidities: groups[AccountType.LIQUIDITY] || [],
-    investments: groups[AccountType.INVESTMENT] || [],
-    properties: groups[AccountType.PROPERTY] || [],
-    receivables: groups[AccountType.RECEIVABLE] || [],
-    liabilities: groups[AccountType.LIABILITY] || [],
+    liquidities: groups["liquidity"] || [],
+    investments: groups["investment"] || [],
+    properties: groups["property"] || [],
+    receivables: groups["receivable"] || [],
+    liabilities: groups["liability"] || [],
   };
 }
 
 export const POSITIVE_ACCOUNT_TYPES = [
-  AccountType.LIQUIDITY,
-  AccountType.INVESTMENT,
-  AccountType.PROPERTY,
-  AccountType.RECEIVABLE,
+  "liquidity",
+  "investment",
+  "property",
+  "receivable",
 ];
-export const NEGATIVE_ACCOUNT_TYPES = [AccountType.LIABILITY];
+export const NEGATIVE_ACCOUNT_TYPES = ["liability"];
 
-export function getOverallStats(accounts: Account[]) {
+export function getOverallStats(accounts: accountsFragment$data) {
   const asset = accounts.reduce((acc, account) => {
     if (POSITIVE_ACCOUNT_TYPES.includes(account.accountType)) {
       return acc.add(currency(account.balance));
