@@ -137,8 +137,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
       '@t3-oss/env-core':
-        specifier: ^0.12.0
-        version: 0.12.0(typescript@5.8.3)(zod@3.24.3)
+        specifier: ^0.13.4
+        version: 0.13.4(arktype@2.1.20)(typescript@5.8.3)(zod@3.24.3)
       '@tanstack/react-query':
         specifier: ^5.75.1
         version: 5.75.1(react@18.3.1)
@@ -179,8 +179,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       lucide-react:
-        specifier: ^0.487.0
-        version: 0.487.0(react@18.3.1)
+        specifier: ^0.507.0
+        version: 0.507.0(react@18.3.1)
       neverthrow:
         specifier: ^8.2.0
         version: 8.2.0
@@ -200,8 +200,8 @@ importers:
         specifier: ^7.56.2
         version: 7.56.2(react@18.3.1)
       react-relay:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.3.1)
+        specifier: ^19.0.0
+        version: 19.0.0(react@18.3.1)
       react-resizable-panels:
         specifier: ^2.1.9
         version: 2.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -212,8 +212,8 @@ importers:
         specifier: ^2.15.3
         version: 2.15.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       relay-runtime:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^19.0.0
+        version: 19.0.0
       sonner:
         specifier: ^2.0.3
         version: 2.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -297,8 +297,8 @@ importers:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.3)
       babel-plugin-relay:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^19.0.0
+        version: 19.0.0
       eslint:
         specifier: ^9.26.0
         version: 9.26.0(jiti@2.4.2)
@@ -324,8 +324,8 @@ importers:
         specifier: ^0.6.11
         version: 0.6.11(prettier@3.5.3)
       relay-compiler:
-        specifier: ^18.2.0
-        version: 18.2.0
+        specifier: ^19.0.0
+        version: 19.0.0
       serve:
         specifier: ^14.2.4
         version: 14.2.4
@@ -343,7 +343,7 @@ importers:
         version: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1)
       vite-plugin-relay:
         specifier: ^2.1.0
-        version: 2.1.0(babel-plugin-relay@18.2.0)(vite@6.3.4(@types/node@20.17.32)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1))
+        version: 2.1.0(babel-plugin-relay@19.0.0)(vite@6.3.4(@types/node@20.17.32)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1))
       vitest:
         specifier: ^3.1.2
         version: 3.1.2(@types/node@20.17.32)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1)
@@ -368,6 +368,12 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@ark/schema@0.46.0':
+    resolution: {integrity: sha512-c2UQdKgP2eqqDArfBqQIJppxJHvNNXuQPeuSPlDML4rjw+f1cu0qAlzOG4b8ujgm9ctIDWwhpyw6gjG5ledIVQ==}
+
+  '@ark/util@0.46.0':
+    resolution: {integrity: sha512-JPy/NGWn/lvf1WmGCPw2VGpBg5utZraE84I7wli18EDF3p3zc/e9WolT35tINeZO3l7C77SjqRJeAUoT0CvMRg==}
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -1679,12 +1685,13 @@ packages:
     resolution: {integrity: sha512-eIIIHqVOTO0m7+3aTg//gVi11XNpKi4G0xA45hjz46UmRiToVfqgBH7Dsn1qRrDxa7YPYCdREQkyGEINlElT2A==}
     engines: {node: '>= 14'}
 
-  '@t3-oss/env-core@0.12.0':
-    resolution: {integrity: sha512-lOPj8d9nJJTt81mMuN9GMk8x5veOt7q9m11OSnCBJhwp1QrL/qR+M8Y467ULBSm9SunosryWNbmQQbgoiMgcdw==}
+  '@t3-oss/env-core@0.13.4':
+    resolution: {integrity: sha512-zVOiYO0+CF7EnBScz8s0O5JnJLPTU0lrUi8qhKXfIxIJXvI/jcppSiXXsEJwfB4A6XZawY/Wg/EQGKANi/aPmQ==}
     peerDependencies:
+      arktype: ^2.1.0
       typescript: '>=5.0.0'
       valibot: ^1.0.0-beta.7 || ^1.0.0
-      zod: ^3.24.0
+      zod: ^3.24.0 || ^4.0.0-beta.0
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -2177,6 +2184,9 @@ packages:
     resolution: {integrity: sha512-y+CcFFwelSXpLZk/7fMB2mUbGtX9lKycf1MWJ7CaTIERyitVlyQx6C+sxcROU2BAJ24OiZyK+8wj2i8AlBoS3A==}
     engines: {node: '>=10'}
 
+  arktype@2.1.20:
+    resolution: {integrity: sha512-IZCEEXaJ8g+Ijd59WtSYwtjnqXiwM8sWQ5EjGamcto7+HVN9eK0C4p0zDlCuAwWhpqr6fIBkxPuYDl4/Mcj/+Q==}
+
   array-ify@1.0.0:
     resolution: {integrity: sha512-c5AMf34bKdvPhQ7tBGhqkgKNUzMr4WUs+WDtC2ZUGOUncbxKMTvqxYctiseW3+L4bA8ec+GcZ6/A/FW4m8ukng==}
 
@@ -2204,8 +2214,8 @@ packages:
   babel-plugin-macros@2.8.0:
     resolution: {integrity: sha512-SEP5kJpfGYqYKpBrj5XU3ahw5p5GOHJ0U5ssOSQ/WBVdwkD2Dzlce95exQTs3jOVWPPKLBN2rlEWkCK7dSmLvg==}
 
-  babel-plugin-relay@18.2.0:
-    resolution: {integrity: sha512-icTICGxKvlmhOvw+MESI/xBsY3J+vsNzgyq6/FL2c/hMnsYJ10IIM6Nps4M3cdUxQfS9CCUTXsbz2/kfmYLzhQ==}
+  babel-plugin-relay@19.0.0:
+    resolution: {integrity: sha512-7K0UnVyagSgzexy28KcEGu18/ms8wgJd2AufZshiKEaZXH/5XwtK2sh+6wKj/8U7xTGSudBuze39Se+CxSlxsw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3273,8 +3283,8 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
-  lucide-react@0.487.0:
-    resolution: {integrity: sha512-aKqhOQ+YmFnwq8dWgGjOuLc8V1R9/c/yOd+zDY4+ohsR2Jo05lSGc3WsstYPIzcTpeosN7LoCkLReUUITvaIvw==}
+  lucide-react@0.507.0:
+    resolution: {integrity: sha512-XfgE6gvAHwAtnbUvWiTTHx4S3VGR+cUJHEc0vrh9Ogu672I1Tue2+Cp/8JJqpytgcBHAB1FVI297W4XGNwc2dQ==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -3720,10 +3730,10 @@ packages:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
 
-  react-relay@18.2.0:
-    resolution: {integrity: sha512-/yHlv4pj3IQQPtDzYLfVk6P4wrOSvYPu/5ySPcRp4xV3pn9xoVOHVczSLcZkRVf72lJu8CIjoT8rn3roaGoFyQ==}
+  react-relay@19.0.0:
+    resolution: {integrity: sha512-OaUISVLUTjfBL1tGBtmt3eDZC+KFnP4QIHq0HDacm7ntiZPgAt+udYs3zapuc8hN65wlRruaLKrWc6P/ZQRlSg==}
     peerDependencies:
-      react: ^16.9.0 || ^17 || ^18
+      react: ^16.9.0 || ^17 || ^18 || ^19
 
   react-remove-scroll-bar@2.3.8:
     resolution: {integrity: sha512-9r+yi9+mgU33AKcj6IbT9oRCO78WriSj6t/cF8DWBZJ9aOGPOTEDvdUDz1FwKim7QXWwmHqtdHnRJfhAxEG46Q==}
@@ -3803,12 +3813,12 @@ packages:
     resolution: {integrity: sha512-ZbgR5aZEdf4UKZVBPYIgaglBmSF2Hi94s2PcIHhRGFjKYu+chjJdYfHn4rt3hB6eCKLJ8giVIIfgMa1ehDfZKA==}
     engines: {node: '>=0.10.0'}
 
-  relay-compiler@18.2.0:
-    resolution: {integrity: sha512-P3o5/Gv/oLC9hckUaz/a+KvDgbFERpjtz5lgsJSIQILg9paaF3k1yaX9qSxErGuU4icZvjoK5G82a/bfPgGZpA==}
+  relay-compiler@19.0.0:
+    resolution: {integrity: sha512-DwyNWPUkzdggT3oBuNTS18bL6KCU3Sg/oSW/q+pqOQNHLo+RUZOWAx44ALy5XoBrsXjQVBr0EiNqJ4A8G1skOw==}
     hasBin: true
 
-  relay-runtime@18.2.0:
-    resolution: {integrity: sha512-r4FYWlx1dPwFW+KQnuF1ugwVKR4toIFduCGheEf2paRc6nEEcCIgd2p2Jx2gRF+4niO3mCbRZvqdCoKaznUDzg==}
+  relay-runtime@19.0.0:
+    resolution: {integrity: sha512-uQqizN6d/7ZkTm2C0sTUAFfHk65BQEFLkfp0IBsXPTsXLL3fAJ2iHkemA621vuphtiKsF06C5ZKxypmC5lduFg==}
 
   remove-trailing-separator@1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
@@ -4402,6 +4412,12 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
+
+  '@ark/schema@0.46.0':
+    dependencies:
+      '@ark/util': 0.46.0
+
+  '@ark/util@0.46.0': {}
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -5732,7 +5748,9 @@ snapshots:
       - encoding
       - supports-color
 
-  '@t3-oss/env-core@0.12.0(typescript@5.8.3)(zod@3.24.3)':
+  '@t3-oss/env-core@0.13.4(arktype@2.1.20)(typescript@5.8.3)(zod@3.24.3)':
+    dependencies:
+      arktype: 2.1.20
     optionalDependencies:
       typescript: 5.8.3
       zod: 3.24.3
@@ -6286,6 +6304,11 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  arktype@2.1.20:
+    dependencies:
+      '@ark/schema': 0.46.0
+      '@ark/util': 0.46.0
+
   array-ify@1.0.0: {}
 
   array-union@2.1.0: {}
@@ -6319,7 +6342,7 @@ snapshots:
       cosmiconfig: 6.0.0
       resolve: 1.22.10
 
-  babel-plugin-relay@18.2.0:
+  babel-plugin-relay@19.0.0:
     dependencies:
       babel-plugin-macros: 2.8.0
       cosmiconfig: 5.2.1
@@ -7380,7 +7403,7 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.487.0(react@18.3.1):
+  lucide-react@0.507.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -7710,14 +7733,14 @@ snapshots:
 
   react-refresh@0.17.0: {}
 
-  react-relay@18.2.0(react@18.3.1):
+  react-relay@19.0.0(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.27.1
       fbjs: 3.0.5
       invariant: 2.2.4
       nullthrows: 1.1.1
       react: 18.3.1
-      relay-runtime: 18.2.0
+      relay-runtime: 19.0.0
     transitivePeerDependencies:
       - encoding
 
@@ -7808,9 +7831,9 @@ snapshots:
     dependencies:
       rc: 1.2.8
 
-  relay-compiler@18.2.0: {}
+  relay-compiler@19.0.0: {}
 
-  relay-runtime@18.2.0:
+  relay-runtime@19.0.0:
     dependencies:
       '@babel/runtime': 7.27.1
       fbjs: 3.0.5
@@ -8257,10 +8280,10 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-relay@2.1.0(babel-plugin-relay@18.2.0)(vite@6.3.4(@types/node@20.17.32)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1)):
+  vite-plugin-relay@2.1.0(babel-plugin-relay@19.0.0)(vite@6.3.4(@types/node@20.17.32)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1)):
     dependencies:
       '@babel/core': 7.27.1
-      babel-plugin-relay: 18.2.0
+      babel-plugin-relay: 19.0.0
       vite: 6.3.4(@types/node@20.17.32)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.4)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
