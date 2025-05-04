@@ -24,7 +24,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
 import { graphql } from "relay-runtime";
-import { useLazyLoadQuery } from "react-relay";
+import { loadQuery, useLazyLoadQuery } from "react-relay";
 import { currencyQuery } from "./__generated__/currencyQuery.graphql";
 
 const CurrencyQuery = graphql`
@@ -38,13 +38,14 @@ const CurrencyQuery = graphql`
 export const Route = createFileRoute("/_protected/_profile/settings/currency/")(
   {
     component: Page,
-    // loader: (opts) => {
-    //   opts.context.queryClient.ensureQueryData(
-    //     getCurrenciesQueryOptions({
-    //       context: opts.context,
-    //     }),
-    //   );
-    // },
+    loader: ({ context }) => {
+      loadQuery(
+        context.environment,
+        CurrencyQuery,
+        {},
+        { fetchPolicy: "store-or-network" },
+      );
+    },
   },
 );
 
