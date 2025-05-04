@@ -46,7 +46,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"

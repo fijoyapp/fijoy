@@ -7,7 +7,7 @@ import (
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 

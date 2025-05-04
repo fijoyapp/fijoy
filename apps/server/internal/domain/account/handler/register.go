@@ -5,7 +5,7 @@ import (
 	"fijoy/internal/domain/account/usecase"
 	"fijoy/proto/fijoy/v1/fijoyv1connect"
 
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 )
