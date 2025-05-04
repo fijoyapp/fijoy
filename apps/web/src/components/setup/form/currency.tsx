@@ -28,12 +28,12 @@ import { Button } from "@/components/ui/button";
 import { currencyCodeToName } from "@/config/currency";
 import { cn } from "@/lib/utils";
 import { getCurrencyDisplay } from "@/lib/money";
-import { graphql } from "relay-runtime";
 import { useFragment } from "react-relay";
 import {
   currencyFragment$data,
   currencyFragment$key,
-} from "./__generated__/currencyFragment.graphql";
+} from "@/lib/queries/__generated__/currencyFragment.graphql";
+import { CurrencyFragment } from "@/lib/queries/currency";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -42,13 +42,6 @@ type CurrencyFieldProps<T extends FieldValues> = {
   onValueChange: (value: string[]) => void;
   defaultValues?: string[];
 };
-
-const CurrencyFragment = graphql`
-  fragment currencyFragment on Currency @relay(plural: true) {
-    code
-    locale
-  }
-`;
 
 export function CurrencyField<T extends FieldValues>({
   control,
