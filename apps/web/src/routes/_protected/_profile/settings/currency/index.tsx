@@ -14,13 +14,10 @@ import { z, type TypeOf } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormMessage } from "@/components/ui/form";
-import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+import { useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
-import {
-  getProfile,
-  updateProfile,
-} from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
+import { updateProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
 import { graphql } from "relay-runtime";
@@ -59,7 +56,7 @@ const variants = {
 };
 
 function Page() {
-  const { queryClient, profile } = Route.useRouteContext();
+  const { profile } = Route.useRouteContext();
 
   const data = useLazyLoadQuery<currencyQuery>(CurrencyQuery, {});
 
@@ -72,12 +69,6 @@ function Page() {
 
   const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getProfile,
-          cardinality: "finite",
-        }),
-      });
       toast.success("Currency settings updated");
     },
     onError(error) {
