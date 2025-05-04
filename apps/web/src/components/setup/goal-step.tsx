@@ -8,12 +8,14 @@ import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
 import { type TypeOf } from "zod";
 import { MoneyField } from "./form/money";
-import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
+import { currencyFragment$key } from "@/lib/queries/__generated__/currencyFragment.graphql";
+import { CurrencyFragment } from "@/lib/queries/currency";
+import { useFragment } from "react-relay";
 
 const formSchema = GoalStepData;
 
 type GoalStepProps = {
-  currencies: Currency[];
+  currencies: currencyFragment$key;
 };
 
 const GoalStep = ({ currencies }: GoalStepProps) => {
@@ -26,6 +28,8 @@ const GoalStep = ({ currencies }: GoalStepProps) => {
       currencyStepData: state.currencyStepData,
     })),
   );
+
+  const data = useFragment(CurrencyFragment, currencies);
 
   const form = useForm<TypeOf<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,7 +49,7 @@ const GoalStep = ({ currencies }: GoalStepProps) => {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
   }
 
-  const locale = currencies.find(
+  const locale = data.find(
     (currency) => currency.code === currencyStepData.currencies[0],
   )!.locale;
 
