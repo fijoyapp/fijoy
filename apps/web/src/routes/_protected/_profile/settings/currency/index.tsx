@@ -23,19 +23,28 @@ import {
 } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
-import { getCurrenciesQueryOptions } from "@/lib/queries/currency";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { graphql } from "relay-runtime";
+import { useLazyLoadQuery } from "react-relay";
+import { currencyQuery } from "./__generated__/currencyQuery.graphql";
+
+const CurrencyQuery = graphql`
+  query currencyQuery {
+    currencies {
+      ...currencyFragment
+    }
+  }
+`;
 
 export const Route = createFileRoute("/_protected/_profile/settings/currency/")(
   {
     component: Page,
-    loader: (opts) => {
-      opts.context.queryClient.ensureQueryData(
-        getCurrenciesQueryOptions({
-          context: opts.context,
-        }),
-      );
-    },
+    // loader: (opts) => {
+    //   opts.context.queryClient.ensureQueryData(
+    //     getCurrenciesQueryOptions({
+    //       context: opts.context,
+    //     }),
+    //   );
+    // },
   },
 );
 
@@ -51,20 +60,14 @@ const variants = {
 function Page() {
   const { queryClient, profile } = Route.useRouteContext();
 
+  const data = useLazyLoadQuery<currencyQuery>(CurrencyQuery, {});
+
   const form = useForm<TypeOf<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),
     defaultValues: {
       currencies: profile.profile.currencies.split(","),
     },
   });
-
-  const context = Route.useRouteContext();
-
-  const { data: currencyList } = useSuspenseQuery(
-    getCurrenciesQueryOptions({
-      context,
-    }),
-  );
 
   const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
@@ -123,7 +126,7 @@ function Page() {
                 <CurrencyField
                   control={form.control}
                   name="currencies"
-                  currencies={currencyList.items}
+                  currencies={data.currencies}
                   defaultValues={profile.profile.currencies.split(",")}
                   onValueChange={(value) => {
                     form.setValue("currencies", value);

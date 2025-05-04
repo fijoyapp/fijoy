@@ -1,4 +1,10 @@
 extend type Query {
   profile: Profile!
   user: User!
+  currencies: [Currency!]!
+}
+
+type Currency {
+  code: String!
+  locale: String!
 }

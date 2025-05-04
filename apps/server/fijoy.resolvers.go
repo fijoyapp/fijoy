@@ -6,10 +6,13 @@ package fijoy
 
 import (
 	"context"
+	"fijoy/constants"
 	"fijoy/ent"
 	"fijoy/ent/profile"
 	"fijoy/ent/user"
 	"fijoy/internal/util/auth"
+
+	"github.com/samber/lo"
 )
 
 // Profile is the resolver for the profile field.
@@ -30,4 +33,16 @@ func (r *queryResolver) User(ctx context.Context) (*ent.User, error) {
 	}
 
 	return r.client.User.Query().Where(user.ID(authData.UserId)).Only(ctx)
+}
+
+// Currencies is the resolver for the currencies field.
+func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
+	currencies := lo.Map(lo.Values(constants.Currencies),
+		func(currency constants.Currency, _ int) *Currency {
+			return &Currency{
+				Code: currency.Code, Locale: currency.Locale,
+			}
+		})
+
+	return currencies, nil
 }
