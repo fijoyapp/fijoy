@@ -172,8 +172,7 @@ type Query {
   transactions: [Transaction!]!
   profile: Profile!
   user: User!
-  users: [User!]!
-  userKeys: [UserKey!]!
+  currencies: [Currency!]!
 }
 
 """The builtin Time type"""
@@ -203,6 +202,11 @@ type UserKey implements Node {
   id: ID!
   hashedPassword: String
   user: User!
+}
+
+type Currency {
+  code: String!
+  locale: String!
 }
 
 schema {

@@ -44,9 +44,9 @@ import (
 
 	health_handler "fijoy/internal/domain/health/handler"
 
+	"buf.build/go/protovalidate"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"buf.build/go/protovalidate"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"

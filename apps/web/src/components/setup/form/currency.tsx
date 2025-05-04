@@ -21,7 +21,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
 import { useEffect, useState } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ChevronsUpDown, Trash } from "lucide-react";
@@ -29,14 +28,27 @@ import { Button } from "@/components/ui/button";
 import { currencyCodeToName } from "@/config/currency";
 import { cn } from "@/lib/utils";
 import { getCurrencyDisplay } from "@/lib/money";
+import { graphql } from "relay-runtime";
+import { useFragment } from "react-relay";
+import {
+  currencyFragment$data,
+  currencyFragment$key,
+} from "./__generated__/currencyFragment.graphql";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
-  currencies: Currency[];
+  currencies: currencyFragment$key;
   onValueChange: (value: string[]) => void;
   defaultValues?: string[];
 };
+
+const CurrencyFragment = graphql`
+  fragment currencyFragment on Currency @relay(plural: true) {
+    code
+    locale
+  }
+`;
 
 export function CurrencyField<T extends FieldValues>({
   control,
@@ -45,6 +57,8 @@ export function CurrencyField<T extends FieldValues>({
   onValueChange,
   defaultValues,
 }: CurrencyFieldProps<T>) {
+  const data = useFragment(CurrencyFragment, currencies);
+
   const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>(
     defaultValues || [],
   );
@@ -52,16 +66,14 @@ export function CurrencyField<T extends FieldValues>({
   const allowChangeDefault = defaultValues === undefined;
 
   const [selectableCurrencies, setSelectableCurrencies] =
-    useState<Currency[]>(currencies);
+    useState<currencyFragment$data>(data);
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     setSelectableCurrencies(
-      currencies.filter(
-        (currency) => !selectedCurrencies.includes(currency.code),
-      ),
+      data.filter((currency) => !selectedCurrencies.includes(currency.code)),
     );
     onValueChange(selectedCurrencies);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,7 +153,7 @@ export function CurrencyField<T extends FieldValues>({
           </Popover>
 
           {selectedCurrencies.map((curr, idx) => {
-            const locale = currencies.find(
+            const locale = data.find(
               (currency) => currency.code === selectedCurrencies[0],
             )!.locale;
             return (
