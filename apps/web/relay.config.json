@@ -2,5 +2,6 @@
   "src": "./src",
   "language": "typescript",
   "schema": "../server/relay.graphql",
-  "excludes": ["**/node_modules/**", "**/__mocks__/**", "**/__generated__/**"]
+  "excludes": ["**/node_modules/**", "**/__mocks__/**", "**/__generated__/**"],
+  "eagerEsModules": true
 }
