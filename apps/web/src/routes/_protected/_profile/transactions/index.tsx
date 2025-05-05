@@ -11,9 +11,11 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
 import { graphql } from "relay-runtime";
-import { loadQuery, useFragment, useLazyLoadQuery } from "react-relay";
-import { transactionsQuery } from "./__generated__/transactionsQuery.graphql";
-import { transactionsFragment$key } from "./__generated__/transactionsFragment.graphql";
+import { loadQuery, useLazyLoadQuery } from "react-relay";
+import {
+  transactionsQuery,
+  transactionsQuery$data,
+} from "./__generated__/transactionsQuery.graphql";
 
 export const Route = createFileRoute("/_protected/_profile/transactions/")({
   loader: ({ context }) => {
@@ -31,22 +33,8 @@ export const Route = createFileRoute("/_protected/_profile/transactions/")({
 const TransactionsQuery = graphql`
   query transactionsQuery {
     transactions {
-      ...transactionsFragment
-    }
-  }
-`;
-
-const TransactionsFragment = graphql`
-  fragment transactionsFragment on Transaction @relay(plural: true) {
-    id
-    note
-    amount
-    datetime
-    createdAt
-    updatedAt
-    account {
-      symbol
-      symbolType
+      id
+      ...transactionCardFragment
     }
   }
 `;
@@ -73,22 +61,24 @@ function Page() {
 function TransactionList({
   transactions,
 }: {
-  transactions: transactionsFragment$key;
+  transactions: transactionsQuery$data["transactions"];
 }) {
-  const data = useFragment(TransactionsFragment, transactions);
   return (
     <Card className="">
-      {data.map((transaction, idx) => {
+      {transactions.map((transaction, idx) => {
         if (idx === 0) {
           return (
-            <TransactionCard transaction={transaction} key={transaction.id} />
+            <TransactionCard
+              transactionRef={transaction}
+              key={transaction.id}
+            />
           );
         }
 
         return (
           <Fragment key={transaction.id}>
             <Separator className="" />
-            <TransactionCard transaction={transaction} />
+            <TransactionCard transactionRef={transaction} />
           </Fragment>
         );
       })}

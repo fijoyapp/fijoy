@@ -7,16 +7,17 @@ import { LiabilityCard } from "./liability/card";
 import { PropertyCard } from "./property/card";
 import { ReceivableCard } from "./receivable/card";
 import { InvestmentCard } from "./investment/card";
-import { accountsFragment$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsFragment.graphql";
+import { accountsQuery$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsQuery.graphql";
+import { cardFragment$key } from "./__generated__/cardFragment.graphql";
 
 type AccountListProps = {
-  accounts: accountsFragment$data;
+  accounts: accountsQuery$data;
 };
 
 type Section = {
   name: string;
-  accounts: accountsFragment$data;
-  card: React.FC<{ account: accountsFragment$data[number] }>;
+  accounts: accountsQuery$data["accounts"];
+  card: React.FC<{ account: cardFragment$key }>;
 };
 
 export default function AccountListView({ accounts }: AccountListProps) {

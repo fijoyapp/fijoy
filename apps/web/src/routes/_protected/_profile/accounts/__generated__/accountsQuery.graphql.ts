@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1ed2db58cd6613482d0ef99dd863bebc>>
+ * @generated SignedSource<<b927ca25eeb9ae411c0bbf247eb416ca>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,10 +10,14 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
+export type AccountAccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 export type accountsQuery$variables = Record<PropertyKey, never>;
 export type accountsQuery$data = {
   readonly accounts: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"accountsFragment">;
+    readonly accountType: AccountAccountType;
+    readonly balance: string;
+    readonly id: string;
+    readonly " $fragmentSpreads": FragmentRefs<"cardFragment">;
   }>;
 };
 export type accountsQuery = {
@@ -21,7 +25,29 @@ export type accountsQuery = {
   variables: accountsQuery$variables;
 };
 
-const node: ConcreteRequest = {
+const node: ConcreteRequest = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "accountType",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "balance",
+  "storageKey": null
+};
+return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -36,10 +62,13 @@ const node: ConcreteRequest = {
         "name": "accounts",
         "plural": true,
         "selections": [
+          (v0/*: any*/),
+          (v1/*: any*/),
+          (v2/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "accountsFragment"
+            "name": "cardFragment"
           }
         ],
         "storageKey": null
@@ -62,32 +91,14 @@ const node: ConcreteRequest = {
         "name": "accounts",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
+          (v0/*: any*/),
+          (v1/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
             "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "balance",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "accountType",
             "storageKey": null
           },
           {
@@ -110,15 +121,16 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "f41a611d4541c7e42917751bb3522a06",
+    "cacheID": "fd055fe2e07bfb5047d6ef16407036e2",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery {\n  accounts {\n    ...accountsFragment\n    id\n  }\n}\n\nfragment accountsFragment on Account {\n  ...cardFragment\n  id\n  accountType\n  balance\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n"
+    "text": "query accountsQuery {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n"
   }
 };
+})();
 
-(node as any).hash = "9c0be7d18a094c0601feaaa15d6916ff";
+(node as any).hash = "c82aa361b77c285a38fd9702c49e16cd";
 
 export default node;
