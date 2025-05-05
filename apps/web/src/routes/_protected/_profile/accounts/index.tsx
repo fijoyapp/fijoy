@@ -72,10 +72,6 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
 });
 
 function Page() {
-  // const context = Route.useRouteContext();
-  // const { data: accountList } = useSuspenseQuery(
-  //   getAccountsQueryOptions({ context }),
-  // );
   const { add, detail } = Route.useSearch();
 
   const data = useLazyLoadQuery<accountsQuery>(AccountsQuery, {});
@@ -90,15 +86,6 @@ function Page() {
     </>
   );
 }
-
-// const AccountsFragment = graphql`
-//   fragment accountsFragment on Account @relay(plural: true) {
-//     ...cardFragment
-//     id
-//     accountType
-//     balance
-//   }
-// `;
 
 type AccountsViewProps = {
   accounts: accountsQuery$data;
