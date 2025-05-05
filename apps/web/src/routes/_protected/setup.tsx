@@ -12,7 +12,7 @@ import CurrencyStep from "@/components/setup/currency-step";
 import FinalStep from "@/components/setup/final-step";
 import GoalStep from "@/components/setup/goal-step";
 import { graphql } from "relay-runtime";
-import { useLazyLoadQuery } from "react-relay";
+import { loadQuery, usePreloadedQuery } from "react-relay";
 import { setupQuery } from "./__generated__/setupQuery.graphql";
 
 const setupSearchSchema = z.object({
@@ -31,20 +31,23 @@ export const Route = createFileRoute("/_protected/setup")({
   validateSearch: (search) => {
     return setupSearchSchema.parse(search);
   },
-  // loader: (opts) => {
-  //   opts.context.queryClient.ensureQueryData(
-  //     getCurrenciesQueryOptions({
-  //       context: opts.context,
-  //     }),
-  //   );
-  // },
+  loader: ({ context }) => {
+    const setupQueryRef = loadQuery<setupQuery>(
+      context.environment,
+      SetupQuery,
+      {},
+      { fetchPolicy: "store-or-network" },
+    );
+    return { setupQueryRef };
+  },
   component: Setup,
 });
 
 function Setup() {
   const { step } = Route.useSearch();
 
-  const data = useLazyLoadQuery<setupQuery>(SetupQuery, {});
+  const { setupQueryRef } = Route.useLoaderData();
+  const data = usePreloadedQuery(SetupQuery, setupQueryRef);
 
   return (
     <div className="container max-w-(--breakpoint-2xl)">

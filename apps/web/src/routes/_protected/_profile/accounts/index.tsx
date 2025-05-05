@@ -32,7 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import NetWorthInfo from "@/components/accounts/net-worth-info";
 import AccountListView from "@/components/accounts/account-list-view";
 import { graphql } from "relay-runtime";
-import { loadQuery, useLazyLoadQuery } from "react-relay";
+import { loadQuery, usePreloadedQuery } from "react-relay";
 import {
   accountsQuery,
   accountsQuery$data,
@@ -60,12 +60,13 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
     return accountsRouteSchema.parse(search);
   },
   loader: ({ context }) => {
-    loadQuery(
+    const accountsQueryRef = loadQuery<accountsQuery>(
       context.environment,
       AccountsQuery,
       {},
       { fetchPolicy: "store-or-network" },
     );
+    return { accountsQueryRef };
   },
   pendingComponent: CenterLoadingSpinner,
   component: Page,
@@ -74,7 +75,9 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
 function Page() {
   const { add, detail } = Route.useSearch();
 
-  const data = useLazyLoadQuery<accountsQuery>(AccountsQuery, {});
+  const { accountsQueryRef } = Route.useLoaderData();
+
+  const data = usePreloadedQuery(AccountsQuery, accountsQueryRef);
 
   return (
     <>

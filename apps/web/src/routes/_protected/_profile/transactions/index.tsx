@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
 import { graphql } from "relay-runtime";
-import { loadQuery, useLazyLoadQuery } from "react-relay";
+import { loadQuery, usePreloadedQuery } from "react-relay";
 import {
   transactionsQuery,
   transactionsQuery$data,
@@ -19,12 +19,15 @@ import {
 
 export const Route = createFileRoute("/_protected/_profile/transactions/")({
   loader: ({ context }) => {
-    loadQuery(
+    const transactionsQueryRef = loadQuery<transactionsQuery>(
       context.environment,
       TransactionsQuery,
       {},
       { fetchPolicy: "store-or-network" },
     );
+    return {
+      transactionsQueryRef,
+    };
   },
   pendingComponent: CenterLoadingSpinner,
   component: Page,
@@ -40,7 +43,8 @@ const TransactionsQuery = graphql`
 `;
 
 function Page() {
-  const data = useLazyLoadQuery<transactionsQuery>(TransactionsQuery, {});
+  const { transactionsQueryRef } = Route.useLoaderData();
+  const data = usePreloadedQuery(TransactionsQuery, transactionsQueryRef);
 
   return (
     <div className="p-4 lg:p-6">
