@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<08c353fbe9bd9f85c0bcce89d81fa621>>
+ * @generated SignedSource<<72a8d3bf85066bc56e1cf150659a13ae>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,8 @@ import { FragmentRefs } from "relay-runtime";
 export type transactionsQuery$variables = Record<PropertyKey, never>;
 export type transactionsQuery$data = {
   readonly transactions: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"transactionsFragment">;
+    readonly id: string;
+    readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment">;
   }>;
 };
 export type transactionsQuery = {
@@ -44,10 +45,11 @@ return {
         "name": "transactions",
         "plural": true,
         "selections": [
+          (v0/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "transactionsFragment"
+            "name": "transactionCardFragment"
           }
         ],
         "storageKey": null
@@ -138,16 +140,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ee1da40ae41226537b845e2a03daf68d",
+    "cacheID": "52c8b506cb2a8ceaa64846698b8d8da3",
     "id": null,
     "metadata": {},
     "name": "transactionsQuery",
     "operationKind": "query",
-    "text": "query transactionsQuery {\n  transactions {\n    ...transactionsFragment\n    id\n  }\n}\n\nfragment transactionsFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    id\n  }\n}\n"
+    "text": "query transactionsQuery {\n  transactions {\n    id\n    ...transactionCardFragment\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "07e431f4d95ce8c36815a244d2b4e695";
+(node as any).hash = "8019f80830107e6347bf3390c6a50a7f";
 
 export default node;

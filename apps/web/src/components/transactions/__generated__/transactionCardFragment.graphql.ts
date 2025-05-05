@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ad848d651caffefb0ab953b848f5f608>>
+ * @generated SignedSource<<b4c500e3b6ccf027ec9fa55d528ebe9d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 export type AccountSymbolType = "crypto" | "currency" | "stock" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type transactionsFragment$data = ReadonlyArray<{
+export type transactionCardFragment$data = {
   readonly account: {
     readonly symbol: string;
     readonly symbolType: AccountSymbolType;
@@ -22,20 +22,18 @@ export type transactionsFragment$data = ReadonlyArray<{
   readonly id: string;
   readonly note: string | null | undefined;
   readonly updatedAt: any;
-  readonly " $fragmentType": "transactionsFragment";
-}>;
-export type transactionsFragment$key = ReadonlyArray<{
-  readonly " $data"?: transactionsFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"transactionsFragment">;
-}>;
+  readonly " $fragmentType": "transactionCardFragment";
+};
+export type transactionCardFragment$key = {
+  readonly " $data"?: transactionCardFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment">;
+};
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": {
-    "plural": true
-  },
-  "name": "transactionsFragment",
+  "metadata": null,
+  "name": "transactionCardFragment",
   "selections": [
     {
       "alias": null,
@@ -109,6 +107,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "a30c64c81e957a600ec9f0c26cc8cbeb";
+(node as any).hash = "b0886e2c18b62a21b5428d522f5aee86";
 
 export default node;

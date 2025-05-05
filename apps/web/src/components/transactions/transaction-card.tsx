@@ -6,14 +6,37 @@ import { useProfile } from "@/hooks/use-profile";
 import { match } from "ts-pattern";
 import { Fragment } from "react/jsx-runtime";
 import { profileQuery } from "@/lib/queries/__generated__/profileQuery.graphql";
-import { transactionsFragment$data } from "@/routes/_protected/_profile/transactions/__generated__/transactionsFragment.graphql";
+import { graphql } from "relay-runtime";
+import {
+  transactionCardFragment$data,
+  transactionCardFragment$key,
+} from "./__generated__/transactionCardFragment.graphql";
+import { useFragment } from "react-relay";
 
 type Props = {
-  transaction: transactionsFragment$data[number];
+  transactionRef: transactionCardFragment$key;
 };
 
-export const TransactionCard = ({ transaction }: Props) => {
+const TransactionCardFragment = graphql`
+  fragment transactionCardFragment on Transaction {
+    id
+    note
+    amount
+    datetime
+    createdAt
+    updatedAt
+    account {
+      symbol
+      symbolType
+    }
+  }
+`;
+
+export const TransactionCard = ({ transactionRef }: Props) => {
   const { profile } = useProfile();
+
+  const transaction = useFragment(TransactionCardFragment, transactionRef);
+
   if (!profile) {
     return null;
   }
@@ -45,7 +68,7 @@ function ValueDisplay({
   transaction,
   profile,
 }: {
-  transaction: transactionsFragment$data[number];
+  transaction: transactionCardFragment$data;
   profile: profileQuery["response"]["profile"];
 }) {
   return (

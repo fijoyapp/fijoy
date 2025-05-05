@@ -32,9 +32,11 @@ import { Separator } from "@/components/ui/separator";
 import NetWorthInfo from "@/components/accounts/net-worth-info";
 import AccountListView from "@/components/accounts/account-list-view";
 import { graphql } from "relay-runtime";
-import { useFragment, useLazyLoadQuery } from "react-relay";
-import { accountsQuery } from "./__generated__/accountsQuery.graphql";
-import { accountsFragment$key } from "./__generated__/accountsFragment.graphql";
+import { loadQuery, useLazyLoadQuery } from "react-relay";
+import {
+  accountsQuery,
+  accountsQuery$data,
+} from "./__generated__/accountsQuery.graphql";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -44,7 +46,10 @@ const accountsRouteSchema = z.object({
 const AccountsQuery = graphql`
   query accountsQuery {
     accounts {
-      ...accountsFragment
+      id
+      accountType
+      balance
+      ...cardFragment
     }
   }
 `;
@@ -54,13 +59,14 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
   validateSearch: (search) => {
     return accountsRouteSchema.parse(search);
   },
-  // loader: (opts) => {
-  //   opts.context.queryClient.ensureQueryData(
-  //     getAccountsQueryOptions({
-  //       context: opts.context,
-  //     }),
-  //   );
-  // },
+  loader: ({ context }) => {
+    loadQuery(
+      context.environment,
+      AccountsQuery,
+      {},
+      { fetchPolicy: "store-or-network" },
+    );
+  },
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
@@ -79,31 +85,29 @@ function Page() {
       {add ? (
         <AddAccount type={add} />
       ) : (
-        <AccountsView accounts={data.accounts} detail={detail} />
+        <AccountsView accounts={data} detail={detail} />
       )}
     </>
   );
 }
 
-const AccountsFragment = graphql`
-  fragment accountsFragment on Account @relay(plural: true) {
-    ...cardFragment
-    id
-    accountType
-    balance
-  }
-`;
+// const AccountsFragment = graphql`
+//   fragment accountsFragment on Account @relay(plural: true) {
+//     ...cardFragment
+//     id
+//     accountType
+//     balance
+//   }
+// `;
 
 type AccountsViewProps = {
-  accounts: accountsFragment$key;
+  accounts: accountsQuery$data;
   detail?: string;
 };
 
 function AccountsView({ accounts, detail }: AccountsViewProps) {
   const isDesktop = useMediaQuery(WIDTH_OPTIONS.lg);
   const sidePanelActive = detail !== undefined;
-
-  const data = useFragment(AccountsFragment, accounts);
 
   return (
     <div className={cn("flex min-h-full w-full", isDesktop ? "" : "")}>
@@ -164,7 +168,7 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
 
         <div className="py-2"></div>
 
-        <AccountListView accounts={data} />
+        <AccountListView accounts={accounts} />
       </div>
 
       {isDesktop && <Separator orientation="vertical" className="min-h-full" />}
@@ -175,7 +179,7 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
           !sidePanelActive && !isDesktop ? "hidden w-1/2" : "",
         )}
       >
-        <NetWorthInfo accounts={data} />
+        <NetWorthInfo accounts={accounts} />
         {/* <div className="py-2"></div> */}
       </div>
     </div>
