@@ -8,3 +8,8 @@ type Currency {
   code: String!
   locale: String!
 }
+
+type Mutation {
+  createProfile(input: CreateProfileInput!): Profile!
+  updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
+}
