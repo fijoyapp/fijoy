@@ -1,6 +1,14 @@
-directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @goField(
+  forceResolver: Boolean
+  name: String
+  omittable: Boolean
+) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 
-directive @goModel(model: String, models: [String!], forceGenerate: Boolean) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+directive @goModel(
+  model: String
+  models: [String!]
+  forceGenerate: Boolean
+) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
 type Account implements Node {
   id: ID!
@@ -19,7 +27,9 @@ type Account implements Node {
   transaction: [Transaction!]
 }
 
-"""AccountAccountType is enum for the field account_type"""
+"""
+AccountAccountType is enum for the field account_type
+"""
 enum AccountAccountType @goModel(model: "fijoy/ent/account.AccountType") {
   liquidity
   investment
@@ -28,7 +38,9 @@ enum AccountAccountType @goModel(model: "fijoy/ent/account.AccountType") {
   liability
 }
 
-"""AccountSymbolType is enum for the field symbol_type"""
+"""
+AccountSymbolType is enum for the field symbol_type
+"""
 enum AccountSymbolType @goModel(model: "fijoy/ent/account.SymbolType") {
   currency
   stock
@@ -116,7 +128,9 @@ An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
 """
 interface Node @goModel(model: "fijoy/ent.Noder") {
-  """The id of the object."""
+  """
+  The id of the object.
+  """
   id: ID!
 }
 
@@ -124,9 +138,13 @@ interface Node @goModel(model: "fijoy/ent.Noder") {
 Possible directions in which to order a list of items when provided an `orderBy` argument.
 """
 enum OrderDirection {
-  """Specifies an ascending order for a given `orderBy` argument."""
+  """
+  Specifies an ascending order for a given `orderBy` argument.
+  """
   ASC
-  """Specifies a descending order for a given `orderBy` argument."""
+  """
+  Specifies a descending order for a given `orderBy` argument.
+  """
   DESC
 }
 
@@ -135,13 +153,21 @@ Information about pagination in a connection.
 https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo
 """
 type PageInfo {
-  """When paginating forwards, are there more items?"""
+  """
+  When paginating forwards, are there more items?
+  """
   hasNextPage: Boolean!
-  """When paginating backwards, are there more items?"""
+  """
+  When paginating backwards, are there more items?
+  """
   hasPreviousPage: Boolean!
-  """When paginating backwards, the cursor to continue."""
+  """
+  When paginating backwards, the cursor to continue.
+  """
   startCursor: Cursor
-  """When paginating forwards, the cursor to continue."""
+  """
+  When paginating forwards, the cursor to continue.
+  """
   endCursor: Cursor
 }
 
@@ -158,14 +184,22 @@ type Profile implements Node {
 }
 
 type Query {
-  """Fetches an object given its ID."""
+  """
+  Fetches an object given its ID.
+  """
   node(
-    """ID of the object."""
+    """
+    ID of the object.
+    """
     id: ID!
   ): Node
-  """Lookup nodes by a list of IDs."""
+  """
+  Lookup nodes by a list of IDs.
+  """
   nodes(
-    """The list of node IDs."""
+    """
+    The list of node IDs.
+    """
     ids: [ID!]!
   ): [Node]!
   accounts: [Account!]!
@@ -175,7 +209,9 @@ type Query {
   currencies: [Currency!]!
 }
 
-"""The builtin Time type"""
+"""
+The builtin Time type
+"""
 scalar Time
 
 type Transaction implements Node {
