@@ -11,9 +11,20 @@ import (
 	"fijoy/ent/profile"
 	"fijoy/ent/user"
 	"fijoy/internal/util/auth"
+	"fmt"
 
 	"github.com/samber/lo"
 )
+
+// CreateProfile is the resolver for the createProfile field.
+func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error) {
+	panic(fmt.Errorf("not implemented: CreateProfile - createProfile"))
+}
+
+// UpdateProfile is the resolver for the updateProfile field.
+func (r *mutationResolver) UpdateProfile(ctx context.Context, id string, input ent.UpdateProfileInput) (*ent.Profile, error) {
+	panic(fmt.Errorf("not implemented: UpdateProfile - updateProfile"))
+}
 
 // Profile is the resolver for the profile field.
 func (r *queryResolver) Profile(ctx context.Context) (*ent.Profile, error) {
@@ -46,3 +57,8 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
 
 	return currencies, nil
 }
+
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
+type mutationResolver struct{ *Resolver }
