@@ -105,6 +105,11 @@ func (r *createTransactionInputResolver) Amount(ctx context.Context, obj *ent.Cr
 	panic(fmt.Errorf("not implemented: Amount - amount"))
 }
 
+// NetWorthGoal is the resolver for the netWorthGoal field.
+func (r *updateProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.UpdateProfileInput, data *string) error {
+	panic(fmt.Errorf("not implemented: NetWorthGoal - netWorthGoal"))
+}
+
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
@@ -132,6 +137,11 @@ func (r *Resolver) CreateTransactionInput() CreateTransactionInputResolver {
 	return &createTransactionInputResolver{r}
 }
 
+// UpdateProfileInput returns UpdateProfileInputResolver implementation.
+func (r *Resolver) UpdateProfileInput() UpdateProfileInputResolver {
+	return &updateProfileInputResolver{r}
+}
+
 type accountResolver struct{ *Resolver }
 type profileResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
@@ -139,3 +149,4 @@ type transactionResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
 type createProfileInputResolver struct{ *Resolver }
 type createTransactionInputResolver struct{ *Resolver }
+type updateProfileInputResolver struct{ *Resolver }

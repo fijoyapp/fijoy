@@ -97,6 +97,74 @@ func (c *ProfileCreate) SetInput(i CreateProfileInput) *ProfileCreate {
 	return c
 }
 
+// UpdateProfileInput represents a mutation input for updating profiles.
+type UpdateProfileInput struct {
+	Locale               *string
+	Currencies           *string
+	NetWorthGoal         *decimal.Decimal
+	CreatedAt            *time.Time
+	UpdatedAt            *time.Time
+	UserID               *string
+	ClearAccount         bool
+	AddAccountIDs        []string
+	RemoveAccountIDs     []string
+	ClearTransaction     bool
+	AddTransactionIDs    []string
+	RemoveTransactionIDs []string
+}
+
+// Mutate applies the UpdateProfileInput on the ProfileMutation builder.
+func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
+	if v := i.Locale; v != nil {
+		m.SetLocale(*v)
+	}
+	if v := i.Currencies; v != nil {
+		m.SetCurrencies(*v)
+	}
+	if v := i.NetWorthGoal; v != nil {
+		m.SetNetWorthGoal(*v)
+	}
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+	if i.ClearAccount {
+		m.ClearAccount()
+	}
+	if v := i.AddAccountIDs; len(v) > 0 {
+		m.AddAccountIDs(v...)
+	}
+	if v := i.RemoveAccountIDs; len(v) > 0 {
+		m.RemoveAccountIDs(v...)
+	}
+	if i.ClearTransaction {
+		m.ClearTransaction()
+	}
+	if v := i.AddTransactionIDs; len(v) > 0 {
+		m.AddTransactionIDs(v...)
+	}
+	if v := i.RemoveTransactionIDs; len(v) > 0 {
+		m.RemoveTransactionIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateProfileInput on the ProfileUpdate builder.
+func (c *ProfileUpdate) SetInput(i UpdateProfileInput) *ProfileUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateProfileInput on the ProfileUpdateOne builder.
+func (c *ProfileUpdateOne) SetInput(i UpdateProfileInput) *ProfileUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateTransactionInput represents a mutation input for creating transactions.
 type CreateTransactionInput struct {
 	Amount    decimal.Decimal
