@@ -4,3 +4,4 @@ pnpm-lock.yaml
 src/gen/**
 
 dist/**
+__generated__

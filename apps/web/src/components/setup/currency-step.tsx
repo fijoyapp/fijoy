@@ -8,12 +8,12 @@ import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
 import { type TypeOf } from "zod";
 import { CurrencyField } from "./form/currency";
-import { Currency } from "@/gen/proto/fijoy/v1/currency_pb";
+import { currencyFragment$key } from "@/lib/queries/__generated__/currencyFragment.graphql";
 
 const formSchema = CurrencyStepData;
 
 type CurrencyStepProps = {
-  currencies: Currency[];
+  currencies: currencyFragment$key;
 };
 
 const CurrencyStep = ({ currencies }: CurrencyStepProps) => {

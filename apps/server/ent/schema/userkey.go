@@ -15,7 +15,6 @@ type UserKey struct {
 
 func (UserKey) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate()),
 	}
 }

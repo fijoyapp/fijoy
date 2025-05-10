@@ -1,4 +1,3 @@
-import { Account } from "@/gen/proto/fijoy/v1/account_pb";
 import { LiquidityCard } from "./liquidity/card";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
@@ -8,45 +7,49 @@ import { LiabilityCard } from "./liability/card";
 import { PropertyCard } from "./property/card";
 import { ReceivableCard } from "./receivable/card";
 import { InvestmentCard } from "./investment/card";
+import { accountsQuery$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsQuery.graphql";
+import { cardFragment$key } from "./__generated__/cardFragment.graphql";
 
 type AccountListProps = {
-  accounts: Account[];
+  accounts: accountsQuery$data;
 };
 
 type Section = {
   name: string;
-  accounts: Account[];
-  card: React.FC<{ account: Account }>;
+  accounts: accountsQuery$data["accounts"];
+  card: React.FC<{ account: cardFragment$key }>;
 };
 
 export default function AccountListView({ accounts }: AccountListProps) {
-  const { liabilities, liquidities, investments, properties, receivables } =
-    useMemo(() => accountsGroupBy(accounts), [accounts]);
+  const { liability, liquidity, investment, property, receivable } = useMemo(
+    () => accountsGroupBy(accounts),
+    [accounts],
+  );
 
   const sections: Section[] = [
     {
       name: "Liquidity",
-      accounts: liquidities,
+      accounts: liquidity,
       card: LiquidityCard,
     },
     {
       name: "Investment",
-      accounts: investments,
+      accounts: investment,
       card: InvestmentCard,
     },
     {
       name: "Property",
-      accounts: properties,
+      accounts: property,
       card: PropertyCard,
     },
     {
       name: "Receivable",
-      accounts: receivables,
+      accounts: receivable,
       card: ReceivableCard,
     },
     {
       name: "Liability",
-      accounts: liabilities,
+      accounts: liability,
       card: LiabilityCard,
     },
   ];

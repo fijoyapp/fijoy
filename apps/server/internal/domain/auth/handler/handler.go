@@ -7,6 +7,7 @@ import (
 	"fijoy/config"
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
+	"fijoy/internal/util/auth"
 	"fmt"
 	"io"
 	"net/http"
@@ -57,29 +58,27 @@ func (h *authHandler) logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
-	user, err := h.authUseCase.LocalLogin(r.Context())
+	ctx := r.Context()
+	user, err := h.authUseCase.LocalLogin(ctx)
 	if err != nil {
 		http.Error(w, "failed to login: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	profileId, err := h.authUseCase.GetProfileId(ctx, user.Id)
+	if err != nil {
+		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
+	}
+
 	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(
-		map[string]interface{}{
-			"user_id": user.Id,
+		map[string]any{
+			"user_id":    user.Id,
+			"profile_id": profileId,
 		},
 	)
 
-	cookie := &http.Cookie{
-		Name:     "jwt",
-		Value:    tokenString,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Path:     "/",
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
-	}
+	auth.SetJwtCookie(ctx, tokenString)
 
-	http.SetCookie(w, cookie)
 	http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
 }
 
@@ -91,6 +90,7 @@ func (h *authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
 	googleOAuthState, _ := r.Cookie("google_oauth_state")
 
 	if r.FormValue("state") != googleOAuthState.Value {
@@ -99,7 +99,7 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use code to get token and get user info from Google.
-	token, err := h.authConfig.GOOGLE.Exchange(r.Context(), r.FormValue("code"))
+	token, err := h.authConfig.GOOGLE.Exchange(ctx, r.FormValue("code"))
 	if err != nil {
 		http.Error(w, "google code exchange wrong: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -132,20 +132,20 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(
-		map[string]any{"user_id": user.Id})
-
-	cookie := &http.Cookie{
-		Name:     "jwt",
-		Value:    tokenString,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Path:     "/",
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
+	profileId, err := h.authUseCase.GetProfileId(ctx, user.Id)
+	if err != nil {
+		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
 	}
 
-	http.SetCookie(w, cookie)
+	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(
+		map[string]any{
+			"user_id":    user.Id,
+			"profile_id": profileId,
+		},
+	)
+
+	auth.SetJwtCookie(ctx, tokenString)
+
 	http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
 }
 

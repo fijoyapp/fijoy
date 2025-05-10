@@ -30,14 +30,6 @@ func (pc *ProfileCreate) SetLocale(s string) *ProfileCreate {
 	return pc
 }
 
-// SetNillableLocale sets the "locale" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableLocale(s *string) *ProfileCreate {
-	if s != nil {
-		pc.SetLocale(*s)
-	}
-	return pc
-}
-
 // SetCurrencies sets the "currencies" field.
 func (pc *ProfileCreate) SetCurrencies(s string) *ProfileCreate {
 	pc.mutation.SetCurrencies(s)
@@ -184,6 +176,9 @@ func (pc *ProfileCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *ProfileCreate) check() error {
+	if _, ok := pc.mutation.Locale(); !ok {
+		return &ValidationError{Name: "locale", err: errors.New(`ent: missing required field "Profile.locale"`)}
+	}
 	if _, ok := pc.mutation.Currencies(); !ok {
 		return &ValidationError{Name: "currencies", err: errors.New(`ent: missing required field "Profile.currencies"`)}
 	}

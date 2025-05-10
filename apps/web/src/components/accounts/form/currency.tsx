@@ -47,7 +47,7 @@ export function CurrencyField<T extends FieldValues>({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {profile?.currencies.map((currency) => (
+              {profile?.currencies.split(",").map((currency) => (
                 <SelectItem key={currency} value={currency}>
                   {currencyCodeToName(currency)} ({currency})
                 </SelectItem>

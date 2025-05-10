@@ -1,0 +1,15 @@
+extend type Query {
+  profile: Profile!
+  user: User!
+  currencies: [Currency!]!
+}
+
+type Currency {
+  code: String!
+  locale: String!
+}
+
+type Mutation {
+  createProfile(input: CreateProfileInput!): Profile!
+  updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
+}

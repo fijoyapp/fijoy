@@ -4,9 +4,8 @@ import (
 	"fijoy/config"
 	"fijoy/internal/domain/account/usecase"
 	"fijoy/proto/fijoy/v1/fijoyv1connect"
-	"fijoy/internal/middleware"
 
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 )
@@ -19,8 +18,6 @@ func RegisterConnect(r *chi.Mux, protoValidator protovalidate.Validator, authCon
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(authConfig.JWT_AUTH))
 		r.Use(jwtauth.Authenticator(authConfig.JWT_AUTH))
-
-		r.Use(middleware.ProfileMiddleware)
 
 		r.Mount(path, handler)
 	})
