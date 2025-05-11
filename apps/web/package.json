@@ -94,7 +94,7 @@
     "@tanstack/router-vite-plugin": "^1.120.3",
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/lodash": "^4.17.16",
-    "@types/node": "^20.17.46",
+    "@types/node": "^22.15.17",
     "@types/react": "^18.3.21",
     "@types/react-dom": "^18.3.7",
     "@types/react-relay": "^18.2.1",
