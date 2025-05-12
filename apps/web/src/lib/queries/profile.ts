@@ -1,13 +1,26 @@
-import { createQueryOptions } from "@connectrpc/connect-query";
-import { Transport } from "@connectrpc/connect";
-import { getProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
+import { environment } from "@/environment";
+import { queryOptions } from "@tanstack/react-query";
+import { fetchQuery, graphql } from "relay-runtime";
+import { profileQuery } from "./__generated__/profileQuery.graphql";
 
-type getProfileProps = {
-  context: {
-    transport: Transport;
-  };
-};
+const ProfileQuery = graphql`
+  query profileQuery {
+    profile {
+      id
+      currencies
+      locale
+      netWorthGoal
+    }
+  }
+`;
 
-export const getProfileQueryOptions = ({ context }: getProfileProps) => {
-  return createQueryOptions(getProfile, {}, { transport: context.transport });
-};
+export function profileQueryOptions() {
+  return queryOptions({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      return fetchQuery<profileQuery>(environment, ProfileQuery, {})
+        .toPromise()
+        .catch(() => null);
+    },
+  });
+}

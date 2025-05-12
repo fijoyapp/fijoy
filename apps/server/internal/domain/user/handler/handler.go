@@ -7,7 +7,7 @@ import (
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
 	"connectrpc.com/connect"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -28,12 +28,12 @@ func (h *userHandler) GetUser(
 		return nil, err
 	}
 
-	userId, err := auth.GetUserIdFromContext(ctx)
+	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := h.useCase.GetUser(ctx, userId)
+	user, err := h.useCase.GetUser(ctx, authData.UserId)
 	if err != nil {
 		return nil, err
 	}

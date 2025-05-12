@@ -15,3 +15,7 @@ procs:
     shell: "just apps/database/dev"
     stop:
       send-keys: ["<C-c>"]
+  graphql:
+    shell: "just apps/server/merge-graphql"
+    stop:
+      send-keys: ["<C-c>"]

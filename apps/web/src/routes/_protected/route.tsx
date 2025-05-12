@@ -1,35 +1,41 @@
-import { useAuth } from "@/hooks/use-auth";
 import {
   Navigate,
   Outlet,
   createFileRoute,
+  redirect,
   useMatchRoute,
 } from "@tanstack/react-router";
-import { useProfile } from "@/hooks/use-profile";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
+import { useProfile } from "@/hooks/use-profile";
+import { queryClient } from "@/lib/query";
+import { userQueryOptions } from "@/lib/queries/user";
 
 export const Route = createFileRoute("/_protected")({
+  pendingComponent: CenterLoadingSpinner,
   component: Protected,
+  beforeLoad: async () => {
+    const user = await queryClient.ensureQueryData(userQueryOptions());
+    if (!user) {
+      throw redirect({ to: "/login" });
+    }
+    return { user };
+  },
 });
 
 function Protected() {
-  const auth = useAuth();
-  const profile = useProfile();
+  const { profile, isLoading } = useProfile();
+
   const matchRoute = useMatchRoute();
 
-  if (auth.isLoading || profile.isLoading) {
+  if (isLoading) {
     return <CenterLoadingSpinner />;
   }
 
-  if (!auth.user) {
-    return <Navigate to="/login" />;
-  }
-
-  if (!profile.profile && !matchRoute({ to: "/setup" })) {
+  if (!profile && !matchRoute({ to: "/setup" })) {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
   }
 
-  if (profile.profile && matchRoute({ to: "/setup" })) {
+  if (profile && matchRoute({ to: "/setup" })) {
     return <Navigate to="/home" />;
   }
 

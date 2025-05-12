@@ -4,6 +4,7 @@ import { queryClient } from "./lib/query";
 import { useAuth } from "./hooks/use-auth";
 import { finalTransport } from "./lib/connect";
 import { useProfile } from "./hooks/use-profile";
+import { environment } from "./environment";
 
 // Create a new router instance
 const router = createRouter({
@@ -13,6 +14,7 @@ const router = createRouter({
     profile: undefined!, // will be set after we wrap the app in ProfileProvider
     transport: finalTransport,
     queryClient,
+    environment: environment,
   },
   defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
