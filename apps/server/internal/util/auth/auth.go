@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fijoy/internal/middleware"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -20,21 +21,46 @@ func GetAuthDataFromContext(ctx context.Context) (*AuthData, error) {
 	if claims == nil {
 		return &AuthData{}, errors.New("no claims found")
 	}
+	fmt.Println(claims)
 
 	if _, ok := claims["user_id"]; !ok {
 		return &AuthData{}, errors.New("no user_id found in claims")
 	}
 
+	userId := claims["user_id"].(string)
+
 	if _, ok := claims["profile_id"]; !ok {
-		return &AuthData{}, errors.New("no profile_id found in claims")
+		return &AuthData{
+			UserId: userId,
+		}, errors.New("no profile_id found in claims")
 	}
 
-	userId := claims["user_id"].(string)
 	profileId := claims["profile_id"].(string)
 
 	return &AuthData{
 		UserId:    userId,
 		ProfileId: profileId,
+	}, nil
+}
+
+type UserData struct {
+	UserId string
+}
+
+func GetUserDataFromContext(ctx context.Context) (*UserData, error) {
+	_, claims, _ := jwtauth.FromContext(ctx)
+	if claims == nil {
+		return &UserData{}, errors.New("no claims found")
+	}
+
+	if _, ok := claims["user_id"]; !ok {
+		return &UserData{}, errors.New("no user_id found in claims")
+	}
+
+	userId := claims["user_id"].(string)
+
+	return &UserData{
+		UserId: userId,
 	}, nil
 }
 

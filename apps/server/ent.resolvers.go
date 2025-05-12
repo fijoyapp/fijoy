@@ -6,6 +6,7 @@ package fijoy
 
 import (
 	"context"
+	"errors"
 	"fijoy/ent"
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
@@ -13,6 +14,8 @@ import (
 	"fijoy/internal/util/auth"
 	"fijoy/internal/util/pointer"
 	"fmt"
+
+	"github.com/shopspring/decimal"
 )
 
 // Amount is the resolver for the amount field.
@@ -97,7 +100,17 @@ func (r *createAccountInputResolver) Balance(ctx context.Context, obj *ent.Creat
 
 // NetWorthGoal is the resolver for the netWorthGoal field.
 func (r *createProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.CreateProfileInput, data string) error {
-	panic(fmt.Errorf("not implemented: NetWorthGoal - netWorthGoal"))
+	if data == "" {
+		return errors.New("net worth goal is required")
+	}
+
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid net worth goal: %w", err)
+	}
+
+	obj.NetWorthGoal = dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.

@@ -18,7 +18,17 @@ import (
 
 // CreateProfile is the resolver for the createProfile field.
 func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error) {
-	panic(fmt.Errorf("not implemented: CreateProfile - createProfile"))
+	userData, err := auth.GetUserDataFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.client.Profile.Create().
+		SetCurrencies(input.Currencies). // TODO: sanitize this
+		SetNetWorthGoal(input.NetWorthGoal).
+		SetLocale(input.Locale). // TODO: sanitize this
+		SetUserID(userData.UserId).
+		Save(ctx)
 }
 
 // UpdateProfile is the resolver for the updateProfile field.
@@ -30,9 +40,11 @@ func (r *mutationResolver) UpdateProfile(ctx context.Context, id string, input e
 func (r *queryResolver) Profile(ctx context.Context) (*ent.Profile, error) {
 	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
-		return nil, err
+		fmt.Println(authData.UserId)
+		return r.client.Profile.Query().Where(profile.HasUserWith(user.ID(authData.UserId))).Only(ctx)
 	}
 
+	fmt.Println(authData.ProfileId)
 	return r.client.Profile.Query().Where(profile.ID(authData.ProfileId)).Only(ctx)
 }
 

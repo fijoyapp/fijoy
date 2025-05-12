@@ -65,17 +65,19 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims := map[string]any{
+		"user_id": user.Id,
+	}
+
 	profileId, err := h.authUseCase.GetProfileId(ctx, user.Id)
 	if err != nil {
 		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
 	}
+	if profileId != "" {
+		claims["profile_id"] = profileId
+	}
 
-	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(
-		map[string]any{
-			"user_id":    user.Id,
-			"profile_id": profileId,
-		},
-	)
+	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)
 
 	auth.SetJwtCookie(ctx, tokenString)
 
@@ -132,17 +134,19 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	claims := map[string]any{
+		"user_id": user.Id,
+	}
+
 	profileId, err := h.authUseCase.GetProfileId(ctx, user.Id)
 	if err != nil {
 		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
 	}
+	if profileId != "" {
+		claims["profile_id"] = profileId
+	}
 
-	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(
-		map[string]any{
-			"user_id":    user.Id,
-			"profile_id": profileId,
-		},
-	)
+	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)
 
 	auth.SetJwtCookie(ctx, tokenString)
 
