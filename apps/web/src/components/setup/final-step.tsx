@@ -3,21 +3,47 @@ import { useForm } from "react-hook-form";
 import { z, type TypeOf } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
-import { useMutation } from "@connectrpc/connect-query";
 import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
 import { useEffect, useRef } from "react";
-import { createProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
+import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
+import { useQuery } from "@tanstack/react-query";
+import { profileQueryOptions } from "@/lib/queries/profile";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
   goal: GoalStepData,
 });
 
+const profileCreateMutation = graphql`
+  mutation finalStepMutation(
+    $currencies: String!
+    $netWorthGoal: String!
+    $locale: String!
+  ) {
+    createProfile(
+      input: {
+        currencies: $currencies
+        netWorthGoal: $netWorthGoal
+        locale: $locale
+        userID: "" # will be set by the server
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 const FinalStep = () => {
   const router = useRouter();
+  const [commitMutation, isMutationInFlight] = useMutation(
+    profileCreateMutation,
+  );
+
+  const { refetch } = useQuery(profileQueryOptions());
 
   const { currencyStepData, goalStepData, reset } = useSetupStore(
     useShallow((state) => ({
@@ -35,16 +61,11 @@ const FinalStep = () => {
     },
   });
 
-  const createProfileMut = useMutation(createProfile, {
-    onSuccess: async () => {
-      router.invalidate();
-      router.navigate({
-        to: "/home",
-      });
-    },
-  });
-
   async function onSubmit() {
+    if (isMutationInFlight) {
+      return;
+    }
+
     if (!(await form.trigger())) {
       router.navigate({
         to: "/setup",
@@ -55,13 +76,27 @@ const FinalStep = () => {
 
     const values = form.getValues();
     toast.promise(
-      createProfileMut.mutateAsync({
-        currencies: values.currency.currencies,
-        netWorthGoal: values.goal.net_worth_goal,
+      new Promise((resolve, reject) => {
+        commitMutation({
+          variables: {
+            currencies: values.currency.currencies.join(","),
+            netWorthGoal: values.goal.net_worth_goal,
+            locale: "en-CA", // TODO: Replace with actual locale value
+          },
+          onCompleted: (response) => resolve(response),
+          onError: (error) => reject(error),
+        });
       }),
       {
-        success: () => {
+        success: async () => {
+          // FIXME: refetch is not working as expected
+          // probably need to turn profile into a refetchable fragment
           reset();
+          await refetch();
+          router.invalidate();
+          router.navigate({
+            to: "/home",
+          });
           return "Profile created";
         },
         loading: "Creating profile...",
