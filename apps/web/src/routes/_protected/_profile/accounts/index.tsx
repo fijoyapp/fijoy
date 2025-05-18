@@ -32,25 +32,25 @@ import { Separator } from "@/components/ui/separator";
 import NetWorthInfo from "@/components/accounts/net-worth-info";
 import AccountListView from "@/components/accounts/account-list-view";
 import { graphql } from "relay-runtime";
-import { loadQuery, usePreloadedQuery } from "react-relay";
+import { useFragment, usePreloadedQuery } from "react-relay";
 import {
-  accountsQuery,
-  accountsQuery$data,
-} from "./__generated__/accountsQuery.graphql";
+  accountsFragment$data,
+  accountsFragment$key,
+} from "./__generated__/accountsFragment.graphql";
+import { RouteProtectedQuery } from "../../route";
+import { routeProtectedQuery } from "../../__generated__/routeProtectedQuery.graphql";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
   detail: z.string().startsWith("account_").optional(),
 });
 
-const AccountsQuery = graphql`
-  query accountsQuery {
-    accounts {
-      id
-      accountType
-      balance
-      ...cardFragment
-    }
+const AccountsFragment = graphql`
+  fragment accountsFragment on Account @relay(plural: true) {
+    id
+    accountType
+    balance
+    ...cardFragment
   }
 `;
 
@@ -59,39 +59,40 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
   validateSearch: (search) => {
     return accountsRouteSchema.parse(search);
   },
-  loader: ({ context }) => {
-    const accountsQueryRef = loadQuery<accountsQuery>(
-      context.environment,
-      AccountsQuery,
-      {},
-      { fetchPolicy: "store-or-network" },
-    );
-    return { accountsQueryRef };
-  },
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
 
 function Page() {
   const { add, detail } = Route.useSearch();
+  const { protectedQueryRef } = Route.useRouteContext();
 
-  const { accountsQueryRef } = Route.useLoaderData();
-
-  const data = usePreloadedQuery(AccountsQuery, accountsQueryRef);
+  const data = usePreloadedQuery<routeProtectedQuery>(
+    RouteProtectedQuery,
+    protectedQueryRef,
+  );
+  // const data = useFragment<accountsFragment$key>(
+  //   AccountsFragment,
+  //   protectedQueryRef,
+  // );
+  const accounts = useFragment<accountsFragment$key>(
+    AccountsFragment,
+    data.accounts,
+  );
 
   return (
     <>
       {add ? (
         <AddAccount type={add} />
       ) : (
-        <AccountsView accounts={data} detail={detail} />
+        <AccountsView accounts={accounts} detail={detail} />
       )}
     </>
   );
 }
 
 type AccountsViewProps = {
-  accounts: accountsQuery$data;
+  accounts: accountsFragment$data;
   detail?: string;
 };
 

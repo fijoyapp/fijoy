@@ -14,6 +14,15 @@ const ProfileQuery = graphql`
   }
 `;
 
+export const ProfileFragment = graphql`
+  fragment profileFragment on Profile {
+    id
+    currencies
+    locale
+    netWorthGoal
+  }
+`;
+
 export function profileQueryOptions() {
   return queryOptions({
     queryKey: ["profile"],
