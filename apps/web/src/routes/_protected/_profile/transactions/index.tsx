@@ -25,6 +25,7 @@ export const Route = createFileRoute("/_protected/_profile/transactions/")({
       {},
       { fetchPolicy: "store-or-network" },
     );
+
     return {
       transactionsQueryRef,
     };

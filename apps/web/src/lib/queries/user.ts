@@ -11,6 +11,12 @@ const UserQuery = graphql`
   }
 `;
 
+export const UserFragment = graphql`
+  fragment userFragment on User {
+    id
+  }
+`;
+
 export function userQueryOptions() {
   return queryOptions({
     queryKey: ["user"],

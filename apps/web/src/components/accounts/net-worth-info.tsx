@@ -5,10 +5,10 @@ import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
 import { useMemo } from "react";
 import currency from "currency.js";
-import { accountsQuery$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsQuery.graphql";
+import { accountsFragment$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsFragment.graphql";
 
 type Props = {
-  accounts: accountsQuery$data;
+  accounts: accountsFragment$data;
 };
 
 const NetWorthInfo = ({ accounts }: Props) => {
