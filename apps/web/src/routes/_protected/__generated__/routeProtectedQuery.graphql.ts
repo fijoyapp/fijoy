@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<30a5768cf589e4aae34fa1df64536e42>>
+ * @generated SignedSource<<384943f1663490ac969a947cebd1ed4e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,11 +15,6 @@ export type routeProtectedQuery$data = {
   readonly currencies: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"currencyFragment">;
   }>;
-  readonly profiles: ReadonlyArray<{
-    readonly currencies: string;
-    readonly id: string;
-    readonly locale: string;
-  }>;
   readonly user: {
     readonly " $fragmentSpreads": FragmentRefs<"userFragment">;
   };
@@ -29,42 +24,7 @@ export type routeProtectedQuery = {
   variables: routeProtectedQuery$variables;
 };
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "locale",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Profile",
-  "kind": "LinkedField",
-  "name": "profiles",
-  "plural": true,
-  "selections": [
-    (v0/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "currencies",
-      "storageKey": null
-    },
-    (v1/*: any*/)
-  ],
-  "storageKey": null
-};
-return {
+const node: ConcreteRequest = {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -87,7 +47,6 @@ return {
         ],
         "storageKey": null
       },
-      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -122,11 +81,16 @@ return {
         "name": "user",
         "plural": false,
         "selections": [
-          (v0/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
         ],
         "storageKey": null
       },
-      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
@@ -142,23 +106,28 @@ return {
             "name": "code",
             "storageKey": null
           },
-          (v1/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "locale",
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "f21be8ed2a84d6d3d3352a7882d32d8e",
+    "cacheID": "ba5d61cf5fba22b9641d1f5973156b1a",
     "id": null,
     "metadata": {},
     "name": "routeProtectedQuery",
     "operationKind": "query",
-    "text": "query routeProtectedQuery {\n  user {\n    ...userFragment\n    id\n  }\n  profiles {\n    id\n    currencies\n    locale\n  }\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query routeProtectedQuery {\n  user {\n    ...userFragment\n    id\n  }\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
-})();
 
-(node as any).hash = "fcc78668be476b0acbab4f9f0ab7cf6a";
+(node as any).hash = "1d54b60eb9aaeb1ae65aac37319ed3f2";
 
 export default node;

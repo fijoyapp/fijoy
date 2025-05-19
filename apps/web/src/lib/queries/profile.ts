@@ -15,7 +15,7 @@ const ProfileQuery = graphql`
 `;
 
 export const ProfileFragment = graphql`
-  fragment profileFragment on Profile {
+  fragment profileFragment on Profile @relay(plural: true) {
     id
     currencies
     locale
