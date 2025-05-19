@@ -22,7 +22,6 @@ import {
   Outlet,
   ValidateLinkOptions,
   createFileRoute,
-  redirect,
   useMatchRoute,
 } from "@tanstack/react-router";
 import {
@@ -48,17 +47,41 @@ import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
-import { profileQueryOptions } from "@/lib/queries/profile";
+import { graphql } from "relay-runtime";
+import { loadQuery } from "react-relay";
+import { routeProfileQuery } from "./__generated__/routeProfileQuery.graphql";
+
+export const RouteProfileQuery = graphql`
+  query routeProfileQuery {
+    user {
+      ...userFragment
+    }
+    profiles {
+      ...profileFragment
+    }
+    accounts {
+      id
+      ...accountsFragment
+    }
+    transactions {
+      id
+      ...transactionCardFragment
+    }
+    currencies {
+      ...currencyFragment
+    }
+  }
+`;
 
 export const Route = createFileRoute("/_protected/_profile")({
   beforeLoad: async ({ context }) => {
-    const profile = await context.queryClient.ensureQueryData(
-      profileQueryOptions(),
+    const profileQueryRef = loadQuery<routeProfileQuery>(
+      context.environment,
+      RouteProfileQuery,
+      {},
+      { fetchPolicy: "store-or-network" },
     );
-    if (!profile) {
-      throw redirect({ to: "/setup", search: { step: "currency" } });
-    }
-    return { profile };
+    return { profileQueryRef };
   },
   pendingComponent: CenterLoadingSpinner,
   errorComponent: ({ error }) => (

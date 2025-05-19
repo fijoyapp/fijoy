@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<53c3e6f2d873e7d1303f7634718897d0>>
+ * @generated SignedSource<<30a5768cf589e4aae34fa1df64536e42>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,12 +12,14 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type routeProtectedQuery$variables = Record<PropertyKey, never>;
 export type routeProtectedQuery$data = {
-  readonly accounts: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"accountsFragment">;
+  readonly currencies: ReadonlyArray<{
+    readonly " $fragmentSpreads": FragmentRefs<"currencyFragment">;
   }>;
-  readonly profile: {
-    readonly " $fragmentSpreads": FragmentRefs<"profileFragment">;
-  };
+  readonly profiles: ReadonlyArray<{
+    readonly currencies: string;
+    readonly id: string;
+    readonly locale: string;
+  }>;
   readonly user: {
     readonly " $fragmentSpreads": FragmentRefs<"userFragment">;
   };
@@ -34,6 +36,33 @@ var v0 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "locale",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Profile",
+  "kind": "LinkedField",
+  "name": "profiles",
+  "plural": true,
+  "selections": [
+    (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "currencies",
+      "storageKey": null
+    },
+    (v1/*: any*/)
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -42,22 +71,6 @@ return {
     "metadata": null,
     "name": "routeProtectedQuery",
     "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Profile",
-        "kind": "LinkedField",
-        "name": "profile",
-        "plural": false,
-        "selections": [
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "profileFragment"
-          }
-        ],
-        "storageKey": null
-      },
       {
         "alias": null,
         "args": null,
@@ -74,18 +87,19 @@ return {
         ],
         "storageKey": null
       },
+      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "Account",
+        "concreteType": "Currency",
         "kind": "LinkedField",
-        "name": "accounts",
+        "name": "currencies",
         "plural": true,
         "selections": [
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "accountsFragment"
+            "name": "currencyFragment"
           }
         ],
         "storageKey": null
@@ -103,39 +117,6 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Profile",
-        "kind": "LinkedField",
-        "name": "profile",
-        "plural": false,
-        "selections": [
-          (v0/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "currencies",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "locale",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "netWorthGoal",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
         "concreteType": "User",
         "kind": "LinkedField",
         "name": "user",
@@ -145,66 +126,39 @@ return {
         ],
         "storageKey": null
       },
+      (v2/*: any*/),
       {
         "alias": null,
         "args": null,
-        "concreteType": "Account",
+        "concreteType": "Currency",
         "kind": "LinkedField",
-        "name": "accounts",
+        "name": "currencies",
         "plural": true,
         "selections": [
-          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "accountType",
+            "name": "code",
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "balance",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "symbol",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "updatedAt",
-            "storageKey": null
-          }
+          (v1/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "f4ec4a1fb70a728912310844247760f6",
+    "cacheID": "f21be8ed2a84d6d3d3352a7882d32d8e",
     "id": null,
     "metadata": {},
     "name": "routeProtectedQuery",
     "operationKind": "query",
-    "text": "query routeProtectedQuery {\n  profile {\n    ...profileFragment\n    id\n  }\n  user {\n    ...userFragment\n    id\n  }\n  accounts {\n    ...accountsFragment\n    id\n  }\n}\n\nfragment accountsFragment on Account {\n  id\n  accountType\n  balance\n  ...cardFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query routeProtectedQuery {\n  user {\n    ...userFragment\n    id\n  }\n  profiles {\n    id\n    currencies\n    locale\n  }\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "44f42dfdbd1183b8f2dc73a7f069a892";
+(node as any).hash = "fcc78668be476b0acbab4f9f0ab7cf6a";
 
 export default node;

@@ -23,7 +23,10 @@ export function userQueryOptions() {
     queryFn: async () => {
       return fetchQuery<userQuery>(environment, UserQuery, {})
         .toPromise()
-        .catch(() => null);
+        .catch((e) => {
+          console.error(e);
+          return null;
+        });
     },
   });
 }

@@ -4,7 +4,7 @@ import { profileQueryOptions } from "./lib/queries/profile";
 import { profileQuery } from "./lib/queries/__generated__/profileQuery.graphql";
 
 export interface ProfileContext {
-  profile: profileQuery["response"]["profile"] | undefined;
+  profile: profileQuery["response"]["profiles"][number] | undefined;
   isLoading: boolean;
 }
 
@@ -14,7 +14,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { data, isLoading } = useQuery(profileQueryOptions());
 
   return (
-    <ProfileContext.Provider value={{ profile: data?.profile, isLoading }}>
+    <ProfileContext.Provider value={{ profile: data?.profiles[0], isLoading }}>
       {children}
     </ProfileContext.Provider>
   );

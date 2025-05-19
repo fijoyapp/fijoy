@@ -37,8 +37,8 @@ import {
   accountsFragment$data,
   accountsFragment$key,
 } from "./__generated__/accountsFragment.graphql";
-import { RouteProtectedQuery } from "../../route";
-import { routeProtectedQuery } from "../../__generated__/routeProtectedQuery.graphql";
+import { RouteProfileQuery } from "../route";
+import { routeProfileQuery } from "../__generated__/routeProfileQuery.graphql";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -65,11 +65,11 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
 
 function Page() {
   const { add, detail } = Route.useSearch();
-  const { protectedQueryRef } = Route.useRouteContext();
+  const { profileQueryRef } = Route.useRouteContext();
 
-  const data = usePreloadedQuery<routeProtectedQuery>(
-    RouteProtectedQuery,
-    protectedQueryRef,
+  const data = usePreloadedQuery<routeProfileQuery>(
+    RouteProfileQuery,
+    profileQueryRef,
   );
   // const data = useFragment<accountsFragment$key>(
   //   AccountsFragment,
