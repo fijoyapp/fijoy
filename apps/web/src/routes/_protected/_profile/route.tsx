@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Link,
+  Navigate,
   Outlet,
   ValidateLinkOptions,
   createFileRoute,
@@ -48,8 +49,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
 import { graphql } from "relay-runtime";
-import { loadQuery } from "react-relay";
+import { loadQuery, useFragment, usePreloadedQuery } from "react-relay";
 import { routeProfileQuery } from "./__generated__/routeProfileQuery.graphql";
+import { ProfileFragment } from "@/lib/queries/profile";
+import { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 
 export const RouteProfileQuery = graphql`
   query routeProfileQuery {
@@ -149,9 +152,24 @@ const navLinks: NavLink[] = [
 
 function Page() {
   const matchRoute = useMatchRoute();
+
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const { profileQueryRef } = Route.useRouteContext();
+
+  const data = usePreloadedQuery<routeProfileQuery>(
+    RouteProfileQuery,
+    profileQueryRef,
+  );
+  const profiles = useFragment<profileFragment$key>(
+    ProfileFragment,
+    data.profiles,
+  );
+
+  if (profiles.length === 0 && !matchRoute({ to: "/setup" })) {
+    return <Navigate to="/setup" search={{ step: "currency" }} />;
+  }
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">

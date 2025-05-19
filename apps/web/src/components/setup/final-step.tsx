@@ -11,6 +11,7 @@ import { useEffect, useRef } from "react";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
+import { environment } from "@/environment";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
@@ -91,7 +92,9 @@ const FinalStep = () => {
       {
         success: async () => {
           reset();
-          await router.invalidate({ sync: true });
+          await router.invalidate({
+            sync: true,
+          });
 
           return "Profile created";
         },
@@ -102,7 +105,7 @@ const FinalStep = () => {
 
     router.navigate({
       to: "/home",
-      reloadDocument: true, // FIXME: this is temporary fix
+      // reloadDocument: true, // FIXME: this is temporary fix
     });
   }
 

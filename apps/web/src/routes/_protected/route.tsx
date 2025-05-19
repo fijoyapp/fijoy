@@ -1,12 +1,7 @@
-import {
-  Navigate,
-  Outlet,
-  createFileRoute,
-  useMatchRoute,
-} from "@tanstack/react-router";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { graphql } from "relay-runtime";
-import { loadQuery, useLazyLoadQuery } from "react-relay";
+import { loadQuery } from "react-relay";
 import { routeProtectedQuery } from "./__generated__/routeProtectedQuery.graphql";
 
 export const Route = createFileRoute("/_protected")({
@@ -28,11 +23,6 @@ export const RouteProtectedQuery = graphql`
     user {
       ...userFragment
     }
-    profiles {
-      id
-      currencies
-      locale
-    }
     currencies {
       ...currencyFragment
     }
@@ -40,13 +30,5 @@ export const RouteProtectedQuery = graphql`
 `;
 
 function Protected() {
-  const matchRoute = useMatchRoute();
-  const data = useLazyLoadQuery<routeProtectedQuery>(RouteProtectedQuery, {});
-
-  if (data.profiles.length === 0 && !matchRoute({ to: "/setup" })) {
-    debugger;
-    return <Navigate to="/setup" search={{ step: "currency" }} />;
-  }
-
   return <Outlet />;
 }
