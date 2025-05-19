@@ -1,5 +1,5 @@
 extend type Query {
-  profile: Profile!
+  # profile: Profile!
   user: User!
   currencies: [Currency!]!
 }

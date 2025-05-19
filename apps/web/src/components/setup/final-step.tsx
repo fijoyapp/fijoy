@@ -10,8 +10,7 @@ import { useShallow } from "zustand/shallow";
 import { useEffect, useRef } from "react";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
-import { useQuery } from "@tanstack/react-query";
-import { profileQueryOptions } from "@/lib/queries/profile";
+import { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
@@ -39,11 +38,9 @@ const profileCreateMutation = graphql`
 
 const FinalStep = () => {
   const router = useRouter();
-  const [commitMutation, isMutationInFlight] = useMutation(
+  const [commitMutation, isMutationInFlight] = useMutation<finalStepMutation>(
     profileCreateMutation,
   );
-
-  const { refetch } = useQuery(profileQueryOptions());
 
   const { currencyStepData, goalStepData, reset } = useSetupStore(
     useShallow((state) => ({
@@ -75,34 +72,38 @@ const FinalStep = () => {
     }
 
     const values = form.getValues();
+
     toast.promise(
       new Promise((resolve, reject) => {
+        resolve("");
         commitMutation({
           variables: {
             currencies: values.currency.currencies.join(","),
             netWorthGoal: values.goal.net_worth_goal,
             locale: "en-CA", // TODO: Replace with actual locale value
           },
-          onCompleted: (response) => resolve(response),
+          onCompleted: (response) => {
+            resolve(response);
+          },
           onError: (error) => reject(error),
         });
       }),
       {
         success: async () => {
-          // FIXME: refetch is not working as expected
-          // probably need to turn profile into a refetchable fragment
           reset();
-          await refetch();
-          router.invalidate();
-          router.navigate({
-            to: "/home",
-          });
+          await router.invalidate({ sync: true });
+
           return "Profile created";
         },
         loading: "Creating profile...",
         error: (e: Error) => `Error creating profile: ${e.toString()}`,
       },
     );
+
+    router.navigate({
+      to: "/home",
+      reloadDocument: true, // FIXME: this is temporary fix
+    });
   }
 
   // this makes sure that the mutation only fires once in strict mode

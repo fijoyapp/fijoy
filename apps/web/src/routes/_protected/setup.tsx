@@ -11,34 +11,17 @@ import { z } from "zod";
 import CurrencyStep from "@/components/setup/currency-step";
 import FinalStep from "@/components/setup/final-step";
 import GoalStep from "@/components/setup/goal-step";
-import { graphql } from "relay-runtime";
-import { loadQuery, usePreloadedQuery } from "react-relay";
-import { setupQuery } from "./__generated__/setupQuery.graphql";
+import { usePreloadedQuery } from "react-relay";
+import { routeProtectedQuery } from "./__generated__/routeProtectedQuery.graphql";
+import { RouteProtectedQuery } from "./route";
 
 const setupSearchSchema = z.object({
   step: SetupStep.default("currency"),
 });
 
-const SetupQuery = graphql`
-  query setupQuery {
-    currencies {
-      ...currencyFragment
-    }
-  }
-`;
-
 export const Route = createFileRoute("/_protected/setup")({
   validateSearch: (search) => {
     return setupSearchSchema.parse(search);
-  },
-  loader: ({ context }) => {
-    const setupQueryRef = loadQuery<setupQuery>(
-      context.environment,
-      SetupQuery,
-      {},
-      { fetchPolicy: "store-or-network" },
-    );
-    return { setupQueryRef };
   },
   component: Setup,
 });
@@ -46,8 +29,12 @@ export const Route = createFileRoute("/_protected/setup")({
 function Setup() {
   const { step } = Route.useSearch();
 
-  const { setupQueryRef } = Route.useLoaderData();
-  const data = usePreloadedQuery(SetupQuery, setupQueryRef);
+  const { protectedQueryRef } = Route.useRouteContext();
+
+  const data = usePreloadedQuery<routeProtectedQuery>(
+    RouteProtectedQuery,
+    protectedQueryRef,
+  );
 
   return (
     <div className="container max-w-(--breakpoint-2xl)">

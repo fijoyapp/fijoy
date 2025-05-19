@@ -10,42 +10,23 @@ import { type TransactionList } from "@/gen/proto/fijoy/v1/transaction_pb";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
-import { graphql } from "relay-runtime";
-import { loadQuery, usePreloadedQuery } from "react-relay";
-import {
-  transactionsQuery,
-  transactionsQuery$data,
-} from "./__generated__/transactionsQuery.graphql";
+import { usePreloadedQuery } from "react-relay";
+import { routeProtectedQuery$data } from "../../__generated__/routeProtectedQuery.graphql";
+import { routeProfileQuery } from "../__generated__/routeProfileQuery.graphql";
+import { RouteProfileQuery } from "../route";
 
 export const Route = createFileRoute("/_protected/_profile/transactions/")({
-  loader: ({ context }) => {
-    const transactionsQueryRef = loadQuery<transactionsQuery>(
-      context.environment,
-      TransactionsQuery,
-      {},
-      { fetchPolicy: "store-or-network" },
-    );
-
-    return {
-      transactionsQueryRef,
-    };
-  },
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
 
-const TransactionsQuery = graphql`
-  query transactionsQuery {
-    transactions {
-      id
-      ...transactionCardFragment
-    }
-  }
-`;
-
 function Page() {
-  const { transactionsQueryRef } = Route.useLoaderData();
-  const data = usePreloadedQuery(TransactionsQuery, transactionsQueryRef);
+  const { profileQueryRef } = Route.useRouteContext();
+
+  const data = usePreloadedQuery<routeProfileQuery>(
+    RouteProfileQuery,
+    profileQueryRef,
+  );
 
   return (
     <div className="p-4 lg:p-6">
@@ -66,7 +47,7 @@ function Page() {
 function TransactionList({
   transactions,
 }: {
-  transactions: transactionsQuery$data["transactions"];
+  transactions: routeProtectedQuery$data["transactions"];
 }) {
   return (
     <Card className="">

@@ -22,6 +22,7 @@ type Profile struct {
 
 func (Profile) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/util/database"
 	fijoyv1 "fijoy/proto/fijoy/v1"
+	"fmt"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -34,10 +35,13 @@ func (u *authUseCase) GetProfileId(ctx context.Context, userId string) (string, 
 	profile, err := u.client.Profile.Query().Where(profile.HasUserWith(user.ID(userId))).Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
+			fmt.Println("GetProfileId", userId, "not found")
 			return "", nil
 		}
+		fmt.Println("GetProfileId", userId, "error", err)
 		return "", err
 	}
+	fmt.Println("GetProfileId", userId, profile.ID)
 
 	return profile.ID, nil
 }

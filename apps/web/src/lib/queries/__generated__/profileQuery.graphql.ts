@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f0484cc04d0ccb12fe6ab1fa407b9e26>>
+ * @generated SignedSource<<11b59ce6e459962519a4742aded94286>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,12 +11,12 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type profileQuery$variables = Record<PropertyKey, never>;
 export type profileQuery$data = {
-  readonly profile: {
+  readonly profiles: ReadonlyArray<{
     readonly currencies: string;
     readonly id: string;
     readonly locale: string;
     readonly netWorthGoal: string;
-  };
+  }>;
 };
 export type profileQuery = {
   response: profileQuery$data;
@@ -30,8 +30,8 @@ var v0 = [
     "args": null,
     "concreteType": "Profile",
     "kind": "LinkedField",
-    "name": "profile",
-    "plural": false,
+    "name": "profiles",
+    "plural": true,
     "selections": [
       {
         "alias": null,
@@ -83,16 +83,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "6d50a9c1a4a46a8b9522cb7ebdb548c7",
+    "cacheID": "b107a21085ab7b34f536fdb896bcacf9",
     "id": null,
     "metadata": {},
     "name": "profileQuery",
     "operationKind": "query",
-    "text": "query profileQuery {\n  profile {\n    id\n    currencies\n    locale\n    netWorthGoal\n  }\n}\n"
+    "text": "query profileQuery {\n  profiles {\n    id\n    currencies\n    locale\n    netWorthGoal\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "441a61ad697ec20f153d684c7667571f";
+(node as any).hash = "a4ee917c7a5289552fb8b2ee9669e81c";
 
 export default node;

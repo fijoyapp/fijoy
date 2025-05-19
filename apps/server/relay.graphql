@@ -203,8 +203,8 @@ type Query {
     ids: [ID!]!
   ): [Node]!
   accounts: [Account!]!
+  profiles: [Profile!]!
   transactions: [Transaction!]!
-  profile: Profile!
   user: User!
   currencies: [Currency!]!
 }

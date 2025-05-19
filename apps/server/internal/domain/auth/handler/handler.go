@@ -70,6 +70,7 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	profileId, err := h.authUseCase.GetProfileId(ctx, user.Id)
+	fmt.Println("profileId", profileId)
 	if err != nil {
 		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
 	}

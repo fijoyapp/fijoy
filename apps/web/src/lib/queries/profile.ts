@@ -5,7 +5,7 @@ import { profileQuery } from "./__generated__/profileQuery.graphql";
 
 const ProfileQuery = graphql`
   query profileQuery {
-    profile {
+    profiles {
       id
       currencies
       locale
