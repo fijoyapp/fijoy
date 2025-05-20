@@ -163,7 +163,7 @@ func main() {
 
 	// TODO: migrate to this, also get rid of default server as it is not prod ready
 	// nolint:staticcheck
-	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
+	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient, cfg.Auth))
 
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(cfg.Auth.JWT_AUTH))

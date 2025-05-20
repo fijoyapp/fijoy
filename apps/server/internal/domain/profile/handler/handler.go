@@ -7,8 +7,8 @@ import (
 	"fijoy/internal/util/auth"
 	fijoyv1 "fijoy/proto/fijoy/v1"
 
-	"connectrpc.com/connect"
 	"buf.build/go/protovalidate"
+	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 

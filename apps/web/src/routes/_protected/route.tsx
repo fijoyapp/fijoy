@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_protected")({
       context.environment,
       RouteProtectedQuery,
       {},
-      { fetchPolicy: "store-or-network" },
+      { fetchPolicy: "network-only" },
     );
     return { protectedQueryRef };
   },

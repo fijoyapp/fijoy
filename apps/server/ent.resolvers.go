@@ -166,13 +166,11 @@ func (r *Resolver) UpdateProfileInput() UpdateProfileInputResolver {
 	return &updateProfileInputResolver{r}
 }
 
-type (
-	accountResolver                struct{ *Resolver }
-	profileResolver                struct{ *Resolver }
-	queryResolver                  struct{ *Resolver }
-	transactionResolver            struct{ *Resolver }
-	createAccountInputResolver     struct{ *Resolver }
-	createProfileInputResolver     struct{ *Resolver }
-	createTransactionInputResolver struct{ *Resolver }
-	updateProfileInputResolver     struct{ *Resolver }
-)
+type accountResolver struct{ *Resolver }
+type profileResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
+type transactionResolver struct{ *Resolver }
+type createAccountInputResolver struct{ *Resolver }
+type createProfileInputResolver struct{ *Resolver }
+type createTransactionInputResolver struct{ *Resolver }
+type updateProfileInputResolver struct{ *Resolver }

@@ -96,17 +96,15 @@ const FinalStep = () => {
             sync: true,
           });
 
+          router.navigate({
+            to: "/home",
+          });
           return "Profile created";
         },
         loading: "Creating profile...",
         error: (e: Error) => `Error creating profile: ${e.toString()}`,
       },
     );
-
-    router.navigate({
-      to: "/home",
-      // reloadDocument: true, // FIXME: this is temporary fix
-    });
   }
 
   // this makes sure that the mutation only fires once in strict mode

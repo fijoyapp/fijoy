@@ -22,12 +22,23 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 		return nil, err
 	}
 
-	return r.client.Profile.Create().
+	profile, err := r.client.Profile.Create().
 		SetCurrencies(input.Currencies). // TODO: sanitize this
 		SetNetWorthGoal(input.NetWorthGoal).
 		SetLocale(input.Locale). // TODO: sanitize this
 		SetUserID(userData.UserId).
 		Save(ctx)
+
+	_, tokenString, _ := r.authConfig.JWT_AUTH.Encode(
+		map[string]any{
+			"user_id":    userData.UserId,
+			"profile_id": profile.ID,
+		},
+	)
+
+	auth.SetJwtCookie(ctx, tokenString)
+
+	return profile, err
 }
 
 // UpdateProfile is the resolver for the updateProfile field.
@@ -61,22 +72,3 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *queryResolver) Profile(ctx context.Context) (*ent.Profile, error) {
-	authData, err := auth.GetAuthDataFromContext(ctx)
-	if err != nil {
-		fmt.Println(authData.UserId)
-		return r.client.Profile.Query().Where(profile.HasUserWith(user.ID(authData.UserId))).Only(ctx)
-	}
-
-	fmt.Println(authData.ProfileId)
-	return r.client.Profile.Query().Where(profile.ID(authData.ProfileId)).Only(ctx)
-}
-*/
