@@ -11,7 +11,6 @@ import { useEffect, useRef } from "react";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
-import { environment } from "@/environment";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
