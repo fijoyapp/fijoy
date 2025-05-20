@@ -23,6 +23,7 @@ import { CurrencyField } from "@/components/setup/form/currency";
 import { graphql } from "relay-runtime";
 import { loadQuery, usePreloadedQuery } from "react-relay";
 import { currencyQuery } from "./__generated__/currencyQuery.graphql";
+import { useProfile } from "@/hooks/use-profile";
 
 const CurrencyQuery = graphql`
   query currencyQuery {
@@ -57,15 +58,15 @@ const variants = {
 };
 
 function Page() {
-  const { profile } = Route.useRouteContext();
   const { currencyQueryRef } = Route.useLoaderData();
+  const { profile } = useProfile();
 
   const data = usePreloadedQuery(CurrencyQuery, currencyQueryRef);
 
   const form = useForm<TypeOf<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),
     defaultValues: {
-      currencies: profile.profile.currencies.split(","),
+      currencies: profile.currencies.split(","),
     },
   });
 
@@ -121,7 +122,7 @@ function Page() {
                   control={form.control}
                   name="currencies"
                   currencies={data.currencies}
-                  defaultValues={profile.profile.currencies.split(",")}
+                  defaultValues={profile.currencies.split(",")}
                   onValueChange={(value) => {
                     form.setValue("currencies", value);
                   }}
