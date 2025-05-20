@@ -82,7 +82,7 @@ export const Route = createFileRoute("/_protected/_profile")({
       context.environment,
       RouteProfileQuery,
       {},
-      { fetchPolicy: "store-or-network" },
+      { fetchPolicy: "network-only" },
     );
     return { profileQueryRef };
   },
