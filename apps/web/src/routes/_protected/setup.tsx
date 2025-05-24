@@ -45,7 +45,7 @@ function Setup() {
         {match(step)
           .with("currency", () => <CurrencyStep currencies={data.currencies} />)
           .with("goal", () => <GoalStep currencies={data.currencies} />)
-          .with("final", () => <FinalStep />)
+          .with("final", () => <FinalStep rootQueryRef={rootQueryRef} />)
           .exhaustive()}
       </div>
     </div>

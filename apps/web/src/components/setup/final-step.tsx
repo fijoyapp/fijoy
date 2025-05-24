@@ -7,10 +7,17 @@ import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
-import { useEffect, useRef } from "react";
-import { graphql } from "relay-runtime";
-import { useMutation } from "react-relay";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { fetchQuery, graphql } from "relay-runtime";
+import {
+  PreloadedQuery,
+  useMutation,
+  useQueryLoader,
+  useRelayEnvironment,
+} from "react-relay";
 import { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
+import { rootQuery } from "@/routes/__root";
+import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
@@ -36,11 +43,23 @@ const profileCreateMutation = graphql`
   }
 `;
 
-const FinalStep = () => {
+type Props = {
+  rootQueryRef: PreloadedQuery<RootQuery>;
+};
+
+const FinalStep = ({ rootQueryRef }: Props) => {
+  const environment = useRelayEnvironment();
   const router = useRouter();
   const [commitMutation, isMutationInFlight] = useMutation<finalStepMutation>(
     profileCreateMutation,
   );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, loadQuery] = useQueryLoader(
+    rootQuery,
+    rootQueryRef /* initial query ref */,
+  );
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { currencyStepData, goalStepData, reset } = useSetupStore(
     useShallow((state) => ({
@@ -57,6 +76,43 @@ const FinalStep = () => {
       goal: goalStepData,
     },
   });
+
+  const refresh = useCallback(({ onComplete }: { onComplete: () => void }) => {
+    if (isRefreshing) {
+      return;
+    }
+    // const {variables} = props.appQueryRef;
+    setIsRefreshing(true);
+
+    // fetchQuery will fetch the query and write
+    // the data to the Relay store. This will ensure
+    // that when we re-render, the data is already
+    // cached and we don't suspend
+    fetchQuery<RootQuery>(environment, rootQuery, {
+      hasProfile: true,
+      hasUser: true,
+    }).subscribe({
+      complete: () => {
+        setIsRefreshing(false);
+
+        // *After* the query has been fetched, we call
+        // loadQuery again to re-render with a new
+        // queryRef.
+        // At this point the data for the query should
+        // be cached, so we use the 'store-only'
+        // fetchPolicy to avoid suspending.
+        loadQuery(
+          { hasProfile: true, hasUser: true },
+          { fetchPolicy: "store-only" },
+        );
+        onComplete();
+      },
+      error: () => {
+        setIsRefreshing(false);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function onSubmit() {
     if (isMutationInFlight) {
@@ -89,15 +145,16 @@ const FinalStep = () => {
         });
       }),
       {
-        success: async () => {
+        success: () => {
+          refresh({
+            onComplete: () => {
+              router.navigate({
+                to: "/home",
+              });
+            },
+          });
           reset();
-          await router.invalidate({
-            sync: true,
-          });
 
-          router.navigate({
-            to: "/home",
-          });
           return "Profile created";
         },
         loading: "Creating profile...",
