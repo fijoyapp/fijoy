@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import invariant from "tiny-invariant";
 import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
-import { getAccountsQueryOptions } from "@/lib/queries/account";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   PageHeader,
   PageHeaderDescription,
@@ -19,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { AccountType, Account } from "@/gen/proto/fijoy/v1/account_pb";
+import { AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import {
   ChartCandlestick,
   CreditCard,
@@ -33,48 +32,66 @@ import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import NetWorthInfo from "@/components/accounts/net-worth-info";
 import AccountListView from "@/components/accounts/account-list-view";
+import { graphql } from "relay-runtime";
+import { useFragment, usePreloadedQuery } from "react-relay";
+import {
+  accountsFragment$data,
+  accountsFragment$key,
+} from "./__generated__/accountsFragment.graphql";
+import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import { rootQuery } from "@/routes/__root";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
   detail: z.string().startsWith("account_").optional(),
 });
 
+const AccountsFragment = graphql`
+  fragment accountsFragment on Account @relay(plural: true) {
+    id
+    accountType
+    balance
+    ...cardFragment
+  }
+`;
+
 export const Route = createFileRoute("/_protected/_profile/accounts/")({
   // loaderDeps: ({ search}) => ({ search }),
   validateSearch: (search) => {
     return accountsRouteSchema.parse(search);
-  },
-  loader: (opts) => {
-    opts.context.queryClient.ensureQueryData(
-      getAccountsQueryOptions({
-        context: opts.context,
-      }),
-    );
   },
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
 
 function Page() {
-  const context = Route.useRouteContext();
-  const { data: accountList } = useSuspenseQuery(
-    getAccountsQueryOptions({ context }),
-  );
   const { add, detail } = Route.useSearch();
+  const { rootQueryRef } = Route.useRouteContext();
+
+  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
+  // const data = useFragment<accountsFragment$key>(
+  //   AccountsFragment,
+  //   protectedQueryRef,
+  // );
+  const accounts = useFragment<accountsFragment$key>(
+    AccountsFragment,
+    data.accounts,
+  );
+  invariant(accounts);
 
   return (
     <>
       {add ? (
         <AddAccount type={add} />
       ) : (
-        <AccountsView accounts={accountList.items} detail={detail} />
+        <AccountsView accounts={accounts} detail={detail} />
       )}
     </>
   );
 }
 
 type AccountsViewProps = {
-  accounts: Account[];
+  accounts: accountsFragment$data;
   detail?: string;
 };
 

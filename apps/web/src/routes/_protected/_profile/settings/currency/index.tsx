@@ -14,28 +14,19 @@ import { z, type TypeOf } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormMessage } from "@/components/ui/form";
-import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
+import { useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
-import {
-  getProfile,
-  updateProfile,
-} from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
+import { updateProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
-import { getCurrenciesQueryOptions } from "@/lib/queries/currency";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { usePreloadedQuery } from "react-relay";
+import { useProfile } from "@/hooks/use-profile";
+import { rootQuery } from "@/routes/__root";
 
 export const Route = createFileRoute("/_protected/_profile/settings/currency/")(
   {
     component: Page,
-    loader: (opts) => {
-      opts.context.queryClient.ensureQueryData(
-        getCurrenciesQueryOptions({
-          context: opts.context,
-        }),
-      );
-    },
   },
 );
 
@@ -49,31 +40,20 @@ const variants = {
 };
 
 function Page() {
-  const { queryClient, profile } = Route.useRouteContext();
+  const { rootQueryRef } = Route.useRouteContext();
+  const { profile } = useProfile();
+
+  const data = usePreloadedQuery(rootQuery, rootQueryRef);
 
   const form = useForm<TypeOf<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),
     defaultValues: {
-      currencies: profile.currencies,
+      currencies: profile.currencies.split(","),
     },
   });
 
-  const context = Route.useRouteContext();
-
-  const { data: currencyList } = useSuspenseQuery(
-    getCurrenciesQueryOptions({
-      context,
-    }),
-  );
-
   const updateProfileMutation = useMutation(updateProfile, {
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getProfile,
-          cardinality: "finite",
-        }),
-      });
       toast.success("Currency settings updated");
     },
     onError(error) {
@@ -123,8 +103,8 @@ function Page() {
                 <CurrencyField
                   control={form.control}
                   name="currencies"
-                  currencies={currencyList.items}
-                  defaultValues={profile.currencies}
+                  currencies={data.currencies}
+                  defaultValues={profile.currencies.split(",")}
                   onValueChange={(value) => {
                     form.setValue("currencies", value);
                   }}

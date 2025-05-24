@@ -1,38 +1,20 @@
-import { createContext, useEffect, useState } from "react";
-
-import { createClient } from "@connectrpc/connect";
-import { User } from "./gen/proto/fijoy/v1/user_pb";
-import { UserService } from "./gen/proto/fijoy/v1/user_pb";
-import { finalTransport } from "./lib/connect";
+import { userFragment$data } from "./lib/queries/__generated__/userFragment.graphql";
+import { createContext } from "react";
 
 export interface AuthContext {
-  user: User | undefined;
-  isLoading: boolean;
+  user: userFragment$data;
 }
-
-const userClient = createClient(UserService, finalTransport);
 
 export const AuthContext = createContext<AuthContext | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    userClient
-      .getUser({})
-      .catch(() => {
-        // console.error(error);
-      })
-      .then((user) => {
-        setUser(user || undefined);
-        setIsLoading(false);
-      });
-  }, []);
-
+export function AuthProvider({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: userFragment$data;
+}) {
   return (
-    <AuthContext.Provider value={{ user, isLoading }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
 }

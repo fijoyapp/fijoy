@@ -20,7 +20,6 @@ type User struct {
 
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate()),
 	}
 }

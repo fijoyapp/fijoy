@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fijoy"
 	"fijoy/config"
 	"fijoy/constants"
 	"fijoy/ent"
@@ -43,7 +44,9 @@ import (
 
 	health_handler "fijoy/internal/domain/health/handler"
 
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
@@ -51,6 +54,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/jwtauth/v5"
 
 	connectcors "connectrpc.com/cors"
 	"github.com/getsentry/sentry-go"
@@ -105,19 +109,6 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// TODO: migrate to this, also get rid of default server as it is not prod ready
-	// nolint:staticcheck
-	// srv := handler.NewDefaultServer(fijoy.NewSchema(entClient))
-	//
-	// http.Handle("/",
-	// 	playground.Handler("Fijoy", "/query"),
-	// )
-	// http.Handle("/query", srv)
-	// log.Println("listening on :8081")
-	// if err := http.ListenAndServe(":8081", nil); err != nil {
-	// 	log.Fatal("http server terminated", err)
-	// }
-
 	validator := validator.New(validator.WithRequiredStructEnabled())
 	protoValidator, err := protovalidate.New()
 	if err != nil {
@@ -156,37 +147,43 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(fijoy_middleware.LoggerMiddleware(logger))
+	r.Use(fijoy_middleware.CookieMiddleWare())
 	r.Use(sentryMiddleware.Handle)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   connectcors.AllowedMethods(),
-		AllowedHeaders:   append(connectcors.AllowedHeaders(), "Fijoy-Profile-Id", "sentry-trace", "baggage"),
+		AllowedHeaders:   append(connectcors.AllowedHeaders(), "sentry-trace", "baggage"),
 		ExposedHeaders:   connectcors.ExposedHeaders(),
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 		Debug:            false,
 	}))
 
-	// r.Get("/error", func(w http.ResponseWriter, r *http.Request) {
-	// 	hub := sentry.GetHubFromContext(r.Context())
-	// 	hub.CaptureException(errors.New("test error"))
-	// })
-	// r.Get("/panic", func(w http.ResponseWriter, r *http.Request) {
-	// 	panic("server panic")
-	// })
+	// TODO: migrate to this, also get rid of default server as it is not prod ready
+	// nolint:staticcheck
+	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient, cfg.Auth))
+
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(cfg.Auth.JWT_AUTH))
+		r.Use(jwtauth.Authenticator(cfg.Auth.JWT_AUTH))
+
+		r.Handle("/graphql",
+			playground.Handler("Fijoy", "/query"),
+		)
+		r.Handle("/query", srv)
+	})
 
 	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
+	health_handler.RegisterHTTPEndpoints(r)
 
+	// TODO: remove these
 	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
 	transaction_handler.RegisterConnect(r, protoValidator, cfg.Auth, transctionUseCase)
-
 	currency_handler.RegisterConnect(r)
-
-	health_handler.RegisterHTTPEndpoints(r)
 
 	// Start our server
 	server := newServer(":"+cfg.Server.PORT, r)

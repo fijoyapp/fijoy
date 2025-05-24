@@ -1,37 +1,29 @@
-import { useAuth } from "@/hooks/use-auth";
-import {
-  Navigate,
-  Outlet,
-  createFileRoute,
-  useMatchRoute,
-} from "@tanstack/react-router";
-import { useProfile } from "@/hooks/use-profile";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
+import invariant from "tiny-invariant";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
+import { useFragment, usePreloadedQuery } from "react-relay";
+import { RootQuery } from "../__generated__/RootQuery.graphql";
+import { rootQuery } from "../__root";
+import { userFragment$key } from "@/lib/queries/__generated__/userFragment.graphql";
+import { UserFragment } from "@/lib/queries/user";
+import { AuthProvider } from "@/auth";
 
 export const Route = createFileRoute("/_protected")({
+  pendingComponent: CenterLoadingSpinner,
   component: Protected,
 });
 
 function Protected() {
-  const auth = useAuth();
-  const profile = useProfile();
-  const matchRoute = useMatchRoute();
+  const { rootQueryRef } = Route.useRouteContext();
 
-  if (auth.isLoading || profile.isLoading) {
-    return <CenterLoadingSpinner />;
-  }
+  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
+  const user = useFragment<userFragment$key>(UserFragment, data.user);
 
-  if (!auth.user) {
-    return <Navigate to="/login" />;
-  }
+  invariant(user, "User data is required for protected routes");
 
-  if (!profile.profile && !matchRoute({ to: "/setup" })) {
-    return <Navigate to="/setup" search={{ step: "currency" }} />;
-  }
-
-  if (profile.profile && matchRoute({ to: "/setup" })) {
-    return <Navigate to="/home" />;
-  }
-
-  return <Outlet />;
+  return (
+    <AuthProvider user={user}>
+      <Outlet />
+    </AuthProvider>
+  );
 }

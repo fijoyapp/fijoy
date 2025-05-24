@@ -1,11 +1,9 @@
-import { getTransactionsQueryOptions } from "@/lib/queries/transaction";
-
+import invariant from "tiny-invariant";
 import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/small-header";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { TransactionCard } from "@/components/transactions/transaction-card";
@@ -13,22 +11,24 @@ import { type TransactionList } from "@/gen/proto/fijoy/v1/transaction_pb";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
+import { usePreloadedQuery } from "react-relay";
+import { rootQuery } from "@/routes/__root";
+import {
+  RootQuery,
+  RootQuery$data,
+} from "@/routes/__generated__/RootQuery.graphql";
 
 export const Route = createFileRoute("/_protected/_profile/transactions/")({
-  loader: (opts) =>
-    opts.context.queryClient.ensureQueryData(
-      getTransactionsQueryOptions({ context: opts.context }),
-    ),
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
 
 function Page() {
-  const context = Route.useRouteContext();
+  const { rootQueryRef } = Route.useRouteContext();
 
-  const { data: transactions } = useSuspenseQuery(
-    getTransactionsQueryOptions({ context }),
-  );
+  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
+
+  invariant(data.transactions);
 
   return (
     <div className="p-4 lg:p-6">
@@ -41,25 +41,32 @@ function Page() {
 
       <div className="py-2"></div>
 
-      <TransactionList transactions={transactions} />
+      <TransactionList transactions={data.transactions} />
     </div>
   );
 }
 
-function TransactionList({ transactions }: { transactions: TransactionList }) {
+function TransactionList({
+  transactions,
+}: {
+  transactions: NonNullable<RootQuery$data["transactions"]>;
+}) {
   return (
     <Card className="">
-      {transactions.items.map((transaction, idx) => {
+      {transactions.map((transaction, idx) => {
         if (idx === 0) {
           return (
-            <TransactionCard transaction={transaction} key={transaction.id} />
+            <TransactionCard
+              transactionRef={transaction}
+              key={transaction.id}
+            />
           );
         }
 
         return (
           <Fragment key={transaction.id}>
             <Separator className="" />
-            <TransactionCard transaction={transaction} />
+            <TransactionCard transactionRef={transaction} />
           </Fragment>
         );
       })}

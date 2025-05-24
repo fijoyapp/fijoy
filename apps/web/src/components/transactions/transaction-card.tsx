@@ -1,21 +1,42 @@
-import { Transaction } from "@/gen/proto/fijoy/v1/transaction_pb";
 import { CardContent } from "../ui/card";
 import { ChartCandlestick } from "lucide-react";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
-import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { useProfile } from "@/hooks/use-profile";
 import { match } from "ts-pattern";
-import { AccountSymbolType } from "@/gen/proto/fijoy/v1/account_pb";
-import { Profile } from "@/gen/proto/fijoy/v1/profile_pb";
 import { Fragment } from "react/jsx-runtime";
+import { profileQuery } from "@/lib/queries/__generated__/profileQuery.graphql";
+import { graphql } from "relay-runtime";
+import {
+  transactionCardFragment$data,
+  transactionCardFragment$key,
+} from "./__generated__/transactionCardFragment.graphql";
+import { useFragment } from "react-relay";
 
 type Props = {
-  transaction: Transaction;
+  transactionRef: transactionCardFragment$key;
 };
 
-export const TransactionCard = ({ transaction }: Props) => {
+const TransactionCardFragment = graphql`
+  fragment transactionCardFragment on Transaction {
+    id
+    note
+    amount
+    datetime
+    createdAt
+    updatedAt
+    account {
+      symbol
+      symbolType
+    }
+  }
+`;
+
+export const TransactionCard = ({ transactionRef }: Props) => {
   const { profile } = useProfile();
+
+  const transaction = useFragment(TransactionCardFragment, transactionRef);
+
   if (!profile) {
     return null;
   }
@@ -36,7 +57,7 @@ export const TransactionCard = ({ transaction }: Props) => {
       <div className="flex flex-col items-end">
         <ValueDisplay transaction={transaction} profile={profile} />
         <div className="text-muted-foreground text-xs">
-          {getPrettyTime(timestampDate(transaction.createdAt!))}
+          {getPrettyTime(new Date(transaction.createdAt))}
         </div>
       </div>
     </CardContent>
@@ -47,16 +68,16 @@ function ValueDisplay({
   transaction,
   profile,
 }: {
-  transaction: Transaction;
-  profile: Profile;
+  transaction: transactionCardFragment$data;
+  profile: profileQuery["response"]["profile"];
 }) {
   return (
     <Fragment>
-      {match(transaction.account!.symbolType)
-        .with(AccountSymbolType.UNSPECIFIED as 0, () => {
+      {match(transaction.account.symbolType)
+        .with("%future added value", () => {
           return "Something is wrong!";
         })
-        .with(AccountSymbolType.CURRENCY as 1, () => {
+        .with("currency", () => {
           return getCurrencyDisplay(
             transaction.amount,
             transaction.account!.symbol,
@@ -67,11 +88,11 @@ function ValueDisplay({
             },
           );
         })
-        .with(AccountSymbolType.CRYPTO as 2, () => {
+        .with("crypto", () => {
           // TODO: implement this
           return "Unimplemented";
         })
-        .with(AccountSymbolType.STOCK as 3, () => {
+        .with("stock", () => {
           // TODO: implement this
           return "Unimplemented";
         })

@@ -3,23 +3,63 @@ import { useForm } from "react-hook-form";
 import { z, type TypeOf } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
-import { useMutation } from "@connectrpc/connect-query";
 import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
-import { useEffect, useRef } from "react";
-import { createProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
-import { useProfile } from "@/hooks/use-profile";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { fetchQuery, graphql } from "relay-runtime";
+import {
+  PreloadedQuery,
+  useMutation,
+  useQueryLoader,
+  useRelayEnvironment,
+} from "react-relay";
+import { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
+import { rootQuery } from "@/routes/__root";
+import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
   goal: GoalStepData,
 });
 
-const FinalStep = () => {
+const profileCreateMutation = graphql`
+  mutation finalStepMutation(
+    $currencies: String!
+    $netWorthGoal: String!
+    $locale: String!
+  ) {
+    createProfile(
+      input: {
+        currencies: $currencies
+        netWorthGoal: $netWorthGoal
+        locale: $locale
+        userID: "" # will be set by the server
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+type Props = {
+  rootQueryRef: PreloadedQuery<RootQuery>;
+};
+
+const FinalStep = ({ rootQueryRef }: Props) => {
+  const environment = useRelayEnvironment();
   const router = useRouter();
-  const { refresh } = useProfile();
+  const [commitMutation, isMutationInFlight] = useMutation<finalStepMutation>(
+    profileCreateMutation,
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, loadQuery] = useQueryLoader(
+    rootQuery,
+    rootQueryRef /* initial query ref */,
+  );
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { currencyStepData, goalStepData, reset } = useSetupStore(
     useShallow((state) => ({
@@ -37,16 +77,48 @@ const FinalStep = () => {
     },
   });
 
-  const createProfileMut = useMutation(createProfile, {
-    onSuccess: async () => {
-      refresh();
-      // router.navigate({
-      //   to: "/home",
-      // });
-    },
-  });
+  const refresh = useCallback(({ onComplete }: { onComplete: () => void }) => {
+    if (isRefreshing) {
+      return;
+    }
+    // const {variables} = props.appQueryRef;
+    setIsRefreshing(true);
+
+    // fetchQuery will fetch the query and write
+    // the data to the Relay store. This will ensure
+    // that when we re-render, the data is already
+    // cached and we don't suspend
+    fetchQuery<RootQuery>(environment, rootQuery, {
+      hasProfile: true,
+      hasUser: true,
+    }).subscribe({
+      complete: () => {
+        setIsRefreshing(false);
+
+        // *After* the query has been fetched, we call
+        // loadQuery again to re-render with a new
+        // queryRef.
+        // At this point the data for the query should
+        // be cached, so we use the 'store-only'
+        // fetchPolicy to avoid suspending.
+        loadQuery(
+          { hasProfile: true, hasUser: true },
+          { fetchPolicy: "store-only" },
+        );
+        onComplete();
+      },
+      error: () => {
+        setIsRefreshing(false);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function onSubmit() {
+    if (isMutationInFlight) {
+      return;
+    }
+
     if (!(await form.trigger())) {
       router.navigate({
         to: "/setup",
@@ -56,14 +128,33 @@ const FinalStep = () => {
     }
 
     const values = form.getValues();
+
     toast.promise(
-      createProfileMut.mutateAsync({
-        currencies: values.currency.currencies,
-        netWorthGoal: values.goal.net_worth_goal,
+      new Promise((resolve, reject) => {
+        resolve("");
+        commitMutation({
+          variables: {
+            currencies: values.currency.currencies.join(","),
+            netWorthGoal: values.goal.net_worth_goal,
+            locale: "en-CA", // TODO: Replace with actual locale value
+          },
+          onCompleted: (response) => {
+            resolve(response);
+          },
+          onError: (error) => reject(error),
+        });
       }),
       {
         success: () => {
+          refresh({
+            onComplete: () => {
+              router.navigate({
+                to: "/home",
+              });
+            },
+          });
           reset();
+
           return "Profile created";
         },
         loading: "Creating profile...",
