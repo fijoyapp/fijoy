@@ -47,7 +47,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       ctx.context.environment,
       rootQuery,
       { hasProfile, hasUser },
-      { fetchPolicy: "store-and-network" },
+      { fetchPolicy: "store-or-network" },
     );
     return { rootQueryRef };
   },
