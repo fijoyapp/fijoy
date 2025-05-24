@@ -20,31 +20,13 @@ import { Icons } from "@/components/icons";
 import { updateProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
-import { graphql } from "relay-runtime";
-import { loadQuery, usePreloadedQuery } from "react-relay";
-import { currencyQuery } from "./__generated__/currencyQuery.graphql";
+import { usePreloadedQuery } from "react-relay";
 import { useProfile } from "@/hooks/use-profile";
-
-const CurrencyQuery = graphql`
-  query currencyQuery {
-    currencies {
-      ...currencyFragment
-    }
-  }
-`;
+import { rootQuery } from "@/routes/__root";
 
 export const Route = createFileRoute("/_protected/_profile/settings/currency/")(
   {
     component: Page,
-    loader: ({ context }) => {
-      const currencyQueryRef = loadQuery<currencyQuery>(
-        context.environment,
-        CurrencyQuery,
-        {},
-        { fetchPolicy: "store-or-network" },
-      );
-      return { currencyQueryRef };
-    },
   },
 );
 
@@ -58,10 +40,10 @@ const variants = {
 };
 
 function Page() {
-  const { currencyQueryRef } = Route.useLoaderData();
+  const { rootQueryRef } = Route.useRouteContext();
   const { profile } = useProfile();
 
-  const data = usePreloadedQuery(CurrencyQuery, currencyQueryRef);
+  const data = usePreloadedQuery(rootQuery, rootQueryRef);
 
   const form = useForm<TypeOf<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),

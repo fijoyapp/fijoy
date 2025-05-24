@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import invariant from "tiny-invariant";
 import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
 import {
@@ -37,8 +38,8 @@ import {
   accountsFragment$data,
   accountsFragment$key,
 } from "./__generated__/accountsFragment.graphql";
-import { RouteProfileQuery } from "../route";
-import { routeProfileQuery } from "../__generated__/routeProfileQuery.graphql";
+import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import { rootQuery } from "@/routes/__root";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
@@ -65,12 +66,9 @@ export const Route = createFileRoute("/_protected/_profile/accounts/")({
 
 function Page() {
   const { add, detail } = Route.useSearch();
-  const { profileQueryRef } = Route.useRouteContext();
+  const { rootQueryRef } = Route.useRouteContext();
 
-  const data = usePreloadedQuery<routeProfileQuery>(
-    RouteProfileQuery,
-    profileQueryRef,
-  );
+  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
   // const data = useFragment<accountsFragment$key>(
   //   AccountsFragment,
   //   protectedQueryRef,
@@ -79,6 +77,7 @@ function Page() {
     AccountsFragment,
     data.accounts,
   );
+  invariant(accounts);
 
   return (
     <>

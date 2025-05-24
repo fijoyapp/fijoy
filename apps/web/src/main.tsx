@@ -7,7 +7,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
-import { AuthProvider } from "./auth";
 import { Toaster } from "./components/ui/sonner";
 
 import { TransportProvider } from "@connectrpc/connect-query";
@@ -55,14 +54,10 @@ if (!rootElement.innerHTML) {
       <TransportProvider transport={finalTransport}>
         <RelayEnvironment>
           <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              {/* <Suspense fallback={<CenterLoadingSpinner />}> */}
-              <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-                <App />
-                <Toaster />
-              </ThemeProvider>
-              {/* </Suspense> */}
-            </AuthProvider>
+            <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+              <App />
+              <Toaster />
+            </ThemeProvider>
           </QueryClientProvider>
         </RelayEnvironment>
       </TransportProvider>
