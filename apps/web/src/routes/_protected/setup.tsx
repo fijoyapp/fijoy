@@ -12,8 +12,8 @@ import CurrencyStep from "@/components/setup/currency-step";
 import FinalStep from "@/components/setup/final-step";
 import GoalStep from "@/components/setup/goal-step";
 import { usePreloadedQuery } from "react-relay";
-import { routeProtectedQuery } from "./__generated__/routeProtectedQuery.graphql";
-import { RouteProtectedQuery } from "./route";
+import { rootQuery } from "../__root";
+import { RootQuery } from "../__generated__/RootQuery.graphql";
 
 const setupSearchSchema = z.object({
   step: SetupStep.default("currency"),
@@ -29,12 +29,9 @@ export const Route = createFileRoute("/_protected/setup")({
 function Setup() {
   const { step } = Route.useSearch();
 
-  const { protectedQueryRef } = Route.useRouteContext();
+  const { rootQueryRef } = Route.useRouteContext();
 
-  const data = usePreloadedQuery<routeProtectedQuery>(
-    RouteProtectedQuery,
-    protectedQueryRef,
-  );
+  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
 
   return (
     <div className="container max-w-(--breakpoint-2xl)">

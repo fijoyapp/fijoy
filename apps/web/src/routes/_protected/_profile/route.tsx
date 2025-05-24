@@ -48,45 +48,45 @@ import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
-import { graphql } from "relay-runtime";
-import { loadQuery, useFragment, usePreloadedQuery } from "react-relay";
-import { routeProfileQuery } from "./__generated__/routeProfileQuery.graphql";
-import { ProfileFragment } from "@/lib/queries/profile";
+import { useFragment, usePreloadedQuery } from "react-relay";
 import { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { ProfileProvider } from "@/profile";
+import { rootQuery } from "@/routes/__root";
+import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import { ProfileFragment } from "@/lib/queries/profile";
 
-export const RouteProfileQuery = graphql`
-  query routeProfileQuery {
-    user {
-      ...userFragment
-    }
-    profiles {
-      ...profileFragment
-    }
-    accounts {
-      id
-      ...accountsFragment
-    }
-    transactions {
-      id
-      ...transactionCardFragment
-    }
-    currencies {
-      ...currencyFragment
-    }
-  }
-`;
+// export const RouteProfileQuery = graphql`
+//   query routeProfileQuery {
+//     user {
+//       ...userFragment
+//     }
+//     profiles {
+//       ...profileFragment
+//     }
+//     accounts {
+//       id
+//       ...accountsFragment
+//     }
+//     transactions {
+//       id
+//       ...transactionCardFragment
+//     }
+//     currencies {
+//       ...currencyFragment
+//     }
+//   }
+// `;
 
 export const Route = createFileRoute("/_protected/_profile")({
-  beforeLoad: async ({ context }) => {
-    const profileQueryRef = loadQuery<routeProfileQuery>(
-      context.environment,
-      RouteProfileQuery,
-      {},
-      { fetchPolicy: "network-only" },
-    );
-    return { profileQueryRef };
-  },
+  // beforeLoad: async ({ context }) => {
+  //   const profileQueryRef = loadQuery<routeProfileQuery>(
+  //     context.environment,
+  //     RouteProfileQuery,
+  //     {},
+  //     { fetchPolicy: "store-and-network" },
+  //   );
+  //   return { profileQueryRef };
+  // },
   pendingComponent: CenterLoadingSpinner,
   errorComponent: ({ error }) => (
     <PageHeader>
@@ -153,18 +153,15 @@ function Page() {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
-  const { profileQueryRef } = Route.useRouteContext();
+  const { rootQueryRef } = Route.useRouteContext();
 
-  const data = usePreloadedQuery<routeProfileQuery>(
-    RouteProfileQuery,
-    profileQueryRef,
-  );
+  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
   const profiles = useFragment<profileFragment$key>(
     ProfileFragment,
     data.profiles,
   );
 
-  if (profiles.length === 0 && !matchRoute({ to: "/setup" })) {
+  if (!profiles || (profiles.length === 0 && !matchRoute({ to: "/setup" }))) {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
   }
 

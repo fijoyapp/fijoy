@@ -1,3 +1,4 @@
+import invariant from "tiny-invariant";
 import {
   PageHeader,
   PageHeaderDescription,
@@ -11,9 +12,11 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
 import { usePreloadedQuery } from "react-relay";
-import { routeProtectedQuery$data } from "../../__generated__/routeProtectedQuery.graphql";
-import { routeProfileQuery } from "../__generated__/routeProfileQuery.graphql";
-import { RouteProfileQuery } from "../route";
+import { rootQuery } from "@/routes/__root";
+import {
+  RootQuery,
+  RootQuery$data,
+} from "@/routes/__generated__/RootQuery.graphql";
 
 export const Route = createFileRoute("/_protected/_profile/transactions/")({
   pendingComponent: CenterLoadingSpinner,
@@ -21,12 +24,11 @@ export const Route = createFileRoute("/_protected/_profile/transactions/")({
 });
 
 function Page() {
-  const { profileQueryRef } = Route.useRouteContext();
+  const { rootQueryRef } = Route.useRouteContext();
 
-  const data = usePreloadedQuery<routeProfileQuery>(
-    RouteProfileQuery,
-    profileQueryRef,
-  );
+  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
+
+  invariant(data.transactions);
 
   return (
     <div className="p-4 lg:p-6">
@@ -47,7 +49,7 @@ function Page() {
 function TransactionList({
   transactions,
 }: {
-  transactions: routeProtectedQuery$data["transactions"];
+  transactions: NonNullable<RootQuery$data["transactions"]>;
 }) {
   return (
     <Card className="">
