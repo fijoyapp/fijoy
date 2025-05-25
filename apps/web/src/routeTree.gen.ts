@@ -17,12 +17,12 @@ import { Route as PublicRouteImport } from './routes/_public/route'
 import { Route as ProtectedRouteImport } from './routes/_protected/route'
 import { Route as ProtectedSetupImport } from './routes/_protected/setup'
 import { Route as ProtectedProfileRouteImport } from './routes/_protected/_profile/route'
-import { Route as ProtectedProfileTransactionsIndexImport } from './routes/_protected/_profile/transactions/index'
+import { Route as ProtectedProfileTransactionsImport } from './routes/_protected/_profile/transactions'
+import { Route as ProtectedProfileHomeImport } from './routes/_protected/_profile/home'
+import { Route as ProtectedProfileAccountsImport } from './routes/_protected/_profile/accounts'
 import { Route as ProtectedProfileSettingsIndexImport } from './routes/_protected/_profile/settings/index'
-import { Route as ProtectedProfileHomeIndexImport } from './routes/_protected/_profile/home/index'
-import { Route as ProtectedProfileAccountsIndexImport } from './routes/_protected/_profile/accounts/index'
-import { Route as ProtectedProfileSettingsGeneralIndexImport } from './routes/_protected/_profile/settings/general/index'
-import { Route as ProtectedProfileSettingsCurrencyIndexImport } from './routes/_protected/_profile/settings/currency/index'
+import { Route as ProtectedProfileSettingsGeneralImport } from './routes/_protected/_profile/settings/general'
+import { Route as ProtectedProfileSettingsCurrencyImport } from './routes/_protected/_profile/settings/currency'
 
 // Create Virtual Routes
 
@@ -105,12 +105,24 @@ const ProtectedProfileRouteRoute = ProtectedProfileRouteImport.update({
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
 
-const ProtectedProfileTransactionsIndexRoute =
-  ProtectedProfileTransactionsIndexImport.update({
-    id: '/transactions/',
-    path: '/transactions/',
+const ProtectedProfileTransactionsRoute =
+  ProtectedProfileTransactionsImport.update({
+    id: '/transactions',
+    path: '/transactions',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
+
+const ProtectedProfileHomeRoute = ProtectedProfileHomeImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => ProtectedProfileRouteRoute,
+} as any)
+
+const ProtectedProfileAccountsRoute = ProtectedProfileAccountsImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => ProtectedProfileRouteRoute,
+} as any)
 
 const ProtectedProfileSettingsIndexRoute =
   ProtectedProfileSettingsIndexImport.update({
@@ -119,30 +131,17 @@ const ProtectedProfileSettingsIndexRoute =
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
-const ProtectedProfileHomeIndexRoute = ProtectedProfileHomeIndexImport.update({
-  id: '/home/',
-  path: '/home/',
-  getParentRoute: () => ProtectedProfileRouteRoute,
-} as any)
-
-const ProtectedProfileAccountsIndexRoute =
-  ProtectedProfileAccountsIndexImport.update({
-    id: '/accounts/',
-    path: '/accounts/',
+const ProtectedProfileSettingsGeneralRoute =
+  ProtectedProfileSettingsGeneralImport.update({
+    id: '/settings/general',
+    path: '/settings/general',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
-const ProtectedProfileSettingsGeneralIndexRoute =
-  ProtectedProfileSettingsGeneralIndexImport.update({
-    id: '/settings/general/',
-    path: '/settings/general/',
-    getParentRoute: () => ProtectedProfileRouteRoute,
-  } as any)
-
-const ProtectedProfileSettingsCurrencyIndexRoute =
-  ProtectedProfileSettingsCurrencyIndexImport.update({
-    id: '/settings/currency/',
-    path: '/settings/currency/',
+const ProtectedProfileSettingsCurrencyRoute =
+  ProtectedProfileSettingsCurrencyImport.update({
+    id: '/settings/currency',
+    path: '/settings/currency',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
@@ -227,18 +226,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicIndexLazyImport
       parentRoute: typeof PublicRouteImport
     }
-    '/_protected/_profile/accounts/': {
-      id: '/_protected/_profile/accounts/'
+    '/_protected/_profile/accounts': {
+      id: '/_protected/_profile/accounts'
       path: '/accounts'
       fullPath: '/accounts'
-      preLoaderRoute: typeof ProtectedProfileAccountsIndexImport
+      preLoaderRoute: typeof ProtectedProfileAccountsImport
       parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/_profile/home/': {
-      id: '/_protected/_profile/home/'
+    '/_protected/_profile/home': {
+      id: '/_protected/_profile/home'
       path: '/home'
       fullPath: '/home'
-      preLoaderRoute: typeof ProtectedProfileHomeIndexImport
+      preLoaderRoute: typeof ProtectedProfileHomeImport
+      parentRoute: typeof ProtectedProfileRouteImport
+    }
+    '/_protected/_profile/transactions': {
+      id: '/_protected/_profile/transactions'
+      path: '/transactions'
+      fullPath: '/transactions'
+      preLoaderRoute: typeof ProtectedProfileTransactionsImport
+      parentRoute: typeof ProtectedProfileRouteImport
+    }
+    '/_protected/_profile/settings/currency': {
+      id: '/_protected/_profile/settings/currency'
+      path: '/settings/currency'
+      fullPath: '/settings/currency'
+      preLoaderRoute: typeof ProtectedProfileSettingsCurrencyImport
+      parentRoute: typeof ProtectedProfileRouteImport
+    }
+    '/_protected/_profile/settings/general': {
+      id: '/_protected/_profile/settings/general'
+      path: '/settings/general'
+      fullPath: '/settings/general'
+      preLoaderRoute: typeof ProtectedProfileSettingsGeneralImport
       parentRoute: typeof ProtectedProfileRouteImport
     }
     '/_protected/_profile/settings/': {
@@ -248,51 +268,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedProfileSettingsIndexImport
       parentRoute: typeof ProtectedProfileRouteImport
     }
-    '/_protected/_profile/transactions/': {
-      id: '/_protected/_profile/transactions/'
-      path: '/transactions'
-      fullPath: '/transactions'
-      preLoaderRoute: typeof ProtectedProfileTransactionsIndexImport
-      parentRoute: typeof ProtectedProfileRouteImport
-    }
-    '/_protected/_profile/settings/currency/': {
-      id: '/_protected/_profile/settings/currency/'
-      path: '/settings/currency'
-      fullPath: '/settings/currency'
-      preLoaderRoute: typeof ProtectedProfileSettingsCurrencyIndexImport
-      parentRoute: typeof ProtectedProfileRouteImport
-    }
-    '/_protected/_profile/settings/general/': {
-      id: '/_protected/_profile/settings/general/'
-      path: '/settings/general'
-      fullPath: '/settings/general'
-      preLoaderRoute: typeof ProtectedProfileSettingsGeneralIndexImport
-      parentRoute: typeof ProtectedProfileRouteImport
-    }
   }
 }
 
 // Create and export the route tree
 
 interface ProtectedProfileRouteRouteChildren {
-  ProtectedProfileAccountsIndexRoute: typeof ProtectedProfileAccountsIndexRoute
-  ProtectedProfileHomeIndexRoute: typeof ProtectedProfileHomeIndexRoute
+  ProtectedProfileAccountsRoute: typeof ProtectedProfileAccountsRoute
+  ProtectedProfileHomeRoute: typeof ProtectedProfileHomeRoute
+  ProtectedProfileTransactionsRoute: typeof ProtectedProfileTransactionsRoute
+  ProtectedProfileSettingsCurrencyRoute: typeof ProtectedProfileSettingsCurrencyRoute
+  ProtectedProfileSettingsGeneralRoute: typeof ProtectedProfileSettingsGeneralRoute
   ProtectedProfileSettingsIndexRoute: typeof ProtectedProfileSettingsIndexRoute
-  ProtectedProfileTransactionsIndexRoute: typeof ProtectedProfileTransactionsIndexRoute
-  ProtectedProfileSettingsCurrencyIndexRoute: typeof ProtectedProfileSettingsCurrencyIndexRoute
-  ProtectedProfileSettingsGeneralIndexRoute: typeof ProtectedProfileSettingsGeneralIndexRoute
 }
 
 const ProtectedProfileRouteRouteChildren: ProtectedProfileRouteRouteChildren = {
-  ProtectedProfileAccountsIndexRoute: ProtectedProfileAccountsIndexRoute,
-  ProtectedProfileHomeIndexRoute: ProtectedProfileHomeIndexRoute,
+  ProtectedProfileAccountsRoute: ProtectedProfileAccountsRoute,
+  ProtectedProfileHomeRoute: ProtectedProfileHomeRoute,
+  ProtectedProfileTransactionsRoute: ProtectedProfileTransactionsRoute,
+  ProtectedProfileSettingsCurrencyRoute: ProtectedProfileSettingsCurrencyRoute,
+  ProtectedProfileSettingsGeneralRoute: ProtectedProfileSettingsGeneralRoute,
   ProtectedProfileSettingsIndexRoute: ProtectedProfileSettingsIndexRoute,
-  ProtectedProfileTransactionsIndexRoute:
-    ProtectedProfileTransactionsIndexRoute,
-  ProtectedProfileSettingsCurrencyIndexRoute:
-    ProtectedProfileSettingsCurrencyIndexRoute,
-  ProtectedProfileSettingsGeneralIndexRoute:
-    ProtectedProfileSettingsGeneralIndexRoute,
 }
 
 const ProtectedProfileRouteRouteWithChildren =
@@ -348,12 +344,12 @@ export interface FileRoutesByFullPath {
   '/stack': typeof PublicStackLazyRoute
   '/why': typeof PublicWhyLazyRoute
   '/': typeof PublicIndexLazyRoute
-  '/accounts': typeof ProtectedProfileAccountsIndexRoute
-  '/home': typeof ProtectedProfileHomeIndexRoute
+  '/accounts': typeof ProtectedProfileAccountsRoute
+  '/home': typeof ProtectedProfileHomeRoute
+  '/transactions': typeof ProtectedProfileTransactionsRoute
+  '/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
+  '/settings/general': typeof ProtectedProfileSettingsGeneralRoute
   '/settings': typeof ProtectedProfileSettingsIndexRoute
-  '/transactions': typeof ProtectedProfileTransactionsIndexRoute
-  '/settings/currency': typeof ProtectedProfileSettingsCurrencyIndexRoute
-  '/settings/general': typeof ProtectedProfileSettingsGeneralIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -366,12 +362,12 @@ export interface FileRoutesByTo {
   '/stack': typeof PublicStackLazyRoute
   '/why': typeof PublicWhyLazyRoute
   '/': typeof PublicIndexLazyRoute
-  '/accounts': typeof ProtectedProfileAccountsIndexRoute
-  '/home': typeof ProtectedProfileHomeIndexRoute
+  '/accounts': typeof ProtectedProfileAccountsRoute
+  '/home': typeof ProtectedProfileHomeRoute
+  '/transactions': typeof ProtectedProfileTransactionsRoute
+  '/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
+  '/settings/general': typeof ProtectedProfileSettingsGeneralRoute
   '/settings': typeof ProtectedProfileSettingsIndexRoute
-  '/transactions': typeof ProtectedProfileTransactionsIndexRoute
-  '/settings/currency': typeof ProtectedProfileSettingsCurrencyIndexRoute
-  '/settings/general': typeof ProtectedProfileSettingsGeneralIndexRoute
 }
 
 export interface FileRoutesById {
@@ -387,12 +383,12 @@ export interface FileRoutesById {
   '/_public/stack': typeof PublicStackLazyRoute
   '/_public/why': typeof PublicWhyLazyRoute
   '/_public/': typeof PublicIndexLazyRoute
-  '/_protected/_profile/accounts/': typeof ProtectedProfileAccountsIndexRoute
-  '/_protected/_profile/home/': typeof ProtectedProfileHomeIndexRoute
+  '/_protected/_profile/accounts': typeof ProtectedProfileAccountsRoute
+  '/_protected/_profile/home': typeof ProtectedProfileHomeRoute
+  '/_protected/_profile/transactions': typeof ProtectedProfileTransactionsRoute
+  '/_protected/_profile/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
+  '/_protected/_profile/settings/general': typeof ProtectedProfileSettingsGeneralRoute
   '/_protected/_profile/settings/': typeof ProtectedProfileSettingsIndexRoute
-  '/_protected/_profile/transactions/': typeof ProtectedProfileTransactionsIndexRoute
-  '/_protected/_profile/settings/currency/': typeof ProtectedProfileSettingsCurrencyIndexRoute
-  '/_protected/_profile/settings/general/': typeof ProtectedProfileSettingsGeneralIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -409,10 +405,10 @@ export interface FileRouteTypes {
     | '/'
     | '/accounts'
     | '/home'
-    | '/settings'
     | '/transactions'
     | '/settings/currency'
     | '/settings/general'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
@@ -426,10 +422,10 @@ export interface FileRouteTypes {
     | '/'
     | '/accounts'
     | '/home'
-    | '/settings'
     | '/transactions'
     | '/settings/currency'
     | '/settings/general'
+    | '/settings'
   id:
     | '__root__'
     | '/_protected'
@@ -443,12 +439,12 @@ export interface FileRouteTypes {
     | '/_public/stack'
     | '/_public/why'
     | '/_public/'
-    | '/_protected/_profile/accounts/'
-    | '/_protected/_profile/home/'
+    | '/_protected/_profile/accounts'
+    | '/_protected/_profile/home'
+    | '/_protected/_profile/transactions'
+    | '/_protected/_profile/settings/currency'
+    | '/_protected/_profile/settings/general'
     | '/_protected/_profile/settings/'
-    | '/_protected/_profile/transactions/'
-    | '/_protected/_profile/settings/currency/'
-    | '/_protected/_profile/settings/general/'
   fileRoutesById: FileRoutesById
 }
 
@@ -499,12 +495,12 @@ export const routeTree = rootRoute
       "filePath": "_protected/_profile/route.tsx",
       "parent": "/_protected",
       "children": [
-        "/_protected/_profile/accounts/",
-        "/_protected/_profile/home/",
-        "/_protected/_profile/settings/",
-        "/_protected/_profile/transactions/",
-        "/_protected/_profile/settings/currency/",
-        "/_protected/_profile/settings/general/"
+        "/_protected/_profile/accounts",
+        "/_protected/_profile/home",
+        "/_protected/_profile/transactions",
+        "/_protected/_profile/settings/currency",
+        "/_protected/_profile/settings/general",
+        "/_protected/_profile/settings/"
       ]
     },
     "/_protected/setup": {
@@ -539,28 +535,28 @@ export const routeTree = rootRoute
       "filePath": "_public/index.lazy.tsx",
       "parent": "/_public"
     },
-    "/_protected/_profile/accounts/": {
-      "filePath": "_protected/_profile/accounts/index.tsx",
+    "/_protected/_profile/accounts": {
+      "filePath": "_protected/_profile/accounts.tsx",
       "parent": "/_protected/_profile"
     },
-    "/_protected/_profile/home/": {
-      "filePath": "_protected/_profile/home/index.tsx",
+    "/_protected/_profile/home": {
+      "filePath": "_protected/_profile/home.tsx",
+      "parent": "/_protected/_profile"
+    },
+    "/_protected/_profile/transactions": {
+      "filePath": "_protected/_profile/transactions.tsx",
+      "parent": "/_protected/_profile"
+    },
+    "/_protected/_profile/settings/currency": {
+      "filePath": "_protected/_profile/settings/currency.tsx",
+      "parent": "/_protected/_profile"
+    },
+    "/_protected/_profile/settings/general": {
+      "filePath": "_protected/_profile/settings/general.tsx",
       "parent": "/_protected/_profile"
     },
     "/_protected/_profile/settings/": {
       "filePath": "_protected/_profile/settings/index.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/transactions/": {
-      "filePath": "_protected/_profile/transactions/index.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/settings/currency/": {
-      "filePath": "_protected/_profile/settings/currency/index.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/settings/general/": {
-      "filePath": "_protected/_profile/settings/general/index.tsx",
       "parent": "/_protected/_profile"
     }
   }

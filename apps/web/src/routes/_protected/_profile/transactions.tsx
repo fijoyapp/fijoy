@@ -18,7 +18,7 @@ import {
   RootQuery$data,
 } from "@/routes/__generated__/RootQuery.graphql";
 
-export const Route = createFileRoute("/_protected/_profile/transactions/")({
+export const Route = createFileRoute("/_protected/_profile/transactions")({
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
