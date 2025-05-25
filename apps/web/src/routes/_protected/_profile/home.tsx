@@ -1,7 +1,7 @@
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_protected/_profile/home/")({
+export const Route = createFileRoute("/_protected/_profile/home")({
   component: HomePage,
   pendingComponent: CenterLoadingSpinner,
 });

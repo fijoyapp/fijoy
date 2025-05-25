@@ -24,11 +24,9 @@ import { usePreloadedQuery } from "react-relay";
 import { useProfile } from "@/hooks/use-profile";
 import { rootQuery } from "@/routes/__root";
 
-export const Route = createFileRoute("/_protected/_profile/settings/currency/")(
-  {
-    component: Page,
-  },
-);
+export const Route = createFileRoute("/_protected/_profile/settings/currency")({
+  component: Page,
+});
 
 const currencyFormSchema = z.object({
   currencies: z.string().array(),

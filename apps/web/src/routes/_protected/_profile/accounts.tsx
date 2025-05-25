@@ -55,7 +55,7 @@ const AccountsFragment = graphql`
   }
 `;
 
-export const Route = createFileRoute("/_protected/_profile/accounts/")({
+export const Route = createFileRoute("/_protected/_profile/accounts")({
   // loaderDeps: ({ search}) => ({ search }),
   validateSearch: (search) => {
     return accountsRouteSchema.parse(search);
