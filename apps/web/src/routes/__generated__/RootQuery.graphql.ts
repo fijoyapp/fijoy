@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6aca0ebe60d24a24e20fed6bbbd264f4>>
+ * @generated SignedSource<<f2cdd9c79659942bde2875989a20b8ea>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,7 @@ export type RootQuery$data = {
   readonly user?: {
     readonly " $fragmentSpreads": FragmentRefs<"userFragment">;
   };
+  readonly " $fragmentSpreads": FragmentRefs<"accountsPageFragment">;
 };
 export type RootQuery = {
   response: RootQuery$data;
@@ -164,6 +165,11 @@ return {
               }
             ],
             "storageKey": null
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "accountsPageFragment"
           }
         ]
       },
@@ -367,16 +373,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "eb0c6136ab0c324b989596f61d920120",
+    "cacheID": "ab581dbde65022449712b10139a68b6c",
     "id": null,
     "metadata": {},
     "name": "RootQuery",
     "operationKind": "query",
-    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  accounts @include(if: $hasProfile) {\n    id\n    ...accountsFragment\n  }\n  transactions @include(if: $hasProfile) {\n    id\n    ...transactionCardFragment\n  }\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsFragment on Account {\n  id\n  accountType\n  balance\n  ...cardFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    id\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  accounts @include(if: $hasProfile) {\n    id\n    ...accountsFragment\n  }\n  transactions @include(if: $hasProfile) {\n    id\n    ...transactionCardFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsFragment on Account {\n  id\n  accountType\n  balance\n  ...cardFragment\n}\n\nfragment accountsPageFragment on Query {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    id\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5a6afe72ac411fce17284f7ea053c17e";
+(node as any).hash = "fd0bdae1b87c5039b5ac18f6861deae2";
 
 export default node;

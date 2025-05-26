@@ -1,13 +1,13 @@
 import { AccountAccountType } from "@/components/accounts/__generated__/cardFragment.graphql";
-import { accountsFragment$data } from "@/routes/_protected/_profile/accounts/__generated__/accountsFragment.graphql";
+import { accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
 import currency from "currency.js";
 import _ from "lodash";
 
 export function accountsGroupBy(
-  accounts: accountsFragment$data,
+  accounts: accountsPageFragment$data["accounts"],
 ): Record<
   Exclude<AccountAccountType, "%future added value">,
-  accountsFragment$data
+  accountsPageFragment$data["accounts"]
 > {
   const groups = _.groupBy(accounts, (account) => account.accountType);
 
@@ -28,7 +28,9 @@ export const POSITIVE_ACCOUNT_TYPES: AccountAccountType[] = [
 ];
 export const NEGATIVE_ACCOUNT_TYPES: AccountAccountType[] = ["liability"];
 
-export function getOverallStats(accounts: accountsFragment$data) {
+export function getOverallStats(
+  accounts: accountsPageFragment$data["accounts"],
+) {
   const asset = accounts.reduce((acc, account) => {
     if (POSITIVE_ACCOUNT_TYPES.includes(account.accountType)) {
       return acc.add(currency(account.balance));
