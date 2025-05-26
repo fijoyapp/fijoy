@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import invariant from "tiny-invariant";
 import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
 import {
@@ -33,25 +32,29 @@ import { Separator } from "@/components/ui/separator";
 import NetWorthInfo from "@/components/accounts/net-worth-info";
 import AccountListView from "@/components/accounts/account-list-view";
 import { graphql } from "relay-runtime";
-import { useFragment, usePreloadedQuery } from "react-relay";
-import {
-  accountsFragment$data,
-  accountsFragment$key,
-} from "./__generated__/accountsFragment.graphql";
+import { usePreloadedQuery, useRefetchableFragment } from "react-relay";
 import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { rootQuery } from "@/routes/__root";
+import {
+  accountsPageFragment$data,
+  accountsPageFragment$key,
+} from "./__generated__/accountsPageFragment.graphql";
+import { AccountsPageRefetch } from "./__generated__/AccountsPageRefetch.graphql";
 
 const accountsRouteSchema = z.object({
   add: AccountTypeEnum.optional(),
   detail: z.string().startsWith("account_").optional(),
 });
 
-const AccountsFragment = graphql`
-  fragment accountsFragment on Account @relay(plural: true) {
-    id
-    accountType
-    balance
-    ...cardFragment
+const AccountsPageFragment = graphql`
+  fragment accountsPageFragment on Query
+  @refetchable(queryName: "AccountsPageRefetch") {
+    accounts {
+      id
+      accountType
+      balance
+      ...cardFragment
+    }
   }
 `;
 
@@ -69,29 +72,26 @@ function Page() {
   const { rootQueryRef } = Route.useRouteContext();
 
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
-  // const data = useFragment<accountsFragment$key>(
-  //   AccountsFragment,
-  //   protectedQueryRef,
-  // );
-  const accounts = useFragment<accountsFragment$key>(
-    AccountsFragment,
-    data.accounts,
-  );
-  invariant(accounts);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [fragmentData, _] = useRefetchableFragment<
+    AccountsPageRefetch,
+    accountsPageFragment$key
+  >(AccountsPageFragment, data);
 
   return (
     <>
       {add ? (
         <AddAccount type={add} />
       ) : (
-        <AccountsView accounts={accounts} detail={detail} />
+        <AccountsView accounts={fragmentData.accounts} detail={detail} />
       )}
     </>
   );
 }
 
 type AccountsViewProps = {
-  accounts: accountsFragment$data;
+  accounts: accountsPageFragment$data["accounts"];
   detail?: string;
 };
 

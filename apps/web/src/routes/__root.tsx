@@ -32,6 +32,7 @@ export const rootQuery = graphql`
     currencies {
       ...currencyFragment
     }
+    ...accountsPageFragment @include(if: $hasProfile)
   }
 `;
 
