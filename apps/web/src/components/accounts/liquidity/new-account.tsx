@@ -14,22 +14,11 @@ import { NameField } from "../form/name";
 import { CurrencyField } from "../form/currency";
 import { useProfile } from "@/hooks/use-profile";
 import { MoneyField } from "../form/money";
-import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
-import {
-  createAccount,
-  getAccounts,
-} from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
-import {
-  AccountSymbolType,
-  AccountType,
-} from "@/gen/proto/fijoy/v1/account_pb";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  createTransaction,
-  getTransactions,
-} from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
+import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
+import { newAccountLiquidityMutation } from "./__generated__/newAccountLiquidityMutation.graphql";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -39,11 +28,20 @@ const formSchema = z.object({
   balance: z.string(),
 });
 
+const NewAccountLiquidityMutation = graphql`
+  mutation newAccountLiquidityMutation($input: CreateAccountInput!) {
+    createAccount(input: $input) {
+      id
+    }
+  }
+`;
+
 export function NewLiquidity() {
   const { profile } = useProfile();
 
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const [commitMutation, isMutationInFlight] =
+    useMutation<newAccountLiquidityMutation>(NewAccountLiquidityMutation);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,67 +50,29 @@ export function NewLiquidity() {
     },
   });
 
-  const createAccountMut = useMutation(createAccount, {
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getAccounts,
-          cardinality: "finite",
-        }),
-      });
-      router.navigate({
-        to: "/accounts",
-      });
-    },
-  });
-
-  const createTransactionMut = useMutation(createTransaction, {
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getAccounts,
-          cardinality: "finite",
-        }),
-      });
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getTransactions,
-          cardinality: "finite",
-        }),
-      });
-    },
-  });
-
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.promise(
-      async () => {
-        const account = await createAccountMut.mutateAsync({
+    commitMutation({
+      variables: {
+        input: {
+          amount: "0",
+          accountType: "liquidity",
           name: values.name,
-          accountType: AccountType.LIQUIDITY,
-
           symbol: values.symbol,
-          symbolType: AccountSymbolType.CURRENCY,
-        });
-
-        await createTransactionMut.mutateAsync({
-          accountId: account.id,
-          amount: values.balance,
-          note: "Initial balance",
-        });
-        return account;
+          symbolType: "currency",
+        },
       },
-      {
-        success: () => {
+      onCompleted(_, errors) {
+        if (errors && errors.length > 0) {
+          toast.error(errors.map((error) => error.message).join(", "));
+        } else {
           router.navigate({
             to: "/accounts",
           });
-          return "Account created";
-        },
-        loading: "Creating account...",
-        error: (e: Error) => `Error creating account: ${e.toString()}`,
+        }
       },
-    );
+      // optimisticUpdater: (store) => {},
+    });
   }
 
   return (
@@ -148,7 +108,9 @@ export function NewLiquidity() {
             </CardContent>
           </Card>
 
-          <Button className="ml-auto">Create</Button>
+          <Button className="ml-auto" disabled={isMutationInFlight}>
+            Create
+          </Button>
         </form>
       </Form>
     </div>

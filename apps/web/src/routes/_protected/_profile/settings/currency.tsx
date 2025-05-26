@@ -14,15 +14,14 @@ import { z, type TypeOf } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormMessage } from "@/components/ui/form";
-import { useMutation } from "@connectrpc/connect-query";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
-import { updateProfile } from "@/gen/proto/fijoy/v1/profile-ProfileService_connectquery";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
-import { usePreloadedQuery } from "react-relay";
+import { graphql, useMutation, usePreloadedQuery } from "react-relay";
 import { useProfile } from "@/hooks/use-profile";
 import { rootQuery } from "@/routes/__root";
+import { currencyMutation } from "./__generated__/currencyMutation.graphql";
 
 export const Route = createFileRoute("/_protected/_profile/settings/currency")({
   component: Page,
@@ -37,9 +36,20 @@ const variants = {
   visible: { opacity: 1, scale: 1 },
 };
 
+const CurrencyMutation = graphql`
+  mutation currencyMutation($id: ID!, $currencies: String!) {
+    updateProfile(id: $id, input: { currencies: $currencies }) {
+      ...profileFragment
+    }
+  }
+`;
+
 function Page() {
   const { rootQueryRef } = Route.useRouteContext();
   const { profile } = useProfile();
+
+  const [commitMutation, isMutationInFlight] =
+    useMutation<currencyMutation>(CurrencyMutation);
 
   const data = usePreloadedQuery(rootQuery, rootQueryRef);
 
@@ -50,17 +60,20 @@ function Page() {
     },
   });
 
-  const updateProfileMutation = useMutation(updateProfile, {
-    onSuccess: () => {
-      toast.success("Currency settings updated");
-    },
-    onError(error) {
-      toast.error(error.message);
-    },
-  });
-
   function onUpdateCurrencySubmit(values: TypeOf<typeof currencyFormSchema>) {
-    return updateProfileMutation.mutateAsync(values);
+    commitMutation({
+      variables: {
+        id: profile.id,
+        currencies: values.currencies.join(","),
+      },
+      onCompleted(_, errors) {
+        if (errors && errors.length > 0) {
+          toast.error(errors.map((error) => error.message).join(", "));
+        } else {
+          toast.success("Currency settings updated");
+        }
+      },
+    });
   }
 
   return (
@@ -111,10 +124,10 @@ function Page() {
               <CardFooter className="space-x-4 border-t px-6 py-4">
                 <AnimatePresence mode="wait" initial={false}>
                   <Button
-                    disabled={form.formState.isSubmitting}
+                    disabled={form.formState.isSubmitting || isMutationInFlight}
                     className="w-16"
                   >
-                    {form.formState.isSubmitting ? (
+                    {form.formState.isSubmitting || isMutationInFlight ? (
                       <motion.span
                         key="checkmark"
                         variants={variants}

@@ -2,6 +2,26 @@
 
 package fijoy
 
+import (
+	"fijoy/ent/account"
+	"time"
+)
+
+type CreateAccountInput struct {
+	Name        string              `json:"name"`
+	AccountType account.AccountType `json:"accountType"`
+	Symbol      string              `json:"symbol"`
+	SymbolType  account.SymbolType  `json:"symbolType"`
+	Amount      string              `json:"amount"`
+}
+
+type CreateTransactionInput struct {
+	Amount    string     `json:"amount"`
+	Note      *string    `json:"note,omitempty"`
+	Datetime  *time.Time `json:"datetime,omitempty"`
+	AccountID string     `json:"accountID"`
+}
+
 type Currency struct {
 	Code   string `json:"code"`
 	Locale string `json:"locale"`

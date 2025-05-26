@@ -9,35 +9,55 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// CreateAccountInput represents a mutation input for creating accounts.
-type CreateAccountInput struct {
-	Name           string
-	AccountType    account.AccountType
-	Symbol         string
-	SymbolType     account.SymbolType
-	Amount         decimal.Decimal
-	Value          decimal.Decimal
-	FxRate         *decimal.Decimal
-	Balance        decimal.Decimal
-	Archived       *bool
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	ProfileID      string
-	TransactionIDs []string
+// UpdateAccountInput represents a mutation input for updating accounts.
+type UpdateAccountInput struct {
+	Name                 *string
+	AccountType          *account.AccountType
+	Symbol               *string
+	SymbolType           *account.SymbolType
+	Amount               *decimal.Decimal
+	Value                *decimal.Decimal
+	ClearFxRate          bool
+	FxRate               *decimal.Decimal
+	Balance              *decimal.Decimal
+	Archived             *bool
+	CreatedAt            *time.Time
+	UpdatedAt            *time.Time
+	ProfileID            *string
+	ClearTransaction     bool
+	AddTransactionIDs    []string
+	RemoveTransactionIDs []string
 }
 
-// Mutate applies the CreateAccountInput on the AccountMutation builder.
-func (i *CreateAccountInput) Mutate(m *AccountMutation) {
-	m.SetName(i.Name)
-	m.SetAccountType(i.AccountType)
-	m.SetSymbol(i.Symbol)
-	m.SetSymbolType(i.SymbolType)
-	m.SetAmount(i.Amount)
-	m.SetValue(i.Value)
+// Mutate applies the UpdateAccountInput on the AccountMutation builder.
+func (i *UpdateAccountInput) Mutate(m *AccountMutation) {
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.AccountType; v != nil {
+		m.SetAccountType(*v)
+	}
+	if v := i.Symbol; v != nil {
+		m.SetSymbol(*v)
+	}
+	if v := i.SymbolType; v != nil {
+		m.SetSymbolType(*v)
+	}
+	if v := i.Amount; v != nil {
+		m.SetAmount(*v)
+	}
+	if v := i.Value; v != nil {
+		m.SetValue(*v)
+	}
+	if i.ClearFxRate {
+		m.ClearFxRate()
+	}
 	if v := i.FxRate; v != nil {
 		m.SetFxRate(*v)
 	}
-	m.SetBalance(i.Balance)
+	if v := i.Balance; v != nil {
+		m.SetBalance(*v)
+	}
 	if v := i.Archived; v != nil {
 		m.SetArchived(*v)
 	}
@@ -47,14 +67,28 @@ func (i *CreateAccountInput) Mutate(m *AccountMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
 	}
-	m.SetProfileID(i.ProfileID)
-	if v := i.TransactionIDs; len(v) > 0 {
+	if v := i.ProfileID; v != nil {
+		m.SetProfileID(*v)
+	}
+	if i.ClearTransaction {
+		m.ClearTransaction()
+	}
+	if v := i.AddTransactionIDs; len(v) > 0 {
 		m.AddTransactionIDs(v...)
+	}
+	if v := i.RemoveTransactionIDs; len(v) > 0 {
+		m.RemoveTransactionIDs(v...)
 	}
 }
 
-// SetInput applies the change-set in the CreateAccountInput on the AccountCreate builder.
-func (c *AccountCreate) SetInput(i CreateAccountInput) *AccountCreate {
+// SetInput applies the change-set in the UpdateAccountInput on the AccountUpdate builder.
+func (c *AccountUpdate) SetInput(i UpdateAccountInput) *AccountUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateAccountInput on the AccountUpdateOne builder.
+func (c *AccountUpdateOne) SetInput(i UpdateAccountInput) *AccountUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -165,20 +199,26 @@ func (c *ProfileUpdateOne) SetInput(i UpdateProfileInput) *ProfileUpdateOne {
 	return c
 }
 
-// CreateTransactionInput represents a mutation input for creating transactions.
-type CreateTransactionInput struct {
-	Amount    decimal.Decimal
+// UpdateTransactionInput represents a mutation input for updating transactions.
+type UpdateTransactionInput struct {
+	Amount    *decimal.Decimal
+	ClearNote bool
 	Note      *string
 	Datetime  *time.Time
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
-	ProfileID string
-	AccountID string
+	ProfileID *string
+	AccountID *string
 }
 
-// Mutate applies the CreateTransactionInput on the TransactionMutation builder.
-func (i *CreateTransactionInput) Mutate(m *TransactionMutation) {
-	m.SetAmount(i.Amount)
+// Mutate applies the UpdateTransactionInput on the TransactionMutation builder.
+func (i *UpdateTransactionInput) Mutate(m *TransactionMutation) {
+	if v := i.Amount; v != nil {
+		m.SetAmount(*v)
+	}
+	if i.ClearNote {
+		m.ClearNote()
+	}
 	if v := i.Note; v != nil {
 		m.SetNote(*v)
 	}
@@ -191,12 +231,22 @@ func (i *CreateTransactionInput) Mutate(m *TransactionMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
 	}
-	m.SetProfileID(i.ProfileID)
-	m.SetAccountID(i.AccountID)
+	if v := i.ProfileID; v != nil {
+		m.SetProfileID(*v)
+	}
+	if v := i.AccountID; v != nil {
+		m.SetAccountID(*v)
+	}
 }
 
-// SetInput applies the change-set in the CreateTransactionInput on the TransactionCreate builder.
-func (c *TransactionCreate) SetInput(i CreateTransactionInput) *TransactionCreate {
+// SetInput applies the change-set in the UpdateTransactionInput on the TransactionUpdate builder.
+func (c *TransactionUpdate) SetInput(i UpdateTransactionInput) *TransactionUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTransactionInput on the TransactionUpdateOne builder.
+func (c *TransactionUpdateOne) SetInput(i UpdateTransactionInput) *TransactionUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

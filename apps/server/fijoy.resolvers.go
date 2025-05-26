@@ -6,6 +6,7 @@ package fijoy
 
 import (
 	"context"
+	"errors"
 	"fijoy/constants"
 	"fijoy/ent"
 	"fijoy/ent/user"
@@ -13,16 +14,18 @@ import (
 	"fmt"
 
 	"github.com/samber/lo"
+	"github.com/shopspring/decimal"
 )
 
 // CreateProfile is the resolver for the createProfile field.
 func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error) {
+	client := ent.FromContext(ctx)
 	userData, err := auth.GetUserDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	profile, err := r.client.Profile.Create().
+	profile, err := client.Profile.Create().
 		SetCurrencies(input.Currencies). // TODO: sanitize this
 		SetNetWorthGoal(input.NetWorthGoal).
 		SetLocale(input.Locale). // TODO: sanitize this
@@ -43,7 +46,63 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 
 // UpdateProfile is the resolver for the updateProfile field.
 func (r *mutationResolver) UpdateProfile(ctx context.Context, id string, input ent.UpdateProfileInput) (*ent.Profile, error) {
-	panic(fmt.Errorf("not implemented: UpdateProfile - updateProfile"))
+	client := ent.FromContext(ctx)
+	userData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if userData.ProfileId != id {
+		return nil, errors.New("unauthorized to update this profile")
+	}
+
+	profile, err := client.Profile.UpdateOneID(id).SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return profile, nil
+}
+
+// CreateAccount is the resolver for the createAccount field.
+func (r *mutationResolver) CreateAccount(ctx context.Context, input CreateAccountInput) (*ent.Account, error) {
+	client := ent.FromContext(ctx)
+	fmt.Println("CreateAccount input:", input)
+	userData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := client.Account.Create().
+		SetName(input.Name).
+		SetAccountType(input.AccountType).
+		SetSymbol(input.Symbol).
+		SetSymbolType(input.SymbolType).
+		SetAmount(decimal.NewFromInt(0)).
+		SetProfileID(userData.ProfileId).
+		SetValue(decimal.NewFromInt(1)).  // FIXME: do not hard code
+		SetFxRate(decimal.NewFromInt(1)). // FIXME: do not hard code
+		SetBalance(decimal.NewFromInt(0)).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return account, err
+}
+
+// UpdateAccount is the resolver for the updateAccount field.
+func (r *mutationResolver) UpdateAccount(ctx context.Context, id string, input ent.UpdateAccountInput) (*ent.Account, error) {
+	panic(fmt.Errorf("not implemented: UpdateAccount - updateAccount"))
+}
+
+// CreateTransaction is the resolver for the createTransaction field.
+func (r *mutationResolver) CreateTransaction(ctx context.Context, input CreateTransactionInput) (*ent.Transaction, error) {
+	panic(fmt.Errorf("not implemented: CreateTransaction - createTransaction"))
+}
+
+// UpdateTransaction is the resolver for the updateTransaction field.
+func (r *mutationResolver) UpdateTransaction(ctx context.Context, id string, input ent.UpdateTransactionInput) (*ent.Transaction, error) {
+	panic(fmt.Errorf("not implemented: UpdateTransaction - updateTransaction"))
 }
 
 // User is the resolver for the user field.
