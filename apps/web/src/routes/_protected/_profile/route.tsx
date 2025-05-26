@@ -1,4 +1,5 @@
 import { Icons } from "@/components/icons";
+import invariant from "tiny-invariant";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -161,12 +162,15 @@ function Page() {
     data.profiles,
   );
 
-  if (!profiles || (profiles.length === 0 && !matchRoute({ to: "/setup" }))) {
+  invariant(profiles);
+  invariant(data.profiles);
+
+  if (profiles.length === 0 && !matchRoute({ to: "/setup" })) {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
   }
 
   return (
-    <ProfileProvider profile={profiles[0]}>
+    <ProfileProvider profile={profiles[0]} profileRef={data.profiles[0]}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="bg-muted/40 hidden border-r md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">

@@ -45,6 +45,7 @@ import (
 	health_handler "fijoy/internal/domain/health/handler"
 
 	"buf.build/go/protovalidate"
+	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-playground/validator/v10"
@@ -164,6 +165,7 @@ func main() {
 	// TODO: migrate to this, also get rid of default server as it is not prod ready
 	// nolint:staticcheck
 	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient, cfg.Auth))
+	srv.Use(entgql.Transactioner{TxOpener: entClient})
 
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(cfg.Auth.JWT_AUTH))

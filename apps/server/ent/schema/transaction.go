@@ -23,7 +23,7 @@ type Transaction struct {
 func (Transaction) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
-		entgql.Mutations(entgql.MutationCreate()),
+		entgql.Mutations(entgql.MutationUpdate()),
 	}
 }
 
