@@ -14,22 +14,11 @@ import { NameField } from "../form/name";
 import { CurrencyField } from "../form/currency";
 import { useProfile } from "@/hooks/use-profile";
 import { MoneyField } from "../form/money";
-import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
-import {
-  createAccount,
-  getAccounts,
-} from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
-import {
-  AccountSymbolType,
-  AccountType,
-} from "@/gen/proto/fijoy/v1/account_pb";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  createTransaction,
-  getTransactions,
-} from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
+import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
+import { newAccountPropertyMutation } from "./__generated__/newAccountPropertyMutation.graphql";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -39,11 +28,20 @@ const formSchema = z.object({
   balance: z.string(),
 });
 
+const NewAccountPropertyMutation = graphql`
+  mutation newAccountPropertyMutation($input: CreateAccountInput!) {
+    createAccount(input: $input) {
+      id
+    }
+  }
+`;
+
 export function NewProperty() {
   const { profile } = useProfile();
 
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const [commitMutation, isMutationInFlight] =
+    useMutation<newAccountPropertyMutation>(NewAccountPropertyMutation);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,64 +50,31 @@ export function NewProperty() {
     },
   });
 
-  const createAccountMut = useMutation(createAccount, {
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getAccounts,
-          cardinality: "finite",
-        }),
-      });
-      router.navigate({
-        to: "/accounts",
-      });
-    },
-  });
-
-  const createTransactionMut = useMutation(createTransaction, {
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getAccounts,
-          cardinality: "finite",
-        }),
-      });
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getTransactions,
-          cardinality: "finite",
-        }),
-      });
-    },
-  });
-
+  // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.promise(
-      async () => {
-        const account = await createAccountMut.mutateAsync({
-          name: values.name,
-          accountType: AccountType.PROPERTY,
-
-          symbol: values.symbol,
-          symbolType: AccountSymbolType.CURRENCY,
-        });
-
-        await createTransactionMut.mutateAsync({
-          accountId: account.id,
+    commitMutation({
+      variables: {
+        input: {
           amount: values.balance,
-          note: "Initial balance",
-        });
-        return account;
-      },
-      {
-        success: () => {
-          return "Account created";
+          accountType: "property",
+          name: values.name,
+          symbol: values.symbol,
+          symbolType: "currency",
         },
-        loading: "Creating account...",
-        error: (e: Error) => `Error creating account: ${e.toString()}`,
       },
-    );
+      onCompleted(_, errors) {
+        if (errors && errors.length > 0) {
+          toast.error(errors.map((error) => error.message).join(", "));
+        } else {
+          router.navigate({
+            to: "/accounts",
+          });
+        }
+      },
+      // optimisticUpdater: (store) => {},
+    });
   }
+
   return (
     <div className="flex max-w-lg flex-col space-y-4">
       <Form {...form}>
@@ -143,7 +108,9 @@ export function NewProperty() {
             </CardContent>
           </Card>
 
-          <Button className="ml-auto">Create</Button>
+          <Button className="ml-auto" disabled={isMutationInFlight}>
+            Create
+          </Button>
         </form>
       </Form>
     </div>

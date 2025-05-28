@@ -21,10 +21,6 @@ export const rootQuery = graphql`
     profiles @include(if: $hasUser) {
       ...profileFragment
     }
-    accounts @include(if: $hasProfile) {
-      id
-      ...accountsFragment
-    }
     transactions @include(if: $hasProfile) {
       id
       ...transactionCardFragment

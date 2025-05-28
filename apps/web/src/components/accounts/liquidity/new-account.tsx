@@ -55,7 +55,7 @@ export function NewLiquidity() {
     commitMutation({
       variables: {
         input: {
-          amount: "0",
+          amount: values.balance,
           accountType: "liquidity",
           name: values.name,
           symbol: values.symbol,

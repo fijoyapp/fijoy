@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f2cdd9c79659942bde2875989a20b8ea>>
+ * @generated SignedSource<<56a9a1b8fbdac10c86cf8d437e049bbb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,10 +15,6 @@ export type RootQuery$variables = {
   hasUser: boolean;
 };
 export type RootQuery$data = {
-  readonly accounts?: ReadonlyArray<{
-    readonly id: string;
-    readonly " $fragmentSpreads": FragmentRefs<"accountsFragment">;
-  }>;
   readonly currencies: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"currencyFragment">;
   }>;
@@ -68,14 +64,14 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "symbol",
+  "name": "updatedAt",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "updatedAt",
+  "name": "symbol",
   "storageKey": null
 };
 return {
@@ -132,23 +128,6 @@ return {
         "kind": "Condition",
         "passingValue": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Account",
-            "kind": "LinkedField",
-            "name": "accounts",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "accountsFragment"
-              }
-            ],
-            "storageKey": null
-          },
           {
             "alias": null,
             "args": null,
@@ -256,41 +235,6 @@ return {
           {
             "alias": null,
             "args": null,
-            "concreteType": "Account",
-            "kind": "LinkedField",
-            "name": "accounts",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "accountType",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "balance",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              },
-              (v4/*: any*/),
-              (v5/*: any*/)
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
             "concreteType": "Transaction",
             "kind": "LinkedField",
             "name": "transactions",
@@ -325,7 +269,7 @@ return {
                 "name": "createdAt",
                 "storageKey": null
               },
-              (v5/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -334,7 +278,7 @@ return {
                 "name": "account",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -346,6 +290,41 @@ return {
                 ],
                 "storageKey": null
               }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Account",
+            "kind": "LinkedField",
+            "name": "accounts",
+            "plural": true,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "accountType",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "balance",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
+                "storageKey": null
+              },
+              (v5/*: any*/),
+              (v4/*: any*/)
             ],
             "storageKey": null
           }
@@ -373,16 +352,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ab581dbde65022449712b10139a68b6c",
+    "cacheID": "4738e0738e4fa91a81daf92411a3355e",
     "id": null,
     "metadata": {},
     "name": "RootQuery",
     "operationKind": "query",
-    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  accounts @include(if: $hasProfile) {\n    id\n    ...accountsFragment\n  }\n  transactions @include(if: $hasProfile) {\n    id\n    ...transactionCardFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsFragment on Account {\n  id\n  accountType\n  balance\n  ...cardFragment\n}\n\nfragment accountsPageFragment on Query {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    id\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  transactions @include(if: $hasProfile) {\n    id\n    ...transactionCardFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsPageFragment on Query {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    id\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fd0bdae1b87c5039b5ac18f6861deae2";
+(node as any).hash = "17718c55083d4c3903801f0257b14e5a";
 
 export default node;

@@ -74,7 +74,7 @@ function Page() {
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [fragmentData, _] = useRefetchableFragment<
+  const [fragmentData, refetch] = useRefetchableFragment<
     AccountsPageRefetch,
     accountsPageFragment$key
   >(AccountsPageFragment, data);

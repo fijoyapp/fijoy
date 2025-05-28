@@ -19,24 +19,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { NameField } from "../form/name";
-import { createConnectQueryKey, useMutation } from "@connectrpc/connect-query";
-import {
-  createAccount,
-  getAccounts,
-} from "@/gen/proto/fijoy/v1/account-AccountService_connectquery";
-import {
-  AccountSymbolType,
-  AccountType,
-} from "@/gen/proto/fijoy/v1/account_pb";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  createTransaction,
-  getTransactions,
-} from "@/gen/proto/fijoy/v1/transaction-TransactionService_connectquery";
 import { AmountField } from "../form/amount";
 import { match } from "ts-pattern";
+import { graphql } from "relay-runtime";
+import { useProfile } from "@/hooks/use-profile";
+import { useMutation } from "react-relay";
+import { newAccountInvestmentMutation } from "./__generated__/newAccountInvestmentMutation.graphql";
 
 const formSchema = z.object({
   symbol: z.string(),
@@ -44,77 +34,51 @@ const formSchema = z.object({
   type: z.enum(["crypto", "stock"]),
 });
 
+const NewAccountInvestmentMutation = graphql`
+  mutation newAccountInvestmentMutation($input: CreateAccountInput!) {
+    createAccount(input: $input) {
+      id
+    }
+  }
+`;
+
 export function NewInvestment() {
+  const { profile } = useProfile();
+
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const [commitMutation, isMutationInFlight] =
+    useMutation<newAccountInvestmentMutation>(NewAccountInvestmentMutation);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      type: "stock",
+      symbol: profile?.currencies.split(",")[0],
     },
   });
 
-  const createAccountMut = useMutation(createAccount, {
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getAccounts,
-          cardinality: "finite",
-        }),
-      });
-      router.navigate({
-        to: "/accounts",
-      });
-    },
-  });
-
-  const createTransactionMut = useMutation(createTransaction, {
-    onSuccess: async () => {
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getAccounts,
-          cardinality: "finite",
-        }),
-      });
-      queryClient.invalidateQueries({
-        queryKey: createConnectQueryKey({
-          schema: getTransactions,
-          cardinality: "finite",
-        }),
-      });
-    },
-  });
-
+  // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.promise(
-      async () => {
-        const account = await createAccountMut.mutateAsync({
-          name: values.symbol,
-          accountType: AccountType.INVESTMENT,
-
-          symbol: values.symbol,
-          symbolType: match(values.type)
-            .with("stock", () => AccountSymbolType.STOCK)
-            .with("crypto", () => AccountSymbolType.CRYPTO)
-            .exhaustive(),
-        });
-
-        await createTransactionMut.mutateAsync({
-          accountId: account.id,
+    commitMutation({
+      variables: {
+        input: {
           amount: values.amount,
-          note: "Initial balance",
-        });
-        return account;
-      },
-      {
-        success: () => {
-          return "Account created";
+          accountType: "investment",
+          name: values.symbol,
+          symbol: values.symbol,
+          symbolType: values.type,
         },
-        loading: "Creating account...",
-        error: (e: Error) => `Error creating account: ${e.toString()}`,
       },
-    );
+      onCompleted(_, errors) {
+        if (errors && errors.length > 0) {
+          toast.error(errors.map((error) => error.message).join(", "));
+        } else {
+          router.navigate({
+            to: "/accounts",
+          });
+        }
+      },
+      // optimisticUpdater: (store) => {},
+    });
   }
 
   return (
@@ -189,7 +153,9 @@ export function NewInvestment() {
             </CardContent>
           </Card>
 
-          <Button className="ml-auto">Create</Button>
+          <Button className="ml-auto" disabled={isMutationInFlight}>
+            Create
+          </Button>
         </form>
       </Form>
     </div>
