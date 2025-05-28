@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AccountTypeEnum } from "@/types/account";
 import { z } from "zod";
 import {
   PageHeader,
@@ -17,7 +16,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import {
   ChartCandlestick,
   CreditCard,
@@ -40,9 +38,10 @@ import {
   accountsPageFragment$key,
 } from "./__generated__/accountsPageFragment.graphql";
 import { AccountsPageRefetch } from "./__generated__/AccountsPageRefetch.graphql";
+import { AccountType } from "@/types/account";
 
 const accountsRouteSchema = z.object({
-  add: AccountTypeEnum.optional(),
+  add: AccountType.optional(),
   detail: z.string().startsWith("account_").optional(),
 });
 
@@ -123,31 +122,31 @@ function AccountsView({ accounts, detail }: AccountsViewProps) {
           <DropdownMenuContent>
             <DropdownMenuLabel>Select a type</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link to={"/accounts"} search={{ add: AccountType.LIQUIDITY }}>
+            <Link to={"/accounts"} search={{ add: "liquidity" }}>
               <DropdownMenuItem>
                 <PiggyBank className="mr-2 h-4 w-4" />
                 <span>Liquitity</span>
               </DropdownMenuItem>
             </Link>
-            <Link to={"/accounts"} search={{ add: AccountType.INVESTMENT }}>
+            <Link to={"/accounts"} search={{ add: "investment" }}>
               <DropdownMenuItem>
                 <ChartCandlestick className="mr-2 h-4 w-4" />
                 <span>Investment</span>
               </DropdownMenuItem>
             </Link>
-            <Link to={"/accounts"} search={{ add: AccountType.PROPERTY }}>
+            <Link to={"/accounts"} search={{ add: "property" }}>
               <DropdownMenuItem>
                 <House className="mr-2 h-4 w-4" />
                 <span>Property</span>
               </DropdownMenuItem>
             </Link>
-            <Link to={"/accounts"} search={{ add: AccountType.RECEIVABLE }}>
+            <Link to={"/accounts"} search={{ add: "receivable" }}>
               <DropdownMenuItem>
                 <HandCoins className="mr-2 h-4 w-4" />
                 <span>Receivable</span>
               </DropdownMenuItem>
             </Link>
-            <Link to={"/accounts"} search={{ add: AccountType.LIABILITY }}>
+            <Link to={"/accounts"} search={{ add: "liability" }}>
               <DropdownMenuItem>
                 <CreditCard className="mr-2 h-4 w-4" />
                 <span>Liability</span>
