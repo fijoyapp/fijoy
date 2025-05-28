@@ -1,7 +1,4 @@
-import { Link, Navigate } from "@tanstack/react-router";
-import { AccountTypeEnum } from "@/types/account";
-import { AccountType } from "@/gen/proto/fijoy/v1/account_pb";
-import { getAccountTypeDetail } from "@/config/account";
+import { Link } from "@tanstack/react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,9 +14,11 @@ import { NewInvestment } from "@/components/accounts/investment/new-account";
 import { NewProperty } from "@/components/accounts/property/new-account";
 import { NewReceivable } from "@/components/accounts/receivable/new-account";
 import { NewLiability } from "@/components/accounts/liability/new-account";
+import { AccountType } from "@/types/account";
+import { getAccountTypeDetail } from "@/config/account";
 
 type AddAccountProps = {
-  type: AccountTypeEnum;
+  type: AccountType;
 };
 
 export default function AddAccount({ type }: AddAccountProps) {
@@ -48,12 +47,11 @@ export default function AddAccount({ type }: AddAccountProps) {
       <div className="py-2"></div>
 
       {match(type)
-        .with(AccountType.UNSPECIFIED as 0, () => <Navigate to={"/accounts"} />)
-        .with(AccountType.LIQUIDITY as 1, () => <NewLiquidity />)
-        .with(AccountType.INVESTMENT as 2, () => <NewInvestment />)
-        .with(AccountType.PROPERTY as 3, () => <NewProperty />)
-        .with(AccountType.RECEIVABLE as 4, () => <NewReceivable />)
-        .with(AccountType.LIABILITY as 5, () => <NewLiability />)
+        .with("liquidity", () => <NewLiquidity />)
+        .with("investment", () => <NewInvestment />)
+        .with("property", () => <NewProperty />)
+        .with("receivable", () => <NewReceivable />)
+        .with("liability", () => <NewLiability />)
         .exhaustive()}
     </div>
   );

@@ -7,8 +7,8 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { TransactionCard } from "@/components/transactions/transaction-card";
-import { type TransactionList } from "@/gen/proto/fijoy/v1/transaction_pb";
 import { Card } from "@/components/ui/card";
+
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
 import { usePreloadedQuery } from "react-relay";

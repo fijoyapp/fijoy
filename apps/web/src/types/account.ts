@@ -1,8 +1,14 @@
-import { AccountType } from "@/gen/proto/fijoy/v1/account_pb";
 import { z, type TypeOf } from "zod";
 
-export const AccountTypeEnum = z.nativeEnum(AccountType);
-export type AccountTypeEnum = TypeOf<typeof AccountTypeEnum>;
+export const AccountType = z.enum([
+  "investment",
+  "liability",
+  "liquidity",
+  "property",
+  "receivable",
+]);
+
+export type AccountType = TypeOf<typeof AccountType>;
 
 export type AccountTypeDetail = {
   name: string;
