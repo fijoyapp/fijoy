@@ -1,14 +1,12 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { queryClient } from "./lib/query";
-import { finalTransport } from "./lib/connect";
 import { environment } from "./environment";
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
   context: {
-    transport: finalTransport,
     queryClient,
     environment: environment,
   },
