@@ -2,14 +2,12 @@ import { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import type { Transport } from "@connectrpc/connect";
 import { graphql, IEnvironment } from "relay-runtime";
 import { loadQuery } from "react-relay";
 import { RootQuery } from "./__generated__/RootQuery.graphql";
 
 interface RouterContext {
   queryClient: QueryClient;
-  transport: Transport;
   environment: IEnvironment;
 }
 

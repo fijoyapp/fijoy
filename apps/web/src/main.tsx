@@ -9,8 +9,6 @@ import "./index.css";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "./components/ui/sonner";
 
-import { TransportProvider } from "@connectrpc/connect-query";
-import { finalTransport } from "./lib/connect";
 import { queryClient } from "./lib/query";
 import { App } from "./app";
 
@@ -51,16 +49,14 @@ if (!rootElement.innerHTML) {
 
   root.render(
     <StrictMode>
-      <TransportProvider transport={finalTransport}>
-        <RelayEnvironment>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-              <App />
-              <Toaster />
-            </ThemeProvider>
-          </QueryClientProvider>
-        </RelayEnvironment>
-      </TransportProvider>
+      <RelayEnvironment>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <App />
+            <Toaster />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </RelayEnvironment>
     </StrictMode>,
   );
 }
