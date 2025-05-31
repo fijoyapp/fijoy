@@ -5,7 +5,6 @@ go 1.23.8
 toolchain go1.24.2
 
 require (
-	connectrpc.com/cors v0.1.0
 	entgo.io/contrib v0.6.1-0.20250319063240-8a7f182943cb
 	entgo.io/ent v0.14.4
 	github.com/99designs/gqlgen v0.17.73

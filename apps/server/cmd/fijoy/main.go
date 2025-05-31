@@ -39,7 +39,6 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
 
-	connectcors "connectrpc.com/cors"
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	_ "github.com/rs/cors"
@@ -123,9 +122,9 @@ func main() {
 		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
-		AllowedMethods:   connectcors.AllowedMethods(),
-		AllowedHeaders:   append(connectcors.AllowedHeaders(), "sentry-trace", "baggage"),
-		ExposedHeaders:   connectcors.ExposedHeaders(),
+		// AllowedMethods:   connectcors.AllowedMethods(),
+		AllowedHeaders: []string{"sentry-trace", "baggage"},
+		// ExposedHeaders:   connectcors.ExposedHeaders(),
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 		Debug:            false,
