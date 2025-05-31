@@ -27,10 +27,10 @@ require (
 	google.golang.org/protobuf v1.36.6
 )
 
-require golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+require golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b // indirect
 
 require (
-	ariga.io/atlas v0.33.1 // indirect
+	ariga.io/atlas v0.34.0 // indirect
 	cloud.google.com/go/compute/metadata v0.7.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
