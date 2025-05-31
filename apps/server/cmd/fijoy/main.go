@@ -30,8 +30,6 @@ import (
 	user_repository "fijoy/internal/domain/user/repository"
 	user_usecase "fijoy/internal/domain/user/usecase"
 
-	currency_handler "fijoy/internal/domain/currency/handler"
-
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 
 	health_handler "fijoy/internal/domain/health/handler"
@@ -171,7 +169,6 @@ func main() {
 	// TODO: remove these
 	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
-	currency_handler.RegisterConnect(r)
 
 	// Start our server
 	server := newServer(":"+cfg.Server.PORT, r)
