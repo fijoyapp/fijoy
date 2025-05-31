@@ -5,14 +5,11 @@ import (
 	"fijoy/ent"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/util/database"
-	fijoyv1 "fijoy/proto/fijoy/v1"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type UserUseCase interface {
-	CreateUser(ctx context.Context, email string) (*fijoyv1.User, error)
-	GetUser(ctx context.Context, userId string) (*fijoyv1.User, error)
+	CreateUser(ctx context.Context, email string) (*ent.User, error)
+	GetUser(ctx context.Context, userId string) (*ent.User, error)
 	DeleteUser(ctx context.Context, userId string) error
 }
 
@@ -25,15 +22,7 @@ func New(userRepo repository.UserRepository, client *ent.Client) UserUseCase {
 	return &userUseCase{userRepo: userRepo, client: client}
 }
 
-func userModelToProto(user *ent.User) *fijoyv1.User {
-	return &fijoyv1.User{
-		Id:        user.ID,
-		Email:     user.Email,
-		CreatedAt: timestamppb.New(user.CreatedAt),
-	}
-}
-
-func (u *userUseCase) CreateUser(ctx context.Context, email string) (*fijoyv1.User, error) {
+func (u *userUseCase) CreateUser(ctx context.Context, email string) (*ent.User, error) {
 	var user *ent.User
 
 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
@@ -49,16 +38,16 @@ func (u *userUseCase) CreateUser(ctx context.Context, email string) (*fijoyv1.Us
 		return nil, err
 	}
 
-	return userModelToProto(user), nil
+	return user, nil
 }
 
-func (u *userUseCase) GetUser(ctx context.Context, userId string) (*fijoyv1.User, error) {
+func (u *userUseCase) GetUser(ctx context.Context, userId string) (*ent.User, error) {
 	user, err := u.userRepo.GetUser(ctx, u.client, userId)
 	if err != nil {
 		return nil, err
 	}
 
-	return userModelToProto(user), nil
+	return user, nil
 }
 
 func (u *userUseCase) DeleteUser(ctx context.Context, userId string) error {

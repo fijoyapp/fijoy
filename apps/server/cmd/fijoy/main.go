@@ -22,23 +22,15 @@ import (
 	auth_usecase "fijoy/internal/domain/auth/usecase"
 	fijoy_middleware "fijoy/internal/middleware"
 
-	profile_handler "fijoy/internal/domain/profile/handler"
-	profile_repository "fijoy/internal/domain/profile/repository"
-	profile_usecase "fijoy/internal/domain/profile/usecase"
-
-	user_handler "fijoy/internal/domain/user/handler"
 	user_repository "fijoy/internal/domain/user/repository"
-	user_usecase "fijoy/internal/domain/user/usecase"
 
 	analytics_usecase "fijoy/internal/domain/analytics/usecase"
 
 	health_handler "fijoy/internal/domain/health/handler"
 
-	"buf.build/go/protovalidate"
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/go-playground/validator/v10"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 
@@ -100,12 +92,6 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	validator := validator.New(validator.WithRequiredStructEnabled())
-	protoValidator, err := protovalidate.New()
-	if err != nil {
-		panic(err)
-	}
-
 	sentryMiddleware := sentryhttp.New(sentryhttp.Options{
 		Repanic: true,
 	})
@@ -123,11 +109,8 @@ func main() {
 
 	userRepo := user_repository.NewUserRepository()
 	userKeyRepo := user_repository.NewUserKeyRepository()
-	profileRepo := profile_repository.NewProfileRepository()
 
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo, entClient)
-	userUseCase := user_usecase.New(userRepo, entClient)
-	profileUseCase := profile_usecase.New(validator, entClient, profileRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -165,10 +148,6 @@ func main() {
 
 	auth_handler.RegisterHTTPEndpoints(r, cfg.Auth, authUseCase, cfg.Server, analyticsService)
 	health_handler.RegisterHTTPEndpoints(r)
-
-	// TODO: remove these
-	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
-	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
 
 	// Start our server
 	server := newServer(":"+cfg.Server.PORT, r)

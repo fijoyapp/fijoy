@@ -8,15 +8,12 @@ import (
 	"fijoy/ent/user"
 	"fijoy/internal/domain/user/repository"
 	"fijoy/internal/util/database"
-	fijoyv1 "fijoy/proto/fijoy/v1"
 	"fmt"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type AuthUseCase interface {
-	LocalLogin(ctx context.Context) (*fijoyv1.User, error)
-	GoogleLogin(ctx context.Context, email string, googleId string) (*fijoyv1.User, error)
+	LocalLogin(ctx context.Context) (*ent.User, error)
+	GoogleLogin(ctx context.Context, email string, googleId string) (*ent.User, error)
 
 	GetProfileId(ctx context.Context, userId string) (string, error)
 }
@@ -46,15 +43,7 @@ func (u *authUseCase) GetProfileId(ctx context.Context, userId string) (string, 
 	return profile.ID, nil
 }
 
-func userModelToProto(user *ent.User) *fijoyv1.User {
-	return &fijoyv1.User{
-		Id:        user.ID,
-		Email:     user.Email,
-		CreatedAt: timestamppb.New(user.CreatedAt),
-	}
-}
-
-func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
+func (u *authUseCase) LocalLogin(ctx context.Context) (*ent.User, error) {
 	var user *ent.User
 	var userKey *ent.UserKey
 
@@ -89,10 +78,10 @@ func (u *authUseCase) LocalLogin(ctx context.Context) (*fijoyv1.User, error) {
 		return nil, err
 	}
 
-	return userModelToProto(user), nil
+	return user, nil
 }
 
-func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId string) (*fijoyv1.User, error) {
+func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId string) (*ent.User, error) {
 	var user *ent.User
 	var userKey *ent.UserKey
 
@@ -127,5 +116,5 @@ func (u *authUseCase) GoogleLogin(ctx context.Context, email string, googleId st
 		return nil, err
 	}
 
-	return userModelToProto(user), nil
+	return user, nil
 }
