@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fijoy"
 	"fijoy/config"
-	"fijoy/constants"
 	"fijoy/ent"
 	"fijoy/ent/migrate"
-	"fijoy/internal/util/market"
-	market_client "fijoy/internal/util/market/client"
+
+	// "fijoy/internal/util/market"
+	// market_client "fijoy/internal/util/market/client"
 	"fmt"
 	"log"
 	"net/http"
@@ -29,14 +29,6 @@ import (
 	user_handler "fijoy/internal/domain/user/handler"
 	user_repository "fijoy/internal/domain/user/repository"
 	user_usecase "fijoy/internal/domain/user/usecase"
-
-	account_handler "fijoy/internal/domain/account/handler"
-	account_repository "fijoy/internal/domain/account/repository"
-	account_usecase "fijoy/internal/domain/account/usecase"
-
-	transaction_handler "fijoy/internal/domain/transaction/handler"
-	transaction_repository "fijoy/internal/domain/transaction/repository"
-	transaction_usecase "fijoy/internal/domain/transaction/usecase"
 
 	currency_handler "fijoy/internal/domain/currency/handler"
 
@@ -122,26 +114,22 @@ func main() {
 
 	analyticsService := analytics_usecase.New(cfg.Analytics)
 
-	var marketDataClient market.MarketDataClient
-	if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
-		log.Println("Using mock market data client")
-		marketDataClient = market_client.NewMockMarketDataClient()
-	} else {
-		log.Println("Using Twelve Data market data client")
-		marketDataClient = market_client.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
-	}
+	// var marketDataClient market.MarketDataClient
+	// if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
+	// 	log.Println("Using mock market data client")
+	// 	marketDataClient = market_client.NewMockMarketDataClient()
+	// } else {
+	// 	log.Println("Using Twelve Data market data client")
+	// 	marketDataClient = market_client.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
+	// }
 
 	userRepo := user_repository.NewUserRepository()
 	userKeyRepo := user_repository.NewUserKeyRepository()
 	profileRepo := profile_repository.NewProfileRepository()
-	accountRepo := account_repository.NewAccountRepository()
-	transactionRepo := transaction_repository.NewTransactionRepository()
 
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo, entClient)
 	userUseCase := user_usecase.New(userRepo, entClient)
 	profileUseCase := profile_usecase.New(validator, entClient, profileRepo)
-	accountUseCase := account_usecase.New(validator, entClient, marketDataClient, profileRepo, accountRepo, transactionRepo)
-	transctionUseCase := transaction_usecase.New(validator, entClient, transactionRepo, accountRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -183,8 +171,6 @@ func main() {
 	// TODO: remove these
 	user_handler.RegisterConnect(r, protoValidator, cfg.Auth, userUseCase)
 	profile_handler.RegisterConnect(r, protoValidator, cfg.Auth, profileUseCase)
-	account_handler.RegisterConnect(r, protoValidator, cfg.Auth, accountUseCase)
-	transaction_handler.RegisterConnect(r, protoValidator, cfg.Auth, transctionUseCase)
 	currency_handler.RegisterConnect(r)
 
 	// Start our server

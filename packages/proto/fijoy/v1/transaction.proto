@@ -2,70 +2,70 @@ syntax = "proto3";
 
 package fijoy.v1;
 
-import "buf/validate/validate.proto";
-import "fijoy/v1/account.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-
-message Transaction {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-  fijoy.v1.Account account = 2;
-
-  string amount = 3;
-
-  string note = 4;
-
-  google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 6 [(buf.validate.field).required = true];
-}
-
-message TransactionList {
-  repeated Transaction items = 1 [(buf.validate.field).required = true];
-}
-
-message CreateTransactionRequest {
-  string account_id = 1 [(buf.validate.field).string.min_len = 1];
-
-  string amount = 2;
-
-  string note = 3;
-}
-
-message GetTransactionRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-}
-message GetTransactionsRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-}
-message GetTransactionsByAccountRequest {
-  string account_id = 1 [(buf.validate.field).string.min_len = 1];
-}
-
-message UpdateTransactionRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-
-  optional string amount = 2;
-
-  optional string note = 3;
-}
-
-message DeleteTransactionRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-}
-
-service TransactionService {
-  rpc CreateTransaction(CreateTransactionRequest) returns (Transaction);
-
-  rpc GetTransaction(GetTransactionRequest) returns (Transaction) {
-    option idempotency_level = NO_SIDE_EFFECTS;
-  }
-  rpc GetTransactionsByAccount(GetTransactionsByAccountRequest) returns (TransactionList) {
-    option idempotency_level = NO_SIDE_EFFECTS;
-  }
-  rpc GetTransactions(google.protobuf.Empty) returns (TransactionList) {
-    option idempotency_level = NO_SIDE_EFFECTS;
-  }
-
-  rpc UpdateTransaction(UpdateTransactionRequest) returns (Transaction);
-  rpc DeleteTransaction(DeleteTransactionRequest) returns (google.protobuf.Empty);
-}
+// import "buf/validate/validate.proto";
+// import "fijoy/v1/account.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/timestamp.proto";
+//
+// message Transaction {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+//   fijoy.v1.Account account = 2;
+//
+//   string amount = 3;
+//
+//   string note = 4;
+//
+//   google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
+//   google.protobuf.Timestamp updated_at = 6 [(buf.validate.field).required = true];
+// }
+//
+// message TransactionList {
+//   repeated Transaction items = 1 [(buf.validate.field).required = true];
+// }
+//
+// message CreateTransactionRequest {
+//   string account_id = 1 [(buf.validate.field).string.min_len = 1];
+//
+//   string amount = 2;
+//
+//   string note = 3;
+// }
+//
+// message GetTransactionRequest {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+// }
+// message GetTransactionsRequest {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+// }
+// message GetTransactionsByAccountRequest {
+//   string account_id = 1 [(buf.validate.field).string.min_len = 1];
+// }
+//
+// message UpdateTransactionRequest {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+//
+//   optional string amount = 2;
+//
+//   optional string note = 3;
+// }
+//
+// message DeleteTransactionRequest {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+// }
+//
+// service TransactionService {
+//   rpc CreateTransaction(CreateTransactionRequest) returns (Transaction);
+//
+//   rpc GetTransaction(GetTransactionRequest) returns (Transaction) {
+//     option idempotency_level = NO_SIDE_EFFECTS;
+//   }
+//   rpc GetTransactionsByAccount(GetTransactionsByAccountRequest) returns (TransactionList) {
+//     option idempotency_level = NO_SIDE_EFFECTS;
+//   }
+//   rpc GetTransactions(google.protobuf.Empty) returns (TransactionList) {
+//     option idempotency_level = NO_SIDE_EFFECTS;
+//   }
+//
+//   rpc UpdateTransaction(UpdateTransactionRequest) returns (Transaction);
+//   rpc DeleteTransaction(DeleteTransactionRequest) returns (google.protobuf.Empty);
+// }
