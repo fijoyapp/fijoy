@@ -66,10 +66,10 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	claims := map[string]any{
-		"user_id": user.Id,
+		"user_id": user.ID,
 	}
 
-	profileId, err := h.authUseCase.GetProfileId(ctx, user.Id)
+	profileId, err := h.authUseCase.GetProfileId(ctx, user.ID)
 	fmt.Println("profileId", profileId)
 	if err != nil {
 		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
@@ -136,10 +136,10 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	claims := map[string]any{
-		"user_id": user.Id,
+		"user_id": user.ID,
 	}
 
-	profileId, err := h.authUseCase.GetProfileId(ctx, user.Id)
+	profileId, err := h.authUseCase.GetProfileId(ctx, user.ID)
 	if err != nil {
 		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
 	}

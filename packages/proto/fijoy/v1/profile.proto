@@ -2,42 +2,42 @@ syntax = "proto3";
 
 package fijoy.v1;
 
-import "buf/validate/validate.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-
-message Profile {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-  repeated string currencies = 2 [
-    (buf.validate.field).repeated.unique = true,
-    (buf.validate.field).repeated.min_items = 1
-  ];
-  string locale = 3 [(buf.validate.field).string.min_len = 1];
-  string net_worth_goal = 4 [(buf.validate.field).string.min_len = 1];
-  google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
-}
-
-message CreateProfileRequest {
-  repeated string currencies = 1 [
-    (buf.validate.field).repeated.unique = true,
-    (buf.validate.field).repeated.min_items = 1
-  ];
-  string net_worth_goal = 2 [(buf.validate.field).string.min_len = 1];
-}
-
-message UpdateProfileRequest {
-  repeated string currencies = 1 [(buf.validate.field).repeated.unique = true];
-  optional string net_worth_goal = 2;
-}
-
-service ProfileService {
-  rpc CreateProfile(CreateProfileRequest) returns (Profile);
-
-  rpc GetProfile(google.protobuf.Empty) returns (Profile) {
-    option idempotency_level = NO_SIDE_EFFECTS;
-  }
-
-  rpc UpdateProfile(UpdateProfileRequest) returns (Profile);
-
-  rpc DeleteProfile(google.protobuf.Empty) returns (google.protobuf.Empty) {}
-}
+// import "buf/validate/validate.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/timestamp.proto";
+//
+// message Profile {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+//   repeated string currencies = 2 [
+//     (buf.validate.field).repeated.unique = true,
+//     (buf.validate.field).repeated.min_items = 1
+//   ];
+//   string locale = 3 [(buf.validate.field).string.min_len = 1];
+//   string net_worth_goal = 4 [(buf.validate.field).string.min_len = 1];
+//   google.protobuf.Timestamp created_at = 5 [(buf.validate.field).required = true];
+// }
+//
+// message CreateProfileRequest {
+//   repeated string currencies = 1 [
+//     (buf.validate.field).repeated.unique = true,
+//     (buf.validate.field).repeated.min_items = 1
+//   ];
+//   string net_worth_goal = 2 [(buf.validate.field).string.min_len = 1];
+// }
+//
+// message UpdateProfileRequest {
+//   repeated string currencies = 1 [(buf.validate.field).repeated.unique = true];
+//   optional string net_worth_goal = 2;
+// }
+//
+// service ProfileService {
+//   rpc CreateProfile(CreateProfileRequest) returns (Profile);
+//
+//   rpc GetProfile(google.protobuf.Empty) returns (Profile) {
+//     option idempotency_level = NO_SIDE_EFFECTS;
+//   }
+//
+//   rpc UpdateProfile(UpdateProfileRequest) returns (Profile);
+//
+//   rpc DeleteProfile(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+// }
