@@ -2,79 +2,79 @@ syntax = "proto3";
 
 package fijoy.v1;
 
-import "buf/validate/validate.proto";
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-
-enum AccountType {
-  ACCOUNT_TYPE_UNSPECIFIED = 0;
-  ACCOUNT_TYPE_LIQUIDITY = 1;
-  ACCOUNT_TYPE_INVESTMENT = 2;
-  ACCOUNT_TYPE_PROPERTY = 3;
-  ACCOUNT_TYPE_RECEIVABLE = 4;
-  ACCOUNT_TYPE_LIABILITY = 5;
-}
-
-enum AccountSymbolType {
-  ACCOUNT_SYMBOL_TYPE_UNSPECIFIED = 0;
-  ACCOUNT_SYMBOL_TYPE_CURRENCY = 1;
-  ACCOUNT_SYMBOL_TYPE_CRYPTO = 2;
-  ACCOUNT_SYMBOL_TYPE_STOCK = 3;
-}
-
-message Account {
-  // the standard stuff
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-  string name = 2 [(buf.validate.field).string.min_len = 1];
-  AccountType account_type = 3 [(buf.validate.field).required = true];
-
-  bool archived = 4 [(buf.validate.field).required = false];
-
-  string symbol = 5 [(buf.validate.field).string.min_len = 1];
-  AccountSymbolType symbol_type = 6 [(buf.validate.field).required = true];
-
-  string amount = 7 [(buf.validate.field).required = true];
-  string value = 8 [(buf.validate.field).required = true];
-  string fx_rate = 9;
-  string balance = 10 [(buf.validate.field).required = true];
-
-  google.protobuf.Timestamp created_at = 11 [(buf.validate.field).required = true];
-  google.protobuf.Timestamp updated_at = 12 [(buf.validate.field).required = true];
-}
-
-message AccountList {
-  repeated Account items = 1 [(buf.validate.field).required = true];
-}
-
-message CreateAccountRequest {
-  string name = 1 [(buf.validate.field).string.min_len = 1];
-  AccountType account_type = 2 [(buf.validate.field).required = true];
-
-  string symbol = 3 [(buf.validate.field).string.min_len = 1];
-  AccountSymbolType symbol_type = 4 [(buf.validate.field).required = true];
-}
-
-message UpdateAccountRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-  optional string name = 2;
-
-  optional bool archived = 3;
-}
-
-message GetAccountRequest {
-  string id = 1 [(buf.validate.field).string.min_len = 1];
-}
-
-service AccountService {
-  rpc CreateAccount(CreateAccountRequest) returns (Account);
-
-  rpc GetAccounts(google.protobuf.Empty) returns (AccountList) {
-    option idempotency_level = NO_SIDE_EFFECTS;
-  }
-
-  rpc GetAccount(GetAccountRequest) returns (Account) {
-    option idempotency_level = NO_SIDE_EFFECTS;
-  }
-
-  rpc UpdateAccount(UpdateAccountRequest) returns (Account);
-}
+// import "buf/validate/validate.proto";
+// import "google/protobuf/empty.proto";
+// import "google/protobuf/timestamp.proto";
+//
+// enum AccountType {
+//   ACCOUNT_TYPE_UNSPECIFIED = 0;
+//   ACCOUNT_TYPE_LIQUIDITY = 1;
+//   ACCOUNT_TYPE_INVESTMENT = 2;
+//   ACCOUNT_TYPE_PROPERTY = 3;
+//   ACCOUNT_TYPE_RECEIVABLE = 4;
+//   ACCOUNT_TYPE_LIABILITY = 5;
+// }
+//
+// enum AccountSymbolType {
+//   ACCOUNT_SYMBOL_TYPE_UNSPECIFIED = 0;
+//   ACCOUNT_SYMBOL_TYPE_CURRENCY = 1;
+//   ACCOUNT_SYMBOL_TYPE_CRYPTO = 2;
+//   ACCOUNT_SYMBOL_TYPE_STOCK = 3;
+// }
+//
+// message Account {
+//   // the standard stuff
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+//   string name = 2 [(buf.validate.field).string.min_len = 1];
+//   AccountType account_type = 3 [(buf.validate.field).required = true];
+//
+//   bool archived = 4 [(buf.validate.field).required = false];
+//
+//   string symbol = 5 [(buf.validate.field).string.min_len = 1];
+//   AccountSymbolType symbol_type = 6 [(buf.validate.field).required = true];
+//
+//   string amount = 7 [(buf.validate.field).required = true];
+//   string value = 8 [(buf.validate.field).required = true];
+//   string fx_rate = 9;
+//   string balance = 10 [(buf.validate.field).required = true];
+//
+//   google.protobuf.Timestamp created_at = 11 [(buf.validate.field).required = true];
+//   google.protobuf.Timestamp updated_at = 12 [(buf.validate.field).required = true];
+// }
+//
+// message AccountList {
+//   repeated Account items = 1 [(buf.validate.field).required = true];
+// }
+//
+// message CreateAccountRequest {
+//   string name = 1 [(buf.validate.field).string.min_len = 1];
+//   AccountType account_type = 2 [(buf.validate.field).required = true];
+//
+//   string symbol = 3 [(buf.validate.field).string.min_len = 1];
+//   AccountSymbolType symbol_type = 4 [(buf.validate.field).required = true];
+// }
+//
+// message UpdateAccountRequest {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+//   optional string name = 2;
+//
+//   optional bool archived = 3;
+// }
+//
+// message GetAccountRequest {
+//   string id = 1 [(buf.validate.field).string.min_len = 1];
+// }
+//
+// service AccountService {
+//   rpc CreateAccount(CreateAccountRequest) returns (Account);
+//
+//   rpc GetAccounts(google.protobuf.Empty) returns (AccountList) {
+//     option idempotency_level = NO_SIDE_EFFECTS;
+//   }
+//
+//   rpc GetAccount(GetAccountRequest) returns (Account) {
+//     option idempotency_level = NO_SIDE_EFFECTS;
+//   }
+//
+//   rpc UpdateAccount(UpdateAccountRequest) returns (Account);
+// }
