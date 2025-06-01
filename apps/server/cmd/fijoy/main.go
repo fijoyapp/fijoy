@@ -122,9 +122,8 @@ func main() {
 		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
 		// AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
-		// AllowedMethods:   connectcors.AllowedMethods(),
-		AllowedHeaders: []string{"sentry-trace", "baggage"},
-		// ExposedHeaders:   connectcors.ExposedHeaders(),
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "sentry-trace", "baggage"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 		Debug:            false,
