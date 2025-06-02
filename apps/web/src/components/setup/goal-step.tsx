@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Navigate, useRouter } from "@tanstack/react-router";
+import { Link, Navigate, useRouter } from "@tanstack/react-router";
 import { GoalStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
@@ -66,9 +66,19 @@ const GoalStep = ({ currencies }: GoalStepProps) => {
             onValueChange={(value) => form.setValue("net_worth_goal", value)}
           />
 
-          <Button type="submit" className="col-span-2">
-            Create
-          </Button>
+          <div className="flex-col space-x-2">
+            <Button type="submit" className="col-span-2">
+              Next
+            </Button>
+            <Button
+              type="button"
+              className="col-span-2"
+              variant={"secondary"}
+              asChild
+            >
+              <Link to="/setup">Cancel</Link>
+            </Button>
+          </div>
         </form>
       </Form>
     </>
