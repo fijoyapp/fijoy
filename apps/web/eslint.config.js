@@ -8,17 +8,19 @@ import pluginRouter from "@tanstack/eslint-plugin-router";
 export default tseslint.config(
   { ignores: ["./dist", "./coverage", "./src/gen"] },
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs["recommended-latest"],
+      reactRefresh.configs.vite,
+      pluginRouter.configs["flat/recommended"],
+    ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
     },
-    plugins: {
-      "react-hooks": reactHooks,
-      "react-refresh": reactRefresh,
-      "@tanstack/router": pluginRouter,
-    },
+    plugins: {},
     rules: {
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": [
