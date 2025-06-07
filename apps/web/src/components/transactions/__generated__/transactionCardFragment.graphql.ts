@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b4c500e3b6ccf027ec9fa55d528ebe9d>>
+ * @generated SignedSource<<fe06e1e1951b5cb45acfc3eddd31c93f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ export type AccountSymbolType = "crypto" | "currency" | "stock" | "%future added
 import { FragmentRefs } from "relay-runtime";
 export type transactionCardFragment$data = {
   readonly account: {
+    readonly name: string;
     readonly symbol: string;
     readonly symbolType: AccountSymbolType;
   };
@@ -98,6 +99,13 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "symbolType",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "name",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -107,6 +115,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "b0886e2c18b62a21b5428d522f5aee86";
+(node as any).hash = "408262bed89a6e0865e57f539324a4f1";
 
 export default node;

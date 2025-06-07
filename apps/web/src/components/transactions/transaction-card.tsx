@@ -5,13 +5,13 @@ import { getPrettyTime } from "@/lib/time";
 import { useProfile } from "@/hooks/use-profile";
 import { match } from "ts-pattern";
 import { Fragment } from "react/jsx-runtime";
-import { profileQuery } from "@/lib/queries/__generated__/profileQuery.graphql";
 import { graphql } from "relay-runtime";
 import {
   transactionCardFragment$data,
   transactionCardFragment$key,
 } from "./__generated__/transactionCardFragment.graphql";
 import { useFragment } from "react-relay";
+import { profileFragment$data } from "@/lib/queries/__generated__/profileFragment.graphql";
 
 type Props = {
   transactionRef: transactionCardFragment$key;
@@ -28,6 +28,7 @@ const TransactionCardFragment = graphql`
     account {
       symbol
       symbolType
+      name
     }
   }
 `;
@@ -49,7 +50,9 @@ export const TransactionCard = ({ transactionRef }: Props) => {
 
       <div>
         <div>{transaction.note}</div>
-        <div className="text-muted-foreground text-xs">{transaction.id}</div>
+        <div className="text-muted-foreground text-xs">
+          {transaction.account.name}
+        </div>
       </div>
 
       <div className="grow"></div>
@@ -69,7 +72,7 @@ function ValueDisplay({
   profile,
 }: {
   transaction: transactionCardFragment$data;
-  profile: profileQuery["response"]["profile"];
+  profile: profileFragment$data[number];
 }) {
   return (
     <Fragment>

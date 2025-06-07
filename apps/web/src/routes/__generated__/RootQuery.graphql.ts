@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<56a9a1b8fbdac10c86cf8d437e049bbb>>
+ * @generated SignedSource<<a0b46305193d8eceda3f05fb9090e920>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -72,6 +72,13 @@ v5 = {
   "args": null,
   "kind": "ScalarField",
   "name": "symbol",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
@@ -286,6 +293,7 @@ return {
                     "name": "symbolType",
                     "storageKey": null
                   },
+                  (v6/*: any*/),
                   (v2/*: any*/)
                 ],
                 "storageKey": null
@@ -316,13 +324,7 @@ return {
                 "name": "balance",
                 "storageKey": null
               },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              },
+              (v6/*: any*/),
               (v5/*: any*/),
               (v4/*: any*/)
             ],
@@ -352,12 +354,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4738e0738e4fa91a81daf92411a3355e",
+    "cacheID": "7ba44e1276e58919b199e5acb01f8111",
     "id": null,
     "metadata": {},
     "name": "RootQuery",
     "operationKind": "query",
-    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  transactions @include(if: $hasProfile) {\n    id\n    ...transactionCardFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsPageFragment on Query {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    id\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  transactions @include(if: $hasProfile) {\n    id\n    ...transactionCardFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsPageFragment on Query {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    name\n    id\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
 })();
