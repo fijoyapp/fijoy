@@ -31,14 +31,14 @@ import NetWorthInfo from "@/components/accounts/net-worth-info";
 import AccountListView from "@/components/accounts/account-list-view";
 import { graphql } from "relay-runtime";
 import { usePreloadedQuery, useRefetchableFragment } from "react-relay";
-import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import { type RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { rootQuery } from "@/routes/__root";
-import {
+import { type AccountsPageRefetch } from "./__generated__/AccountsPageRefetch.graphql";
+import { AccountType } from "@/types/account";
+import type {
   accountsPageFragment$data,
   accountsPageFragment$key,
 } from "./__generated__/accountsPageFragment.graphql";
-import { AccountsPageRefetch } from "./__generated__/AccountsPageRefetch.graphql";
-import { AccountType } from "@/types/account";
 
 const accountsRouteSchema = z.object({
   add: AccountType.optional(),

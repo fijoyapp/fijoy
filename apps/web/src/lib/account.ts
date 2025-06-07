@@ -1,5 +1,5 @@
-import { AccountAccountType } from "@/components/accounts/__generated__/cardFragment.graphql";
-import { accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
+import { type AccountAccountType } from "@/components/accounts/__generated__/cardFragment.graphql";
+import { type accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
 import currency from "currency.js";
 import _ from "lodash";
 
