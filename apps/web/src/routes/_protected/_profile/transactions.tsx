@@ -41,7 +41,9 @@ function Page() {
 
       <div className="py-2"></div>
 
-      <TransactionList transactions={data.transactions} />
+      {data.transactions.length !== 0 && (
+        <TransactionList transactions={data.transactions} />
+      )}
     </div>
   );
 }
