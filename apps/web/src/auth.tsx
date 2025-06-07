@@ -1,4 +1,4 @@
-import { userFragment$data } from "./lib/queries/__generated__/userFragment.graphql";
+import { type userFragment$data } from "./lib/queries/__generated__/userFragment.graphql";
 import { createContext } from "react";
 
 export interface AuthContext {

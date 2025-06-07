@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Control, FieldValues, Path } from "react-hook-form";
+import type { Control, FieldValues, Path } from "react-hook-form";
 
 import {
   Command,
@@ -29,7 +29,7 @@ import { currencyCodeToName } from "@/config/currency";
 import { cn } from "@/lib/utils";
 import { getCurrencyDisplay } from "@/lib/money";
 import { useFragment } from "react-relay";
-import {
+import type {
   currencyFragment$data,
   currencyFragment$key,
 } from "@/lib/queries/__generated__/currencyFragment.graphql";

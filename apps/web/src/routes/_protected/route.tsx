@@ -2,9 +2,9 @@ import { Outlet, createFileRoute } from "@tanstack/react-router";
 import invariant from "tiny-invariant";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useFragment, usePreloadedQuery } from "react-relay";
-import { RootQuery } from "../__generated__/RootQuery.graphql";
+import { type RootQuery } from "../__generated__/RootQuery.graphql";
 import { rootQuery } from "../__root";
-import { userFragment$key } from "@/lib/queries/__generated__/userFragment.graphql";
+import { type userFragment$key } from "@/lib/queries/__generated__/userFragment.graphql";
 import { UserFragment } from "@/lib/queries/user";
 import { AuthProvider } from "@/auth";
 

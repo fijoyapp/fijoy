@@ -7,8 +7,8 @@ import { LiabilityCard } from "./liability/card";
 import { PropertyCard } from "./property/card";
 import { ReceivableCard } from "./receivable/card";
 import { InvestmentCard } from "./investment/card";
-import { cardFragment$key } from "./__generated__/cardFragment.graphql";
-import { accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
+import type { cardFragment$key } from "./__generated__/cardFragment.graphql";
+import type { accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
 
 type AccountListProps = {
   accounts: accountsPageFragment$data["accounts"];

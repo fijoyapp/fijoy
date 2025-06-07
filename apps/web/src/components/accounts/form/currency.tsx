@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { currencyCodeToName } from "@/config/currency";
 import { useProfile } from "@/hooks/use-profile";
-import { Control, FieldValues, Path } from "react-hook-form";
+import type { Control, FieldValues, Path } from "react-hook-form";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;

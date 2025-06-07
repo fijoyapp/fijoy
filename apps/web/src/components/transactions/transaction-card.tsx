@@ -6,12 +6,12 @@ import { useProfile } from "@/hooks/use-profile";
 import { match } from "ts-pattern";
 import { Fragment } from "react/jsx-runtime";
 import { graphql } from "relay-runtime";
-import {
+import type {
   transactionCardFragment$data,
   transactionCardFragment$key,
 } from "./__generated__/transactionCardFragment.graphql";
 import { useFragment } from "react-relay";
-import { profileFragment$data } from "@/lib/queries/__generated__/profileFragment.graphql";
+import type { profileFragment$data } from "@/lib/queries/__generated__/profileFragment.graphql";
 
 type Props = {
   transactionRef: transactionCardFragment$key;

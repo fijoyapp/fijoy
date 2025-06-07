@@ -26,7 +26,7 @@ import { match } from "ts-pattern";
 import { graphql } from "relay-runtime";
 import { useProfile } from "@/hooks/use-profile";
 import { useMutation } from "react-relay";
-import { newAccountInvestmentMutation } from "./__generated__/newAccountInvestmentMutation.graphql";
+import type { newAccountInvestmentMutation } from "./__generated__/newAccountInvestmentMutation.graphql";
 
 const formSchema = z.object({
   symbol: z.string(),

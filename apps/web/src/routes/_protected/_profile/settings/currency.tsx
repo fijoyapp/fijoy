@@ -21,7 +21,7 @@ import { CurrencyField } from "@/components/setup/form/currency";
 import { graphql, useMutation, usePreloadedQuery } from "react-relay";
 import { useProfile } from "@/hooks/use-profile";
 import { rootQuery } from "@/routes/__root";
-import { currencyMutation } from "./__generated__/currencyMutation.graphql";
+import type { currencyMutation } from "./__generated__/currencyMutation.graphql";
 
 export const Route = createFileRoute("/_protected/_profile/settings/currency")({
   component: Page,

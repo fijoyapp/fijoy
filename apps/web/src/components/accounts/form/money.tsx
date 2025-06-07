@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Control, FieldValues, Path } from "react-hook-form";
+import type { Control, FieldValues, Path } from "react-hook-form";
 import CurrencyInput from "react-currency-input-field";
 import { useProfile } from "@/hooks/use-profile";
 import { cn } from "@/lib/utils";

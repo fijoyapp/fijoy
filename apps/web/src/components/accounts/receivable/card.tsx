@@ -3,7 +3,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
 import { HandCoins } from "lucide-react";
-import { cardFragment$key } from "../__generated__/cardFragment.graphql";
+import type { cardFragment$key } from "../__generated__/cardFragment.graphql";
 import { CardFragment } from "../card-fragment";
 import { useFragment } from "react-relay";
 

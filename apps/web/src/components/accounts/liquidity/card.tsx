@@ -5,7 +5,7 @@ import { getPrettyTime } from "@/lib/time";
 import { PiggyBank } from "lucide-react";
 import { useFragment } from "react-relay";
 import { CardFragment } from "../card-fragment";
-import { cardFragment$key } from "../__generated__/cardFragment.graphql";
+import type { cardFragment$key } from "../__generated__/cardFragment.graphql";
 
 type LiquidityCardProps = {
   account: cardFragment$key;

@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import {
+import type {
   profileFragment$data,
   profileFragment$key,
 } from "./lib/queries/__generated__/profileFragment.graphql";

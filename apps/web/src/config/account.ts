@@ -1,4 +1,4 @@
-import { AccountType, AccountTypeDetail } from "@/types/account";
+import { AccountType, type AccountTypeDetail } from "@/types/account";
 import { match } from "ts-pattern";
 
 export function getAccountTypeDetail(

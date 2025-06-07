@@ -10,14 +10,14 @@ import { useShallow } from "zustand/shallow";
 import { useCallback, useEffect, useRef } from "react";
 import { fetchQuery, graphql } from "relay-runtime";
 import {
-  PreloadedQuery,
+  type PreloadedQuery,
   useMutation,
   useQueryLoader,
   useRelayEnvironment,
 } from "react-relay";
-import { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
+import type { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
 import { rootQuery } from "@/routes/__root";
-import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 
 const formSchema = z.object({
   currency: CurrencyStepData,

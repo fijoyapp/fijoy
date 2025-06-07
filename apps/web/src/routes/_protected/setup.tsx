@@ -14,10 +14,10 @@ import FinalStep from "@/components/setup/final-step";
 import GoalStep from "@/components/setup/goal-step";
 import { useFragment, usePreloadedQuery } from "react-relay";
 import { rootQuery } from "../__root";
-import { RootQuery } from "../__generated__/RootQuery.graphql";
+import type { RootQuery } from "../__generated__/RootQuery.graphql";
 import { Button } from "@/components/ui/button";
 import { ProfileFragment } from "@/lib/queries/profile";
-import { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
+import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 

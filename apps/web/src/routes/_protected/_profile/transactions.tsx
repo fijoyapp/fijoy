@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
 import { usePreloadedQuery } from "react-relay";
 import { rootQuery } from "@/routes/__root";
-import {
+import type {
   RootQuery,
   RootQuery$data,
 } from "@/routes/__generated__/RootQuery.graphql";

@@ -22,7 +22,7 @@ import {
   Link,
   Navigate,
   Outlet,
-  ValidateLinkOptions,
+  type ValidateLinkOptions,
   createFileRoute,
   useMatchRoute,
 } from "@tanstack/react-router";
@@ -32,7 +32,7 @@ import {
   History,
   Home,
   Landmark,
-  LucideIcon,
+  type LucideIcon,
   Menu,
   Search,
   Settings,
@@ -50,10 +50,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
 import { useFragment, usePreloadedQuery } from "react-relay";
-import { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
+import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { ProfileProvider } from "@/profile";
 import { rootQuery } from "@/routes/__root";
-import { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { ProfileFragment } from "@/lib/queries/profile";
 
 // export const RouteProfileQuery = graphql`

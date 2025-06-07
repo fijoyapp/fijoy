@@ -18,7 +18,7 @@ import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
-import { newAccountLiquidityMutation } from "./__generated__/newAccountLiquidityMutation.graphql";
+import type { newAccountLiquidityMutation } from "./__generated__/newAccountLiquidityMutation.graphql";
 
 const formSchema = z.object({
   name: z.string().min(2, {

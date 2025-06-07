@@ -8,7 +8,7 @@ import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
 import { type TypeOf } from "zod";
 import { MoneyField } from "./form/money";
-import { currencyFragment$key } from "@/lib/queries/__generated__/currencyFragment.graphql";
+import type { currencyFragment$key } from "@/lib/queries/__generated__/currencyFragment.graphql";
 import { CurrencyFragment } from "@/lib/queries/currency";
 import { useFragment } from "react-relay";
 
