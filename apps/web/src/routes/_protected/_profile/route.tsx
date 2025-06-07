@@ -79,15 +79,6 @@ import { ProfileFragment } from "@/lib/queries/profile";
 // `;
 
 export const Route = createFileRoute("/_protected/_profile")({
-  // beforeLoad: async ({ context }) => {
-  //   const profileQueryRef = loadQuery<routeProfileQuery>(
-  //     context.environment,
-  //     RouteProfileQuery,
-  //     {},
-  //     { fetchPolicy: "store-and-network" },
-  //   );
-  //   return { profileQueryRef };
-  // },
   pendingComponent: CenterLoadingSpinner,
   errorComponent: ({ error }) => (
     <PageHeader>
@@ -170,7 +161,12 @@ function Page() {
   }
 
   return (
-    <ProfileProvider profile={profiles[0]} profileRef={data.profiles[0]}>
+    <ProfileProvider
+      profile={profiles[0]}
+      profileRef={data.profiles[0]}
+      profiles={profiles}
+      profilesRef={data.profiles}
+    >
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="bg-muted/40 hidden border-r md:block">
           <div className="flex h-full max-h-screen flex-col gap-2">

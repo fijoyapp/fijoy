@@ -7,7 +7,7 @@ import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { fetchQuery, graphql } from "relay-runtime";
 import {
   PreloadedQuery,
@@ -59,7 +59,6 @@ const FinalStep = ({ rootQueryRef }: Props) => {
     rootQuery,
     rootQueryRef /* initial query ref */,
   );
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const { currencyStepData, goalStepData, reset } = useSetupStore(
     useShallow((state) => ({
@@ -77,42 +76,35 @@ const FinalStep = ({ rootQueryRef }: Props) => {
     },
   });
 
-  const refresh = useCallback(({ onComplete }: { onComplete: () => void }) => {
-    if (isRefreshing) {
-      return;
-    }
-    // const {variables} = props.appQueryRef;
-    setIsRefreshing(true);
-
-    // fetchQuery will fetch the query and write
-    // the data to the Relay store. This will ensure
-    // that when we re-render, the data is already
-    // cached and we don't suspend
-    fetchQuery<RootQuery>(environment, rootQuery, {
-      hasProfile: true,
-      hasUser: true,
-    }).subscribe({
-      complete: () => {
-        setIsRefreshing(false);
-
-        // *After* the query has been fetched, we call
-        // loadQuery again to re-render with a new
-        // queryRef.
-        // At this point the data for the query should
-        // be cached, so we use the 'store-only'
-        // fetchPolicy to avoid suspending.
-        loadQuery(
-          { hasProfile: true, hasUser: true },
-          { fetchPolicy: "store-only" },
-        );
-        onComplete();
-      },
-      error: () => {
-        setIsRefreshing(false);
-      },
+  const refresh = useCallback(() => {
+    return new Promise<void>((resolve, reject) => {
+      // fetchQuery will fetch the query and write
+      // the data to the Relay store. This will ensure
+      // that when we re-render, the data is already
+      // cached and we don't suspend
+      fetchQuery<RootQuery>(environment, rootQuery, {
+        hasProfile: true,
+        hasUser: true,
+      }).subscribe({
+        complete: () => {
+          // *After* the query has been fetched, we call
+          // loadQuery again to re-render with a new
+          // queryRef.
+          // At this point the data for the query should
+          // be cached, so we use the 'store-only'
+          // fetchPolicy to avoid suspending.
+          loadQuery(
+            { hasProfile: true, hasUser: true },
+            { fetchPolicy: "store-only" },
+          );
+          resolve();
+        },
+        error: (e: Error) => {
+          reject(e);
+        },
+      });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [environment, loadQuery]);
 
   async function onSubmit() {
     if (isMutationInFlight) {
@@ -131,7 +123,6 @@ const FinalStep = ({ rootQueryRef }: Props) => {
 
     toast.promise(
       new Promise((resolve, reject) => {
-        resolve("");
         commitMutation({
           variables: {
             currencies: values.currency.currencies.join(","),
@@ -145,15 +136,12 @@ const FinalStep = ({ rootQueryRef }: Props) => {
         });
       }),
       {
-        success: () => {
-          refresh({
-            onComplete: () => {
-              router.navigate({
-                to: "/home",
-              });
-            },
-          });
+        success: async () => {
+          await refresh();
           reset();
+          router.navigate({
+            to: "/home",
+          });
 
           return "Profile created";
         },
