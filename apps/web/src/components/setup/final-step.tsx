@@ -25,18 +25,9 @@ const formSchema = z.object({
 });
 
 const profileCreateMutation = graphql`
-  mutation finalStepMutation(
-    $currencies: String!
-    $netWorthGoal: String!
-    $locale: String!
-  ) {
+  mutation finalStepMutation($currencies: String!, $netWorthGoal: String!) {
     createProfile(
-      input: {
-        currencies: $currencies
-        netWorthGoal: $netWorthGoal
-        locale: $locale
-        userID: "" # will be set by the server
-      }
+      input: { currencies: $currencies, netWorthGoal: $netWorthGoal }
     ) {
       id
     }
@@ -127,7 +118,6 @@ const FinalStep = ({ rootQueryRef }: Props) => {
           variables: {
             currencies: values.currency.currencies.join(","),
             netWorthGoal: values.goal.net_worth_goal,
-            locale: "en-CA", // TODO: Replace with actual locale value
           },
           onCompleted: (response) => {
             resolve(response);

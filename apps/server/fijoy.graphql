@@ -9,21 +9,6 @@ type Currency {
   locale: String!
 }
 
-input CreateAccountInput {
-  name: String!
-  accountType: AccountAccountType!
-  symbol: String!
-  symbolType: AccountSymbolType!
-  amount: String!
-}
-
-input CreateTransactionInput {
-  amount: String!
-  note: String
-  datetime: Time
-  accountID: ID!
-}
-
 type Mutation {
   createProfile(input: CreateProfileInput!): Profile!
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!

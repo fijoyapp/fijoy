@@ -12,6 +12,7 @@ import (
 	"fijoy/ent/user"
 	"fijoy/internal/util/auth"
 	"fmt"
+	"strings"
 
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -25,10 +26,21 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 		return nil, err
 	}
 
+	currencies := strings.Split(input.Currencies, ",")
+
+	allExist := lo.EveryBy(currencies, func(currency string) bool {
+		return constants.IsValidCurrency(currency)
+	})
+	if !allExist {
+		return nil, fmt.Errorf("invalid currencies: %s", input.Currencies)
+	}
+
+	defaultLocale := constants.Currencies[currencies[0]].Locale
+
 	profile, err := client.Profile.Create().
-		SetCurrencies(input.Currencies). // TODO: sanitize this
+		SetCurrencies(input.Currencies).
 		SetNetWorthGoal(input.NetWorthGoal).
-		SetLocale(input.Locale). // TODO: sanitize this
+		SetLocale(defaultLocale).
 		SetUserID(userData.UserId).
 		Save(ctx)
 
@@ -64,7 +76,7 @@ func (r *mutationResolver) UpdateProfile(ctx context.Context, id string, input e
 }
 
 // CreateAccount is the resolver for the createAccount field.
-func (r *mutationResolver) CreateAccount(ctx context.Context, input CreateAccountInput) (*ent.Account, error) {
+func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error) {
 	client := ent.FromContext(ctx)
 	fmt.Println("CreateAccount input:", input)
 	userData, err := auth.GetAuthDataFromContext(ctx)
@@ -96,7 +108,7 @@ func (r *mutationResolver) UpdateAccount(ctx context.Context, id string, input e
 }
 
 // CreateTransaction is the resolver for the createTransaction field.
-func (r *mutationResolver) CreateTransaction(ctx context.Context, input CreateTransactionInput) (*ent.Transaction, error) {
+func (r *mutationResolver) CreateTransaction(ctx context.Context, input ent.CreateTransactionInput) (*ent.Transaction, error) {
 	panic(fmt.Errorf("not implemented: CreateTransaction - createTransaction"))
 }
 

@@ -32,7 +32,11 @@ func (Profile) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").DefaultFunc(func() string { return constants.ProfilePrefix + cuid2.Generate() }),
 
-		field.String("locale"),
+		field.String("locale").
+			Annotations(
+				entgql.Skip(entgql.SkipMutationCreateInput),
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			),
 		field.String("currencies"),
 
 		field.Float("net_worth_goal").
@@ -55,7 +59,13 @@ func (Profile) Fields() []ent.Field {
 // Edges of the Profile.
 func (Profile) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("profile").Unique().Required(),
+		edge.From("user", User.Type).Ref("profile").
+			Unique().
+			Required().
+			Annotations(
+				entgql.Skip(entgql.SkipMutationCreateInput),
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			),
 		edge.To("account", Account.Type),
 		edge.To("transaction", Transaction.Type),
 	}

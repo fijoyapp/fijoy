@@ -23,7 +23,7 @@ type Account struct {
 func (Account) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
-		entgql.Mutations(entgql.MutationUpdate()),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
 
@@ -53,14 +53,22 @@ func (Account) Fields() []ent.Field {
 				dialect.MySQL:    "decimal(18,10)",
 				dialect.Postgres: "numeric(18,10)",
 			}).
-			Annotations(entgql.Type("String")),
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(entgql.SkipMutationCreateInput),
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			),
 		field.Float("fx_rate").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(18,10)",
 				dialect.Postgres: "numeric(18,10)",
 			}).
-			Annotations(entgql.Type("String")).
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(entgql.SkipMutationCreateInput),
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			).
 			Optional(),
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
@@ -68,7 +76,11 @@ func (Account) Fields() []ent.Field {
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")),
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(entgql.SkipMutationCreateInput),
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			),
 
 		field.Bool("archived").Default(false),
 
@@ -84,7 +96,13 @@ func (Account) Fields() []ent.Field {
 // Edges of the Account.
 func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profile", Profile.Type).Ref("account").Required().Unique(),
+		edge.From("profile", Profile.Type).Ref("account").
+			Unique().
+			Required().
+			Annotations(
+				entgql.Skip(entgql.SkipMutationCreateInput),
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			),
 
 		edge.To("transaction", Transaction.Type),
 	}

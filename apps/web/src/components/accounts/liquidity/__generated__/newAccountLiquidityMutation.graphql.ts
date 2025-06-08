@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d6a04963fdf8419e44eb210f9f264c0c>>
+ * @generated SignedSource<<b57d628f74802c73b57e8d232f24d706>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,9 +14,13 @@ export type AccountSymbolType = "crypto" | "currency" | "stock" | "%future added
 export type CreateAccountInput = {
   accountType: AccountAccountType;
   amount: string;
+  archived?: boolean | null | undefined;
+  createdAt?: any | null | undefined;
   name: string;
   symbol: string;
   symbolType: AccountSymbolType;
+  transactionIDs?: ReadonlyArray<string> | null | undefined;
+  updatedAt?: any | null | undefined;
 };
 export type newAccountLiquidityMutation$variables = {
   input: CreateAccountInput;

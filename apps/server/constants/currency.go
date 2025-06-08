@@ -39,3 +39,8 @@ var Currencies = map[string]Currency{
 		Locale: "de-CH",
 	},
 }
+
+func IsValidCurrency(code string) bool {
+	_, exists := Currencies[code]
+	return exists
+}

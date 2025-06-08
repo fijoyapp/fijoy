@@ -89,6 +89,21 @@ func (r *transactionResolver) Amount(ctx context.Context, obj *ent.Transaction) 
 	return obj.Amount.String(), nil
 }
 
+// Amount is the resolver for the amount field.
+func (r *createAccountInputResolver) Amount(ctx context.Context, obj *ent.CreateAccountInput, data string) error {
+	if data == "" {
+		return errors.New("amount is required")
+	}
+
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid amount: %w", err)
+	}
+
+	obj.Amount = dec
+	return nil
+}
+
 // NetWorthGoal is the resolver for the netWorthGoal field.
 func (r *createProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.CreateProfileInput, data string) error {
 	if data == "" {
@@ -105,23 +120,33 @@ func (r *createProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.
 }
 
 // Amount is the resolver for the amount field.
+func (r *createTransactionInputResolver) Amount(ctx context.Context, obj *ent.CreateTransactionInput, data string) error {
+	if data == "" {
+		return errors.New("amount is required")
+	}
+
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid amount: %w", err)
+	}
+
+	obj.Amount = dec
+	return nil
+}
+
+// Amount is the resolver for the amount field.
 func (r *updateAccountInputResolver) Amount(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
-}
+	if data == nil || *data == "" {
+		return nil
+	}
 
-// Value is the resolver for the value field.
-func (r *updateAccountInputResolver) Value(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Value - value"))
-}
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid amount: %w", err)
+	}
 
-// FxRate is the resolver for the fxRate field.
-func (r *updateAccountInputResolver) FxRate(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
-	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
-}
-
-// Balance is the resolver for the balance field.
-func (r *updateAccountInputResolver) Balance(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
+	obj.Amount = &dec
+	return nil
 }
 
 // NetWorthGoal is the resolver for the netWorthGoal field.
@@ -146,9 +171,19 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // Transaction returns TransactionResolver implementation.
 func (r *Resolver) Transaction() TransactionResolver { return &transactionResolver{r} }
 
+// CreateAccountInput returns CreateAccountInputResolver implementation.
+func (r *Resolver) CreateAccountInput() CreateAccountInputResolver {
+	return &createAccountInputResolver{r}
+}
+
 // CreateProfileInput returns CreateProfileInputResolver implementation.
 func (r *Resolver) CreateProfileInput() CreateProfileInputResolver {
 	return &createProfileInputResolver{r}
+}
+
+// CreateTransactionInput returns CreateTransactionInputResolver implementation.
+func (r *Resolver) CreateTransactionInput() CreateTransactionInputResolver {
+	return &createTransactionInputResolver{r}
 }
 
 // UpdateAccountInput returns UpdateAccountInputResolver implementation.
@@ -170,7 +205,27 @@ type accountResolver struct{ *Resolver }
 type profileResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type transactionResolver struct{ *Resolver }
+type createAccountInputResolver struct{ *Resolver }
 type createProfileInputResolver struct{ *Resolver }
+type createTransactionInputResolver struct{ *Resolver }
 type updateAccountInputResolver struct{ *Resolver }
 type updateProfileInputResolver struct{ *Resolver }
 type updateTransactionInputResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *updateAccountInputResolver) Value(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+func (r *updateAccountInputResolver) FxRate(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
+}
+func (r *updateAccountInputResolver) Balance(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+*/

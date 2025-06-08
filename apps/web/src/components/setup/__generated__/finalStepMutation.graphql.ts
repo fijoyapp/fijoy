@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b8594b77483f601f9854e70af97fd7fe>>
+ * @generated SignedSource<<3b156836722d86c3534afb7d06828511>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,6 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type finalStepMutation$variables = {
   currencies: string;
-  locale: string;
   netWorthGoal: string;
 };
 export type finalStepMutation$data = {
@@ -25,22 +24,19 @@ export type finalStepMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "currencies"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "locale"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "netWorthGoal"
-},
-v3 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "currencies"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "netWorthGoal"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
@@ -53,18 +49,8 @@ v3 = [
           },
           {
             "kind": "Variable",
-            "name": "locale",
-            "variableName": "locale"
-          },
-          {
-            "kind": "Variable",
             "name": "netWorthGoal",
             "variableName": "netWorthGoal"
-          },
-          {
-            "kind": "Literal",
-            "name": "userID",
-            "value": ""
           }
         ],
         "kind": "ObjectValue",
@@ -89,40 +75,32 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "finalStepMutation",
-    "selections": (v3/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v2/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "finalStepMutation",
-    "selections": (v3/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "23745534b1f7ec1173b546f030fa5d6c",
+    "cacheID": "07e1dfbc2d194e394466512d84b46a97",
     "id": null,
     "metadata": {},
     "name": "finalStepMutation",
     "operationKind": "mutation",
-    "text": "mutation finalStepMutation(\n  $currencies: String!\n  $netWorthGoal: String!\n  $locale: String!\n) {\n  createProfile(input: {currencies: $currencies, netWorthGoal: $netWorthGoal, locale: $locale, userID: \"\"}) {\n    id\n  }\n}\n"
+    "text": "mutation finalStepMutation(\n  $currencies: String!\n  $netWorthGoal: String!\n) {\n  createProfile(input: {currencies: $currencies, netWorthGoal: $netWorthGoal}) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "05b18a7c81059376440b976aeb079976";
+(node as any).hash = "77e66d28cd695f037024a3cee08d5ab8";
 
 export default node;
