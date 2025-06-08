@@ -51,7 +51,7 @@
     "@tanstack/react-query-devtools": "^5.79.0",
     "@tanstack/react-router": "^1.120.13",
     "@tanstack/react-table": "^8.21.3",
-    "@tanstack/router-devtools": "^1.120.13",
+    "@tanstack/react-router-devtools": "^1.120.13",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
