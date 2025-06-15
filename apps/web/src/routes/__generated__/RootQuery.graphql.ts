@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a0b46305193d8eceda3f05fb9090e920>>
+ * @generated SignedSource<<908a073df50d6f9d70e60a033a4ede05>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,14 +21,10 @@ export type RootQuery$data = {
   readonly profiles?: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"profileFragment">;
   }>;
-  readonly transactions?: ReadonlyArray<{
-    readonly id: string;
-    readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment">;
-  }>;
   readonly user?: {
     readonly " $fragmentSpreads": FragmentRefs<"userFragment">;
   };
-  readonly " $fragmentSpreads": FragmentRefs<"accountsPageFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"accountsPageFragment" | "transactionsPageFragment">;
 };
 export type RootQuery = {
   response: RootQuery$data;
@@ -64,7 +60,7 @@ v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "updatedAt",
+  "name": "name",
   "storageKey": null
 },
 v5 = {
@@ -78,7 +74,7 @@ v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "updatedAt",
   "storageKey": null
 };
 return {
@@ -131,35 +127,6 @@ return {
         ]
       },
       {
-        "condition": "hasProfile",
-        "kind": "Condition",
-        "passingValue": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Transaction",
-            "kind": "LinkedField",
-            "name": "transactions",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "transactionCardFragment"
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "accountsPageFragment"
-          }
-        ]
-      },
-      {
         "alias": null,
         "args": null,
         "concreteType": "Currency",
@@ -174,6 +141,23 @@ return {
           }
         ],
         "storageKey": null
+      },
+      {
+        "condition": "hasProfile",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "accountsPageFragment"
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "transactionsPageFragment"
+          }
+        ]
       }
     ],
     "type": "Query",
@@ -235,72 +219,29 @@ return {
         ]
       },
       {
-        "condition": "hasProfile",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "Currency",
+        "kind": "LinkedField",
+        "name": "currencies",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "Transaction",
-            "kind": "LinkedField",
-            "name": "transactions",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "note",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "amount",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "datetime",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "createdAt",
-                "storageKey": null
-              },
-              (v4/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Account",
-                "kind": "LinkedField",
-                "name": "account",
-                "plural": false,
-                "selections": [
-                  (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "symbolType",
-                    "storageKey": null
-                  },
-                  (v6/*: any*/),
-                  (v2/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "code",
             "storageKey": null
           },
+          (v3/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "condition": "hasProfile",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
           {
             "alias": null,
             "args": null,
@@ -324,46 +265,135 @@ return {
                 "name": "balance",
                 "storageKey": null
               },
-              (v6/*: any*/),
+              (v4/*: any*/),
               (v5/*: any*/),
-              (v4/*: any*/)
+              (v6/*: any*/)
             ],
             "storageKey": null
-          }
-        ]
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Currency",
-        "kind": "LinkedField",
-        "name": "currencies",
-        "plural": true,
-        "selections": [
+          },
           {
             "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "code",
-            "storageKey": null
-          },
-          (v3/*: any*/)
-        ],
-        "storageKey": null
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "first",
+                "value": 5
+              }
+            ],
+            "concreteType": "TransactionConnection",
+            "kind": "LinkedField",
+            "name": "transactions",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "TransactionEdge",
+                "kind": "LinkedField",
+                "name": "edges",
+                "plural": true,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Transaction",
+                    "kind": "LinkedField",
+                    "name": "node",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "note",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "amount",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "datetime",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "createdAt",
+                        "storageKey": null
+                      },
+                      (v6/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Account",
+                        "kind": "LinkedField",
+                        "name": "account",
+                        "plural": false,
+                        "selections": [
+                          (v5/*: any*/),
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "symbolType",
+                            "storageKey": null
+                          },
+                          (v4/*: any*/),
+                          (v2/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "PageInfo",
+                "kind": "LinkedField",
+                "name": "pageInfo",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "hasNextPage",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": "transactions(first:5)"
+          }
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "7ba44e1276e58919b199e5acb01f8111",
+    "cacheID": "f8ecdef5236a7639595652a8aac866e5",
     "id": null,
     "metadata": {},
     "name": "RootQuery",
     "operationKind": "query",
-    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  transactions @include(if: $hasProfile) {\n    id\n    ...transactionCardFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsPageFragment on Query {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    name\n    id\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  currencies {\n    ...currencyFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  ...transactionsPageFragment @include(if: $hasProfile)\n}\n\nfragment accountsPageFragment on Query {\n  accounts {\n    id\n    accountType\n    balance\n    ...cardFragment\n  }\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    name\n    id\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  transactions(first: 5) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "17718c55083d4c3903801f0257b14e5a";
+(node as any).hash = "f4cde228690eb423396274dcb4cea5e8";
 
 export default node;

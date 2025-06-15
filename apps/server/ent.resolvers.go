@@ -16,6 +16,7 @@ import (
 	"fijoy/internal/util/pointer"
 	"fmt"
 
+	"entgo.io/contrib/entgql"
 	"github.com/shopspring/decimal"
 )
 
@@ -61,7 +62,8 @@ func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
 		return nil, err
 	}
 
-	return r.client.Account.Query().Where(account.HasProfileWith(profile.ID(authData.ProfileId))).All(ctx)
+	return r.client.Account.Query().
+		Where(account.HasProfileWith(profile.ID(authData.ProfileId))).All(ctx)
 }
 
 // Profiles is the resolver for the profiles field.
@@ -75,13 +77,15 @@ func (r *queryResolver) Profiles(ctx context.Context) ([]*ent.Profile, error) {
 }
 
 // Transactions is the resolver for the transactions field.
-func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
+func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) (*ent.TransactionConnection, error) {
 	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return r.client.Transaction.Query().Where(transaction.HasProfileWith(profile.ID(authData.ProfileId))).All(ctx)
+	return r.client.Transaction.Query().
+		Where(transaction.HasProfileWith(profile.ID(authData.ProfileId))).
+		Paginate(ctx, after, first, before, last)
 }
 
 // Amount is the resolver for the amount field.

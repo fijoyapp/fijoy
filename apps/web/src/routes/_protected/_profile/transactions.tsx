@@ -11,24 +11,48 @@ import { Card } from "@/components/ui/card";
 
 import { Separator } from "@/components/ui/separator";
 import { Fragment } from "react/jsx-runtime";
-import { usePreloadedQuery } from "react-relay";
+import {
+  graphql,
+  usePreloadedQuery,
+  useRefetchableFragment,
+} from "react-relay";
 import { rootQuery } from "@/routes/__root";
-import type {
-  RootQuery,
-  RootQuery$data,
-} from "@/routes/__generated__/RootQuery.graphql";
+import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import type { TransactionsPageRefetch } from "./__generated__/TransactionsPageRefetch.graphql";
+import type { transactionsPageFragment$key } from "./__generated__/transactionsPageFragment.graphql";
 
 export const Route = createFileRoute("/_protected/_profile/transactions")({
   pendingComponent: CenterLoadingSpinner,
   component: Page,
 });
 
+const TransactionsPageFragment = graphql`
+  fragment transactionsPageFragment on Query
+  @refetchable(queryName: "TransactionsPageRefetch") {
+    transactions(first: 5) {
+      edges {
+        node {
+          id
+          ...transactionCardFragment
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
+`;
+
 function Page() {
   const { rootQueryRef } = Route.useRouteContext();
 
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
 
-  invariant(data.transactions);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [fragmentData, refetch] = useRefetchableFragment<
+    TransactionsPageRefetch,
+    transactionsPageFragment$key
+  >(TransactionsPageFragment, data);
 
   return (
     <div className="p-4 lg:p-6">
@@ -41,37 +65,28 @@ function Page() {
 
       <div className="py-2"></div>
 
-      {data.transactions.length !== 0 && (
-        <TransactionList transactions={data.transactions} />
+      {fragmentData.transactions.edges?.length !== 0 && (
+        <Card className="">
+          {fragmentData.transactions.edges?.map((edge, idx) => {
+            invariant(edge?.node);
+            if (idx === 0) {
+              return (
+                <TransactionCard
+                  transactionRef={edge.node}
+                  key={edge.node.id}
+                />
+              );
+            }
+
+            return (
+              <Fragment key={edge.node.id}>
+                <Separator className="" />
+                <TransactionCard transactionRef={edge.node} />
+              </Fragment>
+            );
+          })}
+        </Card>
       )}
     </div>
-  );
-}
-
-function TransactionList({
-  transactions,
-}: {
-  transactions: NonNullable<RootQuery$data["transactions"]>;
-}) {
-  return (
-    <Card className="">
-      {transactions.map((transaction, idx) => {
-        if (idx === 0) {
-          return (
-            <TransactionCard
-              transactionRef={transaction}
-              key={transaction.id}
-            />
-          );
-        }
-
-        return (
-          <Fragment key={transaction.id}>
-            <Separator className="" />
-            <TransactionCard transactionRef={transaction} />
-          </Fragment>
-        );
-      })}
-    </Card>
   );
 }

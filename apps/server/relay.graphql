@@ -198,7 +198,24 @@ type Query {
   ): [Node]!
   accounts: [Account!]!
   profiles: [Profile!]!
-  transactions: [Transaction!]!
+  transactions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): TransactionConnection!
   user: User!
   currencies: [Currency!]!
 }
@@ -217,6 +234,38 @@ type Transaction implements Node {
   updatedAt: Time!
   profile: Profile!
   account: Account!
+}
+
+"""
+A connection to a list of items.
+"""
+type TransactionConnection {
+  """
+  A list of edges.
+  """
+  edges: [TransactionEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type TransactionEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Transaction
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 
 """
