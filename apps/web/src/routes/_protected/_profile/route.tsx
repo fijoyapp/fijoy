@@ -56,28 +56,6 @@ import { rootQuery } from "@/routes/__root";
 import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { ProfileFragment } from "@/lib/queries/profile";
 
-// export const RouteProfileQuery = graphql`
-//   query routeProfileQuery {
-//     user {
-//       ...userFragment
-//     }
-//     profiles {
-//       ...profileFragment
-//     }
-//     accounts {
-//       id
-//       ...accountsFragment
-//     }
-//     transactions {
-//       id
-//       ...transactionCardFragment
-//     }
-//     currencies {
-//       ...currencyFragment
-//     }
-//   }
-// `;
-
 export const Route = createFileRoute("/_protected/_profile")({
   pendingComponent: CenterLoadingSpinner,
   errorComponent: ({ error }) => (
@@ -106,14 +84,13 @@ type NavLink = {
 const navLinks: NavLink[] = [
   {
     name: "Home",
-    link: { from: Route.fullPath, to: "/home" },
+    link: { to: "/home" },
     icon: Home,
     fuzzy: false,
   },
   {
     name: "Accounts",
     link: {
-      from: Route.fullPath,
       to: "/accounts",
     },
     icon: Landmark,
@@ -122,7 +99,6 @@ const navLinks: NavLink[] = [
   {
     name: "Transactions",
     link: {
-      from: Route.fullPath,
       to: "/transactions",
     },
     icon: History,
@@ -131,7 +107,6 @@ const navLinks: NavLink[] = [
   {
     name: "Settings",
     link: {
-      from: Route.fullPath,
       to: "/settings",
     },
     icon: Settings,
