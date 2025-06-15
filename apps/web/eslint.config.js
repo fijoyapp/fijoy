@@ -4,6 +4,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 import pluginRouter from "@tanstack/eslint-plugin-router";
+import relay from "eslint-plugin-relay";
 
 export default tseslint.config(
   { ignores: ["./dist", "./coverage", "./src/gen"] },
@@ -20,9 +21,10 @@ export default tseslint.config(
       ecmaVersion: 2020,
       globals: globals.browser,
     },
-    plugins: {},
+    plugins: { relay },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      ...relay.configs["ts-recommended"].rules,
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
