@@ -166,7 +166,7 @@ func validateInt(i string) error {
 		return err
 	}
 	if len(i) != exp {
-		return fmt.Errorf("invalid integer part of order key: %s" + i)
+		return fmt.Errorf("invalid integer part of order key: %s", i)
 	}
 	return nil
 }
@@ -355,7 +355,7 @@ func NKeysBetween(a, b string, n uint) ([]string, error) {
 		}
 		result := make([]string, 0, n)
 		result = append(result, c)
-		for i := 0; i < int(n)-1; i++ {
+		for range int(n) - 1 {
 			c, err = KeyBetween(c, b)
 			if err != nil {
 				return nil, err
@@ -371,7 +371,7 @@ func NKeysBetween(a, b string, n uint) ([]string, error) {
 		}
 		result := make([]string, 0, n)
 		result = append(result, c)
-		for i := 0; i < int(n)-1; i++ {
+		for range int(n) - 1 {
 			c, err = KeyBetween(a, c)
 			if err != nil {
 				return nil, err
@@ -406,7 +406,7 @@ func NKeysBetween(a, b string, n uint) ([]string, error) {
 }
 
 func reverse(values []string) {
-	for i := 0; i < len(values)/2; i++ {
+	for i := range len(values) / 2 {
 		j := len(values) - i - 1
 		values[i], values[j] = values[j], values[i]
 	}
