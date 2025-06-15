@@ -188,8 +188,8 @@ importers:
         specifier: ^7.57.0
         version: 7.57.0(react@18.3.1)
       react-relay:
-        specifier: ^19.0.0
-        version: 19.0.0(react@18.3.1)
+        specifier: ^20.0.0
+        version: 20.0.0(react@18.3.1)
       react-resizable-panels:
         specifier: ^3.0.3
         version: 3.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -200,8 +200,8 @@ importers:
         specifier: ^2.15.3
         version: 2.15.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       relay-runtime:
-        specifier: ^19.0.0
-        version: 19.0.0
+        specifier: ^20.0.0
+        version: 20.0.0
       sonner:
         specifier: ^2.0.5
         version: 2.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -285,8 +285,8 @@ importers:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.5)
       babel-plugin-relay:
-        specifier: ^19.0.0
-        version: 19.0.0
+        specifier: ^20.0.0
+        version: 20.0.0
       eslint:
         specifier: ^9.29.0
         version: 9.29.0(jiti@2.4.2)
@@ -312,8 +312,8 @@ importers:
         specifier: ^0.6.12
         version: 0.6.12(prettier@3.5.3)
       relay-compiler:
-        specifier: ^19.0.0
-        version: 19.0.0
+        specifier: ^20.0.0
+        version: 20.0.0
       serve:
         specifier: ^14.2.4
         version: 14.2.4
@@ -331,7 +331,7 @@ importers:
         version: 6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.7.1)
       vite-plugin-relay:
         specifier: ^2.1.0
-        version: 2.1.0(babel-plugin-relay@19.0.0)(vite@6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.7.1))
+        version: 2.1.0(babel-plugin-relay@20.0.0)(vite@6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.7.1))
       vitest:
         specifier: ^3.2.3
         version: 3.2.3(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.7.1)
@@ -2237,8 +2237,8 @@ packages:
   babel-plugin-macros@2.8.0:
     resolution: {integrity: sha512-SEP5kJpfGYqYKpBrj5XU3ahw5p5GOHJ0U5ssOSQ/WBVdwkD2Dzlce95exQTs3jOVWPPKLBN2rlEWkCK7dSmLvg==}
 
-  babel-plugin-relay@19.0.0:
-    resolution: {integrity: sha512-7K0UnVyagSgzexy28KcEGu18/ms8wgJd2AufZshiKEaZXH/5XwtK2sh+6wKj/8U7xTGSudBuze39Se+CxSlxsw==}
+  babel-plugin-relay@20.0.0:
+    resolution: {integrity: sha512-Gd4EKWjL5mvVhkuz+R4NJOqYmre/PkyIqK9ljySmehwdDWg9fs3Nv7NWHiHzQC3JAgiEwohCwOSYSqr1DgB3xw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -3580,8 +3580,8 @@ packages:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
 
-  react-relay@19.0.0:
-    resolution: {integrity: sha512-OaUISVLUTjfBL1tGBtmt3eDZC+KFnP4QIHq0HDacm7ntiZPgAt+udYs3zapuc8hN65wlRruaLKrWc6P/ZQRlSg==}
+  react-relay@20.0.0:
+    resolution: {integrity: sha512-4Fm3xs8TmCh0B8zargSIWjU6Mdf3AFf4epTboZBHwyN0xDynF53PsiiCgbP5WRAd63oC54T+TF4MrTXdc4VYIw==}
     peerDependencies:
       react: ^16.9.0 || ^17 || ^18 || ^19
 
@@ -3667,12 +3667,12 @@ packages:
     resolution: {integrity: sha512-ZbgR5aZEdf4UKZVBPYIgaglBmSF2Hi94s2PcIHhRGFjKYu+chjJdYfHn4rt3hB6eCKLJ8giVIIfgMa1ehDfZKA==}
     engines: {node: '>=0.10.0'}
 
-  relay-compiler@19.0.0:
-    resolution: {integrity: sha512-DwyNWPUkzdggT3oBuNTS18bL6KCU3Sg/oSW/q+pqOQNHLo+RUZOWAx44ALy5XoBrsXjQVBr0EiNqJ4A8G1skOw==}
+  relay-compiler@20.0.0:
+    resolution: {integrity: sha512-SnsN9/Yjh5kmZbt91Wr70xv3VKORRHx3W4cB+yhz9FpzStlI7qkB9jDlGkvUa6hICZ+rbIooe7OekejjSQ2j5Q==}
     hasBin: true
 
-  relay-runtime@19.0.0:
-    resolution: {integrity: sha512-uQqizN6d/7ZkTm2C0sTUAFfHk65BQEFLkfp0IBsXPTsXLL3fAJ2iHkemA621vuphtiKsF06C5ZKxypmC5lduFg==}
+  relay-runtime@20.0.0:
+    resolution: {integrity: sha512-GwS4WbJZSxfut1nJRCcUVWfOwl6TZ2dWFlb4s8vX0S6/EBLlAKxi5YKOejFe302JVCGp/YbXhezYAY21L6AsGw==}
 
   remove-trailing-separator@1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
@@ -6230,7 +6230,7 @@ snapshots:
       cosmiconfig: 6.0.0
       resolve: 1.22.10
 
-  babel-plugin-relay@19.0.0:
+  babel-plugin-relay@20.0.0:
     dependencies:
       babel-plugin-macros: 2.8.0
       cosmiconfig: 5.2.1
@@ -7423,14 +7423,14 @@ snapshots:
 
   react-refresh@0.17.0: {}
 
-  react-relay@19.0.0(react@18.3.1):
+  react-relay@20.0.0(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.27.6
       fbjs: 3.0.5
       invariant: 2.2.4
       nullthrows: 1.1.1
       react: 18.3.1
-      relay-runtime: 19.0.0
+      relay-runtime: 20.0.0
     transitivePeerDependencies:
       - encoding
 
@@ -7529,9 +7529,9 @@ snapshots:
     dependencies:
       rc: 1.2.8
 
-  relay-compiler@19.0.0: {}
+  relay-compiler@20.0.0: {}
 
-  relay-runtime@19.0.0:
+  relay-runtime@20.0.0:
     dependencies:
       '@babel/runtime': 7.27.6
       fbjs: 3.0.5
@@ -7918,10 +7918,10 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-relay@2.1.0(babel-plugin-relay@19.0.0)(vite@6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.7.1)):
+  vite-plugin-relay@2.1.0(babel-plugin-relay@20.0.0)(vite@6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.7.1)):
     dependencies:
       '@babel/core': 7.27.4
-      babel-plugin-relay: 19.0.0
+      babel-plugin-relay: 20.0.0
       vite: 6.3.5(@types/node@22.15.31)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
