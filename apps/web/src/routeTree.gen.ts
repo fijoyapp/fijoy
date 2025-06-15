@@ -10,268 +10,354 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PublicRouteRouteImport } from './routes/_public/route'
+import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
+import { Route as ProtectedSetupRouteImport } from './routes/_protected/setup'
+import { Route as ProtectedProfileRouteRouteImport } from './routes/_protected/_profile/route'
+import { Route as ProtectedProfileTransactionsRouteImport } from './routes/_protected/_profile/transactions'
+import { Route as ProtectedProfileHomeRouteImport } from './routes/_protected/_profile/home'
+import { Route as ProtectedProfileAccountsRouteImport } from './routes/_protected/_profile/accounts'
+import { Route as ProtectedProfileSettingsIndexRouteImport } from './routes/_protected/_profile/settings/index'
+import { Route as ProtectedProfileSettingsGeneralRouteImport } from './routes/_protected/_profile/settings/general'
+import { Route as ProtectedProfileSettingsCurrencyRouteImport } from './routes/_protected/_profile/settings/currency'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PublicRouteImport } from './routes/_public/route'
-import { Route as ProtectedRouteImport } from './routes/_protected/route'
-import { Route as ProtectedSetupImport } from './routes/_protected/setup'
-import { Route as ProtectedProfileRouteImport } from './routes/_protected/_profile/route'
-import { Route as ProtectedProfileTransactionsImport } from './routes/_protected/_profile/transactions'
-import { Route as ProtectedProfileHomeImport } from './routes/_protected/_profile/home'
-import { Route as ProtectedProfileAccountsImport } from './routes/_protected/_profile/accounts'
-import { Route as ProtectedProfileSettingsIndexImport } from './routes/_protected/_profile/settings/index'
-import { Route as ProtectedProfileSettingsGeneralImport } from './routes/_protected/_profile/settings/general'
-import { Route as ProtectedProfileSettingsCurrencyImport } from './routes/_protected/_profile/settings/currency'
+const PublicIndexLazyRouteImport = createFileRoute('/_public/')()
+const PublicWhyLazyRouteImport = createFileRoute('/_public/why')()
+const PublicStackLazyRouteImport = createFileRoute('/_public/stack')()
+const PublicSignupLazyRouteImport = createFileRoute('/_public/signup')()
+const PublicPricingLazyRouteImport = createFileRoute('/_public/pricing')()
+const PublicLoginLazyRouteImport = createFileRoute('/_public/login')()
+const PublicFeaturesLazyRouteImport = createFileRoute('/_public/features')()
 
-// Create Virtual Routes
-
-const PublicIndexLazyImport = createFileRoute('/_public/')()
-const PublicWhyLazyImport = createFileRoute('/_public/why')()
-const PublicStackLazyImport = createFileRoute('/_public/stack')()
-const PublicSignupLazyImport = createFileRoute('/_public/signup')()
-const PublicPricingLazyImport = createFileRoute('/_public/pricing')()
-const PublicLoginLazyImport = createFileRoute('/_public/login')()
-const PublicFeaturesLazyImport = createFileRoute('/_public/features')()
-
-// Create/Update Routes
-
-const PublicRouteRoute = PublicRouteImport.update({
+const PublicRouteRoute = PublicRouteRouteImport.update({
   id: '/_public',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const ProtectedRouteRoute = ProtectedRouteImport.update({
+const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
   id: '/_protected',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PublicIndexLazyRoute = PublicIndexLazyImport.update({
+const PublicIndexLazyRoute = PublicIndexLazyRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/index.lazy').then((d) => d.Route))
-
-const PublicWhyLazyRoute = PublicWhyLazyImport.update({
+const PublicWhyLazyRoute = PublicWhyLazyRouteImport.update({
   id: '/why',
   path: '/why',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/why.lazy').then((d) => d.Route))
-
-const PublicStackLazyRoute = PublicStackLazyImport.update({
+const PublicStackLazyRoute = PublicStackLazyRouteImport.update({
   id: '/stack',
   path: '/stack',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/stack.lazy').then((d) => d.Route))
-
-const PublicSignupLazyRoute = PublicSignupLazyImport.update({
+const PublicSignupLazyRoute = PublicSignupLazyRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() =>
   import('./routes/_public/signup.lazy').then((d) => d.Route),
 )
-
-const PublicPricingLazyRoute = PublicPricingLazyImport.update({
+const PublicPricingLazyRoute = PublicPricingLazyRouteImport.update({
   id: '/pricing',
   path: '/pricing',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() =>
   import('./routes/_public/pricing.lazy').then((d) => d.Route),
 )
-
-const PublicLoginLazyRoute = PublicLoginLazyImport.update({
+const PublicLoginLazyRoute = PublicLoginLazyRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() => import('./routes/_public/login.lazy').then((d) => d.Route))
-
-const PublicFeaturesLazyRoute = PublicFeaturesLazyImport.update({
+const PublicFeaturesLazyRoute = PublicFeaturesLazyRouteImport.update({
   id: '/features',
   path: '/features',
   getParentRoute: () => PublicRouteRoute,
 } as any).lazy(() =>
   import('./routes/_public/features.lazy').then((d) => d.Route),
 )
-
-const ProtectedSetupRoute = ProtectedSetupImport.update({
+const ProtectedSetupRoute = ProtectedSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
-
-const ProtectedProfileRouteRoute = ProtectedProfileRouteImport.update({
+const ProtectedProfileRouteRoute = ProtectedProfileRouteRouteImport.update({
   id: '/_profile',
   getParentRoute: () => ProtectedRouteRoute,
 } as any)
-
 const ProtectedProfileTransactionsRoute =
-  ProtectedProfileTransactionsImport.update({
+  ProtectedProfileTransactionsRouteImport.update({
     id: '/transactions',
     path: '/transactions',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
-
-const ProtectedProfileHomeRoute = ProtectedProfileHomeImport.update({
+const ProtectedProfileHomeRoute = ProtectedProfileHomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => ProtectedProfileRouteRoute,
 } as any)
-
-const ProtectedProfileAccountsRoute = ProtectedProfileAccountsImport.update({
-  id: '/accounts',
-  path: '/accounts',
-  getParentRoute: () => ProtectedProfileRouteRoute,
-} as any)
-
+const ProtectedProfileAccountsRoute =
+  ProtectedProfileAccountsRouteImport.update({
+    id: '/accounts',
+    path: '/accounts',
+    getParentRoute: () => ProtectedProfileRouteRoute,
+  } as any)
 const ProtectedProfileSettingsIndexRoute =
-  ProtectedProfileSettingsIndexImport.update({
+  ProtectedProfileSettingsIndexRouteImport.update({
     id: '/settings/',
     path: '/settings/',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
-
 const ProtectedProfileSettingsGeneralRoute =
-  ProtectedProfileSettingsGeneralImport.update({
+  ProtectedProfileSettingsGeneralRouteImport.update({
     id: '/settings/general',
     path: '/settings/general',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
-
 const ProtectedProfileSettingsCurrencyRoute =
-  ProtectedProfileSettingsCurrencyImport.update({
+  ProtectedProfileSettingsCurrencyRouteImport.update({
     id: '/settings/currency',
     path: '/settings/currency',
     getParentRoute: () => ProtectedProfileRouteRoute,
   } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/setup': typeof ProtectedSetupRoute
+  '/features': typeof PublicFeaturesLazyRoute
+  '/login': typeof PublicLoginLazyRoute
+  '/pricing': typeof PublicPricingLazyRoute
+  '/signup': typeof PublicSignupLazyRoute
+  '/stack': typeof PublicStackLazyRoute
+  '/why': typeof PublicWhyLazyRoute
+  '/': typeof PublicIndexLazyRoute
+  '/accounts': typeof ProtectedProfileAccountsRoute
+  '/home': typeof ProtectedProfileHomeRoute
+  '/transactions': typeof ProtectedProfileTransactionsRoute
+  '/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
+  '/settings/general': typeof ProtectedProfileSettingsGeneralRoute
+  '/settings': typeof ProtectedProfileSettingsIndexRoute
+}
+export interface FileRoutesByTo {
+  '/setup': typeof ProtectedSetupRoute
+  '/features': typeof PublicFeaturesLazyRoute
+  '/login': typeof PublicLoginLazyRoute
+  '/pricing': typeof PublicPricingLazyRoute
+  '/signup': typeof PublicSignupLazyRoute
+  '/stack': typeof PublicStackLazyRoute
+  '/why': typeof PublicWhyLazyRoute
+  '/': typeof PublicIndexLazyRoute
+  '/accounts': typeof ProtectedProfileAccountsRoute
+  '/home': typeof ProtectedProfileHomeRoute
+  '/transactions': typeof ProtectedProfileTransactionsRoute
+  '/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
+  '/settings/general': typeof ProtectedProfileSettingsGeneralRoute
+  '/settings': typeof ProtectedProfileSettingsIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/_protected': typeof ProtectedRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
+  '/_protected/_profile': typeof ProtectedProfileRouteRouteWithChildren
+  '/_protected/setup': typeof ProtectedSetupRoute
+  '/_public/features': typeof PublicFeaturesLazyRoute
+  '/_public/login': typeof PublicLoginLazyRoute
+  '/_public/pricing': typeof PublicPricingLazyRoute
+  '/_public/signup': typeof PublicSignupLazyRoute
+  '/_public/stack': typeof PublicStackLazyRoute
+  '/_public/why': typeof PublicWhyLazyRoute
+  '/_public/': typeof PublicIndexLazyRoute
+  '/_protected/_profile/accounts': typeof ProtectedProfileAccountsRoute
+  '/_protected/_profile/home': typeof ProtectedProfileHomeRoute
+  '/_protected/_profile/transactions': typeof ProtectedProfileTransactionsRoute
+  '/_protected/_profile/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
+  '/_protected/_profile/settings/general': typeof ProtectedProfileSettingsGeneralRoute
+  '/_protected/_profile/settings/': typeof ProtectedProfileSettingsIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/setup'
+    | '/features'
+    | '/login'
+    | '/pricing'
+    | '/signup'
+    | '/stack'
+    | '/why'
+    | '/'
+    | '/accounts'
+    | '/home'
+    | '/transactions'
+    | '/settings/currency'
+    | '/settings/general'
+    | '/settings'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/setup'
+    | '/features'
+    | '/login'
+    | '/pricing'
+    | '/signup'
+    | '/stack'
+    | '/why'
+    | '/'
+    | '/accounts'
+    | '/home'
+    | '/transactions'
+    | '/settings/currency'
+    | '/settings/general'
+    | '/settings'
+  id:
+    | '__root__'
+    | '/_protected'
+    | '/_public'
+    | '/_protected/_profile'
+    | '/_protected/setup'
+    | '/_public/features'
+    | '/_public/login'
+    | '/_public/pricing'
+    | '/_public/signup'
+    | '/_public/stack'
+    | '/_public/why'
+    | '/_public/'
+    | '/_protected/_profile/accounts'
+    | '/_protected/_profile/home'
+    | '/_protected/_profile/transactions'
+    | '/_protected/_profile/settings/currency'
+    | '/_protected/_profile/settings/general'
+    | '/_protected/_profile/settings/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_protected': {
-      id: '/_protected'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof ProtectedRouteImport
-      parentRoute: typeof rootRoute
-    }
     '/_public': {
       id: '/_public'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof PublicRouteImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof PublicRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_protected/_profile': {
-      id: '/_protected/_profile'
+    '/_protected': {
+      id: '/_protected'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof ProtectedProfileRouteImport
-      parentRoute: typeof ProtectedRouteImport
-    }
-    '/_protected/setup': {
-      id: '/_protected/setup'
-      path: '/setup'
-      fullPath: '/setup'
-      preLoaderRoute: typeof ProtectedSetupImport
-      parentRoute: typeof ProtectedRouteImport
-    }
-    '/_public/features': {
-      id: '/_public/features'
-      path: '/features'
-      fullPath: '/features'
-      preLoaderRoute: typeof PublicFeaturesLazyImport
-      parentRoute: typeof PublicRouteImport
-    }
-    '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof PublicLoginLazyImport
-      parentRoute: typeof PublicRouteImport
-    }
-    '/_public/pricing': {
-      id: '/_public/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PublicPricingLazyImport
-      parentRoute: typeof PublicRouteImport
-    }
-    '/_public/signup': {
-      id: '/_public/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof PublicSignupLazyImport
-      parentRoute: typeof PublicRouteImport
-    }
-    '/_public/stack': {
-      id: '/_public/stack'
-      path: '/stack'
-      fullPath: '/stack'
-      preLoaderRoute: typeof PublicStackLazyImport
-      parentRoute: typeof PublicRouteImport
-    }
-    '/_public/why': {
-      id: '/_public/why'
-      path: '/why'
-      fullPath: '/why'
-      preLoaderRoute: typeof PublicWhyLazyImport
-      parentRoute: typeof PublicRouteImport
+      preLoaderRoute: typeof ProtectedRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_public/': {
       id: '/_public/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof PublicIndexLazyImport
-      parentRoute: typeof PublicRouteImport
+      preLoaderRoute: typeof PublicIndexLazyRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/_protected/_profile/accounts': {
-      id: '/_protected/_profile/accounts'
-      path: '/accounts'
-      fullPath: '/accounts'
-      preLoaderRoute: typeof ProtectedProfileAccountsImport
-      parentRoute: typeof ProtectedProfileRouteImport
+    '/_public/why': {
+      id: '/_public/why'
+      path: '/why'
+      fullPath: '/why'
+      preLoaderRoute: typeof PublicWhyLazyRouteImport
+      parentRoute: typeof PublicRouteRoute
     }
-    '/_protected/_profile/home': {
-      id: '/_protected/_profile/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof ProtectedProfileHomeImport
-      parentRoute: typeof ProtectedProfileRouteImport
+    '/_public/stack': {
+      id: '/_public/stack'
+      path: '/stack'
+      fullPath: '/stack'
+      preLoaderRoute: typeof PublicStackLazyRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/signup': {
+      id: '/_public/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof PublicSignupLazyRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/pricing': {
+      id: '/_public/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PublicPricingLazyRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginLazyRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_public/features': {
+      id: '/_public/features'
+      path: '/features'
+      fullPath: '/features'
+      preLoaderRoute: typeof PublicFeaturesLazyRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/_protected/setup': {
+      id: '/_protected/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof ProtectedSetupRouteImport
+      parentRoute: typeof ProtectedRouteRoute
+    }
+    '/_protected/_profile': {
+      id: '/_protected/_profile'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectedProfileRouteRouteImport
+      parentRoute: typeof ProtectedRouteRoute
     }
     '/_protected/_profile/transactions': {
       id: '/_protected/_profile/transactions'
       path: '/transactions'
       fullPath: '/transactions'
-      preLoaderRoute: typeof ProtectedProfileTransactionsImport
-      parentRoute: typeof ProtectedProfileRouteImport
+      preLoaderRoute: typeof ProtectedProfileTransactionsRouteImport
+      parentRoute: typeof ProtectedProfileRouteRoute
     }
-    '/_protected/_profile/settings/currency': {
-      id: '/_protected/_profile/settings/currency'
-      path: '/settings/currency'
-      fullPath: '/settings/currency'
-      preLoaderRoute: typeof ProtectedProfileSettingsCurrencyImport
-      parentRoute: typeof ProtectedProfileRouteImport
+    '/_protected/_profile/home': {
+      id: '/_protected/_profile/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof ProtectedProfileHomeRouteImport
+      parentRoute: typeof ProtectedProfileRouteRoute
     }
-    '/_protected/_profile/settings/general': {
-      id: '/_protected/_profile/settings/general'
-      path: '/settings/general'
-      fullPath: '/settings/general'
-      preLoaderRoute: typeof ProtectedProfileSettingsGeneralImport
-      parentRoute: typeof ProtectedProfileRouteImport
+    '/_protected/_profile/accounts': {
+      id: '/_protected/_profile/accounts'
+      path: '/accounts'
+      fullPath: '/accounts'
+      preLoaderRoute: typeof ProtectedProfileAccountsRouteImport
+      parentRoute: typeof ProtectedProfileRouteRoute
     }
     '/_protected/_profile/settings/': {
       id: '/_protected/_profile/settings/'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof ProtectedProfileSettingsIndexImport
-      parentRoute: typeof ProtectedProfileRouteImport
+      preLoaderRoute: typeof ProtectedProfileSettingsIndexRouteImport
+      parentRoute: typeof ProtectedProfileRouteRoute
+    }
+    '/_protected/_profile/settings/general': {
+      id: '/_protected/_profile/settings/general'
+      path: '/settings/general'
+      fullPath: '/settings/general'
+      preLoaderRoute: typeof ProtectedProfileSettingsGeneralRouteImport
+      parentRoute: typeof ProtectedProfileRouteRoute
+    }
+    '/_protected/_profile/settings/currency': {
+      id: '/_protected/_profile/settings/currency'
+      path: '/settings/currency'
+      fullPath: '/settings/currency'
+      preLoaderRoute: typeof ProtectedProfileSettingsCurrencyRouteImport
+      parentRoute: typeof ProtectedProfileRouteRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface ProtectedProfileRouteRouteChildren {
   ProtectedProfileAccountsRoute: typeof ProtectedProfileAccountsRoute
@@ -334,231 +420,10 @@ const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
   PublicRouteRouteChildren,
 )
 
-export interface FileRoutesByFullPath {
-  '': typeof ProtectedProfileRouteRouteWithChildren
-  '/setup': typeof ProtectedSetupRoute
-  '/features': typeof PublicFeaturesLazyRoute
-  '/login': typeof PublicLoginLazyRoute
-  '/pricing': typeof PublicPricingLazyRoute
-  '/signup': typeof PublicSignupLazyRoute
-  '/stack': typeof PublicStackLazyRoute
-  '/why': typeof PublicWhyLazyRoute
-  '/': typeof PublicIndexLazyRoute
-  '/accounts': typeof ProtectedProfileAccountsRoute
-  '/home': typeof ProtectedProfileHomeRoute
-  '/transactions': typeof ProtectedProfileTransactionsRoute
-  '/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
-  '/settings/general': typeof ProtectedProfileSettingsGeneralRoute
-  '/settings': typeof ProtectedProfileSettingsIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '': typeof ProtectedProfileRouteRouteWithChildren
-  '/setup': typeof ProtectedSetupRoute
-  '/features': typeof PublicFeaturesLazyRoute
-  '/login': typeof PublicLoginLazyRoute
-  '/pricing': typeof PublicPricingLazyRoute
-  '/signup': typeof PublicSignupLazyRoute
-  '/stack': typeof PublicStackLazyRoute
-  '/why': typeof PublicWhyLazyRoute
-  '/': typeof PublicIndexLazyRoute
-  '/accounts': typeof ProtectedProfileAccountsRoute
-  '/home': typeof ProtectedProfileHomeRoute
-  '/transactions': typeof ProtectedProfileTransactionsRoute
-  '/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
-  '/settings/general': typeof ProtectedProfileSettingsGeneralRoute
-  '/settings': typeof ProtectedProfileSettingsIndexRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_protected': typeof ProtectedRouteRouteWithChildren
-  '/_public': typeof PublicRouteRouteWithChildren
-  '/_protected/_profile': typeof ProtectedProfileRouteRouteWithChildren
-  '/_protected/setup': typeof ProtectedSetupRoute
-  '/_public/features': typeof PublicFeaturesLazyRoute
-  '/_public/login': typeof PublicLoginLazyRoute
-  '/_public/pricing': typeof PublicPricingLazyRoute
-  '/_public/signup': typeof PublicSignupLazyRoute
-  '/_public/stack': typeof PublicStackLazyRoute
-  '/_public/why': typeof PublicWhyLazyRoute
-  '/_public/': typeof PublicIndexLazyRoute
-  '/_protected/_profile/accounts': typeof ProtectedProfileAccountsRoute
-  '/_protected/_profile/home': typeof ProtectedProfileHomeRoute
-  '/_protected/_profile/transactions': typeof ProtectedProfileTransactionsRoute
-  '/_protected/_profile/settings/currency': typeof ProtectedProfileSettingsCurrencyRoute
-  '/_protected/_profile/settings/general': typeof ProtectedProfileSettingsGeneralRoute
-  '/_protected/_profile/settings/': typeof ProtectedProfileSettingsIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/setup'
-    | '/features'
-    | '/login'
-    | '/pricing'
-    | '/signup'
-    | '/stack'
-    | '/why'
-    | '/'
-    | '/accounts'
-    | '/home'
-    | '/transactions'
-    | '/settings/currency'
-    | '/settings/general'
-    | '/settings'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | ''
-    | '/setup'
-    | '/features'
-    | '/login'
-    | '/pricing'
-    | '/signup'
-    | '/stack'
-    | '/why'
-    | '/'
-    | '/accounts'
-    | '/home'
-    | '/transactions'
-    | '/settings/currency'
-    | '/settings/general'
-    | '/settings'
-  id:
-    | '__root__'
-    | '/_protected'
-    | '/_public'
-    | '/_protected/_profile'
-    | '/_protected/setup'
-    | '/_public/features'
-    | '/_public/login'
-    | '/_public/pricing'
-    | '/_public/signup'
-    | '/_public/stack'
-    | '/_public/why'
-    | '/_public/'
-    | '/_protected/_profile/accounts'
-    | '/_protected/_profile/home'
-    | '/_protected/_profile/transactions'
-    | '/_protected/_profile/settings/currency'
-    | '/_protected/_profile/settings/general'
-    | '/_protected/_profile/settings/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
-  PublicRouteRoute: typeof PublicRouteRouteWithChildren
-}
-
 const rootRouteChildren: RootRouteChildren = {
   ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
   PublicRouteRoute: PublicRouteRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_protected",
-        "/_public"
-      ]
-    },
-    "/_protected": {
-      "filePath": "_protected/route.tsx",
-      "children": [
-        "/_protected/_profile",
-        "/_protected/setup"
-      ]
-    },
-    "/_public": {
-      "filePath": "_public/route.tsx",
-      "children": [
-        "/_public/features",
-        "/_public/login",
-        "/_public/pricing",
-        "/_public/signup",
-        "/_public/stack",
-        "/_public/why",
-        "/_public/"
-      ]
-    },
-    "/_protected/_profile": {
-      "filePath": "_protected/_profile/route.tsx",
-      "parent": "/_protected",
-      "children": [
-        "/_protected/_profile/accounts",
-        "/_protected/_profile/home",
-        "/_protected/_profile/transactions",
-        "/_protected/_profile/settings/currency",
-        "/_protected/_profile/settings/general",
-        "/_protected/_profile/settings/"
-      ]
-    },
-    "/_protected/setup": {
-      "filePath": "_protected/setup.tsx",
-      "parent": "/_protected"
-    },
-    "/_public/features": {
-      "filePath": "_public/features.lazy.tsx",
-      "parent": "/_public"
-    },
-    "/_public/login": {
-      "filePath": "_public/login.lazy.tsx",
-      "parent": "/_public"
-    },
-    "/_public/pricing": {
-      "filePath": "_public/pricing.lazy.tsx",
-      "parent": "/_public"
-    },
-    "/_public/signup": {
-      "filePath": "_public/signup.lazy.tsx",
-      "parent": "/_public"
-    },
-    "/_public/stack": {
-      "filePath": "_public/stack.lazy.tsx",
-      "parent": "/_public"
-    },
-    "/_public/why": {
-      "filePath": "_public/why.lazy.tsx",
-      "parent": "/_public"
-    },
-    "/_public/": {
-      "filePath": "_public/index.lazy.tsx",
-      "parent": "/_public"
-    },
-    "/_protected/_profile/accounts": {
-      "filePath": "_protected/_profile/accounts.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/home": {
-      "filePath": "_protected/_profile/home.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/transactions": {
-      "filePath": "_protected/_profile/transactions.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/settings/currency": {
-      "filePath": "_protected/_profile/settings/currency.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/settings/general": {
-      "filePath": "_protected/_profile/settings/general.tsx",
-      "parent": "/_protected/_profile"
-    },
-    "/_protected/_profile/settings/": {
-      "filePath": "_protected/_profile/settings/index.tsx",
-      "parent": "/_protected/_profile"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
