@@ -2,28 +2,55 @@ import { LiquidityCard } from "./liquidity/card";
 import { Card } from "../ui/card";
 import { Separator } from "../ui/separator";
 import { Fragment, useMemo } from "react";
-import { accountsGroupBy } from "@/lib/account";
+import { accountsGroupBy, type GroupedAccounts } from "@/lib/account";
 import { LiabilityCard } from "./liability/card";
 import { PropertyCard } from "./property/card";
 import { ReceivableCard } from "./receivable/card";
 import { InvestmentCard } from "./investment/card";
 import type { cardFragment$key } from "./__generated__/cardFragment.graphql";
-import type { accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
+import { graphql } from "relay-runtime";
+import type { accountListViewFragment$key } from "./__generated__/accountListViewFragment.graphql";
+import { useFragment } from "react-relay";
+import invariant from "tiny-invariant";
 
 type AccountListProps = {
-  accounts: accountsPageFragment$data["accounts"];
+  accountListViewFragment: accountListViewFragment$key;
 };
 
 type Section = {
   name: string;
-  accounts: accountsPageFragment$data["accounts"];
+  accounts: GroupedAccounts;
   card: React.FC<{ account: cardFragment$key }>;
 };
 
-export default function AccountListView({ accounts }: AccountListProps) {
+const AccountListViewFragment = graphql`
+  fragment accountListViewFragment on Query {
+    accounts(first: 5) {
+      edges {
+        node {
+          id
+          accountType
+          balance
+          ...cardFragment
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
+`;
+
+export default function AccountListView({
+  accountListViewFragment,
+}: AccountListProps) {
+  const data = useFragment(AccountListViewFragment, accountListViewFragment);
+  const accountEdges = data.accounts.edges;
+  invariant(accountEdges, "Account edges should not be null or undefined");
+
   const { liability, liquidity, investment, property, receivable } = useMemo(
-    () => accountsGroupBy(accounts),
-    [accounts],
+    () => accountsGroupBy(accountEdges),
+    [accountEdges],
   );
 
   const sections: Section[] = [
@@ -65,15 +92,22 @@ export default function AccountListView({ accounts }: AccountListProps) {
               <div className="py-1"></div>
 
               <Card className="">
-                {section.accounts.map((account, idx) => {
+                {accountEdges.map((account, idx) => {
+                  invariant(account && account.node);
+
                   if (idx === 0) {
-                    return <section.card key={account.id} account={account} />;
+                    return (
+                      <section.card
+                        key={account.node.id}
+                        account={account.node}
+                      />
+                    );
                   }
 
                   return (
-                    <Fragment key={account.id}>
+                    <Fragment key={account.node.id}>
                       <Separator className="" />
-                      <section.card account={account} />
+                      <section.card account={account.node} />
                     </Fragment>
                   );
                 })}

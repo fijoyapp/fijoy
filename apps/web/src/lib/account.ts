@@ -1,15 +1,27 @@
 import { type AccountAccountType } from "@/components/accounts/__generated__/cardFragment.graphql";
-import { type accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
 import currency from "currency.js";
 import _ from "lodash";
+import invariant from "tiny-invariant";
+
+export type GroupedAccounts = ReadonlyArray<
+  | {
+      readonly node:
+        | {
+            readonly accountType: AccountAccountType;
+            readonly balance: string;
+            readonly id: string;
+          }
+        | null
+        | undefined;
+    }
+  | null
+  | undefined
+>;
 
 export function accountsGroupBy(
-  accounts: accountsPageFragment$data["accounts"],
-): Record<
-  Exclude<AccountAccountType, "%future added value">,
-  accountsPageFragment$data["accounts"]
-> {
-  const groups = _.groupBy(accounts, (account) => account.accountType);
+  accounts: GroupedAccounts,
+): Record<Exclude<AccountAccountType, "%future added value">, GroupedAccounts> {
+  const groups = _.groupBy(accounts, (account) => account!.node!.accountType);
 
   return {
     liquidity: groups["liquidity"] || [],
@@ -28,19 +40,23 @@ export const POSITIVE_ACCOUNT_TYPES: AccountAccountType[] = [
 ];
 export const NEGATIVE_ACCOUNT_TYPES: AccountAccountType[] = ["liability"];
 
-export function getOverallStats(
-  accounts: accountsPageFragment$data["accounts"],
-) {
+export function getOverallStats(accounts: GroupedAccounts) {
+  invariant(accounts);
+
   const asset = accounts.reduce((acc, account) => {
-    if (POSITIVE_ACCOUNT_TYPES.includes(account.accountType)) {
-      return acc.add(currency(account.balance));
+    invariant(account && account.node);
+
+    if (POSITIVE_ACCOUNT_TYPES.includes(account.node.accountType)) {
+      return acc.add(currency(account.node.balance));
     }
     return acc;
   }, currency(0));
 
   const liability = accounts.reduce((acc, account) => {
-    if (NEGATIVE_ACCOUNT_TYPES.includes(account.accountType)) {
-      return acc.add(currency(account.balance));
+    invariant(account && account.node);
+
+    if (NEGATIVE_ACCOUNT_TYPES.includes(account.node.accountType)) {
+      return acc.add(currency(account.node.balance));
     }
     return acc;
   }, currency(0));
