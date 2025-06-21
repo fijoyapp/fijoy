@@ -10,7 +10,7 @@ require (
 	github.com/99designs/gqlgen v0.17.74
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/getsentry/sentry-go v0.33.0
-	github.com/go-chi/chi/v5 v5.2.1
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/jwtauth/v5 v5.3.3
 	github.com/hashicorp/go-multierror v1.1.1
