@@ -1,4 +1,4 @@
-import { type AccountAccountType } from "@/components/accounts/__generated__/cardFragment.graphql";
+import type { AccountAccountType } from "@/routes/_protected/_profile/-components/accounts/__generated__/cardFragment.graphql";
 import currency from "currency.js";
 import _ from "lodash";
 import invariant from "tiny-invariant";

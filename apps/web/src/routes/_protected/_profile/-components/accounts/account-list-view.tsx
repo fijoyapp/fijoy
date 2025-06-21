@@ -1,6 +1,6 @@
 import { LiquidityCard } from "./liquidity/card";
-import { Card } from "../ui/card";
-import { Separator } from "../ui/separator";
+import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Fragment, useMemo } from "react";
 import { accountsGroupBy, type GroupedAccounts } from "@/lib/account";
 import { LiabilityCard } from "./liability/card";

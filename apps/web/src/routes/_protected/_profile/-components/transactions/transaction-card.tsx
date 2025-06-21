@@ -1,4 +1,3 @@
-import { CardContent } from "../ui/card";
 import { ChartCandlestick } from "lucide-react";
 import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
@@ -12,6 +11,7 @@ import type {
 } from "./__generated__/transactionCardFragment.graphql";
 import { useFragment } from "react-relay";
 import type { profileFragment$data } from "@/lib/queries/__generated__/profileFragment.graphql";
+import { CardContent } from "@/components/ui/card";
 
 type Props = {
   transactionRef: transactionCardFragment$key;
