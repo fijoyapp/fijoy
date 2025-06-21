@@ -1,4 +1,9 @@
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Coins, CreditCard, PiggyBank, Wallet } from "lucide-react";
 import { getOverallStats } from "@/lib/account";
 import { getCurrencyDisplay } from "@/lib/money";
