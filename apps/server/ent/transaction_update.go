@@ -52,6 +52,27 @@ func (tu *TransactionUpdate) AddAmount(d decimal.Decimal) *TransactionUpdate {
 	return tu
 }
 
+// SetBalance sets the "balance" field.
+func (tu *TransactionUpdate) SetBalance(d decimal.Decimal) *TransactionUpdate {
+	tu.mutation.ResetBalance()
+	tu.mutation.SetBalance(d)
+	return tu
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (tu *TransactionUpdate) SetNillableBalance(d *decimal.Decimal) *TransactionUpdate {
+	if d != nil {
+		tu.SetBalance(*d)
+	}
+	return tu
+}
+
+// AddBalance adds d to the "balance" field.
+func (tu *TransactionUpdate) AddBalance(d decimal.Decimal) *TransactionUpdate {
+	tu.mutation.AddBalance(d)
+	return tu
+}
+
 // SetNote sets the "note" field.
 func (tu *TransactionUpdate) SetNote(s string) *TransactionUpdate {
 	tu.mutation.SetNote(s)
@@ -209,6 +230,12 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := tu.mutation.AddedAmount(); ok {
 		_spec.AddField(transaction.FieldAmount, field.TypeFloat64, value)
 	}
+	if value, ok := tu.mutation.Balance(); ok {
+		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := tu.mutation.AddedBalance(); ok {
+		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
+	}
 	if value, ok := tu.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 	}
@@ -320,6 +347,27 @@ func (tuo *TransactionUpdateOne) SetNillableAmount(d *decimal.Decimal) *Transact
 // AddAmount adds d to the "amount" field.
 func (tuo *TransactionUpdateOne) AddAmount(d decimal.Decimal) *TransactionUpdateOne {
 	tuo.mutation.AddAmount(d)
+	return tuo
+}
+
+// SetBalance sets the "balance" field.
+func (tuo *TransactionUpdateOne) SetBalance(d decimal.Decimal) *TransactionUpdateOne {
+	tuo.mutation.ResetBalance()
+	tuo.mutation.SetBalance(d)
+	return tuo
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (tuo *TransactionUpdateOne) SetNillableBalance(d *decimal.Decimal) *TransactionUpdateOne {
+	if d != nil {
+		tuo.SetBalance(*d)
+	}
+	return tuo
+}
+
+// AddBalance adds d to the "balance" field.
+func (tuo *TransactionUpdateOne) AddBalance(d decimal.Decimal) *TransactionUpdateOne {
+	tuo.mutation.AddBalance(d)
 	return tuo
 }
 
@@ -509,6 +557,12 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if value, ok := tuo.mutation.AddedAmount(); ok {
 		_spec.AddField(transaction.FieldAmount, field.TypeFloat64, value)
+	}
+	if value, ok := tuo.mutation.Balance(); ok {
+		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := tuo.mutation.AddedBalance(); ok {
+		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
 	if value, ok := tuo.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)

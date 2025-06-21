@@ -56,14 +56,15 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, e
 }
 
 // Accounts is the resolver for the accounts field.
-func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
+func (r *queryResolver) Accounts(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) (*ent.AccountConnection, error) {
 	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return r.client.Account.Query().
-		Where(account.HasProfileWith(profile.ID(authData.ProfileId))).All(ctx)
+		Where(account.HasProfileWith(profile.ID(authData.ProfileId))).
+		Paginate(ctx, after, first, before, last)
 }
 
 // Profiles is the resolver for the profiles field.
@@ -91,6 +92,11 @@ func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[s
 // Amount is the resolver for the amount field.
 func (r *transactionResolver) Amount(ctx context.Context, obj *ent.Transaction) (string, error) {
 	return obj.Amount.String(), nil
+}
+
+// Balance is the resolver for the balance field.
+func (r *transactionResolver) Balance(ctx context.Context, obj *ent.Transaction) (string, error) {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
 }
 
 // Amount is the resolver for the amount field.
@@ -138,6 +144,11 @@ func (r *createTransactionInputResolver) Amount(ctx context.Context, obj *ent.Cr
 	return nil
 }
 
+// Balance is the resolver for the balance field.
+func (r *createTransactionInputResolver) Balance(ctx context.Context, obj *ent.CreateTransactionInput, data string) error {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *updateAccountInputResolver) Amount(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
 	if data == nil || *data == "" {
@@ -183,6 +194,11 @@ func (r *updateTransactionInputResolver) Amount(ctx context.Context, obj *ent.Up
 	return nil
 }
 
+// Balance is the resolver for the balance field.
+func (r *updateTransactionInputResolver) Balance(ctx context.Context, obj *ent.UpdateTransactionInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
@@ -225,15 +241,13 @@ func (r *Resolver) UpdateTransactionInput() UpdateTransactionInputResolver {
 	return &updateTransactionInputResolver{r}
 }
 
-type (
-	accountResolver                struct{ *Resolver }
-	profileResolver                struct{ *Resolver }
-	queryResolver                  struct{ *Resolver }
-	transactionResolver            struct{ *Resolver }
-	createAccountInputResolver     struct{ *Resolver }
-	createProfileInputResolver     struct{ *Resolver }
-	createTransactionInputResolver struct{ *Resolver }
-	updateAccountInputResolver     struct{ *Resolver }
-	updateProfileInputResolver     struct{ *Resolver }
-	updateTransactionInputResolver struct{ *Resolver }
-)
+type accountResolver struct{ *Resolver }
+type profileResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
+type transactionResolver struct{ *Resolver }
+type createAccountInputResolver struct{ *Resolver }
+type createProfileInputResolver struct{ *Resolver }
+type createTransactionInputResolver struct{ *Resolver }
+type updateAccountInputResolver struct{ *Resolver }
+type updateProfileInputResolver struct{ *Resolver }
+type updateTransactionInputResolver struct{ *Resolver }

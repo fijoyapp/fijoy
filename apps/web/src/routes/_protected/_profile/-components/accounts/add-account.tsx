@@ -9,19 +9,19 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import { match } from "ts-pattern";
-import { NewLiquidity } from "@/components/accounts/liquidity/new-account";
-import { NewInvestment } from "@/components/accounts/investment/new-account";
-import { NewProperty } from "@/components/accounts/property/new-account";
-import { NewReceivable } from "@/components/accounts/receivable/new-account";
-import { NewLiability } from "@/components/accounts/liability/new-account";
 import { AccountType } from "@/types/account";
 import { getAccountTypeDetail } from "@/config/account";
+import { NewLiquidity } from "./liquidity/new-account";
+import { NewInvestment } from "./investment/new-account";
+import { NewProperty } from "./property/new-account";
+import { NewReceivable } from "./receivable/new-account";
+import { NewLiability } from "./liability/new-account";
 
 type AddAccountProps = {
   type: AccountType;
 };
 
-export default function AddAccount({ type }: AddAccountProps) {
+export function AddAccount({ type }: AddAccountProps) {
   const accountTypeDetail = getAccountTypeDetail(type);
   return (
     <div className="max-w-(--breakpoint-sm) p-4 lg:p-6">

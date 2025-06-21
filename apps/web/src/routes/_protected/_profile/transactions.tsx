@@ -6,7 +6,6 @@ import {
 } from "@/components/small-header";
 import { createFileRoute } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { TransactionCard } from "@/components/transactions/transaction-card";
 import { Card } from "@/components/ui/card";
 
 import { Separator } from "@/components/ui/separator";
@@ -20,6 +19,7 @@ import { rootQuery } from "@/routes/__root";
 import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import type { TransactionsPageRefetch } from "./__generated__/TransactionsPageRefetch.graphql";
 import type { transactionsPageFragment$key } from "./__generated__/transactionsPageFragment.graphql";
+import { TransactionCard } from "./-components/transactions/transaction-card";
 
 export const Route = createFileRoute("/_protected/_profile/transactions")({
   pendingComponent: CenterLoadingSpinner,

@@ -27,13 +27,13 @@ import {
   useMatchRoute,
 } from "@tanstack/react-router";
 import {
-  Bell,
   CircleUser,
   History,
   Home,
   Landmark,
   type LucideIcon,
   Menu,
+  RotateCcw,
   Search,
   Settings,
 } from "lucide-react";
@@ -46,15 +46,21 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
-import { useFragment, usePreloadedQuery } from "react-relay";
+import {
+  fetchQuery,
+  useFragment,
+  usePreloadedQuery,
+  useRelayEnvironment,
+} from "react-relay";
 import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { ProfileProvider } from "@/profile";
 import { rootQuery } from "@/routes/__root";
 import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { ProfileFragment } from "@/lib/queries/profile";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_protected/_profile")({
   pendingComponent: CenterLoadingSpinner,
@@ -127,9 +133,25 @@ function Page() {
     ProfileFragment,
     data.profiles,
   );
+  const environment = useRelayEnvironment();
 
   invariant(profiles);
   invariant(data.profiles);
+
+  const refresh = useCallback(() => {
+    toast.promise(
+      fetchQuery<RootQuery>(
+        environment,
+        rootQuery,
+        { hasUser: true, hasProfile: true },
+        { fetchPolicy: "network-only" },
+      ).toPromise(),
+      {
+        success: "Data refreshed successfully!",
+        error: "Failed to refresh data.",
+      },
+    );
+  }, [environment]);
 
   if (profiles.length === 0 && !matchRoute({ to: "/setup" })) {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
@@ -153,9 +175,14 @@ function Page() {
                 <Icons.logo className="h-6 w-6" />
                 <span className="">Fijoy</span>
               </Link>
-              <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-                <Bell className="h-4 w-4" />
-                <span className="sr-only">Toggle notifications</span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="ml-auto h-8 w-8"
+                onClick={refresh}
+              >
+                <RotateCcw className="h-4 w-4" />
+                <span className="sr-only">Reload</span>
               </Button>
             </div>
             <div className="flex-1">

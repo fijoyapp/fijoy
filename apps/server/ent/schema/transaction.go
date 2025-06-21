@@ -41,6 +41,14 @@ func (Transaction) Fields() []ent.Field {
 			}).
 			Annotations(entgql.Type("String")),
 
+		field.Float("balance").
+			GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.MySQL:    "decimal(36,18)",
+				dialect.Postgres: "numeric(36,18)",
+			}).
+			Annotations(entgql.Type("String")),
+
 		field.Text("note").Optional(),
 
 		field.Time("datetime").Default(time.Now).Annotations(

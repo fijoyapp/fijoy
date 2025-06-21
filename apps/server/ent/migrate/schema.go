@@ -66,6 +66,7 @@ var (
 	TransactionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
+		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "datetime", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
 		{Name: "created_at", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
@@ -81,13 +82,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "transactions_accounts_transaction",
-				Columns:    []*schema.Column{TransactionsColumns[6]},
+				Columns:    []*schema.Column{TransactionsColumns[7]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transactions_profiles_transaction",
-				Columns:    []*schema.Column{TransactionsColumns[7]},
+				Columns:    []*schema.Column{TransactionsColumns[8]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

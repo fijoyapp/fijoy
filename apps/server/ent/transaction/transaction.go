@@ -16,6 +16,8 @@ const (
 	FieldID = "id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
+	// FieldBalance holds the string denoting the balance field in the database.
+	FieldBalance = "balance"
 	// FieldNote holds the string denoting the note field in the database.
 	FieldNote = "note"
 	// FieldDatetime holds the string denoting the datetime field in the database.
@@ -50,6 +52,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldAmount,
+	FieldBalance,
 	FieldNote,
 	FieldDatetime,
 	FieldCreatedAt,
@@ -100,6 +103,11 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByBalance orders the results by the balance field.
+func ByBalance(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBalance, opts...).ToFunc()
 }
 
 // ByNote orders the results by the note field.
