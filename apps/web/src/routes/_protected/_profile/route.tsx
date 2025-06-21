@@ -50,7 +50,7 @@ import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
 import {
-  loadQuery,
+  fetchQuery,
   useFragment,
   usePreloadedQuery,
   useRelayEnvironment,
@@ -60,6 +60,7 @@ import { ProfileProvider } from "@/profile";
 import { rootQuery } from "@/routes/__root";
 import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { ProfileFragment } from "@/lib/queries/profile";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_protected/_profile")({
   pendingComponent: CenterLoadingSpinner,
@@ -138,11 +139,17 @@ function Page() {
   invariant(data.profiles);
 
   const refresh = useCallback(() => {
-    loadQuery<RootQuery>(
-      environment,
-      rootQuery,
-      { hasUser: true, hasProfile: true },
-      { fetchPolicy: "network-only" },
+    toast.promise(
+      fetchQuery<RootQuery>(
+        environment,
+        rootQuery,
+        { hasUser: true, hasProfile: true },
+        { fetchPolicy: "network-only" },
+      ).toPromise(),
+      {
+        success: "Data refreshed successfully!",
+        error: "Failed to refresh data.",
+      },
     );
   }, [environment]);
 
