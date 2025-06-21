@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 
-import AddAccount from "@/components/accounts/add-account";
 import { graphql } from "relay-runtime";
 import { usePreloadedQuery, useRefetchableFragment } from "react-relay";
 import { type RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { rootQuery } from "@/routes/__root";
 import { AccountType } from "@/types/account";
 import type { accountsPageFragment$key } from "./__generated__/accountsPageFragment.graphql";
-import { AccountsView } from "@/components/accounts/accounts-view";
 import type { AccountsPageRefetch } from "./__generated__/AccountsPageRefetch.graphql";
+import { AccountsView } from "./-components/accounts/accounts-view";
+import { AddAccount } from "./-components/accounts/add-account";
 
 const accountsRouteSchema = z.object({
   add: AccountType.optional(),

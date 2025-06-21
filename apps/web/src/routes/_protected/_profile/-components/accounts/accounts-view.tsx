@@ -24,11 +24,11 @@ import {
 import { useMediaQuery, WIDTH_OPTIONS } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import NetWorthInfo from "@/components/accounts/net-worth-info";
-import AccountListView from "@/components/accounts/account-list-view";
 import { graphql } from "relay-runtime";
 import type { accountsViewFragment$key } from "./__generated__/accountsViewFragment.graphql";
 import { useFragment } from "react-relay";
+import AccountListView from "./account-list-view";
+import NetWorthInfo from "./net-worth-info";
 
 type AccountsViewProps = {
   accountsViewFragment: accountsViewFragment$key;
