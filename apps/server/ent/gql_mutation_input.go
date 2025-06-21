@@ -210,6 +210,7 @@ func (c *ProfileUpdateOne) SetInput(i UpdateProfileInput) *ProfileUpdateOne {
 // CreateTransactionInput represents a mutation input for creating transactions.
 type CreateTransactionInput struct {
 	Amount    decimal.Decimal
+	Balance   decimal.Decimal
 	Note      *string
 	Datetime  *time.Time
 	CreatedAt *time.Time
@@ -221,6 +222,7 @@ type CreateTransactionInput struct {
 // Mutate applies the CreateTransactionInput on the TransactionMutation builder.
 func (i *CreateTransactionInput) Mutate(m *TransactionMutation) {
 	m.SetAmount(i.Amount)
+	m.SetBalance(i.Balance)
 	if v := i.Note; v != nil {
 		m.SetNote(*v)
 	}
@@ -246,6 +248,7 @@ func (c *TransactionCreate) SetInput(i CreateTransactionInput) *TransactionCreat
 // UpdateTransactionInput represents a mutation input for updating transactions.
 type UpdateTransactionInput struct {
 	Amount    *decimal.Decimal
+	Balance   *decimal.Decimal
 	ClearNote bool
 	Note      *string
 	Datetime  *time.Time
@@ -259,6 +262,9 @@ type UpdateTransactionInput struct {
 func (i *UpdateTransactionInput) Mutate(m *TransactionMutation) {
 	if v := i.Amount; v != nil {
 		m.SetAmount(*v)
+	}
+	if v := i.Balance; v != nil {
+		m.SetBalance(*v)
 	}
 	if i.ClearNote {
 		m.ClearNote()

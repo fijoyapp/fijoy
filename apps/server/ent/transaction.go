@@ -22,6 +22,8 @@ type Transaction struct {
 	ID string `json:"id,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
+	// Balance holds the value of the "balance" field.
+	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Note holds the value of the "note" field.
 	Note string `json:"note,omitempty"`
 	// Datetime holds the value of the "datetime" field.
@@ -78,7 +80,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transaction.FieldAmount:
+		case transaction.FieldAmount, transaction.FieldBalance:
 			values[i] = new(decimal.Decimal)
 		case transaction.FieldID, transaction.FieldNote:
 			values[i] = new(sql.NullString)
@@ -114,6 +116,12 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value != nil {
 				t.Amount = *value
+			}
+		case transaction.FieldBalance:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field balance", values[i])
+			} else if value != nil {
+				t.Balance = *value
 			}
 		case transaction.FieldNote:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -201,6 +209,9 @@ func (t *Transaction) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", t.Amount))
+	builder.WriteString(", ")
+	builder.WriteString("balance=")
+	builder.WriteString(fmt.Sprintf("%v", t.Balance))
 	builder.WriteString(", ")
 	builder.WriteString("note=")
 	builder.WriteString(t.Note)

@@ -94,6 +94,11 @@ func (r *transactionResolver) Amount(ctx context.Context, obj *ent.Transaction) 
 	return obj.Amount.String(), nil
 }
 
+// Balance is the resolver for the balance field.
+func (r *transactionResolver) Balance(ctx context.Context, obj *ent.Transaction) (string, error) {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *createAccountInputResolver) Amount(ctx context.Context, obj *ent.CreateAccountInput, data string) error {
 	if data == "" {
@@ -139,6 +144,11 @@ func (r *createTransactionInputResolver) Amount(ctx context.Context, obj *ent.Cr
 	return nil
 }
 
+// Balance is the resolver for the balance field.
+func (r *createTransactionInputResolver) Balance(ctx context.Context, obj *ent.CreateTransactionInput, data string) error {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *updateAccountInputResolver) Amount(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
 	if data == nil || *data == "" {
@@ -182,6 +192,11 @@ func (r *updateTransactionInputResolver) Amount(ctx context.Context, obj *ent.Up
 
 	obj.Amount = &dec
 	return nil
+}
+
+// Balance is the resolver for the balance field.
+func (r *updateTransactionInputResolver) Balance(ctx context.Context, obj *ent.UpdateTransactionInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
 }
 
 // Account returns AccountResolver implementation.

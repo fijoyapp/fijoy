@@ -320,6 +320,11 @@ func (tq *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				selectedFields = append(selectedFields, transaction.FieldAmount)
 				fieldSeen[transaction.FieldAmount] = struct{}{}
 			}
+		case "balance":
+			if _, ok := fieldSeen[transaction.FieldBalance]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldBalance)
+				fieldSeen[transaction.FieldBalance] = struct{}{}
+			}
 		case "note":
 			if _, ok := fieldSeen[transaction.FieldNote]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldNote)

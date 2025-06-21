@@ -133,6 +133,7 @@ type ComplexityRoot struct {
 	Transaction struct {
 		Account   func(childComplexity int) int
 		Amount    func(childComplexity int) int
+		Balance   func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		Datetime  func(childComplexity int) int
 		ID        func(childComplexity int) int
@@ -196,6 +197,7 @@ type QueryResolver interface {
 }
 type TransactionResolver interface {
 	Amount(ctx context.Context, obj *ent.Transaction) (string, error)
+	Balance(ctx context.Context, obj *ent.Transaction) (string, error)
 }
 
 type CreateAccountInputResolver interface {
@@ -206,6 +208,7 @@ type CreateProfileInputResolver interface {
 }
 type CreateTransactionInputResolver interface {
 	Amount(ctx context.Context, obj *ent.CreateTransactionInput, data string) error
+	Balance(ctx context.Context, obj *ent.CreateTransactionInput, data string) error
 }
 type UpdateAccountInputResolver interface {
 	Amount(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error
@@ -215,6 +218,7 @@ type UpdateProfileInputResolver interface {
 }
 type UpdateTransactionInputResolver interface {
 	Amount(ctx context.Context, obj *ent.UpdateTransactionInput, data *string) error
+	Balance(ctx context.Context, obj *ent.UpdateTransactionInput, data *string) error
 }
 
 type executableSchema struct {
@@ -628,6 +632,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Transaction.Amount(childComplexity), true
+
+	case "Transaction.balance":
+		if e.complexity.Transaction.Balance == nil {
+			break
+		}
+
+		return e.complexity.Transaction.Balance(childComplexity), true
 
 	case "Transaction.createdAt":
 		if e.complexity.Transaction.CreatedAt == nil {
@@ -2166,6 +2177,8 @@ func (ec *executionContext) fieldContext_Account_transaction(_ context.Context, 
 				return ec.fieldContext_Transaction_id(ctx, field)
 			case "amount":
 				return ec.fieldContext_Transaction_amount(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
 			case "datetime":
@@ -2896,6 +2909,8 @@ func (ec *executionContext) fieldContext_Mutation_createTransaction(ctx context.
 				return ec.fieldContext_Transaction_id(ctx, field)
 			case "amount":
 				return ec.fieldContext_Transaction_amount(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
 			case "datetime":
@@ -2969,6 +2984,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTransaction(ctx context.
 				return ec.fieldContext_Transaction_id(ctx, field)
 			case "amount":
 				return ec.fieldContext_Transaction_amount(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
 			case "datetime":
@@ -3602,6 +3619,8 @@ func (ec *executionContext) fieldContext_Profile_transaction(_ context.Context, 
 				return ec.fieldContext_Transaction_id(ctx, field)
 			case "amount":
 				return ec.fieldContext_Transaction_amount(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
 			case "datetime":
@@ -4245,6 +4264,50 @@ func (ec *executionContext) fieldContext_Transaction_amount(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Transaction_balance(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Transaction_balance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Transaction().Balance(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Transaction_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Transaction",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Transaction_note(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Transaction_note(ctx, field)
 	if err != nil {
@@ -4741,6 +4804,8 @@ func (ec *executionContext) fieldContext_TransactionEdge_node(_ context.Context,
 				return ec.fieldContext_Transaction_id(ctx, field)
 			case "amount":
 				return ec.fieldContext_Transaction_amount(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
 			case "datetime":
@@ -7340,7 +7405,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"amount", "note", "datetime", "createdAt", "updatedAt", "profileID", "accountID"}
+	fieldsInOrder := [...]string{"amount", "balance", "note", "datetime", "createdAt", "updatedAt", "profileID", "accountID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7354,6 +7419,15 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 				return it, err
 			}
 			if err = ec.resolvers.CreateTransactionInput().Amount(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balance":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balance"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateTransactionInput().Balance(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "note":
@@ -7691,7 +7765,7 @@ func (ec *executionContext) unmarshalInputUpdateTransactionInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"amount", "note", "clearNote", "datetime", "createdAt", "updatedAt", "profileID", "accountID"}
+	fieldsInOrder := [...]string{"amount", "balance", "note", "clearNote", "datetime", "createdAt", "updatedAt", "profileID", "accountID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7705,6 +7779,15 @@ func (ec *executionContext) unmarshalInputUpdateTransactionInput(ctx context.Con
 				return it, err
 			}
 			if err = ec.resolvers.UpdateTransactionInput().Amount(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balance":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balance"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.UpdateTransactionInput().Balance(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "note":
@@ -8775,6 +8858,42 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 					}
 				}()
 				res = ec._Transaction_amount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "balance":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Transaction_balance(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
