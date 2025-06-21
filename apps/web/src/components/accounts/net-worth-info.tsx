@@ -5,16 +5,41 @@ import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
 import { useMemo } from "react";
 import currency from "currency.js";
-import type { accountsPageFragment$data } from "@/routes/_protected/_profile/__generated__/accountsPageFragment.graphql";
+import { graphql } from "relay-runtime";
+import type { netWorthInfoFragment$key } from "./__generated__/netWorthInfoFragment.graphql";
+import invariant from "tiny-invariant";
+import { useFragment } from "react-relay";
 
 type Props = {
-  accounts: accountsPageFragment$data["accounts"];
+  netWorthInfoFragment: netWorthInfoFragment$key;
 };
 
-const NetWorthInfo = ({ accounts }: Props) => {
+const NetWorthInfoFragment = graphql`
+  fragment netWorthInfoFragment on Query {
+    accounts(first: 5) {
+      edges {
+        node {
+          id
+          accountType
+          balance
+          ...cardFragment
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }
+`;
+
+const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
+  const data = useFragment(NetWorthInfoFragment, netWorthInfoFragment);
+  const accountEdges = data.accounts.edges;
+  invariant(accountEdges, "Account edges should not be null or undefined");
+
   const { asset, netWorth, liability } = useMemo(
-    () => getOverallStats(accounts),
-    [accounts],
+    () => getOverallStats(accountEdges),
+    [accountEdges],
   );
 
   const { profile } = useProfile();
