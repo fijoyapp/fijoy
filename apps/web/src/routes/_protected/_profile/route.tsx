@@ -27,13 +27,13 @@ import {
   useMatchRoute,
 } from "@tanstack/react-router";
 import {
-  Bell,
   CircleUser,
   History,
   Home,
   Landmark,
   type LucideIcon,
   Menu,
+  RotateCcw,
   Search,
   Settings,
 } from "lucide-react";
@@ -46,10 +46,15 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
-import { useFragment, usePreloadedQuery } from "react-relay";
+import {
+  loadQuery,
+  useFragment,
+  usePreloadedQuery,
+  useRelayEnvironment,
+} from "react-relay";
 import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { ProfileProvider } from "@/profile";
 import { rootQuery } from "@/routes/__root";
@@ -127,9 +132,19 @@ function Page() {
     ProfileFragment,
     data.profiles,
   );
+  const environment = useRelayEnvironment();
 
   invariant(profiles);
   invariant(data.profiles);
+
+  const refresh = useCallback(() => {
+    loadQuery<RootQuery>(
+      environment,
+      rootQuery,
+      { hasUser: true, hasProfile: true },
+      { fetchPolicy: "network-only" },
+    );
+  }, [environment]);
 
   if (profiles.length === 0 && !matchRoute({ to: "/setup" })) {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
@@ -153,9 +168,14 @@ function Page() {
                 <Icons.logo className="h-6 w-6" />
                 <span className="">Fijoy</span>
               </Link>
-              <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-                <Bell className="h-4 w-4" />
-                <span className="sr-only">Toggle notifications</span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="ml-auto h-8 w-8"
+                onClick={refresh}
+              >
+                <RotateCcw className="h-4 w-4" />
+                <span className="sr-only">Reload</span>
               </Button>
             </div>
             <div className="flex-1">
