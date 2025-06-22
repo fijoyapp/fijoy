@@ -39,7 +39,6 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
             profile.locale,
             {
               compact: false,
-              isDebt: false,
             },
           )}
         </div>

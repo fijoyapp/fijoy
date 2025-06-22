@@ -36,7 +36,6 @@ export function LiquidityCard({ account }: LiquidityCardProps) {
         <div>
           {getCurrencyDisplay(data.amount, data.symbol, profile.locale, {
             compact: false,
-            isDebt: false,
           })}
         </div>
         <div className="text-muted-foreground text-xs">
