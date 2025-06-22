@@ -27,8 +27,9 @@ import { Separator } from "@/components/ui/separator";
 import { graphql } from "relay-runtime";
 import type { accountsViewFragment$key } from "./__generated__/accountsViewFragment.graphql";
 import { useFragment } from "react-relay";
-import AccountListView from "./account-list-view";
+// import AccountListView from "./account-list-view";
 import NetWorthInfo from "./net-worth-info";
+import AccountDataTable from "./account-data-table";
 
 type AccountsViewProps = {
   accountsViewFragment: accountsViewFragment$key;
@@ -38,7 +39,8 @@ type AccountsViewProps = {
 const AccountsViewFragment = graphql`
   fragment accountsViewFragment on Query {
     ...netWorthInfoFragment
-    ...accountListViewFragment
+    # ...accountListViewFragment
+    ...accountDataTableFragment
   }
 `;
 
@@ -110,7 +112,8 @@ export function AccountsView({
 
         <div className="py-2"></div>
 
-        <AccountListView accountListViewFragment={data} />
+        {/* <AccountListView accountListViewFragment={data} /> */}
+        <AccountDataTable accountDataTableFragment={data} />
       </div>
 
       {isDesktop && <Separator orientation="vertical" className="min-h-full" />}
