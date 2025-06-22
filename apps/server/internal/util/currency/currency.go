@@ -1,4 +1,6 @@
-package constants
+package currency
+
+import "strings"
 
 type Currency struct {
 	Code   string
@@ -43,4 +45,8 @@ var Currencies = map[string]Currency{
 func IsValidCurrency(code string) bool {
 	_, exists := Currencies[code]
 	return exists
+}
+
+func GetPrimaryCurrency(currencies string) Currency {
+	return Currencies[strings.Split(currencies, ",")[0]]
 }

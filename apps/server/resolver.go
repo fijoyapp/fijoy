@@ -3,6 +3,7 @@ package fijoy
 import (
 	"fijoy/config"
 	"fijoy/ent"
+	"fijoy/internal/util/market"
 
 	"github.com/99designs/gqlgen/graphql"
 )
@@ -12,15 +13,17 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	client     *ent.Client
-	authConfig *config.AuthConfig
+	client           *ent.Client
+	authConfig       *config.AuthConfig
+	marketDataClient market.MarketDataClient
 }
 
-func NewSchema(client *ent.Client, authConfig *config.AuthConfig) graphql.ExecutableSchema {
+func NewSchema(client *ent.Client, authConfig *config.AuthConfig, marketDataClient market.MarketDataClient) graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{
 		Resolvers: &Resolver{
 			client,
 			authConfig,
+			marketDataClient,
 		},
 	})
 }
