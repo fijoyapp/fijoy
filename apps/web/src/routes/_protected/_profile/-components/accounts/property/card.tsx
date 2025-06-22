@@ -36,7 +36,7 @@ export function PropertyCard({ account }: PropertyCardProps) {
       <div className="flex flex-col items-end">
         <div>
           {getCurrencyDisplay(
-            data.balance,
+            data.amount,
             data.currencySymbol,
             profile.locale,
             {
