@@ -20,6 +20,7 @@ export type GroupedAccounts = ReadonlyArray<
 
 export function accountsGroupBy(
   accounts: GroupedAccounts,
+  // eslint-disable-next-line relay/no-future-added-value
 ): Record<Exclude<AccountAccountType, "%future added value">, GroupedAccounts> {
   const groups = _.groupBy(accounts, (account) => account!.node!.accountType);
 

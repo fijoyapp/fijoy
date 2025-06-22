@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"fijoy"
 	"fijoy/config"
+	"fijoy/constants"
 	"fijoy/ent"
 	"fijoy/ent/migrate"
 
 	// "fijoy/internal/util/market"
 	// market_client "fijoy/internal/util/market/client"
+	"fijoy/internal/util/market"
 	"fmt"
 	"log"
 	"net/http"
@@ -97,14 +99,14 @@ func main() {
 
 	analyticsService := analytics_usecase.New(cfg.Analytics)
 
-	// var marketDataClient market.MarketDataClient
-	// if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
-	// 	log.Println("Using mock market data client")
-	// 	marketDataClient = market_client.NewMockMarketDataClient()
-	// } else {
-	// 	log.Println("Using Twelve Data market data client")
-	// 	marketDataClient = market_client.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
-	// }
+	var marketDataClient market.MarketDataClient
+	if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
+		log.Println("Using mock market data client")
+		marketDataClient = market.NewMockMarketDataClient()
+	} else {
+		log.Println("Using Twelve Data market data client")
+		marketDataClient = market.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
+	}
 
 	userRepo := user_repository.NewUserRepository()
 	userKeyRepo := user_repository.NewUserKeyRepository()
@@ -131,7 +133,7 @@ func main() {
 
 	// TODO: migrate to this, also get rid of default server as it is not prod ready
 	// nolint:staticcheck
-	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient, cfg.Auth))
+	srv := handler.NewDefaultServer(fijoy.NewSchema(entClient, cfg.Auth, marketDataClient))
 	srv.Use(entgql.Transactioner{TxOpener: entClient})
 
 	r.Group(func(r chi.Router) {

@@ -92,7 +92,7 @@ export default function AccountListView({
               <div className="py-1"></div>
 
               <Card className="">
-                {accountEdges.map((account, idx) => {
+                {section.accounts.map((account, idx) => {
                   invariant(account && account.node);
 
                   if (idx === 0) {

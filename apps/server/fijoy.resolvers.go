@@ -7,12 +7,12 @@ package fijoy
 import (
 	"context"
 	"errors"
-	"fijoy/constants"
 	"fijoy/ent"
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/user"
 	"fijoy/internal/util/auth"
+	"fijoy/internal/util/currency"
 	"fijoy/internal/util/pointer"
 	"fmt"
 	"strings"
@@ -31,19 +31,19 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 
 	currencies := strings.Split(input.Currencies, ",")
 
-	allExist := lo.EveryBy(currencies, func(currency string) bool {
-		return constants.IsValidCurrency(currency)
+	allExist := lo.EveryBy(currencies, func(code string) bool {
+		return currency.IsValidCurrency(code)
 	})
 	if !allExist {
 		return nil, fmt.Errorf("invalid currencies: %s", input.Currencies)
 	}
 
-	defaultLocale := constants.Currencies[currencies[0]].Locale
+	defaultCurrency := currency.GetPrimaryCurrency(input.Currencies)
 
 	profile, err := client.Profile.Create().
 		SetCurrencies(input.Currencies).
 		SetNetWorthGoal(input.NetWorthGoal).
-		SetLocale(defaultLocale).
+		SetLocale(defaultCurrency.Locale).
 		SetUserID(userData.UserId).
 		Save(ctx)
 
@@ -86,6 +86,47 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		return nil, err
 	}
 
+	profile, err := client.Profile.Query().Where(profile.ID(userData.ProfileId)).Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("profile not found: %w", err)
+	}
+
+	primaryCurrency := currency.GetPrimaryCurrency(profile.Currencies)
+
+	var value decimal.Decimal
+	var fxRate decimal.Decimal
+
+	switch input.AccountType {
+	case account.AccountTypeInvestment:
+		assetInfo, err := r.marketDataClient.GetAssetInfo(ctx, input.Symbol)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get asset info: %w", err)
+		}
+		// value
+		value = assetInfo.CurrentPrice
+		// fxRate
+		marketFxRate, err := r.marketDataClient.GetFxRate(ctx, assetInfo.Currency, primaryCurrency.Code)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get fx rate: %w", err)
+		}
+		fxRate = marketFxRate.Rate
+	case account.AccountTypeLiquidity, account.AccountTypeLiability, account.AccountTypeProperty, account.AccountTypeReceivable:
+		// value
+		value = decimal.NewFromInt(1)
+		// fxRate
+		if primaryCurrency.Code == input.Symbol {
+			fxRate = decimal.NewFromInt(1)
+		} else {
+			marketFxRate, err := r.marketDataClient.GetFxRate(ctx, input.Symbol, primaryCurrency.Code)
+			if err != nil {
+				return nil, fmt.Errorf("failed to get fx rate: %w", err)
+			}
+			fxRate = marketFxRate.Rate
+		}
+	default:
+		return nil, errors.New("invalid account type")
+	}
+
 	account, err := client.Account.Create().
 		SetName(input.Name).
 		SetAccountType(input.AccountType).
@@ -93,8 +134,8 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		SetSymbolType(input.SymbolType).
 		SetAmount(decimal.NewFromInt(0)).
 		SetProfileID(userData.ProfileId).
-		SetValue(decimal.NewFromInt(1)).  // FIXME: do not hard code
-		SetFxRate(decimal.NewFromInt(1)). // FIXME: do not hard code
+		SetValue(value).
+		SetFxRate(fxRate).
 		SetBalance(decimal.NewFromInt(0)).
 		Save(ctx)
 	if err != nil {
@@ -165,8 +206,8 @@ func (r *queryResolver) User(ctx context.Context) (*ent.User, error) {
 
 // Currencies is the resolver for the currencies field.
 func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
-	currencies := lo.Map(lo.Values(constants.Currencies),
-		func(currency constants.Currency, _ int) *Currency {
+	currencies := lo.Map(lo.Values(currency.Currencies),
+		func(currency currency.Currency, _ int) *Currency {
 			return &Currency{
 				Code: currency.Code, Locale: currency.Locale,
 			}

@@ -1,10 +1,9 @@
-package client
+package market
 
 import (
 	"context"
 	"encoding/json"
 	"fijoy/internal/middleware"
-	"fijoy/internal/util/market"
 	"fmt"
 	"io"
 	"net/http"
@@ -44,14 +43,14 @@ type FxRateResponse struct {
 	Rate   decimal.Decimal `json:"rate"`
 }
 
-func (r *FxRateResponse) ToFxRate() *market.FXRate {
-	return &market.FXRate{
+func (r *FxRateResponse) ToFxRate() *FXRate {
+	return &FXRate{
 		Rate: r.Rate,
 	}
 }
 
-func (r *AssetInfoResponse) ToAssetInfo() *market.AssetInfo {
-	return &market.AssetInfo{
+func (r *AssetInfoResponse) ToAssetInfo() *AssetInfo {
+	return &AssetInfo{
 		Symbol:       r.Symbol,
 		Name:         r.Name,
 		Exchange:     r.Exchange,
@@ -61,7 +60,7 @@ func (r *AssetInfoResponse) ToAssetInfo() *market.AssetInfo {
 	}
 }
 
-func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol string) (*market.AssetInfo, error) {
+func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol string) (*AssetInfo, error) {
 	logger := middleware.GetLogger(context)
 
 	u, err := url.Parse(c.baseURL + "quote")
@@ -114,7 +113,7 @@ func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol st
 	return result.ToAssetInfo(), nil
 }
 
-func (c *TwelveMarketDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*market.FXRate, error) {
+func (c *TwelveMarketDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*FXRate, error) {
 	logger := middleware.GetLogger(context)
 
 	u, err := url.Parse(c.baseURL + "exchange_rate")

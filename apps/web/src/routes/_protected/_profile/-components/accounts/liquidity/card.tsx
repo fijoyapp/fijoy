@@ -34,7 +34,7 @@ export function LiquidityCard({ account }: LiquidityCardProps) {
 
       <div className="flex flex-col items-end">
         <div>
-          {getCurrencyDisplay(data.balance, data.symbol, profile.locale, {
+          {getCurrencyDisplay(data.amount, data.symbol, profile.locale, {
             compact: false,
             isDebt: false,
           })}

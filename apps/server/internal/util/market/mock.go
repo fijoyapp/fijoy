@@ -1,8 +1,7 @@
-package client
+package market
 
 import (
 	"context"
-	"fijoy/internal/util/market"
 
 	"github.com/shopspring/decimal"
 )
@@ -13,8 +12,8 @@ func NewMockMarketDataClient() *MockMarketDataClient {
 	return &MockMarketDataClient{}
 }
 
-func (c *MockMarketDataClient) GetAssetInfo(context context.Context, symbol string) (*market.AssetInfo, error) {
-	return &market.AssetInfo{
+func (c *MockMarketDataClient) GetAssetInfo(context context.Context, symbol string) (*AssetInfo, error) {
+	return &AssetInfo{
 		Symbol:       "AAPL",
 		Name:         "Apple Inc.",
 		Exchange:     "NASDAQ",
@@ -23,8 +22,8 @@ func (c *MockMarketDataClient) GetAssetInfo(context context.Context, symbol stri
 	}, nil
 }
 
-func (c *MockMarketDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*market.FXRate, error) {
-	return &market.FXRate{
+func (c *MockMarketDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*FXRate, error) {
+	return &FXRate{
 		Rate: decimal.NewFromFloat(2.0),
 	}, nil
 }
