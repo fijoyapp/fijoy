@@ -87,7 +87,6 @@ function ValueDisplay({
             profile.locale,
             {
               compact: false,
-              isDebt: false,
             },
           );
         })

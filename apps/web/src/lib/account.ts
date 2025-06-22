@@ -62,7 +62,7 @@ export function getOverallStats(accounts: GroupedAccounts) {
     return acc;
   }, currency(0));
 
-  const netWorth = asset.add(liability);
+  const netWorth = asset.subtract(liability);
 
   return {
     asset,

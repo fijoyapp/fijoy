@@ -36,7 +36,6 @@ export function LiabilityCard({ account }: LiabilityCardProps) {
         <div>
           {getCurrencyDisplay(data.balance, data.symbol, profile.locale, {
             compact: false,
-            isDebt: true,
           })}
         </div>
         <div className="text-muted-foreground text-xs">

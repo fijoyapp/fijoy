@@ -35,7 +35,6 @@ export function PropertyCard({ account }: PropertyCardProps) {
         <div>
           {getCurrencyDisplay(data.balance, data.symbol, profile.locale, {
             compact: false,
-            isDebt: false,
           })}
         </div>
         <div className="text-muted-foreground text-xs">

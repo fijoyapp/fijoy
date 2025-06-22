@@ -77,7 +77,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
               liability.toString(),
               profile.currencies.split(",")[0],
               profile.locale,
-              { compact: false, isDebt: true },
+              { compact: false },
             )}
           </CardTitle>
           <CardDescription>Liability</CardDescription>
@@ -118,7 +118,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
               profile.netWorthGoal.toString(),
               profile.currencies.split(",")[0],
               profile.locale,
-              { compact: false, isDebt: false },
+              { compact: false },
             )}{" "}
             Goal
           </CardDescription>

@@ -161,7 +161,6 @@ export function CurrencyField<T extends FieldValues>({
                       <span className="text-muted-foreground text-sm">
                         {getCurrencyDisplay("420", curr, locale, {
                           compact: false,
-                          isDebt: false,
                         })}
                       </span>
                     </div>
