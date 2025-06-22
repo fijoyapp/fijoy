@@ -1,6 +1,6 @@
 // NOTE: https://github.com/shadcn-ui/ui/issues/2053
 import { cn } from "@/lib/utils";
-import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
+import { Collapsible as CollapsiblePrimitive } from "radix-ui";
 import * as React from "react";
 
 const Collapsible = CollapsiblePrimitive.Root;
