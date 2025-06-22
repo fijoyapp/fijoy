@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7aa4e88972d7be4a7c47172d26218424>>
+ * @generated SignedSource<<4ed1ed82d521a5360de8aba097007190>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -171,12 +171,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "cc3a77d4c3f53e72cd1b1a79e304e5e9",
+    "cacheID": "c5b25d23465ce9dbb182edac553c4089",
     "id": null,
     "metadata": {},
     "name": "AccountsPageRefetch",
     "operationKind": "query",
-    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountListViewFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountListViewFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 
