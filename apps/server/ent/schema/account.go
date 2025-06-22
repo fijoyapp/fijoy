@@ -38,8 +38,10 @@ func (Account) Fields() []ent.Field {
 		field.Enum("account_type").
 			Values("liquidity", "investment", "property", "receivable", "liability"),
 
-		field.String("symbol").NotEmpty(),
-		field.Enum("symbol_type").Values("currency", "stock", "crypto"),
+		field.String("currency_symbol").NotEmpty(),
+
+		field.String("ticker").NotEmpty(),
+		field.Enum("ticker_type").Values("currency", "stock", "crypto"),
 
 		field.Float("amount").
 			GoType(decimal.Decimal{}).

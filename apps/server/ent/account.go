@@ -23,10 +23,12 @@ type Account struct {
 	Name string `json:"name,omitempty"`
 	// AccountType holds the value of the "account_type" field.
 	AccountType account.AccountType `json:"account_type,omitempty"`
-	// Symbol holds the value of the "symbol" field.
-	Symbol string `json:"symbol,omitempty"`
-	// SymbolType holds the value of the "symbol_type" field.
-	SymbolType account.SymbolType `json:"symbol_type,omitempty"`
+	// CurrencySymbol holds the value of the "currency_symbol" field.
+	CurrencySymbol string `json:"currency_symbol,omitempty"`
+	// Ticker holds the value of the "ticker" field.
+	Ticker string `json:"ticker,omitempty"`
+	// TickerType holds the value of the "ticker_type" field.
+	TickerType account.TickerType `json:"ticker_type,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Value holds the value of the "value" field.
@@ -92,7 +94,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case account.FieldArchived:
 			values[i] = new(sql.NullBool)
-		case account.FieldID, account.FieldName, account.FieldAccountType, account.FieldSymbol, account.FieldSymbolType:
+		case account.FieldID, account.FieldName, account.FieldAccountType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
 			values[i] = new(sql.NullString)
 		case account.FieldCreatedAt, account.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -131,17 +133,23 @@ func (a *Account) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.AccountType = account.AccountType(value.String)
 			}
-		case account.FieldSymbol:
+		case account.FieldCurrencySymbol:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field symbol", values[i])
+				return fmt.Errorf("unexpected type %T for field currency_symbol", values[i])
 			} else if value.Valid {
-				a.Symbol = value.String
+				a.CurrencySymbol = value.String
 			}
-		case account.FieldSymbolType:
+		case account.FieldTicker:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field symbol_type", values[i])
+				return fmt.Errorf("unexpected type %T for field ticker", values[i])
 			} else if value.Valid {
-				a.SymbolType = account.SymbolType(value.String)
+				a.Ticker = value.String
+			}
+		case account.FieldTickerType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field ticker_type", values[i])
+			} else if value.Valid {
+				a.TickerType = account.TickerType(value.String)
 			}
 		case account.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -244,11 +252,14 @@ func (a *Account) String() string {
 	builder.WriteString("account_type=")
 	builder.WriteString(fmt.Sprintf("%v", a.AccountType))
 	builder.WriteString(", ")
-	builder.WriteString("symbol=")
-	builder.WriteString(a.Symbol)
+	builder.WriteString("currency_symbol=")
+	builder.WriteString(a.CurrencySymbol)
 	builder.WriteString(", ")
-	builder.WriteString("symbol_type=")
-	builder.WriteString(fmt.Sprintf("%v", a.SymbolType))
+	builder.WriteString("ticker=")
+	builder.WriteString(a.Ticker)
+	builder.WriteString(", ")
+	builder.WriteString("ticker_type=")
+	builder.WriteString(fmt.Sprintf("%v", a.TickerType))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", a.Amount))

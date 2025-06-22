@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c45d78b5a42a523b5976e0f4b6179f3b>>
+ * @generated SignedSource<<bc2d951ed55de87a32f311382d14fc52>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -127,14 +127,21 @@ return {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "symbol",
+                        "name": "ticker",
                         "storageKey": null
                       },
                       {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "symbolType",
+                        "name": "tickerType",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "currencySymbol",
                         "storageKey": null
                       },
                       {
@@ -178,12 +185,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "89448ca635173e312b8db8682586c6c4",
+    "cacheID": "937426de8ab0570fadb36d3658fc8a52",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    symbol\n    symbolType\n    name\n    id\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  transactions(first: 5) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    ticker\n    tickerType\n    currencySymbol\n    name\n    id\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  transactions(first: 5) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

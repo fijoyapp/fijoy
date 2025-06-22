@@ -8,7 +8,9 @@ export const CardFragment = graphql`
     amount
     balance
     accountType
-    symbol
+    ticker
+    tickerType
+    currencySymbol
     updatedAt
   }
 `;

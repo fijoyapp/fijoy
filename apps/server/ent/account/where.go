@@ -71,9 +71,14 @@ func Name(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldName, v))
 }
 
-// Symbol applies equality check predicate on the "symbol" field. It's identical to SymbolEQ.
-func Symbol(v string) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldSymbol, v))
+// CurrencySymbol applies equality check predicate on the "currency_symbol" field. It's identical to CurrencySymbolEQ.
+func CurrencySymbol(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldCurrencySymbol, v))
+}
+
+// Ticker applies equality check predicate on the "ticker" field. It's identical to TickerEQ.
+func Ticker(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldTicker, v))
 }
 
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
@@ -196,89 +201,154 @@ func AccountTypeNotIn(vs ...AccountType) predicate.Account {
 	return predicate.Account(sql.FieldNotIn(FieldAccountType, vs...))
 }
 
-// SymbolEQ applies the EQ predicate on the "symbol" field.
-func SymbolEQ(v string) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldSymbol, v))
+// CurrencySymbolEQ applies the EQ predicate on the "currency_symbol" field.
+func CurrencySymbolEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldCurrencySymbol, v))
 }
 
-// SymbolNEQ applies the NEQ predicate on the "symbol" field.
-func SymbolNEQ(v string) predicate.Account {
-	return predicate.Account(sql.FieldNEQ(FieldSymbol, v))
+// CurrencySymbolNEQ applies the NEQ predicate on the "currency_symbol" field.
+func CurrencySymbolNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldCurrencySymbol, v))
 }
 
-// SymbolIn applies the In predicate on the "symbol" field.
-func SymbolIn(vs ...string) predicate.Account {
-	return predicate.Account(sql.FieldIn(FieldSymbol, vs...))
+// CurrencySymbolIn applies the In predicate on the "currency_symbol" field.
+func CurrencySymbolIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldCurrencySymbol, vs...))
 }
 
-// SymbolNotIn applies the NotIn predicate on the "symbol" field.
-func SymbolNotIn(vs ...string) predicate.Account {
-	return predicate.Account(sql.FieldNotIn(FieldSymbol, vs...))
+// CurrencySymbolNotIn applies the NotIn predicate on the "currency_symbol" field.
+func CurrencySymbolNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldCurrencySymbol, vs...))
 }
 
-// SymbolGT applies the GT predicate on the "symbol" field.
-func SymbolGT(v string) predicate.Account {
-	return predicate.Account(sql.FieldGT(FieldSymbol, v))
+// CurrencySymbolGT applies the GT predicate on the "currency_symbol" field.
+func CurrencySymbolGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldCurrencySymbol, v))
 }
 
-// SymbolGTE applies the GTE predicate on the "symbol" field.
-func SymbolGTE(v string) predicate.Account {
-	return predicate.Account(sql.FieldGTE(FieldSymbol, v))
+// CurrencySymbolGTE applies the GTE predicate on the "currency_symbol" field.
+func CurrencySymbolGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldCurrencySymbol, v))
 }
 
-// SymbolLT applies the LT predicate on the "symbol" field.
-func SymbolLT(v string) predicate.Account {
-	return predicate.Account(sql.FieldLT(FieldSymbol, v))
+// CurrencySymbolLT applies the LT predicate on the "currency_symbol" field.
+func CurrencySymbolLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldCurrencySymbol, v))
 }
 
-// SymbolLTE applies the LTE predicate on the "symbol" field.
-func SymbolLTE(v string) predicate.Account {
-	return predicate.Account(sql.FieldLTE(FieldSymbol, v))
+// CurrencySymbolLTE applies the LTE predicate on the "currency_symbol" field.
+func CurrencySymbolLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldCurrencySymbol, v))
 }
 
-// SymbolContains applies the Contains predicate on the "symbol" field.
-func SymbolContains(v string) predicate.Account {
-	return predicate.Account(sql.FieldContains(FieldSymbol, v))
+// CurrencySymbolContains applies the Contains predicate on the "currency_symbol" field.
+func CurrencySymbolContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldCurrencySymbol, v))
 }
 
-// SymbolHasPrefix applies the HasPrefix predicate on the "symbol" field.
-func SymbolHasPrefix(v string) predicate.Account {
-	return predicate.Account(sql.FieldHasPrefix(FieldSymbol, v))
+// CurrencySymbolHasPrefix applies the HasPrefix predicate on the "currency_symbol" field.
+func CurrencySymbolHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldCurrencySymbol, v))
 }
 
-// SymbolHasSuffix applies the HasSuffix predicate on the "symbol" field.
-func SymbolHasSuffix(v string) predicate.Account {
-	return predicate.Account(sql.FieldHasSuffix(FieldSymbol, v))
+// CurrencySymbolHasSuffix applies the HasSuffix predicate on the "currency_symbol" field.
+func CurrencySymbolHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldCurrencySymbol, v))
 }
 
-// SymbolEqualFold applies the EqualFold predicate on the "symbol" field.
-func SymbolEqualFold(v string) predicate.Account {
-	return predicate.Account(sql.FieldEqualFold(FieldSymbol, v))
+// CurrencySymbolEqualFold applies the EqualFold predicate on the "currency_symbol" field.
+func CurrencySymbolEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldCurrencySymbol, v))
 }
 
-// SymbolContainsFold applies the ContainsFold predicate on the "symbol" field.
-func SymbolContainsFold(v string) predicate.Account {
-	return predicate.Account(sql.FieldContainsFold(FieldSymbol, v))
+// CurrencySymbolContainsFold applies the ContainsFold predicate on the "currency_symbol" field.
+func CurrencySymbolContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldCurrencySymbol, v))
 }
 
-// SymbolTypeEQ applies the EQ predicate on the "symbol_type" field.
-func SymbolTypeEQ(v SymbolType) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldSymbolType, v))
+// TickerEQ applies the EQ predicate on the "ticker" field.
+func TickerEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldTicker, v))
 }
 
-// SymbolTypeNEQ applies the NEQ predicate on the "symbol_type" field.
-func SymbolTypeNEQ(v SymbolType) predicate.Account {
-	return predicate.Account(sql.FieldNEQ(FieldSymbolType, v))
+// TickerNEQ applies the NEQ predicate on the "ticker" field.
+func TickerNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldTicker, v))
 }
 
-// SymbolTypeIn applies the In predicate on the "symbol_type" field.
-func SymbolTypeIn(vs ...SymbolType) predicate.Account {
-	return predicate.Account(sql.FieldIn(FieldSymbolType, vs...))
+// TickerIn applies the In predicate on the "ticker" field.
+func TickerIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldTicker, vs...))
 }
 
-// SymbolTypeNotIn applies the NotIn predicate on the "symbol_type" field.
-func SymbolTypeNotIn(vs ...SymbolType) predicate.Account {
-	return predicate.Account(sql.FieldNotIn(FieldSymbolType, vs...))
+// TickerNotIn applies the NotIn predicate on the "ticker" field.
+func TickerNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldTicker, vs...))
+}
+
+// TickerGT applies the GT predicate on the "ticker" field.
+func TickerGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldTicker, v))
+}
+
+// TickerGTE applies the GTE predicate on the "ticker" field.
+func TickerGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldTicker, v))
+}
+
+// TickerLT applies the LT predicate on the "ticker" field.
+func TickerLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldTicker, v))
+}
+
+// TickerLTE applies the LTE predicate on the "ticker" field.
+func TickerLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldTicker, v))
+}
+
+// TickerContains applies the Contains predicate on the "ticker" field.
+func TickerContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldTicker, v))
+}
+
+// TickerHasPrefix applies the HasPrefix predicate on the "ticker" field.
+func TickerHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldTicker, v))
+}
+
+// TickerHasSuffix applies the HasSuffix predicate on the "ticker" field.
+func TickerHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldTicker, v))
+}
+
+// TickerEqualFold applies the EqualFold predicate on the "ticker" field.
+func TickerEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldTicker, v))
+}
+
+// TickerContainsFold applies the ContainsFold predicate on the "ticker" field.
+func TickerContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldTicker, v))
+}
+
+// TickerTypeEQ applies the EQ predicate on the "ticker_type" field.
+func TickerTypeEQ(v TickerType) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldTickerType, v))
+}
+
+// TickerTypeNEQ applies the NEQ predicate on the "ticker_type" field.
+func TickerTypeNEQ(v TickerType) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldTickerType, v))
+}
+
+// TickerTypeIn applies the In predicate on the "ticker_type" field.
+func TickerTypeIn(vs ...TickerType) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldTickerType, vs...))
+}
+
+// TickerTypeNotIn applies the NotIn predicate on the "ticker_type" field.
+func TickerTypeNotIn(vs ...TickerType) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldTickerType, vs...))
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.

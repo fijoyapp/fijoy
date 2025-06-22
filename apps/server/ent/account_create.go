@@ -35,15 +35,21 @@ func (ac *AccountCreate) SetAccountType(at account.AccountType) *AccountCreate {
 	return ac
 }
 
-// SetSymbol sets the "symbol" field.
-func (ac *AccountCreate) SetSymbol(s string) *AccountCreate {
-	ac.mutation.SetSymbol(s)
+// SetCurrencySymbol sets the "currency_symbol" field.
+func (ac *AccountCreate) SetCurrencySymbol(s string) *AccountCreate {
+	ac.mutation.SetCurrencySymbol(s)
 	return ac
 }
 
-// SetSymbolType sets the "symbol_type" field.
-func (ac *AccountCreate) SetSymbolType(at account.SymbolType) *AccountCreate {
-	ac.mutation.SetSymbolType(at)
+// SetTicker sets the "ticker" field.
+func (ac *AccountCreate) SetTicker(s string) *AccountCreate {
+	ac.mutation.SetTicker(s)
+	return ac
+}
+
+// SetTickerType sets the "ticker_type" field.
+func (ac *AccountCreate) SetTickerType(at account.TickerType) *AccountCreate {
+	ac.mutation.SetTickerType(at)
 	return ac
 }
 
@@ -232,20 +238,28 @@ func (ac *AccountCreate) check() error {
 			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "Account.account_type": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.Symbol(); !ok {
-		return &ValidationError{Name: "symbol", err: errors.New(`ent: missing required field "Account.symbol"`)}
+	if _, ok := ac.mutation.CurrencySymbol(); !ok {
+		return &ValidationError{Name: "currency_symbol", err: errors.New(`ent: missing required field "Account.currency_symbol"`)}
 	}
-	if v, ok := ac.mutation.Symbol(); ok {
-		if err := account.SymbolValidator(v); err != nil {
-			return &ValidationError{Name: "symbol", err: fmt.Errorf(`ent: validator failed for field "Account.symbol": %w`, err)}
+	if v, ok := ac.mutation.CurrencySymbol(); ok {
+		if err := account.CurrencySymbolValidator(v); err != nil {
+			return &ValidationError{Name: "currency_symbol", err: fmt.Errorf(`ent: validator failed for field "Account.currency_symbol": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.SymbolType(); !ok {
-		return &ValidationError{Name: "symbol_type", err: errors.New(`ent: missing required field "Account.symbol_type"`)}
+	if _, ok := ac.mutation.Ticker(); !ok {
+		return &ValidationError{Name: "ticker", err: errors.New(`ent: missing required field "Account.ticker"`)}
 	}
-	if v, ok := ac.mutation.SymbolType(); ok {
-		if err := account.SymbolTypeValidator(v); err != nil {
-			return &ValidationError{Name: "symbol_type", err: fmt.Errorf(`ent: validator failed for field "Account.symbol_type": %w`, err)}
+	if v, ok := ac.mutation.Ticker(); ok {
+		if err := account.TickerValidator(v); err != nil {
+			return &ValidationError{Name: "ticker", err: fmt.Errorf(`ent: validator failed for field "Account.ticker": %w`, err)}
+		}
+	}
+	if _, ok := ac.mutation.TickerType(); !ok {
+		return &ValidationError{Name: "ticker_type", err: errors.New(`ent: missing required field "Account.ticker_type"`)}
+	}
+	if v, ok := ac.mutation.TickerType(); ok {
+		if err := account.TickerTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ticker_type", err: fmt.Errorf(`ent: validator failed for field "Account.ticker_type": %w`, err)}
 		}
 	}
 	if _, ok := ac.mutation.Amount(); !ok {
@@ -312,13 +326,17 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 		_node.AccountType = value
 	}
-	if value, ok := ac.mutation.Symbol(); ok {
-		_spec.SetField(account.FieldSymbol, field.TypeString, value)
-		_node.Symbol = value
+	if value, ok := ac.mutation.CurrencySymbol(); ok {
+		_spec.SetField(account.FieldCurrencySymbol, field.TypeString, value)
+		_node.CurrencySymbol = value
 	}
-	if value, ok := ac.mutation.SymbolType(); ok {
-		_spec.SetField(account.FieldSymbolType, field.TypeEnum, value)
-		_node.SymbolType = value
+	if value, ok := ac.mutation.Ticker(); ok {
+		_spec.SetField(account.FieldTicker, field.TypeString, value)
+		_node.Ticker = value
+	}
+	if value, ok := ac.mutation.TickerType(); ok {
+		_spec.SetField(account.FieldTickerType, field.TypeEnum, value)
+		_node.TickerType = value
 	}
 	if value, ok := ac.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)

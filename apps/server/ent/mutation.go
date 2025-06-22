@@ -44,8 +44,9 @@ type AccountMutation struct {
 	id                 *string
 	name               *string
 	account_type       *account.AccountType
-	symbol             *string
-	symbol_type        *account.SymbolType
+	currency_symbol    *string
+	ticker             *string
+	ticker_type        *account.TickerType
 	amount             *decimal.Decimal
 	addamount          *decimal.Decimal
 	value              *decimal.Decimal
@@ -244,76 +245,112 @@ func (m *AccountMutation) ResetAccountType() {
 	m.account_type = nil
 }
 
-// SetSymbol sets the "symbol" field.
-func (m *AccountMutation) SetSymbol(s string) {
-	m.symbol = &s
+// SetCurrencySymbol sets the "currency_symbol" field.
+func (m *AccountMutation) SetCurrencySymbol(s string) {
+	m.currency_symbol = &s
 }
 
-// Symbol returns the value of the "symbol" field in the mutation.
-func (m *AccountMutation) Symbol() (r string, exists bool) {
-	v := m.symbol
+// CurrencySymbol returns the value of the "currency_symbol" field in the mutation.
+func (m *AccountMutation) CurrencySymbol() (r string, exists bool) {
+	v := m.currency_symbol
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSymbol returns the old "symbol" field's value of the Account entity.
+// OldCurrencySymbol returns the old "currency_symbol" field's value of the Account entity.
 // If the Account object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccountMutation) OldSymbol(ctx context.Context) (v string, err error) {
+func (m *AccountMutation) OldCurrencySymbol(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
+		return v, errors.New("OldCurrencySymbol is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSymbol requires an ID field in the mutation")
+		return v, errors.New("OldCurrencySymbol requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSymbol: %w", err)
+		return v, fmt.Errorf("querying old value for OldCurrencySymbol: %w", err)
 	}
-	return oldValue.Symbol, nil
+	return oldValue.CurrencySymbol, nil
 }
 
-// ResetSymbol resets all changes to the "symbol" field.
-func (m *AccountMutation) ResetSymbol() {
-	m.symbol = nil
+// ResetCurrencySymbol resets all changes to the "currency_symbol" field.
+func (m *AccountMutation) ResetCurrencySymbol() {
+	m.currency_symbol = nil
 }
 
-// SetSymbolType sets the "symbol_type" field.
-func (m *AccountMutation) SetSymbolType(at account.SymbolType) {
-	m.symbol_type = &at
+// SetTicker sets the "ticker" field.
+func (m *AccountMutation) SetTicker(s string) {
+	m.ticker = &s
 }
 
-// SymbolType returns the value of the "symbol_type" field in the mutation.
-func (m *AccountMutation) SymbolType() (r account.SymbolType, exists bool) {
-	v := m.symbol_type
+// Ticker returns the value of the "ticker" field in the mutation.
+func (m *AccountMutation) Ticker() (r string, exists bool) {
+	v := m.ticker
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldSymbolType returns the old "symbol_type" field's value of the Account entity.
+// OldTicker returns the old "ticker" field's value of the Account entity.
 // If the Account object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccountMutation) OldSymbolType(ctx context.Context) (v account.SymbolType, err error) {
+func (m *AccountMutation) OldTicker(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldSymbolType is only allowed on UpdateOne operations")
+		return v, errors.New("OldTicker is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldSymbolType requires an ID field in the mutation")
+		return v, errors.New("OldTicker requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldSymbolType: %w", err)
+		return v, fmt.Errorf("querying old value for OldTicker: %w", err)
 	}
-	return oldValue.SymbolType, nil
+	return oldValue.Ticker, nil
 }
 
-// ResetSymbolType resets all changes to the "symbol_type" field.
-func (m *AccountMutation) ResetSymbolType() {
-	m.symbol_type = nil
+// ResetTicker resets all changes to the "ticker" field.
+func (m *AccountMutation) ResetTicker() {
+	m.ticker = nil
+}
+
+// SetTickerType sets the "ticker_type" field.
+func (m *AccountMutation) SetTickerType(at account.TickerType) {
+	m.ticker_type = &at
+}
+
+// TickerType returns the value of the "ticker_type" field in the mutation.
+func (m *AccountMutation) TickerType() (r account.TickerType, exists bool) {
+	v := m.ticker_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTickerType returns the old "ticker_type" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldTickerType(ctx context.Context) (v account.TickerType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTickerType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTickerType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTickerType: %w", err)
+	}
+	return oldValue.TickerType, nil
+}
+
+// ResetTickerType resets all changes to the "ticker_type" field.
+func (m *AccountMutation) ResetTickerType() {
+	m.ticker_type = nil
 }
 
 // SetAmount sets the "amount" field.
@@ -789,18 +826,21 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.name != nil {
 		fields = append(fields, account.FieldName)
 	}
 	if m.account_type != nil {
 		fields = append(fields, account.FieldAccountType)
 	}
-	if m.symbol != nil {
-		fields = append(fields, account.FieldSymbol)
+	if m.currency_symbol != nil {
+		fields = append(fields, account.FieldCurrencySymbol)
 	}
-	if m.symbol_type != nil {
-		fields = append(fields, account.FieldSymbolType)
+	if m.ticker != nil {
+		fields = append(fields, account.FieldTicker)
+	}
+	if m.ticker_type != nil {
+		fields = append(fields, account.FieldTickerType)
 	}
 	if m.amount != nil {
 		fields = append(fields, account.FieldAmount)
@@ -835,10 +875,12 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case account.FieldAccountType:
 		return m.AccountType()
-	case account.FieldSymbol:
-		return m.Symbol()
-	case account.FieldSymbolType:
-		return m.SymbolType()
+	case account.FieldCurrencySymbol:
+		return m.CurrencySymbol()
+	case account.FieldTicker:
+		return m.Ticker()
+	case account.FieldTickerType:
+		return m.TickerType()
 	case account.FieldAmount:
 		return m.Amount()
 	case account.FieldValue:
@@ -866,10 +908,12 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case account.FieldAccountType:
 		return m.OldAccountType(ctx)
-	case account.FieldSymbol:
-		return m.OldSymbol(ctx)
-	case account.FieldSymbolType:
-		return m.OldSymbolType(ctx)
+	case account.FieldCurrencySymbol:
+		return m.OldCurrencySymbol(ctx)
+	case account.FieldTicker:
+		return m.OldTicker(ctx)
+	case account.FieldTickerType:
+		return m.OldTickerType(ctx)
 	case account.FieldAmount:
 		return m.OldAmount(ctx)
 	case account.FieldValue:
@@ -907,19 +951,26 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAccountType(v)
 		return nil
-	case account.FieldSymbol:
+	case account.FieldCurrencySymbol:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSymbol(v)
+		m.SetCurrencySymbol(v)
 		return nil
-	case account.FieldSymbolType:
-		v, ok := value.(account.SymbolType)
+	case account.FieldTicker:
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetSymbolType(v)
+		m.SetTicker(v)
+		return nil
+	case account.FieldTickerType:
+		v, ok := value.(account.TickerType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTickerType(v)
 		return nil
 	case account.FieldAmount:
 		v, ok := value.(decimal.Decimal)
@@ -1085,11 +1136,14 @@ func (m *AccountMutation) ResetField(name string) error {
 	case account.FieldAccountType:
 		m.ResetAccountType()
 		return nil
-	case account.FieldSymbol:
-		m.ResetSymbol()
+	case account.FieldCurrencySymbol:
+		m.ResetCurrencySymbol()
 		return nil
-	case account.FieldSymbolType:
-		m.ResetSymbolType()
+	case account.FieldTicker:
+		m.ResetTicker()
+		return nil
+	case account.FieldTickerType:
+		m.ResetTickerType()
 		return nil
 	case account.FieldAmount:
 		m.ResetAmount()

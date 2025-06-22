@@ -21,10 +21,12 @@ const (
 	FieldName = "name"
 	// FieldAccountType holds the string denoting the account_type field in the database.
 	FieldAccountType = "account_type"
-	// FieldSymbol holds the string denoting the symbol field in the database.
-	FieldSymbol = "symbol"
-	// FieldSymbolType holds the string denoting the symbol_type field in the database.
-	FieldSymbolType = "symbol_type"
+	// FieldCurrencySymbol holds the string denoting the currency_symbol field in the database.
+	FieldCurrencySymbol = "currency_symbol"
+	// FieldTicker holds the string denoting the ticker field in the database.
+	FieldTicker = "ticker"
+	// FieldTickerType holds the string denoting the ticker_type field in the database.
+	FieldTickerType = "ticker_type"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldValue holds the string denoting the value field in the database.
@@ -66,8 +68,9 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldAccountType,
-	FieldSymbol,
-	FieldSymbolType,
+	FieldCurrencySymbol,
+	FieldTicker,
+	FieldTickerType,
 	FieldAmount,
 	FieldValue,
 	FieldFxRate,
@@ -101,8 +104,10 @@ func ValidColumn(column string) bool {
 var (
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
-	// SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
-	SymbolValidator func(string) error
+	// CurrencySymbolValidator is a validator for the "currency_symbol" field. It is called by the builders before save.
+	CurrencySymbolValidator func(string) error
+	// TickerValidator is a validator for the "ticker" field. It is called by the builders before save.
+	TickerValidator func(string) error
 	// DefaultArchived holds the default value on creation for the "archived" field.
 	DefaultArchived bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -139,27 +144,27 @@ func AccountTypeValidator(at AccountType) error {
 	}
 }
 
-// SymbolType defines the type for the "symbol_type" enum field.
-type SymbolType string
+// TickerType defines the type for the "ticker_type" enum field.
+type TickerType string
 
-// SymbolType values.
+// TickerType values.
 const (
-	SymbolTypeCurrency SymbolType = "currency"
-	SymbolTypeStock    SymbolType = "stock"
-	SymbolTypeCrypto   SymbolType = "crypto"
+	TickerTypeCurrency TickerType = "currency"
+	TickerTypeStock    TickerType = "stock"
+	TickerTypeCrypto   TickerType = "crypto"
 )
 
-func (st SymbolType) String() string {
-	return string(st)
+func (tt TickerType) String() string {
+	return string(tt)
 }
 
-// SymbolTypeValidator is a validator for the "symbol_type" field enum values. It is called by the builders before save.
-func SymbolTypeValidator(st SymbolType) error {
-	switch st {
-	case SymbolTypeCurrency, SymbolTypeStock, SymbolTypeCrypto:
+// TickerTypeValidator is a validator for the "ticker_type" field enum values. It is called by the builders before save.
+func TickerTypeValidator(tt TickerType) error {
+	switch tt {
+	case TickerTypeCurrency, TickerTypeStock, TickerTypeCrypto:
 		return nil
 	default:
-		return fmt.Errorf("account: invalid enum value for symbol_type field: %q", st)
+		return fmt.Errorf("account: invalid enum value for ticker_type field: %q", tt)
 	}
 }
 
@@ -181,14 +186,19 @@ func ByAccountType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAccountType, opts...).ToFunc()
 }
 
-// BySymbol orders the results by the symbol field.
-func BySymbol(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSymbol, opts...).ToFunc()
+// ByCurrencySymbol orders the results by the currency_symbol field.
+func ByCurrencySymbol(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencySymbol, opts...).ToFunc()
 }
 
-// BySymbolType orders the results by the symbol_type field.
-func BySymbolType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSymbolType, opts...).ToFunc()
+// ByTicker orders the results by the ticker field.
+func ByTicker(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTicker, opts...).ToFunc()
+}
+
+// ByTickerType orders the results by the ticker_type field.
+func ByTickerType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTickerType, opts...).ToFunc()
 }
 
 // ByAmount orders the results by the amount field.
@@ -280,19 +290,19 @@ func (e *AccountType) UnmarshalGQL(val interface{}) error {
 }
 
 // MarshalGQL implements graphql.Marshaler interface.
-func (e SymbolType) MarshalGQL(w io.Writer) {
+func (e TickerType) MarshalGQL(w io.Writer) {
 	io.WriteString(w, strconv.Quote(e.String()))
 }
 
 // UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *SymbolType) UnmarshalGQL(val interface{}) error {
+func (e *TickerType) UnmarshalGQL(val interface{}) error {
 	str, ok := val.(string)
 	if !ok {
 		return fmt.Errorf("enum %T must be a string", val)
 	}
-	*e = SymbolType(str)
-	if err := SymbolTypeValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid SymbolType", str)
+	*e = TickerType(str)
+	if err := TickerTypeValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid TickerType", str)
 	}
 	return nil
 }

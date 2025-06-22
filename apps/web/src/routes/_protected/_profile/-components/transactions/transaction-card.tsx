@@ -26,8 +26,9 @@ const TransactionCardFragment = graphql`
     createdAt
     updatedAt
     account {
-      symbol
-      symbolType
+      ticker
+      tickerType
+      currencySymbol
       name
     }
   }
@@ -76,14 +77,14 @@ function ValueDisplay({
 }) {
   return (
     <Fragment>
-      {match(transaction.account.symbolType)
+      {match(transaction.account.tickerType)
         .with("%future added value", () => {
           return "Something is wrong!";
         })
         .with("currency", () => {
           return getCurrencyDisplay(
             transaction.amount,
-            transaction.account!.symbol,
+            transaction.account.currencySymbol,
             profile.locale,
             {
               compact: false,

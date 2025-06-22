@@ -59,30 +59,44 @@ func (au *AccountUpdate) SetNillableAccountType(at *account.AccountType) *Accoun
 	return au
 }
 
-// SetSymbol sets the "symbol" field.
-func (au *AccountUpdate) SetSymbol(s string) *AccountUpdate {
-	au.mutation.SetSymbol(s)
+// SetCurrencySymbol sets the "currency_symbol" field.
+func (au *AccountUpdate) SetCurrencySymbol(s string) *AccountUpdate {
+	au.mutation.SetCurrencySymbol(s)
 	return au
 }
 
-// SetNillableSymbol sets the "symbol" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableSymbol(s *string) *AccountUpdate {
+// SetNillableCurrencySymbol sets the "currency_symbol" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableCurrencySymbol(s *string) *AccountUpdate {
 	if s != nil {
-		au.SetSymbol(*s)
+		au.SetCurrencySymbol(*s)
 	}
 	return au
 }
 
-// SetSymbolType sets the "symbol_type" field.
-func (au *AccountUpdate) SetSymbolType(at account.SymbolType) *AccountUpdate {
-	au.mutation.SetSymbolType(at)
+// SetTicker sets the "ticker" field.
+func (au *AccountUpdate) SetTicker(s string) *AccountUpdate {
+	au.mutation.SetTicker(s)
 	return au
 }
 
-// SetNillableSymbolType sets the "symbol_type" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableSymbolType(at *account.SymbolType) *AccountUpdate {
+// SetNillableTicker sets the "ticker" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableTicker(s *string) *AccountUpdate {
+	if s != nil {
+		au.SetTicker(*s)
+	}
+	return au
+}
+
+// SetTickerType sets the "ticker_type" field.
+func (au *AccountUpdate) SetTickerType(at account.TickerType) *AccountUpdate {
+	au.mutation.SetTickerType(at)
+	return au
+}
+
+// SetNillableTickerType sets the "ticker_type" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableTickerType(at *account.TickerType) *AccountUpdate {
 	if at != nil {
-		au.SetSymbolType(*at)
+		au.SetTickerType(*at)
 	}
 	return au
 }
@@ -316,14 +330,19 @@ func (au *AccountUpdate) check() error {
 			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "Account.account_type": %w`, err)}
 		}
 	}
-	if v, ok := au.mutation.Symbol(); ok {
-		if err := account.SymbolValidator(v); err != nil {
-			return &ValidationError{Name: "symbol", err: fmt.Errorf(`ent: validator failed for field "Account.symbol": %w`, err)}
+	if v, ok := au.mutation.CurrencySymbol(); ok {
+		if err := account.CurrencySymbolValidator(v); err != nil {
+			return &ValidationError{Name: "currency_symbol", err: fmt.Errorf(`ent: validator failed for field "Account.currency_symbol": %w`, err)}
 		}
 	}
-	if v, ok := au.mutation.SymbolType(); ok {
-		if err := account.SymbolTypeValidator(v); err != nil {
-			return &ValidationError{Name: "symbol_type", err: fmt.Errorf(`ent: validator failed for field "Account.symbol_type": %w`, err)}
+	if v, ok := au.mutation.Ticker(); ok {
+		if err := account.TickerValidator(v); err != nil {
+			return &ValidationError{Name: "ticker", err: fmt.Errorf(`ent: validator failed for field "Account.ticker": %w`, err)}
+		}
+	}
+	if v, ok := au.mutation.TickerType(); ok {
+		if err := account.TickerTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ticker_type", err: fmt.Errorf(`ent: validator failed for field "Account.ticker_type": %w`, err)}
 		}
 	}
 	if au.mutation.ProfileCleared() && len(au.mutation.ProfileIDs()) > 0 {
@@ -350,11 +369,14 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := au.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 	}
-	if value, ok := au.mutation.Symbol(); ok {
-		_spec.SetField(account.FieldSymbol, field.TypeString, value)
+	if value, ok := au.mutation.CurrencySymbol(); ok {
+		_spec.SetField(account.FieldCurrencySymbol, field.TypeString, value)
 	}
-	if value, ok := au.mutation.SymbolType(); ok {
-		_spec.SetField(account.FieldSymbolType, field.TypeEnum, value)
+	if value, ok := au.mutation.Ticker(); ok {
+		_spec.SetField(account.FieldTicker, field.TypeString, value)
+	}
+	if value, ok := au.mutation.TickerType(); ok {
+		_spec.SetField(account.FieldTickerType, field.TypeEnum, value)
 	}
 	if value, ok := au.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)
@@ -514,30 +536,44 @@ func (auo *AccountUpdateOne) SetNillableAccountType(at *account.AccountType) *Ac
 	return auo
 }
 
-// SetSymbol sets the "symbol" field.
-func (auo *AccountUpdateOne) SetSymbol(s string) *AccountUpdateOne {
-	auo.mutation.SetSymbol(s)
+// SetCurrencySymbol sets the "currency_symbol" field.
+func (auo *AccountUpdateOne) SetCurrencySymbol(s string) *AccountUpdateOne {
+	auo.mutation.SetCurrencySymbol(s)
 	return auo
 }
 
-// SetNillableSymbol sets the "symbol" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableSymbol(s *string) *AccountUpdateOne {
+// SetNillableCurrencySymbol sets the "currency_symbol" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableCurrencySymbol(s *string) *AccountUpdateOne {
 	if s != nil {
-		auo.SetSymbol(*s)
+		auo.SetCurrencySymbol(*s)
 	}
 	return auo
 }
 
-// SetSymbolType sets the "symbol_type" field.
-func (auo *AccountUpdateOne) SetSymbolType(at account.SymbolType) *AccountUpdateOne {
-	auo.mutation.SetSymbolType(at)
+// SetTicker sets the "ticker" field.
+func (auo *AccountUpdateOne) SetTicker(s string) *AccountUpdateOne {
+	auo.mutation.SetTicker(s)
 	return auo
 }
 
-// SetNillableSymbolType sets the "symbol_type" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableSymbolType(at *account.SymbolType) *AccountUpdateOne {
+// SetNillableTicker sets the "ticker" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableTicker(s *string) *AccountUpdateOne {
+	if s != nil {
+		auo.SetTicker(*s)
+	}
+	return auo
+}
+
+// SetTickerType sets the "ticker_type" field.
+func (auo *AccountUpdateOne) SetTickerType(at account.TickerType) *AccountUpdateOne {
+	auo.mutation.SetTickerType(at)
+	return auo
+}
+
+// SetNillableTickerType sets the "ticker_type" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableTickerType(at *account.TickerType) *AccountUpdateOne {
 	if at != nil {
-		auo.SetSymbolType(*at)
+		auo.SetTickerType(*at)
 	}
 	return auo
 }
@@ -784,14 +820,19 @@ func (auo *AccountUpdateOne) check() error {
 			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "Account.account_type": %w`, err)}
 		}
 	}
-	if v, ok := auo.mutation.Symbol(); ok {
-		if err := account.SymbolValidator(v); err != nil {
-			return &ValidationError{Name: "symbol", err: fmt.Errorf(`ent: validator failed for field "Account.symbol": %w`, err)}
+	if v, ok := auo.mutation.CurrencySymbol(); ok {
+		if err := account.CurrencySymbolValidator(v); err != nil {
+			return &ValidationError{Name: "currency_symbol", err: fmt.Errorf(`ent: validator failed for field "Account.currency_symbol": %w`, err)}
 		}
 	}
-	if v, ok := auo.mutation.SymbolType(); ok {
-		if err := account.SymbolTypeValidator(v); err != nil {
-			return &ValidationError{Name: "symbol_type", err: fmt.Errorf(`ent: validator failed for field "Account.symbol_type": %w`, err)}
+	if v, ok := auo.mutation.Ticker(); ok {
+		if err := account.TickerValidator(v); err != nil {
+			return &ValidationError{Name: "ticker", err: fmt.Errorf(`ent: validator failed for field "Account.ticker": %w`, err)}
+		}
+	}
+	if v, ok := auo.mutation.TickerType(); ok {
+		if err := account.TickerTypeValidator(v); err != nil {
+			return &ValidationError{Name: "ticker_type", err: fmt.Errorf(`ent: validator failed for field "Account.ticker_type": %w`, err)}
 		}
 	}
 	if auo.mutation.ProfileCleared() && len(auo.mutation.ProfileIDs()) > 0 {
@@ -835,11 +876,14 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	if value, ok := auo.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 	}
-	if value, ok := auo.mutation.Symbol(); ok {
-		_spec.SetField(account.FieldSymbol, field.TypeString, value)
+	if value, ok := auo.mutation.CurrencySymbol(); ok {
+		_spec.SetField(account.FieldCurrencySymbol, field.TypeString, value)
 	}
-	if value, ok := auo.mutation.SymbolType(); ok {
-		_spec.SetField(account.FieldSymbolType, field.TypeEnum, value)
+	if value, ok := auo.mutation.Ticker(); ok {
+		_spec.SetField(account.FieldTicker, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.TickerType(); ok {
+		_spec.SetField(account.FieldTickerType, field.TypeEnum, value)
 	}
 	if value, ok := auo.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)

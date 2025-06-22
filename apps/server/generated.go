@@ -60,20 +60,21 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Account struct {
-		AccountType func(childComplexity int) int
-		Amount      func(childComplexity int) int
-		Archived    func(childComplexity int) int
-		Balance     func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		FxRate      func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Profile     func(childComplexity int) int
-		Symbol      func(childComplexity int) int
-		SymbolType  func(childComplexity int) int
-		Transaction func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		Value       func(childComplexity int) int
+		AccountType    func(childComplexity int) int
+		Amount         func(childComplexity int) int
+		Archived       func(childComplexity int) int
+		Balance        func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		CurrencySymbol func(childComplexity int) int
+		FxRate         func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Name           func(childComplexity int) int
+		Profile        func(childComplexity int) int
+		Ticker         func(childComplexity int) int
+		TickerType     func(childComplexity int) int
+		Transaction    func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		Value          func(childComplexity int) int
 	}
 
 	AccountConnection struct {
@@ -275,6 +276,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Account.CreatedAt(childComplexity), true
 
+	case "Account.currencySymbol":
+		if e.complexity.Account.CurrencySymbol == nil {
+			break
+		}
+
+		return e.complexity.Account.CurrencySymbol(childComplexity), true
+
 	case "Account.fxRate":
 		if e.complexity.Account.FxRate == nil {
 			break
@@ -303,19 +311,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Account.Profile(childComplexity), true
 
-	case "Account.symbol":
-		if e.complexity.Account.Symbol == nil {
+	case "Account.ticker":
+		if e.complexity.Account.Ticker == nil {
 			break
 		}
 
-		return e.complexity.Account.Symbol(childComplexity), true
+		return e.complexity.Account.Ticker(childComplexity), true
 
-	case "Account.symbolType":
-		if e.complexity.Account.SymbolType == nil {
+	case "Account.tickerType":
+		if e.complexity.Account.TickerType == nil {
 			break
 		}
 
-		return e.complexity.Account.SymbolType(childComplexity), true
+		return e.complexity.Account.TickerType(childComplexity), true
 
 	case "Account.transaction":
 		if e.complexity.Account.Transaction == nil {
@@ -1680,8 +1688,8 @@ func (ec *executionContext) fieldContext_Account_accountType(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Account_symbol(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Account_symbol(ctx, field)
+func (ec *executionContext) _Account_currencySymbol(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_currencySymbol(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1694,7 +1702,7 @@ func (ec *executionContext) _Account_symbol(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Symbol, nil
+		return obj.CurrencySymbol, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1711,7 +1719,7 @@ func (ec *executionContext) _Account_symbol(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Account_symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Account_currencySymbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Account",
 		Field:      field,
@@ -1724,8 +1732,8 @@ func (ec *executionContext) fieldContext_Account_symbol(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Account_symbolType(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Account_symbolType(ctx, field)
+func (ec *executionContext) _Account_ticker(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_ticker(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1738,7 +1746,7 @@ func (ec *executionContext) _Account_symbolType(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SymbolType, nil
+		return obj.Ticker, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1750,19 +1758,63 @@ func (ec *executionContext) _Account_symbolType(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(account.SymbolType)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNAccountSymbolType2fijoyᚋentᚋaccountᚐSymbolType(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Account_symbolType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Account_ticker(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Account",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type AccountSymbolType does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Account_tickerType(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_tickerType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TickerType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(account.TickerType)
+	fc.Result = res
+	return ec.marshalNAccountTickerType2fijoyᚋentᚋaccountᚐTickerType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Account_tickerType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type AccountTickerType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2385,10 +2437,12 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Account_symbol(ctx, field)
-			case "symbolType":
-				return ec.fieldContext_Account_symbolType(ctx, field)
+			case "currencySymbol":
+				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "ticker":
+				return ec.fieldContext_Account_ticker(ctx, field)
+			case "tickerType":
+				return ec.fieldContext_Account_tickerType(ctx, field)
 			case "amount":
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
@@ -2741,10 +2795,12 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Account_symbol(ctx, field)
-			case "symbolType":
-				return ec.fieldContext_Account_symbolType(ctx, field)
+			case "currencySymbol":
+				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "ticker":
+				return ec.fieldContext_Account_ticker(ctx, field)
+			case "tickerType":
+				return ec.fieldContext_Account_tickerType(ctx, field)
 			case "amount":
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
@@ -2826,10 +2882,12 @@ func (ec *executionContext) fieldContext_Mutation_updateAccount(ctx context.Cont
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Account_symbol(ctx, field)
-			case "symbolType":
-				return ec.fieldContext_Account_symbolType(ctx, field)
+			case "currencySymbol":
+				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "ticker":
+				return ec.fieldContext_Account_ticker(ctx, field)
+			case "tickerType":
+				return ec.fieldContext_Account_tickerType(ctx, field)
 			case "amount":
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
@@ -3550,10 +3608,12 @@ func (ec *executionContext) fieldContext_Profile_account(_ context.Context, fiel
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Account_symbol(ctx, field)
-			case "symbolType":
-				return ec.fieldContext_Account_symbolType(ctx, field)
+			case "currencySymbol":
+				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "ticker":
+				return ec.fieldContext_Account_ticker(ctx, field)
+			case "tickerType":
+				return ec.fieldContext_Account_tickerType(ctx, field)
 			case "amount":
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
@@ -4590,10 +4650,12 @@ func (ec *executionContext) fieldContext_Transaction_account(_ context.Context, 
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Account_symbol(ctx, field)
-			case "symbolType":
-				return ec.fieldContext_Account_symbolType(ctx, field)
+			case "currencySymbol":
+				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "ticker":
+				return ec.fieldContext_Account_ticker(ctx, field)
+			case "tickerType":
+				return ec.fieldContext_Account_tickerType(ctx, field)
 			case "amount":
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
@@ -7256,7 +7318,7 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "accountType", "symbol", "symbolType", "amount", "archived", "createdAt", "updatedAt", "transactionIDs"}
+	fieldsInOrder := [...]string{"name", "accountType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "createdAt", "updatedAt", "transactionIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7277,20 +7339,27 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.AccountType = data
-		case "symbol":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+		case "currencySymbol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencySymbol"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Symbol = data
-		case "symbolType":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolType"))
-			data, err := ec.unmarshalNAccountSymbolType2fijoyᚋentᚋaccountᚐSymbolType(ctx, v)
+			it.CurrencySymbol = data
+		case "ticker":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ticker"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SymbolType = data
+			it.Ticker = data
+		case "tickerType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tickerType"))
+			data, err := ec.unmarshalNAccountTickerType2fijoyᚋentᚋaccountᚐTickerType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TickerType = data
 		case "amount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -7574,7 +7643,7 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "accountType", "symbol", "symbolType", "amount", "archived", "createdAt", "updatedAt", "addTransactionIDs", "removeTransactionIDs", "clearTransaction"}
+	fieldsInOrder := [...]string{"name", "accountType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "createdAt", "updatedAt", "addTransactionIDs", "removeTransactionIDs", "clearTransaction"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7595,20 +7664,27 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.AccountType = data
-		case "symbol":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+		case "currencySymbol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencySymbol"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Symbol = data
-		case "symbolType":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolType"))
-			data, err := ec.unmarshalOAccountSymbolType2ᚖfijoyᚋentᚋaccountᚐSymbolType(ctx, v)
+			it.CurrencySymbol = data
+		case "ticker":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ticker"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SymbolType = data
+			it.Ticker = data
+		case "tickerType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tickerType"))
+			data, err := ec.unmarshalOAccountTickerType2ᚖfijoyᚋentᚋaccountᚐTickerType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TickerType = data
 		case "amount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -7913,13 +7989,18 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "symbol":
-			out.Values[i] = ec._Account_symbol(ctx, field, obj)
+		case "currencySymbol":
+			out.Values[i] = ec._Account_currencySymbol(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "symbolType":
-			out.Values[i] = ec._Account_symbolType(ctx, field, obj)
+		case "ticker":
+			out.Values[i] = ec._Account_ticker(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "tickerType":
+			out.Values[i] = ec._Account_tickerType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -9689,13 +9770,13 @@ func (ec *executionContext) marshalNAccountConnection2ᚖfijoyᚋentᚐAccountCo
 	return ec._AccountConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNAccountSymbolType2fijoyᚋentᚋaccountᚐSymbolType(ctx context.Context, v any) (account.SymbolType, error) {
-	var res account.SymbolType
+func (ec *executionContext) unmarshalNAccountTickerType2fijoyᚋentᚋaccountᚐTickerType(ctx context.Context, v any) (account.TickerType, error) {
+	var res account.TickerType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNAccountSymbolType2fijoyᚋentᚋaccountᚐSymbolType(ctx context.Context, sel ast.SelectionSet, v account.SymbolType) graphql.Marshaler {
+func (ec *executionContext) marshalNAccountTickerType2fijoyᚋentᚋaccountᚐTickerType(ctx context.Context, sel ast.SelectionSet, v account.TickerType) graphql.Marshaler {
 	return v
 }
 
@@ -10426,16 +10507,16 @@ func (ec *executionContext) marshalOAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx
 	return ec._AccountEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOAccountSymbolType2ᚖfijoyᚋentᚋaccountᚐSymbolType(ctx context.Context, v any) (*account.SymbolType, error) {
+func (ec *executionContext) unmarshalOAccountTickerType2ᚖfijoyᚋentᚋaccountᚐTickerType(ctx context.Context, v any) (*account.TickerType, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(account.SymbolType)
+	var res = new(account.TickerType)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOAccountSymbolType2ᚖfijoyᚋentᚋaccountᚐSymbolType(ctx context.Context, sel ast.SelectionSet, v *account.SymbolType) graphql.Marshaler {
+func (ec *executionContext) marshalOAccountTickerType2ᚖfijoyᚋentᚋaccountᚐTickerType(ctx context.Context, sel ast.SelectionSet, v *account.TickerType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

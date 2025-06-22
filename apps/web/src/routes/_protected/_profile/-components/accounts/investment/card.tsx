@@ -6,6 +6,7 @@ import { ChartCandlestick } from "lucide-react";
 import type { cardFragment$key } from "../__generated__/cardFragment.graphql";
 import { CardFragment } from "../card-fragment";
 import { useFragment } from "react-relay";
+import currency from "currency.js";
 
 type InvestmentCardProps = {
   account: cardFragment$key;
@@ -26,7 +27,9 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
 
       <div>
         <div>{data.name}</div>
-        <div className="text-muted-foreground text-xs">{data.symbol}</div>
+        <div className="text-muted-foreground text-xs">
+          {data.currencySymbol}
+        </div>
       </div>
 
       <div className="grow"></div>
@@ -34,8 +37,8 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
       <div className="flex flex-col items-end">
         <div>
           {getCurrencyDisplay(
-            data.balance,
-            profile.currencies.split(",")[0],
+            currency(data.value).multiply(currency(data.amount)).toString(),
+            data.currencySymbol,
             profile.locale,
             {
               compact: false,
