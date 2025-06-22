@@ -58,8 +58,9 @@ export function NewLiability() {
           amount: values.balance,
           accountType: "liability",
           name: values.name,
-          symbol: values.symbol,
-          symbolType: "currency",
+          ticker: values.symbol,
+          tickerType: "currency",
+          currencySymbol: values.symbol,
         },
       },
       onCompleted(_, errors) {

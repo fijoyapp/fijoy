@@ -58,8 +58,9 @@ export function NewProperty() {
           amount: values.balance,
           accountType: "property",
           name: values.name,
-          symbol: values.symbol,
-          symbolType: "currency",
+          ticker: values.symbol,
+          tickerType: "currency",
+          currencySymbol: values.symbol,
         },
       },
       onCompleted(_, errors) {

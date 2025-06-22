@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ba8b1099b4f4485560fbf29a9f25c930>>
+ * @generated SignedSource<<7aa4e88972d7be4a7c47172d26218424>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -117,7 +117,21 @@ const node: ConcreteRequest = {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "symbol",
+                    "name": "ticker",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "tickerType",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "currencySymbol",
                     "storageKey": null
                   },
                   {
@@ -157,12 +171,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "9e91588025519e4d4e408f6b2dc13b68",
+    "cacheID": "cc3a77d4c3f53e72cd1b1a79e304e5e9",
     "id": null,
     "metadata": {},
     "name": "AccountsPageRefetch",
     "operationKind": "query",
-    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountListViewFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountListViewFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  symbol\n  updatedAt\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountListViewFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountListViewFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 

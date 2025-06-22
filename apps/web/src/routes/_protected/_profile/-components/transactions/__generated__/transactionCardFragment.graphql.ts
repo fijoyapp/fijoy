@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fe06e1e1951b5cb45acfc3eddd31c93f>>
+ * @generated SignedSource<<a770f4443a021a7e67da7a2f28c3a887>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,14 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type AccountSymbolType = "crypto" | "currency" | "stock" | "%future added value";
+export type AccountTickerType = "crypto" | "currency" | "stock" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type transactionCardFragment$data = {
   readonly account: {
+    readonly currencySymbol: string;
     readonly name: string;
-    readonly symbol: string;
-    readonly symbolType: AccountSymbolType;
+    readonly ticker: string;
+    readonly tickerType: AccountTickerType;
   };
   readonly amount: string;
   readonly createdAt: any;
@@ -90,14 +91,21 @@ const node: ReaderFragment = {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "symbol",
+          "name": "ticker",
           "storageKey": null
         },
         {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "symbolType",
+          "name": "tickerType",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "currencySymbol",
           "storageKey": null
         },
         {
@@ -115,6 +123,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "408262bed89a6e0865e57f539324a4f1";
+(node as any).hash = "bf9bb406ae3d884bfac4d39f82ccbb18";
 
 export default node;

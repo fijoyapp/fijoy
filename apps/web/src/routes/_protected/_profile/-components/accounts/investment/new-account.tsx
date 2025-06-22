@@ -64,8 +64,9 @@ export function NewInvestment() {
           amount: values.amount,
           accountType: "investment",
           name: values.symbol,
-          symbol: values.symbol,
-          symbolType: values.type,
+          ticker: values.symbol,
+          tickerType: values.type,
+          currencySymbol: values.symbol,
         },
       },
       onCompleted(_, errors) {

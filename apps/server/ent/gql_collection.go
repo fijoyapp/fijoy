@@ -68,15 +68,20 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, account.FieldAccountType)
 				fieldSeen[account.FieldAccountType] = struct{}{}
 			}
-		case "symbol":
-			if _, ok := fieldSeen[account.FieldSymbol]; !ok {
-				selectedFields = append(selectedFields, account.FieldSymbol)
-				fieldSeen[account.FieldSymbol] = struct{}{}
+		case "currencySymbol":
+			if _, ok := fieldSeen[account.FieldCurrencySymbol]; !ok {
+				selectedFields = append(selectedFields, account.FieldCurrencySymbol)
+				fieldSeen[account.FieldCurrencySymbol] = struct{}{}
 			}
-		case "symbolType":
-			if _, ok := fieldSeen[account.FieldSymbolType]; !ok {
-				selectedFields = append(selectedFields, account.FieldSymbolType)
-				fieldSeen[account.FieldSymbolType] = struct{}{}
+		case "ticker":
+			if _, ok := fieldSeen[account.FieldTicker]; !ok {
+				selectedFields = append(selectedFields, account.FieldTicker)
+				fieldSeen[account.FieldTicker] = struct{}{}
+			}
+		case "tickerType":
+			if _, ok := fieldSeen[account.FieldTickerType]; !ok {
+				selectedFields = append(selectedFields, account.FieldTickerType)
+				fieldSeen[account.FieldTickerType] = struct{}{}
 			}
 		case "amount":
 			if _, ok := fieldSeen[account.FieldAmount]; !ok {

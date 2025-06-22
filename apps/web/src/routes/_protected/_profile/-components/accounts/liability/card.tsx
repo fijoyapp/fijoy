@@ -27,16 +27,23 @@ export function LiabilityCard({ account }: LiabilityCardProps) {
 
       <div>
         <div>{data.name}</div>
-        <div className="text-muted-foreground text-xs">{data.symbol}</div>
+        <div className="text-muted-foreground text-xs">
+          {data.currencySymbol}
+        </div>
       </div>
 
       <div className="grow"></div>
 
       <div className="flex flex-col items-end">
         <div>
-          {getCurrencyDisplay(data.balance, data.symbol, profile.locale, {
-            compact: false,
-          })}
+          {getCurrencyDisplay(
+            data.balance,
+            data.currencySymbol,
+            profile.locale,
+            {
+              compact: false,
+            },
+          )}
         </div>
         <div className="text-muted-foreground text-xs">
           {getPrettyTime(new Date(data.updatedAt))}

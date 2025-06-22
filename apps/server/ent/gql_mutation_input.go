@@ -13,8 +13,9 @@ import (
 type CreateAccountInput struct {
 	Name           string
 	AccountType    account.AccountType
-	Symbol         string
-	SymbolType     account.SymbolType
+	CurrencySymbol string
+	Ticker         string
+	TickerType     account.TickerType
 	Amount         decimal.Decimal
 	Archived       *bool
 	CreatedAt      *time.Time
@@ -26,8 +27,9 @@ type CreateAccountInput struct {
 func (i *CreateAccountInput) Mutate(m *AccountMutation) {
 	m.SetName(i.Name)
 	m.SetAccountType(i.AccountType)
-	m.SetSymbol(i.Symbol)
-	m.SetSymbolType(i.SymbolType)
+	m.SetCurrencySymbol(i.CurrencySymbol)
+	m.SetTicker(i.Ticker)
+	m.SetTickerType(i.TickerType)
 	m.SetAmount(i.Amount)
 	if v := i.Archived; v != nil {
 		m.SetArchived(*v)
@@ -53,8 +55,9 @@ func (c *AccountCreate) SetInput(i CreateAccountInput) *AccountCreate {
 type UpdateAccountInput struct {
 	Name                 *string
 	AccountType          *account.AccountType
-	Symbol               *string
-	SymbolType           *account.SymbolType
+	CurrencySymbol       *string
+	Ticker               *string
+	TickerType           *account.TickerType
 	Amount               *decimal.Decimal
 	Archived             *bool
 	CreatedAt            *time.Time
@@ -72,11 +75,14 @@ func (i *UpdateAccountInput) Mutate(m *AccountMutation) {
 	if v := i.AccountType; v != nil {
 		m.SetAccountType(*v)
 	}
-	if v := i.Symbol; v != nil {
-		m.SetSymbol(*v)
+	if v := i.CurrencySymbol; v != nil {
+		m.SetCurrencySymbol(*v)
 	}
-	if v := i.SymbolType; v != nil {
-		m.SetSymbolType(*v)
+	if v := i.Ticker; v != nil {
+		m.SetTicker(*v)
+	}
+	if v := i.TickerType; v != nil {
+		m.SetTickerType(*v)
 	}
 	if v := i.Amount; v != nil {
 		m.SetAmount(*v)

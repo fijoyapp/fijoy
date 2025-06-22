@@ -58,8 +58,9 @@ export function NewLiquidity() {
           amount: values.balance,
           accountType: "liquidity",
           name: values.name,
-          symbol: values.symbol,
-          symbolType: "currency",
+          ticker: values.symbol,
+          tickerType: "currency",
+          currencySymbol: values.symbol,
         },
       },
       onCompleted(_, errors) {
