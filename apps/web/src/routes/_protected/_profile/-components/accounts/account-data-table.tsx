@@ -3,6 +3,8 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  type SortingState,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import { graphql } from "relay-runtime";
 import type {
@@ -18,7 +20,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFragment } from "react-relay";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useProfile } from "@/hooks/use-profile";
+import { getCurrencyDisplay } from "@/lib/money";
+import invariant from "tiny-invariant";
+import { match } from "ts-pattern";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
@@ -29,6 +35,7 @@ const AccountDataTableFragment = graphql`
           name
           accountType
           balance
+          currencySymbol
           amount
           ...cardFragment
         }
@@ -44,21 +51,6 @@ type Account = NonNullable<
   NonNullable<accountDataTableFragment$data["accounts"]["edges"]>[number]
 >["node"];
 
-const columns: ColumnDef<Account>[] = [
-  {
-    accessorKey: "name",
-    header: "Name",
-  },
-  {
-    accessorKey: "accountType",
-    header: "Account Type",
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-  },
-];
-
 type AccountDataTableProps = {
   accountDataTableFragment: accountDataTableFragment$key;
 };
@@ -67,6 +59,72 @@ export default function AccountDataTable({
   accountDataTableFragment,
 }: AccountDataTableProps) {
   const data = useFragment(AccountDataTableFragment, accountDataTableFragment);
+  const { profile } = useProfile();
+
+  const columns: ColumnDef<Account>[] = useMemo(
+    (): ColumnDef<Account>[] => [
+      {
+        accessorKey: "name",
+        header: "Name",
+      },
+      {
+        accessorKey: "accountType",
+        header: "Type",
+      },
+      {
+        accessorKey: "currencySymbol",
+        header: "Currency",
+      },
+      {
+        accessorKey: "amount",
+        header: "Amount",
+        cell: ({ row }) => {
+          invariant(row.original, "Row original should not be null");
+          const money = row.original.amount;
+          const currencySymbol = row.original.currencySymbol;
+          const accountType = row.original.accountType;
+
+          return (
+            <div className="">
+              {match(accountType)
+                .with("investment", () => <div>{money} share(s)</div>)
+                .otherwise(() => (
+                  <div className="font-mono">
+                    {getCurrencyDisplay(money, currencySymbol, profile.locale, {
+                      compact: false,
+                    })}
+                  </div>
+                ))}
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "balance",
+        header: () => {
+          return <div className="text-right">Balance</div>;
+        },
+        sortingFn: "basic",
+        cell: ({ row }) => {
+          invariant(row.original, "Row original should not be null");
+          const money = row.original.balance;
+          return (
+            <div className="text-right font-mono">
+              {getCurrencyDisplay(
+                money,
+                profile.currencies.split(",")[0],
+                profile.locale,
+                {
+                  compact: false,
+                },
+              )}
+            </div>
+          );
+        },
+      },
+    ],
+    [profile],
+  );
 
   const filteredData = useMemo(() => {
     return (
@@ -74,6 +132,10 @@ export default function AccountDataTable({
       []
     );
   }, [data]);
+
+  if (!profile) {
+    return null;
+  }
 
   return <DataTable columns={columns} data={filteredData} />;
 }
@@ -87,10 +149,17 @@ function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
   });
 
   return (
