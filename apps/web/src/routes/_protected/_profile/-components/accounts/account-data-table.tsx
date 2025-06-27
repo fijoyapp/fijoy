@@ -25,6 +25,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import invariant from "tiny-invariant";
 import { match } from "ts-pattern";
+import { capitalize } from "lodash";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
@@ -70,6 +71,9 @@ export default function AccountDataTable({
       {
         accessorKey: "accountType",
         header: "Type",
+        cell: ({ row }) => {
+          return <div>{capitalize(row.original?.accountType)}</div>;
+        },
       },
       {
         accessorKey: "currencySymbol",
