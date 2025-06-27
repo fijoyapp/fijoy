@@ -94,12 +94,13 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateAccount     func(childComplexity int, input ent.CreateAccountInput) int
-		CreateProfile     func(childComplexity int, input ent.CreateProfileInput) int
-		CreateTransaction func(childComplexity int, input ent.CreateTransactionInput) int
-		UpdateAccount     func(childComplexity int, id string, input ent.UpdateAccountInput) int
-		UpdateProfile     func(childComplexity int, id string, input ent.UpdateProfileInput) int
-		UpdateTransaction func(childComplexity int, id string, input ent.UpdateTransactionInput) int
+		CreateAccount      func(childComplexity int, input ent.CreateAccountInput) int
+		CreateProfile      func(childComplexity int, input ent.CreateProfileInput) int
+		CreateTransaction  func(childComplexity int, input ent.CreateTransactionInput) int
+		CreateTransactions func(childComplexity int, input []*ent.CreateTransactionInput) int
+		UpdateAccount      func(childComplexity int, id string, input ent.UpdateAccountInput) int
+		UpdateProfile      func(childComplexity int, id string, input ent.UpdateProfileInput) int
+		UpdateTransaction  func(childComplexity int, id string, input ent.UpdateTransactionInput) int
 	}
 
 	PageInfo struct {
@@ -182,6 +183,7 @@ type MutationResolver interface {
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error)
 	UpdateAccount(ctx context.Context, id string, input ent.UpdateAccountInput) (*ent.Account, error)
 	CreateTransaction(ctx context.Context, input ent.CreateTransactionInput) (*ent.Transaction, error)
+	CreateTransactions(ctx context.Context, input []*ent.CreateTransactionInput) ([]*ent.Transaction, error)
 	UpdateTransaction(ctx context.Context, id string, input ent.UpdateTransactionInput) (*ent.Transaction, error)
 }
 type ProfileResolver interface {
@@ -430,6 +432,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateTransaction(childComplexity, args["input"].(ent.CreateTransactionInput)), true
+
+	case "Mutation.createTransactions":
+		if e.complexity.Mutation.CreateTransactions == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createTransactions_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateTransactions(childComplexity, args["input"].([]*ent.CreateTransactionInput)), true
 
 	case "Mutation.updateAccount":
 		if e.complexity.Mutation.UpdateAccount == nil {
@@ -1002,6 +1016,34 @@ func (ec *executionContext) field_Mutation_createTransaction_argsInput(
 	}
 
 	var zeroVal ent.CreateTransactionInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_createTransactions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_createTransactions_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createTransactions_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*ent.CreateTransactionInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal []*ent.CreateTransactionInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateTransactionInput2ᚕᚖfijoyᚋentᚐCreateTransactionInputᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*ent.CreateTransactionInput
 	return zeroVal, nil
 }
 
@@ -2993,6 +3035,81 @@ func (ec *executionContext) fieldContext_Mutation_createTransaction(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createTransaction_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createTransactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTransactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTransactions(rctx, fc.Args["input"].([]*ent.CreateTransactionInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Transaction)
+	fc.Result = res
+	return ec.marshalNTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Transaction_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_Transaction_amount(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
+			case "note":
+				return ec.fieldContext_Transaction_note(ctx, field)
+			case "datetime":
+				return ec.fieldContext_Transaction_datetime(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Transaction_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Transaction_updatedAt(ctx, field)
+			case "profile":
+				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "account":
+				return ec.fieldContext_Transaction_account(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTransactions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -8437,6 +8554,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createTransactions":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTransactions(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "updateTransaction":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateTransaction(ctx, field)
@@ -9811,6 +9935,26 @@ func (ec *executionContext) unmarshalNCreateTransactionInput2fijoyᚋentᚐCreat
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateTransactionInput2ᚕᚖfijoyᚋentᚐCreateTransactionInputᚄ(ctx context.Context, v any) ([]*ent.CreateTransactionInput, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*ent.CreateTransactionInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCreateTransactionInput2ᚖfijoyᚋentᚐCreateTransactionInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNCreateTransactionInput2ᚖfijoyᚋentᚐCreateTransactionInput(ctx context.Context, v any) (*ent.CreateTransactionInput, error) {
+	res, err := ec.unmarshalInputCreateTransactionInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNCurrency2ᚕᚖfijoyᚐCurrencyᚄ(ctx context.Context, sel ast.SelectionSet, v []*Currency) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -10071,6 +10215,50 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 
 func (ec *executionContext) marshalNTransaction2fijoyᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v ent.Transaction) graphql.Marshaler {
 	return ec._Transaction(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Transaction) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {
