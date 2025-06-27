@@ -195,6 +195,11 @@ func (r *mutationResolver) CreateTransaction(ctx context.Context, input ent.Crea
 	return transaction, nil
 }
 
+// CreateTransactions is the resolver for the createTransactions field.
+func (r *mutationResolver) CreateTransactions(ctx context.Context, input []*ent.CreateTransactionInput) ([]*ent.Transaction, error) {
+	panic(fmt.Errorf("not implemented: CreateTransactions - createTransactions"))
+}
+
 // UpdateTransaction is the resolver for the updateTransaction field.
 func (r *mutationResolver) UpdateTransaction(ctx context.Context, id string, input ent.UpdateTransactionInput) (*ent.Transaction, error) {
 	panic(fmt.Errorf("not implemented: UpdateTransaction - updateTransaction"))

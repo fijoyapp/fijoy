@@ -17,5 +17,6 @@ type Mutation {
   updateAccount(id: ID!, input: UpdateAccountInput!): Account!
 
   createTransaction(input: CreateTransactionInput!): Transaction!
+  createTransactions(input: [CreateTransactionInput!]!): [Transaction!]!
   updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
 }
