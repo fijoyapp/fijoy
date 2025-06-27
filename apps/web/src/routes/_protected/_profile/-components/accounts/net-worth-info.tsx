@@ -53,7 +53,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid gap-4 xl:grid-cols-2">
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
