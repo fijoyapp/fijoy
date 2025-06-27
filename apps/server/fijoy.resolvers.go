@@ -197,7 +197,17 @@ func (r *mutationResolver) CreateTransaction(ctx context.Context, input ent.Crea
 
 // CreateTransactions is the resolver for the createTransactions field.
 func (r *mutationResolver) CreateTransactions(ctx context.Context, input []*ent.CreateTransactionInput) ([]*ent.Transaction, error) {
-	panic(fmt.Errorf("not implemented: CreateTransactions - createTransactions"))
+	transactions := make([]*ent.Transaction, len(input))
+	for _, transactionInput := range input {
+		transaction, err := r.CreateTransaction(ctx, *transactionInput)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create transaction: %w", err)
+		}
+
+		transactions = append(transactions, transaction)
+	}
+
+	return transactions, nil
 }
 
 // UpdateTransaction is the resolver for the updateTransaction field.
