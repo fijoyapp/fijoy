@@ -28,7 +28,7 @@ import type {
 
 const TransactionDataTableFragment = graphql`
   fragment transactionDataTableFragment on Query {
-    transactions(first: 2) {
+    transactions(first: 20) {
       edges {
         node {
           id

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cc5678a5a6dc91d474dcb445f8aa4afe>>
+ * @generated SignedSource<<c0b32bed5c024c88bbaf4278826b4f2a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,7 +55,7 @@ return {
           {
             "kind": "Literal",
             "name": "first",
-            "value": 2
+            "value": 20
           }
         ],
         "concreteType": "TransactionConnection",
@@ -166,17 +166,17 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "transactions(first:2)"
+        "storageKey": "transactions(first:20)"
       }
     ]
   },
   "params": {
-    "cacheID": "04c96f403449db21de2f438c410aa964",
+    "cacheID": "74a760d001652e1d2abf8098ff5cdf22",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 2) {\n    edges {\n      node {\n        id\n        amount\n        balance\n        note\n        datetime\n        account {\n          name\n          accountType\n          currencySymbol\n          id\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        amount\n        balance\n        note\n        datetime\n        account {\n          name\n          accountType\n          currencySymbol\n          id\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n"
   }
 };
 })();
