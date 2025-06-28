@@ -15,6 +15,9 @@ import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import type { TransactionsPageRefetch } from "./__generated__/TransactionsPageRefetch.graphql";
 import type { transactionsPageFragment$key } from "./__generated__/transactionsPageFragment.graphql";
 import TransactionDataTable from "./-components/transactions/transaction-data-table";
+import { NewTransaction } from "./-components/transactions/new-transaction";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_protected/_profile/transactions")({
   pendingComponent: CenterLoadingSpinner,
@@ -39,6 +42,8 @@ function Page() {
     transactionsPageFragment$key
   >(TransactionsPageFragment, data);
 
+  const [newTransactionSheetOpen, setNewTransactionSheetOpen] = useState(false);
+
   return (
     <div className="p-4 lg:p-6">
       <PageHeader>
@@ -47,6 +52,16 @@ function Page() {
           See all the transactions made to your accounts
         </PageHeaderDescription>
       </PageHeader>
+
+      <div className="py-2"></div>
+
+      <Button onClick={() => setNewTransactionSheetOpen((open) => !open)}>
+        New Transaction
+      </Button>
+      <NewTransaction
+        newTransactionSheetOpen={newTransactionSheetOpen}
+        setNewTransactionSheetOpen={setNewTransactionSheetOpen}
+      />
 
       <div className="py-2"></div>
 
