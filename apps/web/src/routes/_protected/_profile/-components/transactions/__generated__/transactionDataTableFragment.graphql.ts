@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<75c357a330838a69c888e6dd73d8ab07>>
+ * @generated SignedSource<<79a86a50e88a4b81e9f9b00f733d116a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,10 +18,13 @@ export type transactionDataTableFragment$data = {
         readonly account: {
           readonly accountType: AccountAccountType;
           readonly currencySymbol: string;
+          readonly name: string;
         };
         readonly amount: string;
         readonly balance: string;
+        readonly datetime: any;
         readonly id: string;
+        readonly note: string | null | undefined;
       } | null | undefined;
     } | null | undefined> | null | undefined;
     readonly pageInfo: {
@@ -95,11 +98,32 @@ const node: ReaderFragment = {
                 {
                   "alias": null,
                   "args": null,
+                  "kind": "ScalarField",
+                  "name": "note",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "datetime",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
                   "concreteType": "Account",
                   "kind": "LinkedField",
                   "name": "account",
                   "plural": false,
                   "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "name",
+                      "storageKey": null
+                    },
                     {
                       "alias": null,
                       "args": null,
@@ -149,6 +173,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "d1b9a2c5ac43f1b731a3becb0d590b4b";
+(node as any).hash = "35d839650c770109a8bdd6e515a1dba5";
 
 export default node;

@@ -34,7 +34,10 @@ const TransactionDataTableFragment = graphql`
           id
           amount
           balance
+          note
+          datetime
           account {
+            name
             accountType
             currencySymbol
           }
@@ -69,9 +72,19 @@ export default function TransactionDataTable({
   const columns: ColumnDef<Transaction>[] = useMemo(
     (): ColumnDef<Transaction>[] => [
       {
-        id: "name",
-        accessorKey: "name",
-        header: "Name",
+        id: "note",
+        accessorKey: "note",
+        header: "Note",
+      },
+      {
+        id: "account.name",
+        accessorKey: "account.name",
+        header: "Account Name",
+      },
+      {
+        id: "datetime",
+        accessorKey: "datetime",
+        header: "Datetime",
       },
       {
         accessorKey: "amount",
