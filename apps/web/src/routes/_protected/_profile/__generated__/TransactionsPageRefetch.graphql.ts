@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bc2d951ed55de87a32f311382d14fc52>>
+ * @generated SignedSource<<3fe7bd80d6734e66ab2b32f0071d80fd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,7 +55,7 @@ return {
           {
             "kind": "Literal",
             "name": "first",
-            "value": 5
+            "value": 2
           }
         ],
         "concreteType": "TransactionConnection",
@@ -84,13 +84,6 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "note",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
                     "name": "amount",
                     "storageKey": null
                   },
@@ -98,21 +91,7 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "datetime",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "updatedAt",
+                    "name": "balance",
                     "storageKey": null
                   },
                   {
@@ -127,14 +106,7 @@ return {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "ticker",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "tickerType",
+                        "name": "accountType",
                         "storageKey": null
                       },
                       {
@@ -142,13 +114,6 @@ return {
                         "args": null,
                         "kind": "ScalarField",
                         "name": "currencySymbol",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "name",
                         "storageKey": null
                       },
                       (v0/*: any*/)
@@ -180,21 +145,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "transactions(first:5)"
+        "storageKey": "transactions(first:2)"
       }
     ]
   },
   "params": {
-    "cacheID": "937426de8ab0570fadb36d3658fc8a52",
+    "cacheID": "95b1879c3dba3e2e5c38df416c626d4b",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    ticker\n    tickerType\n    currencySymbol\n    name\n    id\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  transactions(first: 5) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 2) {\n    edges {\n      node {\n        id\n        amount\n        balance\n        account {\n          accountType\n          currencySymbol\n          id\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cdb260c5eed88e9d6299f94599877f25";
+(node as any).hash = "977a194d8bbfa7e821009b833f47e868";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f252b6a7aea01617a23ec5e5ddda2142>>
+ * @generated SignedSource<<965277202be6b90c861f41d36d8854e6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,17 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type transactionsPageFragment$data = {
-  readonly transactions: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment">;
-      } | null | undefined;
-    } | null | undefined> | null | undefined;
-    readonly pageInfo: {
-      readonly hasNextPage: boolean;
-    };
-  };
+  readonly " $fragmentSpreads": FragmentRefs<"transactionDataTableFragment">;
   readonly " $fragmentType": "transactionsPageFragment";
 };
 export type transactionsPageFragment$key = {
@@ -44,79 +34,15 @@ const node: ReaderFragment = {
   "name": "transactionsPageFragment",
   "selections": [
     {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "first",
-          "value": 5
-        }
-      ],
-      "concreteType": "TransactionConnection",
-      "kind": "LinkedField",
-      "name": "transactions",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "TransactionEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "Transaction",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "id",
-                  "storageKey": null
-                },
-                {
-                  "args": null,
-                  "kind": "FragmentSpread",
-                  "name": "transactionCardFragment"
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "PageInfo",
-          "kind": "LinkedField",
-          "name": "pageInfo",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "hasNextPage",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": "transactions(first:5)"
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "transactionDataTableFragment"
     }
   ],
   "type": "Query",
   "abstractKey": null
 };
 
-(node as any).hash = "cdb260c5eed88e9d6299f94599877f25";
+(node as any).hash = "977a194d8bbfa7e821009b833f47e868";
 
 export default node;
