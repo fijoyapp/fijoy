@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bf455bc7b2a54aae659e1455dff34000>>
+ * @generated SignedSource<<ac458e19ab01a45526f57fa8e96d974f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -56,18 +56,18 @@ v3 = {
   "name": "locale",
   "storageKey": null
 },
-v4 = [
-  {
-    "kind": "Literal",
-    "name": "first",
-    "value": 5
-  }
-],
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "accountType",
+  "storageKey": null
+},
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "balance",
   "storageKey": null
 },
 v6 = {
@@ -81,31 +81,10 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "ticker",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "tickerType",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "currencySymbol",
   "storageKey": null
 },
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "updatedAt",
-  "storageKey": null
-},
-v11 = {
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "PageInfo",
@@ -290,7 +269,13 @@ return {
         "selections": [
           {
             "alias": null,
-            "args": (v4/*: any*/),
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "first",
+                "value": 5
+              }
+            ],
             "concreteType": "AccountConnection",
             "kind": "LinkedField",
             "name": "accounts",
@@ -313,21 +298,15 @@ return {
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "accountType",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "balance",
-                        "storageKey": null
-                      },
+                      (v4/*: any*/),
                       (v5/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "name",
+                        "storageKey": null
+                      },
                       {
                         "alias": null,
                         "args": null,
@@ -336,23 +315,47 @@ return {
                         "storageKey": null
                       },
                       (v6/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "ticker",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "tickerType",
+                        "storageKey": null
+                      },
                       (v7/*: any*/),
-                      (v8/*: any*/),
-                      (v9/*: any*/),
-                      (v10/*: any*/)
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "updatedAt",
+                        "storageKey": null
+                      }
                     ],
                     "storageKey": null
                   }
                 ],
                 "storageKey": null
               },
-              (v11/*: any*/)
+              (v8/*: any*/)
             ],
             "storageKey": "accounts(first:5)"
           },
           {
             "alias": null,
-            "args": (v4/*: any*/),
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "first",
+                "value": 2
+              }
+            ],
             "concreteType": "TransactionConnection",
             "kind": "LinkedField",
             "name": "transactions",
@@ -375,29 +378,8 @@ return {
                     "plural": false,
                     "selections": [
                       (v2/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "note",
-                        "storageKey": null
-                      },
                       (v6/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "datetime",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "createdAt",
-                        "storageKey": null
-                      },
-                      (v10/*: any*/),
+                      (v5/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -406,10 +388,8 @@ return {
                         "name": "account",
                         "plural": false,
                         "selections": [
+                          (v4/*: any*/),
                           (v7/*: any*/),
-                          (v8/*: any*/),
-                          (v9/*: any*/),
-                          (v5/*: any*/),
                           (v2/*: any*/)
                         ],
                         "storageKey": null
@@ -420,21 +400,21 @@ return {
                 ],
                 "storageKey": null
               },
-              (v11/*: any*/)
+              (v8/*: any*/)
             ],
-            "storageKey": "transactions(first:5)"
+            "storageKey": "transactions(first:2)"
           }
         ]
       }
     ]
   },
   "params": {
-    "cacheID": "ab9e426f48258bdfb9c67de141956faa",
+    "cacheID": "d9c2d58195fc352459f734906c90e69b",
     "id": null,
     "metadata": {},
     "name": "RootQuery",
     "operationKind": "query",
-    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  currencies {\n    ...currencyFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  ...transactionsPageFragment @include(if: $hasProfile)\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  note\n  amount\n  datetime\n  createdAt\n  updatedAt\n  account {\n    ticker\n    tickerType\n    currencySymbol\n    name\n    id\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  transactions(first: 5) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  currencies {\n    ...currencyFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  ...transactionsPageFragment @include(if: $hasProfile)\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 5) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 2) {\n    edges {\n      node {\n        id\n        amount\n        balance\n        account {\n          accountType\n          currencySymbol\n          id\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
 })();
