@@ -1,4 +1,3 @@
-import invariant from "tiny-invariant";
 import {
   PageHeader,
   PageHeaderDescription,
