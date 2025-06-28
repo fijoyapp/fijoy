@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<79a86a50e88a4b81e9f9b00f733d116a>>
+ * @generated SignedSource<<37a2f2c215e8b4fbb8679942937679a9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,7 +50,7 @@ const node: ReaderFragment = {
         {
           "kind": "Literal",
           "name": "first",
-          "value": 2
+          "value": 20
         }
       ],
       "concreteType": "TransactionConnection",
@@ -166,13 +166,13 @@ const node: ReaderFragment = {
           "storageKey": null
         }
       ],
-      "storageKey": "transactions(first:2)"
+      "storageKey": "transactions(first:20)"
     }
   ],
   "type": "Query",
   "abstractKey": null
 };
 
-(node as any).hash = "35d839650c770109a8bdd6e515a1dba5";
+(node as any).hash = "41839b4ea5d6b9a38ace68cc06061b1c";
 
 export default node;
