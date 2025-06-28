@@ -96,7 +96,7 @@ func (r *transactionResolver) Amount(ctx context.Context, obj *ent.Transaction) 
 
 // Balance is the resolver for the balance field.
 func (r *transactionResolver) Balance(ctx context.Context, obj *ent.Transaction) (string, error) {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
+	return obj.Balance.String(), nil
 }
 
 // Amount is the resolver for the amount field.
@@ -146,7 +146,17 @@ func (r *createTransactionInputResolver) Amount(ctx context.Context, obj *ent.Cr
 
 // Balance is the resolver for the balance field.
 func (r *createTransactionInputResolver) Balance(ctx context.Context, obj *ent.CreateTransactionInput, data string) error {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
+	if data == "" {
+		return errors.New("balance is required")
+	}
+
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid balance: %w", err)
+	}
+
+	obj.Balance = dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.
@@ -196,7 +206,17 @@ func (r *updateTransactionInputResolver) Amount(ctx context.Context, obj *ent.Up
 
 // Balance is the resolver for the balance field.
 func (r *updateTransactionInputResolver) Balance(ctx context.Context, obj *ent.UpdateTransactionInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
+	if data == nil || *data == "" {
+		return nil
+	}
+
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid balance: %w", err)
+	}
+
+	obj.Balance = &dec
+	return nil
 }
 
 // Account returns AccountResolver implementation.
@@ -241,13 +261,15 @@ func (r *Resolver) UpdateTransactionInput() UpdateTransactionInputResolver {
 	return &updateTransactionInputResolver{r}
 }
 
-type accountResolver struct{ *Resolver }
-type profileResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type transactionResolver struct{ *Resolver }
-type createAccountInputResolver struct{ *Resolver }
-type createProfileInputResolver struct{ *Resolver }
-type createTransactionInputResolver struct{ *Resolver }
-type updateAccountInputResolver struct{ *Resolver }
-type updateProfileInputResolver struct{ *Resolver }
-type updateTransactionInputResolver struct{ *Resolver }
+type (
+	accountResolver                struct{ *Resolver }
+	profileResolver                struct{ *Resolver }
+	queryResolver                  struct{ *Resolver }
+	transactionResolver            struct{ *Resolver }
+	createAccountInputResolver     struct{ *Resolver }
+	createProfileInputResolver     struct{ *Resolver }
+	createTransactionInputResolver struct{ *Resolver }
+	updateAccountInputResolver     struct{ *Resolver }
+	updateProfileInputResolver     struct{ *Resolver }
+	updateTransactionInputResolver struct{ *Resolver }
+)
