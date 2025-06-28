@@ -81,7 +81,9 @@ export default function AccountDataTable({
       },
       {
         accessorKey: "amount",
-        header: "Amount",
+        header: () => {
+          return <div className="text-right">Amount</div>;
+        },
         cell: ({ row }) => {
           invariant(row.original, "Row original should not be null");
           const money = row.original.amount;
@@ -89,7 +91,7 @@ export default function AccountDataTable({
           const accountType = row.original.accountType;
 
           return (
-            <div className="">
+            <div className="text-right">
               {match(accountType)
                 .with("investment", () => <div>{money} share(s)</div>)
                 .otherwise(() => (
