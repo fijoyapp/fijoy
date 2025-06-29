@@ -20,7 +20,6 @@
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-separator": "^1.1.7",
-    "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@sentry/react": "^9.32.0",
     "@sentry/vite-plugin": "^3.5.0",
