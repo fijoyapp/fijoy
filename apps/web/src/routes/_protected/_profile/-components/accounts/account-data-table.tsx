@@ -29,7 +29,7 @@ import { capitalize } from "lodash";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
-    accounts(first: 5) {
+    accounts(first: 20) {
       edges {
         node {
           id

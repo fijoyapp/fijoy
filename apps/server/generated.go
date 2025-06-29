@@ -51,7 +51,6 @@ type ResolverRoot interface {
 	CreateAccountInput() CreateAccountInputResolver
 	CreateProfileInput() CreateProfileInputResolver
 	CreateTransactionEntryInput() CreateTransactionEntryInputResolver
-	CreateTransactionInput() CreateTransactionInputResolver
 	UpdateAccountInput() UpdateAccountInputResolver
 	UpdateProfileInput() UpdateProfileInputResolver
 	UpdateTransactionEntryInput() UpdateTransactionEntryInputResolver
@@ -96,13 +95,11 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateAccount      func(childComplexity int, input ent.CreateAccountInput) int
-		CreateProfile      func(childComplexity int, input ent.CreateProfileInput) int
-		CreateTransaction  func(childComplexity int, input ent.CreateTransactionInput) int
-		CreateTransactions func(childComplexity int, input []*ent.CreateTransactionInput) int
-		UpdateAccount      func(childComplexity int, id string, input ent.UpdateAccountInput) int
-		UpdateProfile      func(childComplexity int, id string, input ent.UpdateProfileInput) int
-		UpdateTransaction  func(childComplexity int, id string, input ent.UpdateTransactionInput) int
+		CreateAccount                           func(childComplexity int, input ent.CreateAccountInput) int
+		CreateProfile                           func(childComplexity int, input ent.CreateProfileInput) int
+		CreateTransactionEntry                  func(childComplexity int, input ent.CreateTransactionEntryInput) int
+		CreateTransactionWithTransactionEntries func(childComplexity int, input CreateTransactionWithTransactionEntriesInput) int
+		UpdateProfile                           func(childComplexity int, id string, input ent.UpdateProfileInput) int
 	}
 
 	PageInfo struct {
@@ -192,10 +189,8 @@ type MutationResolver interface {
 	CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error)
 	UpdateProfile(ctx context.Context, id string, input ent.UpdateProfileInput) (*ent.Profile, error)
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error)
-	UpdateAccount(ctx context.Context, id string, input ent.UpdateAccountInput) (*ent.Account, error)
-	CreateTransaction(ctx context.Context, input ent.CreateTransactionInput) (*ent.Transaction, error)
-	CreateTransactions(ctx context.Context, input []*ent.CreateTransactionInput) ([]*ent.Transaction, error)
-	UpdateTransaction(ctx context.Context, id string, input ent.UpdateTransactionInput) (*ent.Transaction, error)
+	CreateTransactionWithTransactionEntries(ctx context.Context, input CreateTransactionWithTransactionEntriesInput) (*ent.Transaction, error)
+	CreateTransactionEntry(ctx context.Context, input ent.CreateTransactionEntryInput) (*ent.TransactionEntry, error)
 }
 type ProfileResolver interface {
 	NetWorthGoal(ctx context.Context, obj *ent.Profile) (string, error)
@@ -227,9 +222,6 @@ type CreateProfileInputResolver interface {
 }
 type CreateTransactionEntryInputResolver interface {
 	Amount(ctx context.Context, obj *ent.CreateTransactionEntryInput, data string) error
-}
-type CreateTransactionInputResolver interface {
-	TransactionEntries(ctx context.Context, obj *ent.CreateTransactionInput, data []*ent.CreateTransactionEntryInput) error
 }
 type UpdateAccountInputResolver interface {
 	Amount(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error
@@ -438,41 +430,29 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateProfile(childComplexity, args["input"].(ent.CreateProfileInput)), true
 
-	case "Mutation.createTransaction":
-		if e.complexity.Mutation.CreateTransaction == nil {
+	case "Mutation.createTransactionEntry":
+		if e.complexity.Mutation.CreateTransactionEntry == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createTransaction_args(ctx, rawArgs)
+		args, err := ec.field_Mutation_createTransactionEntry_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTransaction(childComplexity, args["input"].(ent.CreateTransactionInput)), true
+		return e.complexity.Mutation.CreateTransactionEntry(childComplexity, args["input"].(ent.CreateTransactionEntryInput)), true
 
-	case "Mutation.createTransactions":
-		if e.complexity.Mutation.CreateTransactions == nil {
+	case "Mutation.createTransactionWithTransactionEntries":
+		if e.complexity.Mutation.CreateTransactionWithTransactionEntries == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createTransactions_args(ctx, rawArgs)
+		args, err := ec.field_Mutation_createTransactionWithTransactionEntries_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTransactions(childComplexity, args["input"].([]*ent.CreateTransactionInput)), true
-
-	case "Mutation.updateAccount":
-		if e.complexity.Mutation.UpdateAccount == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateAccount_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateAccount(childComplexity, args["id"].(string), args["input"].(ent.UpdateAccountInput)), true
+		return e.complexity.Mutation.CreateTransactionWithTransactionEntries(childComplexity, args["input"].(CreateTransactionWithTransactionEntriesInput)), true
 
 	case "Mutation.updateProfile":
 		if e.complexity.Mutation.UpdateProfile == nil {
@@ -485,18 +465,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateProfile(childComplexity, args["id"].(string), args["input"].(ent.UpdateProfileInput)), true
-
-	case "Mutation.updateTransaction":
-		if e.complexity.Mutation.UpdateTransaction == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateTransaction_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateTransaction(childComplexity, args["id"].(string), args["input"].(ent.UpdateTransactionInput)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -873,6 +841,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateProfileInput,
 		ec.unmarshalInputCreateTransactionEntryInput,
 		ec.unmarshalInputCreateTransactionInput,
+		ec.unmarshalInputCreateTransactionWithTransactionEntriesInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserKeyInput,
 		ec.unmarshalInputUpdateAccountInput,
@@ -1052,110 +1021,59 @@ func (ec *executionContext) field_Mutation_createProfile_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_createTransaction_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_createTransactionEntry_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_createTransaction_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_createTransactionEntry_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_createTransaction_argsInput(
+func (ec *executionContext) field_Mutation_createTransactionEntry_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (ent.CreateTransactionInput, error) {
+) (ent.CreateTransactionEntryInput, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal ent.CreateTransactionInput
+		var zeroVal ent.CreateTransactionEntryInput
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNCreateTransactionInput2fijoyᚋentᚐCreateTransactionInput(ctx, tmp)
+		return ec.unmarshalNCreateTransactionEntryInput2fijoyᚋentᚐCreateTransactionEntryInput(ctx, tmp)
 	}
 
-	var zeroVal ent.CreateTransactionInput
+	var zeroVal ent.CreateTransactionEntryInput
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_createTransactions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_createTransactionWithTransactionEntries_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_createTransactions_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_createTransactionWithTransactionEntries_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_createTransactions_argsInput(
+func (ec *executionContext) field_Mutation_createTransactionWithTransactionEntries_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) ([]*ent.CreateTransactionInput, error) {
+) (CreateTransactionWithTransactionEntriesInput, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal []*ent.CreateTransactionInput
+		var zeroVal CreateTransactionWithTransactionEntriesInput
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNCreateTransactionInput2ᚕᚖfijoyᚋentᚐCreateTransactionInputᚄ(ctx, tmp)
+		return ec.unmarshalNCreateTransactionWithTransactionEntriesInput2fijoyᚐCreateTransactionWithTransactionEntriesInput(ctx, tmp)
 	}
 
-	var zeroVal []*ent.CreateTransactionInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateAccount_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Mutation_updateAccount_argsID(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["id"] = arg0
-	arg1, err := ec.field_Mutation_updateAccount_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg1
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_updateAccount_argsID(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (string, error) {
-	if _, ok := rawArgs["id"]; !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateAccount_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (ent.UpdateAccountInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal ent.UpdateAccountInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNUpdateAccountInput2fijoyᚋentᚐUpdateAccountInput(ctx, tmp)
-	}
-
-	var zeroVal ent.UpdateAccountInput
+	var zeroVal CreateTransactionWithTransactionEntriesInput
 	return zeroVal, nil
 }
 
@@ -1207,57 +1125,6 @@ func (ec *executionContext) field_Mutation_updateProfile_argsInput(
 	}
 
 	var zeroVal ent.UpdateProfileInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateTransaction_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Mutation_updateTransaction_argsID(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["id"] = arg0
-	arg1, err := ec.field_Mutation_updateTransaction_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg1
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_updateTransaction_argsID(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (string, error) {
-	if _, ok := rawArgs["id"]; !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateTransaction_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (ent.UpdateTransactionInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal ent.UpdateTransactionInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNUpdateTransactionInput2fijoyᚋentᚐUpdateTransactionInput(ctx, tmp)
-	}
-
-	var zeroVal ent.UpdateTransactionInput
 	return zeroVal, nil
 }
 
@@ -2936,8 +2803,8 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateAccount(ctx, field)
+func (ec *executionContext) _Mutation_createTransactionWithTransactionEntries(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTransactionWithTransactionEntries(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2950,7 +2817,7 @@ func (ec *executionContext) _Mutation_updateAccount(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateAccount(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateAccountInput))
+		return ec.resolvers.Mutation().CreateTransactionWithTransactionEntries(rctx, fc.Args["input"].(CreateTransactionWithTransactionEntriesInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2962,12 +2829,12 @@ func (ec *executionContext) _Mutation_updateAccount(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.Account)
+	res := resTmp.(*ent.Transaction)
 	fc.Result = res
-	return ec.marshalNAccount2ᚖfijoyᚋentᚐAccount(ctx, field.Selections, res)
+	return ec.marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_createTransactionWithTransactionEntries(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -2976,37 +2843,94 @@ func (ec *executionContext) fieldContext_Mutation_updateAccount(ctx context.Cont
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Account_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Account_name(ctx, field)
-			case "accountType":
-				return ec.fieldContext_Account_accountType(ctx, field)
-			case "currencySymbol":
-				return ec.fieldContext_Account_currencySymbol(ctx, field)
-			case "ticker":
-				return ec.fieldContext_Account_ticker(ctx, field)
-			case "tickerType":
-				return ec.fieldContext_Account_tickerType(ctx, field)
+				return ec.fieldContext_Transaction_id(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
+			case "note":
+				return ec.fieldContext_Transaction_note(ctx, field)
+			case "datetime":
+				return ec.fieldContext_Transaction_datetime(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Transaction_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Transaction_updatedAt(ctx, field)
+			case "profile":
+				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTransactionWithTransactionEntries_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createTransactionEntry(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTransactionEntry(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateTransactionEntry(rctx, fc.Args["input"].(ent.CreateTransactionEntryInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.TransactionEntry)
+	fc.Result = res
+	return ec.marshalNTransactionEntry2ᚖfijoyᚋentᚐTransactionEntry(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTransactionEntry(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TransactionEntry_id(ctx, field)
 			case "amount":
-				return ec.fieldContext_Account_amount(ctx, field)
+				return ec.fieldContext_TransactionEntry_amount(ctx, field)
 			case "value":
-				return ec.fieldContext_Account_value(ctx, field)
+				return ec.fieldContext_TransactionEntry_value(ctx, field)
 			case "fxRate":
-				return ec.fieldContext_Account_fxRate(ctx, field)
+				return ec.fieldContext_TransactionEntry_fxRate(ctx, field)
 			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
-			case "archived":
-				return ec.fieldContext_Account_archived(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Account_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Account_updatedAt(ctx, field)
-			case "profile":
-				return ec.fieldContext_Account_profile(ctx, field)
-			case "transactionEntry":
-				return ec.fieldContext_Account_transactionEntry(ctx, field)
+				return ec.fieldContext_TransactionEntry_balance(ctx, field)
+			case "account":
+				return ec.fieldContext_TransactionEntry_account(ctx, field)
+			case "transaction":
+				return ec.fieldContext_TransactionEntry_transaction(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type TransactionEntry", field.Name)
 		},
 	}
 	defer func() {
@@ -3016,226 +2940,7 @@ func (ec *executionContext) fieldContext_Mutation_updateAccount(ctx context.Cont
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_createTransaction(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTransaction(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTransaction(rctx, fc.Args["input"].(ent.CreateTransactionInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Transaction)
-	fc.Result = res
-	return ec.marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createTransaction(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Transaction_id(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
-			case "note":
-				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Transaction_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Transaction_updatedAt(ctx, field)
-			case "profile":
-				return ec.fieldContext_Transaction_profile(ctx, field)
-			case "transactionEntries":
-				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTransaction_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_createTransactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTransactions(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTransactions(rctx, fc.Args["input"].([]*ent.CreateTransactionInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*ent.Transaction)
-	fc.Result = res
-	return ec.marshalNTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createTransactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Transaction_id(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
-			case "note":
-				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Transaction_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Transaction_updatedAt(ctx, field)
-			case "profile":
-				return ec.fieldContext_Transaction_profile(ctx, field)
-			case "transactionEntries":
-				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTransactions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateTransaction(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateTransaction(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTransaction(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateTransactionInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*ent.Transaction)
-	fc.Result = res
-	return ec.marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateTransaction(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Transaction_id(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
-			case "note":
-				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Transaction_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Transaction_updatedAt(ctx, field)
-			case "profile":
-				return ec.fieldContext_Transaction_profile(ctx, field)
-			case "transactionEntries":
-				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateTransaction_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_createTransactionEntry_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7973,7 +7678,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"note", "datetime", "createdAt", "updatedAt", "transactionEntryIDs", "transactionEntries"}
+	fieldsInOrder := [...]string{"note", "datetime", "createdAt", "updatedAt", "transactionEntryIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8015,15 +7720,47 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 				return it, err
 			}
 			it.TransactionEntryIDs = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateTransactionWithTransactionEntriesInput(ctx context.Context, obj any) (CreateTransactionWithTransactionEntriesInput, error) {
+	var it CreateTransactionWithTransactionEntriesInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"note", "datetime", "transactionEntries"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "note":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("note"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Note = data
+		case "datetime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datetime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Datetime = data
 		case "transactionEntries":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionEntries"))
 			data, err := ec.unmarshalNCreateTransactionEntryInput2ᚕᚖfijoyᚋentᚐCreateTransactionEntryInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			if err = ec.resolvers.CreateTransactionInput().TransactionEntries(ctx, &it, data); err != nil {
-				return it, err
-			}
+			it.TransactionEntries = data
 		}
 	}
 
@@ -8943,30 +8680,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "updateAccount":
+		case "createTransactionWithTransactionEntries":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateAccount(ctx, field)
+				return ec._Mutation_createTransactionWithTransactionEntries(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createTransaction":
+		case "createTransactionEntry":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTransaction(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "createTransactions":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTransactions(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "updateTransaction":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateTransaction(ctx, field)
+				return ec._Mutation_createTransactionEntry(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -10546,6 +10269,11 @@ func (ec *executionContext) unmarshalNCreateProfileInput2fijoyᚋentᚐCreatePro
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateTransactionEntryInput2fijoyᚋentᚐCreateTransactionEntryInput(ctx context.Context, v any) (ent.CreateTransactionEntryInput, error) {
+	res, err := ec.unmarshalInputCreateTransactionEntryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateTransactionEntryInput2ᚕᚖfijoyᚋentᚐCreateTransactionEntryInputᚄ(ctx context.Context, v any) ([]*ent.CreateTransactionEntryInput, error) {
 	var vSlice []any
 	vSlice = graphql.CoerceList(v)
@@ -10566,29 +10294,9 @@ func (ec *executionContext) unmarshalNCreateTransactionEntryInput2ᚖfijoyᚋent
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateTransactionInput2fijoyᚋentᚐCreateTransactionInput(ctx context.Context, v any) (ent.CreateTransactionInput, error) {
-	res, err := ec.unmarshalInputCreateTransactionInput(ctx, v)
+func (ec *executionContext) unmarshalNCreateTransactionWithTransactionEntriesInput2fijoyᚐCreateTransactionWithTransactionEntriesInput(ctx context.Context, v any) (CreateTransactionWithTransactionEntriesInput, error) {
+	res, err := ec.unmarshalInputCreateTransactionWithTransactionEntriesInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNCreateTransactionInput2ᚕᚖfijoyᚋentᚐCreateTransactionInputᚄ(ctx context.Context, v any) ([]*ent.CreateTransactionInput, error) {
-	var vSlice []any
-	vSlice = graphql.CoerceList(v)
-	var err error
-	res := make([]*ent.CreateTransactionInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNCreateTransactionInput2ᚖfijoyᚋentᚐCreateTransactionInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalNCreateTransactionInput2ᚖfijoyᚋentᚐCreateTransactionInput(ctx context.Context, v any) (*ent.CreateTransactionInput, error) {
-	res, err := ec.unmarshalInputCreateTransactionInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNCurrency2ᚕᚖfijoyᚐCurrencyᚄ(ctx context.Context, sel ast.SelectionSet, v []*Currency) graphql.Marshaler {
@@ -10853,50 +10561,6 @@ func (ec *executionContext) marshalNTransaction2fijoyᚋentᚐTransaction(ctx co
 	return ec._Transaction(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Transaction) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -10921,6 +10585,10 @@ func (ec *executionContext) marshalNTransactionConnection2ᚖfijoyᚋentᚐTrans
 	return ec._TransactionConnection(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTransactionEntry2fijoyᚋentᚐTransactionEntry(ctx context.Context, sel ast.SelectionSet, v ent.TransactionEntry) graphql.Marshaler {
+	return ec._TransactionEntry(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNTransactionEntry2ᚖfijoyᚋentᚐTransactionEntry(ctx context.Context, sel ast.SelectionSet, v *ent.TransactionEntry) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -10931,18 +10599,8 @@ func (ec *executionContext) marshalNTransactionEntry2ᚖfijoyᚋentᚐTransactio
 	return ec._TransactionEntry(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUpdateAccountInput2fijoyᚋentᚐUpdateAccountInput(ctx context.Context, v any) (ent.UpdateAccountInput, error) {
-	res, err := ec.unmarshalInputUpdateAccountInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNUpdateProfileInput2fijoyᚋentᚐUpdateProfileInput(ctx context.Context, v any) (ent.UpdateProfileInput, error) {
 	res, err := ec.unmarshalInputUpdateProfileInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUpdateTransactionInput2fijoyᚋentᚐUpdateTransactionInput(ctx context.Context, v any) (ent.UpdateTransactionInput, error) {
-	res, err := ec.unmarshalInputUpdateTransactionInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

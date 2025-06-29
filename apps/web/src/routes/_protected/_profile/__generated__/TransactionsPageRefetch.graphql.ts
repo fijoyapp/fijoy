@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d4ec1a500d56719d5ff47cb21068b98c>>
+ * @generated SignedSource<<d1ece8a6d35bcf9acc9e197f97317483>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,18 +20,71 @@ export type TransactionsPageRefetch = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
+var v0 = [
+  {
+    "kind": "Literal",
+    "name": "first",
+    "value": 20
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "balance",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "amount",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "value",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "currencySymbol",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "PageInfo",
+  "kind": "LinkedField",
+  "name": "pageInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hasNextPage",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -58,13 +111,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Literal",
-            "name": "first",
-            "value": 20
-          }
-        ],
+        "args": (v0/*: any*/),
         "concreteType": "TransactionConnection",
         "kind": "LinkedField",
         "name": "transactions",
@@ -86,7 +133,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/),
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -101,7 +148,7 @@ return {
                     "name": "datetime",
                     "storageKey": null
                   },
-                  (v1/*: any*/),
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -110,21 +157,9 @@ return {
                     "name": "transactionEntries",
                     "plural": true,
                     "selections": [
-                      (v0/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "amount",
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "value",
-                        "storageKey": null
-                      },
+                      (v1/*: any*/),
+                      (v3/*: any*/),
+                      (v4/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -132,7 +167,7 @@ return {
                         "name": "fxRate",
                         "storageKey": null
                       },
-                      (v1/*: any*/),
+                      (v2/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -141,21 +176,9 @@ return {
                         "name": "account",
                         "plural": false,
                         "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "name",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "currencySymbol",
-                            "storageKey": null
-                          },
-                          (v0/*: any*/)
+                          (v5/*: any*/),
+                          (v6/*: any*/),
+                          (v1/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -168,40 +191,91 @@ return {
             ],
             "storageKey": null
           },
+          (v7/*: any*/)
+        ],
+        "storageKey": "transactions(first:20)"
+      },
+      {
+        "alias": null,
+        "args": (v0/*: any*/),
+        "concreteType": "AccountConnection",
+        "kind": "LinkedField",
+        "name": "accounts",
+        "plural": false,
+        "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "PageInfo",
+            "concreteType": "AccountEdge",
             "kind": "LinkedField",
-            "name": "pageInfo",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "hasNextPage",
+                "concreteType": "Account",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v1/*: any*/),
+                  (v5/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "accountType",
+                    "storageKey": null
+                  },
+                  (v2/*: any*/),
+                  (v6/*: any*/),
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "ticker",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "tickerType",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "updatedAt",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
             "storageKey": null
-          }
+          },
+          (v7/*: any*/)
         ],
-        "storageKey": "transactions(first:20)"
+        "storageKey": "accounts(first:20)"
       }
     ]
   },
   "params": {
-    "cacheID": "56d24fcb7f3f03b12da6cdc116f671f5",
+    "cacheID": "582f3ebbe7e67b654a096607c25f4458",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment newTransactionFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newTransactionFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "977a194d8bbfa7e821009b833f47e868";
+(node as any).hash = "5d47ef6ab8c91175963529f3a553485a";
 
 export default node;

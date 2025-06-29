@@ -28,6 +28,7 @@ const TransactionsPageFragment = graphql`
   fragment transactionsPageFragment on Query
   @refetchable(queryName: "TransactionsPageRefetch") {
     ...transactionDataTableFragment
+    ...newTransactionFragment
   }
 `;
 
@@ -59,6 +60,7 @@ function Page() {
         New Transaction
       </Button>
       <NewTransaction
+        newTransactionFragment={fragmentData}
         newTransactionSheetOpen={newTransactionSheetOpen}
         setNewTransactionSheetOpen={setNewTransactionSheetOpen}
       />

@@ -2,6 +2,17 @@
 
 package fijoy
 
+import (
+	"fijoy/ent"
+	"time"
+)
+
+type CreateTransactionWithTransactionEntriesInput struct {
+	Note               *string                            `json:"note,omitempty"`
+	Datetime           *time.Time                         `json:"datetime,omitempty"`
+	TransactionEntries []*ent.CreateTransactionEntryInput `json:"transactionEntries"`
+}
+
 type Currency struct {
 	Code   string `json:"code"`
 	Locale string `json:"locale"`

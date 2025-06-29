@@ -96,22 +96,22 @@ func (r *transactionResolver) Balance(ctx context.Context, obj *ent.Transaction)
 
 // Amount is the resolver for the amount field.
 func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	return obj.Amount.String(), nil
 }
 
 // Value is the resolver for the value field.
 func (r *transactionEntryResolver) Value(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
-	panic(fmt.Errorf("not implemented: Value - value"))
+	return obj.Value.String(), nil
 }
 
 // FxRate is the resolver for the fxRate field.
 func (r *transactionEntryResolver) FxRate(ctx context.Context, obj *ent.TransactionEntry) (*string, error) {
-	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
+	return pointer.To(obj.FxRate.String()), nil
 }
 
 // Balance is the resolver for the balance field.
 func (r *transactionEntryResolver) Balance(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
+	return obj.Balance.String(), nil
 }
 
 // Amount is the resolver for the amount field.
@@ -146,7 +146,17 @@ func (r *createProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.
 
 // Amount is the resolver for the amount field.
 func (r *createTransactionEntryInputResolver) Amount(ctx context.Context, obj *ent.CreateTransactionEntryInput, data string) error {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	if data == "" {
+		return errors.New("amount is required")
+	}
+
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid amount: %w", err)
+	}
+
+	obj.Amount = dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.
@@ -181,7 +191,17 @@ func (r *updateProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.
 
 // Amount is the resolver for the amount field.
 func (r *updateTransactionEntryInputResolver) Amount(ctx context.Context, obj *ent.UpdateTransactionEntryInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	if data == nil || *data == "" {
+		return nil
+	}
+
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid amount: %w", err)
+	}
+
+	obj.Amount = &dec
+	return nil
 }
 
 // Account returns AccountResolver implementation.
@@ -214,11 +234,6 @@ func (r *Resolver) CreateTransactionEntryInput() CreateTransactionEntryInputReso
 	return &createTransactionEntryInputResolver{r}
 }
 
-// CreateTransactionInput returns CreateTransactionInputResolver implementation.
-func (r *Resolver) CreateTransactionInput() CreateTransactionInputResolver {
-	return &createTransactionInputResolver{r}
-}
-
 // UpdateAccountInput returns UpdateAccountInputResolver implementation.
 func (r *Resolver) UpdateAccountInput() UpdateAccountInputResolver {
 	return &updateAccountInputResolver{r}
@@ -242,7 +257,6 @@ type transactionEntryResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
 type createProfileInputResolver struct{ *Resolver }
 type createTransactionEntryInputResolver struct{ *Resolver }
-type createTransactionInputResolver struct{ *Resolver }
 type updateAccountInputResolver struct{ *Resolver }
 type updateProfileInputResolver struct{ *Resolver }
 type updateTransactionEntryInputResolver struct{ *Resolver }

@@ -21,7 +21,7 @@ type Props = {
 
 const NetWorthInfoFragment = graphql`
   fragment netWorthInfoFragment on Query {
-    accounts(first: 5) {
+    accounts(first: 20) {
       edges {
         node {
           id
