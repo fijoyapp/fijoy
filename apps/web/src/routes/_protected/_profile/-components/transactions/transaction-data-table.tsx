@@ -34,11 +34,18 @@ const TransactionDataTableFragment = graphql`
           id
           note
           datetime
-          # account {
-          #   name
-          #   accountType
-          #   currencySymbol
-          # }
+          balance
+          transactionEntries {
+            id
+            amount
+            value
+            fxRate
+            balance
+            account {
+              name
+              currencySymbol
+            }
+          }
         }
       }
       pageInfo {

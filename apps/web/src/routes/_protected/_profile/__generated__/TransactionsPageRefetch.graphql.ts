@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<270aca45bbfd2809d74e943c954c2a06>>
+ * @generated SignedSource<<d4ec1a500d56719d5ff47cb21068b98c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,22 @@ export type TransactionsPageRefetch = {
   variables: TransactionsPageRefetch$variables;
 };
 
-const node: ConcreteRequest = {
+const node: ConcreteRequest = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "balance",
+  "storageKey": null
+};
+return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -71,13 +86,7 @@ const node: ConcreteRequest = {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
+                  (v0/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -90,6 +99,67 @@ const node: ConcreteRequest = {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "datetime",
+                    "storageKey": null
+                  },
+                  (v1/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "TransactionEntry",
+                    "kind": "LinkedField",
+                    "name": "transactionEntries",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "amount",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "value",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "fxRate",
+                        "storageKey": null
+                      },
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Account",
+                        "kind": "LinkedField",
+                        "name": "account",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "name",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "currencySymbol",
+                            "storageKey": null
+                          },
+                          (v0/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -122,14 +192,15 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "e4a2562924833f454b8724946e2c4c3d",
+    "cacheID": "56d24fcb7f3f03b12da6cdc116f671f5",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n"
   }
 };
+})();
 
 (node as any).hash = "977a194d8bbfa7e821009b833f47e868";
 

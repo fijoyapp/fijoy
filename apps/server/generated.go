@@ -7973,7 +7973,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"note", "datetime", "createdAt", "updatedAt", "profileID", "transactionEntryIDs", "transactionEntries"}
+	fieldsInOrder := [...]string{"note", "datetime", "createdAt", "updatedAt", "transactionEntryIDs", "transactionEntries"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8008,13 +8008,6 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedAt = data
-		case "profileID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ProfileID = data
 		case "transactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionEntryIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -8374,7 +8367,7 @@ func (ec *executionContext) unmarshalInputUpdateTransactionInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"note", "clearNote", "datetime", "createdAt", "updatedAt", "profileID", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
+	fieldsInOrder := [...]string{"note", "clearNote", "datetime", "createdAt", "updatedAt", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8416,13 +8409,6 @@ func (ec *executionContext) unmarshalInputUpdateTransactionInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedAt = data
-		case "profileID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ProfileID = data
 		case "addTransactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTransactionEntryIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)

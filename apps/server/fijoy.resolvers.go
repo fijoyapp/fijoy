@@ -149,8 +149,7 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 	}
 
 	createTransactionInput := ent.CreateTransactionInput{
-		Note:      pointer.To("Initial account setup"),
-		ProfileID: userData.ProfileId,
+		Note: pointer.To("Initial account setup"),
 	}
 	_, err = r.CreateTransaction(ctx, createTransactionInput)
 	if err != nil {
