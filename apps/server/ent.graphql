@@ -111,7 +111,6 @@ input CreateTransactionInput {
   datetime: Time
   createdAt: Time
   updatedAt: Time
-  profileID: ID!
   transactionEntryIDs: [ID!]
 }
 """
@@ -363,7 +362,6 @@ input UpdateTransactionInput {
   datetime: Time
   createdAt: Time
   updatedAt: Time
-  profileID: ID
   addTransactionEntryIDs: [ID!]
   removeTransactionEntryIDs: [ID!]
   clearTransactionEntries: Boolean

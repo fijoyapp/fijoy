@@ -219,7 +219,6 @@ type CreateTransactionInput struct {
 	Datetime            *time.Time
 	CreatedAt           *time.Time
 	UpdatedAt           *time.Time
-	ProfileID           string
 	TransactionEntryIDs []string
 }
 
@@ -237,7 +236,6 @@ func (i *CreateTransactionInput) Mutate(m *TransactionMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
 	}
-	m.SetProfileID(i.ProfileID)
 	if v := i.TransactionEntryIDs; len(v) > 0 {
 		m.AddTransactionEntryIDs(v...)
 	}
@@ -256,7 +254,6 @@ type UpdateTransactionInput struct {
 	Datetime                  *time.Time
 	CreatedAt                 *time.Time
 	UpdatedAt                 *time.Time
-	ProfileID                 *string
 	ClearTransactionEntries   bool
 	AddTransactionEntryIDs    []string
 	RemoveTransactionEntryIDs []string
@@ -278,9 +275,6 @@ func (i *UpdateTransactionInput) Mutate(m *TransactionMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if v := i.ProfileID; v != nil {
-		m.SetProfileID(*v)
 	}
 	if i.ClearTransactionEntries {
 		m.ClearTransactionEntries()
