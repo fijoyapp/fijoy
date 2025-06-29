@@ -7,7 +7,7 @@ toolchain go1.24.2
 require (
 	entgo.io/contrib v0.6.1-0.20250319063240-8a7f182943cb
 	entgo.io/ent v0.14.4
-	github.com/99designs/gqlgen v0.17.75
+	github.com/99designs/gqlgen v0.17.76
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/getsentry/sentry-go v0.34.0
 	github.com/go-chi/chi/v5 v5.2.2
@@ -21,7 +21,7 @@ require (
 	github.com/samber/lo v1.51.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/stretchr/testify v1.10.0
-	github.com/vektah/gqlparser/v2 v2.5.28
+	github.com/vektah/gqlparser/v2 v2.5.30
 	go.uber.org/zap v1.27.0
 	golang.org/x/oauth2 v0.30.0
 	google.golang.org/protobuf v1.36.6
