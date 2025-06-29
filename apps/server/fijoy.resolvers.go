@@ -175,7 +175,7 @@ func (r *mutationResolver) CreateTransactionWithTransactionEntries(ctx context.C
 
 	balance := decimal.NewFromInt(0)
 
-	transaction, err := client.Transaction.Create().SetProfileID(userData.ProfileId).SetBalance(balance).Save(ctx)
+	transaction, err := client.Transaction.Create().SetProfileID(userData.ProfileId).SetBalance(balance).SetNote(*input.Note).Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create transaction: %w", err)
 	}
@@ -186,12 +186,12 @@ func (r *mutationResolver) CreateTransactionWithTransactionEntries(ctx context.C
 			AccountID:     entry.AccountID,
 			Amount:        entry.Amount,
 		}
-		tranasctionEntry, err := r.CreateTransactionEntry(ctx, input)
+		transactionEntry, err := r.CreateTransactionEntry(ctx, input)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create transaction entry: %w", err)
 		}
 
-		balance.Add(tranasctionEntry.Balance)
+		balance = balance.Add(transactionEntry.Balance)
 	}
 
 	transaction, err = transaction.Update().SetBalance(balance).Save(ctx)

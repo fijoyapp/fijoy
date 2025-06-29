@@ -10,6 +10,7 @@ import { graphql } from "relay-runtime";
 import { type newTransactionMutation } from "./__generated__/newTransactionMutation.graphql";
 import { Button } from "@/components/ui/button";
 import type { newTransactionFragment$key } from "./__generated__/newTransactionFragment.graphql";
+import currency from "currency.js";
 
 type Props = {
   newTransactionFragment: newTransactionFragment$key;
@@ -65,15 +66,16 @@ export const NewTransaction = ({
           transactionEntries: [
             {
               accountID: data.accounts.edges![0]?.node?.id || "",
-              amount: "1000",
+              amount: currency(1000).toString(),
               transactionID: "",
             },
             {
               accountID: data.accounts.edges![1]?.node?.id || "",
-              amount: "-1000",
+              amount: currency(-1200).toString(),
               transactionID: "",
             },
           ],
+          note: "New transfer",
         },
       },
     });
