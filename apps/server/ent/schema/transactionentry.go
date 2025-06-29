@@ -6,6 +6,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/nrednav/cuid2"
@@ -15,6 +16,12 @@ import (
 // TransactionEntry holds the schema definition for the TransactionEntry entity.
 type TransactionEntry struct {
 	ent.Schema
+}
+
+func (TransactionEntry) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
+	}
 }
 
 // Fields of the TransactionEntry.

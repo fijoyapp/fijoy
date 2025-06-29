@@ -235,6 +235,11 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
 	return currencies, nil
 }
 
+// TransactionEntries is the resolver for the transactionEntries field.
+func (r *createTransactionInputResolver) TransactionEntries(ctx context.Context, obj *ent.CreateTransactionInput, data []*ent.CreateTransactionEntryInput) error {
+	panic(fmt.Errorf("not implemented: TransactionEntries - transactionEntries"))
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<37a2f2c215e8b4fbb8679942937679a9>>
+ * @generated SignedSource<<6bf6cd3a8c9db53af0b91ba20c612b5f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,19 +9,11 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type AccountAccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type transactionDataTableFragment$data = {
   readonly transactions: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly account: {
-          readonly accountType: AccountAccountType;
-          readonly currencySymbol: string;
-          readonly name: string;
-        };
-        readonly amount: string;
-        readonly balance: string;
         readonly datetime: any;
         readonly id: string;
         readonly note: string | null | undefined;
@@ -85,20 +77,6 @@ const node: ReaderFragment = {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
-                  "name": "amount",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "balance",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
                   "name": "note",
                   "storageKey": null
                 },
@@ -107,38 +85,6 @@ const node: ReaderFragment = {
                   "args": null,
                   "kind": "ScalarField",
                   "name": "datetime",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "Account",
-                  "kind": "LinkedField",
-                  "name": "account",
-                  "plural": false,
-                  "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "name",
-                      "storageKey": null
-                    },
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "accountType",
-                      "storageKey": null
-                    },
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "currencySymbol",
-                      "storageKey": null
-                    }
-                  ],
                   "storageKey": null
                 }
               ],
@@ -173,6 +119,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "41839b4ea5d6b9a38ace68cc06061b1c";
+(node as any).hash = "eaf7a11ee8842cf33ff502ab16226c97";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c5c71fbfa80db09936497d137ba6d203>>
+ * @generated SignedSource<<7f9bd73d1be450ca48bc8e386face76e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,7 +20,7 @@ export type CreateAccountInput = {
   name: string;
   ticker: string;
   tickerType: AccountTickerType;
-  transactionIDs?: ReadonlyArray<string> | null | undefined;
+  transactionEntryIDs?: ReadonlyArray<string> | null | undefined;
   updatedAt?: any | null | undefined;
 };
 export type newAccountPropertyMutation$variables = {

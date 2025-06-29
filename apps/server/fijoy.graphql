@@ -9,6 +9,10 @@ type Currency {
   locale: String!
 }
 
+extend input CreateTransactionInput {
+  transactionEntries: [CreateTransactionEntryInput!]!
+}
+
 type Mutation {
   createProfile(input: CreateProfileInput!): Profile!
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
