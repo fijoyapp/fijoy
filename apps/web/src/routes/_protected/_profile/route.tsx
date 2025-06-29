@@ -33,7 +33,6 @@ import {
   Landmark,
   type LucideIcon,
   Menu,
-  RotateCcw,
   Search,
   Settings,
 } from "lucide-react";
@@ -46,21 +45,21 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { useCallback, useState } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+// import { motion } from "framer-motion";
 import { logout } from "@/lib/auth";
 import {
-  fetchQuery,
+  // fetchQuery,
   useFragment,
   usePreloadedQuery,
-  useRelayEnvironment,
+  // useRelayEnvironment,
 } from "react-relay";
 import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { ProfileProvider } from "@/profile";
 import { rootQuery } from "@/routes/__root";
 import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { ProfileFragment } from "@/lib/queries/profile";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./-components/app-sidebar";
 
@@ -127,7 +126,7 @@ function Page() {
 
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<string | null>(null);
+  // const [activeTab, setActiveTab] = useState<string | null>(null);
   const { rootQueryRef } = Route.useRouteContext();
 
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
@@ -135,25 +134,25 @@ function Page() {
     ProfileFragment,
     data.profiles,
   );
-  const environment = useRelayEnvironment();
+  // const environment = useRelayEnvironment();
 
   invariant(profiles);
   invariant(data.profiles);
 
-  const refresh = useCallback(() => {
-    toast.promise(
-      fetchQuery<RootQuery>(
-        environment,
-        rootQuery,
-        { hasUser: true, hasProfile: true },
-        { fetchPolicy: "network-only" },
-      ).toPromise(),
-      {
-        success: "Data refreshed successfully!",
-        error: "Failed to refresh data.",
-      },
-    );
-  }, [environment]);
+  // const refresh = useCallback(() => {
+  //   toast.promise(
+  //     fetchQuery<RootQuery>(
+  //       environment,
+  //       rootQuery,
+  //       { hasUser: true, hasProfile: true },
+  //       { fetchPolicy: "network-only" },
+  //     ).toPromise(),
+  //     {
+  //       success: "Data refreshed successfully!",
+  //       error: "Failed to refresh data.",
+  //     },
+  //   );
+  // }, [environment]);
 
   if (profiles.length === 0 && !matchRoute({ to: "/setup" })) {
     return <Navigate to="/setup" search={{ step: "currency" }} />;
