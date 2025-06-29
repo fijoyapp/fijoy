@@ -1,4 +1,10 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import {
+  Home,
+  Landmark,
+  Settings,
+  History,
+  type LucideIcon,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -9,49 +15,63 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Link, type ValidateLinkOptions } from "@tanstack/react-router";
 
-const items = [
+type NavLink = {
+  link: ValidateLinkOptions;
+  name: string;
+  icon: LucideIcon;
+  fuzzy: boolean;
+};
+
+const navLinks: NavLink[] = [
   {
-    title: "Home",
-    url: "#",
+    name: "Home",
+    link: { to: "/home" },
     icon: Home,
+    fuzzy: false,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    name: "Accounts",
+    link: {
+      to: "/accounts",
+    },
+    icon: Landmark,
+    fuzzy: true,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    name: "Transactions",
+    link: {
+      to: "/transactions",
+    },
+    icon: History,
+    fuzzy: true,
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
+    name: "Settings",
+    link: {
+      to: "/settings",
+    },
     icon: Settings,
+    fuzzy: true,
   },
 ];
+
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar variant="sidebar" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Fijoy</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
+              {navLinks.map((item) => (
+                <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link {...item.link}>
                       <item.icon />
-                      <span>{item.title}</span>
-                    </a>
+                      <span>{item.name}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
