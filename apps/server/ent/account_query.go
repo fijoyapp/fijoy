@@ -8,7 +8,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
-	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fmt"
 	"math"
 
@@ -21,16 +21,16 @@ import (
 // AccountQuery is the builder for querying Account entities.
 type AccountQuery struct {
 	config
-	ctx                  *QueryContext
-	order                []account.OrderOption
-	inters               []Interceptor
-	predicates           []predicate.Account
-	withProfile          *ProfileQuery
-	withTransaction      *TransactionQuery
-	withFKs              bool
-	modifiers            []func(*sql.Selector)
-	loadTotal            []func(context.Context, []*Account) error
-	withNamedTransaction map[string]*TransactionQuery
+	ctx                       *QueryContext
+	order                     []account.OrderOption
+	inters                    []Interceptor
+	predicates                []predicate.Account
+	withProfile               *ProfileQuery
+	withTransactionEntry      *TransactionEntryQuery
+	withFKs                   bool
+	modifiers                 []func(*sql.Selector)
+	loadTotal                 []func(context.Context, []*Account) error
+	withNamedTransactionEntry map[string]*TransactionEntryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -89,9 +89,9 @@ func (aq *AccountQuery) QueryProfile() *ProfileQuery {
 	return query
 }
 
-// QueryTransaction chains the current query on the "transaction" edge.
-func (aq *AccountQuery) QueryTransaction() *TransactionQuery {
-	query := (&TransactionClient{config: aq.config}).Query()
+// QueryTransactionEntry chains the current query on the "transaction_entry" edge.
+func (aq *AccountQuery) QueryTransactionEntry() *TransactionEntryQuery {
+	query := (&TransactionEntryClient{config: aq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := aq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -102,8 +102,8 @@ func (aq *AccountQuery) QueryTransaction() *TransactionQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, selector),
-			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionTable, account.TransactionColumn),
+			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionEntryTable, account.TransactionEntryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -298,13 +298,13 @@ func (aq *AccountQuery) Clone() *AccountQuery {
 		return nil
 	}
 	return &AccountQuery{
-		config:          aq.config,
-		ctx:             aq.ctx.Clone(),
-		order:           append([]account.OrderOption{}, aq.order...),
-		inters:          append([]Interceptor{}, aq.inters...),
-		predicates:      append([]predicate.Account{}, aq.predicates...),
-		withProfile:     aq.withProfile.Clone(),
-		withTransaction: aq.withTransaction.Clone(),
+		config:               aq.config,
+		ctx:                  aq.ctx.Clone(),
+		order:                append([]account.OrderOption{}, aq.order...),
+		inters:               append([]Interceptor{}, aq.inters...),
+		predicates:           append([]predicate.Account{}, aq.predicates...),
+		withProfile:          aq.withProfile.Clone(),
+		withTransactionEntry: aq.withTransactionEntry.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
@@ -322,14 +322,14 @@ func (aq *AccountQuery) WithProfile(opts ...func(*ProfileQuery)) *AccountQuery {
 	return aq
 }
 
-// WithTransaction tells the query-builder to eager-load the nodes that are connected to
-// the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
-func (aq *AccountQuery) WithTransaction(opts ...func(*TransactionQuery)) *AccountQuery {
-	query := (&TransactionClient{config: aq.config}).Query()
+// WithTransactionEntry tells the query-builder to eager-load the nodes that are connected to
+// the "transaction_entry" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AccountQuery) WithTransactionEntry(opts ...func(*TransactionEntryQuery)) *AccountQuery {
+	query := (&TransactionEntryClient{config: aq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	aq.withTransaction = query
+	aq.withTransactionEntry = query
 	return aq
 }
 
@@ -414,7 +414,7 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		_spec       = aq.querySpec()
 		loadedTypes = [2]bool{
 			aq.withProfile != nil,
-			aq.withTransaction != nil,
+			aq.withTransactionEntry != nil,
 		}
 	)
 	if aq.withProfile != nil {
@@ -450,17 +450,17 @@ func (aq *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			return nil, err
 		}
 	}
-	if query := aq.withTransaction; query != nil {
-		if err := aq.loadTransaction(ctx, query, nodes,
-			func(n *Account) { n.Edges.Transaction = []*Transaction{} },
-			func(n *Account, e *Transaction) { n.Edges.Transaction = append(n.Edges.Transaction, e) }); err != nil {
+	if query := aq.withTransactionEntry; query != nil {
+		if err := aq.loadTransactionEntry(ctx, query, nodes,
+			func(n *Account) { n.Edges.TransactionEntry = []*TransactionEntry{} },
+			func(n *Account, e *TransactionEntry) { n.Edges.TransactionEntry = append(n.Edges.TransactionEntry, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range aq.withNamedTransaction {
-		if err := aq.loadTransaction(ctx, query, nodes,
-			func(n *Account) { n.appendNamedTransaction(name) },
-			func(n *Account, e *Transaction) { n.appendNamedTransaction(name, e) }); err != nil {
+	for name, query := range aq.withNamedTransactionEntry {
+		if err := aq.loadTransactionEntry(ctx, query, nodes,
+			func(n *Account) { n.appendNamedTransactionEntry(name) },
+			func(n *Account, e *TransactionEntry) { n.appendNamedTransactionEntry(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -504,7 +504,7 @@ func (aq *AccountQuery) loadProfile(ctx context.Context, query *ProfileQuery, no
 	}
 	return nil
 }
-func (aq *AccountQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Account, init func(*Account), assign func(*Account, *Transaction)) error {
+func (aq *AccountQuery) loadTransactionEntry(ctx context.Context, query *TransactionEntryQuery, nodes []*Account, init func(*Account), assign func(*Account, *TransactionEntry)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Account)
 	for i := range nodes {
@@ -515,21 +515,21 @@ func (aq *AccountQuery) loadTransaction(ctx context.Context, query *TransactionQ
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.Transaction(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(account.TransactionColumn), fks...))
+	query.Where(predicate.TransactionEntry(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(account.TransactionEntryColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.account_transaction
+		fk := n.account_transaction_entry
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "account_transaction" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "account_transaction_entry" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "account_transaction" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "account_transaction_entry" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -620,17 +620,17 @@ func (aq *AccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// WithNamedTransaction tells the query-builder to eager-load the nodes that are connected to the "transaction"
+// WithNamedTransactionEntry tells the query-builder to eager-load the nodes that are connected to the "transaction_entry"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (aq *AccountQuery) WithNamedTransaction(name string, opts ...func(*TransactionQuery)) *AccountQuery {
-	query := (&TransactionClient{config: aq.config}).Query()
+func (aq *AccountQuery) WithNamedTransactionEntry(name string, opts ...func(*TransactionEntryQuery)) *AccountQuery {
+	query := (&TransactionEntryClient{config: aq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if aq.withNamedTransaction == nil {
-		aq.withNamedTransaction = make(map[string]*TransactionQuery)
+	if aq.withNamedTransactionEntry == nil {
+		aq.withNamedTransactionEntry = make(map[string]*TransactionEntryQuery)
 	}
-	aq.withNamedTransaction[name] = query
+	aq.withNamedTransactionEntry[name] = query
 	return aq
 }
 

@@ -43,8 +43,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
 	EdgeProfile = "profile"
-	// EdgeTransaction holds the string denoting the transaction edge name in mutations.
-	EdgeTransaction = "transaction"
+	// EdgeTransactionEntry holds the string denoting the transaction_entry edge name in mutations.
+	EdgeTransactionEntry = "transaction_entry"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
 	// ProfileTable is the table that holds the profile relation/edge.
@@ -54,13 +54,13 @@ const (
 	ProfileInverseTable = "profiles"
 	// ProfileColumn is the table column denoting the profile relation/edge.
 	ProfileColumn = "profile_account"
-	// TransactionTable is the table that holds the transaction relation/edge.
-	TransactionTable = "transactions"
-	// TransactionInverseTable is the table name for the Transaction entity.
-	// It exists in this package in order to avoid circular dependency with the "transaction" package.
-	TransactionInverseTable = "transactions"
-	// TransactionColumn is the table column denoting the transaction relation/edge.
-	TransactionColumn = "account_transaction"
+	// TransactionEntryTable is the table that holds the transaction_entry relation/edge.
+	TransactionEntryTable = "transaction_entries"
+	// TransactionEntryInverseTable is the table name for the TransactionEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
+	TransactionEntryInverseTable = "transaction_entries"
+	// TransactionEntryColumn is the table column denoting the transaction_entry relation/edge.
+	TransactionEntryColumn = "account_transaction_entry"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -243,17 +243,17 @@ func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByTransactionCount orders the results by transaction count.
-func ByTransactionCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTransactionEntryCount orders the results by transaction_entry count.
+func ByTransactionEntryCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTransactionStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newTransactionEntryStep(), opts...)
 	}
 }
 
-// ByTransaction orders the results by transaction terms.
-func ByTransaction(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByTransactionEntry orders the results by transaction_entry terms.
+func ByTransactionEntry(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTransactionStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newTransactionEntryStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newProfileStep() *sqlgraph.Step {
@@ -263,11 +263,11 @@ func newProfileStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
 	)
 }
-func newTransactionStep() *sqlgraph.Step {
+func newTransactionEntryStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TransactionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, TransactionTable, TransactionColumn),
+		sqlgraph.To(TransactionEntryInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntryTable, TransactionEntryColumn),
 	)
 }
 

@@ -2,46 +2,25 @@ package schema
 
 import (
 	"fijoy/constants"
-	"time"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
 
-// Account holds the schema definition for the Account entity.
-type Account struct {
+// TransactionEntry holds the schema definition for the TransactionEntry entity.
+type TransactionEntry struct {
 	ent.Schema
 }
 
-func (Account) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entgql.RelayConnection(),
-		entgql.QueryField(),
-		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
-	}
-}
-
-// Fields of the Account.
-func (Account) Fields() []ent.Field {
+// Fields of the TransactionEntry.
+func (TransactionEntry) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").DefaultFunc(func() string { return constants.AccountPrefix + cuid2.Generate() }),
-
-		field.String("name").NotEmpty(),
-
-		field.Enum("account_type").
-			Values("liquidity", "investment", "property", "receivable", "liability"),
-
-		field.String("currency_symbol").NotEmpty(),
-
-		field.String("ticker").NotEmpty(),
-		field.Enum("ticker_type").Values("currency", "stock", "crypto"),
+		field.String("id").DefaultFunc(func() string { return constants.TransactionEntryPrefix + cuid2.Generate() }),
 
 		field.Float("amount").
 			GoType(decimal.Decimal{}).
@@ -50,6 +29,7 @@ func (Account) Fields() []ent.Field {
 				dialect.Postgres: "numeric(36,18)",
 			}).
 			Annotations(entgql.Type("String")),
+
 		field.Float("value").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -61,6 +41,7 @@ func (Account) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			),
+
 		field.Float("fx_rate").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -73,6 +54,7 @@ func (Account) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
 			Optional(),
+
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -84,29 +66,13 @@ func (Account) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			),
-
-		field.Bool("archived").Default(false),
-
-		field.Time("created_at").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
-		field.Time("updated_at").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
 	}
 }
 
-// Edges of the Account.
-func (Account) Edges() []ent.Edge {
+// Edges of the TransactionEntry.
+func (TransactionEntry) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profile", Profile.Type).Ref("account").
-			Unique().
-			Required().
-			Annotations(
-				entgql.Skip(entgql.SkipMutationCreateInput),
-				entgql.Skip(entgql.SkipMutationUpdateInput),
-			),
-
-		edge.To("transaction_entry", TransactionEntry.Type),
+		edge.From("account", Account.Type).Ref("transaction_entry").Unique().Required(),
+		edge.From("transaction", Transaction.Type).Ref("transaction_entries").Unique().Required(),
 	}
 }

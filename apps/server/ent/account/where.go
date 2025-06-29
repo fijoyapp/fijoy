@@ -634,21 +634,21 @@ func HasProfileWith(preds ...predicate.Profile) predicate.Account {
 	})
 }
 
-// HasTransaction applies the HasEdge predicate on the "transaction" edge.
-func HasTransaction() predicate.Account {
+// HasTransactionEntry applies the HasEdge predicate on the "transaction_entry" edge.
+func HasTransactionEntry() predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, TransactionTable, TransactionColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntryTable, TransactionEntryColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasTransactionWith applies the HasEdge predicate on the "transaction" edge with a given conditions (other predicates).
-func HasTransactionWith(preds ...predicate.Transaction) predicate.Account {
+// HasTransactionEntryWith applies the HasEdge predicate on the "transaction_entry" edge with a given conditions (other predicates).
+func HasTransactionEntryWith(preds ...predicate.TransactionEntry) predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
-		step := newTransactionStep()
+		step := newTransactionEntryStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

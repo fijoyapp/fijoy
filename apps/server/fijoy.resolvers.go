@@ -149,10 +149,8 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 	}
 
 	createTransactionInput := ent.CreateTransactionInput{
-		Amount:    input.Amount,
 		Note:      pointer.To("Initial account setup"),
 		ProfileID: userData.ProfileId,
-		AccountID: account.ID,
 	}
 	_, err = r.CreateTransaction(ctx, createTransactionInput)
 	if err != nil {
@@ -169,30 +167,30 @@ func (r *mutationResolver) UpdateAccount(ctx context.Context, id string, input e
 
 // CreateTransaction is the resolver for the createTransaction field.
 func (r *mutationResolver) CreateTransaction(ctx context.Context, input ent.CreateTransactionInput) (*ent.Transaction, error) {
-	client := ent.FromContext(ctx)
-	userData, err := auth.GetAuthDataFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
+	// client := ent.FromContext(ctx)
+	// userData, err := auth.GetAuthDataFromContext(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	//
+	// account, err := client.Account.Query().Where(account.ID(input.AccountID), account.HasProfileWith(profile.ID(userData.ProfileId))).Only(ctx)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("account not found: %w", err)
+	// }
+	//
+	// balance := account.FxRate.Mul(account.Value).Mul(input.Amount)
+	//
+	// transaction, err := client.Transaction.Create().SetInput(input).SetBalance(balance).Save(ctx)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to create transaction: %w", err)
+	// }
+	//
+	// _, err = account.Update().AddAmount(input.Amount).AddBalance(balance).Save(ctx)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to update account balance: %w", err)
+	// }
 
-	account, err := client.Account.Query().Where(account.ID(input.AccountID), account.HasProfileWith(profile.ID(userData.ProfileId))).Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("account not found: %w", err)
-	}
-
-	balance := account.FxRate.Mul(account.Value).Mul(input.Amount)
-
-	transaction, err := client.Transaction.Create().SetInput(input).SetBalance(balance).Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create transaction: %w", err)
-	}
-
-	_, err = account.Update().AddAmount(input.Amount).AddBalance(balance).Save(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to update account balance: %w", err)
-	}
-
-	return transaction, nil
+	return nil, nil
 }
 
 // CreateTransactions is the resolver for the createTransactions field.
