@@ -8,6 +8,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 
@@ -843,6 +844,255 @@ func (t *Transaction) ToEdge(order *TransactionOrder) *TransactionEdge {
 	return &TransactionEdge{
 		Node:   t,
 		Cursor: order.Field.toCursor(t),
+	}
+}
+
+// TransactionEntryEdge is the edge representation of TransactionEntry.
+type TransactionEntryEdge struct {
+	Node   *TransactionEntry `json:"node"`
+	Cursor Cursor            `json:"cursor"`
+}
+
+// TransactionEntryConnection is the connection containing edges to TransactionEntry.
+type TransactionEntryConnection struct {
+	Edges      []*TransactionEntryEdge `json:"edges"`
+	PageInfo   PageInfo                `json:"pageInfo"`
+	TotalCount int                     `json:"totalCount"`
+}
+
+func (c *TransactionEntryConnection) build(nodes []*TransactionEntry, pager *transactionentryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *TransactionEntry
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *TransactionEntry {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *TransactionEntry {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TransactionEntryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TransactionEntryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TransactionEntryPaginateOption enables pagination customization.
+type TransactionEntryPaginateOption func(*transactionentryPager) error
+
+// WithTransactionEntryOrder configures pagination ordering.
+func WithTransactionEntryOrder(order *TransactionEntryOrder) TransactionEntryPaginateOption {
+	if order == nil {
+		order = DefaultTransactionEntryOrder
+	}
+	o := *order
+	return func(pager *transactionentryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultTransactionEntryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithTransactionEntryFilter configures pagination filter.
+func WithTransactionEntryFilter(filter func(*TransactionEntryQuery) (*TransactionEntryQuery, error)) TransactionEntryPaginateOption {
+	return func(pager *transactionentryPager) error {
+		if filter == nil {
+			return errors.New("TransactionEntryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type transactionentryPager struct {
+	reverse bool
+	order   *TransactionEntryOrder
+	filter  func(*TransactionEntryQuery) (*TransactionEntryQuery, error)
+}
+
+func newTransactionEntryPager(opts []TransactionEntryPaginateOption, reverse bool) (*transactionentryPager, error) {
+	pager := &transactionentryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultTransactionEntryOrder
+	}
+	return pager, nil
+}
+
+func (p *transactionentryPager) applyFilter(query *TransactionEntryQuery) (*TransactionEntryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *transactionentryPager) toCursor(te *TransactionEntry) Cursor {
+	return p.order.Field.toCursor(te)
+}
+
+func (p *transactionentryPager) applyCursors(query *TransactionEntryQuery, after, before *Cursor) (*TransactionEntryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultTransactionEntryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *transactionentryPager) applyOrder(query *TransactionEntryQuery) *TransactionEntryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultTransactionEntryOrder.Field {
+		query = query.Order(DefaultTransactionEntryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *transactionentryPager) orderExpr(query *TransactionEntryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTransactionEntryOrder.Field {
+			b.Comma().Ident(DefaultTransactionEntryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to TransactionEntry.
+func (te *TransactionEntryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TransactionEntryPaginateOption,
+) (*TransactionEntryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTransactionEntryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if te, err = pager.applyFilter(te); err != nil {
+		return nil, err
+	}
+	conn := &TransactionEntryConnection{Edges: []*TransactionEntryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := te.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if te, err = pager.applyCursors(te, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		te.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := te.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	te = pager.applyOrder(te)
+	nodes, err := te.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// TransactionEntryOrderField defines the ordering field of TransactionEntry.
+type TransactionEntryOrderField struct {
+	// Value extracts the ordering value from the given TransactionEntry.
+	Value    func(*TransactionEntry) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) transactionentry.OrderOption
+	toCursor func(*TransactionEntry) Cursor
+}
+
+// TransactionEntryOrder defines the ordering of TransactionEntry.
+type TransactionEntryOrder struct {
+	Direction OrderDirection              `json:"direction"`
+	Field     *TransactionEntryOrderField `json:"field"`
+}
+
+// DefaultTransactionEntryOrder is the default ordering of TransactionEntry.
+var DefaultTransactionEntryOrder = &TransactionEntryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TransactionEntryOrderField{
+		Value: func(te *TransactionEntry) (ent.Value, error) {
+			return te.ID, nil
+		},
+		column: transactionentry.FieldID,
+		toTerm: transactionentry.ByID,
+		toCursor: func(te *TransactionEntry) Cursor {
+			return Cursor{ID: te.ID}
+		},
+	},
+}
+
+// ToEdge converts TransactionEntry into TransactionEntryEdge.
+func (te *TransactionEntry) ToEdge(order *TransactionEntryOrder) *TransactionEntryEdge {
+	if order == nil {
+		order = DefaultTransactionEntryOrder
+	}
+	return &TransactionEntryEdge{
+		Node:   te,
+		Cursor: order.Field.toCursor(te),
 	}
 }
 

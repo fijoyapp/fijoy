@@ -14,8 +14,6 @@ const (
 	Label = "transaction"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldAmount holds the string denoting the amount field in the database.
-	FieldAmount = "amount"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
 	// FieldNote holds the string denoting the note field in the database.
@@ -28,8 +26,8 @@ const (
 	FieldUpdatedAt = "updated_at"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
 	EdgeProfile = "profile"
-	// EdgeAccount holds the string denoting the account edge name in mutations.
-	EdgeAccount = "account"
+	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
+	EdgeTransactionEntries = "transaction_entries"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
 	// ProfileTable is the table that holds the profile relation/edge.
@@ -39,19 +37,18 @@ const (
 	ProfileInverseTable = "profiles"
 	// ProfileColumn is the table column denoting the profile relation/edge.
 	ProfileColumn = "profile_transaction"
-	// AccountTable is the table that holds the account relation/edge.
-	AccountTable = "transactions"
-	// AccountInverseTable is the table name for the Account entity.
-	// It exists in this package in order to avoid circular dependency with the "account" package.
-	AccountInverseTable = "accounts"
-	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "account_transaction"
+	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
+	TransactionEntriesTable = "transaction_entries"
+	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
+	TransactionEntriesInverseTable = "transaction_entries"
+	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
+	TransactionEntriesColumn = "transaction_transaction_entries"
 )
 
 // Columns holds all SQL columns for transaction fields.
 var Columns = []string{
 	FieldID,
-	FieldAmount,
 	FieldBalance,
 	FieldNote,
 	FieldDatetime,
@@ -62,7 +59,6 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "transactions"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"account_transaction",
 	"profile_transaction",
 }
 
@@ -100,11 +96,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByAmount orders the results by the amount field.
-func ByAmount(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAmount, opts...).ToFunc()
-}
-
 // ByBalance orders the results by the balance field.
 func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
@@ -137,10 +128,17 @@ func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByAccountField orders the results by account field.
-func ByAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByTransactionEntriesCount orders the results by transaction_entries count.
+func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newTransactionEntriesStep(), opts...)
+	}
+}
+
+// ByTransactionEntries orders the results by transaction_entries terms.
+func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newProfileStep() *sqlgraph.Step {
@@ -150,10 +148,10 @@ func newProfileStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
 	)
 }
-func newAccountStep() *sqlgraph.Step {
+func newTransactionEntriesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
+		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
 	)
 }

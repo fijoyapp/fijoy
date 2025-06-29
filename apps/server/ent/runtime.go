@@ -7,6 +7,7 @@ import (
 	"fijoy/ent/profile"
 	"fijoy/ent/schema"
 	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"time"
 )
@@ -62,21 +63,27 @@ func init() {
 	transactionFields := schema.Transaction{}.Fields()
 	_ = transactionFields
 	// transactionDescDatetime is the schema descriptor for datetime field.
-	transactionDescDatetime := transactionFields[4].Descriptor()
+	transactionDescDatetime := transactionFields[3].Descriptor()
 	// transaction.DefaultDatetime holds the default value on creation for the datetime field.
 	transaction.DefaultDatetime = transactionDescDatetime.Default.(func() time.Time)
 	// transactionDescCreatedAt is the schema descriptor for created_at field.
-	transactionDescCreatedAt := transactionFields[5].Descriptor()
+	transactionDescCreatedAt := transactionFields[4].Descriptor()
 	// transaction.DefaultCreatedAt holds the default value on creation for the created_at field.
 	transaction.DefaultCreatedAt = transactionDescCreatedAt.Default.(func() time.Time)
 	// transactionDescUpdatedAt is the schema descriptor for updated_at field.
-	transactionDescUpdatedAt := transactionFields[6].Descriptor()
+	transactionDescUpdatedAt := transactionFields[5].Descriptor()
 	// transaction.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	transaction.DefaultUpdatedAt = transactionDescUpdatedAt.Default.(func() time.Time)
 	// transactionDescID is the schema descriptor for id field.
 	transactionDescID := transactionFields[0].Descriptor()
 	// transaction.DefaultID holds the default value on creation for the id field.
 	transaction.DefaultID = transactionDescID.Default.(func() string)
+	transactionentryFields := schema.TransactionEntry{}.Fields()
+	_ = transactionentryFields
+	// transactionentryDescID is the schema descriptor for id field.
+	transactionentryDescID := transactionentryFields[0].Descriptor()
+	// transactionentry.DefaultID holds the default value on creation for the id field.
+	transactionentry.DefaultID = transactionentryDescID.Default.(func() string)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.

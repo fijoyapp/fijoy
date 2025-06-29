@@ -7,6 +7,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
@@ -35,6 +36,11 @@ var transactionImplementors = []string{"Transaction", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Transaction) IsNode() {}
+
+var transactionentryImplementors = []string{"TransactionEntry", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*TransactionEntry) IsNode() {}
 
 var userImplementors = []string{"User", "Node"}
 
@@ -127,6 +133,15 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(transaction.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, transactionImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case transactionentry.Table:
+		query := c.TransactionEntry.Query().
+			Where(transactionentry.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, transactionentryImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -258,6 +273,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.Transaction.Query().
 			Where(transaction.IDIn(ids...))
 		query, err := query.CollectFields(ctx, transactionImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case transactionentry.Table:
+		query := c.TransactionEntry.Query().
+			Where(transactionentry.IDIn(ids...))
+		query, err := query.CollectFields(ctx, transactionentryImplementors...)
 		if err != nil {
 			return nil, err
 		}

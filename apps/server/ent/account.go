@@ -54,15 +54,15 @@ type Account struct {
 type AccountEdges struct {
 	// Profile holds the value of the profile edge.
 	Profile *Profile `json:"profile,omitempty"`
-	// Transaction holds the value of the transaction edge.
-	Transaction []*Transaction `json:"transaction,omitempty"`
+	// TransactionEntry holds the value of the transaction_entry edge.
+	TransactionEntry []*TransactionEntry `json:"transaction_entry,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
 	totalCount [2]map[string]int
 
-	namedTransaction map[string][]*Transaction
+	namedTransactionEntry map[string][]*TransactionEntry
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
@@ -76,13 +76,13 @@ func (e AccountEdges) ProfileOrErr() (*Profile, error) {
 	return nil, &NotLoadedError{edge: "profile"}
 }
 
-// TransactionOrErr returns the Transaction value or an error if the edge
+// TransactionEntryOrErr returns the TransactionEntry value or an error if the edge
 // was not loaded in eager-loading.
-func (e AccountEdges) TransactionOrErr() ([]*Transaction, error) {
+func (e AccountEdges) TransactionEntryOrErr() ([]*TransactionEntry, error) {
 	if e.loadedTypes[1] {
-		return e.Transaction, nil
+		return e.TransactionEntry, nil
 	}
-	return nil, &NotLoadedError{edge: "transaction"}
+	return nil, &NotLoadedError{edge: "transaction_entry"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -218,9 +218,9 @@ func (a *Account) QueryProfile() *ProfileQuery {
 	return NewAccountClient(a.config).QueryProfile(a)
 }
 
-// QueryTransaction queries the "transaction" edge of the Account entity.
-func (a *Account) QueryTransaction() *TransactionQuery {
-	return NewAccountClient(a.config).QueryTransaction(a)
+// QueryTransactionEntry queries the "transaction_entry" edge of the Account entity.
+func (a *Account) QueryTransactionEntry() *TransactionEntryQuery {
+	return NewAccountClient(a.config).QueryTransactionEntry(a)
 }
 
 // Update returns a builder for updating this Account.
@@ -285,27 +285,27 @@ func (a *Account) String() string {
 	return builder.String()
 }
 
-// NamedTransaction returns the Transaction named value or an error if the edge was not
+// NamedTransactionEntry returns the TransactionEntry named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (a *Account) NamedTransaction(name string) ([]*Transaction, error) {
-	if a.Edges.namedTransaction == nil {
+func (a *Account) NamedTransactionEntry(name string) ([]*TransactionEntry, error) {
+	if a.Edges.namedTransactionEntry == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := a.Edges.namedTransaction[name]
+	nodes, ok := a.Edges.namedTransactionEntry[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (a *Account) appendNamedTransaction(name string, edges ...*Transaction) {
-	if a.Edges.namedTransaction == nil {
-		a.Edges.namedTransaction = make(map[string][]*Transaction)
+func (a *Account) appendNamedTransactionEntry(name string, edges ...*TransactionEntry) {
+	if a.Edges.namedTransactionEntry == nil {
+		a.Edges.namedTransactionEntry = make(map[string][]*TransactionEntry)
 	}
 	if len(edges) == 0 {
-		a.Edges.namedTransaction[name] = []*Transaction{}
+		a.Edges.namedTransactionEntry[name] = []*TransactionEntry{}
 	} else {
-		a.Edges.namedTransaction[name] = append(a.Edges.namedTransaction[name], edges...)
+		a.Edges.namedTransactionEntry[name] = append(a.Edges.namedTransactionEntry[name], edges...)
 	}
 }
 

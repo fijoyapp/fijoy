@@ -5,9 +5,9 @@ package ent
 import (
 	"context"
 	"errors"
-	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fmt"
 	"time"
 
@@ -21,12 +21,6 @@ type TransactionCreate struct {
 	config
 	mutation *TransactionMutation
 	hooks    []Hook
-}
-
-// SetAmount sets the "amount" field.
-func (tc *TransactionCreate) SetAmount(d decimal.Decimal) *TransactionCreate {
-	tc.mutation.SetAmount(d)
-	return tc
 }
 
 // SetBalance sets the "balance" field.
@@ -116,15 +110,19 @@ func (tc *TransactionCreate) SetProfile(p *Profile) *TransactionCreate {
 	return tc.SetProfileID(p.ID)
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (tc *TransactionCreate) SetAccountID(id string) *TransactionCreate {
-	tc.mutation.SetAccountID(id)
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
+func (tc *TransactionCreate) AddTransactionEntryIDs(ids ...string) *TransactionCreate {
+	tc.mutation.AddTransactionEntryIDs(ids...)
 	return tc
 }
 
-// SetAccount sets the "account" edge to the Account entity.
-func (tc *TransactionCreate) SetAccount(a *Account) *TransactionCreate {
-	return tc.SetAccountID(a.ID)
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (tc *TransactionCreate) AddTransactionEntries(t ...*TransactionEntry) *TransactionCreate {
+	ids := make([]string, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return tc.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
@@ -182,9 +180,6 @@ func (tc *TransactionCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TransactionCreate) check() error {
-	if _, ok := tc.mutation.Amount(); !ok {
-		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Transaction.amount"`)}
-	}
 	if _, ok := tc.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Transaction.balance"`)}
 	}
@@ -199,9 +194,6 @@ func (tc *TransactionCreate) check() error {
 	}
 	if len(tc.mutation.ProfileIDs()) == 0 {
 		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "Transaction.profile"`)}
-	}
-	if len(tc.mutation.AccountIDs()) == 0 {
-		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "Transaction.account"`)}
 	}
 	return nil
 }
@@ -237,10 +229,6 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if id, ok := tc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
-	}
-	if value, ok := tc.mutation.Amount(); ok {
-		_spec.SetField(transaction.FieldAmount, field.TypeFloat64, value)
-		_node.Amount = value
 	}
 	if value, ok := tc.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
@@ -279,21 +267,20 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		_node.profile_transaction = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tc.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := tc.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transaction.AccountTable,
-			Columns: []string{transaction.AccountColumn},
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.TransactionEntriesTable,
+			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.account_transaction = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -18,6 +18,8 @@ type Tx struct {
 	Profile *ProfileClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
+	// TransactionEntry is the client for interacting with the TransactionEntry builders.
+	TransactionEntry *TransactionEntryClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserKey is the client for interacting with the UserKey builders.
@@ -156,6 +158,7 @@ func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
 	tx.Profile = NewProfileClient(tx.config)
 	tx.Transaction = NewTransactionClient(tx.config)
+	tx.TransactionEntry = NewTransactionEntryClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserKey = NewUserKeyClient(tx.config)
 }

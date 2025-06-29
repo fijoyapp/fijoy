@@ -7,6 +7,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 
@@ -46,16 +47,16 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			}
 			aq.withProfile = query
 
-		case "transaction":
+		case "transactionEntry":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&TransactionClient{config: aq.config}).Query()
+				query = (&TransactionEntryClient{config: aq.config}).Query()
 			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionentryImplementors)...); err != nil {
 				return err
 			}
-			aq.WithNamedTransaction(alias, func(wq *TransactionQuery) {
+			aq.WithNamedTransactionEntry(alias, func(wq *TransactionEntryQuery) {
 				*wq = *query
 			})
 		case "name":
@@ -310,21 +311,18 @@ func (tq *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			}
 			tq.withProfile = query
 
-		case "account":
+		case "transactionEntries":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&AccountClient{config: tq.config}).Query()
+				query = (&TransactionEntryClient{config: tq.config}).Query()
 			)
-			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionentryImplementors)...); err != nil {
 				return err
 			}
-			tq.withAccount = query
-		case "amount":
-			if _, ok := fieldSeen[transaction.FieldAmount]; !ok {
-				selectedFields = append(selectedFields, transaction.FieldAmount)
-				fieldSeen[transaction.FieldAmount] = struct{}{}
-			}
+			tq.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+				*wq = *query
+			})
 		case "balance":
 			if _, ok := fieldSeen[transaction.FieldBalance]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldBalance)
@@ -370,6 +368,107 @@ type transactionPaginateArgs struct {
 
 func newTransactionPaginateArgs(rv map[string]any) *transactionPaginateArgs {
 	args := &transactionPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (teq *TransactionEntryQuery) CollectFields(ctx context.Context, satisfies ...string) (*TransactionEntryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return teq, nil
+	}
+	if err := teq.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return teq, nil
+}
+
+func (teq *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(transactionentry.Columns))
+		selectedFields = []string{transactionentry.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "account":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&AccountClient{config: teq.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
+				return err
+			}
+			teq.withAccount = query
+
+		case "transaction":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionClient{config: teq.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
+				return err
+			}
+			teq.withTransaction = query
+		case "amount":
+			if _, ok := fieldSeen[transactionentry.FieldAmount]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldAmount)
+				fieldSeen[transactionentry.FieldAmount] = struct{}{}
+			}
+		case "value":
+			if _, ok := fieldSeen[transactionentry.FieldValue]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldValue)
+				fieldSeen[transactionentry.FieldValue] = struct{}{}
+			}
+		case "fxRate":
+			if _, ok := fieldSeen[transactionentry.FieldFxRate]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldFxRate)
+				fieldSeen[transactionentry.FieldFxRate] = struct{}{}
+			}
+		case "balance":
+			if _, ok := fieldSeen[transactionentry.FieldBalance]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldBalance)
+				fieldSeen[transactionentry.FieldBalance] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		teq.Select(selectedFields...)
+	}
+	return nil
+}
+
+type transactionentryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TransactionEntryPaginateOption
+}
+
+func newTransactionEntryPaginateArgs(rv map[string]any) *transactionentryPaginateArgs {
+	args := &transactionentryPaginateArgs{}
 	if rv == nil {
 		return args
 	}

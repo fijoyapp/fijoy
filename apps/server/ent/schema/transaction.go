@@ -33,21 +33,17 @@ func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").DefaultFunc(func() string { return constants.TransactionPrefix + cuid2.Generate() }),
 
-		field.Float("amount").
-			GoType(decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL:    "decimal(36,18)",
-				dialect.Postgres: "numeric(36,18)",
-			}).
-			Annotations(entgql.Type("String")),
-
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")),
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(entgql.SkipMutationCreateInput),
+				entgql.Skip(entgql.SkipMutationUpdateInput),
+			),
 
 		field.Text("note").Optional(),
 
@@ -68,6 +64,6 @@ func (Transaction) Fields() []ent.Field {
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("profile", Profile.Type).Ref("transaction").Required().Unique(),
-		edge.From("account", Account.Type).Ref("transaction").Required().Unique(),
+		edge.To("transaction_entries", TransactionEntry.Type),
 	}
 }

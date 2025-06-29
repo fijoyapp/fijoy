@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
-	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fmt"
 	"time"
 
@@ -152,19 +152,19 @@ func (ac *AccountCreate) SetProfile(p *Profile) *AccountCreate {
 	return ac.SetProfileID(p.ID)
 }
 
-// AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
-func (ac *AccountCreate) AddTransactionIDs(ids ...string) *AccountCreate {
-	ac.mutation.AddTransactionIDs(ids...)
+// AddTransactionEntryIDs adds the "transaction_entry" edge to the TransactionEntry entity by IDs.
+func (ac *AccountCreate) AddTransactionEntryIDs(ids ...string) *AccountCreate {
+	ac.mutation.AddTransactionEntryIDs(ids...)
 	return ac
 }
 
-// AddTransaction adds the "transaction" edges to the Transaction entity.
-func (ac *AccountCreate) AddTransaction(t ...*Transaction) *AccountCreate {
+// AddTransactionEntry adds the "transaction_entry" edges to the TransactionEntry entity.
+func (ac *AccountCreate) AddTransactionEntry(t ...*TransactionEntry) *AccountCreate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
-	return ac.AddTransactionIDs(ids...)
+	return ac.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -383,15 +383,15 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_node.profile_account = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ac.mutation.TransactionIDs(); len(nodes) > 0 {
+	if nodes := ac.mutation.TransactionEntryIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionTable,
-			Columns: []string{account.TransactionColumn},
+			Table:   account.TransactionEntryTable,
+			Columns: []string{account.TransactionEntryColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

@@ -14,6 +14,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
+	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 
@@ -34,6 +35,8 @@ type Client struct {
 	Profile *ProfileClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
+	// TransactionEntry is the client for interacting with the TransactionEntry builders.
+	TransactionEntry *TransactionEntryClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserKey is the client for interacting with the UserKey builders.
@@ -52,6 +55,7 @@ func (c *Client) init() {
 	c.Account = NewAccountClient(c.config)
 	c.Profile = NewProfileClient(c.config)
 	c.Transaction = NewTransactionClient(c.config)
+	c.TransactionEntry = NewTransactionEntryClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserKey = NewUserKeyClient(c.config)
 }
@@ -144,13 +148,14 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Account:     NewAccountClient(cfg),
-		Profile:     NewProfileClient(cfg),
-		Transaction: NewTransactionClient(cfg),
-		User:        NewUserClient(cfg),
-		UserKey:     NewUserKeyClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		Account:          NewAccountClient(cfg),
+		Profile:          NewProfileClient(cfg),
+		Transaction:      NewTransactionClient(cfg),
+		TransactionEntry: NewTransactionEntryClient(cfg),
+		User:             NewUserClient(cfg),
+		UserKey:          NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -168,13 +173,14 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:         ctx,
-		config:      cfg,
-		Account:     NewAccountClient(cfg),
-		Profile:     NewProfileClient(cfg),
-		Transaction: NewTransactionClient(cfg),
-		User:        NewUserClient(cfg),
-		UserKey:     NewUserKeyClient(cfg),
+		ctx:              ctx,
+		config:           cfg,
+		Account:          NewAccountClient(cfg),
+		Profile:          NewProfileClient(cfg),
+		Transaction:      NewTransactionClient(cfg),
+		TransactionEntry: NewTransactionEntryClient(cfg),
+		User:             NewUserClient(cfg),
+		UserKey:          NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -203,21 +209,21 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.Account.Use(hooks...)
-	c.Profile.Use(hooks...)
-	c.Transaction.Use(hooks...)
-	c.User.Use(hooks...)
-	c.UserKey.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.Account, c.Profile, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.Account.Intercept(interceptors...)
-	c.Profile.Intercept(interceptors...)
-	c.Transaction.Intercept(interceptors...)
-	c.User.Intercept(interceptors...)
-	c.UserKey.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.Account, c.Profile, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -229,6 +235,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Profile.mutate(ctx, m)
 	case *TransactionMutation:
 		return c.Transaction.mutate(ctx, m)
+	case *TransactionEntryMutation:
+		return c.TransactionEntry.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserKeyMutation:
@@ -362,15 +370,15 @@ func (c *AccountClient) QueryProfile(a *Account) *ProfileQuery {
 	return query
 }
 
-// QueryTransaction queries the transaction edge of a Account.
-func (c *AccountClient) QueryTransaction(a *Account) *TransactionQuery {
-	query := (&TransactionClient{config: c.config}).Query()
+// QueryTransactionEntry queries the transaction_entry edge of a Account.
+func (c *AccountClient) QueryTransactionEntry(a *Account) *TransactionEntryQuery {
+	query := (&TransactionEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := a.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, id),
-			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionTable, account.TransactionColumn),
+			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionEntryTable, account.TransactionEntryColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -708,15 +716,15 @@ func (c *TransactionClient) QueryProfile(t *Transaction) *ProfileQuery {
 	return query
 }
 
-// QueryAccount queries the account edge of a Transaction.
-func (c *TransactionClient) QueryAccount(t *Transaction) *AccountQuery {
-	query := (&AccountClient{config: c.config}).Query()
+// QueryTransactionEntries queries the transaction_entries edge of a Transaction.
+func (c *TransactionClient) QueryTransactionEntries(t *Transaction) *TransactionEntryQuery {
+	query := (&TransactionEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := t.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(transaction.Table, transaction.FieldID, id),
-			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, transaction.AccountTable, transaction.AccountColumn),
+			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, transaction.TransactionEntriesTable, transaction.TransactionEntriesColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -746,6 +754,171 @@ func (c *TransactionClient) mutate(ctx context.Context, m *TransactionMutation) 
 		return (&TransactionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Transaction mutation op: %q", m.Op())
+	}
+}
+
+// TransactionEntryClient is a client for the TransactionEntry schema.
+type TransactionEntryClient struct {
+	config
+}
+
+// NewTransactionEntryClient returns a client for the TransactionEntry from the given config.
+func NewTransactionEntryClient(c config) *TransactionEntryClient {
+	return &TransactionEntryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `transactionentry.Hooks(f(g(h())))`.
+func (c *TransactionEntryClient) Use(hooks ...Hook) {
+	c.hooks.TransactionEntry = append(c.hooks.TransactionEntry, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `transactionentry.Intercept(f(g(h())))`.
+func (c *TransactionEntryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TransactionEntry = append(c.inters.TransactionEntry, interceptors...)
+}
+
+// Create returns a builder for creating a TransactionEntry entity.
+func (c *TransactionEntryClient) Create() *TransactionEntryCreate {
+	mutation := newTransactionEntryMutation(c.config, OpCreate)
+	return &TransactionEntryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TransactionEntry entities.
+func (c *TransactionEntryClient) CreateBulk(builders ...*TransactionEntryCreate) *TransactionEntryCreateBulk {
+	return &TransactionEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TransactionEntryClient) MapCreateBulk(slice any, setFunc func(*TransactionEntryCreate, int)) *TransactionEntryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TransactionEntryCreateBulk{err: fmt.Errorf("calling to TransactionEntryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TransactionEntryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TransactionEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TransactionEntry.
+func (c *TransactionEntryClient) Update() *TransactionEntryUpdate {
+	mutation := newTransactionEntryMutation(c.config, OpUpdate)
+	return &TransactionEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TransactionEntryClient) UpdateOne(te *TransactionEntry) *TransactionEntryUpdateOne {
+	mutation := newTransactionEntryMutation(c.config, OpUpdateOne, withTransactionEntry(te))
+	return &TransactionEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TransactionEntryClient) UpdateOneID(id string) *TransactionEntryUpdateOne {
+	mutation := newTransactionEntryMutation(c.config, OpUpdateOne, withTransactionEntryID(id))
+	return &TransactionEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TransactionEntry.
+func (c *TransactionEntryClient) Delete() *TransactionEntryDelete {
+	mutation := newTransactionEntryMutation(c.config, OpDelete)
+	return &TransactionEntryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TransactionEntryClient) DeleteOne(te *TransactionEntry) *TransactionEntryDeleteOne {
+	return c.DeleteOneID(te.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TransactionEntryClient) DeleteOneID(id string) *TransactionEntryDeleteOne {
+	builder := c.Delete().Where(transactionentry.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TransactionEntryDeleteOne{builder}
+}
+
+// Query returns a query builder for TransactionEntry.
+func (c *TransactionEntryClient) Query() *TransactionEntryQuery {
+	return &TransactionEntryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTransactionEntry},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TransactionEntry entity by its id.
+func (c *TransactionEntryClient) Get(ctx context.Context, id string) (*TransactionEntry, error) {
+	return c.Query().Where(transactionentry.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TransactionEntryClient) GetX(ctx context.Context, id string) *TransactionEntry {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a TransactionEntry.
+func (c *TransactionEntryClient) QueryAccount(te *TransactionEntry) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := te.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transactionentry.Table, transactionentry.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.AccountTable, transactionentry.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(te.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransaction queries the transaction edge of a TransactionEntry.
+func (c *TransactionEntryClient) QueryTransaction(te *TransactionEntry) *TransactionQuery {
+	query := (&TransactionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := te.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transactionentry.Table, transactionentry.FieldID, id),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.TransactionTable, transactionentry.TransactionColumn),
+		)
+		fromV = sqlgraph.Neighbors(te.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *TransactionEntryClient) Hooks() []Hook {
+	return c.hooks.TransactionEntry
+}
+
+// Interceptors returns the client interceptors.
+func (c *TransactionEntryClient) Interceptors() []Interceptor {
+	return c.inters.TransactionEntry
+}
+
+func (c *TransactionEntryClient) mutate(ctx context.Context, m *TransactionEntryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TransactionEntryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TransactionEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TransactionEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TransactionEntryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TransactionEntry mutation op: %q", m.Op())
 	}
 }
 
@@ -1066,9 +1239,9 @@ func (c *UserKeyClient) mutate(ctx context.Context, m *UserKeyMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, Profile, Transaction, User, UserKey []ent.Hook
+		Account, Profile, Transaction, TransactionEntry, User, UserKey []ent.Hook
 	}
 	inters struct {
-		Account, Profile, Transaction, User, UserKey []ent.Interceptor
+		Account, Profile, Transaction, TransactionEntry, User, UserKey []ent.Interceptor
 	}
 )
