@@ -39,6 +39,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       ctx.context.environment,
       rootQuery,
       { hasProfile, hasUser },
+      // FIXME: use "store-or-network"
       { fetchPolicy: "store-and-network" },
     );
     return { rootQueryRef };
