@@ -5,6 +5,8 @@ import {
   useReactTable,
   type SortingState,
   getSortedRowModel,
+  getGroupedRowModel,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 import { graphql } from "relay-runtime";
 import type {
@@ -20,12 +22,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFragment } from "react-relay";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useProfile } from "@/hooks/use-profile";
 import { getCurrencyDisplay } from "@/lib/money";
 import invariant from "tiny-invariant";
 import { match } from "ts-pattern";
 import { capitalize } from "lodash";
+import currency from "currency.js";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
@@ -74,6 +77,7 @@ export default function AccountDataTable({
         cell: ({ row }) => {
           return <div>{capitalize(row.original?.accountType)}</div>;
         },
+        enableGrouping: true,
       },
       {
         accessorKey: "currencySymbol",
@@ -85,6 +89,10 @@ export default function AccountDataTable({
           return <div className="text-right">Amount</div>;
         },
         cell: ({ row }) => {
+          if (row.getIsGrouped()) {
+            return null;
+          }
+
           invariant(row.original, "Row original should not be null");
           const money = row.original.amount;
           const currencySymbol = row.original.currencySymbol;
@@ -112,6 +120,30 @@ export default function AccountDataTable({
         },
         sortingFn: "basic",
         cell: ({ row }) => {
+          if (row.getIsGrouped()) {
+            const total = data.accounts.edges
+              ?.filter(
+                (a) => a?.node?.accountType === row.original?.accountType,
+              )
+              .reduce(
+                (c, p) => currency(p?.node?.balance || 0).add(c),
+                currency(0),
+              );
+
+            return (
+              <div className="text-right font-mono">
+                {getCurrencyDisplay(
+                  total?.toString() || "",
+                  profile.currencies.split(",")[0],
+                  profile.locale,
+                  {
+                    compact: false,
+                  },
+                )}
+              </div>
+            );
+          }
+
           invariant(row.original, "Row original should not be null");
           const money = row.original.balance;
           return (
@@ -157,6 +189,9 @@ function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const [grouping, setGrouping] = useState<string[]>(["accountType"]);
+  const [expanded, setExpanded] = useState({});
+
   const table = useReactTable({
     data,
     columns,
@@ -165,7 +200,14 @@ function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
+      expanded,
+      grouping,
     },
+    onGroupingChange: setGrouping,
+    onExpandedChange: setExpanded,
+
+    getGroupedRowModel: getGroupedRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
   });
 
   return (
@@ -174,31 +216,35 @@ function DataTable<TData, TValue>({
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
+              <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {cell.getIsGrouped() ? (
+                      // Render group header with expand/collapse
+                      <button
+                        onClick={() => row.toggleExpanded()}
+                        style={{ fontWeight: "bold" }}
+                      >
+                        {row.getIsExpanded() ? "▼" : "▶"}{" "}
+                        {cell.getValue() as ReactNode} ({row.subRows.length})
+                      </button>
+                    ) : (
+                      flexRender(cell.column.columnDef.cell, cell.getContext())
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
