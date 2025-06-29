@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d459c9b6301c0e97ddfb6779d65426c8>>
+ * @generated SignedSource<<a6077cba9368c9b33f98b6bcab4efd52>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 export type AccountAccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type accountDataTableFragment$data = {
+export type newTransactionFragment$data = {
   readonly accounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -28,18 +28,18 @@ export type accountDataTableFragment$data = {
       readonly hasNextPage: boolean;
     };
   };
-  readonly " $fragmentType": "accountDataTableFragment";
+  readonly " $fragmentType": "newTransactionFragment";
 };
-export type accountDataTableFragment$key = {
-  readonly " $data"?: accountDataTableFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"accountDataTableFragment">;
+export type newTransactionFragment$key = {
+  readonly " $data"?: newTransactionFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"newTransactionFragment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "accountDataTableFragment",
+  "name": "newTransactionFragment",
   "selections": [
     {
       "alias": null,
@@ -150,6 +150,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "f0c4d6eab63909a2b2d1a288fc661268";
+(node as any).hash = "815907c9948b05f79571f65493e43be9";
 
 export default node;

@@ -130,7 +130,6 @@ input CreateTransactionInput {
   createdAt: Time
   updatedAt: Time
   transactionEntryIDs: [ID!]
-  transactionEntries: [CreateTransactionEntryInput!]!
 }
 
 """
@@ -419,14 +418,20 @@ type Currency {
   locale: String!
 }
 
+input CreateTransactionWithTransactionEntriesInput {
+  note: String
+  datetime: Time
+  transactionEntries: [CreateTransactionEntryInput!]!
+}
+
 type Mutation {
   createProfile(input: CreateProfileInput!): Profile!
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
   createAccount(input: CreateAccountInput!): Account!
-  updateAccount(id: ID!, input: UpdateAccountInput!): Account!
-  createTransaction(input: CreateTransactionInput!): Transaction!
-  createTransactions(input: [CreateTransactionInput!]!): [Transaction!]!
-  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
+  createTransactionWithTransactionEntries(
+    input: CreateTransactionWithTransactionEntriesInput!
+  ): Transaction!
+  createTransactionEntry(input: CreateTransactionEntryInput!): TransactionEntry!
 }
 
 schema {

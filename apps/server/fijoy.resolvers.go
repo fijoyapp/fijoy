@@ -16,6 +16,7 @@ import (
 	"fijoy/internal/util/pointer"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -148,10 +149,15 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		return nil, err
 	}
 
-	createTransactionInput := ent.CreateTransactionInput{
+	createTransactionInput := CreateTransactionWithTransactionEntriesInput{
 		Note: pointer.To("Initial account setup"),
+		TransactionEntries: []*ent.CreateTransactionEntryInput{{
+			Amount:    input.Amount,
+			AccountID: account.ID,
+		}},
+		Datetime: &time.Time{},
 	}
-	_, err = r.CreateTransaction(ctx, createTransactionInput)
+	_, err = r.CreateTransactionWithTransactionEntries(ctx, createTransactionInput)
 	if err != nil {
 		return nil, err
 	}
@@ -159,57 +165,74 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 	return account, err
 }
 
-// UpdateAccount is the resolver for the updateAccount field.
-func (r *mutationResolver) UpdateAccount(ctx context.Context, id string, input ent.UpdateAccountInput) (*ent.Account, error) {
-	panic(fmt.Errorf("not implemented: UpdateAccount - updateAccount"))
-}
-
-// CreateTransaction is the resolver for the createTransaction field.
-func (r *mutationResolver) CreateTransaction(ctx context.Context, input ent.CreateTransactionInput) (*ent.Transaction, error) {
-	// client := ent.FromContext(ctx)
-	// userData, err := auth.GetAuthDataFromContext(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// account, err := client.Account.Query().Where(account.ID(input.AccountID), account.HasProfileWith(profile.ID(userData.ProfileId))).Only(ctx)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("account not found: %w", err)
-	// }
-	//
-	// balance := account.FxRate.Mul(account.Value).Mul(input.Amount)
-	//
-	// transaction, err := client.Transaction.Create().SetInput(input).SetBalance(balance).Save(ctx)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to create transaction: %w", err)
-	// }
-	//
-	// _, err = account.Update().AddAmount(input.Amount).AddBalance(balance).Save(ctx)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to update account balance: %w", err)
-	// }
-
-	return nil, nil
-}
-
-// CreateTransactions is the resolver for the createTransactions field.
-func (r *mutationResolver) CreateTransactions(ctx context.Context, input []*ent.CreateTransactionInput) ([]*ent.Transaction, error) {
-	transactions := make([]*ent.Transaction, len(input))
-	for _, transactionInput := range input {
-		transaction, err := r.CreateTransaction(ctx, *transactionInput)
-		if err != nil {
-			return nil, fmt.Errorf("failed to create transaction: %w", err)
-		}
-
-		transactions = append(transactions, transaction)
+// CreateTransactionWithTransactionEntries is the resolver for the createTransactionWithTransactionEntries field.
+func (r *mutationResolver) CreateTransactionWithTransactionEntries(ctx context.Context, input CreateTransactionWithTransactionEntriesInput) (*ent.Transaction, error) {
+	client := ent.FromContext(ctx)
+	userData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	return transactions, nil
+	balance := decimal.NewFromInt(0)
+
+	transaction, err := client.Transaction.Create().SetProfileID(userData.ProfileId).SetBalance(balance).Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction: %w", err)
+	}
+
+	for _, entry := range input.TransactionEntries {
+		input := ent.CreateTransactionEntryInput{
+			TransactionID: transaction.ID,
+			AccountID:     entry.AccountID,
+			Amount:        entry.Amount,
+		}
+		tranasctionEntry, err := r.CreateTransactionEntry(ctx, input)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create transaction entry: %w", err)
+		}
+
+		balance.Add(tranasctionEntry.Balance)
+	}
+
+	transaction, err = transaction.Update().SetBalance(balance).Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update transaction balance: %w", err)
+	}
+
+	return transaction, nil
 }
 
-// UpdateTransaction is the resolver for the updateTransaction field.
-func (r *mutationResolver) UpdateTransaction(ctx context.Context, id string, input ent.UpdateTransactionInput) (*ent.Transaction, error) {
-	panic(fmt.Errorf("not implemented: UpdateTransaction - updateTransaction"))
+// CreateTransactionEntry is the resolver for the createTransactionEntry field.
+func (r *mutationResolver) CreateTransactionEntry(ctx context.Context, input ent.CreateTransactionEntryInput) (*ent.TransactionEntry, error) {
+	client := ent.FromContext(ctx)
+	userData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := client.Account.Query().Where(account.ID(input.AccountID), account.HasProfileWith(profile.ID(userData.ProfileId))).Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("account not found: %w", err)
+	}
+
+	balance := account.FxRate.Mul(account.Value).Mul(input.Amount)
+
+	transactionEntry, err := client.TransactionEntry.Create().
+		SetInput(input).
+		SetValue(account.Value).
+		SetFxRate(account.FxRate).
+		SetBalance(balance).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction: %w", err)
+	}
+
+	_, err = account.Update().AddAmount(input.Amount).AddBalance(balance).Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update account balance: %w", err)
+	}
+
+	return transactionEntry, nil
 }
 
 // User is the resolver for the user field.
@@ -232,11 +255,6 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
 		})
 
 	return currencies, nil
-}
-
-// TransactionEntries is the resolver for the transactionEntries field.
-func (r *createTransactionInputResolver) TransactionEntries(ctx context.Context, obj *ent.CreateTransactionInput, data []*ent.CreateTransactionEntryInput) error {
-	panic(fmt.Errorf("not implemented: TransactionEntries - transactionEntries"))
 }
 
 // Mutation returns MutationResolver implementation.

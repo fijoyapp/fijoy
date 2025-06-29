@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d74ebef8e4ba44c39b98fb2f0a3630f3>>
+ * @generated SignedSource<<cd54bdbfa287e0291afe991bf8d8ea94>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,10 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type CreateTransactionInput = {
-  createdAt?: any | null | undefined;
+export type CreateTransactionWithTransactionEntriesInput = {
   datetime?: any | null | undefined;
   note?: string | null | undefined;
   transactionEntries: ReadonlyArray<CreateTransactionEntryInput>;
-  transactionEntryIDs?: ReadonlyArray<string> | null | undefined;
-  updatedAt?: any | null | undefined;
 };
 export type CreateTransactionEntryInput = {
   accountID: string;
@@ -23,10 +20,10 @@ export type CreateTransactionEntryInput = {
   transactionID: string;
 };
 export type newTransactionMutation$variables = {
-  input: CreateTransactionInput;
+  input: CreateTransactionWithTransactionEntriesInput;
 };
 export type newTransactionMutation$data = {
-  readonly createTransaction: {
+  readonly createTransactionWithTransactionEntries: {
     readonly id: string;
   };
 };
@@ -55,7 +52,7 @@ v1 = [
     ],
     "concreteType": "Transaction",
     "kind": "LinkedField",
-    "name": "createTransaction",
+    "name": "createTransactionWithTransactionEntries",
     "plural": false,
     "selections": [
       {
@@ -87,16 +84,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c0d1ab3df593640e51eed7914413166c",
+    "cacheID": "eaaa78b8049871c18137743171ba53c2",
     "id": null,
     "metadata": {},
     "name": "newTransactionMutation",
     "operationKind": "mutation",
-    "text": "mutation newTransactionMutation(\n  $input: CreateTransactionInput!\n) {\n  createTransaction(input: $input) {\n    id\n  }\n}\n"
+    "text": "mutation newTransactionMutation(\n  $input: CreateTransactionWithTransactionEntriesInput!\n) {\n  createTransactionWithTransactionEntries(input: $input) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "aa1c29246abb05187a6b902822ea183a";
+(node as any).hash = "a1e9cefd77417f370233db8a95d3fe1b";
 
 export default node;

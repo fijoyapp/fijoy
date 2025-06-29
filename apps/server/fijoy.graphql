@@ -9,7 +9,9 @@ type Currency {
   locale: String!
 }
 
-extend input CreateTransactionInput {
+input CreateTransactionWithTransactionEntriesInput {
+  note: String
+  datetime: Time
   transactionEntries: [CreateTransactionEntryInput!]!
 }
 
@@ -18,9 +20,12 @@ type Mutation {
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
 
   createAccount(input: CreateAccountInput!): Account!
-  updateAccount(id: ID!, input: UpdateAccountInput!): Account!
+  # updateAccount(id: ID!, input: UpdateAccountInput!): Account!
 
-  createTransaction(input: CreateTransactionInput!): Transaction!
-  createTransactions(input: [CreateTransactionInput!]!): [Transaction!]!
-  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
+  createTransactionWithTransactionEntries(
+    input: CreateTransactionWithTransactionEntriesInput!
+  ): Transaction!
+  # updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
+
+  createTransactionEntry(input: CreateTransactionEntryInput!): TransactionEntry!
 }
