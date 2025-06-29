@@ -18,9 +18,9 @@ import {
 import { useFragment } from "react-relay";
 import { useMemo, useState } from "react";
 import { useProfile } from "@/hooks/use-profile";
-import { getCurrencyDisplay } from "@/lib/money";
-import invariant from "tiny-invariant";
-import { match } from "ts-pattern";
+// import { getCurrencyDisplay } from "@/lib/money";
+// import invariant from "tiny-invariant";
+// import { match } from "ts-pattern";
 import type {
   transactionDataTableFragment$data,
   transactionDataTableFragment$key,
@@ -32,15 +32,13 @@ const TransactionDataTableFragment = graphql`
       edges {
         node {
           id
-          amount
-          balance
           note
           datetime
-          account {
-            name
-            accountType
-            currencySymbol
-          }
+          # account {
+          #   name
+          #   accountType
+          #   currencySymbol
+          # }
         }
       }
       pageInfo {
@@ -76,63 +74,63 @@ export default function TransactionDataTable({
         accessorKey: "note",
         header: "Note",
       },
-      {
-        id: "account.name",
-        accessorKey: "account.name",
-        header: "Account Name",
-      },
+      // {
+      //   id: "account.name",
+      //   accessorKey: "account.name",
+      //   header: "Account Name",
+      // },
       {
         id: "datetime",
         accessorKey: "datetime",
         header: "Datetime",
       },
-      {
-        accessorKey: "amount",
-        header: "Amount",
-        cell: ({ row }) => {
-          invariant(row.original, "Row original should not be null");
-          const money = row.original.amount;
-          const currencySymbol = row.original.account.currencySymbol;
-          const accountType = row.original.account.accountType;
-
-          return (
-            <div className="">
-              {match(accountType)
-                .with("investment", () => <div>{money} share(s)</div>)
-                .otherwise(() => (
-                  <div className="font-mono">
-                    {getCurrencyDisplay(money, currencySymbol, profile.locale, {
-                      compact: false,
-                    })}
-                  </div>
-                ))}
-            </div>
-          );
-        },
-      },
-      {
-        accessorKey: "balance",
-        header: () => {
-          return <div className="text-right">Balance</div>;
-        },
-        sortingFn: "basic",
-        cell: ({ row }) => {
-          invariant(row.original, "Row original should not be null");
-          const money = row.original.balance;
-          return (
-            <div className="text-right font-mono">
-              {getCurrencyDisplay(
-                money,
-                profile.currencies.split(",")[0],
-                profile.locale,
-                {
-                  compact: false,
-                },
-              )}
-            </div>
-          );
-        },
-      },
+      // {
+      //   accessorKey: "amount",
+      //   header: "Amount",
+      //   cell: ({ row }) => {
+      //     invariant(row.original, "Row original should not be null");
+      //     const money = row.original.amount;
+      //     const currencySymbol = row.original.account.currencySymbol;
+      //     const accountType = row.original.account.accountType;
+      //
+      //     return (
+      //       <div className="">
+      //         {match(accountType)
+      //           .with("investment", () => <div>{money} share(s)</div>)
+      //           .otherwise(() => (
+      //             <div className="font-mono">
+      //               {getCurrencyDisplay(money, currencySymbol, profile.locale, {
+      //                 compact: false,
+      //               })}
+      //             </div>
+      //           ))}
+      //       </div>
+      //     );
+      //   },
+      // },
+      // {
+      //   accessorKey: "balance",
+      //   header: () => {
+      //     return <div className="text-right">Balance</div>;
+      //   },
+      //   sortingFn: "basic",
+      //   cell: ({ row }) => {
+      //     invariant(row.original, "Row original should not be null");
+      //     const money = row.original.balance;
+      //     return (
+      //       <div className="text-right font-mono">
+      //         {getCurrencyDisplay(
+      //           money,
+      //           profile.currencies.split(",")[0],
+      //           profile.locale,
+      //           {
+      //             compact: false,
+      //           },
+      //         )}
+      //       </div>
+      //     );
+      //   },
+      // },
     ],
     [profile],
   );

@@ -145,6 +145,11 @@ func (r *createProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.
 }
 
 // Amount is the resolver for the amount field.
+func (r *createTransactionEntryInputResolver) Amount(ctx context.Context, obj *ent.CreateTransactionEntryInput, data string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// Amount is the resolver for the amount field.
 func (r *updateAccountInputResolver) Amount(ctx context.Context, obj *ent.UpdateAccountInput, data *string) error {
 	if data == nil || *data == "" {
 		return nil
@@ -174,6 +179,11 @@ func (r *updateProfileInputResolver) NetWorthGoal(ctx context.Context, obj *ent.
 	return nil
 }
 
+// Amount is the resolver for the amount field.
+func (r *updateTransactionEntryInputResolver) Amount(ctx context.Context, obj *ent.UpdateTransactionEntryInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
@@ -199,6 +209,16 @@ func (r *Resolver) CreateProfileInput() CreateProfileInputResolver {
 	return &createProfileInputResolver{r}
 }
 
+// CreateTransactionEntryInput returns CreateTransactionEntryInputResolver implementation.
+func (r *Resolver) CreateTransactionEntryInput() CreateTransactionEntryInputResolver {
+	return &createTransactionEntryInputResolver{r}
+}
+
+// CreateTransactionInput returns CreateTransactionInputResolver implementation.
+func (r *Resolver) CreateTransactionInput() CreateTransactionInputResolver {
+	return &createTransactionInputResolver{r}
+}
+
 // UpdateAccountInput returns UpdateAccountInputResolver implementation.
 func (r *Resolver) UpdateAccountInput() UpdateAccountInputResolver {
 	return &updateAccountInputResolver{r}
@@ -209,6 +229,11 @@ func (r *Resolver) UpdateProfileInput() UpdateProfileInputResolver {
 	return &updateProfileInputResolver{r}
 }
 
+// UpdateTransactionEntryInput returns UpdateTransactionEntryInputResolver implementation.
+func (r *Resolver) UpdateTransactionEntryInput() UpdateTransactionEntryInputResolver {
+	return &updateTransactionEntryInputResolver{r}
+}
+
 type accountResolver struct{ *Resolver }
 type profileResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
@@ -216,5 +241,8 @@ type transactionResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
 type createProfileInputResolver struct{ *Resolver }
+type createTransactionEntryInputResolver struct{ *Resolver }
+type createTransactionInputResolver struct{ *Resolver }
 type updateAccountInputResolver struct{ *Resolver }
 type updateProfileInputResolver struct{ *Resolver }
+type updateTransactionEntryInputResolver struct{ *Resolver }

@@ -305,6 +305,58 @@ func (c *TransactionUpdateOne) SetInput(i UpdateTransactionInput) *TransactionUp
 	return c
 }
 
+// CreateTransactionEntryInput represents a mutation input for creating transactionentries.
+type CreateTransactionEntryInput struct {
+	Amount        decimal.Decimal
+	AccountID     string
+	TransactionID string
+}
+
+// Mutate applies the CreateTransactionEntryInput on the TransactionEntryMutation builder.
+func (i *CreateTransactionEntryInput) Mutate(m *TransactionEntryMutation) {
+	m.SetAmount(i.Amount)
+	m.SetAccountID(i.AccountID)
+	m.SetTransactionID(i.TransactionID)
+}
+
+// SetInput applies the change-set in the CreateTransactionEntryInput on the TransactionEntryCreate builder.
+func (c *TransactionEntryCreate) SetInput(i CreateTransactionEntryInput) *TransactionEntryCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTransactionEntryInput represents a mutation input for updating transactionentries.
+type UpdateTransactionEntryInput struct {
+	Amount        *decimal.Decimal
+	AccountID     *string
+	TransactionID *string
+}
+
+// Mutate applies the UpdateTransactionEntryInput on the TransactionEntryMutation builder.
+func (i *UpdateTransactionEntryInput) Mutate(m *TransactionEntryMutation) {
+	if v := i.Amount; v != nil {
+		m.SetAmount(*v)
+	}
+	if v := i.AccountID; v != nil {
+		m.SetAccountID(*v)
+	}
+	if v := i.TransactionID; v != nil {
+		m.SetTransactionID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTransactionEntryInput on the TransactionEntryUpdate builder.
+func (c *TransactionEntryUpdate) SetInput(i UpdateTransactionEntryInput) *TransactionEntryUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTransactionEntryInput on the TransactionEntryUpdateOne builder.
+func (c *TransactionEntryUpdateOne) SetInput(i UpdateTransactionEntryInput) *TransactionEntryUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
 	Email      string
