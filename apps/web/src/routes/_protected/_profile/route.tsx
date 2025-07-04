@@ -108,7 +108,7 @@ function Page() {
             )}
             <div className="grow"></div>
           </header>
-          <main className="mx-4 mb-4 flex-1 overflow-y-auto rounded-lg">
+          <main className="mx-4 mb-4 flex-1 overflow-y-auto rounded-lg p-2">
             <Outlet />
           </main>
         </body>
