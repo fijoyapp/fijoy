@@ -7,6 +7,7 @@ import {
   getSortedRowModel,
   getGroupedRowModel,
   getExpandedRowModel,
+  type ExpandedState,
 } from "@tanstack/react-table";
 import { graphql } from "relay-runtime";
 import type {
@@ -35,7 +36,7 @@ const AccountDataTableFragment = graphql`
     accounts(first: 20) {
       edges {
         node {
-          id
+          id @required(action: THROW)
           name
           accountType
           balance
@@ -68,10 +69,12 @@ export default function AccountDataTable({
   const columns: ColumnDef<Account>[] = useMemo(
     (): ColumnDef<Account>[] => [
       {
+        id: "name",
         accessorKey: "name",
         header: "Name",
       },
       {
+        id: "accountType",
         accessorKey: "accountType",
         header: "Type",
         cell: ({ row }) => {
@@ -80,10 +83,7 @@ export default function AccountDataTable({
         enableGrouping: true,
       },
       {
-        accessorKey: "currencySymbol",
-        header: "Currency",
-      },
-      {
+        id: "amount",
         accessorKey: "amount",
         header: () => {
           return <div className="text-right">Amount</div>;
@@ -114,19 +114,20 @@ export default function AccountDataTable({
         },
       },
       {
+        id: "balance",
         accessorKey: "balance",
         header: () => {
           return <div className="text-right">Balance</div>;
         },
-        sortingFn: "basic",
         cell: ({ row }) => {
           if (row.getIsGrouped()) {
-            const total = data.accounts.edges
+            const total = row
+              .getLeafRows()
               ?.filter(
-                (a) => a?.node?.accountType === row.original?.accountType,
+                (a) => a.original?.accountType === row.original?.accountType,
               )
               .reduce(
-                (c, p) => currency(p?.node?.balance || 0).add(c),
+                (c, p) => currency(p?.original?.balance || 0).add(c),
                 currency(0),
               );
 
@@ -189,8 +190,19 @@ function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const [grouping, setGrouping] = useState<string[]>(["accountType"]);
-  const [expanded, setExpanded] = useState({});
+  const initialGroupFilters = useMemo(
+    () =>
+      columns
+        .filter((column) => {
+          return column.enableGrouping;
+        })
+        .map((column) => column.id!),
+    [columns],
+  );
+
+  const columnOrder = useMemo(() => columns.map((col) => col.id!), [columns]);
+
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
 
   const table = useReactTable({
     data,
@@ -201,9 +213,9 @@ function DataTable<TData, TValue>({
     state: {
       sorting,
       expanded,
-      grouping,
+      grouping: initialGroupFilters,
+      columnOrder,
     },
-    onGroupingChange: setGrouping,
     onExpandedChange: setExpanded,
 
     getGroupedRowModel: getGroupedRowModel(),
@@ -214,41 +226,61 @@ function DataTable<TData, TValue>({
     <div className="rounded-md border">
       <Table>
         <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
+          {table.getHeaderGroups().map((headerGroup) => {
+            const orderedHeaders = columnOrder
+              .map(
+                (id) => headerGroup.headers.find((header) => header.id === id)!,
+              )
+              .filter(Boolean);
+            return (
+              <TableRow key={headerGroup.id}>
+                {orderedHeaders.map((header) => (
+                  <TableHead key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            );
+          })}
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {cell.getIsGrouped() ? (
-                      // Render group header with expand/collapse
-                      <button
-                        onClick={() => row.toggleExpanded()}
-                        style={{ fontWeight: "bold" }}
-                      >
-                        {row.getIsExpanded() ? "▼" : "▶"}{" "}
-                        {cell.getValue() as ReactNode} ({row.subRows.length})
-                      </button>
-                    ) : (
-                      flexRender(cell.column.columnDef.cell, cell.getContext())
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              const orderedCells = row.getIsGrouped()
+                ? row.getVisibleCells()
+                : columnOrder.map(
+                    (id) =>
+                      row
+                        .getVisibleCells()
+                        .find((cell) => cell.column.id === id)!,
+                  );
+              return (
+                <TableRow key={row.id}>
+                  {orderedCells.map((cell) => (
+                    <TableCell key={cell.id}>
+                      {cell.getIsGrouped() ? (
+                        // Render group header with expand/collapse
+                        <button
+                          onClick={() => row.toggleExpanded()}
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {row.getIsExpanded() ? "▼" : "▶"}{" "}
+                          {cell.getValue() as ReactNode} ({row.subRows.length})
+                        </button>
+                      ) : (
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
