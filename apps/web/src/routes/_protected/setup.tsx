@@ -44,7 +44,7 @@ function SetupProfile({ step }: { step: SetupStep }) {
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
 
   return (
-    <div className="container max-w-(--breakpoint-2xl)">
+    <div className="container mx-auto max-w-(--breakpoint-2xl)">
       <PageHeader>
         <PageHeaderHeading className="">Welcome to Fijoy</PageHeaderHeading>
         <PageHeaderDescription>
@@ -74,7 +74,7 @@ function ProfilePicker() {
   invariant(profiles);
 
   return (
-    <div className="container max-w-(--breakpoint-2xl)">
+    <div className="container mx-auto max-w-(--breakpoint-2xl)">
       <PageHeader>
         <PageHeaderHeading className="">Welcome back!</PageHeaderHeading>
         <PageHeaderDescription>
