@@ -1,8 +1,3 @@
-import {
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderHeading,
-} from "@/components/small-header";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import {
@@ -19,16 +14,7 @@ export const Route = createFileRoute("/_protected/_profile/settings/")({
 
 function Page() {
   return (
-    <div className="p-4 lg:p-6">
-      <PageHeader>
-        <PageHeaderHeading>Settings</PageHeaderHeading>
-        <PageHeaderDescription>
-          Configure your Fijoy profile
-        </PageHeaderDescription>
-      </PageHeader>
-
-      <div className="py-2"></div>
-
+    <div className="">
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Link from={Route.fullPath} to={"/settings/general"}>
           <Card className="hover:bg-secondary h-full transition-all">

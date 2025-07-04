@@ -1,8 +1,3 @@
-import {
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderHeading,
-} from "@/components/small-header";
 import { createFileRoute } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import {
@@ -46,16 +41,7 @@ function Page() {
   const [newTransactionSheetOpen, setNewTransactionSheetOpen] = useState(false);
 
   return (
-    <div className="p-4 lg:p-6">
-      <PageHeader>
-        <PageHeaderHeading>Transactions</PageHeaderHeading>
-        <PageHeaderDescription>
-          See all the transactions made to your accounts
-        </PageHeaderDescription>
-      </PageHeader>
-
-      <div className="py-2"></div>
-
+    <div className="">
       <Button onClick={() => setNewTransactionSheetOpen((open) => !open)}>
         New Transaction
       </Button>

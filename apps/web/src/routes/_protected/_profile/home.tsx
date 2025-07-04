@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_protected/_profile/home")({
 
 function HomePage() {
   return (
-    <div className="p-4 lg:p-6">
+    <div className="">
       <div>Welcome to Fijoy! </div>
     </div>
   );

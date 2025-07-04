@@ -25,7 +25,7 @@ import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/_protected/_profile")({
   pendingComponent: CenterLoadingSpinner,
-  errorComponent: ({ error }) => (
+  errorComponent: ({ error }: { error: Error }) => (
     <PageHeader>
       <PageHeaderHeading>Oops!</PageHeaderHeading>
       <PageHeaderDescription>Something went wrong :(</PageHeaderDescription>
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/_protected/_profile")({
       </Button>
       <div className="py-2"></div>
 
-      <div>{(error as Error).toString()}</div>
+      <div>{error.toString()}</div>
     </PageHeader>
   ),
   component: Page,
@@ -108,7 +108,7 @@ function Page() {
             )}
             <div className="grow"></div>
           </header>
-          <main className="bg-secondary mx-4 mb-4 flex-1 overflow-y-auto rounded-lg">
+          <main className="mx-4 mb-4 flex-1 overflow-y-auto rounded-lg">
             <Outlet />
           </main>
         </body>
