@@ -16,7 +16,7 @@ export const Route = createLazyFileRoute("/_public/")({
 
 function Index() {
   return (
-    <div className="container">
+    <div className="container mx-auto">
       <PageHeader>
         <Announcement />
         <PageHeaderHeading className="">

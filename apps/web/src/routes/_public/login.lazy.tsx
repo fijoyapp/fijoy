@@ -11,7 +11,7 @@ export const Route = createLazyFileRoute("/_public/login")({
 
 function Login() {
   return (
-    <div className="container max-w-(--breakpoint-2xl)">
+    <div className="container mx-auto max-w-(--breakpoint-2xl)">
       <div className="py-4"></div>
 
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
