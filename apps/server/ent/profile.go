@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fijoy/ent/profile"
 	"fijoy/ent/user"
 	"fmt"
@@ -26,7 +27,7 @@ type Profile struct {
 	// Locale holds the value of the "locale" field.
 	Locale string `json:"locale,omitempty"`
 	// Currencies holds the value of the "currencies" field.
-	Currencies string `json:"currencies,omitempty"`
+	Currencies []string `json:"currencies,omitempty"`
 	// NetWorthGoal holds the value of the "net_worth_goal" field.
 	NetWorthGoal decimal.Decimal `json:"net_worth_goal,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -88,9 +89,11 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case profile.FieldCurrencies:
+			values[i] = new([]byte)
 		case profile.FieldNetWorthGoal:
 			values[i] = new(decimal.Decimal)
-		case profile.FieldID, profile.FieldLocale, profile.FieldCurrencies:
+		case profile.FieldID, profile.FieldLocale:
 			values[i] = new(sql.NullString)
 		case profile.FieldCreateTime, profile.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -136,10 +139,12 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 				pr.Locale = value.String
 			}
 		case profile.FieldCurrencies:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field currencies", values[i])
-			} else if value.Valid {
-				pr.Currencies = value.String
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &pr.Currencies); err != nil {
+					return fmt.Errorf("unmarshal field currencies: %w", err)
+				}
 			}
 		case profile.FieldNetWorthGoal:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -215,7 +220,7 @@ func (pr *Profile) String() string {
 	builder.WriteString(pr.Locale)
 	builder.WriteString(", ")
 	builder.WriteString("currencies=")
-	builder.WriteString(pr.Currencies)
+	builder.WriteString(fmt.Sprintf("%v", pr.Currencies))
 	builder.WriteString(", ")
 	builder.WriteString("net_worth_goal=")
 	builder.WriteString(fmt.Sprintf("%v", pr.NetWorthGoal))

@@ -39,7 +39,7 @@ func (Profile) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			),
-		field.String("currencies"),
+		field.JSON("currencies", []string{}),
 
 		field.Float("net_worth_goal").
 			GoType(decimal.Decimal{}).

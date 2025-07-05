@@ -15,7 +15,6 @@ import (
 	"fijoy/internal/util/currency"
 	"fijoy/internal/util/pointer"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/samber/lo"
@@ -30,16 +29,17 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 		return nil, err
 	}
 
-	currencies := strings.Split(input.Currencies, ",")
-
-	allExist := lo.EveryBy(currencies, func(code string) bool {
+	allExist := lo.EveryBy(input.Currencies, func(code string) bool {
 		return currency.IsValidCurrency(code)
 	})
 	if !allExist {
 		return nil, fmt.Errorf("invalid currencies: %s", input.Currencies)
 	}
 
-	defaultCurrency := currency.GetPrimaryCurrency(input.Currencies)
+	defaultCurrency, ok := currency.Currencies[input.Currencies[0]]
+	if !ok {
+		return nil, fmt.Errorf("default currency not found: %s", input.Currencies[0])
+	}
 
 	profile, err := client.Profile.Create().
 		SetCurrencies(input.Currencies).
@@ -92,7 +92,10 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		return nil, fmt.Errorf("profile not found: %w", err)
 	}
 
-	primaryCurrency := currency.GetPrimaryCurrency(profile.Currencies)
+	primaryCurrency, ok := currency.Currencies[profile.Currencies[0]]
+	if !ok {
+		return nil, fmt.Errorf("primary currency not found: %s", profile.Currencies[0])
+	}
 
 	var value decimal.Decimal
 	var fxRate decimal.Decimal

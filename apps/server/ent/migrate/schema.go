@@ -46,7 +46,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "locale", Type: field.TypeString},
-		{Name: "currencies", Type: field.TypeString},
+		{Name: "currencies", Type: field.TypeJSON},
 		{Name: "net_worth_goal", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "user_profile", Type: field.TypeString},
 	}

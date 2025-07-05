@@ -59,7 +59,7 @@ func (pc *ProfileCreate) SetLocale(s string) *ProfileCreate {
 }
 
 // SetCurrencies sets the "currencies" field.
-func (pc *ProfileCreate) SetCurrencies(s string) *ProfileCreate {
+func (pc *ProfileCreate) SetCurrencies(s []string) *ProfileCreate {
 	pc.mutation.SetCurrencies(s)
 	return pc
 }
@@ -230,7 +230,7 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_node.Locale = value
 	}
 	if value, ok := pc.mutation.Currencies(); ok {
-		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)
+		_spec.SetField(profile.FieldCurrencies, field.TypeJSON, value)
 		_node.Currencies = value
 	}
 	if value, ok := pc.mutation.NetWorthGoal(); ok {

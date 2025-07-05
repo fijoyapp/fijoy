@@ -81,11 +81,6 @@ func Locale(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldEQ(FieldLocale, v))
 }
 
-// Currencies applies equality check predicate on the "currencies" field. It's identical to CurrenciesEQ.
-func Currencies(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldEQ(FieldCurrencies, v))
-}
-
 // NetWorthGoal applies equality check predicate on the "net_worth_goal" field. It's identical to NetWorthGoalEQ.
 func NetWorthGoal(v decimal.Decimal) predicate.Profile {
 	return predicate.Profile(sql.FieldEQ(FieldNetWorthGoal, v))
@@ -234,71 +229,6 @@ func LocaleEqualFold(v string) predicate.Profile {
 // LocaleContainsFold applies the ContainsFold predicate on the "locale" field.
 func LocaleContainsFold(v string) predicate.Profile {
 	return predicate.Profile(sql.FieldContainsFold(FieldLocale, v))
-}
-
-// CurrenciesEQ applies the EQ predicate on the "currencies" field.
-func CurrenciesEQ(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldEQ(FieldCurrencies, v))
-}
-
-// CurrenciesNEQ applies the NEQ predicate on the "currencies" field.
-func CurrenciesNEQ(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldNEQ(FieldCurrencies, v))
-}
-
-// CurrenciesIn applies the In predicate on the "currencies" field.
-func CurrenciesIn(vs ...string) predicate.Profile {
-	return predicate.Profile(sql.FieldIn(FieldCurrencies, vs...))
-}
-
-// CurrenciesNotIn applies the NotIn predicate on the "currencies" field.
-func CurrenciesNotIn(vs ...string) predicate.Profile {
-	return predicate.Profile(sql.FieldNotIn(FieldCurrencies, vs...))
-}
-
-// CurrenciesGT applies the GT predicate on the "currencies" field.
-func CurrenciesGT(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldGT(FieldCurrencies, v))
-}
-
-// CurrenciesGTE applies the GTE predicate on the "currencies" field.
-func CurrenciesGTE(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldGTE(FieldCurrencies, v))
-}
-
-// CurrenciesLT applies the LT predicate on the "currencies" field.
-func CurrenciesLT(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldLT(FieldCurrencies, v))
-}
-
-// CurrenciesLTE applies the LTE predicate on the "currencies" field.
-func CurrenciesLTE(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldLTE(FieldCurrencies, v))
-}
-
-// CurrenciesContains applies the Contains predicate on the "currencies" field.
-func CurrenciesContains(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldContains(FieldCurrencies, v))
-}
-
-// CurrenciesHasPrefix applies the HasPrefix predicate on the "currencies" field.
-func CurrenciesHasPrefix(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldHasPrefix(FieldCurrencies, v))
-}
-
-// CurrenciesHasSuffix applies the HasSuffix predicate on the "currencies" field.
-func CurrenciesHasSuffix(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldHasSuffix(FieldCurrencies, v))
-}
-
-// CurrenciesEqualFold applies the EqualFold predicate on the "currencies" field.
-func CurrenciesEqualFold(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldEqualFold(FieldCurrencies, v))
-}
-
-// CurrenciesContainsFold applies the ContainsFold predicate on the "currencies" field.
-func CurrenciesContainsFold(v string) predicate.Profile {
-	return predicate.Profile(sql.FieldContainsFold(FieldCurrencies, v))
 }
 
 // NetWorthGoalEQ applies the EQ predicate on the "net_worth_goal" field.

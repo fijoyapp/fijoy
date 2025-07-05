@@ -1283,7 +1283,8 @@ type ProfileMutation struct {
 	create_time        *time.Time
 	update_time        *time.Time
 	locale             *string
-	currencies         *string
+	currencies         *[]string
+	appendcurrencies   []string
 	net_worth_goal     *decimal.Decimal
 	addnet_worth_goal  *decimal.Decimal
 	clearedFields      map[string]struct{}
@@ -1513,12 +1514,13 @@ func (m *ProfileMutation) ResetLocale() {
 }
 
 // SetCurrencies sets the "currencies" field.
-func (m *ProfileMutation) SetCurrencies(s string) {
+func (m *ProfileMutation) SetCurrencies(s []string) {
 	m.currencies = &s
+	m.appendcurrencies = nil
 }
 
 // Currencies returns the value of the "currencies" field in the mutation.
-func (m *ProfileMutation) Currencies() (r string, exists bool) {
+func (m *ProfileMutation) Currencies() (r []string, exists bool) {
 	v := m.currencies
 	if v == nil {
 		return
@@ -1529,7 +1531,7 @@ func (m *ProfileMutation) Currencies() (r string, exists bool) {
 // OldCurrencies returns the old "currencies" field's value of the Profile entity.
 // If the Profile object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ProfileMutation) OldCurrencies(ctx context.Context) (v string, err error) {
+func (m *ProfileMutation) OldCurrencies(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCurrencies is only allowed on UpdateOne operations")
 	}
@@ -1543,9 +1545,23 @@ func (m *ProfileMutation) OldCurrencies(ctx context.Context) (v string, err erro
 	return oldValue.Currencies, nil
 }
 
+// AppendCurrencies adds s to the "currencies" field.
+func (m *ProfileMutation) AppendCurrencies(s []string) {
+	m.appendcurrencies = append(m.appendcurrencies, s...)
+}
+
+// AppendedCurrencies returns the list of values that were appended to the "currencies" field in this mutation.
+func (m *ProfileMutation) AppendedCurrencies() ([]string, bool) {
+	if len(m.appendcurrencies) == 0 {
+		return nil, false
+	}
+	return m.appendcurrencies, true
+}
+
 // ResetCurrencies resets all changes to the "currencies" field.
 func (m *ProfileMutation) ResetCurrencies() {
 	m.currencies = nil
+	m.appendcurrencies = nil
 }
 
 // SetNetWorthGoal sets the "net_worth_goal" field.
@@ -1869,7 +1885,7 @@ func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 		m.SetLocale(v)
 		return nil
 	case profile.FieldCurrencies:
-		v, ok := value.(string)
+		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
