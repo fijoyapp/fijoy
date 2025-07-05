@@ -91,14 +91,6 @@ func (tc *TransactionCreate) SetID(s string) *TransactionCreate {
 	return tc
 }
 
-// SetNillableID sets the "id" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableID(s *string) *TransactionCreate {
-	if s != nil {
-		tc.SetID(*s)
-	}
-	return tc
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
 func (tc *TransactionCreate) SetProfileID(id string) *TransactionCreate {
 	tc.mutation.SetProfileID(id)
@@ -171,10 +163,6 @@ func (tc *TransactionCreate) defaults() {
 	if _, ok := tc.mutation.Datetime(); !ok {
 		v := transaction.DefaultDatetime()
 		tc.mutation.SetDatetime(v)
-	}
-	if _, ok := tc.mutation.ID(); !ok {
-		v := transaction.DefaultID()
-		tc.mutation.SetID(v)
 	}
 }
 

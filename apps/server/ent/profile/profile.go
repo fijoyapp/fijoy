@@ -93,8 +93,6 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
 	UpdateDefaultUpdateTime func() time.Time
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() string
 )
 
 // OrderOption defines the ordering options for the Profile queries.

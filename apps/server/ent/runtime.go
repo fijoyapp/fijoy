@@ -48,10 +48,6 @@ func init() {
 	accountDescArchived := accountFields[10].Descriptor()
 	// account.DefaultArchived holds the default value on creation for the archived field.
 	account.DefaultArchived = accountDescArchived.Default.(bool)
-	// accountDescID is the schema descriptor for id field.
-	accountDescID := accountFields[0].Descriptor()
-	// account.DefaultID holds the default value on creation for the id field.
-	account.DefaultID = accountDescID.Default.(func() string)
 	profileMixin := schema.Profile{}.Mixin()
 	profileMixinFields0 := profileMixin[0].Fields()
 	_ = profileMixinFields0
@@ -67,10 +63,6 @@ func init() {
 	profile.DefaultUpdateTime = profileDescUpdateTime.Default.(func() time.Time)
 	// profile.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	profile.UpdateDefaultUpdateTime = profileDescUpdateTime.UpdateDefault.(func() time.Time)
-	// profileDescID is the schema descriptor for id field.
-	profileDescID := profileFields[0].Descriptor()
-	// profile.DefaultID holds the default value on creation for the id field.
-	profile.DefaultID = profileDescID.Default.(func() string)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transactionMixinFields0 := transactionMixin[0].Fields()
 	_ = transactionMixinFields0
@@ -90,10 +82,6 @@ func init() {
 	transactionDescDatetime := transactionFields[3].Descriptor()
 	// transaction.DefaultDatetime holds the default value on creation for the datetime field.
 	transaction.DefaultDatetime = transactionDescDatetime.Default.(func() time.Time)
-	// transactionDescID is the schema descriptor for id field.
-	transactionDescID := transactionFields[0].Descriptor()
-	// transaction.DefaultID holds the default value on creation for the id field.
-	transaction.DefaultID = transactionDescID.Default.(func() string)
 	transactionentryMixin := schema.TransactionEntry{}.Mixin()
 	transactionentryMixinFields0 := transactionentryMixin[0].Fields()
 	_ = transactionentryMixinFields0
@@ -109,10 +97,6 @@ func init() {
 	transactionentry.DefaultUpdateTime = transactionentryDescUpdateTime.Default.(func() time.Time)
 	// transactionentry.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	transactionentry.UpdateDefaultUpdateTime = transactionentryDescUpdateTime.UpdateDefault.(func() time.Time)
-	// transactionentryDescID is the schema descriptor for id field.
-	transactionentryDescID := transactionentryFields[0].Descriptor()
-	// transactionentry.DefaultID holds the default value on creation for the id field.
-	transactionentry.DefaultID = transactionentryDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
@@ -132,10 +116,6 @@ func init() {
 	userDescEmail := userFields[1].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
-	// userDescID is the schema descriptor for id field.
-	userDescID := userFields[0].Descriptor()
-	// user.DefaultID holds the default value on creation for the id field.
-	user.DefaultID = userDescID.Default.(func() string)
 	userkeyMixin := schema.UserKey{}.Mixin()
 	userkeyMixinFields0 := userkeyMixin[0].Fields()
 	_ = userkeyMixinFields0

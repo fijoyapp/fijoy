@@ -89,14 +89,6 @@ func (tec *TransactionEntryCreate) SetID(s string) *TransactionEntryCreate {
 	return tec
 }
 
-// SetNillableID sets the "id" field if the given value is not nil.
-func (tec *TransactionEntryCreate) SetNillableID(s *string) *TransactionEntryCreate {
-	if s != nil {
-		tec.SetID(*s)
-	}
-	return tec
-}
-
 // SetAccountID sets the "account" edge to the Account entity by ID.
 func (tec *TransactionEntryCreate) SetAccountID(id string) *TransactionEntryCreate {
 	tec.mutation.SetAccountID(id)
@@ -161,10 +153,6 @@ func (tec *TransactionEntryCreate) defaults() {
 	if _, ok := tec.mutation.UpdateTime(); !ok {
 		v := transactionentry.DefaultUpdateTime()
 		tec.mutation.SetUpdateTime(v)
-	}
-	if _, ok := tec.mutation.ID(); !ok {
-		v := transactionentry.DefaultID()
-		tec.mutation.SetID(v)
 	}
 }
 

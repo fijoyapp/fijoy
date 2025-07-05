@@ -133,14 +133,6 @@ func (ac *AccountCreate) SetID(s string) *AccountCreate {
 	return ac
 }
 
-// SetNillableID sets the "id" field if the given value is not nil.
-func (ac *AccountCreate) SetNillableID(s *string) *AccountCreate {
-	if s != nil {
-		ac.SetID(*s)
-	}
-	return ac
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
 func (ac *AccountCreate) SetProfileID(id string) *AccountCreate {
 	ac.mutation.SetProfileID(id)
@@ -213,10 +205,6 @@ func (ac *AccountCreate) defaults() {
 	if _, ok := ac.mutation.Archived(); !ok {
 		v := account.DefaultArchived
 		ac.mutation.SetArchived(v)
-	}
-	if _, ok := ac.mutation.ID(); !ok {
-		v := account.DefaultID()
-		ac.mutation.SetID(v)
 	}
 }
 
