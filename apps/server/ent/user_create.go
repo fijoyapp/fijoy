@@ -62,14 +62,14 @@ func (uc *UserCreate) SetID(s string) *UserCreate {
 	return uc
 }
 
-// AddUserKeyIDs adds the "user_key" edge to the UserKey entity by IDs.
+// AddUserKeyIDs adds the "user_keys" edge to the UserKey entity by IDs.
 func (uc *UserCreate) AddUserKeyIDs(ids ...string) *UserCreate {
 	uc.mutation.AddUserKeyIDs(ids...)
 	return uc
 }
 
-// AddUserKey adds the "user_key" edges to the UserKey entity.
-func (uc *UserCreate) AddUserKey(u ...*UserKey) *UserCreate {
+// AddUserKeys adds the "user_keys" edges to the UserKey entity.
+func (uc *UserCreate) AddUserKeys(u ...*UserKey) *UserCreate {
 	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
@@ -77,14 +77,14 @@ func (uc *UserCreate) AddUserKey(u ...*UserKey) *UserCreate {
 	return uc.AddUserKeyIDs(ids...)
 }
 
-// AddProfileIDs adds the "profile" edge to the Profile entity by IDs.
+// AddProfileIDs adds the "profiles" edge to the Profile entity by IDs.
 func (uc *UserCreate) AddProfileIDs(ids ...string) *UserCreate {
 	uc.mutation.AddProfileIDs(ids...)
 	return uc
 }
 
-// AddProfile adds the "profile" edges to the Profile entity.
-func (uc *UserCreate) AddProfile(p ...*Profile) *UserCreate {
+// AddProfiles adds the "profiles" edges to the Profile entity.
+func (uc *UserCreate) AddProfiles(p ...*Profile) *UserCreate {
 	ids := make([]string, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
@@ -200,12 +200,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
 	}
-	if nodes := uc.mutation.UserKeyIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.UserKeysIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.UserKeyTable,
-			Columns: []string{user.UserKeyColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
@@ -216,12 +216,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.ProfileIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.ProfilesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ProfileTable,
-			Columns: []string{user.ProfileColumn},
+			Table:   user.ProfilesTable,
+			Columns: []string{user.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),

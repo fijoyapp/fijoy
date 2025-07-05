@@ -247,7 +247,7 @@ func (tec *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cr
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.account_transaction_entry = &nodes[0]
+		_node.account_transaction_entries = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tec.mutation.TransactionIDs(); len(nodes) > 0 {

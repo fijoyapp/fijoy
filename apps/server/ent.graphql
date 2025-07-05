@@ -28,7 +28,7 @@ type Account implements Node {
   balance: String!
   archived: Boolean!
   profile: Profile!
-  transactionEntry: [TransactionEntry!]
+  transactionEntries: [TransactionEntry!]
 }
 """
 AccountAccountType is enum for the field account_type
@@ -224,8 +224,8 @@ type Profile implements Node {
   currencies: [String!]!
   netWorthGoal: String!
   user: User!
-  account: [Account!]
-  transaction: [Transaction!]
+  accounts: [Account!]
+  transactions: [Transaction!]
 }
 type Query {
   """
@@ -375,7 +375,7 @@ input UpdateAccountInput {
   archived: Boolean
   addTransactionEntryIDs: [ID!]
   removeTransactionEntryIDs: [ID!]
-  clearTransactionEntry: Boolean
+  clearTransactionEntries: Boolean
 }
 """
 UpdateProfileInput is used for update Profile object.
@@ -388,10 +388,10 @@ input UpdateProfileInput {
   netWorthGoal: String
   addAccountIDs: [ID!]
   removeAccountIDs: [ID!]
-  clearAccount: Boolean
+  clearAccounts: Boolean
   addTransactionIDs: [ID!]
   removeTransactionIDs: [ID!]
-  clearTransaction: Boolean
+  clearTransactions: Boolean
 }
 """
 UpdateTransactionEntryInput is used for update TransactionEntry object.
@@ -424,8 +424,8 @@ type User implements Node {
   createTime: Time!
   updateTime: Time!
   email: String!
-  userKey: [UserKey!]
-  profile: [Profile!]
+  userKeys: [UserKey!]
+  profiles: [Profile!]
 }
 type UserKey implements Node {
   id: ID!

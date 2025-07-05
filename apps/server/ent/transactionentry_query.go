@@ -466,10 +466,10 @@ func (teq *TransactionEntryQuery) loadAccount(ctx context.Context, query *Accoun
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*TransactionEntry)
 	for i := range nodes {
-		if nodes[i].account_transaction_entry == nil {
+		if nodes[i].account_transaction_entries == nil {
 			continue
 		}
-		fk := *nodes[i].account_transaction_entry
+		fk := *nodes[i].account_transaction_entries
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -486,7 +486,7 @@ func (teq *TransactionEntryQuery) loadAccount(ctx context.Context, query *Accoun
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "account_transaction_entry" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "account_transaction_entries" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

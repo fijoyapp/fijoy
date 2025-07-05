@@ -38,7 +38,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
 	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "account_transaction_entry"
+	AccountColumn = "account_transaction_entries"
 	// TransactionTable is the table that holds the transaction relation/edge.
 	TransactionTable = "transaction_entries"
 	// TransactionInverseTable is the table name for the Transaction entity.
@@ -62,7 +62,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "transaction_entries"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"account_transaction_entry",
+	"account_transaction_entries",
 	"transaction_transaction_entries",
 }
 

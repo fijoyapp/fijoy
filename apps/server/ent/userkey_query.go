@@ -423,10 +423,10 @@ func (ukq *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes [
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*UserKey)
 	for i := range nodes {
-		if nodes[i].user_user_key == nil {
+		if nodes[i].user_user_keys == nil {
 			continue
 		}
-		fk := *nodes[i].user_user_key
+		fk := *nodes[i].user_user_keys
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -443,7 +443,7 @@ func (ukq *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes [
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_user_key" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_user_keys" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

@@ -113,7 +113,7 @@ func (Account) Fields() []ent.Field {
 // Edges of the Account.
 func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profile", Profile.Type).Ref("account").
+		edge.From("profile", Profile.Type).Ref("accounts").
 			Unique().
 			Required().
 			Annotations(
@@ -121,6 +121,6 @@ func (Account) Edges() []ent.Edge {
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			),
 
-		edge.To("transaction_entry", TransactionEntry.Type),
+		edge.To("transaction_entries", TransactionEntry.Type),
 	}
 }

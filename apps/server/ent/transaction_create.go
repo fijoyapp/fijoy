@@ -252,7 +252,7 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.profile_transaction = &nodes[0]
+		_node.profile_transactions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := tc.mutation.TransactionEntriesIDs(); len(nodes) > 0 {

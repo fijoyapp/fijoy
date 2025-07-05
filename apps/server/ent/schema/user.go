@@ -38,11 +38,11 @@ func (User) Fields() []ent.Field {
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user_key", UserKey.Type).
+		edge.To("user_keys", UserKey.Type).
 			Annotations(
 				entsql.OnDelete(entsql.Cascade),
 			),
-		edge.To("profile", Profile.Type).
+		edge.To("profiles", Profile.Type).
 			Annotations(
 				entsql.OnDelete(entsql.Cascade),
 			),

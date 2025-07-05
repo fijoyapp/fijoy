@@ -370,15 +370,15 @@ func (c *AccountClient) QueryProfile(a *Account) *ProfileQuery {
 	return query
 }
 
-// QueryTransactionEntry queries the transaction_entry edge of a Account.
-func (c *AccountClient) QueryTransactionEntry(a *Account) *TransactionEntryQuery {
+// QueryTransactionEntries queries the transaction_entries edge of a Account.
+func (c *AccountClient) QueryTransactionEntries(a *Account) *TransactionEntryQuery {
 	query := (&TransactionEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := a.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(account.Table, account.FieldID, id),
 			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionEntryTable, account.TransactionEntryColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionEntriesTable, account.TransactionEntriesColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -535,15 +535,15 @@ func (c *ProfileClient) QueryUser(pr *Profile) *UserQuery {
 	return query
 }
 
-// QueryAccount queries the account edge of a Profile.
-func (c *ProfileClient) QueryAccount(pr *Profile) *AccountQuery {
+// QueryAccounts queries the accounts edge of a Profile.
+func (c *ProfileClient) QueryAccounts(pr *Profile) *AccountQuery {
 	query := (&AccountClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := pr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, profile.AccountTable, profile.AccountColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.AccountsTable, profile.AccountsColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 		return fromV, nil
@@ -551,15 +551,15 @@ func (c *ProfileClient) QueryAccount(pr *Profile) *AccountQuery {
 	return query
 }
 
-// QueryTransaction queries the transaction edge of a Profile.
-func (c *ProfileClient) QueryTransaction(pr *Profile) *TransactionQuery {
+// QueryTransactions queries the transactions edge of a Profile.
+func (c *ProfileClient) QueryTransactions(pr *Profile) *TransactionQuery {
 	query := (&TransactionClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := pr.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionTable, profile.TransactionColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionsTable, profile.TransactionsColumn),
 		)
 		fromV = sqlgraph.Neighbors(pr.driver.Dialect(), step)
 		return fromV, nil
@@ -1030,15 +1030,15 @@ func (c *UserClient) GetX(ctx context.Context, id string) *User {
 	return obj
 }
 
-// QueryUserKey queries the user_key edge of a User.
-func (c *UserClient) QueryUserKey(u *User) *UserKeyQuery {
+// QueryUserKeys queries the user_keys edge of a User.
+func (c *UserClient) QueryUserKeys(u *User) *UserKeyQuery {
 	query := (&UserKeyClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(userkey.Table, userkey.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeyTable, user.UserKeyColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeysTable, user.UserKeysColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
@@ -1046,15 +1046,15 @@ func (c *UserClient) QueryUserKey(u *User) *UserKeyQuery {
 	return query
 }
 
-// QueryProfile queries the profile edge of a User.
-func (c *UserClient) QueryProfile(u *User) *ProfileQuery {
+// QueryProfiles queries the profiles edge of a User.
+func (c *UserClient) QueryProfiles(u *User) *ProfileQuery {
 	query := (&ProfileClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfileTable, user.ProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfilesTable, user.ProfilesColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

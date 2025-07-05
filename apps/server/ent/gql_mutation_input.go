@@ -60,7 +60,7 @@ type UpdateAccountInput struct {
 	InvestmentType            *account.InvestmentType
 	Amount                    *decimal.Decimal
 	Archived                  *bool
-	ClearTransactionEntry     bool
+	ClearTransactionEntries   bool
 	AddTransactionEntryIDs    []string
 	RemoveTransactionEntryIDs []string
 }
@@ -82,8 +82,8 @@ func (i *UpdateAccountInput) Mutate(m *AccountMutation) {
 	if v := i.Archived; v != nil {
 		m.SetArchived(*v)
 	}
-	if i.ClearTransactionEntry {
-		m.ClearTransactionEntry()
+	if i.ClearTransactionEntries {
+		m.ClearTransactionEntries()
 	}
 	if v := i.AddTransactionEntryIDs; len(v) > 0 {
 		m.AddTransactionEntryIDs(v...)
@@ -147,10 +147,10 @@ type UpdateProfileInput struct {
 	Currencies           []string
 	AppendCurrencies     []string
 	NetWorthGoal         *decimal.Decimal
-	ClearAccount         bool
+	ClearAccounts        bool
 	AddAccountIDs        []string
 	RemoveAccountIDs     []string
-	ClearTransaction     bool
+	ClearTransactions    bool
 	AddTransactionIDs    []string
 	RemoveTransactionIDs []string
 }
@@ -169,8 +169,8 @@ func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
 	if v := i.NetWorthGoal; v != nil {
 		m.SetNetWorthGoal(*v)
 	}
-	if i.ClearAccount {
-		m.ClearAccount()
+	if i.ClearAccounts {
+		m.ClearAccounts()
 	}
 	if v := i.AddAccountIDs; len(v) > 0 {
 		m.AddAccountIDs(v...)
@@ -178,8 +178,8 @@ func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
 	if v := i.RemoveAccountIDs; len(v) > 0 {
 		m.RemoveAccountIDs(v...)
 	}
-	if i.ClearTransaction {
-		m.ClearTransaction()
+	if i.ClearTransactions {
+		m.ClearTransactions()
 	}
 	if v := i.AddTransactionIDs; len(v) > 0 {
 		m.AddTransactionIDs(v...)

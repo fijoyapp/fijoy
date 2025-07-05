@@ -26,10 +26,10 @@ const (
 	FieldNetWorthGoal = "net_worth_goal"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeAccount holds the string denoting the account edge name in mutations.
-	EdgeAccount = "account"
-	// EdgeTransaction holds the string denoting the transaction edge name in mutations.
-	EdgeTransaction = "transaction"
+	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
+	EdgeAccounts = "accounts"
+	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
+	EdgeTransactions = "transactions"
 	// Table holds the table name of the profile in the database.
 	Table = "profiles"
 	// UserTable is the table that holds the user relation/edge.
@@ -38,21 +38,21 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_profile"
-	// AccountTable is the table that holds the account relation/edge.
-	AccountTable = "accounts"
-	// AccountInverseTable is the table name for the Account entity.
+	UserColumn = "user_profiles"
+	// AccountsTable is the table that holds the accounts relation/edge.
+	AccountsTable = "accounts"
+	// AccountsInverseTable is the table name for the Account entity.
 	// It exists in this package in order to avoid circular dependency with the "account" package.
-	AccountInverseTable = "accounts"
-	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "profile_account"
-	// TransactionTable is the table that holds the transaction relation/edge.
-	TransactionTable = "transactions"
-	// TransactionInverseTable is the table name for the Transaction entity.
+	AccountsInverseTable = "accounts"
+	// AccountsColumn is the table column denoting the accounts relation/edge.
+	AccountsColumn = "profile_accounts"
+	// TransactionsTable is the table that holds the transactions relation/edge.
+	TransactionsTable = "transactions"
+	// TransactionsInverseTable is the table name for the Transaction entity.
 	// It exists in this package in order to avoid circular dependency with the "transaction" package.
-	TransactionInverseTable = "transactions"
-	// TransactionColumn is the table column denoting the transaction relation/edge.
-	TransactionColumn = "profile_transaction"
+	TransactionsInverseTable = "transactions"
+	// TransactionsColumn is the table column denoting the transactions relation/edge.
+	TransactionsColumn = "profile_transactions"
 )
 
 // Columns holds all SQL columns for profile fields.
@@ -68,7 +68,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "profiles"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"user_profile",
+	"user_profiles",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -130,31 +130,31 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByAccountCount orders the results by account count.
-func ByAccountCount(opts ...sql.OrderTermOption) OrderOption {
+// ByAccountsCount orders the results by accounts count.
+func ByAccountsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAccountStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newAccountsStep(), opts...)
 	}
 }
 
-// ByAccount orders the results by account terms.
-func ByAccount(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByAccounts orders the results by accounts terms.
+func ByAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newAccountsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
-// ByTransactionCount orders the results by transaction count.
-func ByTransactionCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTransactionsCount orders the results by transactions count.
+func ByTransactionsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTransactionStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newTransactionsStep(), opts...)
 	}
 }
 
-// ByTransaction orders the results by transaction terms.
-func ByTransaction(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByTransactions orders the results by transactions terms.
+func ByTransactions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTransactionStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newTransactionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -164,17 +164,17 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
 }
-func newAccountStep() *sqlgraph.Step {
+func newAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, AccountTable, AccountColumn),
+		sqlgraph.To(AccountsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, AccountsTable, AccountsColumn),
 	)
 }
-func newTransactionStep() *sqlgraph.Step {
+func newTransactionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TransactionInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, TransactionTable, TransactionColumn),
+		sqlgraph.To(TransactionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionsTable, TransactionsColumn),
 	)
 }

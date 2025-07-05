@@ -55,18 +55,18 @@ func (Profile) Fields() []ent.Field {
 // Edges of the Profile.
 func (Profile) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("profile").
+		edge.From("user", User.Type).Ref("profiles").
 			Unique().
 			Required().
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			),
-		edge.To("account", Account.Type).
+		edge.To("accounts", Account.Type).
 			Annotations(
 				entsql.OnDelete(entsql.Cascade),
 			),
-		edge.To("transaction", Transaction.Type).
+		edge.To("transactions", Transaction.Type).
 			Annotations(
 				entsql.OnDelete(entsql.Cascade),
 			),

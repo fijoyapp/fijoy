@@ -225,21 +225,21 @@ func EmailContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldEmail, v))
 }
 
-// HasUserKey applies the HasEdge predicate on the "user_key" edge.
-func HasUserKey() predicate.User {
+// HasUserKeys applies the HasEdge predicate on the "user_keys" edge.
+func HasUserKeys() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, UserKeyTable, UserKeyColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, UserKeysTable, UserKeysColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUserKeyWith applies the HasEdge predicate on the "user_key" edge with a given conditions (other predicates).
-func HasUserKeyWith(preds ...predicate.UserKey) predicate.User {
+// HasUserKeysWith applies the HasEdge predicate on the "user_keys" edge with a given conditions (other predicates).
+func HasUserKeysWith(preds ...predicate.UserKey) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newUserKeyStep()
+		step := newUserKeysStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -248,21 +248,21 @@ func HasUserKeyWith(preds ...predicate.UserKey) predicate.User {
 	})
 }
 
-// HasProfile applies the HasEdge predicate on the "profile" edge.
-func HasProfile() predicate.User {
+// HasProfiles applies the HasEdge predicate on the "profiles" edge.
+func HasProfiles() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ProfileTable, ProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, ProfilesTable, ProfilesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasProfileWith applies the HasEdge predicate on the "profile" edge with a given conditions (other predicates).
-func HasProfileWith(preds ...predicate.Profile) predicate.User {
+// HasProfilesWith applies the HasEdge predicate on the "profiles" edge with a given conditions (other predicates).
+func HasProfilesWith(preds ...predicate.Profile) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newProfileStep()
+		step := newProfilesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

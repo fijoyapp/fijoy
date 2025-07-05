@@ -25,7 +25,7 @@ var (
 		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "archived", Type: field.TypeBool, Default: false},
-		{Name: "profile_account", Type: field.TypeString},
+		{Name: "profile_accounts", Type: field.TypeString},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -34,7 +34,7 @@ var (
 		PrimaryKey: []*schema.Column{AccountsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "accounts_profiles_account",
+				Symbol:     "accounts_profiles_accounts",
 				Columns:    []*schema.Column{AccountsColumns[14]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.Cascade,
@@ -49,7 +49,7 @@ var (
 		{Name: "locale", Type: field.TypeString},
 		{Name: "currencies", Type: field.TypeJSON},
 		{Name: "net_worth_goal", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
-		{Name: "user_profile", Type: field.TypeString},
+		{Name: "user_profiles", Type: field.TypeString},
 	}
 	// ProfilesTable holds the schema information for the "profiles" table.
 	ProfilesTable = &schema.Table{
@@ -58,7 +58,7 @@ var (
 		PrimaryKey: []*schema.Column{ProfilesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "profiles_users_profile",
+				Symbol:     "profiles_users_profiles",
 				Columns:    []*schema.Column{ProfilesColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
@@ -73,7 +73,7 @@ var (
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "datetime", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
-		{Name: "profile_transaction", Type: field.TypeString},
+		{Name: "profile_transactions", Type: field.TypeString},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
 	TransactionsTable = &schema.Table{
@@ -82,7 +82,7 @@ var (
 		PrimaryKey: []*schema.Column{TransactionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "transactions_profiles_transaction",
+				Symbol:     "transactions_profiles_transactions",
 				Columns:    []*schema.Column{TransactionsColumns[6]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.Cascade,
@@ -98,7 +98,7 @@ var (
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
-		{Name: "account_transaction_entry", Type: field.TypeString},
+		{Name: "account_transaction_entries", Type: field.TypeString},
 		{Name: "transaction_transaction_entries", Type: field.TypeString},
 	}
 	// TransactionEntriesTable holds the schema information for the "transaction_entries" table.
@@ -108,7 +108,7 @@ var (
 		PrimaryKey: []*schema.Column{TransactionEntriesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "transaction_entries_accounts_transaction_entry",
+				Symbol:     "transaction_entries_accounts_transaction_entries",
 				Columns:    []*schema.Column{TransactionEntriesColumns[7]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.NoAction,
@@ -140,7 +140,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "hashed_password", Type: field.TypeString, Nullable: true},
-		{Name: "user_user_key", Type: field.TypeString},
+		{Name: "user_user_keys", Type: field.TypeString},
 	}
 	// UserKeysTable holds the schema information for the "user_keys" table.
 	UserKeysTable = &schema.Table{
@@ -149,7 +149,7 @@ var (
 		PrimaryKey: []*schema.Column{UserKeysColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_keys_users_user_key",
+				Symbol:     "user_keys_users_user_keys",
 				Columns:    []*schema.Column{UserKeysColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,

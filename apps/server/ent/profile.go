@@ -32,27 +32,27 @@ type Profile struct {
 	NetWorthGoal decimal.Decimal `json:"net_worth_goal,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProfileQuery when eager-loading is set.
-	Edges        ProfileEdges `json:"edges"`
-	user_profile *string
-	selectValues sql.SelectValues
+	Edges         ProfileEdges `json:"edges"`
+	user_profiles *string
+	selectValues  sql.SelectValues
 }
 
 // ProfileEdges holds the relations/edges for other nodes in the graph.
 type ProfileEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
-	// Account holds the value of the account edge.
-	Account []*Account `json:"account,omitempty"`
-	// Transaction holds the value of the transaction edge.
-	Transaction []*Transaction `json:"transaction,omitempty"`
+	// Accounts holds the value of the accounts edge.
+	Accounts []*Account `json:"accounts,omitempty"`
+	// Transactions holds the value of the transactions edge.
+	Transactions []*Transaction `json:"transactions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
 	totalCount [3]map[string]int
 
-	namedAccount     map[string][]*Account
-	namedTransaction map[string][]*Transaction
+	namedAccounts     map[string][]*Account
+	namedTransactions map[string][]*Transaction
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -66,22 +66,22 @@ func (e ProfileEdges) UserOrErr() (*User, error) {
 	return nil, &NotLoadedError{edge: "user"}
 }
 
-// AccountOrErr returns the Account value or an error if the edge
+// AccountsOrErr returns the Accounts value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProfileEdges) AccountOrErr() ([]*Account, error) {
+func (e ProfileEdges) AccountsOrErr() ([]*Account, error) {
 	if e.loadedTypes[1] {
-		return e.Account, nil
+		return e.Accounts, nil
 	}
-	return nil, &NotLoadedError{edge: "account"}
+	return nil, &NotLoadedError{edge: "accounts"}
 }
 
-// TransactionOrErr returns the Transaction value or an error if the edge
+// TransactionsOrErr returns the Transactions value or an error if the edge
 // was not loaded in eager-loading.
-func (e ProfileEdges) TransactionOrErr() ([]*Transaction, error) {
+func (e ProfileEdges) TransactionsOrErr() ([]*Transaction, error) {
 	if e.loadedTypes[2] {
-		return e.Transaction, nil
+		return e.Transactions, nil
 	}
-	return nil, &NotLoadedError{edge: "transaction"}
+	return nil, &NotLoadedError{edge: "transactions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -97,7 +97,7 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case profile.FieldCreateTime, profile.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case profile.ForeignKeys[0]: // user_profile
+		case profile.ForeignKeys[0]: // user_profiles
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -154,10 +154,10 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 			}
 		case profile.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_profile", values[i])
+				return fmt.Errorf("unexpected type %T for field user_profiles", values[i])
 			} else if value.Valid {
-				pr.user_profile = new(string)
-				*pr.user_profile = value.String
+				pr.user_profiles = new(string)
+				*pr.user_profiles = value.String
 			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])
@@ -177,14 +177,14 @@ func (pr *Profile) QueryUser() *UserQuery {
 	return NewProfileClient(pr.config).QueryUser(pr)
 }
 
-// QueryAccount queries the "account" edge of the Profile entity.
-func (pr *Profile) QueryAccount() *AccountQuery {
-	return NewProfileClient(pr.config).QueryAccount(pr)
+// QueryAccounts queries the "accounts" edge of the Profile entity.
+func (pr *Profile) QueryAccounts() *AccountQuery {
+	return NewProfileClient(pr.config).QueryAccounts(pr)
 }
 
-// QueryTransaction queries the "transaction" edge of the Profile entity.
-func (pr *Profile) QueryTransaction() *TransactionQuery {
-	return NewProfileClient(pr.config).QueryTransaction(pr)
+// QueryTransactions queries the "transactions" edge of the Profile entity.
+func (pr *Profile) QueryTransactions() *TransactionQuery {
+	return NewProfileClient(pr.config).QueryTransactions(pr)
 }
 
 // Update returns a builder for updating this Profile.
@@ -228,51 +228,51 @@ func (pr *Profile) String() string {
 	return builder.String()
 }
 
-// NamedAccount returns the Account named value or an error if the edge was not
+// NamedAccounts returns the Accounts named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (pr *Profile) NamedAccount(name string) ([]*Account, error) {
-	if pr.Edges.namedAccount == nil {
+func (pr *Profile) NamedAccounts(name string) ([]*Account, error) {
+	if pr.Edges.namedAccounts == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := pr.Edges.namedAccount[name]
+	nodes, ok := pr.Edges.namedAccounts[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (pr *Profile) appendNamedAccount(name string, edges ...*Account) {
-	if pr.Edges.namedAccount == nil {
-		pr.Edges.namedAccount = make(map[string][]*Account)
+func (pr *Profile) appendNamedAccounts(name string, edges ...*Account) {
+	if pr.Edges.namedAccounts == nil {
+		pr.Edges.namedAccounts = make(map[string][]*Account)
 	}
 	if len(edges) == 0 {
-		pr.Edges.namedAccount[name] = []*Account{}
+		pr.Edges.namedAccounts[name] = []*Account{}
 	} else {
-		pr.Edges.namedAccount[name] = append(pr.Edges.namedAccount[name], edges...)
+		pr.Edges.namedAccounts[name] = append(pr.Edges.namedAccounts[name], edges...)
 	}
 }
 
-// NamedTransaction returns the Transaction named value or an error if the edge was not
+// NamedTransactions returns the Transactions named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (pr *Profile) NamedTransaction(name string) ([]*Transaction, error) {
-	if pr.Edges.namedTransaction == nil {
+func (pr *Profile) NamedTransactions(name string) ([]*Transaction, error) {
+	if pr.Edges.namedTransactions == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := pr.Edges.namedTransaction[name]
+	nodes, ok := pr.Edges.namedTransactions[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (pr *Profile) appendNamedTransaction(name string, edges ...*Transaction) {
-	if pr.Edges.namedTransaction == nil {
-		pr.Edges.namedTransaction = make(map[string][]*Transaction)
+func (pr *Profile) appendNamedTransactions(name string, edges ...*Transaction) {
+	if pr.Edges.namedTransactions == nil {
+		pr.Edges.namedTransactions = make(map[string][]*Transaction)
 	}
 	if len(edges) == 0 {
-		pr.Edges.namedTransaction[name] = []*Transaction{}
+		pr.Edges.namedTransactions[name] = []*Transaction{}
 	} else {
-		pr.Edges.namedTransaction[name] = append(pr.Edges.namedTransaction[name], edges...)
+		pr.Edges.namedTransactions[name] = append(pr.Edges.namedTransactions[name], edges...)
 	}
 }
 

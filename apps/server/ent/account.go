@@ -47,24 +47,24 @@ type Account struct {
 	Archived bool `json:"archived,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
-	Edges           AccountEdges `json:"edges"`
-	profile_account *string
-	selectValues    sql.SelectValues
+	Edges            AccountEdges `json:"edges"`
+	profile_accounts *string
+	selectValues     sql.SelectValues
 }
 
 // AccountEdges holds the relations/edges for other nodes in the graph.
 type AccountEdges struct {
 	// Profile holds the value of the profile edge.
 	Profile *Profile `json:"profile,omitempty"`
-	// TransactionEntry holds the value of the transaction_entry edge.
-	TransactionEntry []*TransactionEntry `json:"transaction_entry,omitempty"`
+	// TransactionEntries holds the value of the transaction_entries edge.
+	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
 	totalCount [2]map[string]int
 
-	namedTransactionEntry map[string][]*TransactionEntry
+	namedTransactionEntries map[string][]*TransactionEntry
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
@@ -78,13 +78,13 @@ func (e AccountEdges) ProfileOrErr() (*Profile, error) {
 	return nil, &NotLoadedError{edge: "profile"}
 }
 
-// TransactionEntryOrErr returns the TransactionEntry value or an error if the edge
+// TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
 // was not loaded in eager-loading.
-func (e AccountEdges) TransactionEntryOrErr() ([]*TransactionEntry, error) {
+func (e AccountEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
 	if e.loadedTypes[1] {
-		return e.TransactionEntry, nil
+		return e.TransactionEntries, nil
 	}
-	return nil, &NotLoadedError{edge: "transaction_entry"}
+	return nil, &NotLoadedError{edge: "transaction_entries"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -100,7 +100,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case account.FieldCreateTime, account.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case account.ForeignKeys[0]: // profile_account
+		case account.ForeignKeys[0]: // profile_accounts
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -203,10 +203,10 @@ func (a *Account) assignValues(columns []string, values []any) error {
 			}
 		case account.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field profile_account", values[i])
+				return fmt.Errorf("unexpected type %T for field profile_accounts", values[i])
 			} else if value.Valid {
-				a.profile_account = new(string)
-				*a.profile_account = value.String
+				a.profile_accounts = new(string)
+				*a.profile_accounts = value.String
 			}
 		default:
 			a.selectValues.Set(columns[i], values[i])
@@ -226,9 +226,9 @@ func (a *Account) QueryProfile() *ProfileQuery {
 	return NewAccountClient(a.config).QueryProfile(a)
 }
 
-// QueryTransactionEntry queries the "transaction_entry" edge of the Account entity.
-func (a *Account) QueryTransactionEntry() *TransactionEntryQuery {
-	return NewAccountClient(a.config).QueryTransactionEntry(a)
+// QueryTransactionEntries queries the "transaction_entries" edge of the Account entity.
+func (a *Account) QueryTransactionEntries() *TransactionEntryQuery {
+	return NewAccountClient(a.config).QueryTransactionEntries(a)
 }
 
 // Update returns a builder for updating this Account.
@@ -296,27 +296,27 @@ func (a *Account) String() string {
 	return builder.String()
 }
 
-// NamedTransactionEntry returns the TransactionEntry named value or an error if the edge was not
+// NamedTransactionEntries returns the TransactionEntries named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (a *Account) NamedTransactionEntry(name string) ([]*TransactionEntry, error) {
-	if a.Edges.namedTransactionEntry == nil {
+func (a *Account) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
+	if a.Edges.namedTransactionEntries == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := a.Edges.namedTransactionEntry[name]
+	nodes, ok := a.Edges.namedTransactionEntries[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (a *Account) appendNamedTransactionEntry(name string, edges ...*TransactionEntry) {
-	if a.Edges.namedTransactionEntry == nil {
-		a.Edges.namedTransactionEntry = make(map[string][]*TransactionEntry)
+func (a *Account) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
+	if a.Edges.namedTransactionEntries == nil {
+		a.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
 	}
 	if len(edges) == 0 {
-		a.Edges.namedTransactionEntry[name] = []*TransactionEntry{}
+		a.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
 	} else {
-		a.Edges.namedTransactionEntry[name] = append(a.Edges.namedTransactionEntry[name], edges...)
+		a.Edges.namedTransactionEntries[name] = append(a.Edges.namedTransactionEntries[name], edges...)
 	}
 }
 
