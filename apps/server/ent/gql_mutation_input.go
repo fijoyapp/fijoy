@@ -15,6 +15,7 @@ type CreateAccountInput struct {
 	UpdateTime          *time.Time
 	Name                string
 	AccountType         account.AccountType
+	InvestmentType      account.InvestmentType
 	CurrencySymbol      string
 	Ticker              string
 	TickerType          account.TickerType
@@ -33,6 +34,7 @@ func (i *CreateAccountInput) Mutate(m *AccountMutation) {
 	}
 	m.SetName(i.Name)
 	m.SetAccountType(i.AccountType)
+	m.SetInvestmentType(i.InvestmentType)
 	m.SetCurrencySymbol(i.CurrencySymbol)
 	m.SetTicker(i.Ticker)
 	m.SetTickerType(i.TickerType)
@@ -55,6 +57,7 @@ func (c *AccountCreate) SetInput(i CreateAccountInput) *AccountCreate {
 type UpdateAccountInput struct {
 	UpdateTime                *time.Time
 	Name                      *string
+	InvestmentType            *account.InvestmentType
 	Amount                    *decimal.Decimal
 	Archived                  *bool
 	ClearTransactionEntry     bool
@@ -69,6 +72,9 @@ func (i *UpdateAccountInput) Mutate(m *AccountMutation) {
 	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
+	}
+	if v := i.InvestmentType; v != nil {
+		m.SetInvestmentType(*v)
 	}
 	if v := i.Amount; v != nil {
 		m.SetAmount(*v)

@@ -27,6 +27,8 @@ type Account struct {
 	Name string `json:"name,omitempty"`
 	// AccountType holds the value of the "account_type" field.
 	AccountType account.AccountType `json:"account_type,omitempty"`
+	// InvestmentType holds the value of the "investment_type" field.
+	InvestmentType account.InvestmentType `json:"investment_type,omitempty"`
 	// CurrencySymbol holds the value of the "currency_symbol" field.
 	CurrencySymbol string `json:"currency_symbol,omitempty"`
 	// Ticker holds the value of the "ticker" field.
@@ -94,7 +96,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case account.FieldArchived:
 			values[i] = new(sql.NullBool)
-		case account.FieldID, account.FieldName, account.FieldAccountType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
+		case account.FieldID, account.FieldName, account.FieldAccountType, account.FieldInvestmentType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
 			values[i] = new(sql.NullString)
 		case account.FieldCreateTime, account.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -144,6 +146,12 @@ func (a *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field account_type", values[i])
 			} else if value.Valid {
 				a.AccountType = account.AccountType(value.String)
+			}
+		case account.FieldInvestmentType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field investment_type", values[i])
+			} else if value.Valid {
+				a.InvestmentType = account.InvestmentType(value.String)
 			}
 		case account.FieldCurrencySymbol:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -257,6 +265,9 @@ func (a *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("account_type=")
 	builder.WriteString(fmt.Sprintf("%v", a.AccountType))
+	builder.WriteString(", ")
+	builder.WriteString("investment_type=")
+	builder.WriteString(fmt.Sprintf("%v", a.InvestmentType))
 	builder.WriteString(", ")
 	builder.WriteString("currency_symbol=")
 	builder.WriteString(a.CurrencySymbol)

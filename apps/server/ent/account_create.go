@@ -63,6 +63,12 @@ func (ac *AccountCreate) SetAccountType(at account.AccountType) *AccountCreate {
 	return ac
 }
 
+// SetInvestmentType sets the "investment_type" field.
+func (ac *AccountCreate) SetInvestmentType(at account.InvestmentType) *AccountCreate {
+	ac.mutation.SetInvestmentType(at)
+	return ac
+}
+
 // SetCurrencySymbol sets the "currency_symbol" field.
 func (ac *AccountCreate) SetCurrencySymbol(s string) *AccountCreate {
 	ac.mutation.SetCurrencySymbol(s)
@@ -224,6 +230,14 @@ func (ac *AccountCreate) check() error {
 			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "Account.account_type": %w`, err)}
 		}
 	}
+	if _, ok := ac.mutation.InvestmentType(); !ok {
+		return &ValidationError{Name: "investment_type", err: errors.New(`ent: missing required field "Account.investment_type"`)}
+	}
+	if v, ok := ac.mutation.InvestmentType(); ok {
+		if err := account.InvestmentTypeValidator(v); err != nil {
+			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
+		}
+	}
 	if _, ok := ac.mutation.CurrencySymbol(); !ok {
 		return &ValidationError{Name: "currency_symbol", err: errors.New(`ent: missing required field "Account.currency_symbol"`)}
 	}
@@ -316,6 +330,10 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 		_node.AccountType = value
+	}
+	if value, ok := ac.mutation.InvestmentType(); ok {
+		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
+		_node.InvestmentType = value
 	}
 	if value, ok := ac.mutation.CurrencySymbol(); ok {
 		_spec.SetField(account.FieldCurrencySymbol, field.TypeString, value)

@@ -281,6 +281,26 @@ func AccountTypeNotIn(vs ...AccountType) predicate.Account {
 	return predicate.Account(sql.FieldNotIn(FieldAccountType, vs...))
 }
 
+// InvestmentTypeEQ applies the EQ predicate on the "investment_type" field.
+func InvestmentTypeEQ(v InvestmentType) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldInvestmentType, v))
+}
+
+// InvestmentTypeNEQ applies the NEQ predicate on the "investment_type" field.
+func InvestmentTypeNEQ(v InvestmentType) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldInvestmentType, v))
+}
+
+// InvestmentTypeIn applies the In predicate on the "investment_type" field.
+func InvestmentTypeIn(vs ...InvestmentType) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldInvestmentType, vs...))
+}
+
+// InvestmentTypeNotIn applies the NotIn predicate on the "investment_type" field.
+func InvestmentTypeNotIn(vs ...InvestmentType) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldInvestmentType, vs...))
+}
+
 // CurrencySymbolEQ applies the EQ predicate on the "currency_symbol" field.
 func CurrencySymbolEQ(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldCurrencySymbol, v))

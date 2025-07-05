@@ -69,6 +69,7 @@ type ComplexityRoot struct {
 		CurrencySymbol   func(childComplexity int) int
 		FxRate           func(childComplexity int) int
 		ID               func(childComplexity int) int
+		InvestmentType   func(childComplexity int) int
 		Name             func(childComplexity int) int
 		Profile          func(childComplexity int) int
 		Ticker           func(childComplexity int) int
@@ -311,6 +312,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Account.ID(childComplexity), true
+
+	case "Account.investmentType":
+		if e.complexity.Account.InvestmentType == nil {
+			break
+		}
+
+		return e.complexity.Account.InvestmentType(childComplexity), true
 
 	case "Account.name":
 		if e.complexity.Account.Name == nil {
@@ -1778,6 +1786,50 @@ func (ec *executionContext) fieldContext_Account_accountType(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Account_investmentType(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_investmentType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InvestmentType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(account.InvestmentType)
+	fc.Result = res
+	return ec.marshalNAccountInvestmentType2fijoyᚋentᚋaccountᚐInvestmentType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Account_investmentType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type AccountInvestmentType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Account_currencySymbol(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Account_currencySymbol(ctx, field)
 	if err != nil {
@@ -2446,6 +2498,8 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
+			case "investmentType":
+				return ec.fieldContext_Account_investmentType(ctx, field)
 			case "currencySymbol":
 				return ec.fieldContext_Account_currencySymbol(ctx, field)
 			case "ticker":
@@ -2804,6 +2858,8 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
+			case "investmentType":
+				return ec.fieldContext_Account_investmentType(ctx, field)
 			case "currencySymbol":
 				return ec.fieldContext_Account_currencySymbol(ctx, field)
 			case "ticker":
@@ -3528,6 +3584,8 @@ func (ec *executionContext) fieldContext_Profile_account(_ context.Context, fiel
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
+			case "investmentType":
+				return ec.fieldContext_Account_investmentType(ctx, field)
 			case "currencySymbol":
 				return ec.fieldContext_Account_currencySymbol(ctx, field)
 			case "ticker":
@@ -5141,6 +5199,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_name(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
+			case "investmentType":
+				return ec.fieldContext_Account_investmentType(ctx, field)
 			case "currencySymbol":
 				return ec.fieldContext_Account_currencySymbol(ctx, field)
 			case "ticker":
@@ -7709,7 +7769,7 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "accountType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "transactionEntryIDs"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "accountType", "investmentType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "transactionEntryIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7744,6 +7804,13 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.AccountType = data
+		case "investmentType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("investmentType"))
+			data, err := ec.unmarshalNAccountInvestmentType2fijoyᚋentᚋaccountᚐInvestmentType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InvestmentType = data
 		case "currencySymbol":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencySymbol"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -8121,7 +8188,7 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "name", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntry"}
+	fieldsInOrder := [...]string{"updateTime", "name", "investmentType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntry"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8142,6 +8209,13 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.Name = data
+		case "investmentType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("investmentType"))
+			data, err := ec.unmarshalOAccountInvestmentType2ᚖfijoyᚋentᚋaccountᚐInvestmentType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InvestmentType = data
 		case "amount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -8476,6 +8550,11 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "accountType":
 			out.Values[i] = ec._Account_accountType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "investmentType":
+			out.Values[i] = ec._Account_investmentType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -10482,6 +10561,16 @@ func (ec *executionContext) marshalNAccountConnection2ᚖfijoyᚋentᚐAccountCo
 	return ec._AccountConnection(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNAccountInvestmentType2fijoyᚋentᚋaccountᚐInvestmentType(ctx context.Context, v any) (account.InvestmentType, error) {
+	var res account.InvestmentType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNAccountInvestmentType2fijoyᚋentᚋaccountᚐInvestmentType(ctx context.Context, sel ast.SelectionSet, v account.InvestmentType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNAccountTickerType2fijoyᚋentᚋaccountᚐTickerType(ctx context.Context, v any) (account.TickerType, error) {
 	var res account.TickerType
 	err := res.UnmarshalGQL(v)
@@ -11260,6 +11349,22 @@ func (ec *executionContext) marshalOAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx
 		return graphql.Null
 	}
 	return ec._AccountEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOAccountInvestmentType2ᚖfijoyᚋentᚋaccountᚐInvestmentType(ctx context.Context, v any) (*account.InvestmentType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(account.InvestmentType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOAccountInvestmentType2ᚖfijoyᚋentᚋaccountᚐInvestmentType(ctx context.Context, sel ast.SelectionSet, v *account.InvestmentType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (bool, error) {

@@ -48,6 +48,7 @@ type AccountMutation struct {
 	update_time              *time.Time
 	name                     *string
 	account_type             *account.AccountType
+	investment_type          *account.InvestmentType
 	currency_symbol          *string
 	ticker                   *string
 	ticker_type              *account.TickerType
@@ -317,6 +318,42 @@ func (m *AccountMutation) OldAccountType(ctx context.Context) (v account.Account
 // ResetAccountType resets all changes to the "account_type" field.
 func (m *AccountMutation) ResetAccountType() {
 	m.account_type = nil
+}
+
+// SetInvestmentType sets the "investment_type" field.
+func (m *AccountMutation) SetInvestmentType(at account.InvestmentType) {
+	m.investment_type = &at
+}
+
+// InvestmentType returns the value of the "investment_type" field in the mutation.
+func (m *AccountMutation) InvestmentType() (r account.InvestmentType, exists bool) {
+	v := m.investment_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInvestmentType returns the old "investment_type" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldInvestmentType(ctx context.Context) (v account.InvestmentType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInvestmentType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInvestmentType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInvestmentType: %w", err)
+	}
+	return oldValue.InvestmentType, nil
+}
+
+// ResetInvestmentType resets all changes to the "investment_type" field.
+func (m *AccountMutation) ResetInvestmentType() {
+	m.investment_type = nil
 }
 
 // SetCurrencySymbol sets the "currency_symbol" field.
@@ -814,7 +851,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.create_time != nil {
 		fields = append(fields, account.FieldCreateTime)
 	}
@@ -826,6 +863,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.account_type != nil {
 		fields = append(fields, account.FieldAccountType)
+	}
+	if m.investment_type != nil {
+		fields = append(fields, account.FieldInvestmentType)
 	}
 	if m.currency_symbol != nil {
 		fields = append(fields, account.FieldCurrencySymbol)
@@ -867,6 +907,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case account.FieldAccountType:
 		return m.AccountType()
+	case account.FieldInvestmentType:
+		return m.InvestmentType()
 	case account.FieldCurrencySymbol:
 		return m.CurrencySymbol()
 	case account.FieldTicker:
@@ -900,6 +942,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case account.FieldAccountType:
 		return m.OldAccountType(ctx)
+	case account.FieldInvestmentType:
+		return m.OldInvestmentType(ctx)
 	case account.FieldCurrencySymbol:
 		return m.OldCurrencySymbol(ctx)
 	case account.FieldTicker:
@@ -952,6 +996,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAccountType(v)
+		return nil
+	case account.FieldInvestmentType:
+		v, ok := value.(account.InvestmentType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInvestmentType(v)
 		return nil
 	case account.FieldCurrencySymbol:
 		v, ok := value.(string)
@@ -1120,6 +1171,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldAccountType:
 		m.ResetAccountType()
+		return nil
+	case account.FieldInvestmentType:
+		m.ResetInvestmentType()
 		return nil
 	case account.FieldCurrencySymbol:
 		m.ResetCurrencySymbol()
