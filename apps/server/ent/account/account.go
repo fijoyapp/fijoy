@@ -25,6 +25,8 @@ const (
 	FieldName = "name"
 	// FieldAccountType holds the string denoting the account_type field in the database.
 	FieldAccountType = "account_type"
+	// FieldInvestmentType holds the string denoting the investment_type field in the database.
+	FieldInvestmentType = "investment_type"
 	// FieldCurrencySymbol holds the string denoting the currency_symbol field in the database.
 	FieldCurrencySymbol = "currency_symbol"
 	// FieldTicker holds the string denoting the ticker field in the database.
@@ -70,6 +72,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldAccountType,
+	FieldInvestmentType,
 	FieldCurrencySymbol,
 	FieldTicker,
 	FieldTickerType,
@@ -144,6 +147,32 @@ func AccountTypeValidator(at AccountType) error {
 	}
 }
 
+// InvestmentType defines the type for the "investment_type" enum field.
+type InvestmentType string
+
+// InvestmentType values.
+const (
+	InvestmentTypeNonInvestment InvestmentType = "non_investment"
+	InvestmentTypeTaxable       InvestmentType = "taxable"
+	InvestmentTypeRrsp          InvestmentType = "rrsp"
+	InvestmentTypeTfsa          InvestmentType = "tfsa"
+	InvestmentTypeFhsa          InvestmentType = "fhsa"
+)
+
+func (it InvestmentType) String() string {
+	return string(it)
+}
+
+// InvestmentTypeValidator is a validator for the "investment_type" field enum values. It is called by the builders before save.
+func InvestmentTypeValidator(it InvestmentType) error {
+	switch it {
+	case InvestmentTypeNonInvestment, InvestmentTypeTaxable, InvestmentTypeRrsp, InvestmentTypeTfsa, InvestmentTypeFhsa:
+		return nil
+	default:
+		return fmt.Errorf("account: invalid enum value for investment_type field: %q", it)
+	}
+}
+
 // TickerType defines the type for the "ticker_type" enum field.
 type TickerType string
 
@@ -194,6 +223,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByAccountType orders the results by the account_type field.
 func ByAccountType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAccountType, opts...).ToFunc()
+}
+
+// ByInvestmentType orders the results by the investment_type field.
+func ByInvestmentType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInvestmentType, opts...).ToFunc()
 }
 
 // ByCurrencySymbol orders the results by the currency_symbol field.
@@ -285,6 +319,24 @@ func (e *AccountType) UnmarshalGQL(val interface{}) error {
 	*e = AccountType(str)
 	if err := AccountTypeValidator(*e); err != nil {
 		return fmt.Errorf("%s is not a valid AccountType", str)
+	}
+	return nil
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e InvestmentType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *InvestmentType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = InvestmentType(str)
+	if err := InvestmentTypeValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid InvestmentType", str)
 	}
 	return nil
 }

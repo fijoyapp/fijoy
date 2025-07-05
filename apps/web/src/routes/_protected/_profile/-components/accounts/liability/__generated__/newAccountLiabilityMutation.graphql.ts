@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9f5f089f1a13551dc734d1428e5172fe>>
+ * @generated SignedSource<<dfea3e7d4f3e6ba70cd5bc07ace4cdad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type AccountAccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
+export type AccountInvestmentType = "fhsa" | "non_investment" | "rrsp" | "taxable" | "tfsa" | "%future added value";
 export type AccountTickerType = "crypto" | "currency" | "stock" | "%future added value";
 export type CreateAccountInput = {
   accountType: AccountAccountType;
@@ -17,6 +18,7 @@ export type CreateAccountInput = {
   archived?: boolean | null | undefined;
   createTime?: any | null | undefined;
   currencySymbol: string;
+  investmentType: AccountInvestmentType;
   name: string;
   ticker: string;
   tickerType: AccountTickerType;

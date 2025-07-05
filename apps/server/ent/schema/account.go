@@ -42,6 +42,9 @@ func (Account) Fields() []ent.Field {
 			Values("liquidity", "investment", "property", "receivable", "liability").
 			Immutable(),
 
+		field.Enum("investment_type").
+			Values("non_investment", "taxable", "rrsp", "tfsa", "fhsa"),
+
 		field.String("currency_symbol").
 			NotEmpty().
 			Immutable(),

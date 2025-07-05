@@ -51,6 +51,20 @@ func (au *AccountUpdate) SetNillableName(s *string) *AccountUpdate {
 	return au
 }
 
+// SetInvestmentType sets the "investment_type" field.
+func (au *AccountUpdate) SetInvestmentType(at account.InvestmentType) *AccountUpdate {
+	au.mutation.SetInvestmentType(at)
+	return au
+}
+
+// SetNillableInvestmentType sets the "investment_type" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableInvestmentType(at *account.InvestmentType) *AccountUpdate {
+	if at != nil {
+		au.SetInvestmentType(*at)
+	}
+	return au
+}
+
 // SetAmount sets the "amount" field.
 func (au *AccountUpdate) SetAmount(d decimal.Decimal) *AccountUpdate {
 	au.mutation.ResetAmount()
@@ -250,6 +264,11 @@ func (au *AccountUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if v, ok := au.mutation.InvestmentType(); ok {
+		if err := account.InvestmentTypeValidator(v); err != nil {
+			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
+		}
+	}
 	if au.mutation.ProfileCleared() && len(au.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Account.profile"`)
 	}
@@ -273,6 +292,9 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
+	}
+	if value, ok := au.mutation.InvestmentType(); ok {
+		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
 	}
 	if value, ok := au.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)
@@ -411,6 +433,20 @@ func (auo *AccountUpdateOne) SetName(s string) *AccountUpdateOne {
 func (auo *AccountUpdateOne) SetNillableName(s *string) *AccountUpdateOne {
 	if s != nil {
 		auo.SetName(*s)
+	}
+	return auo
+}
+
+// SetInvestmentType sets the "investment_type" field.
+func (auo *AccountUpdateOne) SetInvestmentType(at account.InvestmentType) *AccountUpdateOne {
+	auo.mutation.SetInvestmentType(at)
+	return auo
+}
+
+// SetNillableInvestmentType sets the "investment_type" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableInvestmentType(at *account.InvestmentType) *AccountUpdateOne {
+	if at != nil {
+		auo.SetInvestmentType(*at)
 	}
 	return auo
 }
@@ -627,6 +663,11 @@ func (auo *AccountUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if v, ok := auo.mutation.InvestmentType(); ok {
+		if err := account.InvestmentTypeValidator(v); err != nil {
+			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
+		}
+	}
 	if auo.mutation.ProfileCleared() && len(auo.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Account.profile"`)
 	}
@@ -667,6 +708,9 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if value, ok := auo.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.InvestmentType(); ok {
+		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
 	}
 	if value, ok := auo.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)
