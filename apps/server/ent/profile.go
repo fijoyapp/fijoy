@@ -19,7 +19,7 @@ import (
 type Profile struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
@@ -33,7 +33,7 @@ type Profile struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProfileQuery when eager-loading is set.
 	Edges         ProfileEdges `json:"edges"`
-	user_profiles *string
+	user_profiles *int
 	selectValues  sql.SelectValues
 }
 
@@ -93,12 +93,14 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case profile.FieldNetWorthGoal:
 			values[i] = new(decimal.Decimal)
-		case profile.FieldID, profile.FieldLocale:
+		case profile.FieldID:
+			values[i] = new(sql.NullInt64)
+		case profile.FieldLocale:
 			values[i] = new(sql.NullString)
 		case profile.FieldCreateTime, profile.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
 		case profile.ForeignKeys[0]: // user_profiles
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -115,11 +117,11 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case profile.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				pr.ID = value.String
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			pr.ID = int(value.Int64)
 		case profile.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
@@ -153,11 +155,11 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 				pr.NetWorthGoal = *value
 			}
 		case profile.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_profiles", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_profiles", value)
 			} else if value.Valid {
-				pr.user_profiles = new(string)
-				*pr.user_profiles = value.String
+				pr.user_profiles = new(int)
+				*pr.user_profiles = int(value.Int64)
 			}
 		default:
 			pr.selectValues.Set(columns[i], values[i])

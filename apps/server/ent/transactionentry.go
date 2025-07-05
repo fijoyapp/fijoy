@@ -19,7 +19,7 @@ import (
 type TransactionEntry struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
@@ -35,8 +35,8 @@ type TransactionEntry struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionEntryQuery when eager-loading is set.
 	Edges                           TransactionEntryEdges `json:"edges"`
-	account_transaction_entries     *string
-	transaction_transaction_entries *string
+	account_transaction_entries     *int
+	transaction_transaction_entries *int
 	selectValues                    sql.SelectValues
 }
 
@@ -83,13 +83,13 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 		case transactionentry.FieldAmount, transactionentry.FieldValue, transactionentry.FieldFxRate, transactionentry.FieldBalance:
 			values[i] = new(decimal.Decimal)
 		case transactionentry.FieldID:
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		case transactionentry.FieldCreateTime, transactionentry.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
 		case transactionentry.ForeignKeys[0]: // account_transaction_entries
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		case transactionentry.ForeignKeys[1]: // transaction_transaction_entries
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -106,11 +106,11 @@ func (te *TransactionEntry) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case transactionentry.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				te.ID = value.String
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			te.ID = int(value.Int64)
 		case transactionentry.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
@@ -148,18 +148,18 @@ func (te *TransactionEntry) assignValues(columns []string, values []any) error {
 				te.Balance = *value
 			}
 		case transactionentry.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field account_transaction_entries", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field account_transaction_entries", value)
 			} else if value.Valid {
-				te.account_transaction_entries = new(string)
-				*te.account_transaction_entries = value.String
+				te.account_transaction_entries = new(int)
+				*te.account_transaction_entries = int(value.Int64)
 			}
 		case transactionentry.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field transaction_transaction_entries", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field transaction_transaction_entries", value)
 			} else if value.Valid {
-				te.transaction_transaction_entries = new(string)
-				*te.transaction_transaction_entries = value.String
+				te.transaction_transaction_entries = new(int)
+				*te.transaction_transaction_entries = int(value.Int64)
 			}
 		default:
 			te.selectValues.Set(columns[i], values[i])

@@ -9,8 +9,8 @@ import (
 
 type UserUseCase interface {
 	CreateUser(ctx context.Context, email string) (*ent.User, error)
-	GetUser(ctx context.Context, userId string) (*ent.User, error)
-	DeleteUser(ctx context.Context, userId string) error
+	GetUser(ctx context.Context, userId int) (*ent.User, error)
+	DeleteUser(ctx context.Context, userId int) error
 }
 
 type userUseCase struct {
@@ -41,8 +41,8 @@ func (u *userUseCase) CreateUser(ctx context.Context, email string) (*ent.User, 
 	return user, nil
 }
 
-func (u *userUseCase) GetUser(ctx context.Context, userId string) (*ent.User, error) {
-	user, err := u.userRepo.GetUser(ctx, u.client, userId)
+func (u *userUseCase) GetUser(ctx context.Context, userID int) (*ent.User, error) {
+	user, err := u.userRepo.GetUser(ctx, u.client, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,9 +50,9 @@ func (u *userUseCase) GetUser(ctx context.Context, userId string) (*ent.User, er
 	return user, nil
 }
 
-func (u *userUseCase) DeleteUser(ctx context.Context, userId string) error {
+func (u *userUseCase) DeleteUser(ctx context.Context, userID int) error {
 	err := database.WithTx(ctx, u.client, func(tx *ent.Tx) error {
-		err := u.userRepo.DeleteUser(ctx, tx.Client(), userId)
+		err := u.userRepo.DeleteUser(ctx, tx.Client(), userID)
 		if err != nil {
 			return err
 		}

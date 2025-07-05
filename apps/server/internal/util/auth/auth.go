@@ -12,8 +12,8 @@ import (
 )
 
 type AuthData struct {
-	UserId    string
-	ProfileId string
+	UserID    int
+	ProfileID int
 }
 
 func GetAuthDataFromContext(ctx context.Context) (*AuthData, error) {
@@ -27,24 +27,24 @@ func GetAuthDataFromContext(ctx context.Context) (*AuthData, error) {
 		return &AuthData{}, errors.New("no user_id found in claims")
 	}
 
-	userId := claims["user_id"].(string)
+	userID := claims["user_id"].(float64)
 
 	if _, ok := claims["profile_id"]; !ok {
 		return &AuthData{
-			UserId: userId,
+			UserID: int(userID),
 		}, errors.New("no profile_id found in claims")
 	}
 
-	profileId := claims["profile_id"].(string)
+	profileID := claims["profile_id"].(float64)
 
 	return &AuthData{
-		UserId:    userId,
-		ProfileId: profileId,
+		UserID:    int(userID),
+		ProfileID: int(profileID),
 	}, nil
 }
 
 type UserData struct {
-	UserId string
+	UserID int
 }
 
 func GetUserDataFromContext(ctx context.Context) (*UserData, error) {
@@ -57,10 +57,10 @@ func GetUserDataFromContext(ctx context.Context) (*UserData, error) {
 		return &UserData{}, errors.New("no user_id found in claims")
 	}
 
-	userId := claims["user_id"].(string)
+	userID := claims["user_id"].(float64)
 
 	return &UserData{
-		UserId: userId,
+		UserID: int(userID),
 	}, nil
 }
 

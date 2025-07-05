@@ -1,3 +1,4 @@
+// Package fijoy contains the GraphQL resolvers and schema for the Fijoy application.
 package fijoy
 
 import (

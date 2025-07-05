@@ -51,14 +51,14 @@ func (uu *UserUpdate) SetNillableEmail(s *string) *UserUpdate {
 }
 
 // AddUserKeyIDs adds the "user_keys" edge to the UserKey entity by IDs.
-func (uu *UserUpdate) AddUserKeyIDs(ids ...string) *UserUpdate {
+func (uu *UserUpdate) AddUserKeyIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddUserKeyIDs(ids...)
 	return uu
 }
 
 // AddUserKeys adds the "user_keys" edges to the UserKey entity.
 func (uu *UserUpdate) AddUserKeys(u ...*UserKey) *UserUpdate {
-	ids := make([]string, len(u))
+	ids := make([]int, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -66,14 +66,14 @@ func (uu *UserUpdate) AddUserKeys(u ...*UserKey) *UserUpdate {
 }
 
 // AddProfileIDs adds the "profiles" edge to the Profile entity by IDs.
-func (uu *UserUpdate) AddProfileIDs(ids ...string) *UserUpdate {
+func (uu *UserUpdate) AddProfileIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddProfileIDs(ids...)
 	return uu
 }
 
 // AddProfiles adds the "profiles" edges to the Profile entity.
 func (uu *UserUpdate) AddProfiles(p ...*Profile) *UserUpdate {
-	ids := make([]string, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -92,14 +92,14 @@ func (uu *UserUpdate) ClearUserKeys() *UserUpdate {
 }
 
 // RemoveUserKeyIDs removes the "user_keys" edge to UserKey entities by IDs.
-func (uu *UserUpdate) RemoveUserKeyIDs(ids ...string) *UserUpdate {
+func (uu *UserUpdate) RemoveUserKeyIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveUserKeyIDs(ids...)
 	return uu
 }
 
 // RemoveUserKeys removes "user_keys" edges to UserKey entities.
 func (uu *UserUpdate) RemoveUserKeys(u ...*UserKey) *UserUpdate {
-	ids := make([]string, len(u))
+	ids := make([]int, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -113,14 +113,14 @@ func (uu *UserUpdate) ClearProfiles() *UserUpdate {
 }
 
 // RemoveProfileIDs removes the "profiles" edge to Profile entities by IDs.
-func (uu *UserUpdate) RemoveProfileIDs(ids ...string) *UserUpdate {
+func (uu *UserUpdate) RemoveProfileIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveProfileIDs(ids...)
 	return uu
 }
 
 // RemoveProfiles removes "profiles" edges to Profile entities.
 func (uu *UserUpdate) RemoveProfiles(p ...*Profile) *UserUpdate {
-	ids := make([]string, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -177,7 +177,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := uu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	if ps := uu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -199,7 +199,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -212,7 +212,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -228,7 +228,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -244,7 +244,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -257,7 +257,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -273,7 +273,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -322,14 +322,14 @@ func (uuo *UserUpdateOne) SetNillableEmail(s *string) *UserUpdateOne {
 }
 
 // AddUserKeyIDs adds the "user_keys" edge to the UserKey entity by IDs.
-func (uuo *UserUpdateOne) AddUserKeyIDs(ids ...string) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddUserKeyIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddUserKeyIDs(ids...)
 	return uuo
 }
 
 // AddUserKeys adds the "user_keys" edges to the UserKey entity.
 func (uuo *UserUpdateOne) AddUserKeys(u ...*UserKey) *UserUpdateOne {
-	ids := make([]string, len(u))
+	ids := make([]int, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -337,14 +337,14 @@ func (uuo *UserUpdateOne) AddUserKeys(u ...*UserKey) *UserUpdateOne {
 }
 
 // AddProfileIDs adds the "profiles" edge to the Profile entity by IDs.
-func (uuo *UserUpdateOne) AddProfileIDs(ids ...string) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddProfileIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddProfileIDs(ids...)
 	return uuo
 }
 
 // AddProfiles adds the "profiles" edges to the Profile entity.
 func (uuo *UserUpdateOne) AddProfiles(p ...*Profile) *UserUpdateOne {
-	ids := make([]string, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -363,14 +363,14 @@ func (uuo *UserUpdateOne) ClearUserKeys() *UserUpdateOne {
 }
 
 // RemoveUserKeyIDs removes the "user_keys" edge to UserKey entities by IDs.
-func (uuo *UserUpdateOne) RemoveUserKeyIDs(ids ...string) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveUserKeyIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveUserKeyIDs(ids...)
 	return uuo
 }
 
 // RemoveUserKeys removes "user_keys" edges to UserKey entities.
 func (uuo *UserUpdateOne) RemoveUserKeys(u ...*UserKey) *UserUpdateOne {
-	ids := make([]string, len(u))
+	ids := make([]int, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -384,14 +384,14 @@ func (uuo *UserUpdateOne) ClearProfiles() *UserUpdateOne {
 }
 
 // RemoveProfileIDs removes the "profiles" edge to Profile entities by IDs.
-func (uuo *UserUpdateOne) RemoveProfileIDs(ids ...string) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveProfileIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveProfileIDs(ids...)
 	return uuo
 }
 
 // RemoveProfiles removes "profiles" edges to Profile entities.
 func (uuo *UserUpdateOne) RemoveProfiles(p ...*Profile) *UserUpdateOne {
-	ids := make([]string, len(p))
+	ids := make([]int, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
@@ -461,7 +461,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if err := uuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	id, ok := uuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "User.id" for update`)}
@@ -500,7 +500,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -513,7 +513,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -529,7 +529,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -545,7 +545,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -558,7 +558,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -574,7 +574,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.ProfilesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

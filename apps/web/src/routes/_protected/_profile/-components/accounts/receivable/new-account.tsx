@@ -57,9 +57,11 @@ export function NewReceivable() {
         input: {
           amount: values.balance,
           accountType: "receivable",
+          investmentType: "taxable", // TODO: customize
           name: values.name,
-          symbol: values.symbol,
-          symbolType: "currency",
+          ticker: values.symbol,
+          currencySymbol: values.symbol,
+          tickerType: "currency",
         },
       },
       onCompleted(_, errors) {

@@ -109,8 +109,8 @@ func (ukq *UserKeyQuery) FirstX(ctx context.Context) *UserKey {
 
 // FirstID returns the first UserKey ID from the query.
 // Returns a *NotFoundError when no UserKey ID was found.
-func (ukq *UserKeyQuery) FirstID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (ukq *UserKeyQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = ukq.Limit(1).IDs(setContextOp(ctx, ukq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -122,7 +122,7 @@ func (ukq *UserKeyQuery) FirstID(ctx context.Context) (id string, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (ukq *UserKeyQuery) FirstIDX(ctx context.Context) string {
+func (ukq *UserKeyQuery) FirstIDX(ctx context.Context) int {
 	id, err := ukq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -160,8 +160,8 @@ func (ukq *UserKeyQuery) OnlyX(ctx context.Context) *UserKey {
 // OnlyID is like Only, but returns the only UserKey ID in the query.
 // Returns a *NotSingularError when more than one UserKey ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (ukq *UserKeyQuery) OnlyID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (ukq *UserKeyQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = ukq.Limit(2).IDs(setContextOp(ctx, ukq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -177,7 +177,7 @@ func (ukq *UserKeyQuery) OnlyID(ctx context.Context) (id string, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (ukq *UserKeyQuery) OnlyIDX(ctx context.Context) string {
+func (ukq *UserKeyQuery) OnlyIDX(ctx context.Context) int {
 	id, err := ukq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -205,7 +205,7 @@ func (ukq *UserKeyQuery) AllX(ctx context.Context) []*UserKey {
 }
 
 // IDs executes the query and returns a list of UserKey IDs.
-func (ukq *UserKeyQuery) IDs(ctx context.Context) (ids []string, err error) {
+func (ukq *UserKeyQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if ukq.ctx.Unique == nil && ukq.path != nil {
 		ukq.Unique(true)
 	}
@@ -217,7 +217,7 @@ func (ukq *UserKeyQuery) IDs(ctx context.Context) (ids []string, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (ukq *UserKeyQuery) IDsX(ctx context.Context) []string {
+func (ukq *UserKeyQuery) IDsX(ctx context.Context) []int {
 	ids, err := ukq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -420,8 +420,8 @@ func (ukq *UserKeyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Use
 }
 
 func (ukq *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*UserKey, init func(*UserKey), assign func(*UserKey, *User)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*UserKey)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*UserKey)
 	for i := range nodes {
 		if nodes[i].user_user_keys == nil {
 			continue
@@ -465,7 +465,7 @@ func (ukq *UserKeyQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (ukq *UserKeyQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	_spec.From = ukq.sql
 	if unique := ukq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

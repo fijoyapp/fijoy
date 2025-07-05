@@ -49,6 +49,12 @@ func (ukc *UserKeyCreate) SetNillableUpdateTime(t *time.Time) *UserKeyCreate {
 	return ukc
 }
 
+// SetKey sets the "key" field.
+func (ukc *UserKeyCreate) SetKey(s string) *UserKeyCreate {
+	ukc.mutation.SetKey(s)
+	return ukc
+}
+
 // SetHashedPassword sets the "hashed_password" field.
 func (ukc *UserKeyCreate) SetHashedPassword(s string) *UserKeyCreate {
 	ukc.mutation.SetHashedPassword(s)
@@ -63,14 +69,8 @@ func (ukc *UserKeyCreate) SetNillableHashedPassword(s *string) *UserKeyCreate {
 	return ukc
 }
 
-// SetID sets the "id" field.
-func (ukc *UserKeyCreate) SetID(s string) *UserKeyCreate {
-	ukc.mutation.SetID(s)
-	return ukc
-}
-
 // SetUserID sets the "user" edge to the User entity by ID.
-func (ukc *UserKeyCreate) SetUserID(id string) *UserKeyCreate {
+func (ukc *UserKeyCreate) SetUserID(id int) *UserKeyCreate {
 	ukc.mutation.SetUserID(id)
 	return ukc
 }
@@ -133,6 +133,14 @@ func (ukc *UserKeyCreate) check() error {
 	if _, ok := ukc.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "UserKey.update_time"`)}
 	}
+	if _, ok := ukc.mutation.Key(); !ok {
+		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "UserKey.key"`)}
+	}
+	if v, ok := ukc.mutation.Key(); ok {
+		if err := userkey.KeyValidator(v); err != nil {
+			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
+		}
+	}
 	if len(ukc.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "UserKey.user"`)}
 	}
@@ -150,13 +158,8 @@ func (ukc *UserKeyCreate) sqlSave(ctx context.Context) (*UserKey, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected UserKey.ID type: %T", _spec.ID.Value)
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	ukc.mutation.id = &_node.ID
 	ukc.mutation.done = true
 	return _node, nil
@@ -165,12 +168,8 @@ func (ukc *UserKeyCreate) sqlSave(ctx context.Context) (*UserKey, error) {
 func (ukc *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 	var (
 		_node = &UserKey{config: ukc.config}
-		_spec = sqlgraph.NewCreateSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	)
-	if id, ok := ukc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := ukc.mutation.CreateTime(); ok {
 		_spec.SetField(userkey.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -178,6 +177,10 @@ func (ukc *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 	if value, ok := ukc.mutation.UpdateTime(); ok {
 		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
+	}
+	if value, ok := ukc.mutation.Key(); ok {
+		_spec.SetField(userkey.FieldKey, field.TypeString, value)
+		_node.Key = value
 	}
 	if value, ok := ukc.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
@@ -191,7 +194,7 @@ func (ukc *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 			Columns: []string{userkey.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -248,6 +251,10 @@ func (ukcb *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

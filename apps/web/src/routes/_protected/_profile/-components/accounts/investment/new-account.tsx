@@ -62,6 +62,7 @@ export function NewInvestment() {
       variables: {
         input: {
           amount: values.amount,
+          investmentType: "taxable", // TODO: customize
           accountType: "investment",
           name: values.symbol,
           ticker: values.symbol,

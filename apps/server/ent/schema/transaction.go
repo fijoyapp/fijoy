@@ -36,8 +36,6 @@ func (Transaction) Mixin() []ent.Mixin {
 // Fields of the Transaction.
 func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id"),
-
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{

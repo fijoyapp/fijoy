@@ -21,7 +21,7 @@ type CreateAccountInput struct {
 	TickerType          account.TickerType
 	Amount              decimal.Decimal
 	Archived            *bool
-	TransactionEntryIDs []string
+	TransactionEntryIDs []int
 }
 
 // Mutate applies the CreateAccountInput on the AccountMutation builder.
@@ -61,8 +61,8 @@ type UpdateAccountInput struct {
 	Amount                    *decimal.Decimal
 	Archived                  *bool
 	ClearTransactionEntries   bool
-	AddTransactionEntryIDs    []string
-	RemoveTransactionEntryIDs []string
+	AddTransactionEntryIDs    []int
+	RemoveTransactionEntryIDs []int
 }
 
 // Mutate applies the UpdateAccountInput on the AccountMutation builder.
@@ -111,8 +111,8 @@ type CreateProfileInput struct {
 	UpdateTime     *time.Time
 	Currencies     []string
 	NetWorthGoal   decimal.Decimal
-	AccountIDs     []string
-	TransactionIDs []string
+	AccountIDs     []int
+	TransactionIDs []int
 }
 
 // Mutate applies the CreateProfileInput on the ProfileMutation builder.
@@ -148,11 +148,11 @@ type UpdateProfileInput struct {
 	AppendCurrencies     []string
 	NetWorthGoal         *decimal.Decimal
 	ClearAccounts        bool
-	AddAccountIDs        []string
-	RemoveAccountIDs     []string
+	AddAccountIDs        []int
+	RemoveAccountIDs     []int
 	ClearTransactions    bool
-	AddTransactionIDs    []string
-	RemoveTransactionIDs []string
+	AddTransactionIDs    []int
+	RemoveTransactionIDs []int
 }
 
 // Mutate applies the UpdateProfileInput on the ProfileMutation builder.
@@ -207,7 +207,7 @@ type CreateTransactionInput struct {
 	UpdateTime          *time.Time
 	Note                *string
 	Datetime            *time.Time
-	TransactionEntryIDs []string
+	TransactionEntryIDs []int
 }
 
 // Mutate applies the CreateTransactionInput on the TransactionMutation builder.
@@ -242,8 +242,8 @@ type UpdateTransactionInput struct {
 	Note                      *string
 	Datetime                  *time.Time
 	ClearTransactionEntries   bool
-	AddTransactionEntryIDs    []string
-	RemoveTransactionEntryIDs []string
+	AddTransactionEntryIDs    []int
+	RemoveTransactionEntryIDs []int
 }
 
 // Mutate applies the UpdateTransactionInput on the TransactionMutation builder.
@@ -288,8 +288,8 @@ type CreateTransactionEntryInput struct {
 	CreateTime    *time.Time
 	UpdateTime    *time.Time
 	Amount        decimal.Decimal
-	AccountID     string
-	TransactionID string
+	AccountID     int
+	TransactionID int
 }
 
 // Mutate applies the CreateTransactionEntryInput on the TransactionEntryMutation builder.
@@ -315,8 +315,8 @@ func (c *TransactionEntryCreate) SetInput(i CreateTransactionEntryInput) *Transa
 type UpdateTransactionEntryInput struct {
 	UpdateTime    *time.Time
 	Amount        *decimal.Decimal
-	AccountID     *string
-	TransactionID *string
+	AccountID     *int
+	TransactionID *int
 }
 
 // Mutate applies the UpdateTransactionEntryInput on the TransactionEntryMutation builder.
@@ -352,8 +352,8 @@ type CreateUserInput struct {
 	CreateTime *time.Time
 	UpdateTime *time.Time
 	Email      string
-	UserKeyIDs []string
-	ProfileIDs []string
+	UserKeyIDs []int
+	ProfileIDs []int
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -383,8 +383,9 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 type CreateUserKeyInput struct {
 	CreateTime     *time.Time
 	UpdateTime     *time.Time
+	Key            string
 	HashedPassword *string
-	UserID         string
+	UserID         int
 }
 
 // Mutate applies the CreateUserKeyInput on the UserKeyMutation builder.
@@ -395,6 +396,7 @@ func (i *CreateUserKeyInput) Mutate(m *UserKeyMutation) {
 	if v := i.UpdateTime; v != nil {
 		m.SetUpdateTime(*v)
 	}
+	m.SetKey(i.Key)
 	if v := i.HashedPassword; v != nil {
 		m.SetHashedPassword(*v)
 	}

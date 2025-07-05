@@ -85,14 +85,8 @@ func (tc *TransactionCreate) SetNillableDatetime(t *time.Time) *TransactionCreat
 	return tc
 }
 
-// SetID sets the "id" field.
-func (tc *TransactionCreate) SetID(s string) *TransactionCreate {
-	tc.mutation.SetID(s)
-	return tc
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (tc *TransactionCreate) SetProfileID(id string) *TransactionCreate {
+func (tc *TransactionCreate) SetProfileID(id int) *TransactionCreate {
 	tc.mutation.SetProfileID(id)
 	return tc
 }
@@ -103,14 +97,14 @@ func (tc *TransactionCreate) SetProfile(p *Profile) *TransactionCreate {
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (tc *TransactionCreate) AddTransactionEntryIDs(ids ...string) *TransactionCreate {
+func (tc *TransactionCreate) AddTransactionEntryIDs(ids ...int) *TransactionCreate {
 	tc.mutation.AddTransactionEntryIDs(ids...)
 	return tc
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
 func (tc *TransactionCreate) AddTransactionEntries(t ...*TransactionEntry) *TransactionCreate {
-	ids := make([]string, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -197,13 +191,8 @@ func (tc *TransactionCreate) sqlSave(ctx context.Context) (*Transaction, error) 
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected Transaction.ID type: %T", _spec.ID.Value)
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	tc.mutation.id = &_node.ID
 	tc.mutation.done = true
 	return _node, nil
@@ -212,12 +201,8 @@ func (tc *TransactionCreate) sqlSave(ctx context.Context) (*Transaction, error) 
 func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Transaction{config: tc.config}
-		_spec = sqlgraph.NewCreateSpec(transaction.Table, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(transaction.Table, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	)
-	if id, ok := tc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := tc.mutation.CreateTime(); ok {
 		_spec.SetField(transaction.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -246,7 +231,7 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -263,7 +248,7 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -319,6 +304,10 @@ func (tcb *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, err
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

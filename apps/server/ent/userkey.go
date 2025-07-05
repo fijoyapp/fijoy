@@ -17,17 +17,19 @@ import (
 type UserKey struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// Key holds the value of the "key" field.
+	Key string `json:"key,omitempty"`
 	// HashedPassword holds the value of the "hashed_password" field.
 	HashedPassword string `json:"hashed_password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserKeyQuery when eager-loading is set.
 	Edges          UserKeyEdges `json:"edges"`
-	user_user_keys *string
+	user_user_keys *int
 	selectValues   sql.SelectValues
 }
 
@@ -58,12 +60,14 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userkey.FieldID, userkey.FieldHashedPassword:
+		case userkey.FieldID:
+			values[i] = new(sql.NullInt64)
+		case userkey.FieldKey, userkey.FieldHashedPassword:
 			values[i] = new(sql.NullString)
 		case userkey.FieldCreateTime, userkey.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
 		case userkey.ForeignKeys[0]: // user_user_keys
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -80,11 +84,11 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case userkey.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				uk.ID = value.String
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			uk.ID = int(value.Int64)
 		case userkey.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
@@ -97,6 +101,12 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				uk.UpdateTime = value.Time
 			}
+		case userkey.FieldKey:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field key", values[i])
+			} else if value.Valid {
+				uk.Key = value.String
+			}
 		case userkey.FieldHashedPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field hashed_password", values[i])
@@ -104,11 +114,11 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 				uk.HashedPassword = value.String
 			}
 		case userkey.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_user_keys", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_user_keys", value)
 			} else if value.Valid {
-				uk.user_user_keys = new(string)
-				*uk.user_user_keys = value.String
+				uk.user_user_keys = new(int)
+				*uk.user_user_keys = int(value.Int64)
 			}
 		default:
 			uk.selectValues.Set(columns[i], values[i])
@@ -156,6 +166,9 @@ func (uk *UserKey) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
 	builder.WriteString(uk.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("key=")
+	builder.WriteString(uk.Key)
 	builder.WriteString(", ")
 	builder.WriteString("hashed_password=")
 	builder.WriteString(uk.HashedPassword)

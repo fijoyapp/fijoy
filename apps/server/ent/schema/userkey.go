@@ -29,7 +29,7 @@ func (UserKey) Mixin() []ent.Mixin {
 // Fields of the UserKey.
 func (UserKey) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id"),
+		field.String("key").NotEmpty(),
 		field.String("hashed_password").Optional(),
 	}
 }

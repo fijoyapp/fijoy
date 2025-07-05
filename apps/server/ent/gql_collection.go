@@ -644,6 +644,11 @@ func (ukq *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				selectedFields = append(selectedFields, userkey.FieldUpdateTime)
 				fieldSeen[userkey.FieldUpdateTime] = struct{}{}
 			}
+		case "key":
+			if _, ok := fieldSeen[userkey.FieldKey]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldKey)
+				fieldSeen[userkey.FieldKey] = struct{}{}
+			}
 		case "hashedPassword":
 			if _, ok := fieldSeen[userkey.FieldHashedPassword]; !ok {
 				selectedFields = append(selectedFields, userkey.FieldHashedPassword)

@@ -3,12 +3,13 @@ package repository
 import (
 	"context"
 	"fijoy/ent"
+	"fijoy/ent/userkey"
 )
 
 type UserRepository interface {
 	CreateUser(ctx context.Context, client *ent.Client, email string) (*ent.User, error)
-	GetUser(ctx context.Context, client *ent.Client, id string) (*ent.User, error)
-	DeleteUser(ctx context.Context, client *ent.Client, id string) error
+	GetUser(ctx context.Context, client *ent.Client, id int) (*ent.User, error)
+	DeleteUser(ctx context.Context, client *ent.Client, id int) error
 }
 
 type userRepository struct{}
@@ -18,9 +19,9 @@ func NewUserRepository() *userRepository {
 }
 
 type UserKeyRepository interface {
-	CreateUserKey(ctx context.Context, client *ent.Client, id string, userId string) (*ent.UserKey, error)
-	GetUserKey(ctx context.Context, client *ent.Client, id string) (*ent.UserKey, error)
-	DeleteUserKey(ctx context.Context, client *ent.Client, id string) error
+	CreateUserKey(ctx context.Context, client *ent.Client, key string, userID int) (*ent.UserKey, error)
+	GetUserKey(ctx context.Context, client *ent.Client, key string) (*ent.UserKey, error)
+	DeleteUserKey(ctx context.Context, client *ent.Client, key string) error
 }
 
 type userKeyRepository struct{}
@@ -38,7 +39,7 @@ func (r *userRepository) CreateUser(ctx context.Context, client *ent.Client, ema
 	return user, nil
 }
 
-func (r *userRepository) GetUser(ctx context.Context, client *ent.Client, id string) (*ent.User, error) {
+func (r *userRepository) GetUser(ctx context.Context, client *ent.Client, id int) (*ent.User, error) {
 	user, err := client.User.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -47,7 +48,7 @@ func (r *userRepository) GetUser(ctx context.Context, client *ent.Client, id str
 	return user, nil
 }
 
-func (r *userRepository) DeleteUser(ctx context.Context, client *ent.Client, id string) error {
+func (r *userRepository) DeleteUser(ctx context.Context, client *ent.Client, id int) error {
 	err := client.User.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return err
@@ -56,9 +57,9 @@ func (r *userRepository) DeleteUser(ctx context.Context, client *ent.Client, id 
 	return nil
 }
 
-func (r *userKeyRepository) CreateUserKey(ctx context.Context, client *ent.Client, id string, userId string) (*ent.UserKey, error) {
+func (r *userKeyRepository) CreateUserKey(ctx context.Context, client *ent.Client, key string, userID int) (*ent.UserKey, error) {
 	userKey, err := client.UserKey.
-		Create().SetUserID(userId).SetID(id).Save(ctx)
+		Create().SetUserID(userID).SetKey(key).Save(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +67,8 @@ func (r *userKeyRepository) CreateUserKey(ctx context.Context, client *ent.Clien
 	return userKey, nil
 }
 
-func (r *userKeyRepository) GetUserKey(ctx context.Context, client *ent.Client, id string) (*ent.UserKey, error) {
-	userKey, err := client.UserKey.Get(ctx, id)
+func (r *userKeyRepository) GetUserKey(ctx context.Context, client *ent.Client, key string) (*ent.UserKey, error) {
+	userKey, err := client.UserKey.Query().Where(userkey.KeyEQ(key)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -75,8 +76,8 @@ func (r *userKeyRepository) GetUserKey(ctx context.Context, client *ent.Client, 
 	return userKey, nil
 }
 
-func (r *userKeyRepository) DeleteUserKey(ctx context.Context, client *ent.Client, id string) error {
-	err := client.UserKey.DeleteOneID(id).Exec(ctx)
+func (r *userKeyRepository) DeleteUserKey(ctx context.Context, client *ent.Client, key string) error {
+	_, err := client.UserKey.Delete().Where(userkey.KeyEQ(key)).Exec(ctx)
 	if err != nil {
 		return err
 	}

@@ -18,7 +18,7 @@ import (
 type Transaction struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
@@ -32,7 +32,7 @@ type Transaction struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
 	Edges                TransactionEdges `json:"edges"`
-	profile_transactions *string
+	profile_transactions *int
 	selectValues         sql.SelectValues
 }
 
@@ -78,12 +78,14 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case transaction.FieldBalance:
 			values[i] = new(decimal.Decimal)
-		case transaction.FieldID, transaction.FieldNote:
+		case transaction.FieldID:
+			values[i] = new(sql.NullInt64)
+		case transaction.FieldNote:
 			values[i] = new(sql.NullString)
 		case transaction.FieldCreateTime, transaction.FieldUpdateTime, transaction.FieldDatetime:
 			values[i] = new(sql.NullTime)
 		case transaction.ForeignKeys[0]: // profile_transactions
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -100,11 +102,11 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case transaction.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				t.ID = value.String
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			t.ID = int(value.Int64)
 		case transaction.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
@@ -136,11 +138,11 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				t.Datetime = value.Time
 			}
 		case transaction.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field profile_transactions", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field profile_transactions", value)
 			} else if value.Valid {
-				t.profile_transactions = new(string)
-				*t.profile_transactions = value.String
+				t.profile_transactions = new(int)
+				*t.profile_transactions = int(value.Int64)
 			}
 		default:
 			t.selectValues.Set(columns[i], values[i])
