@@ -36,7 +36,7 @@ var (
 				Symbol:     "accounts_profiles_account",
 				Columns:    []*schema.Column{AccountsColumns[13]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -60,7 +60,7 @@ var (
 				Symbol:     "profiles_users_profile",
 				Columns:    []*schema.Column{ProfilesColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -84,7 +84,7 @@ var (
 				Symbol:     "transactions_profiles_transaction",
 				Columns:    []*schema.Column{TransactionsColumns[6]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -151,7 +151,7 @@ var (
 				Symbol:     "user_keys_users_user_key",
 				Columns:    []*schema.Column{UserKeysColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
