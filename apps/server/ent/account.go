@@ -33,13 +33,13 @@ type Account struct {
 	Ticker string `json:"ticker,omitempty"`
 	// TickerType holds the value of the "ticker_type" field.
 	TickerType account.TickerType `json:"ticker_type,omitempty"`
-	// Amount holds the value of the "amount" field.
+	// The unit amount of share or money in this account
 	Amount decimal.Decimal `json:"amount,omitempty"`
-	// Value holds the value of the "value" field.
+	// The value of 1 share in the native currency. If this is just a currency account, then this field will be 1
 	Value decimal.Decimal `json:"value,omitempty"`
-	// FxRate holds the value of the "fx_rate" field.
+	// The exchange rate from the native currency to user's default display currency
 	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
-	// Balance holds the value of the "balance" field.
+	// The total balance of this account in user's display currency
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Archived holds the value of the "archived" field.
 	Archived bool `json:"archived,omitempty"`

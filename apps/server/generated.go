@@ -8115,7 +8115,7 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "name", "accountType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntry"}
+	fieldsInOrder := [...]string{"updateTime", "name", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntry"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8136,34 +8136,6 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.Name = data
-		case "accountType":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountType"))
-			data, err := ec.unmarshalOAccountAccountType2ᚖfijoyᚋentᚋaccountᚐAccountType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AccountType = data
-		case "currencySymbol":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencySymbol"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CurrencySymbol = data
-		case "ticker":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ticker"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Ticker = data
-		case "tickerType":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tickerType"))
-			data, err := ec.unmarshalOAccountTickerType2ᚖfijoyᚋentᚋaccountᚐTickerType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TickerType = data
 		case "amount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -11193,22 +11165,6 @@ func (ec *executionContext) marshalOAccount2ᚖfijoyᚋentᚐAccount(ctx context
 	return ec._Account(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOAccountAccountType2ᚖfijoyᚋentᚋaccountᚐAccountType(ctx context.Context, v any) (*account.AccountType, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(account.AccountType)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOAccountAccountType2ᚖfijoyᚋentᚋaccountᚐAccountType(ctx context.Context, sel ast.SelectionSet, v *account.AccountType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
-}
-
 func (ec *executionContext) marshalOAccountEdge2ᚕᚖfijoyᚋentᚐAccountEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.AccountEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -11255,22 +11211,6 @@ func (ec *executionContext) marshalOAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx
 		return graphql.Null
 	}
 	return ec._AccountEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOAccountTickerType2ᚖfijoyᚋentᚋaccountᚐTickerType(ctx context.Context, v any) (*account.TickerType, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(account.TickerType)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOAccountTickerType2ᚖfijoyᚋentᚋaccountᚐTickerType(ctx context.Context, sel ast.SelectionSet, v *account.TickerType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (bool, error) {

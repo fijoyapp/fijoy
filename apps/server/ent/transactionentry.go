@@ -24,13 +24,13 @@ type TransactionEntry struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// Amount holds the value of the "amount" field.
+	// The unit amount of share or money in this transaction entry
 	Amount decimal.Decimal `json:"amount,omitempty"`
-	// Value holds the value of the "value" field.
+	// The value of 1 share in the native currency. If this is just a currency account, then this field will be 1
 	Value decimal.Decimal `json:"value,omitempty"`
-	// FxRate holds the value of the "fx_rate" field.
+	// The exchange rate from the native currency to user's default display currency
 	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
-	// Balance holds the value of the "balance" field.
+	// The total balance of this transaction entry in user's display currency
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionEntryQuery when eager-loading is set.
