@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"fijoy/constants"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -10,7 +8,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
 
@@ -35,7 +32,7 @@ func (Profile) Mixin() []ent.Mixin {
 // Fields of the Profile.
 func (Profile) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").DefaultFunc(func() string { return constants.ProfilePrefix + cuid2.Generate() }),
+		field.String("id"),
 
 		field.String("locale").
 			Annotations(

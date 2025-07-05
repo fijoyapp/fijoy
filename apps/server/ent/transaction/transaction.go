@@ -86,8 +86,6 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// DefaultDatetime holds the default value on creation for the "datetime" field.
 	DefaultDatetime func() time.Time
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() string
 )
 
 // OrderOption defines the ordering options for the Transaction queries.

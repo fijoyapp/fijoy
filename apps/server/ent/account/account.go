@@ -116,8 +116,6 @@ var (
 	TickerValidator func(string) error
 	// DefaultArchived holds the default value on creation for the "archived" field.
 	DefaultArchived bool
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() string
 )
 
 // AccountType defines the type for the "account_type" enum field.

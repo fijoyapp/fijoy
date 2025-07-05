@@ -69,8 +69,6 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
-	// DefaultID holds the default value on creation for the "id" field.
-	DefaultID func() string
 )
 
 // OrderOption defines the ordering options for the User queries.

@@ -62,14 +62,6 @@ func (uc *UserCreate) SetID(s string) *UserCreate {
 	return uc
 }
 
-// SetNillableID sets the "id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableID(s *string) *UserCreate {
-	if s != nil {
-		uc.SetID(*s)
-	}
-	return uc
-}
-
 // AddUserKeyIDs adds the "user_key" edge to the UserKey entity by IDs.
 func (uc *UserCreate) AddUserKeyIDs(ids ...string) *UserCreate {
 	uc.mutation.AddUserKeyIDs(ids...)
@@ -142,10 +134,6 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.UpdateTime(); !ok {
 		v := user.DefaultUpdateTime()
 		uc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := uc.mutation.ID(); !ok {
-		v := user.DefaultID()
-		uc.mutation.SetID(v)
 	}
 }
 

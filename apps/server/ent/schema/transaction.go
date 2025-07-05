@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fijoy/constants"
 	"time"
 
 	"entgo.io/contrib/entgql"
@@ -12,7 +11,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
 
@@ -38,7 +36,7 @@ func (Transaction) Mixin() []ent.Mixin {
 // Fields of the Transaction.
 func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").DefaultFunc(func() string { return constants.TransactionPrefix + cuid2.Generate() }),
+		field.String("id"),
 
 		field.Float("balance").
 			GoType(decimal.Decimal{}).

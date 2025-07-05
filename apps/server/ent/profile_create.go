@@ -76,14 +76,6 @@ func (pc *ProfileCreate) SetID(s string) *ProfileCreate {
 	return pc
 }
 
-// SetNillableID sets the "id" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableID(s *string) *ProfileCreate {
-	if s != nil {
-		pc.SetID(*s)
-	}
-	return pc
-}
-
 // SetUserID sets the "user" edge to the User entity by ID.
 func (pc *ProfileCreate) SetUserID(id string) *ProfileCreate {
 	pc.mutation.SetUserID(id)
@@ -167,10 +159,6 @@ func (pc *ProfileCreate) defaults() {
 	if _, ok := pc.mutation.UpdateTime(); !ok {
 		v := profile.DefaultUpdateTime()
 		pc.mutation.SetUpdateTime(v)
-	}
-	if _, ok := pc.mutation.ID(); !ok {
-		v := profile.DefaultID()
-		pc.mutation.SetID(v)
 	}
 }
 
