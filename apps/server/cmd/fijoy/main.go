@@ -91,6 +91,7 @@ func main() {
 	ctx := context.Background()
 	if err := entClient.Schema.Create(
 		ctx,
+		// TODO: disable the following options in production
 		migrate.WithDropIndex(true),
 		migrate.WithDropColumn(true),
 	); err != nil {
