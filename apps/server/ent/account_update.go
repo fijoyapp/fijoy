@@ -114,12 +114,6 @@ func (au *AccountUpdate) AddFxRate(d decimal.Decimal) *AccountUpdate {
 	return au
 }
 
-// ClearFxRate clears the value of the "fx_rate" field.
-func (au *AccountUpdate) ClearFxRate() *AccountUpdate {
-	au.mutation.ClearFxRate()
-	return au
-}
-
 // SetBalance sets the "balance" field.
 func (au *AccountUpdate) SetBalance(d decimal.Decimal) *AccountUpdate {
 	au.mutation.ResetBalance()
@@ -297,9 +291,6 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.AddedFxRate(); ok {
 		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
-	}
-	if au.mutation.FxRateCleared() {
-		_spec.ClearField(account.FieldFxRate, field.TypeFloat64)
 	}
 	if value, ok := au.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
@@ -484,12 +475,6 @@ func (auo *AccountUpdateOne) SetNillableFxRate(d *decimal.Decimal) *AccountUpdat
 // AddFxRate adds d to the "fx_rate" field.
 func (auo *AccountUpdateOne) AddFxRate(d decimal.Decimal) *AccountUpdateOne {
 	auo.mutation.AddFxRate(d)
-	return auo
-}
-
-// ClearFxRate clears the value of the "fx_rate" field.
-func (auo *AccountUpdateOne) ClearFxRate() *AccountUpdateOne {
-	auo.mutation.ClearFxRate()
 	return auo
 }
 
@@ -700,9 +685,6 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if value, ok := auo.mutation.AddedFxRate(); ok {
 		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
-	}
-	if auo.mutation.FxRateCleared() {
-		_spec.ClearField(account.FieldFxRate, field.TypeFloat64)
 	}
 	if value, ok := auo.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)

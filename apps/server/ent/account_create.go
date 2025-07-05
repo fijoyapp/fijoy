@@ -99,14 +99,6 @@ func (ac *AccountCreate) SetFxRate(d decimal.Decimal) *AccountCreate {
 	return ac
 }
 
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (ac *AccountCreate) SetNillableFxRate(d *decimal.Decimal) *AccountCreate {
-	if d != nil {
-		ac.SetFxRate(*d)
-	}
-	return ac
-}
-
 // SetBalance sets the "balance" field.
 func (ac *AccountCreate) SetBalance(d decimal.Decimal) *AccountCreate {
 	ac.mutation.SetBalance(d)
@@ -261,6 +253,9 @@ func (ac *AccountCreate) check() error {
 	}
 	if _, ok := ac.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Account.value"`)}
+	}
+	if _, ok := ac.mutation.FxRate(); !ok {
+		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "Account.fx_rate"`)}
 	}
 	if _, ok := ac.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}

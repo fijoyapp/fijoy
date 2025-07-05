@@ -186,7 +186,7 @@ type ComplexityRoot struct {
 type AccountResolver interface {
 	Amount(ctx context.Context, obj *ent.Account) (string, error)
 	Value(ctx context.Context, obj *ent.Account) (string, error)
-	FxRate(ctx context.Context, obj *ent.Account) (*string, error)
+	FxRate(ctx context.Context, obj *ent.Account) (string, error)
 	Balance(ctx context.Context, obj *ent.Account) (string, error)
 }
 type MutationResolver interface {
@@ -214,7 +214,7 @@ type TransactionResolver interface {
 type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 	Value(ctx context.Context, obj *ent.TransactionEntry) (string, error)
-	FxRate(ctx context.Context, obj *ent.TransactionEntry) (*string, error)
+	FxRate(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 	Balance(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 }
 
@@ -2019,11 +2019,14 @@ func (ec *executionContext) _Account_fxRate(ctx context.Context, field graphql.C
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Account_fxRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5022,11 +5025,14 @@ func (ec *executionContext) _TransactionEntry_fxRate(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_TransactionEntry_fxRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8563,13 +8569,16 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 		case "fxRate":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Account_fxRate(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -9729,13 +9738,16 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 		case "fxRate":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._TransactionEntry_fxRate(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 

@@ -87,7 +87,6 @@ func (Account) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
-			Optional().
 			Comment("The exchange rate from the native currency to user's default display currency"),
 
 		field.Float("balance").
