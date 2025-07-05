@@ -301,12 +301,12 @@ func (ukq *UserKeyQuery) WithUser(opts ...func(*UserQuery)) *UserKeyQuery {
 // Example:
 //
 //	var v []struct {
-//		HashedPassword string `json:"hashed_password,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.UserKey.Query().
-//		GroupBy(userkey.FieldHashedPassword).
+//		GroupBy(userkey.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (ukq *UserKeyQuery) GroupBy(field string, fields ...string) *UserKeyGroupBy {
@@ -324,11 +324,11 @@ func (ukq *UserKeyQuery) GroupBy(field string, fields ...string) *UserKeyGroupBy
 // Example:
 //
 //	var v []struct {
-//		HashedPassword string `json:"hashed_password,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.UserKey.Query().
-//		Select(userkey.FieldHashedPassword).
+//		Select(userkey.FieldCreateTime).
 //		Scan(ctx, &v)
 func (ukq *UserKeyQuery) Select(fields ...string) *UserKeySelect {
 	ukq.ctx.Fields = append(ukq.ctx.Fields, fields...)

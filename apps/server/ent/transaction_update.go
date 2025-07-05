@@ -31,6 +31,12 @@ func (tu *TransactionUpdate) Where(ps ...predicate.Transaction) *TransactionUpda
 	return tu
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (tu *TransactionUpdate) SetUpdateTime(t time.Time) *TransactionUpdate {
+	tu.mutation.SetUpdateTime(t)
+	return tu
+}
+
 // SetBalance sets the "balance" field.
 func (tu *TransactionUpdate) SetBalance(d decimal.Decimal) *TransactionUpdate {
 	tu.mutation.ResetBalance()
@@ -82,34 +88,6 @@ func (tu *TransactionUpdate) SetDatetime(t time.Time) *TransactionUpdate {
 func (tu *TransactionUpdate) SetNillableDatetime(t *time.Time) *TransactionUpdate {
 	if t != nil {
 		tu.SetDatetime(*t)
-	}
-	return tu
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (tu *TransactionUpdate) SetCreatedAt(t time.Time) *TransactionUpdate {
-	tu.mutation.SetCreatedAt(t)
-	return tu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableCreatedAt(t *time.Time) *TransactionUpdate {
-	if t != nil {
-		tu.SetCreatedAt(*t)
-	}
-	return tu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (tu *TransactionUpdate) SetUpdatedAt(t time.Time) *TransactionUpdate {
-	tu.mutation.SetUpdatedAt(t)
-	return tu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableUpdatedAt(t *time.Time) *TransactionUpdate {
-	if t != nil {
-		tu.SetUpdatedAt(*t)
 	}
 	return tu
 }
@@ -174,6 +152,7 @@ func (tu *TransactionUpdate) RemoveTransactionEntries(t ...*TransactionEntry) *T
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (tu *TransactionUpdate) Save(ctx context.Context) (int, error) {
+	tu.defaults()
 	return withHooks(ctx, tu.sqlSave, tu.mutation, tu.hooks)
 }
 
@@ -199,6 +178,14 @@ func (tu *TransactionUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (tu *TransactionUpdate) defaults() {
+	if _, ok := tu.mutation.UpdateTime(); !ok {
+		v := transaction.UpdateDefaultUpdateTime()
+		tu.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (tu *TransactionUpdate) check() error {
 	if tu.mutation.ProfileCleared() && len(tu.mutation.ProfileIDs()) > 0 {
@@ -219,6 +206,9 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := tu.mutation.UpdateTime(); ok {
+		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
+	}
 	if value, ok := tu.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
@@ -233,12 +223,6 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := tu.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
-	}
-	if value, ok := tu.mutation.CreatedAt(); ok {
-		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
-	}
-	if value, ok := tu.mutation.UpdatedAt(); ok {
-		_spec.SetField(transaction.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if tu.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -334,6 +318,12 @@ type TransactionUpdateOne struct {
 	mutation *TransactionMutation
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (tuo *TransactionUpdateOne) SetUpdateTime(t time.Time) *TransactionUpdateOne {
+	tuo.mutation.SetUpdateTime(t)
+	return tuo
+}
+
 // SetBalance sets the "balance" field.
 func (tuo *TransactionUpdateOne) SetBalance(d decimal.Decimal) *TransactionUpdateOne {
 	tuo.mutation.ResetBalance()
@@ -385,34 +375,6 @@ func (tuo *TransactionUpdateOne) SetDatetime(t time.Time) *TransactionUpdateOne 
 func (tuo *TransactionUpdateOne) SetNillableDatetime(t *time.Time) *TransactionUpdateOne {
 	if t != nil {
 		tuo.SetDatetime(*t)
-	}
-	return tuo
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (tuo *TransactionUpdateOne) SetCreatedAt(t time.Time) *TransactionUpdateOne {
-	tuo.mutation.SetCreatedAt(t)
-	return tuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableCreatedAt(t *time.Time) *TransactionUpdateOne {
-	if t != nil {
-		tuo.SetCreatedAt(*t)
-	}
-	return tuo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (tuo *TransactionUpdateOne) SetUpdatedAt(t time.Time) *TransactionUpdateOne {
-	tuo.mutation.SetUpdatedAt(t)
-	return tuo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableUpdatedAt(t *time.Time) *TransactionUpdateOne {
-	if t != nil {
-		tuo.SetUpdatedAt(*t)
 	}
 	return tuo
 }
@@ -490,6 +452,7 @@ func (tuo *TransactionUpdateOne) Select(field string, fields ...string) *Transac
 
 // Save executes the query and returns the updated Transaction entity.
 func (tuo *TransactionUpdateOne) Save(ctx context.Context) (*Transaction, error) {
+	tuo.defaults()
 	return withHooks(ctx, tuo.sqlSave, tuo.mutation, tuo.hooks)
 }
 
@@ -512,6 +475,14 @@ func (tuo *TransactionUpdateOne) Exec(ctx context.Context) error {
 func (tuo *TransactionUpdateOne) ExecX(ctx context.Context) {
 	if err := tuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (tuo *TransactionUpdateOne) defaults() {
+	if _, ok := tuo.mutation.UpdateTime(); !ok {
+		v := transaction.UpdateDefaultUpdateTime()
+		tuo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -552,6 +523,9 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 			}
 		}
 	}
+	if value, ok := tuo.mutation.UpdateTime(); ok {
+		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
+	}
 	if value, ok := tuo.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
@@ -566,12 +540,6 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	}
 	if value, ok := tuo.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
-	}
-	if value, ok := tuo.mutation.CreatedAt(); ok {
-		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
-	}
-	if value, ok := tuo.mutation.UpdatedAt(); ok {
-		_spec.SetField(transaction.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if tuo.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{

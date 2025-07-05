@@ -2,14 +2,13 @@ package schema
 
 import (
 	"fijoy/constants"
-	"time"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/mixin"
 	"github.com/nrednav/cuid2"
 )
 
@@ -24,18 +23,17 @@ func (User) Annotations() []schema.Annotation {
 	}
 }
 
+func (User) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.Time{},
+	}
+}
+
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").DefaultFunc(func() string { return constants.UserPrefix + cuid2.Generate() }),
 		field.String("email").Unique().NotEmpty(),
-
-		field.Time("created_at").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
-		field.Time("updated_at").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
 	}
 }
 

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/mixin"
 	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
@@ -25,6 +26,12 @@ func (Transaction) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
+	}
+}
+
+func (Transaction) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.Time{},
 	}
 }
 
@@ -48,13 +55,6 @@ func (Transaction) Fields() []ent.Field {
 		field.Text("note").Optional(),
 
 		field.Time("datetime").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
-
-		field.Time("created_at").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
-		field.Time("updated_at").Default(time.Now).Annotations(
 			entsql.Default("CURRENT_TIMESTAMP"),
 		),
 	}

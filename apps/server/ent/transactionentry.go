@@ -8,6 +8,7 @@ import (
 	"fijoy/ent/transactionentry"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -19,6 +20,10 @@ type TransactionEntry struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Value holds the value of the "value" field.
@@ -79,6 +84,8 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case transactionentry.FieldID:
 			values[i] = new(sql.NullString)
+		case transactionentry.FieldCreateTime, transactionentry.FieldUpdateTime:
+			values[i] = new(sql.NullTime)
 		case transactionentry.ForeignKeys[0]: // account_transaction_entry
 			values[i] = new(sql.NullString)
 		case transactionentry.ForeignKeys[1]: // transaction_transaction_entries
@@ -103,6 +110,18 @@ func (te *TransactionEntry) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				te.ID = value.String
+			}
+		case transactionentry.FieldCreateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+			} else if value.Valid {
+				te.CreateTime = value.Time
+			}
+		case transactionentry.FieldUpdateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+			} else if value.Valid {
+				te.UpdateTime = value.Time
 			}
 		case transactionentry.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -188,6 +207,12 @@ func (te *TransactionEntry) String() string {
 	var builder strings.Builder
 	builder.WriteString("TransactionEntry(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", te.ID))
+	builder.WriteString("create_time=")
+	builder.WriteString(te.CreateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("update_time=")
+	builder.WriteString(te.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", te.Amount))
 	builder.WriteString(", ")

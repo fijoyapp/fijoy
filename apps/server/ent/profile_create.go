@@ -24,6 +24,34 @@ type ProfileCreate struct {
 	hooks    []Hook
 }
 
+// SetCreateTime sets the "create_time" field.
+func (pc *ProfileCreate) SetCreateTime(t time.Time) *ProfileCreate {
+	pc.mutation.SetCreateTime(t)
+	return pc
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableCreateTime(t *time.Time) *ProfileCreate {
+	if t != nil {
+		pc.SetCreateTime(*t)
+	}
+	return pc
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (pc *ProfileCreate) SetUpdateTime(t time.Time) *ProfileCreate {
+	pc.mutation.SetUpdateTime(t)
+	return pc
+}
+
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (pc *ProfileCreate) SetNillableUpdateTime(t *time.Time) *ProfileCreate {
+	if t != nil {
+		pc.SetUpdateTime(*t)
+	}
+	return pc
+}
+
 // SetLocale sets the "locale" field.
 func (pc *ProfileCreate) SetLocale(s string) *ProfileCreate {
 	pc.mutation.SetLocale(s)
@@ -39,34 +67,6 @@ func (pc *ProfileCreate) SetCurrencies(s string) *ProfileCreate {
 // SetNetWorthGoal sets the "net_worth_goal" field.
 func (pc *ProfileCreate) SetNetWorthGoal(d decimal.Decimal) *ProfileCreate {
 	pc.mutation.SetNetWorthGoal(d)
-	return pc
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (pc *ProfileCreate) SetCreatedAt(t time.Time) *ProfileCreate {
-	pc.mutation.SetCreatedAt(t)
-	return pc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableCreatedAt(t *time.Time) *ProfileCreate {
-	if t != nil {
-		pc.SetCreatedAt(*t)
-	}
-	return pc
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (pc *ProfileCreate) SetUpdatedAt(t time.Time) *ProfileCreate {
-	pc.mutation.SetUpdatedAt(t)
-	return pc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableUpdatedAt(t *time.Time) *ProfileCreate {
-	if t != nil {
-		pc.SetUpdatedAt(*t)
-	}
 	return pc
 }
 
@@ -160,13 +160,13 @@ func (pc *ProfileCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pc *ProfileCreate) defaults() {
-	if _, ok := pc.mutation.CreatedAt(); !ok {
-		v := profile.DefaultCreatedAt()
-		pc.mutation.SetCreatedAt(v)
+	if _, ok := pc.mutation.CreateTime(); !ok {
+		v := profile.DefaultCreateTime()
+		pc.mutation.SetCreateTime(v)
 	}
-	if _, ok := pc.mutation.UpdatedAt(); !ok {
-		v := profile.DefaultUpdatedAt()
-		pc.mutation.SetUpdatedAt(v)
+	if _, ok := pc.mutation.UpdateTime(); !ok {
+		v := profile.DefaultUpdateTime()
+		pc.mutation.SetUpdateTime(v)
 	}
 	if _, ok := pc.mutation.ID(); !ok {
 		v := profile.DefaultID()
@@ -176,6 +176,12 @@ func (pc *ProfileCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *ProfileCreate) check() error {
+	if _, ok := pc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Profile.create_time"`)}
+	}
+	if _, ok := pc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Profile.update_time"`)}
+	}
 	if _, ok := pc.mutation.Locale(); !ok {
 		return &ValidationError{Name: "locale", err: errors.New(`ent: missing required field "Profile.locale"`)}
 	}
@@ -184,12 +190,6 @@ func (pc *ProfileCreate) check() error {
 	}
 	if _, ok := pc.mutation.NetWorthGoal(); !ok {
 		return &ValidationError{Name: "net_worth_goal", err: errors.New(`ent: missing required field "Profile.net_worth_goal"`)}
-	}
-	if _, ok := pc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Profile.created_at"`)}
-	}
-	if _, ok := pc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Profile.updated_at"`)}
 	}
 	if len(pc.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Profile.user"`)}
@@ -229,6 +229,14 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := pc.mutation.CreateTime(); ok {
+		_spec.SetField(profile.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := pc.mutation.UpdateTime(); ok {
+		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
+	}
 	if value, ok := pc.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 		_node.Locale = value
@@ -240,14 +248,6 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	if value, ok := pc.mutation.NetWorthGoal(); ok {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 		_node.NetWorthGoal = value
-	}
-	if value, ok := pc.mutation.CreatedAt(); ok {
-		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := pc.mutation.UpdatedAt(); ok {
-		_spec.SetField(profile.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
 	}
 	if nodes := pc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

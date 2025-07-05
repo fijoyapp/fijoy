@@ -2,15 +2,14 @@ package schema
 
 import (
 	"fijoy/constants"
-	"time"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/mixin"
 	"github.com/nrednav/cuid2"
 	"github.com/shopspring/decimal"
 )
@@ -25,6 +24,12 @@ func (Account) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
+	}
+}
+
+func (Account) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.Time{},
 	}
 }
 
@@ -86,13 +91,6 @@ func (Account) Fields() []ent.Field {
 			),
 
 		field.Bool("archived").Default(false),
-
-		field.Time("created_at").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
-		field.Time("updated_at").Default(time.Now).Annotations(
-			entsql.Default("CURRENT_TIMESTAMP"),
-		),
 	}
 }
 

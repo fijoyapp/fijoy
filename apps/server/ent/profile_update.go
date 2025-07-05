@@ -32,6 +32,12 @@ func (pu *ProfileUpdate) Where(ps ...predicate.Profile) *ProfileUpdate {
 	return pu
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (pu *ProfileUpdate) SetUpdateTime(t time.Time) *ProfileUpdate {
+	pu.mutation.SetUpdateTime(t)
+	return pu
+}
+
 // SetLocale sets the "locale" field.
 func (pu *ProfileUpdate) SetLocale(s string) *ProfileUpdate {
 	pu.mutation.SetLocale(s)
@@ -78,34 +84,6 @@ func (pu *ProfileUpdate) SetNillableNetWorthGoal(d *decimal.Decimal) *ProfileUpd
 // AddNetWorthGoal adds d to the "net_worth_goal" field.
 func (pu *ProfileUpdate) AddNetWorthGoal(d decimal.Decimal) *ProfileUpdate {
 	pu.mutation.AddNetWorthGoal(d)
-	return pu
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (pu *ProfileUpdate) SetCreatedAt(t time.Time) *ProfileUpdate {
-	pu.mutation.SetCreatedAt(t)
-	return pu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableCreatedAt(t *time.Time) *ProfileUpdate {
-	if t != nil {
-		pu.SetCreatedAt(*t)
-	}
-	return pu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (pu *ProfileUpdate) SetUpdatedAt(t time.Time) *ProfileUpdate {
-	pu.mutation.SetUpdatedAt(t)
-	return pu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableUpdatedAt(t *time.Time) *ProfileUpdate {
-	if t != nil {
-		pu.SetUpdatedAt(*t)
-	}
 	return pu
 }
 
@@ -205,6 +183,7 @@ func (pu *ProfileUpdate) RemoveTransaction(t ...*Transaction) *ProfileUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (pu *ProfileUpdate) Save(ctx context.Context) (int, error) {
+	pu.defaults()
 	return withHooks(ctx, pu.sqlSave, pu.mutation, pu.hooks)
 }
 
@@ -230,6 +209,14 @@ func (pu *ProfileUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (pu *ProfileUpdate) defaults() {
+	if _, ok := pu.mutation.UpdateTime(); !ok {
+		v := profile.UpdateDefaultUpdateTime()
+		pu.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (pu *ProfileUpdate) check() error {
 	if pu.mutation.UserCleared() && len(pu.mutation.UserIDs()) > 0 {
@@ -250,6 +237,9 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := pu.mutation.UpdateTime(); ok {
+		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
+	}
 	if value, ok := pu.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
@@ -261,12 +251,6 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := pu.mutation.AddedNetWorthGoal(); ok {
 		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
-	}
-	if value, ok := pu.mutation.CreatedAt(); ok {
-		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
-	}
-	if value, ok := pu.mutation.UpdatedAt(); ok {
-		_spec.SetField(profile.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if pu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -407,6 +391,12 @@ type ProfileUpdateOne struct {
 	mutation *ProfileMutation
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (puo *ProfileUpdateOne) SetUpdateTime(t time.Time) *ProfileUpdateOne {
+	puo.mutation.SetUpdateTime(t)
+	return puo
+}
+
 // SetLocale sets the "locale" field.
 func (puo *ProfileUpdateOne) SetLocale(s string) *ProfileUpdateOne {
 	puo.mutation.SetLocale(s)
@@ -453,34 +443,6 @@ func (puo *ProfileUpdateOne) SetNillableNetWorthGoal(d *decimal.Decimal) *Profil
 // AddNetWorthGoal adds d to the "net_worth_goal" field.
 func (puo *ProfileUpdateOne) AddNetWorthGoal(d decimal.Decimal) *ProfileUpdateOne {
 	puo.mutation.AddNetWorthGoal(d)
-	return puo
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (puo *ProfileUpdateOne) SetCreatedAt(t time.Time) *ProfileUpdateOne {
-	puo.mutation.SetCreatedAt(t)
-	return puo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableCreatedAt(t *time.Time) *ProfileUpdateOne {
-	if t != nil {
-		puo.SetCreatedAt(*t)
-	}
-	return puo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (puo *ProfileUpdateOne) SetUpdatedAt(t time.Time) *ProfileUpdateOne {
-	puo.mutation.SetUpdatedAt(t)
-	return puo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableUpdatedAt(t *time.Time) *ProfileUpdateOne {
-	if t != nil {
-		puo.SetUpdatedAt(*t)
-	}
 	return puo
 }
 
@@ -593,6 +555,7 @@ func (puo *ProfileUpdateOne) Select(field string, fields ...string) *ProfileUpda
 
 // Save executes the query and returns the updated Profile entity.
 func (puo *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
+	puo.defaults()
 	return withHooks(ctx, puo.sqlSave, puo.mutation, puo.hooks)
 }
 
@@ -615,6 +578,14 @@ func (puo *ProfileUpdateOne) Exec(ctx context.Context) error {
 func (puo *ProfileUpdateOne) ExecX(ctx context.Context) {
 	if err := puo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (puo *ProfileUpdateOne) defaults() {
+	if _, ok := puo.mutation.UpdateTime(); !ok {
+		v := profile.UpdateDefaultUpdateTime()
+		puo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -655,6 +626,9 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 			}
 		}
 	}
+	if value, ok := puo.mutation.UpdateTime(); ok {
+		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
+	}
 	if value, ok := puo.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
@@ -666,12 +640,6 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 	}
 	if value, ok := puo.mutation.AddedNetWorthGoal(); ok {
 		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
-	}
-	if value, ok := puo.mutation.CreatedAt(); ok {
-		_spec.SetField(profile.FieldCreatedAt, field.TypeTime, value)
-	}
-	if value, ok := puo.mutation.UpdatedAt(); ok {
-		_spec.SetField(profile.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if puo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

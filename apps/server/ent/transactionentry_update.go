@@ -10,6 +10,7 @@ import (
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,6 +28,12 @@ type TransactionEntryUpdate struct {
 // Where appends a list predicates to the TransactionEntryUpdate builder.
 func (teu *TransactionEntryUpdate) Where(ps ...predicate.TransactionEntry) *TransactionEntryUpdate {
 	teu.mutation.Where(ps...)
+	return teu
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (teu *TransactionEntryUpdate) SetUpdateTime(t time.Time) *TransactionEntryUpdate {
+	teu.mutation.SetUpdateTime(t)
 	return teu
 }
 
@@ -161,6 +168,7 @@ func (teu *TransactionEntryUpdate) ClearTransaction() *TransactionEntryUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (teu *TransactionEntryUpdate) Save(ctx context.Context) (int, error) {
+	teu.defaults()
 	return withHooks(ctx, teu.sqlSave, teu.mutation, teu.hooks)
 }
 
@@ -186,6 +194,14 @@ func (teu *TransactionEntryUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (teu *TransactionEntryUpdate) defaults() {
+	if _, ok := teu.mutation.UpdateTime(); !ok {
+		v := transactionentry.UpdateDefaultUpdateTime()
+		teu.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (teu *TransactionEntryUpdate) check() error {
 	if teu.mutation.AccountCleared() && len(teu.mutation.AccountIDs()) > 0 {
@@ -208,6 +224,9 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := teu.mutation.UpdateTime(); ok {
+		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := teu.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
@@ -312,6 +331,12 @@ type TransactionEntryUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *TransactionEntryMutation
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (teuo *TransactionEntryUpdateOne) SetUpdateTime(t time.Time) *TransactionEntryUpdateOne {
+	teuo.mutation.SetUpdateTime(t)
+	return teuo
 }
 
 // SetAmount sets the "amount" field.
@@ -458,6 +483,7 @@ func (teuo *TransactionEntryUpdateOne) Select(field string, fields ...string) *T
 
 // Save executes the query and returns the updated TransactionEntry entity.
 func (teuo *TransactionEntryUpdateOne) Save(ctx context.Context) (*TransactionEntry, error) {
+	teuo.defaults()
 	return withHooks(ctx, teuo.sqlSave, teuo.mutation, teuo.hooks)
 }
 
@@ -480,6 +506,14 @@ func (teuo *TransactionEntryUpdateOne) Exec(ctx context.Context) error {
 func (teuo *TransactionEntryUpdateOne) ExecX(ctx context.Context) {
 	if err := teuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (teuo *TransactionEntryUpdateOne) defaults() {
+	if _, ok := teuo.mutation.UpdateTime(); !ok {
+		v := transactionentry.UpdateDefaultUpdateTime()
+		teuo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -522,6 +556,9 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := teuo.mutation.UpdateTime(); ok {
+		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := teuo.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
