@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<74727f232c34083ce9d515b38b2ca47e>>
+ * @generated SignedSource<<5850c3d6d1748a060ad430e359ca7d23>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,7 +25,7 @@ export type transactionDataTableFragment$data = {
           };
           readonly amount: string;
           readonly balance: string;
-          readonly fxRate: string | null | undefined;
+          readonly fxRate: string;
           readonly id: string;
           readonly value: string;
         }> | null | undefined;

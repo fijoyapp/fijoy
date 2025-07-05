@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3b156836722d86c3534afb7d06828511>>
+ * @generated SignedSource<<c250eca294060b9f27fd3d3f5066528a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type finalStepMutation$variables = {
-  currencies: string;
+  currencies: ReadonlyArray<string>;
   netWorthGoal: string;
 };
 export type finalStepMutation$data = {
@@ -91,16 +91,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "07e1dfbc2d194e394466512d84b46a97",
+    "cacheID": "338e1cb94b3244baa331d77b99c13373",
     "id": null,
     "metadata": {},
     "name": "finalStepMutation",
     "operationKind": "mutation",
-    "text": "mutation finalStepMutation(\n  $currencies: String!\n  $netWorthGoal: String!\n) {\n  createProfile(input: {currencies: $currencies, netWorthGoal: $netWorthGoal}) {\n    id\n  }\n}\n"
+    "text": "mutation finalStepMutation(\n  $currencies: [String!]!\n  $netWorthGoal: String!\n) {\n  createProfile(input: {currencies: $currencies, netWorthGoal: $netWorthGoal}) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "77e66d28cd695f037024a3cee08d5ab8";
+(node as any).hash = "f6fc9c263d7adf18df1e1c03f048e8da";
 
 export default node;

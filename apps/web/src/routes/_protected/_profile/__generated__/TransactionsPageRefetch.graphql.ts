@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d1ece8a6d35bcf9acc9e197f97317483>>
+ * @generated SignedSource<<e27d5c4e345b096f9ba80f058cc5cecc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -250,7 +250,7 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "updatedAt",
+                    "name": "updateTime",
                     "storageKey": null
                   }
                 ],
@@ -266,12 +266,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "582f3ebbe7e67b654a096607c25f4458",
+    "cacheID": "9f77fe81a95c21b2249e69e808441c7a",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment newTransactionFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newTransactionFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updateTime\n}\n\nfragment newTransactionFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newTransactionFragment\n}\n"
   }
 };
 })();

@@ -128,7 +128,7 @@ export default function TransactionDataTable({
       //       <div className="text-right font-mono">
       //         {getCurrencyDisplay(
       //           money,
-      //           profile.currencies.split(",")[0],
+      //           profile.currencies[0],
       //           profile.locale,
       //           {
       //             compact: false,

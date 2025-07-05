@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dceaf352cd67249d12d83de2d226b9e2>>
+ * @generated SignedSource<<82a7477af56eed25e96a5d51971726c2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type cardFragment$data = {
   readonly name: string;
   readonly ticker: string;
   readonly tickerType: AccountTickerType;
-  readonly updatedAt: any;
+  readonly updateTime: any;
   readonly value: string;
   readonly " $fragmentType": "cardFragment";
 };
@@ -103,7 +103,7 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "updatedAt",
+      "name": "updateTime",
       "storageKey": null
     }
   ],
@@ -111,6 +111,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "868269760b61f55e6d8283f69830e271";
+(node as any).hash = "aeb0c9eb5efbd94967a0b9fda3f45241";
 
 export default node;

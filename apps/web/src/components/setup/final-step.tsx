@@ -25,7 +25,7 @@ const formSchema = z.object({
 });
 
 const profileCreateMutation = graphql`
-  mutation finalStepMutation($currencies: String!, $netWorthGoal: String!) {
+  mutation finalStepMutation($currencies: [String!]!, $netWorthGoal: String!) {
     createProfile(
       input: { currencies: $currencies, netWorthGoal: $netWorthGoal }
     ) {
@@ -116,7 +116,7 @@ const FinalStep = ({ rootQueryRef }: Props) => {
       new Promise((resolve, reject) => {
         commitMutation({
           variables: {
-            currencies: values.currency.currencies.join(","),
+            currencies: values.currency.currencies,
             netWorthGoal: values.goal.net_worth_goal,
           },
           onCompleted: (response) => {

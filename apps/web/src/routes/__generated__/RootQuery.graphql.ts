@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3f13352cd8527f0c847499e842da45fb>>
+ * @generated SignedSource<<a002e10c2078317479ba1b8ef92c090a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -336,7 +336,7 @@ return {
                         "alias": null,
                         "args": null,
                         "kind": "ScalarField",
-                        "name": "updatedAt",
+                        "name": "updateTime",
                         "storageKey": null
                       }
                     ],
@@ -440,12 +440,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ac53bc2bde604863506e21a679818445",
+    "cacheID": "f39e78f5847630b0c6fbe92f2f23d320",
     "id": null,
     "metadata": {},
     "name": "RootQuery",
     "operationKind": "query",
-    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  currencies {\n    ...currencyFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  ...transactionsPageFragment @include(if: $hasProfile)\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updatedAt\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment newTransactionFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newTransactionFragment\n}\n\nfragment userFragment on User {\n  id\n}\n"
+    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profileFragment\n    id\n  }\n  currencies {\n    ...currencyFragment\n  }\n  ...accountsPageFragment @include(if: $hasProfile)\n  ...transactionsPageFragment @include(if: $hasProfile)\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updateTime\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment newTransactionFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        currencySymbol\n        amount\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newTransactionFragment\n}\n\nfragment userFragment on User {\n  id\n}\n"
   }
 };
 })();
