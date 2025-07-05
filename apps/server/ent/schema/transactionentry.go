@@ -39,7 +39,8 @@ func (TransactionEntry) Fields() []ent.Field {
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")),
+			Annotations(entgql.Type("String")).
+			Comment("The unit amount of share or money in this transaction entry"),
 
 		field.Float("value").
 			GoType(decimal.Decimal{}).
@@ -51,7 +52,8 @@ func (TransactionEntry) Fields() []ent.Field {
 				entgql.Type("String"),
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
-			),
+			).
+			Comment("The value of 1 share in the native currency. If this is just a currency account, then this field will be 1"),
 
 		field.Float("fx_rate").
 			GoType(decimal.Decimal{}).
@@ -64,7 +66,8 @@ func (TransactionEntry) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
-			Optional(),
+			Optional().
+			Comment("The exchange rate from the native currency to user's default display currency"),
 
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
@@ -76,7 +79,8 @@ func (TransactionEntry) Fields() []ent.Field {
 				entgql.Type("String"),
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
-			),
+			).
+			Comment("The total balance of this transaction entry in user's display currency"),
 	}
 }
 

@@ -35,15 +35,24 @@ func (Account) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id"),
 
-		field.String("name").NotEmpty(),
+		field.String("name").
+			NotEmpty(),
 
 		field.Enum("account_type").
-			Values("liquidity", "investment", "property", "receivable", "liability"),
+			Values("liquidity", "investment", "property", "receivable", "liability").
+			Immutable(),
 
-		field.String("currency_symbol").NotEmpty(),
+		field.String("currency_symbol").
+			NotEmpty().
+			Immutable(),
 
-		field.String("ticker").NotEmpty(),
-		field.Enum("ticker_type").Values("currency", "stock", "crypto"),
+		field.String("ticker").
+			NotEmpty().
+			Immutable(),
+
+		field.Enum("ticker_type").
+			Values("currency", "stock", "crypto").
+			Immutable(),
 
 		field.Float("amount").
 			GoType(decimal.Decimal{}).
@@ -51,7 +60,9 @@ func (Account) Fields() []ent.Field {
 				dialect.MySQL:    "decimal(36,18)",
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")),
+			Annotations(entgql.Type("String")).
+			Comment("The unit amount of share or money in this account"),
+
 		field.Float("value").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -62,7 +73,9 @@ func (Account) Fields() []ent.Field {
 				entgql.Type("String"),
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
-			),
+			).
+			Comment("The value of 1 share in the native currency. If this is just a currency account, then this field will be 1"),
+
 		field.Float("fx_rate").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -74,7 +87,9 @@ func (Account) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
-			Optional(),
+			Optional().
+			Comment("The exchange rate from the native currency to user's default display currency"),
+
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -85,9 +100,11 @@ func (Account) Fields() []ent.Field {
 				entgql.Type("String"),
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
-			),
+			).
+			Comment("The total balance of this account in user's display currency"),
 
-		field.Bool("archived").Default(false),
+		field.Bool("archived").
+			Default(false),
 	}
 }
 

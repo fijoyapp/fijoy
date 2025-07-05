@@ -23,7 +23,7 @@ type Transaction struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
-	// Balance holds the value of the "balance" field.
+	// The total balance of this transaction entry in user's display currency. Note that this is an aggregate of all the transaction entries belong to this transaction
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Note holds the value of the "note" field.
 	Note string `json:"note,omitempty"`

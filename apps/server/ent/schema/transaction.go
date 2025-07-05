@@ -48,7 +48,8 @@ func (Transaction) Fields() []ent.Field {
 				entgql.Type("String"),
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
-			),
+			).
+			Comment("The total balance of this transaction entry in user's display currency. Note that this is an aggregate of all the transaction entries belong to this transaction"),
 
 		field.Text("note").Optional(),
 
