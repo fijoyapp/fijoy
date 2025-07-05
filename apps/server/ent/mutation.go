@@ -589,24 +589,10 @@ func (m *AccountMutation) AddedFxRate() (r decimal.Decimal, exists bool) {
 	return *v, true
 }
 
-// ClearFxRate clears the value of the "fx_rate" field.
-func (m *AccountMutation) ClearFxRate() {
-	m.fx_rate = nil
-	m.addfx_rate = nil
-	m.clearedFields[account.FieldFxRate] = struct{}{}
-}
-
-// FxRateCleared returns if the "fx_rate" field was cleared in this mutation.
-func (m *AccountMutation) FxRateCleared() bool {
-	_, ok := m.clearedFields[account.FieldFxRate]
-	return ok
-}
-
 // ResetFxRate resets all changes to the "fx_rate" field.
 func (m *AccountMutation) ResetFxRate() {
 	m.fx_rate = nil
 	m.addfx_rate = nil
-	delete(m.clearedFields, account.FieldFxRate)
 }
 
 // SetBalance sets the "balance" field.
@@ -1103,11 +1089,7 @@ func (m *AccountMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *AccountMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(account.FieldFxRate) {
-		fields = append(fields, account.FieldFxRate)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1120,11 +1102,6 @@ func (m *AccountMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *AccountMutation) ClearField(name string) error {
-	switch name {
-	case account.FieldFxRate:
-		m.ClearFxRate()
-		return nil
-	}
 	return fmt.Errorf("unknown Account nullable field %s", name)
 }
 
@@ -3231,24 +3208,10 @@ func (m *TransactionEntryMutation) AddedFxRate() (r decimal.Decimal, exists bool
 	return *v, true
 }
 
-// ClearFxRate clears the value of the "fx_rate" field.
-func (m *TransactionEntryMutation) ClearFxRate() {
-	m.fx_rate = nil
-	m.addfx_rate = nil
-	m.clearedFields[transactionentry.FieldFxRate] = struct{}{}
-}
-
-// FxRateCleared returns if the "fx_rate" field was cleared in this mutation.
-func (m *TransactionEntryMutation) FxRateCleared() bool {
-	_, ok := m.clearedFields[transactionentry.FieldFxRate]
-	return ok
-}
-
 // ResetFxRate resets all changes to the "fx_rate" field.
 func (m *TransactionEntryMutation) ResetFxRate() {
 	m.fx_rate = nil
 	m.addfx_rate = nil
-	delete(m.clearedFields, transactionentry.FieldFxRate)
 }
 
 // SetBalance sets the "balance" field.
@@ -3610,11 +3573,7 @@ func (m *TransactionEntryMutation) AddField(name string, value ent.Value) error 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *TransactionEntryMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(transactionentry.FieldFxRate) {
-		fields = append(fields, transactionentry.FieldFxRate)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -3627,11 +3586,6 @@ func (m *TransactionEntryMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *TransactionEntryMutation) ClearField(name string) error {
-	switch name {
-	case transactionentry.FieldFxRate:
-		m.ClearFxRate()
-		return nil
-	}
 	return fmt.Errorf("unknown TransactionEntry nullable field %s", name)
 }
 

@@ -100,12 +100,6 @@ func (teu *TransactionEntryUpdate) AddFxRate(d decimal.Decimal) *TransactionEntr
 	return teu
 }
 
-// ClearFxRate clears the value of the "fx_rate" field.
-func (teu *TransactionEntryUpdate) ClearFxRate() *TransactionEntryUpdate {
-	teu.mutation.ClearFxRate()
-	return teu
-}
-
 // SetBalance sets the "balance" field.
 func (teu *TransactionEntryUpdate) SetBalance(d decimal.Decimal) *TransactionEntryUpdate {
 	teu.mutation.ResetBalance()
@@ -245,9 +239,6 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 	}
 	if value, ok := teu.mutation.AddedFxRate(); ok {
 		_spec.AddField(transactionentry.FieldFxRate, field.TypeFloat64, value)
-	}
-	if teu.mutation.FxRateCleared() {
-		_spec.ClearField(transactionentry.FieldFxRate, field.TypeFloat64)
 	}
 	if value, ok := teu.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)
@@ -399,12 +390,6 @@ func (teuo *TransactionEntryUpdateOne) SetNillableFxRate(d *decimal.Decimal) *Tr
 // AddFxRate adds d to the "fx_rate" field.
 func (teuo *TransactionEntryUpdateOne) AddFxRate(d decimal.Decimal) *TransactionEntryUpdateOne {
 	teuo.mutation.AddFxRate(d)
-	return teuo
-}
-
-// ClearFxRate clears the value of the "fx_rate" field.
-func (teuo *TransactionEntryUpdateOne) ClearFxRate() *TransactionEntryUpdateOne {
-	teuo.mutation.ClearFxRate()
 	return teuo
 }
 
@@ -577,9 +562,6 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 	}
 	if value, ok := teuo.mutation.AddedFxRate(); ok {
 		_spec.AddField(transactionentry.FieldFxRate, field.TypeFloat64, value)
-	}
-	if teuo.mutation.FxRateCleared() {
-		_spec.ClearField(transactionentry.FieldFxRate, field.TypeFloat64)
 	}
 	if value, ok := teuo.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)

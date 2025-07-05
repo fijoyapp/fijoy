@@ -31,7 +31,7 @@ func (r *accountResolver) Value(ctx context.Context, obj *ent.Account) (string, 
 }
 
 // FxRate is the resolver for the fxRate field.
-func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (*string, error) {
+func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (string, error) {
 	return pointer.To(obj.FxRate.String()), nil
 }
 
@@ -105,7 +105,7 @@ func (r *transactionEntryResolver) Value(ctx context.Context, obj *ent.Transacti
 }
 
 // FxRate is the resolver for the fxRate field.
-func (r *transactionEntryResolver) FxRate(ctx context.Context, obj *ent.TransactionEntry) (*string, error) {
+func (r *transactionEntryResolver) FxRate(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
 	return pointer.To(obj.FxRate.String()), nil
 }
 

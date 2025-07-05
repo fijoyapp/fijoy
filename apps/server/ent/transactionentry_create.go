@@ -69,14 +69,6 @@ func (tec *TransactionEntryCreate) SetFxRate(d decimal.Decimal) *TransactionEntr
 	return tec
 }
 
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (tec *TransactionEntryCreate) SetNillableFxRate(d *decimal.Decimal) *TransactionEntryCreate {
-	if d != nil {
-		tec.SetFxRate(*d)
-	}
-	return tec
-}
-
 // SetBalance sets the "balance" field.
 func (tec *TransactionEntryCreate) SetBalance(d decimal.Decimal) *TransactionEntryCreate {
 	tec.mutation.SetBalance(d)
@@ -169,6 +161,9 @@ func (tec *TransactionEntryCreate) check() error {
 	}
 	if _, ok := tec.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "TransactionEntry.value"`)}
+	}
+	if _, ok := tec.mutation.FxRate(); !ok {
+		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "TransactionEntry.fx_rate"`)}
 	}
 	if _, ok := tec.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "TransactionEntry.balance"`)}

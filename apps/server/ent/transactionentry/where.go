@@ -296,16 +296,6 @@ func FxRateLTE(v decimal.Decimal) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldLTE(FieldFxRate, v))
 }
 
-// FxRateIsNil applies the IsNil predicate on the "fx_rate" field.
-func FxRateIsNil() predicate.TransactionEntry {
-	return predicate.TransactionEntry(sql.FieldIsNull(FieldFxRate))
-}
-
-// FxRateNotNil applies the NotNil predicate on the "fx_rate" field.
-func FxRateNotNil() predicate.TransactionEntry {
-	return predicate.TransactionEntry(sql.FieldNotNull(FieldFxRate))
-}
-
 // BalanceEQ applies the EQ predicate on the "balance" field.
 func BalanceEQ(v decimal.Decimal) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldEQ(FieldBalance, v))

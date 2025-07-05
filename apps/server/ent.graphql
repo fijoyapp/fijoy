@@ -20,7 +20,7 @@ type Account implements Node {
   """
   The exchange rate from the native currency to user's default display currency
   """
-  fxRate: String
+  fxRate: String!
   """
   The total balance of this account in user's display currency
   """
@@ -340,7 +340,7 @@ type TransactionEntry implements Node {
   """
   The exchange rate from the native currency to user's default display currency
   """
-  fxRate: String
+  fxRate: String!
   """
   The total balance of this transaction entry in user's display currency
   """
