@@ -4,7 +4,9 @@ package ent
 
 import (
 	"context"
+	"encoding/json"
 	"fijoy/ent/account"
+	"fijoy/ent/internal"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
@@ -76,6 +78,21 @@ func WithFixedNodeType(t string) NodeOption {
 type nodeOptions struct {
 	nodeType func(context.Context, string) (string, error)
 }
+
+// Each node has a range of 1<<32 ids. Pre-computing a map of node starting
+// value to node type ensures node type resolution happens in O(1) complexity.
+var nodeTypes = func() map[int]string {
+	var is map[string]int
+	if err := json.Unmarshal([]byte(internal.IncrementStarts), &is); err != nil {
+		panic(err)
+	}
+	// Get a map of range starting value to node type.
+	m := make(map[int]string, len(is))
+	for k, v := range is {
+		m[v] = k // ent ensures there are no duplicate starting values
+	}
+	return m
+}()
 
 func (c *Client) newNodeOpts(opts []NodeOption) *nodeOptions {
 	nopts := &nodeOptions{}
