@@ -15,6 +15,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/shopspring/decimal"
 )
@@ -53,16 +54,14 @@ func (pu *ProfileUpdate) SetNillableLocale(s *string) *ProfileUpdate {
 }
 
 // SetCurrencies sets the "currencies" field.
-func (pu *ProfileUpdate) SetCurrencies(s string) *ProfileUpdate {
+func (pu *ProfileUpdate) SetCurrencies(s []string) *ProfileUpdate {
 	pu.mutation.SetCurrencies(s)
 	return pu
 }
 
-// SetNillableCurrencies sets the "currencies" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableCurrencies(s *string) *ProfileUpdate {
-	if s != nil {
-		pu.SetCurrencies(*s)
-	}
+// AppendCurrencies appends s to the "currencies" field.
+func (pu *ProfileUpdate) AppendCurrencies(s []string) *ProfileUpdate {
+	pu.mutation.AppendCurrencies(s)
 	return pu
 }
 
@@ -244,7 +243,12 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
 	if value, ok := pu.mutation.Currencies(); ok {
-		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)
+		_spec.SetField(profile.FieldCurrencies, field.TypeJSON, value)
+	}
+	if value, ok := pu.mutation.AppendedCurrencies(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, profile.FieldCurrencies, value)
+		})
 	}
 	if value, ok := pu.mutation.NetWorthGoal(); ok {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
@@ -412,16 +416,14 @@ func (puo *ProfileUpdateOne) SetNillableLocale(s *string) *ProfileUpdateOne {
 }
 
 // SetCurrencies sets the "currencies" field.
-func (puo *ProfileUpdateOne) SetCurrencies(s string) *ProfileUpdateOne {
+func (puo *ProfileUpdateOne) SetCurrencies(s []string) *ProfileUpdateOne {
 	puo.mutation.SetCurrencies(s)
 	return puo
 }
 
-// SetNillableCurrencies sets the "currencies" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableCurrencies(s *string) *ProfileUpdateOne {
-	if s != nil {
-		puo.SetCurrencies(*s)
-	}
+// AppendCurrencies appends s to the "currencies" field.
+func (puo *ProfileUpdateOne) AppendCurrencies(s []string) *ProfileUpdateOne {
+	puo.mutation.AppendCurrencies(s)
 	return puo
 }
 
@@ -633,7 +635,12 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
 	if value, ok := puo.mutation.Currencies(); ok {
-		_spec.SetField(profile.FieldCurrencies, field.TypeString, value)
+		_spec.SetField(profile.FieldCurrencies, field.TypeJSON, value)
+	}
+	if value, ok := puo.mutation.AppendedCurrencies(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, profile.FieldCurrencies, value)
+		})
 	}
 	if value, ok := puo.mutation.NetWorthGoal(); ok {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)

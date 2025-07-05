@@ -3359,9 +3359,9 @@ func (ec *executionContext) _Profile_currencies(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Profile_currencies(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7818,7 +7818,7 @@ func (ec *executionContext) unmarshalInputCreateProfileInput(ctx context.Context
 			it.UpdateTime = data
 		case "currencies":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencies"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8186,7 +8186,7 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "currencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccount", "addTransactionIDs", "removeTransactionIDs", "clearTransaction"}
+	fieldsInOrder := [...]string{"updateTime", "currencies", "appendCurrencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccount", "addTransactionIDs", "removeTransactionIDs", "clearTransaction"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8202,11 +8202,18 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 			it.UpdateTime = data
 		case "currencies":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencies"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Currencies = data
+		case "appendCurrencies":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendCurrencies"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendCurrencies = data
 		case "netWorthGoal":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("netWorthGoal"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -10769,6 +10776,36 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v any) (time.Time, error) {

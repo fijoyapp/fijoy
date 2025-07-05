@@ -118,11 +118,6 @@ func ByLocale(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLocale, opts...).ToFunc()
 }
 
-// ByCurrencies orders the results by the currencies field.
-func ByCurrencies(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCurrencies, opts...).ToFunc()
-}
-
 // ByNetWorthGoal orders the results by the net_worth_goal field.
 func ByNetWorthGoal(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNetWorthGoal, opts...).ToFunc()

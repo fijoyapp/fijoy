@@ -103,7 +103,7 @@ func (c *AccountUpdateOne) SetInput(i UpdateAccountInput) *AccountUpdateOne {
 type CreateProfileInput struct {
 	CreateTime     *time.Time
 	UpdateTime     *time.Time
-	Currencies     string
+	Currencies     []string
 	NetWorthGoal   decimal.Decimal
 	AccountIDs     []string
 	TransactionIDs []string
@@ -117,7 +117,9 @@ func (i *CreateProfileInput) Mutate(m *ProfileMutation) {
 	if v := i.UpdateTime; v != nil {
 		m.SetUpdateTime(*v)
 	}
-	m.SetCurrencies(i.Currencies)
+	if v := i.Currencies; v != nil {
+		m.SetCurrencies(v)
+	}
 	m.SetNetWorthGoal(i.NetWorthGoal)
 	if v := i.AccountIDs; len(v) > 0 {
 		m.AddAccountIDs(v...)
@@ -136,7 +138,8 @@ func (c *ProfileCreate) SetInput(i CreateProfileInput) *ProfileCreate {
 // UpdateProfileInput represents a mutation input for updating profiles.
 type UpdateProfileInput struct {
 	UpdateTime           *time.Time
-	Currencies           *string
+	Currencies           []string
+	AppendCurrencies     []string
 	NetWorthGoal         *decimal.Decimal
 	ClearAccount         bool
 	AddAccountIDs        []string
@@ -152,7 +155,10 @@ func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
 		m.SetUpdateTime(*v)
 	}
 	if v := i.Currencies; v != nil {
-		m.SetCurrencies(*v)
+		m.SetCurrencies(v)
+	}
+	if i.AppendCurrencies != nil {
+		m.AppendCurrencies(i.Currencies)
 	}
 	if v := i.NetWorthGoal; v != nil {
 		m.SetNetWorthGoal(*v)
