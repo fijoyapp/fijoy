@@ -7,6 +7,7 @@ import (
 	"fijoy/config"
 	"fijoy/constants"
 	"fijoy/ent"
+	"fijoy/ent/migrate"
 
 	// "fijoy/internal/util/market"
 	// market_client "fijoy/internal/util/market/client"
@@ -88,7 +89,11 @@ func main() {
 	}
 
 	ctx := context.Background()
-	if err := entClient.Schema.Create(ctx); err != nil {
+	if err := entClient.Schema.Create(
+		ctx,
+		migrate.WithDropIndex(true),
+		migrate.WithDropColumn(true),
+	); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
