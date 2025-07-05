@@ -31,6 +31,12 @@ func (au *AccountUpdate) Where(ps ...predicate.Account) *AccountUpdate {
 	return au
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (au *AccountUpdate) SetUpdateTime(t time.Time) *AccountUpdate {
+	au.mutation.SetUpdateTime(t)
+	return au
+}
+
 // SetName sets the "name" field.
 func (au *AccountUpdate) SetName(s string) *AccountUpdate {
 	au.mutation.SetName(s)
@@ -205,34 +211,6 @@ func (au *AccountUpdate) SetNillableArchived(b *bool) *AccountUpdate {
 	return au
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (au *AccountUpdate) SetCreatedAt(t time.Time) *AccountUpdate {
-	au.mutation.SetCreatedAt(t)
-	return au
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableCreatedAt(t *time.Time) *AccountUpdate {
-	if t != nil {
-		au.SetCreatedAt(*t)
-	}
-	return au
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (au *AccountUpdate) SetUpdatedAt(t time.Time) *AccountUpdate {
-	au.mutation.SetUpdatedAt(t)
-	return au
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableUpdatedAt(t *time.Time) *AccountUpdate {
-	if t != nil {
-		au.SetUpdatedAt(*t)
-	}
-	return au
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
 func (au *AccountUpdate) SetProfileID(id string) *AccountUpdate {
 	au.mutation.SetProfileID(id)
@@ -293,6 +271,7 @@ func (au *AccountUpdate) RemoveTransactionEntry(t ...*TransactionEntry) *Account
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (au *AccountUpdate) Save(ctx context.Context) (int, error) {
+	au.defaults()
 	return withHooks(ctx, au.sqlSave, au.mutation, au.hooks)
 }
 
@@ -315,6 +294,14 @@ func (au *AccountUpdate) Exec(ctx context.Context) error {
 func (au *AccountUpdate) ExecX(ctx context.Context) {
 	if err := au.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (au *AccountUpdate) defaults() {
+	if _, ok := au.mutation.UpdateTime(); !ok {
+		v := account.UpdateDefaultUpdateTime()
+		au.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -363,6 +350,9 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := au.mutation.UpdateTime(); ok {
+		_spec.SetField(account.FieldUpdateTime, field.TypeTime, value)
+	}
 	if value, ok := au.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 	}
@@ -407,12 +397,6 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Archived(); ok {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
-	}
-	if value, ok := au.mutation.CreatedAt(); ok {
-		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)
-	}
-	if value, ok := au.mutation.UpdatedAt(); ok {
-		_spec.SetField(account.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if au.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -506,6 +490,12 @@ type AccountUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *AccountMutation
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (auo *AccountUpdateOne) SetUpdateTime(t time.Time) *AccountUpdateOne {
+	auo.mutation.SetUpdateTime(t)
+	return auo
 }
 
 // SetName sets the "name" field.
@@ -682,34 +672,6 @@ func (auo *AccountUpdateOne) SetNillableArchived(b *bool) *AccountUpdateOne {
 	return auo
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (auo *AccountUpdateOne) SetCreatedAt(t time.Time) *AccountUpdateOne {
-	auo.mutation.SetCreatedAt(t)
-	return auo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableCreatedAt(t *time.Time) *AccountUpdateOne {
-	if t != nil {
-		auo.SetCreatedAt(*t)
-	}
-	return auo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (auo *AccountUpdateOne) SetUpdatedAt(t time.Time) *AccountUpdateOne {
-	auo.mutation.SetUpdatedAt(t)
-	return auo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableUpdatedAt(t *time.Time) *AccountUpdateOne {
-	if t != nil {
-		auo.SetUpdatedAt(*t)
-	}
-	return auo
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
 func (auo *AccountUpdateOne) SetProfileID(id string) *AccountUpdateOne {
 	auo.mutation.SetProfileID(id)
@@ -783,6 +745,7 @@ func (auo *AccountUpdateOne) Select(field string, fields ...string) *AccountUpda
 
 // Save executes the query and returns the updated Account entity.
 func (auo *AccountUpdateOne) Save(ctx context.Context) (*Account, error) {
+	auo.defaults()
 	return withHooks(ctx, auo.sqlSave, auo.mutation, auo.hooks)
 }
 
@@ -805,6 +768,14 @@ func (auo *AccountUpdateOne) Exec(ctx context.Context) error {
 func (auo *AccountUpdateOne) ExecX(ctx context.Context) {
 	if err := auo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (auo *AccountUpdateOne) defaults() {
+	if _, ok := auo.mutation.UpdateTime(); !ok {
+		v := account.UpdateDefaultUpdateTime()
+		auo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -870,6 +841,9 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 			}
 		}
 	}
+	if value, ok := auo.mutation.UpdateTime(); ok {
+		_spec.SetField(account.FieldUpdateTime, field.TypeTime, value)
+	}
 	if value, ok := auo.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 	}
@@ -914,12 +888,6 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if value, ok := auo.mutation.Archived(); ok {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
-	}
-	if value, ok := auo.mutation.CreatedAt(); ok {
-		_spec.SetField(account.FieldCreatedAt, field.TypeTime, value)
-	}
-	if value, ok := auo.mutation.UpdatedAt(); ok {
-		_spec.SetField(account.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if auo.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{

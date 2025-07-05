@@ -9,6 +9,7 @@ import (
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -20,6 +21,34 @@ type TransactionEntryCreate struct {
 	config
 	mutation *TransactionEntryMutation
 	hooks    []Hook
+}
+
+// SetCreateTime sets the "create_time" field.
+func (tec *TransactionEntryCreate) SetCreateTime(t time.Time) *TransactionEntryCreate {
+	tec.mutation.SetCreateTime(t)
+	return tec
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (tec *TransactionEntryCreate) SetNillableCreateTime(t *time.Time) *TransactionEntryCreate {
+	if t != nil {
+		tec.SetCreateTime(*t)
+	}
+	return tec
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (tec *TransactionEntryCreate) SetUpdateTime(t time.Time) *TransactionEntryCreate {
+	tec.mutation.SetUpdateTime(t)
+	return tec
+}
+
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (tec *TransactionEntryCreate) SetNillableUpdateTime(t *time.Time) *TransactionEntryCreate {
+	if t != nil {
+		tec.SetUpdateTime(*t)
+	}
+	return tec
 }
 
 // SetAmount sets the "amount" field.
@@ -125,6 +154,14 @@ func (tec *TransactionEntryCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tec *TransactionEntryCreate) defaults() {
+	if _, ok := tec.mutation.CreateTime(); !ok {
+		v := transactionentry.DefaultCreateTime()
+		tec.mutation.SetCreateTime(v)
+	}
+	if _, ok := tec.mutation.UpdateTime(); !ok {
+		v := transactionentry.DefaultUpdateTime()
+		tec.mutation.SetUpdateTime(v)
+	}
 	if _, ok := tec.mutation.ID(); !ok {
 		v := transactionentry.DefaultID()
 		tec.mutation.SetID(v)
@@ -133,6 +170,12 @@ func (tec *TransactionEntryCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tec *TransactionEntryCreate) check() error {
+	if _, ok := tec.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "TransactionEntry.create_time"`)}
+	}
+	if _, ok := tec.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "TransactionEntry.update_time"`)}
+	}
 	if _, ok := tec.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "TransactionEntry.amount"`)}
 	}
@@ -182,6 +225,14 @@ func (tec *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cr
 	if id, ok := tec.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := tec.mutation.CreateTime(); ok {
+		_spec.SetField(transactionentry.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := tec.mutation.UpdateTime(); ok {
+		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
 	}
 	if value, ok := tec.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)

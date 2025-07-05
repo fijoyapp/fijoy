@@ -376,12 +376,12 @@ func (pq *ProfileQuery) WithTransaction(opts ...func(*TransactionQuery)) *Profil
 // Example:
 //
 //	var v []struct {
-//		Locale string `json:"locale,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Profile.Query().
-//		GroupBy(profile.FieldLocale).
+//		GroupBy(profile.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (pq *ProfileQuery) GroupBy(field string, fields ...string) *ProfileGroupBy {
@@ -399,11 +399,11 @@ func (pq *ProfileQuery) GroupBy(field string, fields ...string) *ProfileGroupBy 
 // Example:
 //
 //	var v []struct {
-//		Locale string `json:"locale,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.Profile.Query().
-//		Select(profile.FieldLocale).
+//		Select(profile.FieldCreateTime).
 //		Scan(ctx, &v)
 func (pq *ProfileQuery) Select(fields ...string) *ProfileSelect {
 	pq.ctx.Fields = append(pq.ctx.Fields, fields...)

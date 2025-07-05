@@ -8,6 +8,7 @@ import (
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,6 +19,34 @@ type UserKeyCreate struct {
 	config
 	mutation *UserKeyMutation
 	hooks    []Hook
+}
+
+// SetCreateTime sets the "create_time" field.
+func (ukc *UserKeyCreate) SetCreateTime(t time.Time) *UserKeyCreate {
+	ukc.mutation.SetCreateTime(t)
+	return ukc
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (ukc *UserKeyCreate) SetNillableCreateTime(t *time.Time) *UserKeyCreate {
+	if t != nil {
+		ukc.SetCreateTime(*t)
+	}
+	return ukc
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (ukc *UserKeyCreate) SetUpdateTime(t time.Time) *UserKeyCreate {
+	ukc.mutation.SetUpdateTime(t)
+	return ukc
+}
+
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (ukc *UserKeyCreate) SetNillableUpdateTime(t *time.Time) *UserKeyCreate {
+	if t != nil {
+		ukc.SetUpdateTime(*t)
+	}
+	return ukc
 }
 
 // SetHashedPassword sets the "hashed_password" field.
@@ -58,6 +87,7 @@ func (ukc *UserKeyCreate) Mutation() *UserKeyMutation {
 
 // Save creates the UserKey in the database.
 func (ukc *UserKeyCreate) Save(ctx context.Context) (*UserKey, error) {
+	ukc.defaults()
 	return withHooks(ctx, ukc.sqlSave, ukc.mutation, ukc.hooks)
 }
 
@@ -83,8 +113,26 @@ func (ukc *UserKeyCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ukc *UserKeyCreate) defaults() {
+	if _, ok := ukc.mutation.CreateTime(); !ok {
+		v := userkey.DefaultCreateTime()
+		ukc.mutation.SetCreateTime(v)
+	}
+	if _, ok := ukc.mutation.UpdateTime(); !ok {
+		v := userkey.DefaultUpdateTime()
+		ukc.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (ukc *UserKeyCreate) check() error {
+	if _, ok := ukc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "UserKey.create_time"`)}
+	}
+	if _, ok := ukc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "UserKey.update_time"`)}
+	}
 	if len(ukc.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "UserKey.user"`)}
 	}
@@ -122,6 +170,14 @@ func (ukc *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 	if id, ok := ukc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := ukc.mutation.CreateTime(); ok {
+		_spec.SetField(userkey.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := ukc.mutation.UpdateTime(); ok {
+		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
 	}
 	if value, ok := ukc.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
@@ -165,6 +221,7 @@ func (ukcb *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
 	for i := range ukcb.builders {
 		func(i int, root context.Context) {
 			builder := ukcb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserKeyMutation)
 				if !ok {

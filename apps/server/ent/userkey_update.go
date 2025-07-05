@@ -9,6 +9,7 @@ import (
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -25,6 +26,12 @@ type UserKeyUpdate struct {
 // Where appends a list predicates to the UserKeyUpdate builder.
 func (uku *UserKeyUpdate) Where(ps ...predicate.UserKey) *UserKeyUpdate {
 	uku.mutation.Where(ps...)
+	return uku
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (uku *UserKeyUpdate) SetUpdateTime(t time.Time) *UserKeyUpdate {
+	uku.mutation.SetUpdateTime(t)
 	return uku
 }
 
@@ -72,6 +79,7 @@ func (uku *UserKeyUpdate) ClearUser() *UserKeyUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uku *UserKeyUpdate) Save(ctx context.Context) (int, error) {
+	uku.defaults()
 	return withHooks(ctx, uku.sqlSave, uku.mutation, uku.hooks)
 }
 
@@ -97,6 +105,14 @@ func (uku *UserKeyUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uku *UserKeyUpdate) defaults() {
+	if _, ok := uku.mutation.UpdateTime(); !ok {
+		v := userkey.UpdateDefaultUpdateTime()
+		uku.mutation.SetUpdateTime(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uku *UserKeyUpdate) check() error {
 	if uku.mutation.UserCleared() && len(uku.mutation.UserIDs()) > 0 {
@@ -116,6 +132,9 @@ func (uku *UserKeyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uku.mutation.UpdateTime(); ok {
+		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := uku.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
@@ -170,6 +189,12 @@ type UserKeyUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserKeyMutation
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (ukuo *UserKeyUpdateOne) SetUpdateTime(t time.Time) *UserKeyUpdateOne {
+	ukuo.mutation.SetUpdateTime(t)
+	return ukuo
 }
 
 // SetHashedPassword sets the "hashed_password" field.
@@ -229,6 +254,7 @@ func (ukuo *UserKeyUpdateOne) Select(field string, fields ...string) *UserKeyUpd
 
 // Save executes the query and returns the updated UserKey entity.
 func (ukuo *UserKeyUpdateOne) Save(ctx context.Context) (*UserKey, error) {
+	ukuo.defaults()
 	return withHooks(ctx, ukuo.sqlSave, ukuo.mutation, ukuo.hooks)
 }
 
@@ -251,6 +277,14 @@ func (ukuo *UserKeyUpdateOne) Exec(ctx context.Context) error {
 func (ukuo *UserKeyUpdateOne) ExecX(ctx context.Context) {
 	if err := ukuo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ukuo *UserKeyUpdateOne) defaults() {
+	if _, ok := ukuo.mutation.UpdateTime(); !ok {
+		v := userkey.UpdateDefaultUpdateTime()
+		ukuo.mutation.SetUpdateTime(v)
 	}
 }
 
@@ -290,6 +324,9 @@ func (ukuo *UserKeyUpdateOne) sqlSave(ctx context.Context) (_node *UserKey, err 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ukuo.mutation.UpdateTime(); ok {
+		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := ukuo.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)

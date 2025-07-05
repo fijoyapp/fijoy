@@ -19,16 +19,16 @@ type Transaction struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Balance holds the value of the "balance" field.
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Note holds the value of the "note" field.
 	Note string `json:"note,omitempty"`
 	// Datetime holds the value of the "datetime" field.
 	Datetime time.Time `json:"datetime,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
 	Edges               TransactionEdges `json:"edges"`
@@ -80,7 +80,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case transaction.FieldID, transaction.FieldNote:
 			values[i] = new(sql.NullString)
-		case transaction.FieldDatetime, transaction.FieldCreatedAt, transaction.FieldUpdatedAt:
+		case transaction.FieldCreateTime, transaction.FieldUpdateTime, transaction.FieldDatetime:
 			values[i] = new(sql.NullTime)
 		case transaction.ForeignKeys[0]: // profile_transaction
 			values[i] = new(sql.NullString)
@@ -105,6 +105,18 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.ID = value.String
 			}
+		case transaction.FieldCreateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+			} else if value.Valid {
+				t.CreateTime = value.Time
+			}
+		case transaction.FieldUpdateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+			} else if value.Valid {
+				t.UpdateTime = value.Time
+			}
 		case transaction.FieldBalance:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
@@ -122,18 +134,6 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field datetime", values[i])
 			} else if value.Valid {
 				t.Datetime = value.Time
-			}
-		case transaction.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				t.CreatedAt = value.Time
-			}
-		case transaction.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				t.UpdatedAt = value.Time
 			}
 		case transaction.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -188,6 +188,12 @@ func (t *Transaction) String() string {
 	var builder strings.Builder
 	builder.WriteString("Transaction(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
+	builder.WriteString("create_time=")
+	builder.WriteString(t.CreateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("update_time=")
+	builder.WriteString(t.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("balance=")
 	builder.WriteString(fmt.Sprintf("%v", t.Balance))
 	builder.WriteString(", ")
@@ -196,12 +202,6 @@ func (t *Transaction) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("datetime=")
 	builder.WriteString(t.Datetime.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(t.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

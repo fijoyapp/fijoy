@@ -7,6 +7,7 @@ import (
 	"fijoy/ent/userkey"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -17,6 +18,10 @@ type UserKey struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreateTime holds the value of the "create_time" field.
+	CreateTime time.Time `json:"create_time,omitempty"`
+	// UpdateTime holds the value of the "update_time" field.
+	UpdateTime time.Time `json:"update_time,omitempty"`
 	// HashedPassword holds the value of the "hashed_password" field.
 	HashedPassword string `json:"hashed_password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -55,6 +60,8 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case userkey.FieldID, userkey.FieldHashedPassword:
 			values[i] = new(sql.NullString)
+		case userkey.FieldCreateTime, userkey.FieldUpdateTime:
+			values[i] = new(sql.NullTime)
 		case userkey.ForeignKeys[0]: // user_user_key
 			values[i] = new(sql.NullString)
 		default:
@@ -77,6 +84,18 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				uk.ID = value.String
+			}
+		case userkey.FieldCreateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field create_time", values[i])
+			} else if value.Valid {
+				uk.CreateTime = value.Time
+			}
+		case userkey.FieldUpdateTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field update_time", values[i])
+			} else if value.Valid {
+				uk.UpdateTime = value.Time
 			}
 		case userkey.FieldHashedPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -132,6 +151,12 @@ func (uk *UserKey) String() string {
 	var builder strings.Builder
 	builder.WriteString("UserKey(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", uk.ID))
+	builder.WriteString("create_time=")
+	builder.WriteString(uk.CreateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("update_time=")
+	builder.WriteString(uk.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("hashed_password=")
 	builder.WriteString(uk.HashedPassword)
 	builder.WriteByte(')')

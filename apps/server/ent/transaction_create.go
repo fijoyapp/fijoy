@@ -23,6 +23,34 @@ type TransactionCreate struct {
 	hooks    []Hook
 }
 
+// SetCreateTime sets the "create_time" field.
+func (tc *TransactionCreate) SetCreateTime(t time.Time) *TransactionCreate {
+	tc.mutation.SetCreateTime(t)
+	return tc
+}
+
+// SetNillableCreateTime sets the "create_time" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableCreateTime(t *time.Time) *TransactionCreate {
+	if t != nil {
+		tc.SetCreateTime(*t)
+	}
+	return tc
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (tc *TransactionCreate) SetUpdateTime(t time.Time) *TransactionCreate {
+	tc.mutation.SetUpdateTime(t)
+	return tc
+}
+
+// SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
+func (tc *TransactionCreate) SetNillableUpdateTime(t *time.Time) *TransactionCreate {
+	if t != nil {
+		tc.SetUpdateTime(*t)
+	}
+	return tc
+}
+
 // SetBalance sets the "balance" field.
 func (tc *TransactionCreate) SetBalance(d decimal.Decimal) *TransactionCreate {
 	tc.mutation.SetBalance(d)
@@ -53,34 +81,6 @@ func (tc *TransactionCreate) SetDatetime(t time.Time) *TransactionCreate {
 func (tc *TransactionCreate) SetNillableDatetime(t *time.Time) *TransactionCreate {
 	if t != nil {
 		tc.SetDatetime(*t)
-	}
-	return tc
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (tc *TransactionCreate) SetCreatedAt(t time.Time) *TransactionCreate {
-	tc.mutation.SetCreatedAt(t)
-	return tc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableCreatedAt(t *time.Time) *TransactionCreate {
-	if t != nil {
-		tc.SetCreatedAt(*t)
-	}
-	return tc
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (tc *TransactionCreate) SetUpdatedAt(t time.Time) *TransactionCreate {
-	tc.mutation.SetUpdatedAt(t)
-	return tc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableUpdatedAt(t *time.Time) *TransactionCreate {
-	if t != nil {
-		tc.SetUpdatedAt(*t)
 	}
 	return tc
 }
@@ -160,17 +160,17 @@ func (tc *TransactionCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (tc *TransactionCreate) defaults() {
+	if _, ok := tc.mutation.CreateTime(); !ok {
+		v := transaction.DefaultCreateTime()
+		tc.mutation.SetCreateTime(v)
+	}
+	if _, ok := tc.mutation.UpdateTime(); !ok {
+		v := transaction.DefaultUpdateTime()
+		tc.mutation.SetUpdateTime(v)
+	}
 	if _, ok := tc.mutation.Datetime(); !ok {
 		v := transaction.DefaultDatetime()
 		tc.mutation.SetDatetime(v)
-	}
-	if _, ok := tc.mutation.CreatedAt(); !ok {
-		v := transaction.DefaultCreatedAt()
-		tc.mutation.SetCreatedAt(v)
-	}
-	if _, ok := tc.mutation.UpdatedAt(); !ok {
-		v := transaction.DefaultUpdatedAt()
-		tc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := tc.mutation.ID(); !ok {
 		v := transaction.DefaultID()
@@ -180,17 +180,17 @@ func (tc *TransactionCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (tc *TransactionCreate) check() error {
+	if _, ok := tc.mutation.CreateTime(); !ok {
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Transaction.create_time"`)}
+	}
+	if _, ok := tc.mutation.UpdateTime(); !ok {
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Transaction.update_time"`)}
+	}
 	if _, ok := tc.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Transaction.balance"`)}
 	}
 	if _, ok := tc.mutation.Datetime(); !ok {
 		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
-	}
-	if _, ok := tc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Transaction.created_at"`)}
-	}
-	if _, ok := tc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Transaction.updated_at"`)}
 	}
 	if len(tc.mutation.ProfileIDs()) == 0 {
 		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "Transaction.profile"`)}
@@ -230,6 +230,14 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := tc.mutation.CreateTime(); ok {
+		_spec.SetField(transaction.FieldCreateTime, field.TypeTime, value)
+		_node.CreateTime = value
+	}
+	if value, ok := tc.mutation.UpdateTime(); ok {
+		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
+		_node.UpdateTime = value
+	}
 	if value, ok := tc.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
@@ -241,14 +249,6 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 		_node.Datetime = value
-	}
-	if value, ok := tc.mutation.CreatedAt(); ok {
-		_spec.SetField(transaction.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := tc.mutation.UpdatedAt(); ok {
-		_spec.SetField(transaction.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
 	}
 	if nodes := tc.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

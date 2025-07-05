@@ -59,6 +59,16 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			aq.WithNamedTransactionEntry(alias, func(wq *TransactionEntryQuery) {
 				*wq = *query
 			})
+		case "createTime":
+			if _, ok := fieldSeen[account.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, account.FieldCreateTime)
+				fieldSeen[account.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[account.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, account.FieldUpdateTime)
+				fieldSeen[account.FieldUpdateTime] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[account.FieldName]; !ok {
 				selectedFields = append(selectedFields, account.FieldName)
@@ -108,16 +118,6 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[account.FieldArchived]; !ok {
 				selectedFields = append(selectedFields, account.FieldArchived)
 				fieldSeen[account.FieldArchived] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[account.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, account.FieldCreatedAt)
-				fieldSeen[account.FieldCreatedAt] = struct{}{}
-			}
-		case "updatedAt":
-			if _, ok := fieldSeen[account.FieldUpdatedAt]; !ok {
-				selectedFields = append(selectedFields, account.FieldUpdatedAt)
-				fieldSeen[account.FieldUpdatedAt] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -215,6 +215,16 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			pq.WithNamedTransaction(alias, func(wq *TransactionQuery) {
 				*wq = *query
 			})
+		case "createTime":
+			if _, ok := fieldSeen[profile.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, profile.FieldCreateTime)
+				fieldSeen[profile.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[profile.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, profile.FieldUpdateTime)
+				fieldSeen[profile.FieldUpdateTime] = struct{}{}
+			}
 		case "locale":
 			if _, ok := fieldSeen[profile.FieldLocale]; !ok {
 				selectedFields = append(selectedFields, profile.FieldLocale)
@@ -229,16 +239,6 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[profile.FieldNetWorthGoal]; !ok {
 				selectedFields = append(selectedFields, profile.FieldNetWorthGoal)
 				fieldSeen[profile.FieldNetWorthGoal] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[profile.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, profile.FieldCreatedAt)
-				fieldSeen[profile.FieldCreatedAt] = struct{}{}
-			}
-		case "updatedAt":
-			if _, ok := fieldSeen[profile.FieldUpdatedAt]; !ok {
-				selectedFields = append(selectedFields, profile.FieldUpdatedAt)
-				fieldSeen[profile.FieldUpdatedAt] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -323,6 +323,16 @@ func (tq *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			tq.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
 				*wq = *query
 			})
+		case "createTime":
+			if _, ok := fieldSeen[transaction.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldCreateTime)
+				fieldSeen[transaction.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[transaction.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldUpdateTime)
+				fieldSeen[transaction.FieldUpdateTime] = struct{}{}
+			}
 		case "balance":
 			if _, ok := fieldSeen[transaction.FieldBalance]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldBalance)
@@ -337,16 +347,6 @@ func (tq *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			if _, ok := fieldSeen[transaction.FieldDatetime]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldDatetime)
 				fieldSeen[transaction.FieldDatetime] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[transaction.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, transaction.FieldCreatedAt)
-				fieldSeen[transaction.FieldCreatedAt] = struct{}{}
-			}
-		case "updatedAt":
-			if _, ok := fieldSeen[transaction.FieldUpdatedAt]; !ok {
-				selectedFields = append(selectedFields, transaction.FieldUpdatedAt)
-				fieldSeen[transaction.FieldUpdatedAt] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -429,6 +429,16 @@ func (teq *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool
 				return err
 			}
 			teq.withTransaction = query
+		case "createTime":
+			if _, ok := fieldSeen[transactionentry.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldCreateTime)
+				fieldSeen[transactionentry.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[transactionentry.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldUpdateTime)
+				fieldSeen[transactionentry.FieldUpdateTime] = struct{}{}
+			}
 		case "amount":
 			if _, ok := fieldSeen[transactionentry.FieldAmount]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldAmount)
@@ -534,20 +544,20 @@ func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 			uq.WithNamedProfile(alias, func(wq *ProfileQuery) {
 				*wq = *query
 			})
+		case "createTime":
+			if _, ok := fieldSeen[user.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, user.FieldCreateTime)
+				fieldSeen[user.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[user.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, user.FieldUpdateTime)
+				fieldSeen[user.FieldUpdateTime] = struct{}{}
+			}
 		case "email":
 			if _, ok := fieldSeen[user.FieldEmail]; !ok {
 				selectedFields = append(selectedFields, user.FieldEmail)
 				fieldSeen[user.FieldEmail] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[user.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, user.FieldCreatedAt)
-				fieldSeen[user.FieldCreatedAt] = struct{}{}
-			}
-		case "updatedAt":
-			if _, ok := fieldSeen[user.FieldUpdatedAt]; !ok {
-				selectedFields = append(selectedFields, user.FieldUpdatedAt)
-				fieldSeen[user.FieldUpdatedAt] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -619,6 +629,16 @@ func (ukq *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				return err
 			}
 			ukq.withUser = query
+		case "createTime":
+			if _, ok := fieldSeen[userkey.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldCreateTime)
+				fieldSeen[userkey.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[userkey.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldUpdateTime)
+				fieldSeen[userkey.FieldUpdateTime] = struct{}{}
+			}
 		case "hashedPassword":
 			if _, ok := fieldSeen[userkey.FieldHashedPassword]; !ok {
 				selectedFields = append(selectedFields, userkey.FieldHashedPassword)

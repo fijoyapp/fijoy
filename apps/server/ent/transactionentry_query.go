@@ -337,12 +337,12 @@ func (teq *TransactionEntryQuery) WithTransaction(opts ...func(*TransactionQuery
 // Example:
 //
 //	var v []struct {
-//		Amount decimal.Decimal `json:"amount,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.TransactionEntry.Query().
-//		GroupBy(transactionentry.FieldAmount).
+//		GroupBy(transactionentry.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (teq *TransactionEntryQuery) GroupBy(field string, fields ...string) *TransactionEntryGroupBy {
@@ -360,11 +360,11 @@ func (teq *TransactionEntryQuery) GroupBy(field string, fields ...string) *Trans
 // Example:
 //
 //	var v []struct {
-//		Amount decimal.Decimal `json:"amount,omitempty"`
+//		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
 //	client.TransactionEntry.Query().
-//		Select(transactionentry.FieldAmount).
+//		Select(transactionentry.FieldCreateTime).
 //		Scan(ctx, &v)
 func (teq *TransactionEntryQuery) Select(fields ...string) *TransactionEntrySelect {
 	teq.ctx.Fields = append(teq.ctx.Fields, fields...)

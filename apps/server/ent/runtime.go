@@ -9,6 +9,7 @@ import (
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
+	"fijoy/ent/userkey"
 	"time"
 )
 
@@ -16,8 +17,21 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accountMixin := schema.Account{}.Mixin()
+	accountMixinFields0 := accountMixin[0].Fields()
+	_ = accountMixinFields0
 	accountFields := schema.Account{}.Fields()
 	_ = accountFields
+	// accountDescCreateTime is the schema descriptor for create_time field.
+	accountDescCreateTime := accountMixinFields0[0].Descriptor()
+	// account.DefaultCreateTime holds the default value on creation for the create_time field.
+	account.DefaultCreateTime = accountDescCreateTime.Default.(func() time.Time)
+	// accountDescUpdateTime is the schema descriptor for update_time field.
+	accountDescUpdateTime := accountMixinFields0[1].Descriptor()
+	// account.DefaultUpdateTime holds the default value on creation for the update_time field.
+	account.DefaultUpdateTime = accountDescUpdateTime.Default.(func() time.Time)
+	// account.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	account.UpdateDefaultUpdateTime = accountDescUpdateTime.UpdateDefault.(func() time.Time)
 	// accountDescName is the schema descriptor for name field.
 	accountDescName := accountFields[1].Descriptor()
 	// account.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -34,72 +48,107 @@ func init() {
 	accountDescArchived := accountFields[10].Descriptor()
 	// account.DefaultArchived holds the default value on creation for the archived field.
 	account.DefaultArchived = accountDescArchived.Default.(bool)
-	// accountDescCreatedAt is the schema descriptor for created_at field.
-	accountDescCreatedAt := accountFields[11].Descriptor()
-	// account.DefaultCreatedAt holds the default value on creation for the created_at field.
-	account.DefaultCreatedAt = accountDescCreatedAt.Default.(func() time.Time)
-	// accountDescUpdatedAt is the schema descriptor for updated_at field.
-	accountDescUpdatedAt := accountFields[12].Descriptor()
-	// account.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	account.DefaultUpdatedAt = accountDescUpdatedAt.Default.(func() time.Time)
 	// accountDescID is the schema descriptor for id field.
 	accountDescID := accountFields[0].Descriptor()
 	// account.DefaultID holds the default value on creation for the id field.
 	account.DefaultID = accountDescID.Default.(func() string)
+	profileMixin := schema.Profile{}.Mixin()
+	profileMixinFields0 := profileMixin[0].Fields()
+	_ = profileMixinFields0
 	profileFields := schema.Profile{}.Fields()
 	_ = profileFields
-	// profileDescCreatedAt is the schema descriptor for created_at field.
-	profileDescCreatedAt := profileFields[4].Descriptor()
-	// profile.DefaultCreatedAt holds the default value on creation for the created_at field.
-	profile.DefaultCreatedAt = profileDescCreatedAt.Default.(func() time.Time)
-	// profileDescUpdatedAt is the schema descriptor for updated_at field.
-	profileDescUpdatedAt := profileFields[5].Descriptor()
-	// profile.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	profile.DefaultUpdatedAt = profileDescUpdatedAt.Default.(func() time.Time)
+	// profileDescCreateTime is the schema descriptor for create_time field.
+	profileDescCreateTime := profileMixinFields0[0].Descriptor()
+	// profile.DefaultCreateTime holds the default value on creation for the create_time field.
+	profile.DefaultCreateTime = profileDescCreateTime.Default.(func() time.Time)
+	// profileDescUpdateTime is the schema descriptor for update_time field.
+	profileDescUpdateTime := profileMixinFields0[1].Descriptor()
+	// profile.DefaultUpdateTime holds the default value on creation for the update_time field.
+	profile.DefaultUpdateTime = profileDescUpdateTime.Default.(func() time.Time)
+	// profile.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	profile.UpdateDefaultUpdateTime = profileDescUpdateTime.UpdateDefault.(func() time.Time)
 	// profileDescID is the schema descriptor for id field.
 	profileDescID := profileFields[0].Descriptor()
 	// profile.DefaultID holds the default value on creation for the id field.
 	profile.DefaultID = profileDescID.Default.(func() string)
+	transactionMixin := schema.Transaction{}.Mixin()
+	transactionMixinFields0 := transactionMixin[0].Fields()
+	_ = transactionMixinFields0
 	transactionFields := schema.Transaction{}.Fields()
 	_ = transactionFields
+	// transactionDescCreateTime is the schema descriptor for create_time field.
+	transactionDescCreateTime := transactionMixinFields0[0].Descriptor()
+	// transaction.DefaultCreateTime holds the default value on creation for the create_time field.
+	transaction.DefaultCreateTime = transactionDescCreateTime.Default.(func() time.Time)
+	// transactionDescUpdateTime is the schema descriptor for update_time field.
+	transactionDescUpdateTime := transactionMixinFields0[1].Descriptor()
+	// transaction.DefaultUpdateTime holds the default value on creation for the update_time field.
+	transaction.DefaultUpdateTime = transactionDescUpdateTime.Default.(func() time.Time)
+	// transaction.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	transaction.UpdateDefaultUpdateTime = transactionDescUpdateTime.UpdateDefault.(func() time.Time)
 	// transactionDescDatetime is the schema descriptor for datetime field.
 	transactionDescDatetime := transactionFields[3].Descriptor()
 	// transaction.DefaultDatetime holds the default value on creation for the datetime field.
 	transaction.DefaultDatetime = transactionDescDatetime.Default.(func() time.Time)
-	// transactionDescCreatedAt is the schema descriptor for created_at field.
-	transactionDescCreatedAt := transactionFields[4].Descriptor()
-	// transaction.DefaultCreatedAt holds the default value on creation for the created_at field.
-	transaction.DefaultCreatedAt = transactionDescCreatedAt.Default.(func() time.Time)
-	// transactionDescUpdatedAt is the schema descriptor for updated_at field.
-	transactionDescUpdatedAt := transactionFields[5].Descriptor()
-	// transaction.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	transaction.DefaultUpdatedAt = transactionDescUpdatedAt.Default.(func() time.Time)
 	// transactionDescID is the schema descriptor for id field.
 	transactionDescID := transactionFields[0].Descriptor()
 	// transaction.DefaultID holds the default value on creation for the id field.
 	transaction.DefaultID = transactionDescID.Default.(func() string)
+	transactionentryMixin := schema.TransactionEntry{}.Mixin()
+	transactionentryMixinFields0 := transactionentryMixin[0].Fields()
+	_ = transactionentryMixinFields0
 	transactionentryFields := schema.TransactionEntry{}.Fields()
 	_ = transactionentryFields
+	// transactionentryDescCreateTime is the schema descriptor for create_time field.
+	transactionentryDescCreateTime := transactionentryMixinFields0[0].Descriptor()
+	// transactionentry.DefaultCreateTime holds the default value on creation for the create_time field.
+	transactionentry.DefaultCreateTime = transactionentryDescCreateTime.Default.(func() time.Time)
+	// transactionentryDescUpdateTime is the schema descriptor for update_time field.
+	transactionentryDescUpdateTime := transactionentryMixinFields0[1].Descriptor()
+	// transactionentry.DefaultUpdateTime holds the default value on creation for the update_time field.
+	transactionentry.DefaultUpdateTime = transactionentryDescUpdateTime.Default.(func() time.Time)
+	// transactionentry.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	transactionentry.UpdateDefaultUpdateTime = transactionentryDescUpdateTime.UpdateDefault.(func() time.Time)
 	// transactionentryDescID is the schema descriptor for id field.
 	transactionentryDescID := transactionentryFields[0].Descriptor()
 	// transactionentry.DefaultID holds the default value on creation for the id field.
 	transactionentry.DefaultID = transactionentryDescID.Default.(func() string)
+	userMixin := schema.User{}.Mixin()
+	userMixinFields0 := userMixin[0].Fields()
+	_ = userMixinFields0
 	userFields := schema.User{}.Fields()
 	_ = userFields
+	// userDescCreateTime is the schema descriptor for create_time field.
+	userDescCreateTime := userMixinFields0[0].Descriptor()
+	// user.DefaultCreateTime holds the default value on creation for the create_time field.
+	user.DefaultCreateTime = userDescCreateTime.Default.(func() time.Time)
+	// userDescUpdateTime is the schema descriptor for update_time field.
+	userDescUpdateTime := userMixinFields0[1].Descriptor()
+	// user.DefaultUpdateTime holds the default value on creation for the update_time field.
+	user.DefaultUpdateTime = userDescUpdateTime.Default.(func() time.Time)
+	// user.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	user.UpdateDefaultUpdateTime = userDescUpdateTime.UpdateDefault.(func() time.Time)
 	// userDescEmail is the schema descriptor for email field.
 	userDescEmail := userFields[1].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
-	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[2].Descriptor()
-	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
-	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
-	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userFields[3].Descriptor()
-	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() string)
+	userkeyMixin := schema.UserKey{}.Mixin()
+	userkeyMixinFields0 := userkeyMixin[0].Fields()
+	_ = userkeyMixinFields0
+	userkeyFields := schema.UserKey{}.Fields()
+	_ = userkeyFields
+	// userkeyDescCreateTime is the schema descriptor for create_time field.
+	userkeyDescCreateTime := userkeyMixinFields0[0].Descriptor()
+	// userkey.DefaultCreateTime holds the default value on creation for the create_time field.
+	userkey.DefaultCreateTime = userkeyDescCreateTime.Default.(func() time.Time)
+	// userkeyDescUpdateTime is the schema descriptor for update_time field.
+	userkeyDescUpdateTime := userkeyMixinFields0[1].Descriptor()
+	// userkey.DefaultUpdateTime holds the default value on creation for the update_time field.
+	userkey.DefaultUpdateTime = userkeyDescUpdateTime.Default.(func() time.Time)
+	// userkey.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	userkey.UpdateDefaultUpdateTime = userkeyDescUpdateTime.UpdateDefault.(func() time.Time)
 }
