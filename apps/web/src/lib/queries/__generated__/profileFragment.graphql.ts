@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5247dfdfb673d326c6e6bcfb9a258bb1>>
+ * @generated SignedSource<<1b6b21fe53fd9106c4037bcc3879dfa2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type profileFragment$data = ReadonlyArray<{
-  readonly currencies: string;
+  readonly currencies: ReadonlyArray<string>;
   readonly id: string;
   readonly locale: string;
   readonly netWorthGoal: string;

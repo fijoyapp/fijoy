@@ -13,7 +13,6 @@ import (
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"fijoy/internal/util/auth"
-	"fijoy/internal/util/pointer"
 	"fmt"
 
 	"entgo.io/contrib/entgql"
@@ -32,7 +31,7 @@ func (r *accountResolver) Value(ctx context.Context, obj *ent.Account) (string, 
 
 // FxRate is the resolver for the fxRate field.
 func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (string, error) {
-	return pointer.To(obj.FxRate.String()), nil
+	return obj.FxRate.String(), nil
 }
 
 // Balance is the resolver for the balance field.
@@ -106,7 +105,7 @@ func (r *transactionEntryResolver) Value(ctx context.Context, obj *ent.Transacti
 
 // FxRate is the resolver for the fxRate field.
 func (r *transactionEntryResolver) FxRate(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
-	return pointer.To(obj.FxRate.String()), nil
+	return obj.FxRate.String(), nil
 }
 
 // Balance is the resolver for the balance field.

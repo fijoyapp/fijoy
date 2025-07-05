@@ -11,6 +11,6 @@ export const CardFragment = graphql`
     ticker
     tickerType
     currencySymbol
-    updatedAt
+    updateTime
   }
 `;

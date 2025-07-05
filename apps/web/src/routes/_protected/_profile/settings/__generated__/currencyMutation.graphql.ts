@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<795da34c41b237789a22cfb7a471bbe7>>
+ * @generated SignedSource<<6739408e04da3b26eac19d2e48b6bd63>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type currencyMutation$variables = {
-  currencies: string;
+  currencies: ReadonlyArray<string>;
   id: string;
 };
 export type currencyMutation$data = {
@@ -134,16 +134,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b0019ddde56d5d42bbe2342a6114279a",
+    "cacheID": "e1cf23eb6b2b744b9e6513d774c219b7",
     "id": null,
     "metadata": {},
     "name": "currencyMutation",
     "operationKind": "mutation",
-    "text": "mutation currencyMutation(\n  $id: ID!\n  $currencies: String!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profileFragment\n    id\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n"
+    "text": "mutation currencyMutation(\n  $id: ID!\n  $currencies: [String!]!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profileFragment\n    id\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b41cc37655f0a652cf9af4b97bbd65bd";
+(node as any).hash = "57f2d55ad1b3f3367bb98735fc1dddcd";
 
 export default node;

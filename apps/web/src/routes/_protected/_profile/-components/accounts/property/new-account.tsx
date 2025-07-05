@@ -46,7 +46,7 @@ export function NewProperty() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      symbol: profile?.currencies.split(",")[0],
+      symbol: profile?.currencies[0],
     },
   });
 

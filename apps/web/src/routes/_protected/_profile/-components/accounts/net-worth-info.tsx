@@ -59,7 +59,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
           <CardTitle>
             {getCurrencyDisplay(
               asset.toString(),
-              profile.currencies.split(",")[0],
+              profile.currencies[0],
               profile.locale,
               { compact: false },
             )}
@@ -75,7 +75,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
           <CardTitle>
             {getCurrencyDisplay(
               liability.toString(),
-              profile.currencies.split(",")[0],
+              profile.currencies[0],
               profile.locale,
               { compact: false },
             )}
@@ -92,7 +92,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
           <CardTitle>
             {getCurrencyDisplay(
               netWorth.toString(),
-              profile.currencies.split(",")[0],
+              profile.currencies[0],
               profile.locale,
               { compact: false },
             )}
@@ -116,7 +116,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
           <CardDescription>
             {getCurrencyDisplay(
               profile.netWorthGoal.toString(),
-              profile.currencies.split(",")[0],
+              profile.currencies[0],
               profile.locale,
               { compact: false },
             )}{" "}

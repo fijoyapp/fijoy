@@ -37,7 +37,7 @@ const variants = {
 };
 
 const CurrencyMutation = graphql`
-  mutation currencyMutation($id: ID!, $currencies: String!) {
+  mutation currencyMutation($id: ID!, $currencies: [String!]!) {
     updateProfile(id: $id, input: { currencies: $currencies }) {
       ...profileFragment
     }
@@ -56,7 +56,7 @@ function Page() {
   const form = useForm<TypeOf<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),
     defaultValues: {
-      currencies: profile.currencies.split(","),
+      currencies: [...profile.currencies],
     },
   });
 
@@ -64,7 +64,7 @@ function Page() {
     commitMutation({
       variables: {
         id: profile.id,
-        currencies: values.currencies.join(","),
+        currencies: values.currencies,
       },
       onCompleted(_, errors) {
         if (errors && errors.length > 0) {
@@ -115,7 +115,7 @@ function Page() {
                   control={form.control}
                   name="currencies"
                   currencies={data.currencies}
-                  defaultValues={profile.currencies.split(",")}
+                  defaultValues={[...profile.currencies]}
                   onValueChange={(value) => {
                     form.setValue("currencies", value);
                   }}

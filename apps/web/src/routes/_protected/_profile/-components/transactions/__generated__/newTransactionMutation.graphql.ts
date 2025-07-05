@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cd54bdbfa287e0291afe991bf8d8ea94>>
+ * @generated SignedSource<<d30d3f9ec5b93122846cb006c831d081>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,9 @@ export type CreateTransactionWithTransactionEntriesInput = {
 export type CreateTransactionEntryInput = {
   accountID: string;
   amount: string;
+  createTime?: any | null | undefined;
   transactionID: string;
+  updateTime?: any | null | undefined;
 };
 export type newTransactionMutation$variables = {
   input: CreateTransactionWithTransactionEntriesInput;
