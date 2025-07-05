@@ -12,58 +12,48 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id string) predicate.TransactionEntry {
+func ID(id int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id string) predicate.TransactionEntry {
+func IDEQ(id int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id string) predicate.TransactionEntry {
+func IDNEQ(id int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...string) predicate.TransactionEntry {
+func IDIn(ids ...int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...string) predicate.TransactionEntry {
+func IDNotIn(ids ...int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id string) predicate.TransactionEntry {
+func IDGT(id int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id string) predicate.TransactionEntry {
+func IDGTE(id int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id string) predicate.TransactionEntry {
+func IDLT(id int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id string) predicate.TransactionEntry {
+func IDLTE(id int) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldLTE(FieldID, id))
-}
-
-// IDEqualFold applies the EqualFold predicate on the ID field.
-func IDEqualFold(id string) predicate.TransactionEntry {
-	return predicate.TransactionEntry(sql.FieldEqualFold(FieldID, id))
-}
-
-// IDContainsFold applies the ContainsFold predicate on the ID field.
-func IDContainsFold(id string) predicate.TransactionEntry {
-	return predicate.TransactionEntry(sql.FieldContainsFold(FieldID, id))
 }
 
 // CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.

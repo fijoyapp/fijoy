@@ -125,14 +125,8 @@ func (ac *AccountCreate) SetNillableArchived(b *bool) *AccountCreate {
 	return ac
 }
 
-// SetID sets the "id" field.
-func (ac *AccountCreate) SetID(s string) *AccountCreate {
-	ac.mutation.SetID(s)
-	return ac
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (ac *AccountCreate) SetProfileID(id string) *AccountCreate {
+func (ac *AccountCreate) SetProfileID(id int) *AccountCreate {
 	ac.mutation.SetProfileID(id)
 	return ac
 }
@@ -143,14 +137,14 @@ func (ac *AccountCreate) SetProfile(p *Profile) *AccountCreate {
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (ac *AccountCreate) AddTransactionEntryIDs(ids ...string) *AccountCreate {
+func (ac *AccountCreate) AddTransactionEntryIDs(ids ...int) *AccountCreate {
 	ac.mutation.AddTransactionEntryIDs(ids...)
 	return ac
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
 func (ac *AccountCreate) AddTransactionEntries(t ...*TransactionEntry) *AccountCreate {
-	ids := make([]string, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -294,13 +288,8 @@ func (ac *AccountCreate) sqlSave(ctx context.Context) (*Account, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected Account.ID type: %T", _spec.ID.Value)
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	ac.mutation.id = &_node.ID
 	ac.mutation.done = true
 	return _node, nil
@@ -309,12 +298,8 @@ func (ac *AccountCreate) sqlSave(ctx context.Context) (*Account, error) {
 func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Account{config: ac.config}
-		_spec = sqlgraph.NewCreateSpec(account.Table, sqlgraph.NewFieldSpec(account.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(account.Table, sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt))
 	)
-	if id, ok := ac.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := ac.mutation.CreateTime(); ok {
 		_spec.SetField(account.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -375,7 +360,7 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			Columns: []string{account.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -392,7 +377,7 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -448,6 +433,10 @@ func (acb *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

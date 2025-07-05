@@ -58,6 +58,7 @@ export function NewProperty() {
           amount: values.balance,
           accountType: "property",
           name: values.name,
+          investmentType: "taxable", // TODO: customize
           ticker: values.symbol,
           tickerType: "currency",
           currencySymbol: values.symbol,

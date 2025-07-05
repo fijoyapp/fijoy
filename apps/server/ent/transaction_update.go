@@ -93,7 +93,7 @@ func (tu *TransactionUpdate) SetNillableDatetime(t *time.Time) *TransactionUpdat
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (tu *TransactionUpdate) SetProfileID(id string) *TransactionUpdate {
+func (tu *TransactionUpdate) SetProfileID(id int) *TransactionUpdate {
 	tu.mutation.SetProfileID(id)
 	return tu
 }
@@ -104,14 +104,14 @@ func (tu *TransactionUpdate) SetProfile(p *Profile) *TransactionUpdate {
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (tu *TransactionUpdate) AddTransactionEntryIDs(ids ...string) *TransactionUpdate {
+func (tu *TransactionUpdate) AddTransactionEntryIDs(ids ...int) *TransactionUpdate {
 	tu.mutation.AddTransactionEntryIDs(ids...)
 	return tu
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
 func (tu *TransactionUpdate) AddTransactionEntries(t ...*TransactionEntry) *TransactionUpdate {
-	ids := make([]string, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -136,14 +136,14 @@ func (tu *TransactionUpdate) ClearTransactionEntries() *TransactionUpdate {
 }
 
 // RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
-func (tu *TransactionUpdate) RemoveTransactionEntryIDs(ids ...string) *TransactionUpdate {
+func (tu *TransactionUpdate) RemoveTransactionEntryIDs(ids ...int) *TransactionUpdate {
 	tu.mutation.RemoveTransactionEntryIDs(ids...)
 	return tu
 }
 
 // RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
 func (tu *TransactionUpdate) RemoveTransactionEntries(t ...*TransactionEntry) *TransactionUpdate {
-	ids := make([]string, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -198,7 +198,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := tu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	if ps := tu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -232,7 +232,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -245,7 +245,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -261,7 +261,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -274,7 +274,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -290,7 +290,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -380,7 +380,7 @@ func (tuo *TransactionUpdateOne) SetNillableDatetime(t *time.Time) *TransactionU
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (tuo *TransactionUpdateOne) SetProfileID(id string) *TransactionUpdateOne {
+func (tuo *TransactionUpdateOne) SetProfileID(id int) *TransactionUpdateOne {
 	tuo.mutation.SetProfileID(id)
 	return tuo
 }
@@ -391,14 +391,14 @@ func (tuo *TransactionUpdateOne) SetProfile(p *Profile) *TransactionUpdateOne {
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (tuo *TransactionUpdateOne) AddTransactionEntryIDs(ids ...string) *TransactionUpdateOne {
+func (tuo *TransactionUpdateOne) AddTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
 	tuo.mutation.AddTransactionEntryIDs(ids...)
 	return tuo
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
 func (tuo *TransactionUpdateOne) AddTransactionEntries(t ...*TransactionEntry) *TransactionUpdateOne {
-	ids := make([]string, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -423,14 +423,14 @@ func (tuo *TransactionUpdateOne) ClearTransactionEntries() *TransactionUpdateOne
 }
 
 // RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
-func (tuo *TransactionUpdateOne) RemoveTransactionEntryIDs(ids ...string) *TransactionUpdateOne {
+func (tuo *TransactionUpdateOne) RemoveTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
 	tuo.mutation.RemoveTransactionEntryIDs(ids...)
 	return tuo
 }
 
 // RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
 func (tuo *TransactionUpdateOne) RemoveTransactionEntries(t ...*TransactionEntry) *TransactionUpdateOne {
-	ids := make([]string, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -498,7 +498,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 	if err := tuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	id, ok := tuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Transaction.id" for update`)}
@@ -549,7 +549,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -562,7 +562,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 			Columns: []string{transaction.ProfileColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -578,7 +578,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -591,7 +591,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -607,7 +607,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

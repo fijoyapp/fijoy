@@ -45,12 +45,12 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 		SetCurrencies(input.Currencies).
 		SetNetWorthGoal(input.NetWorthGoal).
 		SetLocale(defaultCurrency.Locale).
-		SetUserID(userData.UserId).
+		SetUserID(userData.UserID).
 		Save(ctx)
 
 	_, tokenString, _ := r.authConfig.JWT_AUTH.Encode(
 		map[string]any{
-			"user_id":    userData.UserId,
+			"user_id":    userData.UserID,
 			"profile_id": profile.ID,
 		},
 	)
@@ -61,14 +61,14 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 }
 
 // UpdateProfile is the resolver for the updateProfile field.
-func (r *mutationResolver) UpdateProfile(ctx context.Context, id string, input ent.UpdateProfileInput) (*ent.Profile, error) {
+func (r *mutationResolver) UpdateProfile(ctx context.Context, id int, input ent.UpdateProfileInput) (*ent.Profile, error) {
 	client := ent.FromContext(ctx)
 	userData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if userData.ProfileId != id {
+	if userData.ProfileID != 0 {
 		return nil, errors.New("unauthorized to update this profile")
 	}
 
@@ -87,7 +87,7 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		return nil, err
 	}
 
-	profile, err := client.Profile.Query().Where(profile.ID(userData.ProfileId)).Only(ctx)
+	profile, err := client.Profile.Query().Where(profile.ID(userData.ProfileID)).Only(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("profile not found: %w", err)
 	}
@@ -137,13 +137,10 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 	}
 
 	account, err := client.Account.Create().
-		SetName(input.Name).
-		SetAccountType(input.AccountType).
-		SetTicker(input.Ticker).
-		SetTickerType(input.TickerType).
+		SetInput(input).
 		SetCurrencySymbol(currencySymbol).
 		SetAmount(decimal.NewFromInt(0)).
-		SetProfileID(userData.ProfileId).
+		SetProfileID(userData.ProfileID).
 		SetValue(value).
 		SetFxRate(fxRate).
 		SetBalance(decimal.NewFromInt(0)).
@@ -178,7 +175,7 @@ func (r *mutationResolver) CreateTransactionWithTransactionEntries(ctx context.C
 
 	balance := decimal.NewFromInt(0)
 
-	transaction, err := client.Transaction.Create().SetProfileID(userData.ProfileId).SetBalance(balance).SetNote(*input.Note).Save(ctx)
+	transaction, err := client.Transaction.Create().SetProfileID(userData.ProfileID).SetBalance(balance).SetNote(*input.Note).Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create transaction: %w", err)
 	}
@@ -213,7 +210,7 @@ func (r *mutationResolver) CreateTransactionEntry(ctx context.Context, input ent
 		return nil, err
 	}
 
-	account, err := client.Account.Query().Where(account.ID(input.AccountID), account.HasProfileWith(profile.ID(userData.ProfileId))).Only(ctx)
+	account, err := client.Account.Query().Where(account.ID(input.AccountID), account.HasProfileWith(profile.ID(userData.ProfileID))).Only(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("account not found: %w", err)
 	}
@@ -245,7 +242,7 @@ func (r *queryResolver) User(ctx context.Context) (*ent.User, error) {
 		return nil, err
 	}
 
-	return r.client.User.Query().Where(user.ID(authData.UserId)).Only(ctx)
+	return r.client.User.Query().Where(user.ID(authData.UserID)).Only(ctx)
 }
 
 // Currencies is the resolver for the currencies field.

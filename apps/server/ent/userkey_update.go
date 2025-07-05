@@ -35,6 +35,20 @@ func (uku *UserKeyUpdate) SetUpdateTime(t time.Time) *UserKeyUpdate {
 	return uku
 }
 
+// SetKey sets the "key" field.
+func (uku *UserKeyUpdate) SetKey(s string) *UserKeyUpdate {
+	uku.mutation.SetKey(s)
+	return uku
+}
+
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (uku *UserKeyUpdate) SetNillableKey(s *string) *UserKeyUpdate {
+	if s != nil {
+		uku.SetKey(*s)
+	}
+	return uku
+}
+
 // SetHashedPassword sets the "hashed_password" field.
 func (uku *UserKeyUpdate) SetHashedPassword(s string) *UserKeyUpdate {
 	uku.mutation.SetHashedPassword(s)
@@ -56,7 +70,7 @@ func (uku *UserKeyUpdate) ClearHashedPassword() *UserKeyUpdate {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (uku *UserKeyUpdate) SetUserID(id string) *UserKeyUpdate {
+func (uku *UserKeyUpdate) SetUserID(id int) *UserKeyUpdate {
 	uku.mutation.SetUserID(id)
 	return uku
 }
@@ -115,6 +129,11 @@ func (uku *UserKeyUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uku *UserKeyUpdate) check() error {
+	if v, ok := uku.mutation.Key(); ok {
+		if err := userkey.KeyValidator(v); err != nil {
+			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
+		}
+	}
 	if uku.mutation.UserCleared() && len(uku.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "UserKey.user"`)
 	}
@@ -125,7 +144,7 @@ func (uku *UserKeyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := uku.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	if ps := uku.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -135,6 +154,9 @@ func (uku *UserKeyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uku.mutation.UpdateTime(); ok {
 		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := uku.mutation.Key(); ok {
+		_spec.SetField(userkey.FieldKey, field.TypeString, value)
 	}
 	if value, ok := uku.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
@@ -150,7 +172,7 @@ func (uku *UserKeyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{userkey.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -163,7 +185,7 @@ func (uku *UserKeyUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{userkey.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -197,6 +219,20 @@ func (ukuo *UserKeyUpdateOne) SetUpdateTime(t time.Time) *UserKeyUpdateOne {
 	return ukuo
 }
 
+// SetKey sets the "key" field.
+func (ukuo *UserKeyUpdateOne) SetKey(s string) *UserKeyUpdateOne {
+	ukuo.mutation.SetKey(s)
+	return ukuo
+}
+
+// SetNillableKey sets the "key" field if the given value is not nil.
+func (ukuo *UserKeyUpdateOne) SetNillableKey(s *string) *UserKeyUpdateOne {
+	if s != nil {
+		ukuo.SetKey(*s)
+	}
+	return ukuo
+}
+
 // SetHashedPassword sets the "hashed_password" field.
 func (ukuo *UserKeyUpdateOne) SetHashedPassword(s string) *UserKeyUpdateOne {
 	ukuo.mutation.SetHashedPassword(s)
@@ -218,7 +254,7 @@ func (ukuo *UserKeyUpdateOne) ClearHashedPassword() *UserKeyUpdateOne {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (ukuo *UserKeyUpdateOne) SetUserID(id string) *UserKeyUpdateOne {
+func (ukuo *UserKeyUpdateOne) SetUserID(id int) *UserKeyUpdateOne {
 	ukuo.mutation.SetUserID(id)
 	return ukuo
 }
@@ -290,6 +326,11 @@ func (ukuo *UserKeyUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ukuo *UserKeyUpdateOne) check() error {
+	if v, ok := ukuo.mutation.Key(); ok {
+		if err := userkey.KeyValidator(v); err != nil {
+			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
+		}
+	}
 	if ukuo.mutation.UserCleared() && len(ukuo.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "UserKey.user"`)
 	}
@@ -300,7 +341,7 @@ func (ukuo *UserKeyUpdateOne) sqlSave(ctx context.Context) (_node *UserKey, err 
 	if err := ukuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(userkey.Table, userkey.Columns, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	id, ok := ukuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserKey.id" for update`)}
@@ -328,6 +369,9 @@ func (ukuo *UserKeyUpdateOne) sqlSave(ctx context.Context) (_node *UserKey, err 
 	if value, ok := ukuo.mutation.UpdateTime(); ok {
 		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 	}
+	if value, ok := ukuo.mutation.Key(); ok {
+		_spec.SetField(userkey.FieldKey, field.TypeString, value)
+	}
 	if value, ok := ukuo.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
 	}
@@ -342,7 +386,7 @@ func (ukuo *UserKeyUpdateOne) sqlSave(ctx context.Context) (_node *UserKey, err 
 			Columns: []string{userkey.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -355,7 +399,7 @@ func (ukuo *UserKeyUpdateOne) sqlSave(ctx context.Context) (_node *UserKey, err 
 			Columns: []string{userkey.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

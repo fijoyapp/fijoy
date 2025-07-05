@@ -133,8 +133,8 @@ func (teq *TransactionEntryQuery) FirstX(ctx context.Context) *TransactionEntry 
 
 // FirstID returns the first TransactionEntry ID from the query.
 // Returns a *NotFoundError when no TransactionEntry ID was found.
-func (teq *TransactionEntryQuery) FirstID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (teq *TransactionEntryQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = teq.Limit(1).IDs(setContextOp(ctx, teq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -146,7 +146,7 @@ func (teq *TransactionEntryQuery) FirstID(ctx context.Context) (id string, err e
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (teq *TransactionEntryQuery) FirstIDX(ctx context.Context) string {
+func (teq *TransactionEntryQuery) FirstIDX(ctx context.Context) int {
 	id, err := teq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -184,8 +184,8 @@ func (teq *TransactionEntryQuery) OnlyX(ctx context.Context) *TransactionEntry {
 // OnlyID is like Only, but returns the only TransactionEntry ID in the query.
 // Returns a *NotSingularError when more than one TransactionEntry ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (teq *TransactionEntryQuery) OnlyID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (teq *TransactionEntryQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = teq.Limit(2).IDs(setContextOp(ctx, teq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -201,7 +201,7 @@ func (teq *TransactionEntryQuery) OnlyID(ctx context.Context) (id string, err er
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (teq *TransactionEntryQuery) OnlyIDX(ctx context.Context) string {
+func (teq *TransactionEntryQuery) OnlyIDX(ctx context.Context) int {
 	id, err := teq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -229,7 +229,7 @@ func (teq *TransactionEntryQuery) AllX(ctx context.Context) []*TransactionEntry 
 }
 
 // IDs executes the query and returns a list of TransactionEntry IDs.
-func (teq *TransactionEntryQuery) IDs(ctx context.Context) (ids []string, err error) {
+func (teq *TransactionEntryQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if teq.ctx.Unique == nil && teq.path != nil {
 		teq.Unique(true)
 	}
@@ -241,7 +241,7 @@ func (teq *TransactionEntryQuery) IDs(ctx context.Context) (ids []string, err er
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (teq *TransactionEntryQuery) IDsX(ctx context.Context) []string {
+func (teq *TransactionEntryQuery) IDsX(ctx context.Context) []int {
 	ids, err := teq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -463,8 +463,8 @@ func (teq *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook
 }
 
 func (teq *TransactionEntryQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*TransactionEntry, init func(*TransactionEntry), assign func(*TransactionEntry, *Account)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*TransactionEntry)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*TransactionEntry)
 	for i := range nodes {
 		if nodes[i].account_transaction_entries == nil {
 			continue
@@ -495,8 +495,8 @@ func (teq *TransactionEntryQuery) loadAccount(ctx context.Context, query *Accoun
 	return nil
 }
 func (teq *TransactionEntryQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*TransactionEntry, init func(*TransactionEntry), assign func(*TransactionEntry, *Transaction)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*TransactionEntry)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*TransactionEntry)
 	for i := range nodes {
 		if nodes[i].transaction_transaction_entries == nil {
 			continue
@@ -540,7 +540,7 @@ func (teq *TransactionEntryQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (teq *TransactionEntryQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
 	_spec.From = teq.sql
 	if unique := teq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

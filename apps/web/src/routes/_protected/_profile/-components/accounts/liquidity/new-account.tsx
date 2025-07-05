@@ -57,6 +57,7 @@ export function NewLiquidity() {
         input: {
           amount: values.balance,
           accountType: "liquidity",
+          investmentType: "taxable", // TODO: customize
           name: values.name,
           ticker: values.symbol,
           tickerType: "currency",

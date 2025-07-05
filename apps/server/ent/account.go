@@ -18,7 +18,7 @@ import (
 type Account struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// CreateTime holds the value of the "create_time" field.
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
@@ -48,7 +48,7 @@ type Account struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
 	Edges            AccountEdges `json:"edges"`
-	profile_accounts *string
+	profile_accounts *int
 	selectValues     sql.SelectValues
 }
 
@@ -96,12 +96,14 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case account.FieldArchived:
 			values[i] = new(sql.NullBool)
-		case account.FieldID, account.FieldName, account.FieldAccountType, account.FieldInvestmentType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
+		case account.FieldID:
+			values[i] = new(sql.NullInt64)
+		case account.FieldName, account.FieldAccountType, account.FieldInvestmentType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
 			values[i] = new(sql.NullString)
 		case account.FieldCreateTime, account.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
 		case account.ForeignKeys[0]: // profile_accounts
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -118,11 +120,11 @@ func (a *Account) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case account.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				a.ID = value.String
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			a.ID = int(value.Int64)
 		case account.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
@@ -202,11 +204,11 @@ func (a *Account) assignValues(columns []string, values []any) error {
 				a.Archived = value.Bool
 			}
 		case account.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field profile_accounts", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field profile_accounts", value)
 			} else if value.Valid {
-				a.profile_accounts = new(string)
-				*a.profile_accounts = value.String
+				a.profile_accounts = new(int)
+				*a.profile_accounts = int(value.Int64)
 			}
 		default:
 			a.selectValues.Set(columns[i], values[i])

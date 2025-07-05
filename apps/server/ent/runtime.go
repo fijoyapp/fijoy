@@ -33,19 +33,19 @@ func init() {
 	// account.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	account.UpdateDefaultUpdateTime = accountDescUpdateTime.UpdateDefault.(func() time.Time)
 	// accountDescName is the schema descriptor for name field.
-	accountDescName := accountFields[1].Descriptor()
+	accountDescName := accountFields[0].Descriptor()
 	// account.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	account.NameValidator = accountDescName.Validators[0].(func(string) error)
 	// accountDescCurrencySymbol is the schema descriptor for currency_symbol field.
-	accountDescCurrencySymbol := accountFields[4].Descriptor()
+	accountDescCurrencySymbol := accountFields[3].Descriptor()
 	// account.CurrencySymbolValidator is a validator for the "currency_symbol" field. It is called by the builders before save.
 	account.CurrencySymbolValidator = accountDescCurrencySymbol.Validators[0].(func(string) error)
 	// accountDescTicker is the schema descriptor for ticker field.
-	accountDescTicker := accountFields[5].Descriptor()
+	accountDescTicker := accountFields[4].Descriptor()
 	// account.TickerValidator is a validator for the "ticker" field. It is called by the builders before save.
 	account.TickerValidator = accountDescTicker.Validators[0].(func(string) error)
 	// accountDescArchived is the schema descriptor for archived field.
-	accountDescArchived := accountFields[11].Descriptor()
+	accountDescArchived := accountFields[10].Descriptor()
 	// account.DefaultArchived holds the default value on creation for the archived field.
 	account.DefaultArchived = accountDescArchived.Default.(bool)
 	profileMixin := schema.Profile{}.Mixin()
@@ -79,7 +79,7 @@ func init() {
 	// transaction.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	transaction.UpdateDefaultUpdateTime = transactionDescUpdateTime.UpdateDefault.(func() time.Time)
 	// transactionDescDatetime is the schema descriptor for datetime field.
-	transactionDescDatetime := transactionFields[3].Descriptor()
+	transactionDescDatetime := transactionFields[2].Descriptor()
 	// transaction.DefaultDatetime holds the default value on creation for the datetime field.
 	transaction.DefaultDatetime = transactionDescDatetime.Default.(func() time.Time)
 	transactionentryMixin := schema.TransactionEntry{}.Mixin()
@@ -113,7 +113,7 @@ func init() {
 	// user.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	user.UpdateDefaultUpdateTime = userDescUpdateTime.UpdateDefault.(func() time.Time)
 	// userDescEmail is the schema descriptor for email field.
-	userDescEmail := userFields[1].Descriptor()
+	userDescEmail := userFields[0].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
 	userkeyMixin := schema.UserKey{}.Mixin()
@@ -131,4 +131,8 @@ func init() {
 	userkey.DefaultUpdateTime = userkeyDescUpdateTime.Default.(func() time.Time)
 	// userkey.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	userkey.UpdateDefaultUpdateTime = userkeyDescUpdateTime.UpdateDefault.(func() time.Time)
+	// userkeyDescKey is the schema descriptor for key field.
+	userkeyDescKey := userkeyFields[0].Descriptor()
+	// userkey.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	userkey.KeyValidator = userkeyDescKey.Validators[0].(func(string) error)
 }

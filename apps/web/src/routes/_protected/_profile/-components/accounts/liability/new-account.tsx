@@ -58,6 +58,7 @@ export function NewLiability() {
           amount: values.balance,
           accountType: "liability",
           name: values.name,
+          investmentType: "taxable", // TODO: customize
           ticker: values.symbol,
           tickerType: "currency",
           currencySymbol: values.symbol,

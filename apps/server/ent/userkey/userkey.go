@@ -18,6 +18,8 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldKey holds the string denoting the key field in the database.
+	FieldKey = "key"
 	// FieldHashedPassword holds the string denoting the hashed_password field in the database.
 	FieldHashedPassword = "hashed_password"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -38,6 +40,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldKey,
 	FieldHashedPassword,
 }
 
@@ -69,6 +72,8 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
 	UpdateDefaultUpdateTime func() time.Time
+	// KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	KeyValidator func(string) error
 )
 
 // OrderOption defines the ordering options for the UserKey queries.
@@ -87,6 +92,11 @@ func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdateTime orders the results by the update_time field.
 func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+}
+
+// ByKey orders the results by the key field.
+func ByKey(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKey, opts...).ToFunc()
 }
 
 // ByHashedPassword orders the results by the hashed_password field.

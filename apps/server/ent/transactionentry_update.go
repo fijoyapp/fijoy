@@ -122,7 +122,7 @@ func (teu *TransactionEntryUpdate) AddBalance(d decimal.Decimal) *TransactionEnt
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (teu *TransactionEntryUpdate) SetAccountID(id string) *TransactionEntryUpdate {
+func (teu *TransactionEntryUpdate) SetAccountID(id int) *TransactionEntryUpdate {
 	teu.mutation.SetAccountID(id)
 	return teu
 }
@@ -133,7 +133,7 @@ func (teu *TransactionEntryUpdate) SetAccount(a *Account) *TransactionEntryUpdat
 }
 
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (teu *TransactionEntryUpdate) SetTransactionID(id string) *TransactionEntryUpdate {
+func (teu *TransactionEntryUpdate) SetTransactionID(id int) *TransactionEntryUpdate {
 	teu.mutation.SetTransactionID(id)
 	return teu
 }
@@ -211,7 +211,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 	if err := teu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
 	if ps := teu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -254,7 +254,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Columns: []string{transactionentry.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -267,7 +267,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Columns: []string{transactionentry.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -283,7 +283,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Columns: []string{transactionentry.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -296,7 +296,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 			Columns: []string{transactionentry.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -415,7 +415,7 @@ func (teuo *TransactionEntryUpdateOne) AddBalance(d decimal.Decimal) *Transactio
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (teuo *TransactionEntryUpdateOne) SetAccountID(id string) *TransactionEntryUpdateOne {
+func (teuo *TransactionEntryUpdateOne) SetAccountID(id int) *TransactionEntryUpdateOne {
 	teuo.mutation.SetAccountID(id)
 	return teuo
 }
@@ -426,7 +426,7 @@ func (teuo *TransactionEntryUpdateOne) SetAccount(a *Account) *TransactionEntryU
 }
 
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (teuo *TransactionEntryUpdateOne) SetTransactionID(id string) *TransactionEntryUpdateOne {
+func (teuo *TransactionEntryUpdateOne) SetTransactionID(id int) *TransactionEntryUpdateOne {
 	teuo.mutation.SetTransactionID(id)
 	return teuo
 }
@@ -517,7 +517,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 	if err := teuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString))
+	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
 	id, ok := teuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TransactionEntry.id" for update`)}
@@ -577,7 +577,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 			Columns: []string{transactionentry.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -590,7 +590,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 			Columns: []string{transactionentry.AccountColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -606,7 +606,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 			Columns: []string{transactionentry.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -619,7 +619,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 			Columns: []string{transactionentry.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

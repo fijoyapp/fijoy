@@ -11,7 +11,7 @@ import (
 var (
 	// AccountsColumns holds the columns for the "accounts" table.
 	AccountsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
@@ -25,7 +25,7 @@ var (
 		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "archived", Type: field.TypeBool, Default: false},
-		{Name: "profile_accounts", Type: field.TypeString},
+		{Name: "profile_accounts", Type: field.TypeInt},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -43,13 +43,13 @@ var (
 	}
 	// ProfilesColumns holds the columns for the "profiles" table.
 	ProfilesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "locale", Type: field.TypeString},
 		{Name: "currencies", Type: field.TypeJSON},
 		{Name: "net_worth_goal", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
-		{Name: "user_profiles", Type: field.TypeString},
+		{Name: "user_profiles", Type: field.TypeInt},
 	}
 	// ProfilesTable holds the schema information for the "profiles" table.
 	ProfilesTable = &schema.Table{
@@ -67,13 +67,13 @@ var (
 	}
 	// TransactionsColumns holds the columns for the "transactions" table.
 	TransactionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "datetime", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
-		{Name: "profile_transactions", Type: field.TypeString},
+		{Name: "profile_transactions", Type: field.TypeInt},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
 	TransactionsTable = &schema.Table{
@@ -91,15 +91,15 @@ var (
 	}
 	// TransactionEntriesColumns holds the columns for the "transaction_entries" table.
 	TransactionEntriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
-		{Name: "account_transaction_entries", Type: field.TypeString},
-		{Name: "transaction_transaction_entries", Type: field.TypeString},
+		{Name: "account_transaction_entries", Type: field.TypeInt},
+		{Name: "transaction_transaction_entries", Type: field.TypeInt},
 	}
 	// TransactionEntriesTable holds the schema information for the "transaction_entries" table.
 	TransactionEntriesTable = &schema.Table{
@@ -123,7 +123,7 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "email", Type: field.TypeString, Unique: true},
@@ -136,11 +136,12 @@ var (
 	}
 	// UserKeysColumns holds the columns for the "user_keys" table.
 	UserKeysColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
+		{Name: "key", Type: field.TypeString},
 		{Name: "hashed_password", Type: field.TypeString, Nullable: true},
-		{Name: "user_user_keys", Type: field.TypeString},
+		{Name: "user_user_keys", Type: field.TypeInt},
 	}
 	// UserKeysTable holds the schema information for the "user_keys" table.
 	UserKeysTable = &schema.Table{
@@ -150,7 +151,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_keys_users_user_keys",
-				Columns:    []*schema.Column{UserKeysColumns[4]},
+				Columns:    []*schema.Column{UserKeysColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

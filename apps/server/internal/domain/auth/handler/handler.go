@@ -74,7 +74,7 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
 	}
-	if profileID != "" {
+	if profileID != 0 {
 		claims["profile_id"] = profileID
 	}
 
@@ -143,7 +143,7 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
 	}
-	if profileID != "" {
+	if profileID != 0 {
 		claims["profile_id"] = profileID
 	}
 

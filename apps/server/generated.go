@@ -56,8 +56,7 @@ type ResolverRoot interface {
 	UpdateTransactionEntryInput() UpdateTransactionEntryInputResolver
 }
 
-type DirectiveRoot struct {
-}
+type DirectiveRoot struct{}
 
 type ComplexityRoot struct {
 	Account struct {
@@ -100,7 +99,7 @@ type ComplexityRoot struct {
 		CreateProfile                           func(childComplexity int, input ent.CreateProfileInput) int
 		CreateTransactionEntry                  func(childComplexity int, input ent.CreateTransactionEntryInput) int
 		CreateTransactionWithTransactionEntries func(childComplexity int, input CreateTransactionWithTransactionEntriesInput) int
-		UpdateProfile                           func(childComplexity int, id string, input ent.UpdateProfileInput) int
+		UpdateProfile                           func(childComplexity int, id int, input ent.UpdateProfileInput) int
 	}
 
 	PageInfo struct {
@@ -123,12 +122,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Accounts     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) int
+		Accounts     func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
 		Currencies   func(childComplexity int) int
-		Node         func(childComplexity int, id string) int
-		Nodes        func(childComplexity int, ids []string) int
+		Node         func(childComplexity int, id int) int
+		Nodes        func(childComplexity int, ids []int) int
 		Profiles     func(childComplexity int) int
-		Transactions func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) int
+		Transactions func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
 		User         func(childComplexity int) int
 	}
 
@@ -179,6 +178,7 @@ type ComplexityRoot struct {
 		CreateTime     func(childComplexity int) int
 		HashedPassword func(childComplexity int) int
 		ID             func(childComplexity int) int
+		Key            func(childComplexity int) int
 		UpdateTime     func(childComplexity int) int
 		User           func(childComplexity int) int
 	}
@@ -192,7 +192,7 @@ type AccountResolver interface {
 }
 type MutationResolver interface {
 	CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error)
-	UpdateProfile(ctx context.Context, id string, input ent.UpdateProfileInput) (*ent.Profile, error)
+	UpdateProfile(ctx context.Context, id int, input ent.UpdateProfileInput) (*ent.Profile, error)
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error)
 	CreateTransactionWithTransactionEntries(ctx context.Context, input CreateTransactionWithTransactionEntriesInput) (*ent.Transaction, error)
 	CreateTransactionEntry(ctx context.Context, input ent.CreateTransactionEntryInput) (*ent.TransactionEntry, error)
@@ -201,11 +201,11 @@ type ProfileResolver interface {
 	NetWorthGoal(ctx context.Context, obj *ent.Profile) (string, error)
 }
 type QueryResolver interface {
-	Node(ctx context.Context, id string) (ent.Noder, error)
-	Nodes(ctx context.Context, ids []string) ([]ent.Noder, error)
-	Accounts(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) (*ent.AccountConnection, error)
+	Node(ctx context.Context, id int) (ent.Noder, error)
+	Nodes(ctx context.Context, ids []int) ([]ent.Noder, error)
+	Accounts(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.AccountConnection, error)
 	Profiles(ctx context.Context) ([]*ent.Profile, error)
-	Transactions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) (*ent.TransactionConnection, error)
+	Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.TransactionConnection, error)
 	User(ctx context.Context) (*ent.User, error)
 	Currencies(ctx context.Context) ([]*Currency, error)
 }
@@ -476,7 +476,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateProfile(childComplexity, args["id"].(string), args["input"].(ent.UpdateProfileInput)), true
+		return e.complexity.Mutation.UpdateProfile(childComplexity, args["id"].(int), args["input"].(ent.UpdateProfileInput)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -579,7 +579,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Accounts(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int)), true
+		return e.complexity.Query.Accounts(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int)), true
 
 	case "Query.currencies":
 		if e.complexity.Query.Currencies == nil {
@@ -598,7 +598,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Node(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Node(childComplexity, args["id"].(int)), true
 
 	case "Query.nodes":
 		if e.complexity.Query.Nodes == nil {
@@ -610,7 +610,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]string)), true
+		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]int)), true
 
 	case "Query.profiles":
 		if e.complexity.Query.Profiles == nil {
@@ -629,7 +629,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Transactions(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int)), true
+		return e.complexity.Query.Transactions(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -855,6 +855,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.UserKey.ID(childComplexity), true
 
+	case "UserKey.key":
+		if e.complexity.UserKey.Key == nil {
+			break
+		}
+
+		return e.complexity.UserKey.Key(childComplexity), true
+
 	case "UserKey.updateTime":
 		if e.complexity.UserKey.UpdateTime == nil {
 			break
@@ -1015,6 +1022,7 @@ func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Contex
 	args["input"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field_Mutation_createAccount_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1043,6 +1051,7 @@ func (ec *executionContext) field_Mutation_createProfile_args(ctx context.Contex
 	args["input"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field_Mutation_createProfile_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1071,6 +1080,7 @@ func (ec *executionContext) field_Mutation_createTransactionEntry_args(ctx conte
 	args["input"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field_Mutation_createTransactionEntry_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1099,6 +1109,7 @@ func (ec *executionContext) field_Mutation_createTransactionWithTransactionEntri
 	args["input"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field_Mutation_createTransactionWithTransactionEntries_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1132,21 +1143,22 @@ func (ec *executionContext) field_Mutation_updateProfile_args(ctx context.Contex
 	args["input"] = arg1
 	return args, nil
 }
+
 func (ec *executionContext) field_Mutation_updateProfile_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (string, error) {
+) (int, error) {
 	if _, ok := rawArgs["id"]; !ok {
-		var zeroVal string
+		var zeroVal int
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
+		return ec.unmarshalNID2int(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal int
 	return zeroVal, nil
 }
 
@@ -1178,6 +1190,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	args["name"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field_Query___type_argsName(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1221,12 +1234,13 @@ func (ec *executionContext) field_Query_accounts_args(ctx context.Context, rawAr
 	args["last"] = arg3
 	return args, nil
 }
+
 func (ec *executionContext) field_Query_accounts_argsAfter(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (*entgql.Cursor[string], error) {
+) (*entgql.Cursor[int], error) {
 	if _, ok := rawArgs["after"]; !ok {
-		var zeroVal *entgql.Cursor[string]
+		var zeroVal *entgql.Cursor[int]
 		return zeroVal, nil
 	}
 
@@ -1235,7 +1249,7 @@ func (ec *executionContext) field_Query_accounts_argsAfter(
 		return ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 	}
 
-	var zeroVal *entgql.Cursor[string]
+	var zeroVal *entgql.Cursor[int]
 	return zeroVal, nil
 }
 
@@ -1260,9 +1274,9 @@ func (ec *executionContext) field_Query_accounts_argsFirst(
 func (ec *executionContext) field_Query_accounts_argsBefore(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (*entgql.Cursor[string], error) {
+) (*entgql.Cursor[int], error) {
 	if _, ok := rawArgs["before"]; !ok {
-		var zeroVal *entgql.Cursor[string]
+		var zeroVal *entgql.Cursor[int]
 		return zeroVal, nil
 	}
 
@@ -1271,7 +1285,7 @@ func (ec *executionContext) field_Query_accounts_argsBefore(
 		return ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 	}
 
-	var zeroVal *entgql.Cursor[string]
+	var zeroVal *entgql.Cursor[int]
 	return zeroVal, nil
 }
 
@@ -1303,21 +1317,22 @@ func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs m
 	args["id"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field_Query_node_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (string, error) {
+) (int, error) {
 	if _, ok := rawArgs["id"]; !ok {
-		var zeroVal string
+		var zeroVal int
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
+		return ec.unmarshalNID2int(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal int
 	return zeroVal, nil
 }
 
@@ -1331,21 +1346,22 @@ func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs 
 	args["ids"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field_Query_nodes_argsIds(
 	ctx context.Context,
 	rawArgs map[string]any,
-) ([]string, error) {
+) ([]int, error) {
 	if _, ok := rawArgs["ids"]; !ok {
-		var zeroVal []string
+		var zeroVal []int
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("ids"))
 	if tmp, ok := rawArgs["ids"]; ok {
-		return ec.unmarshalNID2ᚕstringᚄ(ctx, tmp)
+		return ec.unmarshalNID2ᚕintᚄ(ctx, tmp)
 	}
 
-	var zeroVal []string
+	var zeroVal []int
 	return zeroVal, nil
 }
 
@@ -1374,12 +1390,13 @@ func (ec *executionContext) field_Query_transactions_args(ctx context.Context, r
 	args["last"] = arg3
 	return args, nil
 }
+
 func (ec *executionContext) field_Query_transactions_argsAfter(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (*entgql.Cursor[string], error) {
+) (*entgql.Cursor[int], error) {
 	if _, ok := rawArgs["after"]; !ok {
-		var zeroVal *entgql.Cursor[string]
+		var zeroVal *entgql.Cursor[int]
 		return zeroVal, nil
 	}
 
@@ -1388,7 +1405,7 @@ func (ec *executionContext) field_Query_transactions_argsAfter(
 		return ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 	}
 
-	var zeroVal *entgql.Cursor[string]
+	var zeroVal *entgql.Cursor[int]
 	return zeroVal, nil
 }
 
@@ -1413,9 +1430,9 @@ func (ec *executionContext) field_Query_transactions_argsFirst(
 func (ec *executionContext) field_Query_transactions_argsBefore(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (*entgql.Cursor[string], error) {
+) (*entgql.Cursor[int], error) {
 	if _, ok := rawArgs["before"]; !ok {
-		var zeroVal *entgql.Cursor[string]
+		var zeroVal *entgql.Cursor[int]
 		return zeroVal, nil
 	}
 
@@ -1424,7 +1441,7 @@ func (ec *executionContext) field_Query_transactions_argsBefore(
 		return ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
 	}
 
-	var zeroVal *entgql.Cursor[string]
+	var zeroVal *entgql.Cursor[int]
 	return zeroVal, nil
 }
 
@@ -1456,6 +1473,7 @@ func (ec *executionContext) field___Directive_args_args(ctx context.Context, raw
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field___Directive_args_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1484,6 +1502,7 @@ func (ec *executionContext) field___Field_args_args(ctx context.Context, rawArgs
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field___Field_args_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1512,6 +1531,7 @@ func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, ra
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field___Type_enumValues_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1540,6 +1560,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
+
 func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1592,9 +1613,9 @@ func (ec *executionContext) _Account_id(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Account_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2380,7 +2401,7 @@ func (ec *executionContext) _AccountConnection_pageInfo(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(entgql.PageInfo[string])
+	res := resTmp.(entgql.PageInfo[int])
 	fc.Result = res
 	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
 }
@@ -2553,7 +2574,7 @@ func (ec *executionContext) _AccountEdge_cursor(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(entgql.Cursor[string])
+	res := resTmp.(entgql.Cursor[int])
 	fc.Result = res
 	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
@@ -2748,7 +2769,7 @@ func (ec *executionContext) _Mutation_updateProfile(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateProfile(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateProfileInput))
+		return ec.resolvers.Mutation().UpdateProfile(rctx, fc.Args["id"].(int), fc.Args["input"].(ent.UpdateProfileInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3046,7 +3067,7 @@ func (ec *executionContext) fieldContext_Mutation_createTransactionEntry(ctx con
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[string]) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[int]) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasNextPage(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -3090,7 +3111,7 @@ func (ec *executionContext) fieldContext_PageInfo_hasNextPage(_ context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_hasPreviousPage(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[string]) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_hasPreviousPage(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[int]) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -3134,7 +3155,7 @@ func (ec *executionContext) fieldContext_PageInfo_hasPreviousPage(_ context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[string]) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[int]) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_startCursor(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -3157,7 +3178,7 @@ func (ec *executionContext) _PageInfo_startCursor(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entgql.Cursor[string])
+	res := resTmp.(*entgql.Cursor[int])
 	fc.Result = res
 	return ec.marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
@@ -3175,7 +3196,7 @@ func (ec *executionContext) fieldContext_PageInfo_startCursor(_ context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[string]) (ret graphql.Marshaler) {
+func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[int]) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_endCursor(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -3198,7 +3219,7 @@ func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entgql.Cursor[string])
+	res := resTmp.(*entgql.Cursor[int])
 	fc.Result = res
 	return ec.marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
@@ -3242,9 +3263,9 @@ func (ec *executionContext) _Profile_id(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Profile_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3686,7 +3707,7 @@ func (ec *executionContext) _Query_node(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Node(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().Node(rctx, fc.Args["id"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3738,7 +3759,7 @@ func (ec *executionContext) _Query_nodes(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Nodes(rctx, fc.Args["ids"].([]string))
+		return ec.resolvers.Query().Nodes(rctx, fc.Args["ids"].([]int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3793,7 +3814,7 @@ func (ec *executionContext) _Query_accounts(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Accounts(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int))
+		return ec.resolvers.Query().Accounts(rctx, fc.Args["after"].(*entgql.Cursor[int]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[int]), fc.Args["last"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3920,7 +3941,7 @@ func (ec *executionContext) _Query_transactions(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Transactions(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int))
+		return ec.resolvers.Query().Transactions(rctx, fc.Args["after"].(*entgql.Cursor[int]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[int]), fc.Args["last"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4234,9 +4255,9 @@ func (ec *executionContext) _Transaction_id(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Transaction_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4667,7 +4688,7 @@ func (ec *executionContext) _TransactionConnection_pageInfo(ctx context.Context,
 		}
 		return graphql.Null
 	}
-	res := resTmp.(entgql.PageInfo[string])
+	res := resTmp.(entgql.PageInfo[int])
 	fc.Result = res
 	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
 }
@@ -4824,7 +4845,7 @@ func (ec *executionContext) _TransactionEdge_cursor(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(entgql.Cursor[string])
+	res := resTmp.(entgql.Cursor[int])
 	fc.Result = res
 	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
@@ -4868,9 +4889,9 @@ func (ec *executionContext) _TransactionEntry_id(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_TransactionEntry_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5316,9 +5337,9 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5508,6 +5529,8 @@ func (ec *executionContext) fieldContext_User_userKeys(_ context.Context, field 
 				return ec.fieldContext_UserKey_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_UserKey_updateTime(ctx, field)
+			case "key":
+				return ec.fieldContext_UserKey_key(ctx, field)
 			case "hashedPassword":
 				return ec.fieldContext_UserKey_hashedPassword(ctx, field)
 			case "user":
@@ -5606,9 +5629,9 @@ func (ec *executionContext) _UserKey_id(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UserKey_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5707,6 +5730,50 @@ func (ec *executionContext) fieldContext_UserKey_updateTime(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserKey_key(ctx context.Context, field graphql.CollectedField, obj *ent.UserKey) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserKey_key(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Key, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserKey_key(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserKey",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7850,7 +7917,7 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 			it.Archived = data
 		case "transactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionEntryIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7907,14 +7974,14 @@ func (ec *executionContext) unmarshalInputCreateProfileInput(ctx context.Context
 			}
 		case "accountIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AccountIDs = data
 		case "transactionIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -7964,14 +8031,14 @@ func (ec *executionContext) unmarshalInputCreateTransactionEntryInput(ctx contex
 			}
 		case "accountID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
+			data, err := ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AccountID = data
 		case "transactionID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
+			data, err := ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8026,7 +8093,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 			it.Datetime = data
 		case "transactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionEntryIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8115,14 +8182,14 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 			it.Email = data
 		case "userKeyIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userKeyIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.UserKeyIDs = data
 		case "profileIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("profileIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8140,7 +8207,7 @@ func (ec *executionContext) unmarshalInputCreateUserKeyInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "hashedPassword", "userID"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "key", "hashedPassword", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8161,6 +8228,13 @@ func (ec *executionContext) unmarshalInputCreateUserKeyInput(ctx context.Context
 				return it, err
 			}
 			it.UpdateTime = data
+		case "key":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("key"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Key = data
 		case "hashedPassword":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hashedPassword"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -8170,7 +8244,7 @@ func (ec *executionContext) unmarshalInputCreateUserKeyInput(ctx context.Context
 			it.HashedPassword = data
 		case "userID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
+			data, err := ec.unmarshalNID2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8234,14 +8308,14 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 			it.Archived = data
 		case "addTransactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTransactionEntryIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AddTransactionEntryIDs = data
 		case "removeTransactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeTransactionEntryIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8305,14 +8379,14 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 			}
 		case "addAccountIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addAccountIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AddAccountIDs = data
 		case "removeAccountIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeAccountIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8326,14 +8400,14 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 			it.ClearAccounts = data
 		case "addTransactionIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTransactionIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AddTransactionIDs = data
 		case "removeTransactionIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeTransactionIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8383,14 +8457,14 @@ func (ec *executionContext) unmarshalInputUpdateTransactionEntryInput(ctx contex
 			}
 		case "accountID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AccountID = data
 		case "transactionID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8445,14 +8519,14 @@ func (ec *executionContext) unmarshalInputUpdateTransactionInput(ctx context.Con
 			it.Datetime = data
 		case "addTransactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTransactionEntryIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AddTransactionEntryIDs = data
 		case "removeTransactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeTransactionEntryIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -9024,7 +9098,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 var pageInfoImplementors = []string{"PageInfo"}
 
-func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet, obj *entgql.PageInfo[string]) graphql.Marshaler {
+func (ec *executionContext) _PageInfo(ctx context.Context, sel ast.SelectionSet, obj *entgql.PageInfo[int]) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, pageInfoImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -10127,6 +10201,11 @@ func (ec *executionContext) _UserKey(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "key":
+			out.Values[i] = ec._UserKey_key(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "hashedPassword":
 			out.Values[i] = ec._UserKey_hashedPassword(ctx, field, obj)
 		case "user":
@@ -10691,24 +10770,24 @@ func (ec *executionContext) marshalNCurrency2ᚖfijoyᚐCurrency(ctx context.Con
 	return ec._Currency(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v any) (entgql.Cursor[string], error) {
-	var res entgql.Cursor[string]
+func (ec *executionContext) unmarshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v any) (entgql.Cursor[int], error) {
+	var res entgql.Cursor[int]
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v entgql.Cursor[string]) graphql.Marshaler {
+func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v entgql.Cursor[int]) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
-	res, err := graphql.UnmarshalID(v)
+func (ec *executionContext) unmarshalNID2int(ctx context.Context, v any) (int, error) {
+	res, err := graphql.UnmarshalIntID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+func (ec *executionContext) marshalNID2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
 	_ = sel
-	res := graphql.MarshalID(v)
+	res := graphql.MarshalIntID(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -10717,14 +10796,14 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) unmarshalNID2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+func (ec *executionContext) unmarshalNID2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
 	var vSlice []any
 	vSlice = graphql.CoerceList(v)
 	var err error
-	res := make([]string, len(vSlice))
+	res := make([]int, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNID2string(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNID2int(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -10732,10 +10811,10 @@ func (ec *executionContext) unmarshalNID2ᚕstringᚄ(ctx context.Context, v any
 	return res, nil
 }
 
-func (ec *executionContext) marshalNID2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+func (ec *executionContext) marshalNID2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	for i := range v {
-		ret[i] = ec.marshalNID2string(ctx, sel, v[i])
+		ret[i] = ec.marshalNID2int(ctx, sel, v[i])
 	}
 
 	for _, e := range ret {
@@ -10801,7 +10880,7 @@ func (ec *executionContext) marshalNNode2ᚕfijoyᚋentᚐNoder(ctx context.Cont
 	return ret
 }
 
-func (ec *executionContext) marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v entgql.PageInfo[string]) graphql.Marshaler {
+func (ec *executionContext) marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx context.Context, sel ast.SelectionSet, v entgql.PageInfo[int]) graphql.Marshaler {
 	return ec._PageInfo(ctx, sel, &v)
 }
 
@@ -11355,7 +11434,7 @@ func (ec *executionContext) unmarshalOAccountInvestmentType2ᚖfijoyᚋentᚋacc
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(account.InvestmentType)
+	res := new(account.InvestmentType)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -11397,33 +11476,33 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v any) (*entgql.Cursor[string], error) {
+func (ec *executionContext) unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v any) (*entgql.Cursor[int], error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(entgql.Cursor[string])
+	res := new(entgql.Cursor[int])
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v *entgql.Cursor[string]) graphql.Marshaler {
+func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v *entgql.Cursor[int]) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) unmarshalOID2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+func (ec *executionContext) unmarshalOID2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
 	if v == nil {
 		return nil, nil
 	}
 	var vSlice []any
 	vSlice = graphql.CoerceList(v)
 	var err error
-	res := make([]string, len(vSlice))
+	res := make([]int, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNID2string(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNID2int(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -11431,13 +11510,13 @@ func (ec *executionContext) unmarshalOID2ᚕstringᚄ(ctx context.Context, v any
 	return res, nil
 }
 
-func (ec *executionContext) marshalOID2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+func (ec *executionContext) marshalOID2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	ret := make(graphql.Array, len(v))
 	for i := range v {
-		ret[i] = ec.marshalNID2string(ctx, sel, v[i])
+		ret[i] = ec.marshalNID2int(ctx, sel, v[i])
 	}
 
 	for _, e := range ret {
@@ -11449,21 +11528,21 @@ func (ec *executionContext) marshalOID2ᚕstringᚄ(ctx context.Context, sel ast
 	return ret
 }
 
-func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v any) (*string, error) {
+func (ec *executionContext) unmarshalOID2ᚖint(ctx context.Context, v any) (*int, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := graphql.UnmarshalID(v)
+	res, err := graphql.UnmarshalIntID(v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+func (ec *executionContext) marshalOID2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	_ = sel
 	_ = ctx
-	res := graphql.MarshalID(*v)
+	res := graphql.MarshalIntID(*v)
 	return res
 }
 

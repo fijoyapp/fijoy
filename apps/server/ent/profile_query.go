@@ -160,8 +160,8 @@ func (pq *ProfileQuery) FirstX(ctx context.Context) *Profile {
 
 // FirstID returns the first Profile ID from the query.
 // Returns a *NotFoundError when no Profile ID was found.
-func (pq *ProfileQuery) FirstID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (pq *ProfileQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = pq.Limit(1).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -173,7 +173,7 @@ func (pq *ProfileQuery) FirstID(ctx context.Context) (id string, err error) {
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (pq *ProfileQuery) FirstIDX(ctx context.Context) string {
+func (pq *ProfileQuery) FirstIDX(ctx context.Context) int {
 	id, err := pq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -211,8 +211,8 @@ func (pq *ProfileQuery) OnlyX(ctx context.Context) *Profile {
 // OnlyID is like Only, but returns the only Profile ID in the query.
 // Returns a *NotSingularError when more than one Profile ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (pq *ProfileQuery) OnlyID(ctx context.Context) (id string, err error) {
-	var ids []string
+func (pq *ProfileQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = pq.Limit(2).IDs(setContextOp(ctx, pq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -228,7 +228,7 @@ func (pq *ProfileQuery) OnlyID(ctx context.Context) (id string, err error) {
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (pq *ProfileQuery) OnlyIDX(ctx context.Context) string {
+func (pq *ProfileQuery) OnlyIDX(ctx context.Context) int {
 	id, err := pq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -256,7 +256,7 @@ func (pq *ProfileQuery) AllX(ctx context.Context) []*Profile {
 }
 
 // IDs executes the query and returns a list of Profile IDs.
-func (pq *ProfileQuery) IDs(ctx context.Context) (ids []string, err error) {
+func (pq *ProfileQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if pq.ctx.Unique == nil && pq.path != nil {
 		pq.Unique(true)
 	}
@@ -268,7 +268,7 @@ func (pq *ProfileQuery) IDs(ctx context.Context) (ids []string, err error) {
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (pq *ProfileQuery) IDsX(ctx context.Context) []string {
+func (pq *ProfileQuery) IDsX(ctx context.Context) []int {
 	ids, err := pq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -525,8 +525,8 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 }
 
 func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *User)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*Profile)
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Profile)
 	for i := range nodes {
 		if nodes[i].user_profiles == nil {
 			continue
@@ -558,7 +558,7 @@ func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 }
 func (pq *ProfileQuery) loadAccounts(ctx context.Context, query *AccountQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Account)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[string]*Profile)
+	nodeids := make(map[int]*Profile)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -589,7 +589,7 @@ func (pq *ProfileQuery) loadAccounts(ctx context.Context, query *AccountQuery, n
 }
 func (pq *ProfileQuery) loadTransactions(ctx context.Context, query *TransactionQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Transaction)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[string]*Profile)
+	nodeids := make(map[int]*Profile)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -632,7 +632,7 @@ func (pq *ProfileQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (pq *ProfileQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
+	_spec := sqlgraph.NewQuerySpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	_spec.From = pq.sql
 	if unique := pq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

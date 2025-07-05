@@ -71,13 +71,13 @@ func (pc *ProfileCreate) SetNetWorthGoal(d decimal.Decimal) *ProfileCreate {
 }
 
 // SetID sets the "id" field.
-func (pc *ProfileCreate) SetID(s string) *ProfileCreate {
-	pc.mutation.SetID(s)
+func (pc *ProfileCreate) SetID(i int) *ProfileCreate {
+	pc.mutation.SetID(i)
 	return pc
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (pc *ProfileCreate) SetUserID(id string) *ProfileCreate {
+func (pc *ProfileCreate) SetUserID(id int) *ProfileCreate {
 	pc.mutation.SetUserID(id)
 	return pc
 }
@@ -88,14 +88,14 @@ func (pc *ProfileCreate) SetUser(u *User) *ProfileCreate {
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
-func (pc *ProfileCreate) AddAccountIDs(ids ...string) *ProfileCreate {
+func (pc *ProfileCreate) AddAccountIDs(ids ...int) *ProfileCreate {
 	pc.mutation.AddAccountIDs(ids...)
 	return pc
 }
 
 // AddAccounts adds the "accounts" edges to the Account entity.
 func (pc *ProfileCreate) AddAccounts(a ...*Account) *ProfileCreate {
-	ids := make([]string, len(a))
+	ids := make([]int, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
 	}
@@ -103,14 +103,14 @@ func (pc *ProfileCreate) AddAccounts(a ...*Account) *ProfileCreate {
 }
 
 // AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
-func (pc *ProfileCreate) AddTransactionIDs(ids ...string) *ProfileCreate {
+func (pc *ProfileCreate) AddTransactionIDs(ids ...int) *ProfileCreate {
 	pc.mutation.AddTransactionIDs(ids...)
 	return pc
 }
 
 // AddTransactions adds the "transactions" edges to the Transaction entity.
 func (pc *ProfileCreate) AddTransactions(t ...*Transaction) *ProfileCreate {
-	ids := make([]string, len(t))
+	ids := make([]int, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
 	}
@@ -196,12 +196,9 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(string); ok {
-			_node.ID = id
-		} else {
-			return nil, fmt.Errorf("unexpected Profile.ID type: %T", _spec.ID.Value)
-		}
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
 	}
 	pc.mutation.id = &_node.ID
 	pc.mutation.done = true
@@ -211,7 +208,7 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Profile{config: pc.config}
-		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeString))
+		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	)
 	if id, ok := pc.mutation.ID(); ok {
 		_node.ID = id
@@ -245,7 +242,7 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 			Columns: []string{profile.UserColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -262,7 +259,7 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 			Columns: []string{profile.AccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -278,7 +275,7 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 			Columns: []string{profile.TransactionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -334,6 +331,10 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

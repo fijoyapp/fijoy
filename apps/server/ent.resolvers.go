@@ -45,24 +45,24 @@ func (r *profileResolver) NetWorthGoal(ctx context.Context, obj *ent.Profile) (s
 }
 
 // Node is the resolver for the node field.
-func (r *queryResolver) Node(ctx context.Context, id string) (ent.Noder, error) {
-	return r.client.Noder(ctx, id)
+func (r *queryResolver) Node(ctx context.Context, id int) (ent.Noder, error) {
+	panic(fmt.Errorf("not implemented: Node - node"))
 }
 
 // Nodes is the resolver for the nodes field.
-func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, error) {
-	return r.client.Noders(ctx, ids)
+func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, error) {
+	panic(fmt.Errorf("not implemented: Nodes - nodes"))
 }
 
 // Accounts is the resolver for the accounts field.
-func (r *queryResolver) Accounts(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) (*ent.AccountConnection, error) {
+func (r *queryResolver) Accounts(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.AccountConnection, error) {
 	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return r.client.Account.Query().
-		Where(account.HasProfileWith(profile.ID(authData.ProfileId))).
+		Where(account.HasProfileWith(profile.ID(authData.ProfileID))).
 		Paginate(ctx, after, first, before, last)
 }
 
@@ -73,18 +73,18 @@ func (r *queryResolver) Profiles(ctx context.Context) ([]*ent.Profile, error) {
 		return nil, err
 	}
 
-	return r.client.Profile.Query().Where(profile.HasUserWith(user.ID(authData.UserId))).All(ctx)
+	return r.client.Profile.Query().Where(profile.HasUserWith(user.ID(authData.UserID))).All(ctx)
 }
 
 // Transactions is the resolver for the transactions field.
-func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int) (*ent.TransactionConnection, error) {
+func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.TransactionConnection, error) {
 	authData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	return r.client.Transaction.Query().
-		Where(transaction.HasProfileWith(profile.ID(authData.ProfileId))).
+		Where(transaction.HasProfileWith(profile.ID(authData.ProfileID))).
 		Paginate(ctx, after, first, before, last)
 }
 

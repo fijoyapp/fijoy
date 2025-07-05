@@ -33,7 +33,7 @@ func (Profile) Mixin() []ent.Mixin {
 // Fields of the Profile.
 func (Profile) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id"),
+		field.Int("id"),
 
 		field.String("locale").
 			Annotations(

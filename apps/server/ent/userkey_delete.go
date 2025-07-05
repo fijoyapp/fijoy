@@ -40,7 +40,7 @@ func (ukd *UserKeyDelete) ExecX(ctx context.Context) int {
 }
 
 func (ukd *UserKeyDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeString))
+	_spec := sqlgraph.NewDeleteSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	if ps := ukd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

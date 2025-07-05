@@ -11,58 +11,48 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id string) predicate.UserKey {
+func ID(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id string) predicate.UserKey {
+func IDEQ(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id string) predicate.UserKey {
+func IDNEQ(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...string) predicate.UserKey {
+func IDIn(ids ...int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...string) predicate.UserKey {
+func IDNotIn(ids ...int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id string) predicate.UserKey {
+func IDGT(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id string) predicate.UserKey {
+func IDGTE(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id string) predicate.UserKey {
+func IDLT(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id string) predicate.UserKey {
+func IDLTE(id int) predicate.UserKey {
 	return predicate.UserKey(sql.FieldLTE(FieldID, id))
-}
-
-// IDEqualFold applies the EqualFold predicate on the ID field.
-func IDEqualFold(id string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldEqualFold(FieldID, id))
-}
-
-// IDContainsFold applies the ContainsFold predicate on the ID field.
-func IDContainsFold(id string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldContainsFold(FieldID, id))
 }
 
 // CreateTime applies equality check predicate on the "create_time" field. It's identical to CreateTimeEQ.
@@ -73,6 +63,11 @@ func CreateTime(v time.Time) predicate.UserKey {
 // UpdateTime applies equality check predicate on the "update_time" field. It's identical to UpdateTimeEQ.
 func UpdateTime(v time.Time) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldUpdateTime, v))
+}
+
+// Key applies equality check predicate on the "key" field. It's identical to KeyEQ.
+func Key(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEQ(FieldKey, v))
 }
 
 // HashedPassword applies equality check predicate on the "hashed_password" field. It's identical to HashedPasswordEQ.
@@ -158,6 +153,71 @@ func UpdateTimeLT(v time.Time) predicate.UserKey {
 // UpdateTimeLTE applies the LTE predicate on the "update_time" field.
 func UpdateTimeLTE(v time.Time) predicate.UserKey {
 	return predicate.UserKey(sql.FieldLTE(FieldUpdateTime, v))
+}
+
+// KeyEQ applies the EQ predicate on the "key" field.
+func KeyEQ(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEQ(FieldKey, v))
+}
+
+// KeyNEQ applies the NEQ predicate on the "key" field.
+func KeyNEQ(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNEQ(FieldKey, v))
+}
+
+// KeyIn applies the In predicate on the "key" field.
+func KeyIn(vs ...string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldIn(FieldKey, vs...))
+}
+
+// KeyNotIn applies the NotIn predicate on the "key" field.
+func KeyNotIn(vs ...string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNotIn(FieldKey, vs...))
+}
+
+// KeyGT applies the GT predicate on the "key" field.
+func KeyGT(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldGT(FieldKey, v))
+}
+
+// KeyGTE applies the GTE predicate on the "key" field.
+func KeyGTE(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldGTE(FieldKey, v))
+}
+
+// KeyLT applies the LT predicate on the "key" field.
+func KeyLT(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldLT(FieldKey, v))
+}
+
+// KeyLTE applies the LTE predicate on the "key" field.
+func KeyLTE(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldLTE(FieldKey, v))
+}
+
+// KeyContains applies the Contains predicate on the "key" field.
+func KeyContains(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldContains(FieldKey, v))
+}
+
+// KeyHasPrefix applies the HasPrefix predicate on the "key" field.
+func KeyHasPrefix(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldHasPrefix(FieldKey, v))
+}
+
+// KeyHasSuffix applies the HasSuffix predicate on the "key" field.
+func KeyHasSuffix(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldHasSuffix(FieldKey, v))
+}
+
+// KeyEqualFold applies the EqualFold predicate on the "key" field.
+func KeyEqualFold(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEqualFold(FieldKey, v))
+}
+
+// KeyContainsFold applies the ContainsFold predicate on the "key" field.
+func KeyContainsFold(v string) predicate.UserKey {
+	return predicate.UserKey(sql.FieldContainsFold(FieldKey, v))
 }
 
 // HashedPasswordEQ applies the EQ predicate on the "hashed_password" field.

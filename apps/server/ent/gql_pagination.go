@@ -22,8 +22,8 @@ import (
 
 // Common entgql types.
 type (
-	Cursor         = entgql.Cursor[string]
-	PageInfo       = entgql.PageInfo[string]
+	Cursor         = entgql.Cursor[int]
+	PageInfo       = entgql.PageInfo[int]
 	OrderDirection = entgql.OrderDirection
 )
 
