@@ -29,6 +29,8 @@ func main() {
 	cfg := &gen.Config{
 		Features: []gen.Feature{
 			gen.FeatureGlobalID,
+			gen.FeaturePrivacy,
+			gen.FeatureSnapshot,
 		},
 	}
 
