@@ -86,7 +86,13 @@ func (TransactionEntry) Fields() []ent.Field {
 // Edges of the TransactionEntry.
 func (TransactionEntry) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("account", Account.Type).Ref("transaction_entry").Unique().Required(),
-		edge.From("transaction", Transaction.Type).Ref("transaction_entries").Unique().Required(),
+		edge.From("account", Account.Type).
+			Ref("transaction_entries").
+			Unique().
+			Required(),
+		edge.From("transaction", Transaction.Type).
+			Ref("transaction_entries").
+			Unique().
+			Required(),
 	}
 }

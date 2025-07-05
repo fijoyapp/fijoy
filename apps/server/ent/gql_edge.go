@@ -16,14 +16,14 @@ func (a *Account) Profile(ctx context.Context) (*Profile, error) {
 	return result, err
 }
 
-func (a *Account) TransactionEntry(ctx context.Context) (result []*TransactionEntry, err error) {
+func (a *Account) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = a.NamedTransactionEntry(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = a.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = a.Edges.TransactionEntryOrErr()
+		result, err = a.Edges.TransactionEntriesOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = a.QueryTransactionEntry().All(ctx)
+		result, err = a.QueryTransactionEntries().All(ctx)
 	}
 	return result, err
 }
@@ -36,26 +36,26 @@ func (pr *Profile) User(ctx context.Context) (*User, error) {
 	return result, err
 }
 
-func (pr *Profile) Account(ctx context.Context) (result []*Account, err error) {
+func (pr *Profile) Accounts(ctx context.Context) (result []*Account, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = pr.NamedAccount(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = pr.NamedAccounts(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = pr.Edges.AccountOrErr()
+		result, err = pr.Edges.AccountsOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = pr.QueryAccount().All(ctx)
+		result, err = pr.QueryAccounts().All(ctx)
 	}
 	return result, err
 }
 
-func (pr *Profile) Transaction(ctx context.Context) (result []*Transaction, err error) {
+func (pr *Profile) Transactions(ctx context.Context) (result []*Transaction, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = pr.NamedTransaction(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = pr.NamedTransactions(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = pr.Edges.TransactionOrErr()
+		result, err = pr.Edges.TransactionsOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = pr.QueryTransaction().All(ctx)
+		result, err = pr.QueryTransactions().All(ctx)
 	}
 	return result, err
 }
@@ -96,26 +96,26 @@ func (te *TransactionEntry) Transaction(ctx context.Context) (*Transaction, erro
 	return result, err
 }
 
-func (u *User) UserKey(ctx context.Context) (result []*UserKey, err error) {
+func (u *User) UserKeys(ctx context.Context) (result []*UserKey, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedUserKey(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = u.NamedUserKeys(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = u.Edges.UserKeyOrErr()
+		result, err = u.Edges.UserKeysOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = u.QueryUserKey().All(ctx)
+		result, err = u.QueryUserKeys().All(ctx)
 	}
 	return result, err
 }
 
-func (u *User) Profile(ctx context.Context) (result []*Profile, err error) {
+func (u *User) Profiles(ctx context.Context) (result []*Profile, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedProfile(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = u.NamedProfiles(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = u.Edges.ProfileOrErr()
+		result, err = u.Edges.ProfilesOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = u.QueryProfile().All(ctx)
+		result, err = u.QueryProfiles().All(ctx)
 	}
 	return result, err
 }

@@ -478,10 +478,10 @@ func (tq *TransactionQuery) loadProfile(ctx context.Context, query *ProfileQuery
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Transaction)
 	for i := range nodes {
-		if nodes[i].profile_transaction == nil {
+		if nodes[i].profile_transactions == nil {
 			continue
 		}
-		fk := *nodes[i].profile_transaction
+		fk := *nodes[i].profile_transactions
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -498,7 +498,7 @@ func (tq *TransactionQuery) loadProfile(ctx context.Context, query *ProfileQuery
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "profile_transaction" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "profile_transactions" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

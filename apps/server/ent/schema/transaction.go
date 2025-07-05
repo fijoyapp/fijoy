@@ -62,7 +62,7 @@ func (Transaction) Fields() []ent.Field {
 // Edges of the Transaction.
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("profile", Profile.Type).Ref("transaction").
+		edge.From("profile", Profile.Type).Ref("transactions").
 			Unique().
 			Required().
 			Annotations(

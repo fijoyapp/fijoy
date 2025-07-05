@@ -20,26 +20,26 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
-	// EdgeUserKey holds the string denoting the user_key edge name in mutations.
-	EdgeUserKey = "user_key"
-	// EdgeProfile holds the string denoting the profile edge name in mutations.
-	EdgeProfile = "profile"
+	// EdgeUserKeys holds the string denoting the user_keys edge name in mutations.
+	EdgeUserKeys = "user_keys"
+	// EdgeProfiles holds the string denoting the profiles edge name in mutations.
+	EdgeProfiles = "profiles"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// UserKeyTable is the table that holds the user_key relation/edge.
-	UserKeyTable = "user_keys"
-	// UserKeyInverseTable is the table name for the UserKey entity.
+	// UserKeysTable is the table that holds the user_keys relation/edge.
+	UserKeysTable = "user_keys"
+	// UserKeysInverseTable is the table name for the UserKey entity.
 	// It exists in this package in order to avoid circular dependency with the "userkey" package.
-	UserKeyInverseTable = "user_keys"
-	// UserKeyColumn is the table column denoting the user_key relation/edge.
-	UserKeyColumn = "user_user_key"
-	// ProfileTable is the table that holds the profile relation/edge.
-	ProfileTable = "profiles"
-	// ProfileInverseTable is the table name for the Profile entity.
+	UserKeysInverseTable = "user_keys"
+	// UserKeysColumn is the table column denoting the user_keys relation/edge.
+	UserKeysColumn = "user_user_keys"
+	// ProfilesTable is the table that holds the profiles relation/edge.
+	ProfilesTable = "profiles"
+	// ProfilesInverseTable is the table name for the Profile entity.
 	// It exists in this package in order to avoid circular dependency with the "profile" package.
-	ProfileInverseTable = "profiles"
-	// ProfileColumn is the table column denoting the profile relation/edge.
-	ProfileColumn = "user_profile"
+	ProfilesInverseTable = "profiles"
+	// ProfilesColumn is the table column denoting the profiles relation/edge.
+	ProfilesColumn = "user_profiles"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -94,44 +94,44 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
 }
 
-// ByUserKeyCount orders the results by user_key count.
-func ByUserKeyCount(opts ...sql.OrderTermOption) OrderOption {
+// ByUserKeysCount orders the results by user_keys count.
+func ByUserKeysCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newUserKeyStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newUserKeysStep(), opts...)
 	}
 }
 
-// ByUserKey orders the results by user_key terms.
-func ByUserKey(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByUserKeys orders the results by user_keys terms.
+func ByUserKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserKeyStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newUserKeysStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
-// ByProfileCount orders the results by profile count.
-func ByProfileCount(opts ...sql.OrderTermOption) OrderOption {
+// ByProfilesCount orders the results by profiles count.
+func ByProfilesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newProfileStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newProfilesStep(), opts...)
 	}
 }
 
-// ByProfile orders the results by profile terms.
-func ByProfile(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByProfiles orders the results by profiles terms.
+func ByProfiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newProfileStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newProfilesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-func newUserKeyStep() *sqlgraph.Step {
+func newUserKeysStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UserKeyInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, UserKeyTable, UserKeyColumn),
+		sqlgraph.To(UserKeysInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UserKeysTable, UserKeysColumn),
 	)
 }
-func newProfileStep() *sqlgraph.Step {
+func newProfilesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ProfileInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ProfileTable, ProfileColumn),
+		sqlgraph.To(ProfilesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ProfilesTable, ProfilesColumn),
 	)
 }

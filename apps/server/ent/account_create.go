@@ -142,14 +142,14 @@ func (ac *AccountCreate) SetProfile(p *Profile) *AccountCreate {
 	return ac.SetProfileID(p.ID)
 }
 
-// AddTransactionEntryIDs adds the "transaction_entry" edge to the TransactionEntry entity by IDs.
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (ac *AccountCreate) AddTransactionEntryIDs(ids ...string) *AccountCreate {
 	ac.mutation.AddTransactionEntryIDs(ids...)
 	return ac
 }
 
-// AddTransactionEntry adds the "transaction_entry" edges to the TransactionEntry entity.
-func (ac *AccountCreate) AddTransactionEntry(t ...*TransactionEntry) *AccountCreate {
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (ac *AccountCreate) AddTransactionEntries(t ...*TransactionEntry) *AccountCreate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -381,15 +381,15 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.profile_account = &nodes[0]
+		_node.profile_accounts = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ac.mutation.TransactionEntryIDs(); len(nodes) > 0 {
+	if nodes := ac.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionEntryTable,
-			Columns: []string{account.TransactionEntryColumn},
+			Table:   account.TransactionEntriesTable,
+			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),

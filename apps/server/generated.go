@@ -61,22 +61,22 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Account struct {
-		AccountType      func(childComplexity int) int
-		Amount           func(childComplexity int) int
-		Archived         func(childComplexity int) int
-		Balance          func(childComplexity int) int
-		CreateTime       func(childComplexity int) int
-		CurrencySymbol   func(childComplexity int) int
-		FxRate           func(childComplexity int) int
-		ID               func(childComplexity int) int
-		InvestmentType   func(childComplexity int) int
-		Name             func(childComplexity int) int
-		Profile          func(childComplexity int) int
-		Ticker           func(childComplexity int) int
-		TickerType       func(childComplexity int) int
-		TransactionEntry func(childComplexity int) int
-		UpdateTime       func(childComplexity int) int
-		Value            func(childComplexity int) int
+		AccountType        func(childComplexity int) int
+		Amount             func(childComplexity int) int
+		Archived           func(childComplexity int) int
+		Balance            func(childComplexity int) int
+		CreateTime         func(childComplexity int) int
+		CurrencySymbol     func(childComplexity int) int
+		FxRate             func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		InvestmentType     func(childComplexity int) int
+		Name               func(childComplexity int) int
+		Profile            func(childComplexity int) int
+		Ticker             func(childComplexity int) int
+		TickerType         func(childComplexity int) int
+		TransactionEntries func(childComplexity int) int
+		UpdateTime         func(childComplexity int) int
+		Value              func(childComplexity int) int
 	}
 
 	AccountConnection struct {
@@ -111,13 +111,13 @@ type ComplexityRoot struct {
 	}
 
 	Profile struct {
-		Account      func(childComplexity int) int
+		Accounts     func(childComplexity int) int
 		CreateTime   func(childComplexity int) int
 		Currencies   func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Locale       func(childComplexity int) int
 		NetWorthGoal func(childComplexity int) int
-		Transaction  func(childComplexity int) int
+		Transactions func(childComplexity int) int
 		UpdateTime   func(childComplexity int) int
 		User         func(childComplexity int) int
 	}
@@ -170,9 +170,9 @@ type ComplexityRoot struct {
 		CreateTime func(childComplexity int) int
 		Email      func(childComplexity int) int
 		ID         func(childComplexity int) int
-		Profile    func(childComplexity int) int
+		Profiles   func(childComplexity int) int
 		UpdateTime func(childComplexity int) int
-		UserKey    func(childComplexity int) int
+		UserKeys   func(childComplexity int) int
 	}
 
 	UserKey struct {
@@ -348,12 +348,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Account.TickerType(childComplexity), true
 
-	case "Account.transactionEntry":
-		if e.complexity.Account.TransactionEntry == nil {
+	case "Account.transactionEntries":
+		if e.complexity.Account.TransactionEntries == nil {
 			break
 		}
 
-		return e.complexity.Account.TransactionEntry(childComplexity), true
+		return e.complexity.Account.TransactionEntries(childComplexity), true
 
 	case "Account.updateTime":
 		if e.complexity.Account.UpdateTime == nil {
@@ -506,12 +506,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
-	case "Profile.account":
-		if e.complexity.Profile.Account == nil {
+	case "Profile.accounts":
+		if e.complexity.Profile.Accounts == nil {
 			break
 		}
 
-		return e.complexity.Profile.Account(childComplexity), true
+		return e.complexity.Profile.Accounts(childComplexity), true
 
 	case "Profile.createTime":
 		if e.complexity.Profile.CreateTime == nil {
@@ -548,12 +548,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Profile.NetWorthGoal(childComplexity), true
 
-	case "Profile.transaction":
-		if e.complexity.Profile.Transaction == nil {
+	case "Profile.transactions":
+		if e.complexity.Profile.Transactions == nil {
 			break
 		}
 
-		return e.complexity.Profile.Transaction(childComplexity), true
+		return e.complexity.Profile.Transactions(childComplexity), true
 
 	case "Profile.updateTime":
 		if e.complexity.Profile.UpdateTime == nil {
@@ -813,12 +813,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.ID(childComplexity), true
 
-	case "User.profile":
-		if e.complexity.User.Profile == nil {
+	case "User.profiles":
+		if e.complexity.User.Profiles == nil {
 			break
 		}
 
-		return e.complexity.User.Profile(childComplexity), true
+		return e.complexity.User.Profiles(childComplexity), true
 
 	case "User.updateTime":
 		if e.complexity.User.UpdateTime == nil {
@@ -827,12 +827,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.UpdateTime(childComplexity), true
 
-	case "User.userKey":
-		if e.complexity.User.UserKey == nil {
+	case "User.userKeys":
+		if e.complexity.User.UserKeys == nil {
 			break
 		}
 
-		return e.complexity.User.UserKey(childComplexity), true
+		return e.complexity.User.UserKeys(childComplexity), true
 
 	case "UserKey.createTime":
 		if e.complexity.UserKey.CreateTime == nil {
@@ -2235,10 +2235,10 @@ func (ec *executionContext) fieldContext_Account_profile(_ context.Context, fiel
 				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
 			case "user":
 				return ec.fieldContext_Profile_user(ctx, field)
-			case "account":
-				return ec.fieldContext_Profile_account(ctx, field)
-			case "transaction":
-				return ec.fieldContext_Profile_transaction(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -2246,8 +2246,8 @@ func (ec *executionContext) fieldContext_Account_profile(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Account_transactionEntry(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Account_transactionEntry(ctx, field)
+func (ec *executionContext) _Account_transactionEntries(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_transactionEntries(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2260,7 +2260,7 @@ func (ec *executionContext) _Account_transactionEntry(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TransactionEntry(ctx)
+		return obj.TransactionEntries(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2274,7 +2274,7 @@ func (ec *executionContext) _Account_transactionEntry(ctx context.Context, field
 	return ec.marshalOTransactionEntry2ᚕᚖfijoyᚋentᚐTransactionEntryᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Account_transactionEntry(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Account_transactionEntries(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Account",
 		Field:      field,
@@ -2518,8 +2518,8 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_archived(ctx, field)
 			case "profile":
 				return ec.fieldContext_Account_profile(ctx, field)
-			case "transactionEntry":
-				return ec.fieldContext_Account_transactionEntry(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -2712,10 +2712,10 @@ func (ec *executionContext) fieldContext_Mutation_createProfile(ctx context.Cont
 				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
 			case "user":
 				return ec.fieldContext_Profile_user(ctx, field)
-			case "account":
-				return ec.fieldContext_Profile_account(ctx, field)
-			case "transaction":
-				return ec.fieldContext_Profile_transaction(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -2787,10 +2787,10 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
 			case "user":
 				return ec.fieldContext_Profile_user(ctx, field)
-			case "account":
-				return ec.fieldContext_Profile_account(ctx, field)
-			case "transaction":
-				return ec.fieldContext_Profile_transaction(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -2878,8 +2878,8 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 				return ec.fieldContext_Account_archived(ctx, field)
 			case "profile":
 				return ec.fieldContext_Account_profile(ctx, field)
-			case "transactionEntry":
-				return ec.fieldContext_Account_transactionEntry(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -3527,10 +3527,10 @@ func (ec *executionContext) fieldContext_Profile_user(_ context.Context, field g
 				return ec.fieldContext_User_updateTime(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "userKey":
-				return ec.fieldContext_User_userKey(ctx, field)
-			case "profile":
-				return ec.fieldContext_User_profile(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
+			case "profiles":
+				return ec.fieldContext_User_profiles(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -3538,8 +3538,8 @@ func (ec *executionContext) fieldContext_Profile_user(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Profile_account(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_account(ctx, field)
+func (ec *executionContext) _Profile_accounts(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_accounts(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3552,7 +3552,7 @@ func (ec *executionContext) _Profile_account(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Account(ctx)
+		return obj.Accounts(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3566,7 +3566,7 @@ func (ec *executionContext) _Profile_account(ctx context.Context, field graphql.
 	return ec.marshalOAccount2ᚕᚖfijoyᚋentᚐAccountᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Profile_account(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Profile_accounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Profile",
 		Field:      field,
@@ -3604,8 +3604,8 @@ func (ec *executionContext) fieldContext_Profile_account(_ context.Context, fiel
 				return ec.fieldContext_Account_archived(ctx, field)
 			case "profile":
 				return ec.fieldContext_Account_profile(ctx, field)
-			case "transactionEntry":
-				return ec.fieldContext_Account_transactionEntry(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -3613,8 +3613,8 @@ func (ec *executionContext) fieldContext_Profile_account(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Profile_transaction(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_transaction(ctx, field)
+func (ec *executionContext) _Profile_transactions(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_transactions(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3627,7 +3627,7 @@ func (ec *executionContext) _Profile_transaction(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Transaction(ctx)
+		return obj.Transactions(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3641,7 +3641,7 @@ func (ec *executionContext) _Profile_transaction(ctx context.Context, field grap
 	return ec.marshalOTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Profile_transaction(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Profile_transactions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Profile",
 		Field:      field,
@@ -3895,10 +3895,10 @@ func (ec *executionContext) fieldContext_Query_profiles(_ context.Context, field
 				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
 			case "user":
 				return ec.fieldContext_Profile_user(ctx, field)
-			case "account":
-				return ec.fieldContext_Profile_account(ctx, field)
-			case "transaction":
-				return ec.fieldContext_Profile_transaction(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -4016,10 +4016,10 @@ func (ec *executionContext) fieldContext_Query_user(_ context.Context, field gra
 				return ec.fieldContext_User_updateTime(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "userKey":
-				return ec.fieldContext_User_userKey(ctx, field)
-			case "profile":
-				return ec.fieldContext_User_profile(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
+			case "profiles":
+				return ec.fieldContext_User_profiles(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -4522,10 +4522,10 @@ func (ec *executionContext) fieldContext_Transaction_profile(_ context.Context, 
 				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
 			case "user":
 				return ec.fieldContext_Profile_user(ctx, field)
-			case "account":
-				return ec.fieldContext_Profile_account(ctx, field)
-			case "transaction":
-				return ec.fieldContext_Profile_transaction(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -5219,8 +5219,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_archived(ctx, field)
 			case "profile":
 				return ec.fieldContext_Account_profile(ctx, field)
-			case "transactionEntry":
-				return ec.fieldContext_Account_transactionEntry(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -5466,8 +5466,8 @@ func (ec *executionContext) fieldContext_User_email(_ context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _User_userKey(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_userKey(ctx, field)
+func (ec *executionContext) _User_userKeys(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_userKeys(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5480,7 +5480,7 @@ func (ec *executionContext) _User_userKey(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UserKey(ctx)
+		return obj.UserKeys(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5494,7 +5494,7 @@ func (ec *executionContext) _User_userKey(ctx context.Context, field graphql.Col
 	return ec.marshalOUserKey2ᚕᚖfijoyᚋentᚐUserKeyᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_userKey(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_userKeys(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5519,8 +5519,8 @@ func (ec *executionContext) fieldContext_User_userKey(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_profile(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_profile(ctx, field)
+func (ec *executionContext) _User_profiles(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_profiles(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5533,7 +5533,7 @@ func (ec *executionContext) _User_profile(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Profile(ctx)
+		return obj.Profiles(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5547,7 +5547,7 @@ func (ec *executionContext) _User_profile(ctx context.Context, field graphql.Col
 	return ec.marshalOProfile2ᚕᚖfijoyᚋentᚐProfileᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_profile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_profiles(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5569,10 +5569,10 @@ func (ec *executionContext) fieldContext_User_profile(_ context.Context, field g
 				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
 			case "user":
 				return ec.fieldContext_Profile_user(ctx, field)
-			case "account":
-				return ec.fieldContext_Profile_account(ctx, field)
-			case "transaction":
-				return ec.fieldContext_Profile_transaction(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -5800,10 +5800,10 @@ func (ec *executionContext) fieldContext_UserKey_user(_ context.Context, field g
 				return ec.fieldContext_User_updateTime(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
-			case "userKey":
-				return ec.fieldContext_User_userKey(ctx, field)
-			case "profile":
-				return ec.fieldContext_User_profile(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
+			case "profiles":
+				return ec.fieldContext_User_profiles(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -8188,7 +8188,7 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "name", "investmentType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntry"}
+	fieldsInOrder := [...]string{"updateTime", "name", "investmentType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8246,13 +8246,13 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.RemoveTransactionEntryIDs = data
-		case "clearTransactionEntry":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTransactionEntry"))
+		case "clearTransactionEntries":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTransactionEntries"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearTransactionEntry = data
+			it.ClearTransactionEntries = data
 		}
 	}
 
@@ -8266,7 +8266,7 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "currencies", "appendCurrencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccount", "addTransactionIDs", "removeTransactionIDs", "clearTransaction"}
+	fieldsInOrder := [...]string{"updateTime", "currencies", "appendCurrencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccounts", "addTransactionIDs", "removeTransactionIDs", "clearTransactions"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8317,13 +8317,13 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.RemoveAccountIDs = data
-		case "clearAccount":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAccount"))
+		case "clearAccounts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAccounts"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearAccount = data
+			it.ClearAccounts = data
 		case "addTransactionIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTransactionIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -8338,13 +8338,13 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.RemoveTransactionIDs = data
-		case "clearTransaction":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTransaction"))
+		case "clearTransactions":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTransactions"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearTransaction = data
+			it.ClearTransactions = data
 		}
 	}
 
@@ -8758,7 +8758,7 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "transactionEntry":
+		case "transactionEntries":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -8767,7 +8767,7 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Account_transactionEntry(ctx, field, obj)
+				res = ec._Account_transactionEntries(ctx, field, obj)
 				return res
 			}
 
@@ -9178,7 +9178,7 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "account":
+		case "accounts":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -9187,7 +9187,7 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Profile_account(ctx, field, obj)
+				res = ec._Profile_accounts(ctx, field, obj)
 				return res
 			}
 
@@ -9211,7 +9211,7 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "transaction":
+		case "transactions":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -9220,7 +9220,7 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Profile_transaction(ctx, field, obj)
+				res = ec._Profile_transactions(ctx, field, obj)
 				return res
 			}
 
@@ -10012,7 +10012,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "userKey":
+		case "userKeys":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -10021,7 +10021,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._User_userKey(ctx, field, obj)
+				res = ec._User_userKeys(ctx, field, obj)
 				return res
 			}
 
@@ -10045,7 +10045,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "profile":
+		case "profiles":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -10054,7 +10054,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._User_profile(ctx, field, obj)
+				res = ec._User_profiles(ctx, field, obj)
 				return res
 			}
 

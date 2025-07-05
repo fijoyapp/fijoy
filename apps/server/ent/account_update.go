@@ -174,14 +174,14 @@ func (au *AccountUpdate) SetProfile(p *Profile) *AccountUpdate {
 	return au.SetProfileID(p.ID)
 }
 
-// AddTransactionEntryIDs adds the "transaction_entry" edge to the TransactionEntry entity by IDs.
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (au *AccountUpdate) AddTransactionEntryIDs(ids ...string) *AccountUpdate {
 	au.mutation.AddTransactionEntryIDs(ids...)
 	return au
 }
 
-// AddTransactionEntry adds the "transaction_entry" edges to the TransactionEntry entity.
-func (au *AccountUpdate) AddTransactionEntry(t ...*TransactionEntry) *AccountUpdate {
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (au *AccountUpdate) AddTransactionEntries(t ...*TransactionEntry) *AccountUpdate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -200,20 +200,20 @@ func (au *AccountUpdate) ClearProfile() *AccountUpdate {
 	return au
 }
 
-// ClearTransactionEntry clears all "transaction_entry" edges to the TransactionEntry entity.
-func (au *AccountUpdate) ClearTransactionEntry() *AccountUpdate {
-	au.mutation.ClearTransactionEntry()
+// ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
+func (au *AccountUpdate) ClearTransactionEntries() *AccountUpdate {
+	au.mutation.ClearTransactionEntries()
 	return au
 }
 
-// RemoveTransactionEntryIDs removes the "transaction_entry" edge to TransactionEntry entities by IDs.
+// RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
 func (au *AccountUpdate) RemoveTransactionEntryIDs(ids ...string) *AccountUpdate {
 	au.mutation.RemoveTransactionEntryIDs(ids...)
 	return au
 }
 
-// RemoveTransactionEntry removes "transaction_entry" edges to TransactionEntry entities.
-func (au *AccountUpdate) RemoveTransactionEntry(t ...*TransactionEntry) *AccountUpdate {
+// RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
+func (au *AccountUpdate) RemoveTransactionEntries(t ...*TransactionEntry) *AccountUpdate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -352,12 +352,12 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if au.mutation.TransactionEntryCleared() {
+	if au.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionEntryTable,
-			Columns: []string{account.TransactionEntryColumn},
+			Table:   account.TransactionEntriesTable,
+			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
@@ -365,12 +365,12 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.RemovedTransactionEntryIDs(); len(nodes) > 0 && !au.mutation.TransactionEntryCleared() {
+	if nodes := au.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !au.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionEntryTable,
-			Columns: []string{account.TransactionEntryColumn},
+			Table:   account.TransactionEntriesTable,
+			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
@@ -381,12 +381,12 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.TransactionEntryIDs(); len(nodes) > 0 {
+	if nodes := au.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionEntryTable,
-			Columns: []string{account.TransactionEntryColumn},
+			Table:   account.TransactionEntriesTable,
+			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
@@ -560,14 +560,14 @@ func (auo *AccountUpdateOne) SetProfile(p *Profile) *AccountUpdateOne {
 	return auo.SetProfileID(p.ID)
 }
 
-// AddTransactionEntryIDs adds the "transaction_entry" edge to the TransactionEntry entity by IDs.
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (auo *AccountUpdateOne) AddTransactionEntryIDs(ids ...string) *AccountUpdateOne {
 	auo.mutation.AddTransactionEntryIDs(ids...)
 	return auo
 }
 
-// AddTransactionEntry adds the "transaction_entry" edges to the TransactionEntry entity.
-func (auo *AccountUpdateOne) AddTransactionEntry(t ...*TransactionEntry) *AccountUpdateOne {
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (auo *AccountUpdateOne) AddTransactionEntries(t ...*TransactionEntry) *AccountUpdateOne {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -586,20 +586,20 @@ func (auo *AccountUpdateOne) ClearProfile() *AccountUpdateOne {
 	return auo
 }
 
-// ClearTransactionEntry clears all "transaction_entry" edges to the TransactionEntry entity.
-func (auo *AccountUpdateOne) ClearTransactionEntry() *AccountUpdateOne {
-	auo.mutation.ClearTransactionEntry()
+// ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
+func (auo *AccountUpdateOne) ClearTransactionEntries() *AccountUpdateOne {
+	auo.mutation.ClearTransactionEntries()
 	return auo
 }
 
-// RemoveTransactionEntryIDs removes the "transaction_entry" edge to TransactionEntry entities by IDs.
+// RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
 func (auo *AccountUpdateOne) RemoveTransactionEntryIDs(ids ...string) *AccountUpdateOne {
 	auo.mutation.RemoveTransactionEntryIDs(ids...)
 	return auo
 }
 
-// RemoveTransactionEntry removes "transaction_entry" edges to TransactionEntry entities.
-func (auo *AccountUpdateOne) RemoveTransactionEntry(t ...*TransactionEntry) *AccountUpdateOne {
+// RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
+func (auo *AccountUpdateOne) RemoveTransactionEntries(t ...*TransactionEntry) *AccountUpdateOne {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -768,12 +768,12 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if auo.mutation.TransactionEntryCleared() {
+	if auo.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionEntryTable,
-			Columns: []string{account.TransactionEntryColumn},
+			Table:   account.TransactionEntriesTable,
+			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
@@ -781,12 +781,12 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.RemovedTransactionEntryIDs(); len(nodes) > 0 && !auo.mutation.TransactionEntryCleared() {
+	if nodes := auo.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !auo.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionEntryTable,
-			Columns: []string{account.TransactionEntryColumn},
+			Table:   account.TransactionEntriesTable,
+			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),
@@ -797,12 +797,12 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.TransactionEntryIDs(); len(nodes) > 0 {
+	if nodes := auo.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   account.TransactionEntryTable,
-			Columns: []string{account.TransactionEntryColumn},
+			Table:   account.TransactionEntriesTable,
+			Columns: []string{account.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeString),

@@ -26,9 +26,9 @@ type UserKey struct {
 	HashedPassword string `json:"hashed_password,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserKeyQuery when eager-loading is set.
-	Edges         UserKeyEdges `json:"edges"`
-	user_user_key *string
-	selectValues  sql.SelectValues
+	Edges          UserKeyEdges `json:"edges"`
+	user_user_keys *string
+	selectValues   sql.SelectValues
 }
 
 // UserKeyEdges holds the relations/edges for other nodes in the graph.
@@ -62,7 +62,7 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case userkey.FieldCreateTime, userkey.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case userkey.ForeignKeys[0]: // user_user_key
+		case userkey.ForeignKeys[0]: // user_user_keys
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -105,10 +105,10 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 			}
 		case userkey.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_user_key", values[i])
+				return fmt.Errorf("unexpected type %T for field user_user_keys", values[i])
 			} else if value.Valid {
-				uk.user_user_key = new(string)
-				*uk.user_user_key = value.String
+				uk.user_user_keys = new(string)
+				*uk.user_user_keys = value.String
 			}
 		default:
 			uk.selectValues.Set(columns[i], values[i])

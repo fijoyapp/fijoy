@@ -22,18 +22,18 @@ import (
 // ProfileQuery is the builder for querying Profile entities.
 type ProfileQuery struct {
 	config
-	ctx                  *QueryContext
-	order                []profile.OrderOption
-	inters               []Interceptor
-	predicates           []predicate.Profile
-	withUser             *UserQuery
-	withAccount          *AccountQuery
-	withTransaction      *TransactionQuery
-	withFKs              bool
-	modifiers            []func(*sql.Selector)
-	loadTotal            []func(context.Context, []*Profile) error
-	withNamedAccount     map[string]*AccountQuery
-	withNamedTransaction map[string]*TransactionQuery
+	ctx                   *QueryContext
+	order                 []profile.OrderOption
+	inters                []Interceptor
+	predicates            []predicate.Profile
+	withUser              *UserQuery
+	withAccounts          *AccountQuery
+	withTransactions      *TransactionQuery
+	withFKs               bool
+	modifiers             []func(*sql.Selector)
+	loadTotal             []func(context.Context, []*Profile) error
+	withNamedAccounts     map[string]*AccountQuery
+	withNamedTransactions map[string]*TransactionQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -92,8 +92,8 @@ func (pq *ProfileQuery) QueryUser() *UserQuery {
 	return query
 }
 
-// QueryAccount chains the current query on the "account" edge.
-func (pq *ProfileQuery) QueryAccount() *AccountQuery {
+// QueryAccounts chains the current query on the "accounts" edge.
+func (pq *ProfileQuery) QueryAccounts() *AccountQuery {
 	query := (&AccountClient{config: pq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := pq.prepareQuery(ctx); err != nil {
@@ -106,7 +106,7 @@ func (pq *ProfileQuery) QueryAccount() *AccountQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, profile.AccountTable, profile.AccountColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.AccountsTable, profile.AccountsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -114,8 +114,8 @@ func (pq *ProfileQuery) QueryAccount() *AccountQuery {
 	return query
 }
 
-// QueryTransaction chains the current query on the "transaction" edge.
-func (pq *ProfileQuery) QueryTransaction() *TransactionQuery {
+// QueryTransactions chains the current query on the "transactions" edge.
+func (pq *ProfileQuery) QueryTransactions() *TransactionQuery {
 	query := (&TransactionClient{config: pq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := pq.prepareQuery(ctx); err != nil {
@@ -128,7 +128,7 @@ func (pq *ProfileQuery) QueryTransaction() *TransactionQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionTable, profile.TransactionColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionsTable, profile.TransactionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -323,14 +323,14 @@ func (pq *ProfileQuery) Clone() *ProfileQuery {
 		return nil
 	}
 	return &ProfileQuery{
-		config:          pq.config,
-		ctx:             pq.ctx.Clone(),
-		order:           append([]profile.OrderOption{}, pq.order...),
-		inters:          append([]Interceptor{}, pq.inters...),
-		predicates:      append([]predicate.Profile{}, pq.predicates...),
-		withUser:        pq.withUser.Clone(),
-		withAccount:     pq.withAccount.Clone(),
-		withTransaction: pq.withTransaction.Clone(),
+		config:           pq.config,
+		ctx:              pq.ctx.Clone(),
+		order:            append([]profile.OrderOption{}, pq.order...),
+		inters:           append([]Interceptor{}, pq.inters...),
+		predicates:       append([]predicate.Profile{}, pq.predicates...),
+		withUser:         pq.withUser.Clone(),
+		withAccounts:     pq.withAccounts.Clone(),
+		withTransactions: pq.withTransactions.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
@@ -348,25 +348,25 @@ func (pq *ProfileQuery) WithUser(opts ...func(*UserQuery)) *ProfileQuery {
 	return pq
 }
 
-// WithAccount tells the query-builder to eager-load the nodes that are connected to
-// the "account" edge. The optional arguments are used to configure the query builder of the edge.
-func (pq *ProfileQuery) WithAccount(opts ...func(*AccountQuery)) *ProfileQuery {
+// WithAccounts tells the query-builder to eager-load the nodes that are connected to
+// the "accounts" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithAccounts(opts ...func(*AccountQuery)) *ProfileQuery {
 	query := (&AccountClient{config: pq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	pq.withAccount = query
+	pq.withAccounts = query
 	return pq
 }
 
-// WithTransaction tells the query-builder to eager-load the nodes that are connected to
-// the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
-func (pq *ProfileQuery) WithTransaction(opts ...func(*TransactionQuery)) *ProfileQuery {
+// WithTransactions tells the query-builder to eager-load the nodes that are connected to
+// the "transactions" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *ProfileQuery) WithTransactions(opts ...func(*TransactionQuery)) *ProfileQuery {
 	query := (&TransactionClient{config: pq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	pq.withTransaction = query
+	pq.withTransactions = query
 	return pq
 }
 
@@ -451,8 +451,8 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 		_spec       = pq.querySpec()
 		loadedTypes = [3]bool{
 			pq.withUser != nil,
-			pq.withAccount != nil,
-			pq.withTransaction != nil,
+			pq.withAccounts != nil,
+			pq.withTransactions != nil,
 		}
 	)
 	if pq.withUser != nil {
@@ -488,31 +488,31 @@ func (pq *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 			return nil, err
 		}
 	}
-	if query := pq.withAccount; query != nil {
-		if err := pq.loadAccount(ctx, query, nodes,
-			func(n *Profile) { n.Edges.Account = []*Account{} },
-			func(n *Profile, e *Account) { n.Edges.Account = append(n.Edges.Account, e) }); err != nil {
+	if query := pq.withAccounts; query != nil {
+		if err := pq.loadAccounts(ctx, query, nodes,
+			func(n *Profile) { n.Edges.Accounts = []*Account{} },
+			func(n *Profile, e *Account) { n.Edges.Accounts = append(n.Edges.Accounts, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := pq.withTransaction; query != nil {
-		if err := pq.loadTransaction(ctx, query, nodes,
-			func(n *Profile) { n.Edges.Transaction = []*Transaction{} },
-			func(n *Profile, e *Transaction) { n.Edges.Transaction = append(n.Edges.Transaction, e) }); err != nil {
+	if query := pq.withTransactions; query != nil {
+		if err := pq.loadTransactions(ctx, query, nodes,
+			func(n *Profile) { n.Edges.Transactions = []*Transaction{} },
+			func(n *Profile, e *Transaction) { n.Edges.Transactions = append(n.Edges.Transactions, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range pq.withNamedAccount {
-		if err := pq.loadAccount(ctx, query, nodes,
-			func(n *Profile) { n.appendNamedAccount(name) },
-			func(n *Profile, e *Account) { n.appendNamedAccount(name, e) }); err != nil {
+	for name, query := range pq.withNamedAccounts {
+		if err := pq.loadAccounts(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedAccounts(name) },
+			func(n *Profile, e *Account) { n.appendNamedAccounts(name, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range pq.withNamedTransaction {
-		if err := pq.loadTransaction(ctx, query, nodes,
-			func(n *Profile) { n.appendNamedTransaction(name) },
-			func(n *Profile, e *Transaction) { n.appendNamedTransaction(name, e) }); err != nil {
+	for name, query := range pq.withNamedTransactions {
+		if err := pq.loadTransactions(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedTransactions(name) },
+			func(n *Profile, e *Transaction) { n.appendNamedTransactions(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -528,10 +528,10 @@ func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Profile)
 	for i := range nodes {
-		if nodes[i].user_profile == nil {
+		if nodes[i].user_profiles == nil {
 			continue
 		}
-		fk := *nodes[i].user_profile
+		fk := *nodes[i].user_profiles
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -548,7 +548,7 @@ func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_profile" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_profiles" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -556,7 +556,7 @@ func (pq *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	}
 	return nil
 }
-func (pq *ProfileQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Account)) error {
+func (pq *ProfileQuery) loadAccounts(ctx context.Context, query *AccountQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Account)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Profile)
 	for i := range nodes {
@@ -568,26 +568,26 @@ func (pq *ProfileQuery) loadAccount(ctx context.Context, query *AccountQuery, no
 	}
 	query.withFKs = true
 	query.Where(predicate.Account(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(profile.AccountColumn), fks...))
+		s.Where(sql.InValues(s.C(profile.AccountsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.profile_account
+		fk := n.profile_accounts
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "profile_account" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "profile_accounts" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "profile_account" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_accounts" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
-func (pq *ProfileQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Transaction)) error {
+func (pq *ProfileQuery) loadTransactions(ctx context.Context, query *TransactionQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Transaction)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Profile)
 	for i := range nodes {
@@ -599,20 +599,20 @@ func (pq *ProfileQuery) loadTransaction(ctx context.Context, query *TransactionQ
 	}
 	query.withFKs = true
 	query.Where(predicate.Transaction(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(profile.TransactionColumn), fks...))
+		s.Where(sql.InValues(s.C(profile.TransactionsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.profile_transaction
+		fk := n.profile_transactions
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "profile_transaction" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "profile_transactions" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "profile_transaction" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_transactions" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -703,31 +703,31 @@ func (pq *ProfileQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// WithNamedAccount tells the query-builder to eager-load the nodes that are connected to the "account"
+// WithNamedAccounts tells the query-builder to eager-load the nodes that are connected to the "accounts"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (pq *ProfileQuery) WithNamedAccount(name string, opts ...func(*AccountQuery)) *ProfileQuery {
+func (pq *ProfileQuery) WithNamedAccounts(name string, opts ...func(*AccountQuery)) *ProfileQuery {
 	query := (&AccountClient{config: pq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if pq.withNamedAccount == nil {
-		pq.withNamedAccount = make(map[string]*AccountQuery)
+	if pq.withNamedAccounts == nil {
+		pq.withNamedAccounts = make(map[string]*AccountQuery)
 	}
-	pq.withNamedAccount[name] = query
+	pq.withNamedAccounts[name] = query
 	return pq
 }
 
-// WithNamedTransaction tells the query-builder to eager-load the nodes that are connected to the "transaction"
+// WithNamedTransactions tells the query-builder to eager-load the nodes that are connected to the "transactions"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (pq *ProfileQuery) WithNamedTransaction(name string, opts ...func(*TransactionQuery)) *ProfileQuery {
+func (pq *ProfileQuery) WithNamedTransactions(name string, opts ...func(*TransactionQuery)) *ProfileQuery {
 	query := (&TransactionClient{config: pq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if pq.withNamedTransaction == nil {
-		pq.withNamedTransaction = make(map[string]*TransactionQuery)
+	if pq.withNamedTransactions == nil {
+		pq.withNamedTransactions = make(map[string]*TransactionQuery)
 	}
-	pq.withNamedTransaction[name] = query
+	pq.withNamedTransactions[name] = query
 	return pq
 }
 

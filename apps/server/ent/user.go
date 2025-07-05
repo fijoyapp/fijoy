@@ -31,36 +31,36 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// UserKey holds the value of the user_key edge.
-	UserKey []*UserKey `json:"user_key,omitempty"`
-	// Profile holds the value of the profile edge.
-	Profile []*Profile `json:"profile,omitempty"`
+	// UserKeys holds the value of the user_keys edge.
+	UserKeys []*UserKey `json:"user_keys,omitempty"`
+	// Profiles holds the value of the profiles edge.
+	Profiles []*Profile `json:"profiles,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
 	totalCount [2]map[string]int
 
-	namedUserKey map[string][]*UserKey
-	namedProfile map[string][]*Profile
+	namedUserKeys map[string][]*UserKey
+	namedProfiles map[string][]*Profile
 }
 
-// UserKeyOrErr returns the UserKey value or an error if the edge
+// UserKeysOrErr returns the UserKeys value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) UserKeyOrErr() ([]*UserKey, error) {
+func (e UserEdges) UserKeysOrErr() ([]*UserKey, error) {
 	if e.loadedTypes[0] {
-		return e.UserKey, nil
+		return e.UserKeys, nil
 	}
-	return nil, &NotLoadedError{edge: "user_key"}
+	return nil, &NotLoadedError{edge: "user_keys"}
 }
 
-// ProfileOrErr returns the Profile value or an error if the edge
+// ProfilesOrErr returns the Profiles value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ProfileOrErr() ([]*Profile, error) {
+func (e UserEdges) ProfilesOrErr() ([]*Profile, error) {
 	if e.loadedTypes[1] {
-		return e.Profile, nil
+		return e.Profiles, nil
 	}
-	return nil, &NotLoadedError{edge: "profile"}
+	return nil, &NotLoadedError{edge: "profiles"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -124,14 +124,14 @@ func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
 }
 
-// QueryUserKey queries the "user_key" edge of the User entity.
-func (u *User) QueryUserKey() *UserKeyQuery {
-	return NewUserClient(u.config).QueryUserKey(u)
+// QueryUserKeys queries the "user_keys" edge of the User entity.
+func (u *User) QueryUserKeys() *UserKeyQuery {
+	return NewUserClient(u.config).QueryUserKeys(u)
 }
 
-// QueryProfile queries the "profile" edge of the User entity.
-func (u *User) QueryProfile() *ProfileQuery {
-	return NewUserClient(u.config).QueryProfile(u)
+// QueryProfiles queries the "profiles" edge of the User entity.
+func (u *User) QueryProfiles() *ProfileQuery {
+	return NewUserClient(u.config).QueryProfiles(u)
 }
 
 // Update returns a builder for updating this User.
@@ -169,51 +169,51 @@ func (u *User) String() string {
 	return builder.String()
 }
 
-// NamedUserKey returns the UserKey named value or an error if the edge was not
+// NamedUserKeys returns the UserKeys named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (u *User) NamedUserKey(name string) ([]*UserKey, error) {
-	if u.Edges.namedUserKey == nil {
+func (u *User) NamedUserKeys(name string) ([]*UserKey, error) {
+	if u.Edges.namedUserKeys == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := u.Edges.namedUserKey[name]
+	nodes, ok := u.Edges.namedUserKeys[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (u *User) appendNamedUserKey(name string, edges ...*UserKey) {
-	if u.Edges.namedUserKey == nil {
-		u.Edges.namedUserKey = make(map[string][]*UserKey)
+func (u *User) appendNamedUserKeys(name string, edges ...*UserKey) {
+	if u.Edges.namedUserKeys == nil {
+		u.Edges.namedUserKeys = make(map[string][]*UserKey)
 	}
 	if len(edges) == 0 {
-		u.Edges.namedUserKey[name] = []*UserKey{}
+		u.Edges.namedUserKeys[name] = []*UserKey{}
 	} else {
-		u.Edges.namedUserKey[name] = append(u.Edges.namedUserKey[name], edges...)
+		u.Edges.namedUserKeys[name] = append(u.Edges.namedUserKeys[name], edges...)
 	}
 }
 
-// NamedProfile returns the Profile named value or an error if the edge was not
+// NamedProfiles returns the Profiles named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (u *User) NamedProfile(name string) ([]*Profile, error) {
-	if u.Edges.namedProfile == nil {
+func (u *User) NamedProfiles(name string) ([]*Profile, error) {
+	if u.Edges.namedProfiles == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := u.Edges.namedProfile[name]
+	nodes, ok := u.Edges.namedProfiles[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (u *User) appendNamedProfile(name string, edges ...*Profile) {
-	if u.Edges.namedProfile == nil {
-		u.Edges.namedProfile = make(map[string][]*Profile)
+func (u *User) appendNamedProfiles(name string, edges ...*Profile) {
+	if u.Edges.namedProfiles == nil {
+		u.Edges.namedProfiles = make(map[string][]*Profile)
 	}
 	if len(edges) == 0 {
-		u.Edges.namedProfile[name] = []*Profile{}
+		u.Edges.namedProfiles[name] = []*Profile{}
 	} else {
-		u.Edges.namedProfile[name] = append(u.Edges.namedProfile[name], edges...)
+		u.Edges.namedProfiles[name] = append(u.Edges.namedProfiles[name], edges...)
 	}
 }
 

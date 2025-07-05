@@ -45,8 +45,8 @@ const (
 	FieldArchived = "archived"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
 	EdgeProfile = "profile"
-	// EdgeTransactionEntry holds the string denoting the transaction_entry edge name in mutations.
-	EdgeTransactionEntry = "transaction_entry"
+	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
+	EdgeTransactionEntries = "transaction_entries"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
 	// ProfileTable is the table that holds the profile relation/edge.
@@ -55,14 +55,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "profile" package.
 	ProfileInverseTable = "profiles"
 	// ProfileColumn is the table column denoting the profile relation/edge.
-	ProfileColumn = "profile_account"
-	// TransactionEntryTable is the table that holds the transaction_entry relation/edge.
-	TransactionEntryTable = "transaction_entries"
-	// TransactionEntryInverseTable is the table name for the TransactionEntry entity.
+	ProfileColumn = "profile_accounts"
+	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
+	TransactionEntriesTable = "transaction_entries"
+	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
 	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
-	TransactionEntryInverseTable = "transaction_entries"
-	// TransactionEntryColumn is the table column denoting the transaction_entry relation/edge.
-	TransactionEntryColumn = "account_transaction_entry"
+	TransactionEntriesInverseTable = "transaction_entries"
+	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
+	TransactionEntriesColumn = "account_transaction_entries"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -86,7 +86,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "accounts"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"profile_account",
+	"profile_accounts",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -277,17 +277,17 @@ func ByProfileField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByTransactionEntryCount orders the results by transaction_entry count.
-func ByTransactionEntryCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTransactionEntriesCount orders the results by transaction_entries count.
+func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTransactionEntryStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newTransactionEntriesStep(), opts...)
 	}
 }
 
-// ByTransactionEntry orders the results by transaction_entry terms.
-func ByTransactionEntry(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByTransactionEntries orders the results by transaction_entries terms.
+func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTransactionEntryStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newProfileStep() *sqlgraph.Step {
@@ -297,11 +297,11 @@ func newProfileStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, ProfileTable, ProfileColumn),
 	)
 }
-func newTransactionEntryStep() *sqlgraph.Step {
+func newTransactionEntriesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TransactionEntryInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntryTable, TransactionEntryColumn),
+		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
 	)
 }
 

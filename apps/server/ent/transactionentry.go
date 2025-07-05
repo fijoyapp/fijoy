@@ -35,7 +35,7 @@ type TransactionEntry struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionEntryQuery when eager-loading is set.
 	Edges                           TransactionEntryEdges `json:"edges"`
-	account_transaction_entry       *string
+	account_transaction_entries     *string
 	transaction_transaction_entries *string
 	selectValues                    sql.SelectValues
 }
@@ -86,7 +86,7 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case transactionentry.FieldCreateTime, transactionentry.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case transactionentry.ForeignKeys[0]: // account_transaction_entry
+		case transactionentry.ForeignKeys[0]: // account_transaction_entries
 			values[i] = new(sql.NullString)
 		case transactionentry.ForeignKeys[1]: // transaction_transaction_entries
 			values[i] = new(sql.NullString)
@@ -149,10 +149,10 @@ func (te *TransactionEntry) assignValues(columns []string, values []any) error {
 			}
 		case transactionentry.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field account_transaction_entry", values[i])
+				return fmt.Errorf("unexpected type %T for field account_transaction_entries", values[i])
 			} else if value.Valid {
-				te.account_transaction_entry = new(string)
-				*te.account_transaction_entry = value.String
+				te.account_transaction_entries = new(string)
+				*te.account_transaction_entries = value.String
 			}
 		case transactionentry.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullString); !ok {

@@ -36,7 +36,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "profile" package.
 	ProfileInverseTable = "profiles"
 	// ProfileColumn is the table column denoting the profile relation/edge.
-	ProfileColumn = "profile_transaction"
+	ProfileColumn = "profile_transactions"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
@@ -59,7 +59,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "transactions"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"profile_transaction",
+	"profile_transactions",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

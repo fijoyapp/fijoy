@@ -37,6 +37,6 @@ func (UserKey) Fields() []ent.Field {
 // Edges of the UserKey.
 func (UserKey) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("user_key").Required().Unique(),
+		edge.From("user", User.Type).Ref("user_keys").Required().Unique(),
 	}
 }

@@ -31,9 +31,9 @@ type Transaction struct {
 	Datetime time.Time `json:"datetime,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
-	Edges               TransactionEdges `json:"edges"`
-	profile_transaction *string
-	selectValues        sql.SelectValues
+	Edges                TransactionEdges `json:"edges"`
+	profile_transactions *string
+	selectValues         sql.SelectValues
 }
 
 // TransactionEdges holds the relations/edges for other nodes in the graph.
@@ -82,7 +82,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case transaction.FieldCreateTime, transaction.FieldUpdateTime, transaction.FieldDatetime:
 			values[i] = new(sql.NullTime)
-		case transaction.ForeignKeys[0]: // profile_transaction
+		case transaction.ForeignKeys[0]: // profile_transactions
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -137,10 +137,10 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 			}
 		case transaction.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field profile_transaction", values[i])
+				return fmt.Errorf("unexpected type %T for field profile_transactions", values[i])
 			} else if value.Valid {
-				t.profile_transaction = new(string)
-				*t.profile_transaction = value.String
+				t.profile_transactions = new(string)
+				*t.profile_transactions = value.String
 			}
 		default:
 			t.selectValues.Set(columns[i], values[i])

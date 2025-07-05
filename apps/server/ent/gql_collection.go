@@ -47,7 +47,7 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			}
 			aq.withProfile = query
 
-		case "transactionEntry":
+		case "transactionEntries":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -56,7 +56,7 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionentryImplementors)...); err != nil {
 				return err
 			}
-			aq.WithNamedTransactionEntry(alias, func(wq *TransactionEntryQuery) {
+			aq.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -195,7 +195,7 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			}
 			pq.withUser = query
 
-		case "account":
+		case "accounts":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -204,11 +204,11 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
 				return err
 			}
-			pq.WithNamedAccount(alias, func(wq *AccountQuery) {
+			pq.WithNamedAccounts(alias, func(wq *AccountQuery) {
 				*wq = *query
 			})
 
-		case "transaction":
+		case "transactions":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -217,7 +217,7 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
 				return err
 			}
-			pq.WithNamedTransaction(alias, func(wq *TransactionQuery) {
+			pq.WithNamedTransactions(alias, func(wq *TransactionQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -524,7 +524,7 @@ func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
-		case "userKey":
+		case "userKeys":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -533,11 +533,11 @@ func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userkeyImplementors)...); err != nil {
 				return err
 			}
-			uq.WithNamedUserKey(alias, func(wq *UserKeyQuery) {
+			uq.WithNamedUserKeys(alias, func(wq *UserKeyQuery) {
 				*wq = *query
 			})
 
-		case "profile":
+		case "profiles":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -546,7 +546,7 @@ func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, profileImplementors)...); err != nil {
 				return err
 			}
-			uq.WithNamedProfile(alias, func(wq *ProfileQuery) {
+			uq.WithNamedProfiles(alias, func(wq *ProfileQuery) {
 				*wq = *query
 			})
 		case "createTime":

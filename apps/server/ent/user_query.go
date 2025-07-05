@@ -21,16 +21,16 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx              *QueryContext
-	order            []user.OrderOption
-	inters           []Interceptor
-	predicates       []predicate.User
-	withUserKey      *UserKeyQuery
-	withProfile      *ProfileQuery
-	modifiers        []func(*sql.Selector)
-	loadTotal        []func(context.Context, []*User) error
-	withNamedUserKey map[string]*UserKeyQuery
-	withNamedProfile map[string]*ProfileQuery
+	ctx               *QueryContext
+	order             []user.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.User
+	withUserKeys      *UserKeyQuery
+	withProfiles      *ProfileQuery
+	modifiers         []func(*sql.Selector)
+	loadTotal         []func(context.Context, []*User) error
+	withNamedUserKeys map[string]*UserKeyQuery
+	withNamedProfiles map[string]*ProfileQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -67,8 +67,8 @@ func (uq *UserQuery) Order(o ...user.OrderOption) *UserQuery {
 	return uq
 }
 
-// QueryUserKey chains the current query on the "user_key" edge.
-func (uq *UserQuery) QueryUserKey() *UserKeyQuery {
+// QueryUserKeys chains the current query on the "user_keys" edge.
+func (uq *UserQuery) QueryUserKeys() *UserKeyQuery {
 	query := (&UserKeyClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -81,7 +81,7 @@ func (uq *UserQuery) QueryUserKey() *UserKeyQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(userkey.Table, userkey.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeyTable, user.UserKeyColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeysTable, user.UserKeysColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -89,8 +89,8 @@ func (uq *UserQuery) QueryUserKey() *UserKeyQuery {
 	return query
 }
 
-// QueryProfile chains the current query on the "profile" edge.
-func (uq *UserQuery) QueryProfile() *ProfileQuery {
+// QueryProfiles chains the current query on the "profiles" edge.
+func (uq *UserQuery) QueryProfiles() *ProfileQuery {
 	query := (&ProfileClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -103,7 +103,7 @@ func (uq *UserQuery) QueryProfile() *ProfileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfileTable, user.ProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfilesTable, user.ProfilesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -298,38 +298,38 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:      uq.config,
-		ctx:         uq.ctx.Clone(),
-		order:       append([]user.OrderOption{}, uq.order...),
-		inters:      append([]Interceptor{}, uq.inters...),
-		predicates:  append([]predicate.User{}, uq.predicates...),
-		withUserKey: uq.withUserKey.Clone(),
-		withProfile: uq.withProfile.Clone(),
+		config:       uq.config,
+		ctx:          uq.ctx.Clone(),
+		order:        append([]user.OrderOption{}, uq.order...),
+		inters:       append([]Interceptor{}, uq.inters...),
+		predicates:   append([]predicate.User{}, uq.predicates...),
+		withUserKeys: uq.withUserKeys.Clone(),
+		withProfiles: uq.withProfiles.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
 	}
 }
 
-// WithUserKey tells the query-builder to eager-load the nodes that are connected to
-// the "user_key" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithUserKey(opts ...func(*UserKeyQuery)) *UserQuery {
+// WithUserKeys tells the query-builder to eager-load the nodes that are connected to
+// the "user_keys" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithUserKeys(opts ...func(*UserKeyQuery)) *UserQuery {
 	query := (&UserKeyClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withUserKey = query
+	uq.withUserKeys = query
 	return uq
 }
 
-// WithProfile tells the query-builder to eager-load the nodes that are connected to
-// the "profile" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithProfile(opts ...func(*ProfileQuery)) *UserQuery {
+// WithProfiles tells the query-builder to eager-load the nodes that are connected to
+// the "profiles" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithProfiles(opts ...func(*ProfileQuery)) *UserQuery {
 	query := (&ProfileClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withProfile = query
+	uq.withProfiles = query
 	return uq
 }
 
@@ -412,8 +412,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
 		loadedTypes = [2]bool{
-			uq.withUserKey != nil,
-			uq.withProfile != nil,
+			uq.withUserKeys != nil,
+			uq.withProfiles != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -437,31 +437,31 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := uq.withUserKey; query != nil {
-		if err := uq.loadUserKey(ctx, query, nodes,
-			func(n *User) { n.Edges.UserKey = []*UserKey{} },
-			func(n *User, e *UserKey) { n.Edges.UserKey = append(n.Edges.UserKey, e) }); err != nil {
+	if query := uq.withUserKeys; query != nil {
+		if err := uq.loadUserKeys(ctx, query, nodes,
+			func(n *User) { n.Edges.UserKeys = []*UserKey{} },
+			func(n *User, e *UserKey) { n.Edges.UserKeys = append(n.Edges.UserKeys, e) }); err != nil {
 			return nil, err
 		}
 	}
-	if query := uq.withProfile; query != nil {
-		if err := uq.loadProfile(ctx, query, nodes,
-			func(n *User) { n.Edges.Profile = []*Profile{} },
-			func(n *User, e *Profile) { n.Edges.Profile = append(n.Edges.Profile, e) }); err != nil {
+	if query := uq.withProfiles; query != nil {
+		if err := uq.loadProfiles(ctx, query, nodes,
+			func(n *User) { n.Edges.Profiles = []*Profile{} },
+			func(n *User, e *Profile) { n.Edges.Profiles = append(n.Edges.Profiles, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range uq.withNamedUserKey {
-		if err := uq.loadUserKey(ctx, query, nodes,
-			func(n *User) { n.appendNamedUserKey(name) },
-			func(n *User, e *UserKey) { n.appendNamedUserKey(name, e) }); err != nil {
+	for name, query := range uq.withNamedUserKeys {
+		if err := uq.loadUserKeys(ctx, query, nodes,
+			func(n *User) { n.appendNamedUserKeys(name) },
+			func(n *User, e *UserKey) { n.appendNamedUserKeys(name, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range uq.withNamedProfile {
-		if err := uq.loadProfile(ctx, query, nodes,
-			func(n *User) { n.appendNamedProfile(name) },
-			func(n *User, e *Profile) { n.appendNamedProfile(name, e) }); err != nil {
+	for name, query := range uq.withNamedProfiles {
+		if err := uq.loadProfiles(ctx, query, nodes,
+			func(n *User) { n.appendNamedProfiles(name) },
+			func(n *User, e *Profile) { n.appendNamedProfiles(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -473,7 +473,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	return nodes, nil
 }
 
-func (uq *UserQuery) loadUserKey(ctx context.Context, query *UserKeyQuery, nodes []*User, init func(*User), assign func(*User, *UserKey)) error {
+func (uq *UserQuery) loadUserKeys(ctx context.Context, query *UserKeyQuery, nodes []*User, init func(*User), assign func(*User, *UserKey)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
 	for i := range nodes {
@@ -485,26 +485,26 @@ func (uq *UserQuery) loadUserKey(ctx context.Context, query *UserKeyQuery, nodes
 	}
 	query.withFKs = true
 	query.Where(predicate.UserKey(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.UserKeyColumn), fks...))
+		s.Where(sql.InValues(s.C(user.UserKeysColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_user_key
+		fk := n.user_user_keys
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_user_key" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "user_user_keys" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_user_key" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_user_keys" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
-func (uq *UserQuery) loadProfile(ctx context.Context, query *ProfileQuery, nodes []*User, init func(*User), assign func(*User, *Profile)) error {
+func (uq *UserQuery) loadProfiles(ctx context.Context, query *ProfileQuery, nodes []*User, init func(*User), assign func(*User, *Profile)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
 	for i := range nodes {
@@ -516,20 +516,20 @@ func (uq *UserQuery) loadProfile(ctx context.Context, query *ProfileQuery, nodes
 	}
 	query.withFKs = true
 	query.Where(predicate.Profile(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.ProfileColumn), fks...))
+		s.Where(sql.InValues(s.C(user.ProfilesColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_profile
+		fk := n.user_profiles
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_profile" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "user_profiles" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_profile" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_profiles" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -620,31 +620,31 @@ func (uq *UserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// WithNamedUserKey tells the query-builder to eager-load the nodes that are connected to the "user_key"
+// WithNamedUserKeys tells the query-builder to eager-load the nodes that are connected to the "user_keys"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedUserKey(name string, opts ...func(*UserKeyQuery)) *UserQuery {
+func (uq *UserQuery) WithNamedUserKeys(name string, opts ...func(*UserKeyQuery)) *UserQuery {
 	query := (&UserKeyClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if uq.withNamedUserKey == nil {
-		uq.withNamedUserKey = make(map[string]*UserKeyQuery)
+	if uq.withNamedUserKeys == nil {
+		uq.withNamedUserKeys = make(map[string]*UserKeyQuery)
 	}
-	uq.withNamedUserKey[name] = query
+	uq.withNamedUserKeys[name] = query
 	return uq
 }
 
-// WithNamedProfile tells the query-builder to eager-load the nodes that are connected to the "profile"
+// WithNamedProfiles tells the query-builder to eager-load the nodes that are connected to the "profiles"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedProfile(name string, opts ...func(*ProfileQuery)) *UserQuery {
+func (uq *UserQuery) WithNamedProfiles(name string, opts ...func(*ProfileQuery)) *UserQuery {
 	query := (&ProfileClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if uq.withNamedProfile == nil {
-		uq.withNamedProfile = make(map[string]*ProfileQuery)
+	if uq.withNamedProfiles == nil {
+		uq.withNamedProfiles = make(map[string]*ProfileQuery)
 	}
-	uq.withNamedProfile[name] = query
+	uq.withNamedProfiles[name] = query
 	return uq
 }
 

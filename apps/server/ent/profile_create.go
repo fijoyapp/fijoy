@@ -87,14 +87,14 @@ func (pc *ProfileCreate) SetUser(u *User) *ProfileCreate {
 	return pc.SetUserID(u.ID)
 }
 
-// AddAccountIDs adds the "account" edge to the Account entity by IDs.
+// AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
 func (pc *ProfileCreate) AddAccountIDs(ids ...string) *ProfileCreate {
 	pc.mutation.AddAccountIDs(ids...)
 	return pc
 }
 
-// AddAccount adds the "account" edges to the Account entity.
-func (pc *ProfileCreate) AddAccount(a ...*Account) *ProfileCreate {
+// AddAccounts adds the "accounts" edges to the Account entity.
+func (pc *ProfileCreate) AddAccounts(a ...*Account) *ProfileCreate {
 	ids := make([]string, len(a))
 	for i := range a {
 		ids[i] = a[i].ID
@@ -102,14 +102,14 @@ func (pc *ProfileCreate) AddAccount(a ...*Account) *ProfileCreate {
 	return pc.AddAccountIDs(ids...)
 }
 
-// AddTransactionIDs adds the "transaction" edge to the Transaction entity by IDs.
+// AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
 func (pc *ProfileCreate) AddTransactionIDs(ids ...string) *ProfileCreate {
 	pc.mutation.AddTransactionIDs(ids...)
 	return pc
 }
 
-// AddTransaction adds the "transaction" edges to the Transaction entity.
-func (pc *ProfileCreate) AddTransaction(t ...*Transaction) *ProfileCreate {
+// AddTransactions adds the "transactions" edges to the Transaction entity.
+func (pc *ProfileCreate) AddTransactions(t ...*Transaction) *ProfileCreate {
 	ids := make([]string, len(t))
 	for i := range t {
 		ids[i] = t[i].ID
@@ -251,15 +251,15 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_profile = &nodes[0]
+		_node.user_profiles = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := pc.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := pc.mutation.AccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   profile.AccountTable,
-			Columns: []string{profile.AccountColumn},
+			Table:   profile.AccountsTable,
+			Columns: []string{profile.AccountsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeString),
@@ -270,12 +270,12 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := pc.mutation.TransactionIDs(); len(nodes) > 0 {
+	if nodes := pc.mutation.TransactionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   profile.TransactionTable,
-			Columns: []string{profile.TransactionColumn},
+			Table:   profile.TransactionsTable,
+			Columns: []string{profile.TransactionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeString),
