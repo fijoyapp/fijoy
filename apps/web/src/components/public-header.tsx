@@ -10,7 +10,7 @@ import { Link } from "@tanstack/react-router";
 export function PublicHeader() {
   // const { user } = useAuth();
   return (
-    <header className="border-border bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-sm">
+    <header className="border-border bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 container mx-auto w-full border-b backdrop-blur-sm">
       <div className="container mx-auto flex h-14 max-w-(--breakpoint-2xl) items-center">
         <PublicNav />
         <nav className="flex flex-1 items-center justify-end gap-2">
