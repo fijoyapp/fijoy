@@ -52,4 +52,4 @@ ent-generate:
     go generate ./ent
 
 merge-graphql:
-  watchman-make -p 'ent.graphql' 'fijoy.graphql' --run '(rm relay.graphql || true) && node merge.js'
+    watchman-make -p 'ent.graphql' 'fijoy.graphql' --run '(rm relay.graphql || true) && node merge.js'
