@@ -13,6 +13,10 @@ import TransactionDataTable from "./-components/transactions/transaction-data-ta
 import { useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import z from "zod";
+import { ButtonGroup } from "@/components/ui/button-group";
+import NewIncome from "./-components/transactions/new-income";
+import NewExpense from "./-components/transactions/new-expense";
+import NewTransfer from "./-components/transactions/new-transfer";
 
 const Add = z.enum(["income", "expense", "transfer"]).optional();
 const transactionsRouteSchema = z.object({
@@ -32,6 +36,9 @@ const TransactionsPageFragment = graphql`
   fragment transactionsPageFragment on Query
   @refetchable(queryName: "TransactionsPageRefetch") {
     ...transactionDataTableFragment
+    ...newExpenseFragment
+    ...newIncomeFragment
+    ...newTransferFragment
   }
 `;
 
@@ -84,15 +91,26 @@ function Page() {
 
   return (
     <div className="">
-      <div className="flex gap-2">
-        <Button onClick={() => navigateTo("expense")}>New Expense (e)</Button>
-        <Button onClick={() => navigateTo("income")}>New Income (i)</Button>
-        <Button onClick={() => navigateTo("transfer")}>New Transfer (t)</Button>
-      </div>
+      <ButtonGroup>
+        <Button>New</Button>
+        <Button variant="outline" onClick={() => navigateTo("expense")}>
+          Expense (e)
+        </Button>
+        <Button variant="outline" onClick={() => navigateTo("income")}>
+          Income (i)
+        </Button>
+        <Button variant="outline" onClick={() => navigateTo("transfer")}>
+          Transfer (t)
+        </Button>
+      </ButtonGroup>
 
       <div className="py-2"></div>
 
       <TransactionDataTable transactionDataTableFragment={fragmentData} />
+
+      <NewExpense fragmentRef={fragmentData} />
+      <NewIncome fragmentRef={fragmentData} />
+      <NewTransfer fragmentRef={fragmentData} />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d4ec1a500d56719d5ff47cb21068b98c>>
+ * @generated SignedSource<<6ab8349f8ccaa531f27ae6bb6c3184a0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,18 +20,32 @@ export type TransactionsPageRefetch = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
+var v0 = [
+  {
+    "kind": "Literal",
+    "name": "first",
+    "value": 20
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "balance",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
@@ -58,13 +72,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Literal",
-            "name": "first",
-            "value": 20
-          }
-        ],
+        "args": (v0/*: any*/),
         "concreteType": "TransactionConnection",
         "kind": "LinkedField",
         "name": "transactions",
@@ -86,7 +94,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/),
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -101,7 +109,7 @@ return {
                     "name": "datetime",
                     "storageKey": null
                   },
-                  (v1/*: any*/),
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -110,7 +118,7 @@ return {
                     "name": "transactionEntries",
                     "plural": true,
                     "selections": [
-                      (v0/*: any*/),
+                      (v1/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -132,7 +140,7 @@ return {
                         "name": "fxRate",
                         "storageKey": null
                       },
-                      (v1/*: any*/),
+                      (v2/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -141,13 +149,7 @@ return {
                         "name": "account",
                         "plural": false,
                         "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "name",
-                            "storageKey": null
-                          },
+                          (v3/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -155,7 +157,7 @@ return {
                             "name": "currencySymbol",
                             "storageKey": null
                           },
-                          (v0/*: any*/)
+                          (v1/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -188,20 +190,55 @@ return {
           }
         ],
         "storageKey": "transactions(first:20)"
+      },
+      {
+        "alias": null,
+        "args": (v0/*: any*/),
+        "concreteType": "AccountConnection",
+        "kind": "LinkedField",
+        "name": "accounts",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "AccountEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Account",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/),
+                  (v1/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": "accounts(first:20)"
       }
     ]
   },
   "params": {
-    "cacheID": "56d24fcb7f3f03b12da6cdc116f671f5",
+    "cacheID": "abfe77c018a6de1efbcb8f57d007ad68",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment newExpenseFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment newTransferFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "977a194d8bbfa7e821009b833f47e868";
+(node as any).hash = "d60e05deab815bae7da9167f3c096a5e";
 
 export default node;
