@@ -47,6 +47,7 @@ type AccountMutation struct {
 	create_time                *time.Time
 	update_time                *time.Time
 	name                       *string
+	lmao                       *string
 	account_type               *account.AccountType
 	investment_type            *account.InvestmentType
 	currency_symbol            *string
@@ -276,6 +277,42 @@ func (m *AccountMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *AccountMutation) ResetName() {
 	m.name = nil
+}
+
+// SetLmao sets the "lmao" field.
+func (m *AccountMutation) SetLmao(s string) {
+	m.lmao = &s
+}
+
+// Lmao returns the value of the "lmao" field in the mutation.
+func (m *AccountMutation) Lmao() (r string, exists bool) {
+	v := m.lmao
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLmao returns the old "lmao" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldLmao(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLmao is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLmao requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLmao: %w", err)
+	}
+	return oldValue.Lmao, nil
+}
+
+// ResetLmao resets all changes to the "lmao" field.
+func (m *AccountMutation) ResetLmao() {
+	m.lmao = nil
 }
 
 // SetAccountType sets the "account_type" field.
@@ -845,7 +882,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.create_time != nil {
 		fields = append(fields, account.FieldCreateTime)
 	}
@@ -854,6 +891,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, account.FieldName)
+	}
+	if m.lmao != nil {
+		fields = append(fields, account.FieldLmao)
 	}
 	if m.account_type != nil {
 		fields = append(fields, account.FieldAccountType)
@@ -899,6 +939,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case account.FieldName:
 		return m.Name()
+	case account.FieldLmao:
+		return m.Lmao()
 	case account.FieldAccountType:
 		return m.AccountType()
 	case account.FieldInvestmentType:
@@ -934,6 +976,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldUpdateTime(ctx)
 	case account.FieldName:
 		return m.OldName(ctx)
+	case account.FieldLmao:
+		return m.OldLmao(ctx)
 	case account.FieldAccountType:
 		return m.OldAccountType(ctx)
 	case account.FieldInvestmentType:
@@ -983,6 +1027,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case account.FieldLmao:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLmao(v)
 		return nil
 	case account.FieldAccountType:
 		v, ok := value.(account.AccountType)
@@ -1162,6 +1213,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldName:
 		m.ResetName()
+		return nil
+	case account.FieldLmao:
+		m.ResetLmao()
 		return nil
 	case account.FieldAccountType:
 		m.ResetAccountType()

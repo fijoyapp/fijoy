@@ -74,6 +74,11 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, account.FieldName)
 				fieldSeen[account.FieldName] = struct{}{}
 			}
+		case "lmao":
+			if _, ok := fieldSeen[account.FieldLmao]; !ok {
+				selectedFields = append(selectedFields, account.FieldLmao)
+				fieldSeen[account.FieldLmao] = struct{}{}
+			}
 		case "accountType":
 			if _, ok := fieldSeen[account.FieldAccountType]; !ok {
 				selectedFields = append(selectedFields, account.FieldAccountType)

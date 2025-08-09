@@ -23,6 +23,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldLmao holds the string denoting the lmao field in the database.
+	FieldLmao = "lmao"
 	// FieldAccountType holds the string denoting the account_type field in the database.
 	FieldAccountType = "account_type"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
@@ -71,6 +73,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
+	FieldLmao,
 	FieldAccountType,
 	FieldInvestmentType,
 	FieldCurrencySymbol,
@@ -113,6 +116,8 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// LmaoValidator is a validator for the "lmao" field. It is called by the builders before save.
+	LmaoValidator func(string) error
 	// CurrencySymbolValidator is a validator for the "currency_symbol" field. It is called by the builders before save.
 	CurrencySymbolValidator func(string) error
 	// TickerValidator is a validator for the "ticker" field. It is called by the builders before save.
@@ -218,6 +223,11 @@ func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByLmao orders the results by the lmao field.
+func ByLmao(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLmao, opts...).ToFunc()
 }
 
 // ByAccountType orders the results by the account_type field.

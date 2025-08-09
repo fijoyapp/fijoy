@@ -71,6 +71,11 @@ func Name(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldName, v))
 }
 
+// Lmao applies equality check predicate on the "lmao" field. It's identical to LmaoEQ.
+func Lmao(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldLmao, v))
+}
+
 // CurrencySymbol applies equality check predicate on the "currency_symbol" field. It's identical to CurrencySymbolEQ.
 func CurrencySymbol(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldCurrencySymbol, v))
@@ -249,6 +254,71 @@ func NameEqualFold(v string) predicate.Account {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Account {
 	return predicate.Account(sql.FieldContainsFold(FieldName, v))
+}
+
+// LmaoEQ applies the EQ predicate on the "lmao" field.
+func LmaoEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldLmao, v))
+}
+
+// LmaoNEQ applies the NEQ predicate on the "lmao" field.
+func LmaoNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldLmao, v))
+}
+
+// LmaoIn applies the In predicate on the "lmao" field.
+func LmaoIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldLmao, vs...))
+}
+
+// LmaoNotIn applies the NotIn predicate on the "lmao" field.
+func LmaoNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldLmao, vs...))
+}
+
+// LmaoGT applies the GT predicate on the "lmao" field.
+func LmaoGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldLmao, v))
+}
+
+// LmaoGTE applies the GTE predicate on the "lmao" field.
+func LmaoGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldLmao, v))
+}
+
+// LmaoLT applies the LT predicate on the "lmao" field.
+func LmaoLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldLmao, v))
+}
+
+// LmaoLTE applies the LTE predicate on the "lmao" field.
+func LmaoLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldLmao, v))
+}
+
+// LmaoContains applies the Contains predicate on the "lmao" field.
+func LmaoContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldLmao, v))
+}
+
+// LmaoHasPrefix applies the HasPrefix predicate on the "lmao" field.
+func LmaoHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldLmao, v))
+}
+
+// LmaoHasSuffix applies the HasSuffix predicate on the "lmao" field.
+func LmaoHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldLmao, v))
+}
+
+// LmaoEqualFold applies the EqualFold predicate on the "lmao" field.
+func LmaoEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldLmao, v))
+}
+
+// LmaoContainsFold applies the ContainsFold predicate on the "lmao" field.
+func LmaoContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldLmao, v))
 }
 
 // AccountTypeEQ applies the EQ predicate on the "account_type" field.

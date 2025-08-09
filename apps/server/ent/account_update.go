@@ -51,6 +51,20 @@ func (au *AccountUpdate) SetNillableName(s *string) *AccountUpdate {
 	return au
 }
 
+// SetLmao sets the "lmao" field.
+func (au *AccountUpdate) SetLmao(s string) *AccountUpdate {
+	au.mutation.SetLmao(s)
+	return au
+}
+
+// SetNillableLmao sets the "lmao" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableLmao(s *string) *AccountUpdate {
+	if s != nil {
+		au.SetLmao(*s)
+	}
+	return au
+}
+
 // SetInvestmentType sets the "investment_type" field.
 func (au *AccountUpdate) SetInvestmentType(at account.InvestmentType) *AccountUpdate {
 	au.mutation.SetInvestmentType(at)
@@ -264,6 +278,11 @@ func (au *AccountUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if v, ok := au.mutation.Lmao(); ok {
+		if err := account.LmaoValidator(v); err != nil {
+			return &ValidationError{Name: "lmao", err: fmt.Errorf(`ent: validator failed for field "Account.lmao": %w`, err)}
+		}
+	}
 	if v, ok := au.mutation.InvestmentType(); ok {
 		if err := account.InvestmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
@@ -292,6 +311,9 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
+	}
+	if value, ok := au.mutation.Lmao(); ok {
+		_spec.SetField(account.FieldLmao, field.TypeString, value)
 	}
 	if value, ok := au.mutation.InvestmentType(); ok {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
@@ -433,6 +455,20 @@ func (auo *AccountUpdateOne) SetName(s string) *AccountUpdateOne {
 func (auo *AccountUpdateOne) SetNillableName(s *string) *AccountUpdateOne {
 	if s != nil {
 		auo.SetName(*s)
+	}
+	return auo
+}
+
+// SetLmao sets the "lmao" field.
+func (auo *AccountUpdateOne) SetLmao(s string) *AccountUpdateOne {
+	auo.mutation.SetLmao(s)
+	return auo
+}
+
+// SetNillableLmao sets the "lmao" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableLmao(s *string) *AccountUpdateOne {
+	if s != nil {
+		auo.SetLmao(*s)
 	}
 	return auo
 }
@@ -663,6 +699,11 @@ func (auo *AccountUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if v, ok := auo.mutation.Lmao(); ok {
+		if err := account.LmaoValidator(v); err != nil {
+			return &ValidationError{Name: "lmao", err: fmt.Errorf(`ent: validator failed for field "Account.lmao": %w`, err)}
+		}
+	}
 	if v, ok := auo.mutation.InvestmentType(); ok {
 		if err := account.InvestmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
@@ -708,6 +749,9 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if value, ok := auo.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.Lmao(); ok {
+		_spec.SetField(account.FieldLmao, field.TypeString, value)
 	}
 	if value, ok := auo.mutation.InvestmentType(); ok {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)

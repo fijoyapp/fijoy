@@ -57,6 +57,12 @@ func (ac *AccountCreate) SetName(s string) *AccountCreate {
 	return ac
 }
 
+// SetLmao sets the "lmao" field.
+func (ac *AccountCreate) SetLmao(s string) *AccountCreate {
+	ac.mutation.SetLmao(s)
+	return ac
+}
+
 // SetAccountType sets the "account_type" field.
 func (ac *AccountCreate) SetAccountType(at account.AccountType) *AccountCreate {
 	ac.mutation.SetAccountType(at)
@@ -216,6 +222,14 @@ func (ac *AccountCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if _, ok := ac.mutation.Lmao(); !ok {
+		return &ValidationError{Name: "lmao", err: errors.New(`ent: missing required field "Account.lmao"`)}
+	}
+	if v, ok := ac.mutation.Lmao(); ok {
+		if err := account.LmaoValidator(v); err != nil {
+			return &ValidationError{Name: "lmao", err: fmt.Errorf(`ent: validator failed for field "Account.lmao": %w`, err)}
+		}
+	}
 	if _, ok := ac.mutation.AccountType(); !ok {
 		return &ValidationError{Name: "account_type", err: errors.New(`ent: missing required field "Account.account_type"`)}
 	}
@@ -311,6 +325,10 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := ac.mutation.Lmao(); ok {
+		_spec.SetField(account.FieldLmao, field.TypeString, value)
+		_node.Lmao = value
 	}
 	if value, ok := ac.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
