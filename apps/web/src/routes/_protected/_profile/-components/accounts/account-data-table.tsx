@@ -37,12 +37,12 @@ const AccountDataTableFragment = graphql`
       edges {
         node {
           id @required(action: THROW)
-          name
+          name @required(action: THROW)
           accountType
           balance
+          value @required(action: THROW)
           currencySymbol
           amount
-          ...cardFragment
         }
       }
       pageInfo {
@@ -72,6 +72,9 @@ export default function AccountDataTable({
         id: "name",
         accessorKey: "name",
         header: "Name",
+        cell: ({ row }) => {
+          return <div>{row.original?.name}</div>;
+        },
       },
       {
         id: "accountType",
@@ -95,13 +98,21 @@ export default function AccountDataTable({
 
           invariant(row.original, "Row original should not be null");
           const money = row.original.amount;
+          const value = row.original.value;
           const currencySymbol = row.original.currencySymbol;
           const accountType = row.original.accountType;
 
           return (
             <div className="text-right">
               {match(accountType)
-                .with("investment", () => <div>{money} share(s)</div>)
+                .with("investment", () => (
+                  <div>
+                    {money} x{" "}
+                    {getCurrencyDisplay(value, currencySymbol, profile.locale, {
+                      compact: false,
+                    })}
+                  </div>
+                ))
                 .otherwise(() => (
                   <div className="font-mono">
                     {getCurrencyDisplay(money, currencySymbol, profile.locale, {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c99aebcb69589fdec82299775858c583>>
+ * @generated SignedSource<<629f71e346f009a09e6d0c7ab9b7ae87>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type accountDataTableFragment$data = {
         readonly currencySymbol: string;
         readonly id: string;
         readonly name: string;
-        readonly " $fragmentSpreads": FragmentRefs<"cardFragment">;
+        readonly value: string;
       } | null | undefined;
     } | null | undefined> | null | undefined;
     readonly pageInfo: {
@@ -83,11 +83,15 @@ const node: ReaderFragment = {
                   "action": "THROW"
                 },
                 {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "name",
-                  "storageKey": null
+                  "kind": "RequiredField",
+                  "field": {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "name",
+                    "storageKey": null
+                  },
+                  "action": "THROW"
                 },
                 {
                   "alias": null,
@@ -104,6 +108,17 @@ const node: ReaderFragment = {
                   "storageKey": null
                 },
                 {
+                  "kind": "RequiredField",
+                  "field": {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "value",
+                    "storageKey": null
+                  },
+                  "action": "THROW"
+                },
+                {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
@@ -116,11 +131,6 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "amount",
                   "storageKey": null
-                },
-                {
-                  "args": null,
-                  "kind": "FragmentSpread",
-                  "name": "cardFragment"
                 }
               ],
               "storageKey": null
@@ -154,6 +164,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "453cd95ce1224aadba6b05b63e36b142";
+(node as any).hash = "64f2c4e68f614db241756b4343216487";
 
 export default node;
