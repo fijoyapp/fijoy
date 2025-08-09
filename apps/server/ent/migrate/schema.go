@@ -15,6 +15,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
+		{Name: "institution", Type: field.TypeString},
 		{Name: "account_type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
 		{Name: "investment_type", Type: field.TypeEnum, Enums: []string{"non_investment", "taxable", "rrsp", "tfsa", "fhsa"}},
 		{Name: "currency_symbol", Type: field.TypeString},
@@ -35,7 +36,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "accounts_profiles_accounts",
-				Columns:    []*schema.Column{AccountsColumns[14]},
+				Columns:    []*schema.Column{AccountsColumns[15]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e975d8762618fe25f53b781c12737a1b>>
+ * @generated SignedSource<<2ed52cfeb6be43618ca1bc648515c626>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -140,6 +140,13 @@ const node: ConcreteRequest = {
                     "kind": "ScalarField",
                     "name": "updateTime",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "institution",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -171,12 +178,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "cb7fc542adeae0796cac7abfdc8b1b80",
+    "cacheID": "38bf627ebb2fa4d0dc6efd74ab07c4fc",
     "id": null,
     "metadata": {},
     "name": "AccountsPageRefetch",
     "operationKind": "query",
-    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        value\n        currencySymbol\n        amount\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updateTime\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencySymbol\n        amount\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment cardFragment on Account {\n  id\n  name\n  value\n  amount\n  balance\n  accountType\n  ticker\n  tickerType\n  currencySymbol\n  updateTime\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n        ...cardFragment\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 

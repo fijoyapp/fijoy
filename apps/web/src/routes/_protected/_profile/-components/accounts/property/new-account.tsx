@@ -26,6 +26,7 @@ const formSchema = z.object({
   }),
   symbol: z.string().length(3),
   balance: z.string(),
+  institution: z.string(),
 });
 
 const NewAccountPropertyMutation = graphql`
@@ -58,6 +59,7 @@ export function NewProperty() {
           amount: values.balance,
           accountType: "property",
           name: values.name,
+          institution: values.institution,
           investmentType: "taxable", // TODO: customize
           ticker: values.symbol,
           tickerType: "currency",
@@ -91,6 +93,13 @@ export function NewProperty() {
                 name="name"
                 label="Name"
                 placeholder="Give your account a descriptive name, e.g. My House"
+              />
+
+              <NameField
+                control={form.control}
+                name="institution"
+                label="Institution"
+                placeholder="Which institution does this account belong to? e.g. Wealthimple"
               />
 
               <CurrencyField

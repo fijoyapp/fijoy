@@ -25,6 +25,8 @@ type Account struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Institution holds the value of the "institution" field.
+	Institution string `json:"institution,omitempty"`
 	// AccountType holds the value of the "account_type" field.
 	AccountType account.AccountType `json:"account_type,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
@@ -98,7 +100,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case account.FieldID:
 			values[i] = new(sql.NullInt64)
-		case account.FieldName, account.FieldAccountType, account.FieldInvestmentType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
+		case account.FieldName, account.FieldInstitution, account.FieldAccountType, account.FieldInvestmentType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
 			values[i] = new(sql.NullString)
 		case account.FieldCreateTime, account.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -142,6 +144,12 @@ func (a *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				a.Name = value.String
+			}
+		case account.FieldInstitution:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field institution", values[i])
+			} else if value.Valid {
+				a.Institution = value.String
 			}
 		case account.FieldAccountType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -264,6 +272,9 @@ func (a *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(a.Name)
+	builder.WriteString(", ")
+	builder.WriteString("institution=")
+	builder.WriteString(a.Institution)
 	builder.WriteString(", ")
 	builder.WriteString("account_type=")
 	builder.WriteString(fmt.Sprintf("%v", a.AccountType))

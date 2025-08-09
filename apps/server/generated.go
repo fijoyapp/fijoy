@@ -56,7 +56,8 @@ type ResolverRoot interface {
 	UpdateTransactionEntryInput() UpdateTransactionEntryInputResolver
 }
 
-type DirectiveRoot struct{}
+type DirectiveRoot struct {
+}
 
 type ComplexityRoot struct {
 	Account struct {
@@ -68,6 +69,7 @@ type ComplexityRoot struct {
 		CurrencySymbol     func(childComplexity int) int
 		FxRate             func(childComplexity int) int
 		ID                 func(childComplexity int) int
+		Institution        func(childComplexity int) int
 		InvestmentType     func(childComplexity int) int
 		Name               func(childComplexity int) int
 		Profile            func(childComplexity int) int
@@ -312,6 +314,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Account.ID(childComplexity), true
+
+	case "Account.institution":
+		if e.complexity.Account.Institution == nil {
+			break
+		}
+
+		return e.complexity.Account.Institution(childComplexity), true
 
 	case "Account.investmentType":
 		if e.complexity.Account.InvestmentType == nil {
@@ -1022,7 +1031,6 @@ func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Contex
 	args["input"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field_Mutation_createAccount_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1051,7 +1059,6 @@ func (ec *executionContext) field_Mutation_createProfile_args(ctx context.Contex
 	args["input"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field_Mutation_createProfile_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1080,7 +1087,6 @@ func (ec *executionContext) field_Mutation_createTransactionEntry_args(ctx conte
 	args["input"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field_Mutation_createTransactionEntry_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1109,7 +1115,6 @@ func (ec *executionContext) field_Mutation_createTransactionWithTransactionEntri
 	args["input"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field_Mutation_createTransactionWithTransactionEntries_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1143,7 +1148,6 @@ func (ec *executionContext) field_Mutation_updateProfile_args(ctx context.Contex
 	args["input"] = arg1
 	return args, nil
 }
-
 func (ec *executionContext) field_Mutation_updateProfile_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1190,7 +1194,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	args["name"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field_Query___type_argsName(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1234,7 +1237,6 @@ func (ec *executionContext) field_Query_accounts_args(ctx context.Context, rawAr
 	args["last"] = arg3
 	return args, nil
 }
-
 func (ec *executionContext) field_Query_accounts_argsAfter(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1317,7 +1319,6 @@ func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs m
 	args["id"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field_Query_node_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1346,7 +1347,6 @@ func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs 
 	args["ids"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field_Query_nodes_argsIds(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1390,7 +1390,6 @@ func (ec *executionContext) field_Query_transactions_args(ctx context.Context, r
 	args["last"] = arg3
 	return args, nil
 }
-
 func (ec *executionContext) field_Query_transactions_argsAfter(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1473,7 +1472,6 @@ func (ec *executionContext) field___Directive_args_args(ctx context.Context, raw
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field___Directive_args_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1502,7 +1500,6 @@ func (ec *executionContext) field___Field_args_args(ctx context.Context, rawArgs
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field___Field_args_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1531,7 +1528,6 @@ func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, ra
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field___Type_enumValues_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1560,7 +1556,6 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 	args["includeDeprecated"] = arg0
 	return args, nil
 }
-
 func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 	ctx context.Context,
 	rawArgs map[string]any,
@@ -1751,6 +1746,50 @@ func (ec *executionContext) _Account_name(ctx context.Context, field graphql.Col
 }
 
 func (ec *executionContext) fieldContext_Account_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Account_institution(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_institution(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Institution, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Account_institution(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Account",
 		Field:      field,
@@ -2517,6 +2556,8 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
+			case "institution":
+				return ec.fieldContext_Account_institution(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
@@ -2877,6 +2918,8 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
+			case "institution":
+				return ec.fieldContext_Account_institution(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
@@ -3603,6 +3646,8 @@ func (ec *executionContext) fieldContext_Profile_accounts(_ context.Context, fie
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
+			case "institution":
+				return ec.fieldContext_Account_institution(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
@@ -5218,6 +5263,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
+			case "institution":
+				return ec.fieldContext_Account_institution(ctx, field)
 			case "accountType":
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
@@ -7836,7 +7883,7 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "accountType", "investmentType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "transactionEntryIDs"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "institution", "accountType", "investmentType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "transactionEntryIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7864,6 +7911,13 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.Name = data
+		case "institution":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("institution"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Institution = data
 		case "accountType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountType"))
 			data, err := ec.unmarshalNAccountAccountType2fijoyᚋentᚋaccountᚐAccountType(ctx, v)
@@ -8262,7 +8316,7 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "name", "investmentType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
+	fieldsInOrder := [...]string{"updateTime", "name", "institution", "investmentType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8283,6 +8337,13 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.Name = data
+		case "institution":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("institution"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Institution = data
 		case "investmentType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("investmentType"))
 			data, err := ec.unmarshalOAccountInvestmentType2ᚖfijoyᚋentᚋaccountᚐInvestmentType(ctx, v)
@@ -8619,6 +8680,11 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "name":
 			out.Values[i] = ec._Account_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "institution":
+			out.Values[i] = ec._Account_institution(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -11434,7 +11500,7 @@ func (ec *executionContext) unmarshalOAccountInvestmentType2ᚖfijoyᚋentᚋacc
 	if v == nil {
 		return nil, nil
 	}
-	res := new(account.InvestmentType)
+	var res = new(account.InvestmentType)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -11480,7 +11546,7 @@ func (ec *executionContext) unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐ
 	if v == nil {
 		return nil, nil
 	}
-	res := new(entgql.Cursor[int])
+	var res = new(entgql.Cursor[int])
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }

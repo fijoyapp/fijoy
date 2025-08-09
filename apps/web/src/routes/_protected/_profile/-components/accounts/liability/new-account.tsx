@@ -26,6 +26,7 @@ const formSchema = z.object({
   }),
   symbol: z.string().length(3),
   balance: z.string(),
+  institution: z.string(),
 });
 
 const NewAccountLiabilityMutation = graphql`
@@ -58,6 +59,7 @@ export function NewLiability() {
           amount: values.balance,
           accountType: "liability",
           name: values.name,
+          institution: values.institution,
           investmentType: "taxable", // TODO: customize
           ticker: values.symbol,
           tickerType: "currency",
@@ -90,6 +92,13 @@ export function NewLiability() {
                 name="name"
                 label="Name"
                 placeholder="Give your account a descriptive name, e.g. My Student Loan"
+              />
+
+              <NameField
+                control={form.control}
+                name="institution"
+                label="Institution"
+                placeholder="Which institution does this account belong to? e.g. Wealthimple"
               />
 
               <CurrencyField

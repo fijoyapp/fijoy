@@ -57,6 +57,12 @@ func (ac *AccountCreate) SetName(s string) *AccountCreate {
 	return ac
 }
 
+// SetInstitution sets the "institution" field.
+func (ac *AccountCreate) SetInstitution(s string) *AccountCreate {
+	ac.mutation.SetInstitution(s)
+	return ac
+}
+
 // SetAccountType sets the "account_type" field.
 func (ac *AccountCreate) SetAccountType(at account.AccountType) *AccountCreate {
 	ac.mutation.SetAccountType(at)
@@ -216,6 +222,14 @@ func (ac *AccountCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if _, ok := ac.mutation.Institution(); !ok {
+		return &ValidationError{Name: "institution", err: errors.New(`ent: missing required field "Account.institution"`)}
+	}
+	if v, ok := ac.mutation.Institution(); ok {
+		if err := account.InstitutionValidator(v); err != nil {
+			return &ValidationError{Name: "institution", err: fmt.Errorf(`ent: validator failed for field "Account.institution": %w`, err)}
+		}
+	}
 	if _, ok := ac.mutation.AccountType(); !ok {
 		return &ValidationError{Name: "account_type", err: errors.New(`ent: missing required field "Account.account_type"`)}
 	}
@@ -311,6 +325,10 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := ac.mutation.Institution(); ok {
+		_spec.SetField(account.FieldInstitution, field.TypeString, value)
+		_node.Institution = value
 	}
 	if value, ok := ac.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)

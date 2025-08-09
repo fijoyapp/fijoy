@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f9e77e490d0dfcd54706283e4a90b5f9>>
+ * @generated SignedSource<<707c86b8520dbb3076da966b5ead5e27>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type CreateAccountInput = {
   archived?: boolean | null | undefined;
   createTime?: any | null | undefined;
   currencySymbol: string;
+  institution: string;
   investmentType: AccountInvestmentType;
   name: string;
   ticker: string;

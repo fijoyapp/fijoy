@@ -51,6 +51,20 @@ func (au *AccountUpdate) SetNillableName(s *string) *AccountUpdate {
 	return au
 }
 
+// SetInstitution sets the "institution" field.
+func (au *AccountUpdate) SetInstitution(s string) *AccountUpdate {
+	au.mutation.SetInstitution(s)
+	return au
+}
+
+// SetNillableInstitution sets the "institution" field if the given value is not nil.
+func (au *AccountUpdate) SetNillableInstitution(s *string) *AccountUpdate {
+	if s != nil {
+		au.SetInstitution(*s)
+	}
+	return au
+}
+
 // SetInvestmentType sets the "investment_type" field.
 func (au *AccountUpdate) SetInvestmentType(at account.InvestmentType) *AccountUpdate {
 	au.mutation.SetInvestmentType(at)
@@ -264,6 +278,11 @@ func (au *AccountUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if v, ok := au.mutation.Institution(); ok {
+		if err := account.InstitutionValidator(v); err != nil {
+			return &ValidationError{Name: "institution", err: fmt.Errorf(`ent: validator failed for field "Account.institution": %w`, err)}
+		}
+	}
 	if v, ok := au.mutation.InvestmentType(); ok {
 		if err := account.InvestmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
@@ -292,6 +311,9 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
+	}
+	if value, ok := au.mutation.Institution(); ok {
+		_spec.SetField(account.FieldInstitution, field.TypeString, value)
 	}
 	if value, ok := au.mutation.InvestmentType(); ok {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
@@ -433,6 +455,20 @@ func (auo *AccountUpdateOne) SetName(s string) *AccountUpdateOne {
 func (auo *AccountUpdateOne) SetNillableName(s *string) *AccountUpdateOne {
 	if s != nil {
 		auo.SetName(*s)
+	}
+	return auo
+}
+
+// SetInstitution sets the "institution" field.
+func (auo *AccountUpdateOne) SetInstitution(s string) *AccountUpdateOne {
+	auo.mutation.SetInstitution(s)
+	return auo
+}
+
+// SetNillableInstitution sets the "institution" field if the given value is not nil.
+func (auo *AccountUpdateOne) SetNillableInstitution(s *string) *AccountUpdateOne {
+	if s != nil {
+		auo.SetInstitution(*s)
 	}
 	return auo
 }
@@ -663,6 +699,11 @@ func (auo *AccountUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if v, ok := auo.mutation.Institution(); ok {
+		if err := account.InstitutionValidator(v); err != nil {
+			return &ValidationError{Name: "institution", err: fmt.Errorf(`ent: validator failed for field "Account.institution": %w`, err)}
+		}
+	}
 	if v, ok := auo.mutation.InvestmentType(); ok {
 		if err := account.InvestmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
@@ -708,6 +749,9 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 	}
 	if value, ok := auo.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.Institution(); ok {
+		_spec.SetField(account.FieldInstitution, field.TypeString, value)
 	}
 	if value, ok := auo.mutation.InvestmentType(); ok {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)

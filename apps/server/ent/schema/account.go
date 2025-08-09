@@ -36,6 +36,9 @@ func (Account) Fields() []ent.Field {
 		field.String("name").
 			NotEmpty(),
 
+		field.String("institution").
+			NotEmpty(),
+
 		field.Enum("account_type").
 			Values("liquidity", "investment", "property", "receivable", "liability").
 			Immutable(),

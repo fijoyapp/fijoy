@@ -71,6 +71,11 @@ func Name(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldName, v))
 }
 
+// Institution applies equality check predicate on the "institution" field. It's identical to InstitutionEQ.
+func Institution(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldInstitution, v))
+}
+
 // CurrencySymbol applies equality check predicate on the "currency_symbol" field. It's identical to CurrencySymbolEQ.
 func CurrencySymbol(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldCurrencySymbol, v))
@@ -249,6 +254,71 @@ func NameEqualFold(v string) predicate.Account {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Account {
 	return predicate.Account(sql.FieldContainsFold(FieldName, v))
+}
+
+// InstitutionEQ applies the EQ predicate on the "institution" field.
+func InstitutionEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldInstitution, v))
+}
+
+// InstitutionNEQ applies the NEQ predicate on the "institution" field.
+func InstitutionNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldInstitution, v))
+}
+
+// InstitutionIn applies the In predicate on the "institution" field.
+func InstitutionIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldInstitution, vs...))
+}
+
+// InstitutionNotIn applies the NotIn predicate on the "institution" field.
+func InstitutionNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldInstitution, vs...))
+}
+
+// InstitutionGT applies the GT predicate on the "institution" field.
+func InstitutionGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldInstitution, v))
+}
+
+// InstitutionGTE applies the GTE predicate on the "institution" field.
+func InstitutionGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldInstitution, v))
+}
+
+// InstitutionLT applies the LT predicate on the "institution" field.
+func InstitutionLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldInstitution, v))
+}
+
+// InstitutionLTE applies the LTE predicate on the "institution" field.
+func InstitutionLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldInstitution, v))
+}
+
+// InstitutionContains applies the Contains predicate on the "institution" field.
+func InstitutionContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldInstitution, v))
+}
+
+// InstitutionHasPrefix applies the HasPrefix predicate on the "institution" field.
+func InstitutionHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldInstitution, v))
+}
+
+// InstitutionHasSuffix applies the HasSuffix predicate on the "institution" field.
+func InstitutionHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldInstitution, v))
+}
+
+// InstitutionEqualFold applies the EqualFold predicate on the "institution" field.
+func InstitutionEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldInstitution, v))
+}
+
+// InstitutionContainsFold applies the ContainsFold predicate on the "institution" field.
+func InstitutionContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldInstitution, v))
 }
 
 // AccountTypeEQ applies the EQ predicate on the "account_type" field.

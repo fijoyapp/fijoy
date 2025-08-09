@@ -32,6 +32,7 @@ const formSchema = z.object({
   symbol: z.string(),
   amount: z.string(),
   type: z.enum(["crypto", "stock"]),
+  institution: z.string(),
 });
 
 const NewAccountInvestmentMutation = graphql`
@@ -65,6 +66,7 @@ export function NewInvestment() {
           investmentType: "taxable", // TODO: customize
           accountType: "investment",
           name: values.symbol,
+          institution: values.institution,
           ticker: values.symbol,
           tickerType: values.type,
           currencySymbol: values.symbol,
@@ -144,6 +146,13 @@ export function NewInvestment() {
                   )}
                 />
               </div>
+
+              <NameField
+                control={form.control}
+                name="institution"
+                label="Institution"
+                placeholder="Which institution does this account belong to? e.g. Wealthimple"
+              />
 
               <AmountField
                 control={form.control}

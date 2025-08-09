@@ -40,6 +40,7 @@ const AccountDataTableFragment = graphql`
           name @required(action: THROW)
           accountType
           balance
+          institution @required(action: THROW)
           value @required(action: THROW)
           currencySymbol
           amount
@@ -73,6 +74,9 @@ export default function AccountDataTable({
         accessorKey: "name",
         header: "Name",
         cell: ({ row }) => {
+          if (row.getIsGrouped()) {
+            return null;
+          }
           return <div>{row.original?.name}</div>;
         },
       },
@@ -84,6 +88,17 @@ export default function AccountDataTable({
           return <div>{capitalize(row.original?.accountType)}</div>;
         },
         enableGrouping: true,
+      },
+      {
+        id: "institution",
+        accessorKey: "institution",
+        header: "Institution",
+        cell: ({ row }) => {
+          if (row.getIsGrouped()) {
+            return null;
+          }
+          return <div>{row.original?.institution}</div>;
+        },
       },
       {
         id: "amount",
