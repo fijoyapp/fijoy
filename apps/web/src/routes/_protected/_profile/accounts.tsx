@@ -15,6 +15,7 @@ import { AddAccount } from "./-components/accounts/add-account";
 const accountsRouteSchema = z.object({
   add: AccountType.optional(),
   detail: z.string().startsWith("account_").optional(),
+  groupby: z.enum(["accountType", "institution"]).optional(),
 });
 
 const AccountsPageFragment = graphql`

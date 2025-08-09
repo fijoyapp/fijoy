@@ -30,6 +30,7 @@ import invariant from "tiny-invariant";
 import { match } from "ts-pattern";
 import { capitalize } from "lodash";
 import currency from "currency.js";
+import { getRouteApi } from "@tanstack/react-router";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
@@ -61,16 +62,20 @@ type AccountDataTableProps = {
   accountDataTableFragment: accountDataTableFragment$key;
 };
 
+const routeApi = getRouteApi("/_protected/_profile/accounts");
+
 export default function AccountDataTable({
   accountDataTableFragment,
 }: AccountDataTableProps) {
+  const { groupby } = routeApi.useSearch();
+
   const data = useFragment(AccountDataTableFragment, accountDataTableFragment);
   const { profile } = useProfile();
 
   const columns: ColumnDef<Account>[] = useMemo(
     (): ColumnDef<Account>[] => [
       {
-        id: "name",
+        id: "name" satisfies keyof NonNullable<Account>,
         accessorKey: "name",
         header: "Name",
         cell: ({ row }) => {
@@ -81,16 +86,19 @@ export default function AccountDataTable({
         },
       },
       {
-        id: "accountType",
+        id: "accountType" satisfies keyof NonNullable<Account>,
         accessorKey: "accountType",
         header: "Type",
         cell: ({ row }) => {
+          if (row.getIsGrouped()) {
+            return null;
+          }
           return <div>{capitalize(row.original?.accountType)}</div>;
         },
-        enableGrouping: true,
+        enableGrouping: groupby === "accountType",
       },
       {
-        id: "institution",
+        id: "institution" satisfies keyof NonNullable<Account>,
         accessorKey: "institution",
         header: "Institution",
         cell: ({ row }) => {
@@ -99,9 +107,10 @@ export default function AccountDataTable({
           }
           return <div>{row.original?.institution}</div>;
         },
+        enableGrouping: groupby === "institution",
       },
       {
-        id: "amount",
+        id: "amount" satisfies keyof NonNullable<Account>,
         accessorKey: "amount",
         header: () => {
           return <div className="text-right">Amount</div>;
@@ -140,7 +149,7 @@ export default function AccountDataTable({
         },
       },
       {
-        id: "balance",
+        id: "balance" satisfies keyof NonNullable<Account>,
         accessorKey: "balance",
         header: () => {
           return <div className="text-right">Balance</div>;
@@ -188,7 +197,7 @@ export default function AccountDataTable({
         },
       },
     ],
-    [profile],
+    [profile, groupby],
   );
 
   const filteredData = useMemo(() => {
@@ -216,15 +225,11 @@ function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const initialGroupFilters = useMemo(
-    () =>
-      columns
-        .filter((column) => {
-          return column.enableGrouping;
-        })
-        .map((column) => column.id!),
-    [columns],
-  );
+  const grouping = useMemo(() => {
+    const target = columns.find((col) => col.enableGrouping)?.id;
+    if (!target) return [];
+    return [target];
+  }, [columns]);
 
   const columnOrder = useMemo(() => columns.map((col) => col.id!), [columns]);
 
@@ -239,7 +244,7 @@ function DataTable<TData, TValue>({
     state: {
       sorting,
       expanded,
-      grouping: initialGroupFilters,
+      grouping,
       columnOrder,
     },
     onExpandedChange: setExpanded,
