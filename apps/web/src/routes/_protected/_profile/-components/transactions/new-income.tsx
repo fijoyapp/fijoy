@@ -9,6 +9,15 @@ import type { newIncomeFragment$key } from "./__generated__/newIncomeFragment.gr
 import { graphql } from "relay-runtime";
 import { getRouteApi } from "@tanstack/react-router";
 import { useFragment } from "react-relay";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Form } from "@/components/ui/form";
+import { SelectAccount } from "./select-account";
+
+const formSchema = z.object({
+  account: z.string(),
+});
 
 type Props = {
   fragmentRef: newIncomeFragment$key;
@@ -18,13 +27,7 @@ const routeApi = getRouteApi("/_protected/_profile/transactions");
 
 const fragment = graphql`
   fragment newIncomeFragment on Query {
-    accounts(first: 20) {
-      edges {
-        node {
-          name
-        }
-      }
-    }
+    ...selectAccountFragment
   }
 `;
 
@@ -32,27 +35,48 @@ const NewIncome = ({ fragmentRef }: Props) => {
   const { add } = routeApi.useSearch();
   const navigate = routeApi.useNavigate();
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {},
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // eslint-disable-next-line no-console
+    console.info(values);
+  }
   const data = useFragment(fragment, fragmentRef);
 
   return (
-    <Sheet
-      open={add === "income"}
-      onOpenChange={(open) =>
-        navigate({
-          to: "/transactions",
-          search: {
-            add: open ? "income" : undefined,
-          },
-        })
-      }
-    >
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>New Income</SheetTitle>
-          <SheetDescription></SheetDescription>
-        </SheetHeader>
-      </SheetContent>
-    </Sheet>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <Sheet
+          open={add === "income"}
+          onOpenChange={(open) =>
+            navigate({
+              to: "/transactions",
+              search: {
+                add: open ? "income" : undefined,
+              },
+            })
+          }
+        >
+          <SheetContent className="space-y-2">
+            <SheetHeader>
+              <SheetTitle>New Income</SheetTitle>
+              <SheetDescription></SheetDescription>
+            </SheetHeader>
+
+            <SelectAccount
+              control={form.control}
+              name="account"
+              label="Account"
+              description="Select an account"
+              fragmentRef={data}
+            />
+          </SheetContent>
+        </Sheet>
+      </form>
+    </Form>
   );
 };
 

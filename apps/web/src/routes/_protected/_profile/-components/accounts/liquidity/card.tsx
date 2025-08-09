@@ -46,7 +46,7 @@ export function LiquidityCard({ account }: LiquidityCardProps) {
           )}
         </div>
         <div className="text-muted-foreground text-xs">
-          {getPrettyTime(new Date(data.updatedAt))}
+          {getPrettyTime(new Date(data.updateTime))}
         </div>
       </div>
     </CardContent>

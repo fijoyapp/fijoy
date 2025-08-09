@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7bdbd07ba5bbb066d383cc735a704755>>
+ * @generated SignedSource<<c933e5c8c210acc39dad65a94914063f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,13 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type newIncomeFragment$data = {
-  readonly accounts: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly name: string;
-      } | null | undefined;
-    } | null | undefined> | null | undefined;
-  };
+  readonly " $fragmentSpreads": FragmentRefs<"selectAccountFragment">;
   readonly " $fragmentType": "newIncomeFragment";
 };
 export type newIncomeFragment$key = {
@@ -32,56 +26,15 @@ const node: ReaderFragment = {
   "name": "newIncomeFragment",
   "selections": [
     {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "first",
-          "value": 20
-        }
-      ],
-      "concreteType": "AccountConnection",
-      "kind": "LinkedField",
-      "name": "accounts",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "AccountEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "Account",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "name",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": "accounts(first:20)"
+      "args": null,
+      "kind": "FragmentSpread",
+      "name": "selectAccountFragment"
     }
   ],
   "type": "Query",
   "abstractKey": null
 };
 
-(node as any).hash = "33f67d49fc070eee85f8fc1fc7a265b6";
+(node as any).hash = "377d659b5e41ca0b5824ccfcf5e11e23";
 
 export default node;
