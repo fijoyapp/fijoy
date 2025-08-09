@@ -14,7 +14,6 @@ import { AddAccount } from "./-components/accounts/add-account";
 
 const accountsRouteSchema = z.object({
   add: AccountType.optional(),
-  detail: z.string().startsWith("account_").optional(),
   groupby: z.enum(["accountType", "institution"]).optional(),
 });
 
@@ -35,7 +34,7 @@ export const Route = createFileRoute("/_protected/_profile/accounts")({
 });
 
 function Page() {
-  const { add, detail } = Route.useSearch();
+  const { add } = Route.useSearch();
   const { rootQueryRef } = Route.useRouteContext();
 
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
@@ -51,7 +50,7 @@ function Page() {
       {add ? (
         <AddAccount type={add} />
       ) : (
-        <AccountsView accountsViewFragment={fragmentData} detail={detail} />
+        <AccountsView accountsViewFragment={fragmentData} />
       )}
     </>
   );

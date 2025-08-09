@@ -25,7 +25,6 @@ import AccountDataTable from "./account-data-table";
 
 type AccountsViewProps = {
   accountsViewFragment: accountsViewFragment$key;
-  detail?: string;
 };
 
 const AccountsViewFragment = graphql`
