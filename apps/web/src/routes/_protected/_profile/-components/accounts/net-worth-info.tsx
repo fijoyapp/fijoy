@@ -103,7 +103,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
             {getCurrencyDisplay(
               profile.netWorthGoal.toString(),
               profile.currencies[0],
-            )}
+            )}{" "}
             Goal
           </CardDescription>
         </CardHeader>
