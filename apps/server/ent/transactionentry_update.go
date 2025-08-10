@@ -26,149 +26,149 @@ type TransactionEntryUpdate struct {
 }
 
 // Where appends a list predicates to the TransactionEntryUpdate builder.
-func (teu *TransactionEntryUpdate) Where(ps ...predicate.TransactionEntry) *TransactionEntryUpdate {
-	teu.mutation.Where(ps...)
-	return teu
+func (_u *TransactionEntryUpdate) Where(ps ...predicate.TransactionEntry) *TransactionEntryUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (teu *TransactionEntryUpdate) SetUpdateTime(t time.Time) *TransactionEntryUpdate {
-	teu.mutation.SetUpdateTime(t)
-	return teu
+func (_u *TransactionEntryUpdate) SetUpdateTime(v time.Time) *TransactionEntryUpdate {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetAmount sets the "amount" field.
-func (teu *TransactionEntryUpdate) SetAmount(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.ResetAmount()
-	teu.mutation.SetAmount(d)
-	return teu
+func (_u *TransactionEntryUpdate) SetAmount(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.ResetAmount()
+	_u.mutation.SetAmount(v)
+	return _u
 }
 
 // SetNillableAmount sets the "amount" field if the given value is not nil.
-func (teu *TransactionEntryUpdate) SetNillableAmount(d *decimal.Decimal) *TransactionEntryUpdate {
-	if d != nil {
-		teu.SetAmount(*d)
+func (_u *TransactionEntryUpdate) SetNillableAmount(v *decimal.Decimal) *TransactionEntryUpdate {
+	if v != nil {
+		_u.SetAmount(*v)
 	}
-	return teu
+	return _u
 }
 
-// AddAmount adds d to the "amount" field.
-func (teu *TransactionEntryUpdate) AddAmount(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.AddAmount(d)
-	return teu
+// AddAmount adds value to the "amount" field.
+func (_u *TransactionEntryUpdate) AddAmount(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.AddAmount(v)
+	return _u
 }
 
 // SetValue sets the "value" field.
-func (teu *TransactionEntryUpdate) SetValue(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.ResetValue()
-	teu.mutation.SetValue(d)
-	return teu
+func (_u *TransactionEntryUpdate) SetValue(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.ResetValue()
+	_u.mutation.SetValue(v)
+	return _u
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (teu *TransactionEntryUpdate) SetNillableValue(d *decimal.Decimal) *TransactionEntryUpdate {
-	if d != nil {
-		teu.SetValue(*d)
+func (_u *TransactionEntryUpdate) SetNillableValue(v *decimal.Decimal) *TransactionEntryUpdate {
+	if v != nil {
+		_u.SetValue(*v)
 	}
-	return teu
+	return _u
 }
 
-// AddValue adds d to the "value" field.
-func (teu *TransactionEntryUpdate) AddValue(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.AddValue(d)
-	return teu
+// AddValue adds value to the "value" field.
+func (_u *TransactionEntryUpdate) AddValue(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.AddValue(v)
+	return _u
 }
 
 // SetFxRate sets the "fx_rate" field.
-func (teu *TransactionEntryUpdate) SetFxRate(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.ResetFxRate()
-	teu.mutation.SetFxRate(d)
-	return teu
+func (_u *TransactionEntryUpdate) SetFxRate(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.ResetFxRate()
+	_u.mutation.SetFxRate(v)
+	return _u
 }
 
 // SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (teu *TransactionEntryUpdate) SetNillableFxRate(d *decimal.Decimal) *TransactionEntryUpdate {
-	if d != nil {
-		teu.SetFxRate(*d)
+func (_u *TransactionEntryUpdate) SetNillableFxRate(v *decimal.Decimal) *TransactionEntryUpdate {
+	if v != nil {
+		_u.SetFxRate(*v)
 	}
-	return teu
+	return _u
 }
 
-// AddFxRate adds d to the "fx_rate" field.
-func (teu *TransactionEntryUpdate) AddFxRate(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.AddFxRate(d)
-	return teu
+// AddFxRate adds value to the "fx_rate" field.
+func (_u *TransactionEntryUpdate) AddFxRate(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.AddFxRate(v)
+	return _u
 }
 
 // SetBalance sets the "balance" field.
-func (teu *TransactionEntryUpdate) SetBalance(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.ResetBalance()
-	teu.mutation.SetBalance(d)
-	return teu
+func (_u *TransactionEntryUpdate) SetBalance(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
 }
 
 // SetNillableBalance sets the "balance" field if the given value is not nil.
-func (teu *TransactionEntryUpdate) SetNillableBalance(d *decimal.Decimal) *TransactionEntryUpdate {
-	if d != nil {
-		teu.SetBalance(*d)
+func (_u *TransactionEntryUpdate) SetNillableBalance(v *decimal.Decimal) *TransactionEntryUpdate {
+	if v != nil {
+		_u.SetBalance(*v)
 	}
-	return teu
+	return _u
 }
 
-// AddBalance adds d to the "balance" field.
-func (teu *TransactionEntryUpdate) AddBalance(d decimal.Decimal) *TransactionEntryUpdate {
-	teu.mutation.AddBalance(d)
-	return teu
+// AddBalance adds value to the "balance" field.
+func (_u *TransactionEntryUpdate) AddBalance(v decimal.Decimal) *TransactionEntryUpdate {
+	_u.mutation.AddBalance(v)
+	return _u
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (teu *TransactionEntryUpdate) SetAccountID(id int) *TransactionEntryUpdate {
-	teu.mutation.SetAccountID(id)
-	return teu
+func (_u *TransactionEntryUpdate) SetAccountID(id int) *TransactionEntryUpdate {
+	_u.mutation.SetAccountID(id)
+	return _u
 }
 
 // SetAccount sets the "account" edge to the Account entity.
-func (teu *TransactionEntryUpdate) SetAccount(a *Account) *TransactionEntryUpdate {
-	return teu.SetAccountID(a.ID)
+func (_u *TransactionEntryUpdate) SetAccount(v *Account) *TransactionEntryUpdate {
+	return _u.SetAccountID(v.ID)
 }
 
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (teu *TransactionEntryUpdate) SetTransactionID(id int) *TransactionEntryUpdate {
-	teu.mutation.SetTransactionID(id)
-	return teu
+func (_u *TransactionEntryUpdate) SetTransactionID(id int) *TransactionEntryUpdate {
+	_u.mutation.SetTransactionID(id)
+	return _u
 }
 
 // SetTransaction sets the "transaction" edge to the Transaction entity.
-func (teu *TransactionEntryUpdate) SetTransaction(t *Transaction) *TransactionEntryUpdate {
-	return teu.SetTransactionID(t.ID)
+func (_u *TransactionEntryUpdate) SetTransaction(v *Transaction) *TransactionEntryUpdate {
+	return _u.SetTransactionID(v.ID)
 }
 
 // Mutation returns the TransactionEntryMutation object of the builder.
-func (teu *TransactionEntryUpdate) Mutation() *TransactionEntryMutation {
-	return teu.mutation
+func (_u *TransactionEntryUpdate) Mutation() *TransactionEntryMutation {
+	return _u.mutation
 }
 
 // ClearAccount clears the "account" edge to the Account entity.
-func (teu *TransactionEntryUpdate) ClearAccount() *TransactionEntryUpdate {
-	teu.mutation.ClearAccount()
-	return teu
+func (_u *TransactionEntryUpdate) ClearAccount() *TransactionEntryUpdate {
+	_u.mutation.ClearAccount()
+	return _u
 }
 
 // ClearTransaction clears the "transaction" edge to the Transaction entity.
-func (teu *TransactionEntryUpdate) ClearTransaction() *TransactionEntryUpdate {
-	teu.mutation.ClearTransaction()
-	return teu
+func (_u *TransactionEntryUpdate) ClearTransaction() *TransactionEntryUpdate {
+	_u.mutation.ClearTransaction()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (teu *TransactionEntryUpdate) Save(ctx context.Context) (int, error) {
-	teu.defaults()
-	return withHooks(ctx, teu.sqlSave, teu.mutation, teu.hooks)
+func (_u *TransactionEntryUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (teu *TransactionEntryUpdate) SaveX(ctx context.Context) int {
-	affected, err := teu.Save(ctx)
+func (_u *TransactionEntryUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -176,77 +176,77 @@ func (teu *TransactionEntryUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (teu *TransactionEntryUpdate) Exec(ctx context.Context) error {
-	_, err := teu.Save(ctx)
+func (_u *TransactionEntryUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (teu *TransactionEntryUpdate) ExecX(ctx context.Context) {
-	if err := teu.Exec(ctx); err != nil {
+func (_u *TransactionEntryUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (teu *TransactionEntryUpdate) defaults() {
-	if _, ok := teu.mutation.UpdateTime(); !ok {
+func (_u *TransactionEntryUpdate) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := transactionentry.UpdateDefaultUpdateTime()
-		teu.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (teu *TransactionEntryUpdate) check() error {
-	if teu.mutation.AccountCleared() && len(teu.mutation.AccountIDs()) > 0 {
+func (_u *TransactionEntryUpdate) check() error {
+	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.account"`)
 	}
-	if teu.mutation.TransactionCleared() && len(teu.mutation.TransactionIDs()) > 0 {
+	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.transaction"`)
 	}
 	return nil
 }
 
-func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := teu.check(); err != nil {
-		return n, err
+func (_u *TransactionEntryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
-	if ps := teu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := teu.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := teu.mutation.Amount(); ok {
+	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := teu.mutation.AddedAmount(); ok {
+	if value, ok := _u.mutation.AddedAmount(); ok {
 		_spec.AddField(transactionentry.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := teu.mutation.Value(); ok {
+	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(transactionentry.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := teu.mutation.AddedValue(); ok {
+	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(transactionentry.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := teu.mutation.FxRate(); ok {
+	if value, ok := _u.mutation.FxRate(); ok {
 		_spec.SetField(transactionentry.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := teu.mutation.AddedFxRate(); ok {
+	if value, ok := _u.mutation.AddedFxRate(); ok {
 		_spec.AddField(transactionentry.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := teu.mutation.Balance(); ok {
+	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := teu.mutation.AddedBalance(); ok {
+	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(transactionentry.FieldBalance, field.TypeFloat64, value)
 	}
-	if teu.mutation.AccountCleared() {
+	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -259,7 +259,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := teu.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -275,7 +275,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if teu.mutation.TransactionCleared() {
+	if _u.mutation.TransactionCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -288,7 +288,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := teu.mutation.TransactionIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -304,7 +304,7 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, teu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transactionentry.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -312,8 +312,8 @@ func (teu *TransactionEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		return 0, err
 	}
-	teu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // TransactionEntryUpdateOne is the builder for updating a single TransactionEntry entity.
@@ -325,156 +325,156 @@ type TransactionEntryUpdateOne struct {
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (teuo *TransactionEntryUpdateOne) SetUpdateTime(t time.Time) *TransactionEntryUpdateOne {
-	teuo.mutation.SetUpdateTime(t)
-	return teuo
+func (_u *TransactionEntryUpdateOne) SetUpdateTime(v time.Time) *TransactionEntryUpdateOne {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetAmount sets the "amount" field.
-func (teuo *TransactionEntryUpdateOne) SetAmount(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.ResetAmount()
-	teuo.mutation.SetAmount(d)
-	return teuo
+func (_u *TransactionEntryUpdateOne) SetAmount(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.ResetAmount()
+	_u.mutation.SetAmount(v)
+	return _u
 }
 
 // SetNillableAmount sets the "amount" field if the given value is not nil.
-func (teuo *TransactionEntryUpdateOne) SetNillableAmount(d *decimal.Decimal) *TransactionEntryUpdateOne {
-	if d != nil {
-		teuo.SetAmount(*d)
+func (_u *TransactionEntryUpdateOne) SetNillableAmount(v *decimal.Decimal) *TransactionEntryUpdateOne {
+	if v != nil {
+		_u.SetAmount(*v)
 	}
-	return teuo
+	return _u
 }
 
-// AddAmount adds d to the "amount" field.
-func (teuo *TransactionEntryUpdateOne) AddAmount(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.AddAmount(d)
-	return teuo
+// AddAmount adds value to the "amount" field.
+func (_u *TransactionEntryUpdateOne) AddAmount(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.AddAmount(v)
+	return _u
 }
 
 // SetValue sets the "value" field.
-func (teuo *TransactionEntryUpdateOne) SetValue(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.ResetValue()
-	teuo.mutation.SetValue(d)
-	return teuo
+func (_u *TransactionEntryUpdateOne) SetValue(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.ResetValue()
+	_u.mutation.SetValue(v)
+	return _u
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (teuo *TransactionEntryUpdateOne) SetNillableValue(d *decimal.Decimal) *TransactionEntryUpdateOne {
-	if d != nil {
-		teuo.SetValue(*d)
+func (_u *TransactionEntryUpdateOne) SetNillableValue(v *decimal.Decimal) *TransactionEntryUpdateOne {
+	if v != nil {
+		_u.SetValue(*v)
 	}
-	return teuo
+	return _u
 }
 
-// AddValue adds d to the "value" field.
-func (teuo *TransactionEntryUpdateOne) AddValue(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.AddValue(d)
-	return teuo
+// AddValue adds value to the "value" field.
+func (_u *TransactionEntryUpdateOne) AddValue(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.AddValue(v)
+	return _u
 }
 
 // SetFxRate sets the "fx_rate" field.
-func (teuo *TransactionEntryUpdateOne) SetFxRate(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.ResetFxRate()
-	teuo.mutation.SetFxRate(d)
-	return teuo
+func (_u *TransactionEntryUpdateOne) SetFxRate(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.ResetFxRate()
+	_u.mutation.SetFxRate(v)
+	return _u
 }
 
 // SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (teuo *TransactionEntryUpdateOne) SetNillableFxRate(d *decimal.Decimal) *TransactionEntryUpdateOne {
-	if d != nil {
-		teuo.SetFxRate(*d)
+func (_u *TransactionEntryUpdateOne) SetNillableFxRate(v *decimal.Decimal) *TransactionEntryUpdateOne {
+	if v != nil {
+		_u.SetFxRate(*v)
 	}
-	return teuo
+	return _u
 }
 
-// AddFxRate adds d to the "fx_rate" field.
-func (teuo *TransactionEntryUpdateOne) AddFxRate(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.AddFxRate(d)
-	return teuo
+// AddFxRate adds value to the "fx_rate" field.
+func (_u *TransactionEntryUpdateOne) AddFxRate(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.AddFxRate(v)
+	return _u
 }
 
 // SetBalance sets the "balance" field.
-func (teuo *TransactionEntryUpdateOne) SetBalance(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.ResetBalance()
-	teuo.mutation.SetBalance(d)
-	return teuo
+func (_u *TransactionEntryUpdateOne) SetBalance(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
 }
 
 // SetNillableBalance sets the "balance" field if the given value is not nil.
-func (teuo *TransactionEntryUpdateOne) SetNillableBalance(d *decimal.Decimal) *TransactionEntryUpdateOne {
-	if d != nil {
-		teuo.SetBalance(*d)
+func (_u *TransactionEntryUpdateOne) SetNillableBalance(v *decimal.Decimal) *TransactionEntryUpdateOne {
+	if v != nil {
+		_u.SetBalance(*v)
 	}
-	return teuo
+	return _u
 }
 
-// AddBalance adds d to the "balance" field.
-func (teuo *TransactionEntryUpdateOne) AddBalance(d decimal.Decimal) *TransactionEntryUpdateOne {
-	teuo.mutation.AddBalance(d)
-	return teuo
+// AddBalance adds value to the "balance" field.
+func (_u *TransactionEntryUpdateOne) AddBalance(v decimal.Decimal) *TransactionEntryUpdateOne {
+	_u.mutation.AddBalance(v)
+	return _u
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (teuo *TransactionEntryUpdateOne) SetAccountID(id int) *TransactionEntryUpdateOne {
-	teuo.mutation.SetAccountID(id)
-	return teuo
+func (_u *TransactionEntryUpdateOne) SetAccountID(id int) *TransactionEntryUpdateOne {
+	_u.mutation.SetAccountID(id)
+	return _u
 }
 
 // SetAccount sets the "account" edge to the Account entity.
-func (teuo *TransactionEntryUpdateOne) SetAccount(a *Account) *TransactionEntryUpdateOne {
-	return teuo.SetAccountID(a.ID)
+func (_u *TransactionEntryUpdateOne) SetAccount(v *Account) *TransactionEntryUpdateOne {
+	return _u.SetAccountID(v.ID)
 }
 
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (teuo *TransactionEntryUpdateOne) SetTransactionID(id int) *TransactionEntryUpdateOne {
-	teuo.mutation.SetTransactionID(id)
-	return teuo
+func (_u *TransactionEntryUpdateOne) SetTransactionID(id int) *TransactionEntryUpdateOne {
+	_u.mutation.SetTransactionID(id)
+	return _u
 }
 
 // SetTransaction sets the "transaction" edge to the Transaction entity.
-func (teuo *TransactionEntryUpdateOne) SetTransaction(t *Transaction) *TransactionEntryUpdateOne {
-	return teuo.SetTransactionID(t.ID)
+func (_u *TransactionEntryUpdateOne) SetTransaction(v *Transaction) *TransactionEntryUpdateOne {
+	return _u.SetTransactionID(v.ID)
 }
 
 // Mutation returns the TransactionEntryMutation object of the builder.
-func (teuo *TransactionEntryUpdateOne) Mutation() *TransactionEntryMutation {
-	return teuo.mutation
+func (_u *TransactionEntryUpdateOne) Mutation() *TransactionEntryMutation {
+	return _u.mutation
 }
 
 // ClearAccount clears the "account" edge to the Account entity.
-func (teuo *TransactionEntryUpdateOne) ClearAccount() *TransactionEntryUpdateOne {
-	teuo.mutation.ClearAccount()
-	return teuo
+func (_u *TransactionEntryUpdateOne) ClearAccount() *TransactionEntryUpdateOne {
+	_u.mutation.ClearAccount()
+	return _u
 }
 
 // ClearTransaction clears the "transaction" edge to the Transaction entity.
-func (teuo *TransactionEntryUpdateOne) ClearTransaction() *TransactionEntryUpdateOne {
-	teuo.mutation.ClearTransaction()
-	return teuo
+func (_u *TransactionEntryUpdateOne) ClearTransaction() *TransactionEntryUpdateOne {
+	_u.mutation.ClearTransaction()
+	return _u
 }
 
 // Where appends a list predicates to the TransactionEntryUpdate builder.
-func (teuo *TransactionEntryUpdateOne) Where(ps ...predicate.TransactionEntry) *TransactionEntryUpdateOne {
-	teuo.mutation.Where(ps...)
-	return teuo
+func (_u *TransactionEntryUpdateOne) Where(ps ...predicate.TransactionEntry) *TransactionEntryUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (teuo *TransactionEntryUpdateOne) Select(field string, fields ...string) *TransactionEntryUpdateOne {
-	teuo.fields = append([]string{field}, fields...)
-	return teuo
+func (_u *TransactionEntryUpdateOne) Select(field string, fields ...string) *TransactionEntryUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated TransactionEntry entity.
-func (teuo *TransactionEntryUpdateOne) Save(ctx context.Context) (*TransactionEntry, error) {
-	teuo.defaults()
-	return withHooks(ctx, teuo.sqlSave, teuo.mutation, teuo.hooks)
+func (_u *TransactionEntryUpdateOne) Save(ctx context.Context) (*TransactionEntry, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (teuo *TransactionEntryUpdateOne) SaveX(ctx context.Context) *TransactionEntry {
-	node, err := teuo.Save(ctx)
+func (_u *TransactionEntryUpdateOne) SaveX(ctx context.Context) *TransactionEntry {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -482,48 +482,48 @@ func (teuo *TransactionEntryUpdateOne) SaveX(ctx context.Context) *TransactionEn
 }
 
 // Exec executes the query on the entity.
-func (teuo *TransactionEntryUpdateOne) Exec(ctx context.Context) error {
-	_, err := teuo.Save(ctx)
+func (_u *TransactionEntryUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (teuo *TransactionEntryUpdateOne) ExecX(ctx context.Context) {
-	if err := teuo.Exec(ctx); err != nil {
+func (_u *TransactionEntryUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (teuo *TransactionEntryUpdateOne) defaults() {
-	if _, ok := teuo.mutation.UpdateTime(); !ok {
+func (_u *TransactionEntryUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := transactionentry.UpdateDefaultUpdateTime()
-		teuo.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (teuo *TransactionEntryUpdateOne) check() error {
-	if teuo.mutation.AccountCleared() && len(teuo.mutation.AccountIDs()) > 0 {
+func (_u *TransactionEntryUpdateOne) check() error {
+	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.account"`)
 	}
-	if teuo.mutation.TransactionCleared() && len(teuo.mutation.TransactionIDs()) > 0 {
+	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.transaction"`)
 	}
 	return nil
 }
 
-func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *TransactionEntry, err error) {
-	if err := teuo.check(); err != nil {
+func (_u *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *TransactionEntry, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
-	id, ok := teuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TransactionEntry.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := teuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, transactionentry.FieldID)
 		for _, f := range fields {
@@ -535,41 +535,41 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 			}
 		}
 	}
-	if ps := teuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := teuo.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := teuo.mutation.Amount(); ok {
+	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := teuo.mutation.AddedAmount(); ok {
+	if value, ok := _u.mutation.AddedAmount(); ok {
 		_spec.AddField(transactionentry.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := teuo.mutation.Value(); ok {
+	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(transactionentry.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := teuo.mutation.AddedValue(); ok {
+	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(transactionentry.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := teuo.mutation.FxRate(); ok {
+	if value, ok := _u.mutation.FxRate(); ok {
 		_spec.SetField(transactionentry.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := teuo.mutation.AddedFxRate(); ok {
+	if value, ok := _u.mutation.AddedFxRate(); ok {
 		_spec.AddField(transactionentry.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := teuo.mutation.Balance(); ok {
+	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := teuo.mutation.AddedBalance(); ok {
+	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(transactionentry.FieldBalance, field.TypeFloat64, value)
 	}
-	if teuo.mutation.AccountCleared() {
+	if _u.mutation.AccountCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -582,7 +582,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := teuo.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -598,7 +598,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if teuo.mutation.TransactionCleared() {
+	if _u.mutation.TransactionCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -611,7 +611,7 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := teuo.mutation.TransactionIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -627,10 +627,10 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &TransactionEntry{config: teuo.config}
+	_node = &TransactionEntry{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, teuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transactionentry.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -638,6 +638,6 @@ func (teuo *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Tran
 		}
 		return nil, err
 	}
-	teuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

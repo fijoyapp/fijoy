@@ -110,7 +110,7 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Profile fields.
-func (pr *Profile) assignValues(columns []string, values []any) error {
+func (_m *Profile) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -121,30 +121,30 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			pr.ID = int(value.Int64)
+			_m.ID = int(value.Int64)
 		case profile.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				pr.CreateTime = value.Time
+				_m.CreateTime = value.Time
 			}
 		case profile.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
-				pr.UpdateTime = value.Time
+				_m.UpdateTime = value.Time
 			}
 		case profile.FieldLocale:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field locale", values[i])
 			} else if value.Valid {
-				pr.Locale = value.String
+				_m.Locale = value.String
 			}
 		case profile.FieldCurrencies:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field currencies", values[i])
 			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &pr.Currencies); err != nil {
+				if err := json.Unmarshal(*value, &_m.Currencies); err != nil {
 					return fmt.Errorf("unmarshal field currencies: %w", err)
 				}
 			}
@@ -152,17 +152,17 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field net_worth_goal", values[i])
 			} else if value != nil {
-				pr.NetWorthGoal = *value
+				_m.NetWorthGoal = *value
 			}
 		case profile.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_profiles", value)
 			} else if value.Valid {
-				pr.user_profiles = new(int)
-				*pr.user_profiles = int(value.Int64)
+				_m.user_profiles = new(int)
+				*_m.user_profiles = int(value.Int64)
 			}
 		default:
-			pr.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -170,111 +170,111 @@ func (pr *Profile) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Profile.
 // This includes values selected through modifiers, order, etc.
-func (pr *Profile) Value(name string) (ent.Value, error) {
-	return pr.selectValues.Get(name)
+func (_m *Profile) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryUser queries the "user" edge of the Profile entity.
-func (pr *Profile) QueryUser() *UserQuery {
-	return NewProfileClient(pr.config).QueryUser(pr)
+func (_m *Profile) QueryUser() *UserQuery {
+	return NewProfileClient(_m.config).QueryUser(_m)
 }
 
 // QueryAccounts queries the "accounts" edge of the Profile entity.
-func (pr *Profile) QueryAccounts() *AccountQuery {
-	return NewProfileClient(pr.config).QueryAccounts(pr)
+func (_m *Profile) QueryAccounts() *AccountQuery {
+	return NewProfileClient(_m.config).QueryAccounts(_m)
 }
 
 // QueryTransactions queries the "transactions" edge of the Profile entity.
-func (pr *Profile) QueryTransactions() *TransactionQuery {
-	return NewProfileClient(pr.config).QueryTransactions(pr)
+func (_m *Profile) QueryTransactions() *TransactionQuery {
+	return NewProfileClient(_m.config).QueryTransactions(_m)
 }
 
 // Update returns a builder for updating this Profile.
 // Note that you need to call Profile.Unwrap() before calling this method if this Profile
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (pr *Profile) Update() *ProfileUpdateOne {
-	return NewProfileClient(pr.config).UpdateOne(pr)
+func (_m *Profile) Update() *ProfileUpdateOne {
+	return NewProfileClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Profile entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (pr *Profile) Unwrap() *Profile {
-	_tx, ok := pr.config.driver.(*txDriver)
+func (_m *Profile) Unwrap() *Profile {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Profile is not a transactional entity")
 	}
-	pr.config.driver = _tx.drv
-	return pr
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (pr *Profile) String() string {
+func (_m *Profile) String() string {
 	var builder strings.Builder
 	builder.WriteString("Profile(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", pr.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("create_time=")
-	builder.WriteString(pr.CreateTime.Format(time.ANSIC))
+	builder.WriteString(_m.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
-	builder.WriteString(pr.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("locale=")
-	builder.WriteString(pr.Locale)
+	builder.WriteString(_m.Locale)
 	builder.WriteString(", ")
 	builder.WriteString("currencies=")
-	builder.WriteString(fmt.Sprintf("%v", pr.Currencies))
+	builder.WriteString(fmt.Sprintf("%v", _m.Currencies))
 	builder.WriteString(", ")
 	builder.WriteString("net_worth_goal=")
-	builder.WriteString(fmt.Sprintf("%v", pr.NetWorthGoal))
+	builder.WriteString(fmt.Sprintf("%v", _m.NetWorthGoal))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
 // NamedAccounts returns the Accounts named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (pr *Profile) NamedAccounts(name string) ([]*Account, error) {
-	if pr.Edges.namedAccounts == nil {
+func (_m *Profile) NamedAccounts(name string) ([]*Account, error) {
+	if _m.Edges.namedAccounts == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := pr.Edges.namedAccounts[name]
+	nodes, ok := _m.Edges.namedAccounts[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (pr *Profile) appendNamedAccounts(name string, edges ...*Account) {
-	if pr.Edges.namedAccounts == nil {
-		pr.Edges.namedAccounts = make(map[string][]*Account)
+func (_m *Profile) appendNamedAccounts(name string, edges ...*Account) {
+	if _m.Edges.namedAccounts == nil {
+		_m.Edges.namedAccounts = make(map[string][]*Account)
 	}
 	if len(edges) == 0 {
-		pr.Edges.namedAccounts[name] = []*Account{}
+		_m.Edges.namedAccounts[name] = []*Account{}
 	} else {
-		pr.Edges.namedAccounts[name] = append(pr.Edges.namedAccounts[name], edges...)
+		_m.Edges.namedAccounts[name] = append(_m.Edges.namedAccounts[name], edges...)
 	}
 }
 
 // NamedTransactions returns the Transactions named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (pr *Profile) NamedTransactions(name string) ([]*Transaction, error) {
-	if pr.Edges.namedTransactions == nil {
+func (_m *Profile) NamedTransactions(name string) ([]*Transaction, error) {
+	if _m.Edges.namedTransactions == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := pr.Edges.namedTransactions[name]
+	nodes, ok := _m.Edges.namedTransactions[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (pr *Profile) appendNamedTransactions(name string, edges ...*Transaction) {
-	if pr.Edges.namedTransactions == nil {
-		pr.Edges.namedTransactions = make(map[string][]*Transaction)
+func (_m *Profile) appendNamedTransactions(name string, edges ...*Transaction) {
+	if _m.Edges.namedTransactions == nil {
+		_m.Edges.namedTransactions = make(map[string][]*Transaction)
 	}
 	if len(edges) == 0 {
-		pr.Edges.namedTransactions[name] = []*Transaction{}
+		_m.Edges.namedTransactions[name] = []*Transaction{}
 	} else {
-		pr.Edges.namedTransactions[name] = append(pr.Edges.namedTransactions[name], edges...)
+		_m.Edges.namedTransactions[name] = append(_m.Edges.namedTransactions[name], edges...)
 	}
 }
 

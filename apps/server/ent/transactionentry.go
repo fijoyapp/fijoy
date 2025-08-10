@@ -99,7 +99,7 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the TransactionEntry fields.
-func (te *TransactionEntry) assignValues(columns []string, values []any) error {
+func (_m *TransactionEntry) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -110,59 +110,59 @@ func (te *TransactionEntry) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			te.ID = int(value.Int64)
+			_m.ID = int(value.Int64)
 		case transactionentry.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				te.CreateTime = value.Time
+				_m.CreateTime = value.Time
 			}
 		case transactionentry.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
-				te.UpdateTime = value.Time
+				_m.UpdateTime = value.Time
 			}
 		case transactionentry.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value != nil {
-				te.Amount = *value
+				_m.Amount = *value
 			}
 		case transactionentry.FieldValue:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value != nil {
-				te.Value = *value
+				_m.Value = *value
 			}
 		case transactionentry.FieldFxRate:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
 			} else if value != nil {
-				te.FxRate = *value
+				_m.FxRate = *value
 			}
 		case transactionentry.FieldBalance:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value != nil {
-				te.Balance = *value
+				_m.Balance = *value
 			}
 		case transactionentry.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field account_transaction_entries", value)
 			} else if value.Valid {
-				te.account_transaction_entries = new(int)
-				*te.account_transaction_entries = int(value.Int64)
+				_m.account_transaction_entries = new(int)
+				*_m.account_transaction_entries = int(value.Int64)
 			}
 		case transactionentry.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field transaction_transaction_entries", value)
 			} else if value.Valid {
-				te.transaction_transaction_entries = new(int)
-				*te.transaction_transaction_entries = int(value.Int64)
+				_m.transaction_transaction_entries = new(int)
+				*_m.transaction_transaction_entries = int(value.Int64)
 			}
 		default:
-			te.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -170,60 +170,60 @@ func (te *TransactionEntry) assignValues(columns []string, values []any) error {
 
 // GetValue returns the ent.Value that was dynamically selected and assigned to the TransactionEntry.
 // This includes values selected through modifiers, order, etc.
-func (te *TransactionEntry) GetValue(name string) (ent.Value, error) {
-	return te.selectValues.Get(name)
+func (_m *TransactionEntry) GetValue(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryAccount queries the "account" edge of the TransactionEntry entity.
-func (te *TransactionEntry) QueryAccount() *AccountQuery {
-	return NewTransactionEntryClient(te.config).QueryAccount(te)
+func (_m *TransactionEntry) QueryAccount() *AccountQuery {
+	return NewTransactionEntryClient(_m.config).QueryAccount(_m)
 }
 
 // QueryTransaction queries the "transaction" edge of the TransactionEntry entity.
-func (te *TransactionEntry) QueryTransaction() *TransactionQuery {
-	return NewTransactionEntryClient(te.config).QueryTransaction(te)
+func (_m *TransactionEntry) QueryTransaction() *TransactionQuery {
+	return NewTransactionEntryClient(_m.config).QueryTransaction(_m)
 }
 
 // Update returns a builder for updating this TransactionEntry.
 // Note that you need to call TransactionEntry.Unwrap() before calling this method if this TransactionEntry
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (te *TransactionEntry) Update() *TransactionEntryUpdateOne {
-	return NewTransactionEntryClient(te.config).UpdateOne(te)
+func (_m *TransactionEntry) Update() *TransactionEntryUpdateOne {
+	return NewTransactionEntryClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the TransactionEntry entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (te *TransactionEntry) Unwrap() *TransactionEntry {
-	_tx, ok := te.config.driver.(*txDriver)
+func (_m *TransactionEntry) Unwrap() *TransactionEntry {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: TransactionEntry is not a transactional entity")
 	}
-	te.config.driver = _tx.drv
-	return te
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (te *TransactionEntry) String() string {
+func (_m *TransactionEntry) String() string {
 	var builder strings.Builder
 	builder.WriteString("TransactionEntry(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", te.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("create_time=")
-	builder.WriteString(te.CreateTime.Format(time.ANSIC))
+	builder.WriteString(_m.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
-	builder.WriteString(te.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", te.Amount))
+	builder.WriteString(fmt.Sprintf("%v", _m.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("value=")
-	builder.WriteString(fmt.Sprintf("%v", te.Value))
+	builder.WriteString(fmt.Sprintf("%v", _m.Value))
 	builder.WriteString(", ")
 	builder.WriteString("fx_rate=")
-	builder.WriteString(fmt.Sprintf("%v", te.FxRate))
+	builder.WriteString(fmt.Sprintf("%v", _m.FxRate))
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
-	builder.WriteString(fmt.Sprintf("%v", te.Balance))
+	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -24,153 +24,153 @@ type AccountCreate struct {
 }
 
 // SetCreateTime sets the "create_time" field.
-func (ac *AccountCreate) SetCreateTime(t time.Time) *AccountCreate {
-	ac.mutation.SetCreateTime(t)
-	return ac
+func (_c *AccountCreate) SetCreateTime(v time.Time) *AccountCreate {
+	_c.mutation.SetCreateTime(v)
+	return _c
 }
 
 // SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (ac *AccountCreate) SetNillableCreateTime(t *time.Time) *AccountCreate {
-	if t != nil {
-		ac.SetCreateTime(*t)
+func (_c *AccountCreate) SetNillableCreateTime(v *time.Time) *AccountCreate {
+	if v != nil {
+		_c.SetCreateTime(*v)
 	}
-	return ac
+	return _c
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (ac *AccountCreate) SetUpdateTime(t time.Time) *AccountCreate {
-	ac.mutation.SetUpdateTime(t)
-	return ac
+func (_c *AccountCreate) SetUpdateTime(v time.Time) *AccountCreate {
+	_c.mutation.SetUpdateTime(v)
+	return _c
 }
 
 // SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (ac *AccountCreate) SetNillableUpdateTime(t *time.Time) *AccountCreate {
-	if t != nil {
-		ac.SetUpdateTime(*t)
+func (_c *AccountCreate) SetNillableUpdateTime(v *time.Time) *AccountCreate {
+	if v != nil {
+		_c.SetUpdateTime(*v)
 	}
-	return ac
+	return _c
 }
 
 // SetName sets the "name" field.
-func (ac *AccountCreate) SetName(s string) *AccountCreate {
-	ac.mutation.SetName(s)
-	return ac
+func (_c *AccountCreate) SetName(v string) *AccountCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetInstitution sets the "institution" field.
-func (ac *AccountCreate) SetInstitution(s string) *AccountCreate {
-	ac.mutation.SetInstitution(s)
-	return ac
+func (_c *AccountCreate) SetInstitution(v string) *AccountCreate {
+	_c.mutation.SetInstitution(v)
+	return _c
 }
 
 // SetAccountType sets the "account_type" field.
-func (ac *AccountCreate) SetAccountType(at account.AccountType) *AccountCreate {
-	ac.mutation.SetAccountType(at)
-	return ac
+func (_c *AccountCreate) SetAccountType(v account.AccountType) *AccountCreate {
+	_c.mutation.SetAccountType(v)
+	return _c
 }
 
 // SetInvestmentType sets the "investment_type" field.
-func (ac *AccountCreate) SetInvestmentType(at account.InvestmentType) *AccountCreate {
-	ac.mutation.SetInvestmentType(at)
-	return ac
+func (_c *AccountCreate) SetInvestmentType(v account.InvestmentType) *AccountCreate {
+	_c.mutation.SetInvestmentType(v)
+	return _c
 }
 
 // SetCurrencySymbol sets the "currency_symbol" field.
-func (ac *AccountCreate) SetCurrencySymbol(s string) *AccountCreate {
-	ac.mutation.SetCurrencySymbol(s)
-	return ac
+func (_c *AccountCreate) SetCurrencySymbol(v string) *AccountCreate {
+	_c.mutation.SetCurrencySymbol(v)
+	return _c
 }
 
 // SetTicker sets the "ticker" field.
-func (ac *AccountCreate) SetTicker(s string) *AccountCreate {
-	ac.mutation.SetTicker(s)
-	return ac
+func (_c *AccountCreate) SetTicker(v string) *AccountCreate {
+	_c.mutation.SetTicker(v)
+	return _c
 }
 
 // SetTickerType sets the "ticker_type" field.
-func (ac *AccountCreate) SetTickerType(at account.TickerType) *AccountCreate {
-	ac.mutation.SetTickerType(at)
-	return ac
+func (_c *AccountCreate) SetTickerType(v account.TickerType) *AccountCreate {
+	_c.mutation.SetTickerType(v)
+	return _c
 }
 
 // SetAmount sets the "amount" field.
-func (ac *AccountCreate) SetAmount(d decimal.Decimal) *AccountCreate {
-	ac.mutation.SetAmount(d)
-	return ac
+func (_c *AccountCreate) SetAmount(v decimal.Decimal) *AccountCreate {
+	_c.mutation.SetAmount(v)
+	return _c
 }
 
 // SetValue sets the "value" field.
-func (ac *AccountCreate) SetValue(d decimal.Decimal) *AccountCreate {
-	ac.mutation.SetValue(d)
-	return ac
+func (_c *AccountCreate) SetValue(v decimal.Decimal) *AccountCreate {
+	_c.mutation.SetValue(v)
+	return _c
 }
 
 // SetFxRate sets the "fx_rate" field.
-func (ac *AccountCreate) SetFxRate(d decimal.Decimal) *AccountCreate {
-	ac.mutation.SetFxRate(d)
-	return ac
+func (_c *AccountCreate) SetFxRate(v decimal.Decimal) *AccountCreate {
+	_c.mutation.SetFxRate(v)
+	return _c
 }
 
 // SetBalance sets the "balance" field.
-func (ac *AccountCreate) SetBalance(d decimal.Decimal) *AccountCreate {
-	ac.mutation.SetBalance(d)
-	return ac
+func (_c *AccountCreate) SetBalance(v decimal.Decimal) *AccountCreate {
+	_c.mutation.SetBalance(v)
+	return _c
 }
 
 // SetArchived sets the "archived" field.
-func (ac *AccountCreate) SetArchived(b bool) *AccountCreate {
-	ac.mutation.SetArchived(b)
-	return ac
+func (_c *AccountCreate) SetArchived(v bool) *AccountCreate {
+	_c.mutation.SetArchived(v)
+	return _c
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (ac *AccountCreate) SetNillableArchived(b *bool) *AccountCreate {
-	if b != nil {
-		ac.SetArchived(*b)
+func (_c *AccountCreate) SetNillableArchived(v *bool) *AccountCreate {
+	if v != nil {
+		_c.SetArchived(*v)
 	}
-	return ac
+	return _c
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (ac *AccountCreate) SetProfileID(id int) *AccountCreate {
-	ac.mutation.SetProfileID(id)
-	return ac
+func (_c *AccountCreate) SetProfileID(id int) *AccountCreate {
+	_c.mutation.SetProfileID(id)
+	return _c
 }
 
 // SetProfile sets the "profile" edge to the Profile entity.
-func (ac *AccountCreate) SetProfile(p *Profile) *AccountCreate {
-	return ac.SetProfileID(p.ID)
+func (_c *AccountCreate) SetProfile(v *Profile) *AccountCreate {
+	return _c.SetProfileID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (ac *AccountCreate) AddTransactionEntryIDs(ids ...int) *AccountCreate {
-	ac.mutation.AddTransactionEntryIDs(ids...)
-	return ac
+func (_c *AccountCreate) AddTransactionEntryIDs(ids ...int) *AccountCreate {
+	_c.mutation.AddTransactionEntryIDs(ids...)
+	return _c
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
-func (ac *AccountCreate) AddTransactionEntries(t ...*TransactionEntry) *AccountCreate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_c *AccountCreate) AddTransactionEntries(v ...*TransactionEntry) *AccountCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return ac.AddTransactionEntryIDs(ids...)
+	return _c.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
-func (ac *AccountCreate) Mutation() *AccountMutation {
-	return ac.mutation
+func (_c *AccountCreate) Mutation() *AccountMutation {
+	return _c.mutation
 }
 
 // Save creates the Account in the database.
-func (ac *AccountCreate) Save(ctx context.Context) (*Account, error) {
-	ac.defaults()
-	return withHooks(ctx, ac.sqlSave, ac.mutation, ac.hooks)
+func (_c *AccountCreate) Save(ctx context.Context) (*Account, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ac *AccountCreate) SaveX(ctx context.Context) *Account {
-	v, err := ac.Save(ctx)
+func (_c *AccountCreate) SaveX(ctx context.Context) *Account {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -178,125 +178,125 @@ func (ac *AccountCreate) SaveX(ctx context.Context) *Account {
 }
 
 // Exec executes the query.
-func (ac *AccountCreate) Exec(ctx context.Context) error {
-	_, err := ac.Save(ctx)
+func (_c *AccountCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ac *AccountCreate) ExecX(ctx context.Context) {
-	if err := ac.Exec(ctx); err != nil {
+func (_c *AccountCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ac *AccountCreate) defaults() {
-	if _, ok := ac.mutation.CreateTime(); !ok {
+func (_c *AccountCreate) defaults() {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		v := account.DefaultCreateTime()
-		ac.mutation.SetCreateTime(v)
+		_c.mutation.SetCreateTime(v)
 	}
-	if _, ok := ac.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		v := account.DefaultUpdateTime()
-		ac.mutation.SetUpdateTime(v)
+		_c.mutation.SetUpdateTime(v)
 	}
-	if _, ok := ac.mutation.Archived(); !ok {
+	if _, ok := _c.mutation.Archived(); !ok {
 		v := account.DefaultArchived
-		ac.mutation.SetArchived(v)
+		_c.mutation.SetArchived(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ac *AccountCreate) check() error {
-	if _, ok := ac.mutation.CreateTime(); !ok {
+func (_c *AccountCreate) check() error {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Account.create_time"`)}
 	}
-	if _, ok := ac.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Account.update_time"`)}
 	}
-	if _, ok := ac.mutation.Name(); !ok {
+	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Account.name"`)}
 	}
-	if v, ok := ac.mutation.Name(); ok {
+	if v, ok := _c.mutation.Name(); ok {
 		if err := account.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.Institution(); !ok {
+	if _, ok := _c.mutation.Institution(); !ok {
 		return &ValidationError{Name: "institution", err: errors.New(`ent: missing required field "Account.institution"`)}
 	}
-	if v, ok := ac.mutation.Institution(); ok {
+	if v, ok := _c.mutation.Institution(); ok {
 		if err := account.InstitutionValidator(v); err != nil {
 			return &ValidationError{Name: "institution", err: fmt.Errorf(`ent: validator failed for field "Account.institution": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.AccountType(); !ok {
+	if _, ok := _c.mutation.AccountType(); !ok {
 		return &ValidationError{Name: "account_type", err: errors.New(`ent: missing required field "Account.account_type"`)}
 	}
-	if v, ok := ac.mutation.AccountType(); ok {
+	if v, ok := _c.mutation.AccountType(); ok {
 		if err := account.AccountTypeValidator(v); err != nil {
 			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "Account.account_type": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.InvestmentType(); !ok {
+	if _, ok := _c.mutation.InvestmentType(); !ok {
 		return &ValidationError{Name: "investment_type", err: errors.New(`ent: missing required field "Account.investment_type"`)}
 	}
-	if v, ok := ac.mutation.InvestmentType(); ok {
+	if v, ok := _c.mutation.InvestmentType(); ok {
 		if err := account.InvestmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.CurrencySymbol(); !ok {
+	if _, ok := _c.mutation.CurrencySymbol(); !ok {
 		return &ValidationError{Name: "currency_symbol", err: errors.New(`ent: missing required field "Account.currency_symbol"`)}
 	}
-	if v, ok := ac.mutation.CurrencySymbol(); ok {
+	if v, ok := _c.mutation.CurrencySymbol(); ok {
 		if err := account.CurrencySymbolValidator(v); err != nil {
 			return &ValidationError{Name: "currency_symbol", err: fmt.Errorf(`ent: validator failed for field "Account.currency_symbol": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.Ticker(); !ok {
+	if _, ok := _c.mutation.Ticker(); !ok {
 		return &ValidationError{Name: "ticker", err: errors.New(`ent: missing required field "Account.ticker"`)}
 	}
-	if v, ok := ac.mutation.Ticker(); ok {
+	if v, ok := _c.mutation.Ticker(); ok {
 		if err := account.TickerValidator(v); err != nil {
 			return &ValidationError{Name: "ticker", err: fmt.Errorf(`ent: validator failed for field "Account.ticker": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.TickerType(); !ok {
+	if _, ok := _c.mutation.TickerType(); !ok {
 		return &ValidationError{Name: "ticker_type", err: errors.New(`ent: missing required field "Account.ticker_type"`)}
 	}
-	if v, ok := ac.mutation.TickerType(); ok {
+	if v, ok := _c.mutation.TickerType(); ok {
 		if err := account.TickerTypeValidator(v); err != nil {
 			return &ValidationError{Name: "ticker_type", err: fmt.Errorf(`ent: validator failed for field "Account.ticker_type": %w`, err)}
 		}
 	}
-	if _, ok := ac.mutation.Amount(); !ok {
+	if _, ok := _c.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Account.amount"`)}
 	}
-	if _, ok := ac.mutation.Value(); !ok {
+	if _, ok := _c.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Account.value"`)}
 	}
-	if _, ok := ac.mutation.FxRate(); !ok {
+	if _, ok := _c.mutation.FxRate(); !ok {
 		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "Account.fx_rate"`)}
 	}
-	if _, ok := ac.mutation.Balance(); !ok {
+	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}
 	}
-	if _, ok := ac.mutation.Archived(); !ok {
+	if _, ok := _c.mutation.Archived(); !ok {
 		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Account.archived"`)}
 	}
-	if len(ac.mutation.ProfileIDs()) == 0 {
+	if len(_c.mutation.ProfileIDs()) == 0 {
 		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "Account.profile"`)}
 	}
 	return nil
 }
 
-func (ac *AccountCreate) sqlSave(ctx context.Context) (*Account, error) {
-	if err := ac.check(); err != nil {
+func (_c *AccountCreate) sqlSave(ctx context.Context) (*Account, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := ac.createSpec()
-	if err := sqlgraph.CreateNode(ctx, ac.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -304,73 +304,73 @@ func (ac *AccountCreate) sqlSave(ctx context.Context) (*Account, error) {
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
-	ac.mutation.id = &_node.ID
-	ac.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
+func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Account{config: ac.config}
+		_node = &Account{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(account.Table, sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt))
 	)
-	if value, ok := ac.mutation.CreateTime(); ok {
+	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(account.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
 	}
-	if value, ok := ac.mutation.UpdateTime(); ok {
+	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(account.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
-	if value, ok := ac.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := ac.mutation.Institution(); ok {
+	if value, ok := _c.mutation.Institution(); ok {
 		_spec.SetField(account.FieldInstitution, field.TypeString, value)
 		_node.Institution = value
 	}
-	if value, ok := ac.mutation.AccountType(); ok {
+	if value, ok := _c.mutation.AccountType(); ok {
 		_spec.SetField(account.FieldAccountType, field.TypeEnum, value)
 		_node.AccountType = value
 	}
-	if value, ok := ac.mutation.InvestmentType(); ok {
+	if value, ok := _c.mutation.InvestmentType(); ok {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
 		_node.InvestmentType = value
 	}
-	if value, ok := ac.mutation.CurrencySymbol(); ok {
+	if value, ok := _c.mutation.CurrencySymbol(); ok {
 		_spec.SetField(account.FieldCurrencySymbol, field.TypeString, value)
 		_node.CurrencySymbol = value
 	}
-	if value, ok := ac.mutation.Ticker(); ok {
+	if value, ok := _c.mutation.Ticker(); ok {
 		_spec.SetField(account.FieldTicker, field.TypeString, value)
 		_node.Ticker = value
 	}
-	if value, ok := ac.mutation.TickerType(); ok {
+	if value, ok := _c.mutation.TickerType(); ok {
 		_spec.SetField(account.FieldTickerType, field.TypeEnum, value)
 		_node.TickerType = value
 	}
-	if value, ok := ac.mutation.Amount(); ok {
+	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
 	}
-	if value, ok := ac.mutation.Value(); ok {
+	if value, ok := _c.mutation.Value(); ok {
 		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
 		_node.Value = value
 	}
-	if value, ok := ac.mutation.FxRate(); ok {
+	if value, ok := _c.mutation.FxRate(); ok {
 		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
 		_node.FxRate = value
 	}
-	if value, ok := ac.mutation.Balance(); ok {
+	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
 	}
-	if value, ok := ac.mutation.Archived(); ok {
+	if value, ok := _c.mutation.Archived(); ok {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 		_node.Archived = value
 	}
-	if nodes := ac.mutation.ProfileIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -387,7 +387,7 @@ func (ac *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_node.profile_accounts = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ac.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -414,16 +414,16 @@ type AccountCreateBulk struct {
 }
 
 // Save creates the Account entities in the database.
-func (acb *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
-	if acb.err != nil {
-		return nil, acb.err
+func (_c *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(acb.builders))
-	nodes := make([]*Account, len(acb.builders))
-	mutators := make([]Mutator, len(acb.builders))
-	for i := range acb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Account, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := acb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AccountMutation)
@@ -437,11 +437,11 @@ func (acb *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, acb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, acb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -465,7 +465,7 @@ func (acb *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, acb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -473,8 +473,8 @@ func (acb *AccountCreateBulk) Save(ctx context.Context) ([]*Account, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (acb *AccountCreateBulk) SaveX(ctx context.Context) []*Account {
-	v, err := acb.Save(ctx)
+func (_c *AccountCreateBulk) SaveX(ctx context.Context) []*Account {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -482,14 +482,14 @@ func (acb *AccountCreateBulk) SaveX(ctx context.Context) []*Account {
 }
 
 // Exec executes the query.
-func (acb *AccountCreateBulk) Exec(ctx context.Context) error {
-	_, err := acb.Save(ctx)
+func (_c *AccountCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (acb *AccountCreateBulk) ExecX(ctx context.Context) {
-	if err := acb.Exec(ctx); err != nil {
+func (_c *AccountCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

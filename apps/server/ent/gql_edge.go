@@ -8,122 +8,122 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
-func (a *Account) Profile(ctx context.Context) (*Profile, error) {
-	result, err := a.Edges.ProfileOrErr()
+func (_m *Account) Profile(ctx context.Context) (*Profile, error) {
+	result, err := _m.Edges.ProfileOrErr()
 	if IsNotLoaded(err) {
-		result, err = a.QueryProfile().Only(ctx)
+		result, err = _m.QueryProfile().Only(ctx)
 	}
 	return result, err
 }
 
-func (a *Account) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
+func (_m *Account) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = a.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = _m.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = a.Edges.TransactionEntriesOrErr()
+		result, err = _m.Edges.TransactionEntriesOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = a.QueryTransactionEntries().All(ctx)
+		result, err = _m.QueryTransactionEntries().All(ctx)
 	}
 	return result, err
 }
 
-func (pr *Profile) User(ctx context.Context) (*User, error) {
-	result, err := pr.Edges.UserOrErr()
+func (_m *Profile) User(ctx context.Context) (*User, error) {
+	result, err := _m.Edges.UserOrErr()
 	if IsNotLoaded(err) {
-		result, err = pr.QueryUser().Only(ctx)
+		result, err = _m.QueryUser().Only(ctx)
 	}
 	return result, err
 }
 
-func (pr *Profile) Accounts(ctx context.Context) (result []*Account, err error) {
+func (_m *Profile) Accounts(ctx context.Context) (result []*Account, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = pr.NamedAccounts(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = _m.NamedAccounts(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = pr.Edges.AccountsOrErr()
+		result, err = _m.Edges.AccountsOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = pr.QueryAccounts().All(ctx)
+		result, err = _m.QueryAccounts().All(ctx)
 	}
 	return result, err
 }
 
-func (pr *Profile) Transactions(ctx context.Context) (result []*Transaction, err error) {
+func (_m *Profile) Transactions(ctx context.Context) (result []*Transaction, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = pr.NamedTransactions(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = _m.NamedTransactions(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = pr.Edges.TransactionsOrErr()
+		result, err = _m.Edges.TransactionsOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = pr.QueryTransactions().All(ctx)
+		result, err = _m.QueryTransactions().All(ctx)
 	}
 	return result, err
 }
 
-func (t *Transaction) Profile(ctx context.Context) (*Profile, error) {
-	result, err := t.Edges.ProfileOrErr()
+func (_m *Transaction) Profile(ctx context.Context) (*Profile, error) {
+	result, err := _m.Edges.ProfileOrErr()
 	if IsNotLoaded(err) {
-		result, err = t.QueryProfile().Only(ctx)
+		result, err = _m.QueryProfile().Only(ctx)
 	}
 	return result, err
 }
 
-func (t *Transaction) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
+func (_m *Transaction) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = t.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = _m.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = t.Edges.TransactionEntriesOrErr()
+		result, err = _m.Edges.TransactionEntriesOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = t.QueryTransactionEntries().All(ctx)
+		result, err = _m.QueryTransactionEntries().All(ctx)
 	}
 	return result, err
 }
 
-func (te *TransactionEntry) Account(ctx context.Context) (*Account, error) {
-	result, err := te.Edges.AccountOrErr()
+func (_m *TransactionEntry) Account(ctx context.Context) (*Account, error) {
+	result, err := _m.Edges.AccountOrErr()
 	if IsNotLoaded(err) {
-		result, err = te.QueryAccount().Only(ctx)
+		result, err = _m.QueryAccount().Only(ctx)
 	}
 	return result, err
 }
 
-func (te *TransactionEntry) Transaction(ctx context.Context) (*Transaction, error) {
-	result, err := te.Edges.TransactionOrErr()
+func (_m *TransactionEntry) Transaction(ctx context.Context) (*Transaction, error) {
+	result, err := _m.Edges.TransactionOrErr()
 	if IsNotLoaded(err) {
-		result, err = te.QueryTransaction().Only(ctx)
+		result, err = _m.QueryTransaction().Only(ctx)
 	}
 	return result, err
 }
 
-func (u *User) UserKeys(ctx context.Context) (result []*UserKey, err error) {
+func (_m *User) UserKeys(ctx context.Context) (result []*UserKey, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedUserKeys(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = _m.NamedUserKeys(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = u.Edges.UserKeysOrErr()
+		result, err = _m.Edges.UserKeysOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = u.QueryUserKeys().All(ctx)
+		result, err = _m.QueryUserKeys().All(ctx)
 	}
 	return result, err
 }
 
-func (u *User) Profiles(ctx context.Context) (result []*Profile, err error) {
+func (_m *User) Profiles(ctx context.Context) (result []*Profile, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedProfiles(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = _m.NamedProfiles(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = u.Edges.ProfilesOrErr()
+		result, err = _m.Edges.ProfilesOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = u.QueryProfiles().All(ctx)
+		result, err = _m.QueryProfiles().All(ctx)
 	}
 	return result, err
 }
 
-func (uk *UserKey) User(ctx context.Context) (*User, error) {
-	result, err := uk.Edges.UserOrErr()
+func (_m *UserKey) User(ctx context.Context) (*User, error) {
+	result, err := _m.Edges.UserOrErr()
 	if IsNotLoaded(err) {
-		result, err = uk.QueryUser().Only(ctx)
+		result, err = _m.QueryUser().Only(ctx)
 	}
 	return result, err
 }

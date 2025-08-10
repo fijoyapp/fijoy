@@ -24,93 +24,93 @@ type TransactionEntryCreate struct {
 }
 
 // SetCreateTime sets the "create_time" field.
-func (tec *TransactionEntryCreate) SetCreateTime(t time.Time) *TransactionEntryCreate {
-	tec.mutation.SetCreateTime(t)
-	return tec
+func (_c *TransactionEntryCreate) SetCreateTime(v time.Time) *TransactionEntryCreate {
+	_c.mutation.SetCreateTime(v)
+	return _c
 }
 
 // SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (tec *TransactionEntryCreate) SetNillableCreateTime(t *time.Time) *TransactionEntryCreate {
-	if t != nil {
-		tec.SetCreateTime(*t)
+func (_c *TransactionEntryCreate) SetNillableCreateTime(v *time.Time) *TransactionEntryCreate {
+	if v != nil {
+		_c.SetCreateTime(*v)
 	}
-	return tec
+	return _c
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (tec *TransactionEntryCreate) SetUpdateTime(t time.Time) *TransactionEntryCreate {
-	tec.mutation.SetUpdateTime(t)
-	return tec
+func (_c *TransactionEntryCreate) SetUpdateTime(v time.Time) *TransactionEntryCreate {
+	_c.mutation.SetUpdateTime(v)
+	return _c
 }
 
 // SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (tec *TransactionEntryCreate) SetNillableUpdateTime(t *time.Time) *TransactionEntryCreate {
-	if t != nil {
-		tec.SetUpdateTime(*t)
+func (_c *TransactionEntryCreate) SetNillableUpdateTime(v *time.Time) *TransactionEntryCreate {
+	if v != nil {
+		_c.SetUpdateTime(*v)
 	}
-	return tec
+	return _c
 }
 
 // SetAmount sets the "amount" field.
-func (tec *TransactionEntryCreate) SetAmount(d decimal.Decimal) *TransactionEntryCreate {
-	tec.mutation.SetAmount(d)
-	return tec
+func (_c *TransactionEntryCreate) SetAmount(v decimal.Decimal) *TransactionEntryCreate {
+	_c.mutation.SetAmount(v)
+	return _c
 }
 
 // SetValue sets the "value" field.
-func (tec *TransactionEntryCreate) SetValue(d decimal.Decimal) *TransactionEntryCreate {
-	tec.mutation.SetValue(d)
-	return tec
+func (_c *TransactionEntryCreate) SetValue(v decimal.Decimal) *TransactionEntryCreate {
+	_c.mutation.SetValue(v)
+	return _c
 }
 
 // SetFxRate sets the "fx_rate" field.
-func (tec *TransactionEntryCreate) SetFxRate(d decimal.Decimal) *TransactionEntryCreate {
-	tec.mutation.SetFxRate(d)
-	return tec
+func (_c *TransactionEntryCreate) SetFxRate(v decimal.Decimal) *TransactionEntryCreate {
+	_c.mutation.SetFxRate(v)
+	return _c
 }
 
 // SetBalance sets the "balance" field.
-func (tec *TransactionEntryCreate) SetBalance(d decimal.Decimal) *TransactionEntryCreate {
-	tec.mutation.SetBalance(d)
-	return tec
+func (_c *TransactionEntryCreate) SetBalance(v decimal.Decimal) *TransactionEntryCreate {
+	_c.mutation.SetBalance(v)
+	return _c
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
-func (tec *TransactionEntryCreate) SetAccountID(id int) *TransactionEntryCreate {
-	tec.mutation.SetAccountID(id)
-	return tec
+func (_c *TransactionEntryCreate) SetAccountID(id int) *TransactionEntryCreate {
+	_c.mutation.SetAccountID(id)
+	return _c
 }
 
 // SetAccount sets the "account" edge to the Account entity.
-func (tec *TransactionEntryCreate) SetAccount(a *Account) *TransactionEntryCreate {
-	return tec.SetAccountID(a.ID)
+func (_c *TransactionEntryCreate) SetAccount(v *Account) *TransactionEntryCreate {
+	return _c.SetAccountID(v.ID)
 }
 
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (tec *TransactionEntryCreate) SetTransactionID(id int) *TransactionEntryCreate {
-	tec.mutation.SetTransactionID(id)
-	return tec
+func (_c *TransactionEntryCreate) SetTransactionID(id int) *TransactionEntryCreate {
+	_c.mutation.SetTransactionID(id)
+	return _c
 }
 
 // SetTransaction sets the "transaction" edge to the Transaction entity.
-func (tec *TransactionEntryCreate) SetTransaction(t *Transaction) *TransactionEntryCreate {
-	return tec.SetTransactionID(t.ID)
+func (_c *TransactionEntryCreate) SetTransaction(v *Transaction) *TransactionEntryCreate {
+	return _c.SetTransactionID(v.ID)
 }
 
 // Mutation returns the TransactionEntryMutation object of the builder.
-func (tec *TransactionEntryCreate) Mutation() *TransactionEntryMutation {
-	return tec.mutation
+func (_c *TransactionEntryCreate) Mutation() *TransactionEntryMutation {
+	return _c.mutation
 }
 
 // Save creates the TransactionEntry in the database.
-func (tec *TransactionEntryCreate) Save(ctx context.Context) (*TransactionEntry, error) {
-	tec.defaults()
-	return withHooks(ctx, tec.sqlSave, tec.mutation, tec.hooks)
+func (_c *TransactionEntryCreate) Save(ctx context.Context) (*TransactionEntry, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (tec *TransactionEntryCreate) SaveX(ctx context.Context) *TransactionEntry {
-	v, err := tec.Save(ctx)
+func (_c *TransactionEntryCreate) SaveX(ctx context.Context) *TransactionEntry {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -118,65 +118,65 @@ func (tec *TransactionEntryCreate) SaveX(ctx context.Context) *TransactionEntry 
 }
 
 // Exec executes the query.
-func (tec *TransactionEntryCreate) Exec(ctx context.Context) error {
-	_, err := tec.Save(ctx)
+func (_c *TransactionEntryCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tec *TransactionEntryCreate) ExecX(ctx context.Context) {
-	if err := tec.Exec(ctx); err != nil {
+func (_c *TransactionEntryCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tec *TransactionEntryCreate) defaults() {
-	if _, ok := tec.mutation.CreateTime(); !ok {
+func (_c *TransactionEntryCreate) defaults() {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		v := transactionentry.DefaultCreateTime()
-		tec.mutation.SetCreateTime(v)
+		_c.mutation.SetCreateTime(v)
 	}
-	if _, ok := tec.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		v := transactionentry.DefaultUpdateTime()
-		tec.mutation.SetUpdateTime(v)
+		_c.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tec *TransactionEntryCreate) check() error {
-	if _, ok := tec.mutation.CreateTime(); !ok {
+func (_c *TransactionEntryCreate) check() error {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "TransactionEntry.create_time"`)}
 	}
-	if _, ok := tec.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "TransactionEntry.update_time"`)}
 	}
-	if _, ok := tec.mutation.Amount(); !ok {
+	if _, ok := _c.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "TransactionEntry.amount"`)}
 	}
-	if _, ok := tec.mutation.Value(); !ok {
+	if _, ok := _c.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "TransactionEntry.value"`)}
 	}
-	if _, ok := tec.mutation.FxRate(); !ok {
+	if _, ok := _c.mutation.FxRate(); !ok {
 		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "TransactionEntry.fx_rate"`)}
 	}
-	if _, ok := tec.mutation.Balance(); !ok {
+	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "TransactionEntry.balance"`)}
 	}
-	if len(tec.mutation.AccountIDs()) == 0 {
+	if len(_c.mutation.AccountIDs()) == 0 {
 		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "TransactionEntry.account"`)}
 	}
-	if len(tec.mutation.TransactionIDs()) == 0 {
+	if len(_c.mutation.TransactionIDs()) == 0 {
 		return &ValidationError{Name: "transaction", err: errors.New(`ent: missing required edge "TransactionEntry.transaction"`)}
 	}
 	return nil
 }
 
-func (tec *TransactionEntryCreate) sqlSave(ctx context.Context) (*TransactionEntry, error) {
-	if err := tec.check(); err != nil {
+func (_c *TransactionEntryCreate) sqlSave(ctx context.Context) (*TransactionEntry, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := tec.createSpec()
-	if err := sqlgraph.CreateNode(ctx, tec.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -184,41 +184,41 @@ func (tec *TransactionEntryCreate) sqlSave(ctx context.Context) (*TransactionEnt
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
-	tec.mutation.id = &_node.ID
-	tec.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (tec *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.CreateSpec) {
+func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.CreateSpec) {
 	var (
-		_node = &TransactionEntry{config: tec.config}
+		_node = &TransactionEntry{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(transactionentry.Table, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
 	)
-	if value, ok := tec.mutation.CreateTime(); ok {
+	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(transactionentry.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
 	}
-	if value, ok := tec.mutation.UpdateTime(); ok {
+	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
-	if value, ok := tec.mutation.Amount(); ok {
+	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
 	}
-	if value, ok := tec.mutation.Value(); ok {
+	if value, ok := _c.mutation.Value(); ok {
 		_spec.SetField(transactionentry.FieldValue, field.TypeFloat64, value)
 		_node.Value = value
 	}
-	if value, ok := tec.mutation.FxRate(); ok {
+	if value, ok := _c.mutation.FxRate(); ok {
 		_spec.SetField(transactionentry.FieldFxRate, field.TypeFloat64, value)
 		_node.FxRate = value
 	}
-	if value, ok := tec.mutation.Balance(); ok {
+	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
 	}
-	if nodes := tec.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -235,7 +235,7 @@ func (tec *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cr
 		_node.account_transaction_entries = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tec.mutation.TransactionIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TransactionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -263,16 +263,16 @@ type TransactionEntryCreateBulk struct {
 }
 
 // Save creates the TransactionEntry entities in the database.
-func (tecb *TransactionEntryCreateBulk) Save(ctx context.Context) ([]*TransactionEntry, error) {
-	if tecb.err != nil {
-		return nil, tecb.err
+func (_c *TransactionEntryCreateBulk) Save(ctx context.Context) ([]*TransactionEntry, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(tecb.builders))
-	nodes := make([]*TransactionEntry, len(tecb.builders))
-	mutators := make([]Mutator, len(tecb.builders))
-	for i := range tecb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*TransactionEntry, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := tecb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TransactionEntryMutation)
@@ -286,11 +286,11 @@ func (tecb *TransactionEntryCreateBulk) Save(ctx context.Context) ([]*Transactio
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, tecb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, tecb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -314,7 +314,7 @@ func (tecb *TransactionEntryCreateBulk) Save(ctx context.Context) ([]*Transactio
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, tecb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -322,8 +322,8 @@ func (tecb *TransactionEntryCreateBulk) Save(ctx context.Context) ([]*Transactio
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tecb *TransactionEntryCreateBulk) SaveX(ctx context.Context) []*TransactionEntry {
-	v, err := tecb.Save(ctx)
+func (_c *TransactionEntryCreateBulk) SaveX(ctx context.Context) []*TransactionEntry {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -331,14 +331,14 @@ func (tecb *TransactionEntryCreateBulk) SaveX(ctx context.Context) []*Transactio
 }
 
 // Exec executes the query.
-func (tecb *TransactionEntryCreateBulk) Exec(ctx context.Context) error {
-	_, err := tecb.Save(ctx)
+func (_c *TransactionEntryCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tecb *TransactionEntryCreateBulk) ExecX(ctx context.Context) {
-	if err := tecb.Exec(ctx); err != nil {
+func (_c *TransactionEntryCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

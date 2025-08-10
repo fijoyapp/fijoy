@@ -115,7 +115,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Account fields.
-func (a *Account) assignValues(columns []string, values []any) error {
+func (_m *Account) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -126,100 +126,100 @@ func (a *Account) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			a.ID = int(value.Int64)
+			_m.ID = int(value.Int64)
 		case account.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				a.CreateTime = value.Time
+				_m.CreateTime = value.Time
 			}
 		case account.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
-				a.UpdateTime = value.Time
+				_m.UpdateTime = value.Time
 			}
 		case account.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				a.Name = value.String
+				_m.Name = value.String
 			}
 		case account.FieldInstitution:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field institution", values[i])
 			} else if value.Valid {
-				a.Institution = value.String
+				_m.Institution = value.String
 			}
 		case account.FieldAccountType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field account_type", values[i])
 			} else if value.Valid {
-				a.AccountType = account.AccountType(value.String)
+				_m.AccountType = account.AccountType(value.String)
 			}
 		case account.FieldInvestmentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field investment_type", values[i])
 			} else if value.Valid {
-				a.InvestmentType = account.InvestmentType(value.String)
+				_m.InvestmentType = account.InvestmentType(value.String)
 			}
 		case account.FieldCurrencySymbol:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field currency_symbol", values[i])
 			} else if value.Valid {
-				a.CurrencySymbol = value.String
+				_m.CurrencySymbol = value.String
 			}
 		case account.FieldTicker:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ticker", values[i])
 			} else if value.Valid {
-				a.Ticker = value.String
+				_m.Ticker = value.String
 			}
 		case account.FieldTickerType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ticker_type", values[i])
 			} else if value.Valid {
-				a.TickerType = account.TickerType(value.String)
+				_m.TickerType = account.TickerType(value.String)
 			}
 		case account.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value != nil {
-				a.Amount = *value
+				_m.Amount = *value
 			}
 		case account.FieldValue:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value != nil {
-				a.Value = *value
+				_m.Value = *value
 			}
 		case account.FieldFxRate:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
 			} else if value != nil {
-				a.FxRate = *value
+				_m.FxRate = *value
 			}
 		case account.FieldBalance:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value != nil {
-				a.Balance = *value
+				_m.Balance = *value
 			}
 		case account.FieldArchived:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field archived", values[i])
 			} else if value.Valid {
-				a.Archived = value.Bool
+				_m.Archived = value.Bool
 			}
 		case account.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field profile_accounts", value)
 			} else if value.Valid {
-				a.profile_accounts = new(int)
-				*a.profile_accounts = int(value.Int64)
+				_m.profile_accounts = new(int)
+				*_m.profile_accounts = int(value.Int64)
 			}
 		default:
-			a.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -227,109 +227,109 @@ func (a *Account) assignValues(columns []string, values []any) error {
 
 // GetValue returns the ent.Value that was dynamically selected and assigned to the Account.
 // This includes values selected through modifiers, order, etc.
-func (a *Account) GetValue(name string) (ent.Value, error) {
-	return a.selectValues.Get(name)
+func (_m *Account) GetValue(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryProfile queries the "profile" edge of the Account entity.
-func (a *Account) QueryProfile() *ProfileQuery {
-	return NewAccountClient(a.config).QueryProfile(a)
+func (_m *Account) QueryProfile() *ProfileQuery {
+	return NewAccountClient(_m.config).QueryProfile(_m)
 }
 
 // QueryTransactionEntries queries the "transaction_entries" edge of the Account entity.
-func (a *Account) QueryTransactionEntries() *TransactionEntryQuery {
-	return NewAccountClient(a.config).QueryTransactionEntries(a)
+func (_m *Account) QueryTransactionEntries() *TransactionEntryQuery {
+	return NewAccountClient(_m.config).QueryTransactionEntries(_m)
 }
 
 // Update returns a builder for updating this Account.
 // Note that you need to call Account.Unwrap() before calling this method if this Account
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (a *Account) Update() *AccountUpdateOne {
-	return NewAccountClient(a.config).UpdateOne(a)
+func (_m *Account) Update() *AccountUpdateOne {
+	return NewAccountClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Account entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (a *Account) Unwrap() *Account {
-	_tx, ok := a.config.driver.(*txDriver)
+func (_m *Account) Unwrap() *Account {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Account is not a transactional entity")
 	}
-	a.config.driver = _tx.drv
-	return a
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (a *Account) String() string {
+func (_m *Account) String() string {
 	var builder strings.Builder
 	builder.WriteString("Account(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("create_time=")
-	builder.WriteString(a.CreateTime.Format(time.ANSIC))
+	builder.WriteString(_m.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
-	builder.WriteString(a.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(a.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("institution=")
-	builder.WriteString(a.Institution)
+	builder.WriteString(_m.Institution)
 	builder.WriteString(", ")
 	builder.WriteString("account_type=")
-	builder.WriteString(fmt.Sprintf("%v", a.AccountType))
+	builder.WriteString(fmt.Sprintf("%v", _m.AccountType))
 	builder.WriteString(", ")
 	builder.WriteString("investment_type=")
-	builder.WriteString(fmt.Sprintf("%v", a.InvestmentType))
+	builder.WriteString(fmt.Sprintf("%v", _m.InvestmentType))
 	builder.WriteString(", ")
 	builder.WriteString("currency_symbol=")
-	builder.WriteString(a.CurrencySymbol)
+	builder.WriteString(_m.CurrencySymbol)
 	builder.WriteString(", ")
 	builder.WriteString("ticker=")
-	builder.WriteString(a.Ticker)
+	builder.WriteString(_m.Ticker)
 	builder.WriteString(", ")
 	builder.WriteString("ticker_type=")
-	builder.WriteString(fmt.Sprintf("%v", a.TickerType))
+	builder.WriteString(fmt.Sprintf("%v", _m.TickerType))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
-	builder.WriteString(fmt.Sprintf("%v", a.Amount))
+	builder.WriteString(fmt.Sprintf("%v", _m.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("value=")
-	builder.WriteString(fmt.Sprintf("%v", a.Value))
+	builder.WriteString(fmt.Sprintf("%v", _m.Value))
 	builder.WriteString(", ")
 	builder.WriteString("fx_rate=")
-	builder.WriteString(fmt.Sprintf("%v", a.FxRate))
+	builder.WriteString(fmt.Sprintf("%v", _m.FxRate))
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
-	builder.WriteString(fmt.Sprintf("%v", a.Balance))
+	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
 	builder.WriteString(", ")
 	builder.WriteString("archived=")
-	builder.WriteString(fmt.Sprintf("%v", a.Archived))
+	builder.WriteString(fmt.Sprintf("%v", _m.Archived))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
 // NamedTransactionEntries returns the TransactionEntries named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (a *Account) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
-	if a.Edges.namedTransactionEntries == nil {
+func (_m *Account) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
+	if _m.Edges.namedTransactionEntries == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := a.Edges.namedTransactionEntries[name]
+	nodes, ok := _m.Edges.namedTransactionEntries[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (a *Account) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
-	if a.Edges.namedTransactionEntries == nil {
-		a.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
+func (_m *Account) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
+	if _m.Edges.namedTransactionEntries == nil {
+		_m.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
 	}
 	if len(edges) == 0 {
-		a.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
+		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
 	} else {
-		a.Edges.namedTransactionEntries[name] = append(a.Edges.namedTransactionEntries[name], edges...)
+		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
 	}
 }
 

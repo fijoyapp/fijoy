@@ -15,18 +15,18 @@ import (
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (aq *AccountQuery) CollectFields(ctx context.Context, satisfies ...string) (*AccountQuery, error) {
+func (_q *AccountQuery) CollectFields(ctx context.Context, satisfies ...string) (*AccountQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return aq, nil
+		return _q, nil
 	}
-	if err := aq.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return aq, nil
+	return _q, nil
 }
 
-func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -40,23 +40,23 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&ProfileClient{config: aq.config}).Query()
+				query = (&ProfileClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, profileImplementors)...); err != nil {
 				return err
 			}
-			aq.withProfile = query
+			_q.withProfile = query
 
 		case "transactionEntries":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&TransactionEntryClient{config: aq.config}).Query()
+				query = (&TransactionEntryClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionentryImplementors)...); err != nil {
 				return err
 			}
-			aq.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -136,7 +136,7 @@ func (aq *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 		}
 	}
 	if !unknownSeen {
-		aq.Select(selectedFields...)
+		_q.Select(selectedFields...)
 	}
 	return nil
 }
@@ -168,18 +168,18 @@ func newAccountPaginateArgs(rv map[string]any) *accountPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (pq *ProfileQuery) CollectFields(ctx context.Context, satisfies ...string) (*ProfileQuery, error) {
+func (_q *ProfileQuery) CollectFields(ctx context.Context, satisfies ...string) (*ProfileQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return pq, nil
+		return _q, nil
 	}
-	if err := pq.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return pq, nil
+	return _q, nil
 }
 
-func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -193,23 +193,23 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&UserClient{config: pq.config}).Query()
+				query = (&UserClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
-			pq.withUser = query
+			_q.withUser = query
 
 		case "accounts":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&AccountClient{config: pq.config}).Query()
+				query = (&AccountClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
 				return err
 			}
-			pq.WithNamedAccounts(alias, func(wq *AccountQuery) {
+			_q.WithNamedAccounts(alias, func(wq *AccountQuery) {
 				*wq = *query
 			})
 
@@ -217,12 +217,12 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&TransactionClient{config: pq.config}).Query()
+				query = (&TransactionClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
 				return err
 			}
-			pq.WithNamedTransactions(alias, func(wq *TransactionQuery) {
+			_q.WithNamedTransactions(alias, func(wq *TransactionQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -257,7 +257,7 @@ func (pq *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 		}
 	}
 	if !unknownSeen {
-		pq.Select(selectedFields...)
+		_q.Select(selectedFields...)
 	}
 	return nil
 }
@@ -289,18 +289,18 @@ func newProfilePaginateArgs(rv map[string]any) *profilePaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (tq *TransactionQuery) CollectFields(ctx context.Context, satisfies ...string) (*TransactionQuery, error) {
+func (_q *TransactionQuery) CollectFields(ctx context.Context, satisfies ...string) (*TransactionQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return tq, nil
+		return _q, nil
 	}
-	if err := tq.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return tq, nil
+	return _q, nil
 }
 
-func (tq *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -314,23 +314,23 @@ func (tq *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&ProfileClient{config: tq.config}).Query()
+				query = (&ProfileClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, profileImplementors)...); err != nil {
 				return err
 			}
-			tq.withProfile = query
+			_q.withProfile = query
 
 		case "transactionEntries":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&TransactionEntryClient{config: tq.config}).Query()
+				query = (&TransactionEntryClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionentryImplementors)...); err != nil {
 				return err
 			}
-			tq.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -365,7 +365,7 @@ func (tq *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 		}
 	}
 	if !unknownSeen {
-		tq.Select(selectedFields...)
+		_q.Select(selectedFields...)
 	}
 	return nil
 }
@@ -397,18 +397,18 @@ func newTransactionPaginateArgs(rv map[string]any) *transactionPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (teq *TransactionEntryQuery) CollectFields(ctx context.Context, satisfies ...string) (*TransactionEntryQuery, error) {
+func (_q *TransactionEntryQuery) CollectFields(ctx context.Context, satisfies ...string) (*TransactionEntryQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return teq, nil
+		return _q, nil
 	}
-	if err := teq.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return teq, nil
+	return _q, nil
 }
 
-func (teq *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -422,23 +422,23 @@ func (teq *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&AccountClient{config: teq.config}).Query()
+				query = (&AccountClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
 				return err
 			}
-			teq.withAccount = query
+			_q.withAccount = query
 
 		case "transaction":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&TransactionClient{config: teq.config}).Query()
+				query = (&TransactionClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
 				return err
 			}
-			teq.withTransaction = query
+			_q.withTransaction = query
 		case "createTime":
 			if _, ok := fieldSeen[transactionentry.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldCreateTime)
@@ -476,7 +476,7 @@ func (teq *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool
 		}
 	}
 	if !unknownSeen {
-		teq.Select(selectedFields...)
+		_q.Select(selectedFields...)
 	}
 	return nil
 }
@@ -508,18 +508,18 @@ func newTransactionEntryPaginateArgs(rv map[string]any) *transactionentryPaginat
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (uq *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserQuery, error) {
+func (_q *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return uq, nil
+		return _q, nil
 	}
-	if err := uq.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return uq, nil
+	return _q, nil
 }
 
-func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -533,12 +533,12 @@ func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&UserKeyClient{config: uq.config}).Query()
+				query = (&UserKeyClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userkeyImplementors)...); err != nil {
 				return err
 			}
-			uq.WithNamedUserKeys(alias, func(wq *UserKeyQuery) {
+			_q.WithNamedUserKeys(alias, func(wq *UserKeyQuery) {
 				*wq = *query
 			})
 
@@ -546,12 +546,12 @@ func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&ProfileClient{config: uq.config}).Query()
+				query = (&ProfileClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, profileImplementors)...); err != nil {
 				return err
 			}
-			uq.WithNamedProfiles(alias, func(wq *ProfileQuery) {
+			_q.WithNamedProfiles(alias, func(wq *ProfileQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -576,7 +576,7 @@ func (uq *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 		}
 	}
 	if !unknownSeen {
-		uq.Select(selectedFields...)
+		_q.Select(selectedFields...)
 	}
 	return nil
 }
@@ -608,18 +608,18 @@ func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (ukq *UserKeyQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserKeyQuery, error) {
+func (_q *UserKeyQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserKeyQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
-		return ukq, nil
+		return _q, nil
 	}
-	if err := ukq.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
 		return nil, err
 	}
-	return ukq, nil
+	return _q, nil
 }
 
-func (ukq *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
@@ -633,12 +633,12 @@ func (ukq *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&UserClient{config: ukq.config}).Query()
+				query = (&UserClient{config: _q.config}).Query()
 			)
 			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
-			ukq.withUser = query
+			_q.withUser = query
 		case "createTime":
 			if _, ok := fieldSeen[userkey.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, userkey.FieldCreateTime)
@@ -666,7 +666,7 @@ func (ukq *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 		}
 	}
 	if !unknownSeen {
-		ukq.Select(selectedFields...)
+		_q.Select(selectedFields...)
 	}
 	return nil
 }

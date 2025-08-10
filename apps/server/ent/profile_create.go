@@ -25,112 +25,112 @@ type ProfileCreate struct {
 }
 
 // SetCreateTime sets the "create_time" field.
-func (pc *ProfileCreate) SetCreateTime(t time.Time) *ProfileCreate {
-	pc.mutation.SetCreateTime(t)
-	return pc
+func (_c *ProfileCreate) SetCreateTime(v time.Time) *ProfileCreate {
+	_c.mutation.SetCreateTime(v)
+	return _c
 }
 
 // SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableCreateTime(t *time.Time) *ProfileCreate {
-	if t != nil {
-		pc.SetCreateTime(*t)
+func (_c *ProfileCreate) SetNillableCreateTime(v *time.Time) *ProfileCreate {
+	if v != nil {
+		_c.SetCreateTime(*v)
 	}
-	return pc
+	return _c
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (pc *ProfileCreate) SetUpdateTime(t time.Time) *ProfileCreate {
-	pc.mutation.SetUpdateTime(t)
-	return pc
+func (_c *ProfileCreate) SetUpdateTime(v time.Time) *ProfileCreate {
+	_c.mutation.SetUpdateTime(v)
+	return _c
 }
 
 // SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (pc *ProfileCreate) SetNillableUpdateTime(t *time.Time) *ProfileCreate {
-	if t != nil {
-		pc.SetUpdateTime(*t)
+func (_c *ProfileCreate) SetNillableUpdateTime(v *time.Time) *ProfileCreate {
+	if v != nil {
+		_c.SetUpdateTime(*v)
 	}
-	return pc
+	return _c
 }
 
 // SetLocale sets the "locale" field.
-func (pc *ProfileCreate) SetLocale(s string) *ProfileCreate {
-	pc.mutation.SetLocale(s)
-	return pc
+func (_c *ProfileCreate) SetLocale(v string) *ProfileCreate {
+	_c.mutation.SetLocale(v)
+	return _c
 }
 
 // SetCurrencies sets the "currencies" field.
-func (pc *ProfileCreate) SetCurrencies(s []string) *ProfileCreate {
-	pc.mutation.SetCurrencies(s)
-	return pc
+func (_c *ProfileCreate) SetCurrencies(v []string) *ProfileCreate {
+	_c.mutation.SetCurrencies(v)
+	return _c
 }
 
 // SetNetWorthGoal sets the "net_worth_goal" field.
-func (pc *ProfileCreate) SetNetWorthGoal(d decimal.Decimal) *ProfileCreate {
-	pc.mutation.SetNetWorthGoal(d)
-	return pc
+func (_c *ProfileCreate) SetNetWorthGoal(v decimal.Decimal) *ProfileCreate {
+	_c.mutation.SetNetWorthGoal(v)
+	return _c
 }
 
 // SetID sets the "id" field.
-func (pc *ProfileCreate) SetID(i int) *ProfileCreate {
-	pc.mutation.SetID(i)
-	return pc
+func (_c *ProfileCreate) SetID(v int) *ProfileCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (pc *ProfileCreate) SetUserID(id int) *ProfileCreate {
-	pc.mutation.SetUserID(id)
-	return pc
+func (_c *ProfileCreate) SetUserID(id int) *ProfileCreate {
+	_c.mutation.SetUserID(id)
+	return _c
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (pc *ProfileCreate) SetUser(u *User) *ProfileCreate {
-	return pc.SetUserID(u.ID)
+func (_c *ProfileCreate) SetUser(v *User) *ProfileCreate {
+	return _c.SetUserID(v.ID)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
-func (pc *ProfileCreate) AddAccountIDs(ids ...int) *ProfileCreate {
-	pc.mutation.AddAccountIDs(ids...)
-	return pc
+func (_c *ProfileCreate) AddAccountIDs(ids ...int) *ProfileCreate {
+	_c.mutation.AddAccountIDs(ids...)
+	return _c
 }
 
 // AddAccounts adds the "accounts" edges to the Account entity.
-func (pc *ProfileCreate) AddAccounts(a ...*Account) *ProfileCreate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_c *ProfileCreate) AddAccounts(v ...*Account) *ProfileCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return pc.AddAccountIDs(ids...)
+	return _c.AddAccountIDs(ids...)
 }
 
 // AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
-func (pc *ProfileCreate) AddTransactionIDs(ids ...int) *ProfileCreate {
-	pc.mutation.AddTransactionIDs(ids...)
-	return pc
+func (_c *ProfileCreate) AddTransactionIDs(ids ...int) *ProfileCreate {
+	_c.mutation.AddTransactionIDs(ids...)
+	return _c
 }
 
 // AddTransactions adds the "transactions" edges to the Transaction entity.
-func (pc *ProfileCreate) AddTransactions(t ...*Transaction) *ProfileCreate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_c *ProfileCreate) AddTransactions(v ...*Transaction) *ProfileCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return pc.AddTransactionIDs(ids...)
+	return _c.AddTransactionIDs(ids...)
 }
 
 // Mutation returns the ProfileMutation object of the builder.
-func (pc *ProfileCreate) Mutation() *ProfileMutation {
-	return pc.mutation
+func (_c *ProfileCreate) Mutation() *ProfileMutation {
+	return _c.mutation
 }
 
 // Save creates the Profile in the database.
-func (pc *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
-	pc.defaults()
-	return withHooks(ctx, pc.sqlSave, pc.mutation, pc.hooks)
+func (_c *ProfileCreate) Save(ctx context.Context) (*Profile, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (pc *ProfileCreate) SaveX(ctx context.Context) *Profile {
-	v, err := pc.Save(ctx)
+func (_c *ProfileCreate) SaveX(ctx context.Context) *Profile {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -138,59 +138,59 @@ func (pc *ProfileCreate) SaveX(ctx context.Context) *Profile {
 }
 
 // Exec executes the query.
-func (pc *ProfileCreate) Exec(ctx context.Context) error {
-	_, err := pc.Save(ctx)
+func (_c *ProfileCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (pc *ProfileCreate) ExecX(ctx context.Context) {
-	if err := pc.Exec(ctx); err != nil {
+func (_c *ProfileCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (pc *ProfileCreate) defaults() {
-	if _, ok := pc.mutation.CreateTime(); !ok {
+func (_c *ProfileCreate) defaults() {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		v := profile.DefaultCreateTime()
-		pc.mutation.SetCreateTime(v)
+		_c.mutation.SetCreateTime(v)
 	}
-	if _, ok := pc.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		v := profile.DefaultUpdateTime()
-		pc.mutation.SetUpdateTime(v)
+		_c.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (pc *ProfileCreate) check() error {
-	if _, ok := pc.mutation.CreateTime(); !ok {
+func (_c *ProfileCreate) check() error {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Profile.create_time"`)}
 	}
-	if _, ok := pc.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Profile.update_time"`)}
 	}
-	if _, ok := pc.mutation.Locale(); !ok {
+	if _, ok := _c.mutation.Locale(); !ok {
 		return &ValidationError{Name: "locale", err: errors.New(`ent: missing required field "Profile.locale"`)}
 	}
-	if _, ok := pc.mutation.Currencies(); !ok {
+	if _, ok := _c.mutation.Currencies(); !ok {
 		return &ValidationError{Name: "currencies", err: errors.New(`ent: missing required field "Profile.currencies"`)}
 	}
-	if _, ok := pc.mutation.NetWorthGoal(); !ok {
+	if _, ok := _c.mutation.NetWorthGoal(); !ok {
 		return &ValidationError{Name: "net_worth_goal", err: errors.New(`ent: missing required field "Profile.net_worth_goal"`)}
 	}
-	if len(pc.mutation.UserIDs()) == 0 {
+	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Profile.user"`)}
 	}
 	return nil
 }
 
-func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
-	if err := pc.check(); err != nil {
+func (_c *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := pc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, pc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -200,41 +200,41 @@ func (pc *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 		id := _spec.ID.Value.(int64)
 		_node.ID = int(id)
 	}
-	pc.mutation.id = &_node.ID
-	pc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
+func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Profile{config: pc.config}
+		_node = &Profile{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	)
-	if id, ok := pc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := pc.mutation.CreateTime(); ok {
+	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(profile.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
 	}
-	if value, ok := pc.mutation.UpdateTime(); ok {
+	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
-	if value, ok := pc.mutation.Locale(); ok {
+	if value, ok := _c.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 		_node.Locale = value
 	}
-	if value, ok := pc.mutation.Currencies(); ok {
+	if value, ok := _c.mutation.Currencies(); ok {
 		_spec.SetField(profile.FieldCurrencies, field.TypeJSON, value)
 		_node.Currencies = value
 	}
-	if value, ok := pc.mutation.NetWorthGoal(); ok {
+	if value, ok := _c.mutation.NetWorthGoal(); ok {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 		_node.NetWorthGoal = value
 	}
-	if nodes := pc.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -251,7 +251,7 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_node.user_profiles = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := pc.mutation.AccountsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.AccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -267,7 +267,7 @@ func (pc *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := pc.mutation.TransactionsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TransactionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -294,16 +294,16 @@ type ProfileCreateBulk struct {
 }
 
 // Save creates the Profile entities in the database.
-func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
-	if pcb.err != nil {
-		return nil, pcb.err
+func (_c *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(pcb.builders))
-	nodes := make([]*Profile, len(pcb.builders))
-	mutators := make([]Mutator, len(pcb.builders))
-	for i := range pcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Profile, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := pcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ProfileMutation)
@@ -317,11 +317,11 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, pcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, pcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -345,7 +345,7 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, pcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -353,8 +353,8 @@ func (pcb *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (pcb *ProfileCreateBulk) SaveX(ctx context.Context) []*Profile {
-	v, err := pcb.Save(ctx)
+func (_c *ProfileCreateBulk) SaveX(ctx context.Context) []*Profile {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -362,14 +362,14 @@ func (pcb *ProfileCreateBulk) SaveX(ctx context.Context) []*Profile {
 }
 
 // Exec executes the query.
-func (pcb *ProfileCreateBulk) Exec(ctx context.Context) error {
-	_, err := pcb.Save(ctx)
+func (_c *ProfileCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (pcb *ProfileCreateBulk) ExecX(ctx context.Context) {
-	if err := pcb.Exec(ctx); err != nil {
+func (_c *ProfileCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

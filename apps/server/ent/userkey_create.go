@@ -22,78 +22,78 @@ type UserKeyCreate struct {
 }
 
 // SetCreateTime sets the "create_time" field.
-func (ukc *UserKeyCreate) SetCreateTime(t time.Time) *UserKeyCreate {
-	ukc.mutation.SetCreateTime(t)
-	return ukc
+func (_c *UserKeyCreate) SetCreateTime(v time.Time) *UserKeyCreate {
+	_c.mutation.SetCreateTime(v)
+	return _c
 }
 
 // SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (ukc *UserKeyCreate) SetNillableCreateTime(t *time.Time) *UserKeyCreate {
-	if t != nil {
-		ukc.SetCreateTime(*t)
+func (_c *UserKeyCreate) SetNillableCreateTime(v *time.Time) *UserKeyCreate {
+	if v != nil {
+		_c.SetCreateTime(*v)
 	}
-	return ukc
+	return _c
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (ukc *UserKeyCreate) SetUpdateTime(t time.Time) *UserKeyCreate {
-	ukc.mutation.SetUpdateTime(t)
-	return ukc
+func (_c *UserKeyCreate) SetUpdateTime(v time.Time) *UserKeyCreate {
+	_c.mutation.SetUpdateTime(v)
+	return _c
 }
 
 // SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (ukc *UserKeyCreate) SetNillableUpdateTime(t *time.Time) *UserKeyCreate {
-	if t != nil {
-		ukc.SetUpdateTime(*t)
+func (_c *UserKeyCreate) SetNillableUpdateTime(v *time.Time) *UserKeyCreate {
+	if v != nil {
+		_c.SetUpdateTime(*v)
 	}
-	return ukc
+	return _c
 }
 
 // SetKey sets the "key" field.
-func (ukc *UserKeyCreate) SetKey(s string) *UserKeyCreate {
-	ukc.mutation.SetKey(s)
-	return ukc
+func (_c *UserKeyCreate) SetKey(v string) *UserKeyCreate {
+	_c.mutation.SetKey(v)
+	return _c
 }
 
 // SetHashedPassword sets the "hashed_password" field.
-func (ukc *UserKeyCreate) SetHashedPassword(s string) *UserKeyCreate {
-	ukc.mutation.SetHashedPassword(s)
-	return ukc
+func (_c *UserKeyCreate) SetHashedPassword(v string) *UserKeyCreate {
+	_c.mutation.SetHashedPassword(v)
+	return _c
 }
 
 // SetNillableHashedPassword sets the "hashed_password" field if the given value is not nil.
-func (ukc *UserKeyCreate) SetNillableHashedPassword(s *string) *UserKeyCreate {
-	if s != nil {
-		ukc.SetHashedPassword(*s)
+func (_c *UserKeyCreate) SetNillableHashedPassword(v *string) *UserKeyCreate {
+	if v != nil {
+		_c.SetHashedPassword(*v)
 	}
-	return ukc
+	return _c
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (ukc *UserKeyCreate) SetUserID(id int) *UserKeyCreate {
-	ukc.mutation.SetUserID(id)
-	return ukc
+func (_c *UserKeyCreate) SetUserID(id int) *UserKeyCreate {
+	_c.mutation.SetUserID(id)
+	return _c
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (ukc *UserKeyCreate) SetUser(u *User) *UserKeyCreate {
-	return ukc.SetUserID(u.ID)
+func (_c *UserKeyCreate) SetUser(v *User) *UserKeyCreate {
+	return _c.SetUserID(v.ID)
 }
 
 // Mutation returns the UserKeyMutation object of the builder.
-func (ukc *UserKeyCreate) Mutation() *UserKeyMutation {
-	return ukc.mutation
+func (_c *UserKeyCreate) Mutation() *UserKeyMutation {
+	return _c.mutation
 }
 
 // Save creates the UserKey in the database.
-func (ukc *UserKeyCreate) Save(ctx context.Context) (*UserKey, error) {
-	ukc.defaults()
-	return withHooks(ctx, ukc.sqlSave, ukc.mutation, ukc.hooks)
+func (_c *UserKeyCreate) Save(ctx context.Context) (*UserKey, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ukc *UserKeyCreate) SaveX(ctx context.Context) *UserKey {
-	v, err := ukc.Save(ctx)
+func (_c *UserKeyCreate) SaveX(ctx context.Context) *UserKey {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -101,58 +101,58 @@ func (ukc *UserKeyCreate) SaveX(ctx context.Context) *UserKey {
 }
 
 // Exec executes the query.
-func (ukc *UserKeyCreate) Exec(ctx context.Context) error {
-	_, err := ukc.Save(ctx)
+func (_c *UserKeyCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ukc *UserKeyCreate) ExecX(ctx context.Context) {
-	if err := ukc.Exec(ctx); err != nil {
+func (_c *UserKeyCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ukc *UserKeyCreate) defaults() {
-	if _, ok := ukc.mutation.CreateTime(); !ok {
+func (_c *UserKeyCreate) defaults() {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		v := userkey.DefaultCreateTime()
-		ukc.mutation.SetCreateTime(v)
+		_c.mutation.SetCreateTime(v)
 	}
-	if _, ok := ukc.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		v := userkey.DefaultUpdateTime()
-		ukc.mutation.SetUpdateTime(v)
+		_c.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ukc *UserKeyCreate) check() error {
-	if _, ok := ukc.mutation.CreateTime(); !ok {
+func (_c *UserKeyCreate) check() error {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "UserKey.create_time"`)}
 	}
-	if _, ok := ukc.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "UserKey.update_time"`)}
 	}
-	if _, ok := ukc.mutation.Key(); !ok {
+	if _, ok := _c.mutation.Key(); !ok {
 		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "UserKey.key"`)}
 	}
-	if v, ok := ukc.mutation.Key(); ok {
+	if v, ok := _c.mutation.Key(); ok {
 		if err := userkey.KeyValidator(v); err != nil {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
 		}
 	}
-	if len(ukc.mutation.UserIDs()) == 0 {
+	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "UserKey.user"`)}
 	}
 	return nil
 }
 
-func (ukc *UserKeyCreate) sqlSave(ctx context.Context) (*UserKey, error) {
-	if err := ukc.check(); err != nil {
+func (_c *UserKeyCreate) sqlSave(ctx context.Context) (*UserKey, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := ukc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, ukc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -160,33 +160,33 @@ func (ukc *UserKeyCreate) sqlSave(ctx context.Context) (*UserKey, error) {
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
-	ukc.mutation.id = &_node.ID
-	ukc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (ukc *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
+func (_c *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 	var (
-		_node = &UserKey{config: ukc.config}
+		_node = &UserKey{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	)
-	if value, ok := ukc.mutation.CreateTime(); ok {
+	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(userkey.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
 	}
-	if value, ok := ukc.mutation.UpdateTime(); ok {
+	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
-	if value, ok := ukc.mutation.Key(); ok {
+	if value, ok := _c.mutation.Key(); ok {
 		_spec.SetField(userkey.FieldKey, field.TypeString, value)
 		_node.Key = value
 	}
-	if value, ok := ukc.mutation.HashedPassword(); ok {
+	if value, ok := _c.mutation.HashedPassword(); ok {
 		_spec.SetField(userkey.FieldHashedPassword, field.TypeString, value)
 		_node.HashedPassword = value
 	}
-	if nodes := ukc.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -214,16 +214,16 @@ type UserKeyCreateBulk struct {
 }
 
 // Save creates the UserKey entities in the database.
-func (ukcb *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
-	if ukcb.err != nil {
-		return nil, ukcb.err
+func (_c *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(ukcb.builders))
-	nodes := make([]*UserKey, len(ukcb.builders))
-	mutators := make([]Mutator, len(ukcb.builders))
-	for i := range ukcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*UserKey, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := ukcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserKeyMutation)
@@ -237,11 +237,11 @@ func (ukcb *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, ukcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, ukcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -265,7 +265,7 @@ func (ukcb *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, ukcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -273,8 +273,8 @@ func (ukcb *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ukcb *UserKeyCreateBulk) SaveX(ctx context.Context) []*UserKey {
-	v, err := ukcb.Save(ctx)
+func (_c *UserKeyCreateBulk) SaveX(ctx context.Context) []*UserKey {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -282,14 +282,14 @@ func (ukcb *UserKeyCreateBulk) SaveX(ctx context.Context) []*UserKey {
 }
 
 // Exec executes the query.
-func (ukcb *UserKeyCreateBulk) Exec(ctx context.Context) error {
-	_, err := ukcb.Save(ctx)
+func (_c *UserKeyCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ukcb *UserKeyCreateBulk) ExecX(ctx context.Context) {
-	if err := ukcb.Exec(ctx); err != nil {
+func (_c *UserKeyCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

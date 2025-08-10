@@ -24,107 +24,107 @@ type TransactionCreate struct {
 }
 
 // SetCreateTime sets the "create_time" field.
-func (tc *TransactionCreate) SetCreateTime(t time.Time) *TransactionCreate {
-	tc.mutation.SetCreateTime(t)
-	return tc
+func (_c *TransactionCreate) SetCreateTime(v time.Time) *TransactionCreate {
+	_c.mutation.SetCreateTime(v)
+	return _c
 }
 
 // SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableCreateTime(t *time.Time) *TransactionCreate {
-	if t != nil {
-		tc.SetCreateTime(*t)
+func (_c *TransactionCreate) SetNillableCreateTime(v *time.Time) *TransactionCreate {
+	if v != nil {
+		_c.SetCreateTime(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (tc *TransactionCreate) SetUpdateTime(t time.Time) *TransactionCreate {
-	tc.mutation.SetUpdateTime(t)
-	return tc
+func (_c *TransactionCreate) SetUpdateTime(v time.Time) *TransactionCreate {
+	_c.mutation.SetUpdateTime(v)
+	return _c
 }
 
 // SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableUpdateTime(t *time.Time) *TransactionCreate {
-	if t != nil {
-		tc.SetUpdateTime(*t)
+func (_c *TransactionCreate) SetNillableUpdateTime(v *time.Time) *TransactionCreate {
+	if v != nil {
+		_c.SetUpdateTime(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetBalance sets the "balance" field.
-func (tc *TransactionCreate) SetBalance(d decimal.Decimal) *TransactionCreate {
-	tc.mutation.SetBalance(d)
-	return tc
+func (_c *TransactionCreate) SetBalance(v decimal.Decimal) *TransactionCreate {
+	_c.mutation.SetBalance(v)
+	return _c
 }
 
 // SetNote sets the "note" field.
-func (tc *TransactionCreate) SetNote(s string) *TransactionCreate {
-	tc.mutation.SetNote(s)
-	return tc
+func (_c *TransactionCreate) SetNote(v string) *TransactionCreate {
+	_c.mutation.SetNote(v)
+	return _c
 }
 
 // SetNillableNote sets the "note" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableNote(s *string) *TransactionCreate {
-	if s != nil {
-		tc.SetNote(*s)
+func (_c *TransactionCreate) SetNillableNote(v *string) *TransactionCreate {
+	if v != nil {
+		_c.SetNote(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetDatetime sets the "datetime" field.
-func (tc *TransactionCreate) SetDatetime(t time.Time) *TransactionCreate {
-	tc.mutation.SetDatetime(t)
-	return tc
+func (_c *TransactionCreate) SetDatetime(v time.Time) *TransactionCreate {
+	_c.mutation.SetDatetime(v)
+	return _c
 }
 
 // SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (tc *TransactionCreate) SetNillableDatetime(t *time.Time) *TransactionCreate {
-	if t != nil {
-		tc.SetDatetime(*t)
+func (_c *TransactionCreate) SetNillableDatetime(v *time.Time) *TransactionCreate {
+	if v != nil {
+		_c.SetDatetime(*v)
 	}
-	return tc
+	return _c
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (tc *TransactionCreate) SetProfileID(id int) *TransactionCreate {
-	tc.mutation.SetProfileID(id)
-	return tc
+func (_c *TransactionCreate) SetProfileID(id int) *TransactionCreate {
+	_c.mutation.SetProfileID(id)
+	return _c
 }
 
 // SetProfile sets the "profile" edge to the Profile entity.
-func (tc *TransactionCreate) SetProfile(p *Profile) *TransactionCreate {
-	return tc.SetProfileID(p.ID)
+func (_c *TransactionCreate) SetProfile(v *Profile) *TransactionCreate {
+	return _c.SetProfileID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (tc *TransactionCreate) AddTransactionEntryIDs(ids ...int) *TransactionCreate {
-	tc.mutation.AddTransactionEntryIDs(ids...)
-	return tc
+func (_c *TransactionCreate) AddTransactionEntryIDs(ids ...int) *TransactionCreate {
+	_c.mutation.AddTransactionEntryIDs(ids...)
+	return _c
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
-func (tc *TransactionCreate) AddTransactionEntries(t ...*TransactionEntry) *TransactionCreate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_c *TransactionCreate) AddTransactionEntries(v ...*TransactionEntry) *TransactionCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tc.AddTransactionEntryIDs(ids...)
+	return _c.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
-func (tc *TransactionCreate) Mutation() *TransactionMutation {
-	return tc.mutation
+func (_c *TransactionCreate) Mutation() *TransactionMutation {
+	return _c.mutation
 }
 
 // Save creates the Transaction in the database.
-func (tc *TransactionCreate) Save(ctx context.Context) (*Transaction, error) {
-	tc.defaults()
-	return withHooks(ctx, tc.sqlSave, tc.mutation, tc.hooks)
+func (_c *TransactionCreate) Save(ctx context.Context) (*Transaction, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (tc *TransactionCreate) SaveX(ctx context.Context) *Transaction {
-	v, err := tc.Save(ctx)
+func (_c *TransactionCreate) SaveX(ctx context.Context) *Transaction {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -132,60 +132,60 @@ func (tc *TransactionCreate) SaveX(ctx context.Context) *Transaction {
 }
 
 // Exec executes the query.
-func (tc *TransactionCreate) Exec(ctx context.Context) error {
-	_, err := tc.Save(ctx)
+func (_c *TransactionCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tc *TransactionCreate) ExecX(ctx context.Context) {
-	if err := tc.Exec(ctx); err != nil {
+func (_c *TransactionCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tc *TransactionCreate) defaults() {
-	if _, ok := tc.mutation.CreateTime(); !ok {
+func (_c *TransactionCreate) defaults() {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		v := transaction.DefaultCreateTime()
-		tc.mutation.SetCreateTime(v)
+		_c.mutation.SetCreateTime(v)
 	}
-	if _, ok := tc.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		v := transaction.DefaultUpdateTime()
-		tc.mutation.SetUpdateTime(v)
+		_c.mutation.SetUpdateTime(v)
 	}
-	if _, ok := tc.mutation.Datetime(); !ok {
+	if _, ok := _c.mutation.Datetime(); !ok {
 		v := transaction.DefaultDatetime()
-		tc.mutation.SetDatetime(v)
+		_c.mutation.SetDatetime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tc *TransactionCreate) check() error {
-	if _, ok := tc.mutation.CreateTime(); !ok {
+func (_c *TransactionCreate) check() error {
+	if _, ok := _c.mutation.CreateTime(); !ok {
 		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Transaction.create_time"`)}
 	}
-	if _, ok := tc.mutation.UpdateTime(); !ok {
+	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Transaction.update_time"`)}
 	}
-	if _, ok := tc.mutation.Balance(); !ok {
+	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Transaction.balance"`)}
 	}
-	if _, ok := tc.mutation.Datetime(); !ok {
+	if _, ok := _c.mutation.Datetime(); !ok {
 		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
 	}
-	if len(tc.mutation.ProfileIDs()) == 0 {
+	if len(_c.mutation.ProfileIDs()) == 0 {
 		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "Transaction.profile"`)}
 	}
 	return nil
 }
 
-func (tc *TransactionCreate) sqlSave(ctx context.Context) (*Transaction, error) {
-	if err := tc.check(); err != nil {
+func (_c *TransactionCreate) sqlSave(ctx context.Context) (*Transaction, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := tc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, tc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -193,37 +193,37 @@ func (tc *TransactionCreate) sqlSave(ctx context.Context) (*Transaction, error) 
 	}
 	id := _spec.ID.Value.(int64)
 	_node.ID = int(id)
-	tc.mutation.id = &_node.ID
-	tc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
+func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Transaction{config: tc.config}
+		_node = &Transaction{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(transaction.Table, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	)
-	if value, ok := tc.mutation.CreateTime(); ok {
+	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(transaction.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
 	}
-	if value, ok := tc.mutation.UpdateTime(); ok {
+	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
-	if value, ok := tc.mutation.Balance(); ok {
+	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
 	}
-	if value, ok := tc.mutation.Note(); ok {
+	if value, ok := _c.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 		_node.Note = value
 	}
-	if value, ok := tc.mutation.Datetime(); ok {
+	if value, ok := _c.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 		_node.Datetime = value
 	}
-	if nodes := tc.mutation.ProfileIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -240,7 +240,7 @@ func (tc *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		_node.profile_transactions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := tc.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -267,16 +267,16 @@ type TransactionCreateBulk struct {
 }
 
 // Save creates the Transaction entities in the database.
-func (tcb *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, error) {
-	if tcb.err != nil {
-		return nil, tcb.err
+func (_c *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(tcb.builders))
-	nodes := make([]*Transaction, len(tcb.builders))
-	mutators := make([]Mutator, len(tcb.builders))
-	for i := range tcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Transaction, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := tcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*TransactionMutation)
@@ -290,11 +290,11 @@ func (tcb *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, err
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, tcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, tcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -318,7 +318,7 @@ func (tcb *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, err
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, tcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -326,8 +326,8 @@ func (tcb *TransactionCreateBulk) Save(ctx context.Context) ([]*Transaction, err
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tcb *TransactionCreateBulk) SaveX(ctx context.Context) []*Transaction {
-	v, err := tcb.Save(ctx)
+func (_c *TransactionCreateBulk) SaveX(ctx context.Context) []*Transaction {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -335,14 +335,14 @@ func (tcb *TransactionCreateBulk) SaveX(ctx context.Context) []*Transaction {
 }
 
 // Exec executes the query.
-func (tcb *TransactionCreateBulk) Exec(ctx context.Context) error {
-	_, err := tcb.Save(ctx)
+func (_c *TransactionCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tcb *TransactionCreateBulk) ExecX(ctx context.Context) {
-	if err := tcb.Exec(ctx); err != nil {
+func (_c *TransactionCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

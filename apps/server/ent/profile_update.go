@@ -28,167 +28,167 @@ type ProfileUpdate struct {
 }
 
 // Where appends a list predicates to the ProfileUpdate builder.
-func (pu *ProfileUpdate) Where(ps ...predicate.Profile) *ProfileUpdate {
-	pu.mutation.Where(ps...)
-	return pu
+func (_u *ProfileUpdate) Where(ps ...predicate.Profile) *ProfileUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (pu *ProfileUpdate) SetUpdateTime(t time.Time) *ProfileUpdate {
-	pu.mutation.SetUpdateTime(t)
-	return pu
+func (_u *ProfileUpdate) SetUpdateTime(v time.Time) *ProfileUpdate {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetLocale sets the "locale" field.
-func (pu *ProfileUpdate) SetLocale(s string) *ProfileUpdate {
-	pu.mutation.SetLocale(s)
-	return pu
+func (_u *ProfileUpdate) SetLocale(v string) *ProfileUpdate {
+	_u.mutation.SetLocale(v)
+	return _u
 }
 
 // SetNillableLocale sets the "locale" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableLocale(s *string) *ProfileUpdate {
-	if s != nil {
-		pu.SetLocale(*s)
+func (_u *ProfileUpdate) SetNillableLocale(v *string) *ProfileUpdate {
+	if v != nil {
+		_u.SetLocale(*v)
 	}
-	return pu
+	return _u
 }
 
 // SetCurrencies sets the "currencies" field.
-func (pu *ProfileUpdate) SetCurrencies(s []string) *ProfileUpdate {
-	pu.mutation.SetCurrencies(s)
-	return pu
+func (_u *ProfileUpdate) SetCurrencies(v []string) *ProfileUpdate {
+	_u.mutation.SetCurrencies(v)
+	return _u
 }
 
-// AppendCurrencies appends s to the "currencies" field.
-func (pu *ProfileUpdate) AppendCurrencies(s []string) *ProfileUpdate {
-	pu.mutation.AppendCurrencies(s)
-	return pu
+// AppendCurrencies appends value to the "currencies" field.
+func (_u *ProfileUpdate) AppendCurrencies(v []string) *ProfileUpdate {
+	_u.mutation.AppendCurrencies(v)
+	return _u
 }
 
 // SetNetWorthGoal sets the "net_worth_goal" field.
-func (pu *ProfileUpdate) SetNetWorthGoal(d decimal.Decimal) *ProfileUpdate {
-	pu.mutation.ResetNetWorthGoal()
-	pu.mutation.SetNetWorthGoal(d)
-	return pu
+func (_u *ProfileUpdate) SetNetWorthGoal(v decimal.Decimal) *ProfileUpdate {
+	_u.mutation.ResetNetWorthGoal()
+	_u.mutation.SetNetWorthGoal(v)
+	return _u
 }
 
 // SetNillableNetWorthGoal sets the "net_worth_goal" field if the given value is not nil.
-func (pu *ProfileUpdate) SetNillableNetWorthGoal(d *decimal.Decimal) *ProfileUpdate {
-	if d != nil {
-		pu.SetNetWorthGoal(*d)
+func (_u *ProfileUpdate) SetNillableNetWorthGoal(v *decimal.Decimal) *ProfileUpdate {
+	if v != nil {
+		_u.SetNetWorthGoal(*v)
 	}
-	return pu
+	return _u
 }
 
-// AddNetWorthGoal adds d to the "net_worth_goal" field.
-func (pu *ProfileUpdate) AddNetWorthGoal(d decimal.Decimal) *ProfileUpdate {
-	pu.mutation.AddNetWorthGoal(d)
-	return pu
+// AddNetWorthGoal adds value to the "net_worth_goal" field.
+func (_u *ProfileUpdate) AddNetWorthGoal(v decimal.Decimal) *ProfileUpdate {
+	_u.mutation.AddNetWorthGoal(v)
+	return _u
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (pu *ProfileUpdate) SetUserID(id int) *ProfileUpdate {
-	pu.mutation.SetUserID(id)
-	return pu
+func (_u *ProfileUpdate) SetUserID(id int) *ProfileUpdate {
+	_u.mutation.SetUserID(id)
+	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (pu *ProfileUpdate) SetUser(u *User) *ProfileUpdate {
-	return pu.SetUserID(u.ID)
+func (_u *ProfileUpdate) SetUser(v *User) *ProfileUpdate {
+	return _u.SetUserID(v.ID)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
-func (pu *ProfileUpdate) AddAccountIDs(ids ...int) *ProfileUpdate {
-	pu.mutation.AddAccountIDs(ids...)
-	return pu
+func (_u *ProfileUpdate) AddAccountIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.AddAccountIDs(ids...)
+	return _u
 }
 
 // AddAccounts adds the "accounts" edges to the Account entity.
-func (pu *ProfileUpdate) AddAccounts(a ...*Account) *ProfileUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ProfileUpdate) AddAccounts(v ...*Account) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return pu.AddAccountIDs(ids...)
+	return _u.AddAccountIDs(ids...)
 }
 
 // AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
-func (pu *ProfileUpdate) AddTransactionIDs(ids ...int) *ProfileUpdate {
-	pu.mutation.AddTransactionIDs(ids...)
-	return pu
+func (_u *ProfileUpdate) AddTransactionIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.AddTransactionIDs(ids...)
+	return _u
 }
 
 // AddTransactions adds the "transactions" edges to the Transaction entity.
-func (pu *ProfileUpdate) AddTransactions(t ...*Transaction) *ProfileUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *ProfileUpdate) AddTransactions(v ...*Transaction) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return pu.AddTransactionIDs(ids...)
+	return _u.AddTransactionIDs(ids...)
 }
 
 // Mutation returns the ProfileMutation object of the builder.
-func (pu *ProfileUpdate) Mutation() *ProfileMutation {
-	return pu.mutation
+func (_u *ProfileUpdate) Mutation() *ProfileMutation {
+	return _u.mutation
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (pu *ProfileUpdate) ClearUser() *ProfileUpdate {
-	pu.mutation.ClearUser()
-	return pu
+func (_u *ProfileUpdate) ClearUser() *ProfileUpdate {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // ClearAccounts clears all "accounts" edges to the Account entity.
-func (pu *ProfileUpdate) ClearAccounts() *ProfileUpdate {
-	pu.mutation.ClearAccounts()
-	return pu
+func (_u *ProfileUpdate) ClearAccounts() *ProfileUpdate {
+	_u.mutation.ClearAccounts()
+	return _u
 }
 
 // RemoveAccountIDs removes the "accounts" edge to Account entities by IDs.
-func (pu *ProfileUpdate) RemoveAccountIDs(ids ...int) *ProfileUpdate {
-	pu.mutation.RemoveAccountIDs(ids...)
-	return pu
+func (_u *ProfileUpdate) RemoveAccountIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.RemoveAccountIDs(ids...)
+	return _u
 }
 
 // RemoveAccounts removes "accounts" edges to Account entities.
-func (pu *ProfileUpdate) RemoveAccounts(a ...*Account) *ProfileUpdate {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ProfileUpdate) RemoveAccounts(v ...*Account) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return pu.RemoveAccountIDs(ids...)
+	return _u.RemoveAccountIDs(ids...)
 }
 
 // ClearTransactions clears all "transactions" edges to the Transaction entity.
-func (pu *ProfileUpdate) ClearTransactions() *ProfileUpdate {
-	pu.mutation.ClearTransactions()
-	return pu
+func (_u *ProfileUpdate) ClearTransactions() *ProfileUpdate {
+	_u.mutation.ClearTransactions()
+	return _u
 }
 
 // RemoveTransactionIDs removes the "transactions" edge to Transaction entities by IDs.
-func (pu *ProfileUpdate) RemoveTransactionIDs(ids ...int) *ProfileUpdate {
-	pu.mutation.RemoveTransactionIDs(ids...)
-	return pu
+func (_u *ProfileUpdate) RemoveTransactionIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.RemoveTransactionIDs(ids...)
+	return _u
 }
 
 // RemoveTransactions removes "transactions" edges to Transaction entities.
-func (pu *ProfileUpdate) RemoveTransactions(t ...*Transaction) *ProfileUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *ProfileUpdate) RemoveTransactions(v ...*Transaction) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return pu.RemoveTransactionIDs(ids...)
+	return _u.RemoveTransactionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (pu *ProfileUpdate) Save(ctx context.Context) (int, error) {
-	pu.defaults()
-	return withHooks(ctx, pu.sqlSave, pu.mutation, pu.hooks)
+func (_u *ProfileUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (pu *ProfileUpdate) SaveX(ctx context.Context) int {
-	affected, err := pu.Save(ctx)
+func (_u *ProfileUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -196,67 +196,67 @@ func (pu *ProfileUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (pu *ProfileUpdate) Exec(ctx context.Context) error {
-	_, err := pu.Save(ctx)
+func (_u *ProfileUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (pu *ProfileUpdate) ExecX(ctx context.Context) {
-	if err := pu.Exec(ctx); err != nil {
+func (_u *ProfileUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (pu *ProfileUpdate) defaults() {
-	if _, ok := pu.mutation.UpdateTime(); !ok {
+func (_u *ProfileUpdate) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := profile.UpdateDefaultUpdateTime()
-		pu.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (pu *ProfileUpdate) check() error {
-	if pu.mutation.UserCleared() && len(pu.mutation.UserIDs()) > 0 {
+func (_u *ProfileUpdate) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Profile.user"`)
 	}
 	return nil
 }
 
-func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := pu.check(); err != nil {
-		return n, err
+func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
-	if ps := pu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := pu.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := pu.mutation.Locale(); ok {
+	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
-	if value, ok := pu.mutation.Currencies(); ok {
+	if value, ok := _u.mutation.Currencies(); ok {
 		_spec.SetField(profile.FieldCurrencies, field.TypeJSON, value)
 	}
-	if value, ok := pu.mutation.AppendedCurrencies(); ok {
+	if value, ok := _u.mutation.AppendedCurrencies(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, profile.FieldCurrencies, value)
 		})
 	}
-	if value, ok := pu.mutation.NetWorthGoal(); ok {
+	if value, ok := _u.mutation.NetWorthGoal(); ok {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 	}
-	if value, ok := pu.mutation.AddedNetWorthGoal(); ok {
+	if value, ok := _u.mutation.AddedNetWorthGoal(); ok {
 		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 	}
-	if pu.mutation.UserCleared() {
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -269,7 +269,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -285,7 +285,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if pu.mutation.AccountsCleared() {
+	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -298,7 +298,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !pu.mutation.AccountsCleared() {
+	if nodes := _u.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !_u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -314,7 +314,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.AccountsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -330,7 +330,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if pu.mutation.TransactionsCleared() {
+	if _u.mutation.TransactionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -343,7 +343,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.RemovedTransactionsIDs(); len(nodes) > 0 && !pu.mutation.TransactionsCleared() {
+	if nodes := _u.mutation.RemovedTransactionsIDs(); len(nodes) > 0 && !_u.mutation.TransactionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -359,7 +359,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := pu.mutation.TransactionsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -375,7 +375,7 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profile.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -383,8 +383,8 @@ func (pu *ProfileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	pu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // ProfileUpdateOne is the builder for updating a single Profile entity.
@@ -396,174 +396,174 @@ type ProfileUpdateOne struct {
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (puo *ProfileUpdateOne) SetUpdateTime(t time.Time) *ProfileUpdateOne {
-	puo.mutation.SetUpdateTime(t)
-	return puo
+func (_u *ProfileUpdateOne) SetUpdateTime(v time.Time) *ProfileUpdateOne {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetLocale sets the "locale" field.
-func (puo *ProfileUpdateOne) SetLocale(s string) *ProfileUpdateOne {
-	puo.mutation.SetLocale(s)
-	return puo
+func (_u *ProfileUpdateOne) SetLocale(v string) *ProfileUpdateOne {
+	_u.mutation.SetLocale(v)
+	return _u
 }
 
 // SetNillableLocale sets the "locale" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableLocale(s *string) *ProfileUpdateOne {
-	if s != nil {
-		puo.SetLocale(*s)
+func (_u *ProfileUpdateOne) SetNillableLocale(v *string) *ProfileUpdateOne {
+	if v != nil {
+		_u.SetLocale(*v)
 	}
-	return puo
+	return _u
 }
 
 // SetCurrencies sets the "currencies" field.
-func (puo *ProfileUpdateOne) SetCurrencies(s []string) *ProfileUpdateOne {
-	puo.mutation.SetCurrencies(s)
-	return puo
+func (_u *ProfileUpdateOne) SetCurrencies(v []string) *ProfileUpdateOne {
+	_u.mutation.SetCurrencies(v)
+	return _u
 }
 
-// AppendCurrencies appends s to the "currencies" field.
-func (puo *ProfileUpdateOne) AppendCurrencies(s []string) *ProfileUpdateOne {
-	puo.mutation.AppendCurrencies(s)
-	return puo
+// AppendCurrencies appends value to the "currencies" field.
+func (_u *ProfileUpdateOne) AppendCurrencies(v []string) *ProfileUpdateOne {
+	_u.mutation.AppendCurrencies(v)
+	return _u
 }
 
 // SetNetWorthGoal sets the "net_worth_goal" field.
-func (puo *ProfileUpdateOne) SetNetWorthGoal(d decimal.Decimal) *ProfileUpdateOne {
-	puo.mutation.ResetNetWorthGoal()
-	puo.mutation.SetNetWorthGoal(d)
-	return puo
+func (_u *ProfileUpdateOne) SetNetWorthGoal(v decimal.Decimal) *ProfileUpdateOne {
+	_u.mutation.ResetNetWorthGoal()
+	_u.mutation.SetNetWorthGoal(v)
+	return _u
 }
 
 // SetNillableNetWorthGoal sets the "net_worth_goal" field if the given value is not nil.
-func (puo *ProfileUpdateOne) SetNillableNetWorthGoal(d *decimal.Decimal) *ProfileUpdateOne {
-	if d != nil {
-		puo.SetNetWorthGoal(*d)
+func (_u *ProfileUpdateOne) SetNillableNetWorthGoal(v *decimal.Decimal) *ProfileUpdateOne {
+	if v != nil {
+		_u.SetNetWorthGoal(*v)
 	}
-	return puo
+	return _u
 }
 
-// AddNetWorthGoal adds d to the "net_worth_goal" field.
-func (puo *ProfileUpdateOne) AddNetWorthGoal(d decimal.Decimal) *ProfileUpdateOne {
-	puo.mutation.AddNetWorthGoal(d)
-	return puo
+// AddNetWorthGoal adds value to the "net_worth_goal" field.
+func (_u *ProfileUpdateOne) AddNetWorthGoal(v decimal.Decimal) *ProfileUpdateOne {
+	_u.mutation.AddNetWorthGoal(v)
+	return _u
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (puo *ProfileUpdateOne) SetUserID(id int) *ProfileUpdateOne {
-	puo.mutation.SetUserID(id)
-	return puo
+func (_u *ProfileUpdateOne) SetUserID(id int) *ProfileUpdateOne {
+	_u.mutation.SetUserID(id)
+	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (puo *ProfileUpdateOne) SetUser(u *User) *ProfileUpdateOne {
-	return puo.SetUserID(u.ID)
+func (_u *ProfileUpdateOne) SetUser(v *User) *ProfileUpdateOne {
+	return _u.SetUserID(v.ID)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
-func (puo *ProfileUpdateOne) AddAccountIDs(ids ...int) *ProfileUpdateOne {
-	puo.mutation.AddAccountIDs(ids...)
-	return puo
+func (_u *ProfileUpdateOne) AddAccountIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.AddAccountIDs(ids...)
+	return _u
 }
 
 // AddAccounts adds the "accounts" edges to the Account entity.
-func (puo *ProfileUpdateOne) AddAccounts(a ...*Account) *ProfileUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ProfileUpdateOne) AddAccounts(v ...*Account) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return puo.AddAccountIDs(ids...)
+	return _u.AddAccountIDs(ids...)
 }
 
 // AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
-func (puo *ProfileUpdateOne) AddTransactionIDs(ids ...int) *ProfileUpdateOne {
-	puo.mutation.AddTransactionIDs(ids...)
-	return puo
+func (_u *ProfileUpdateOne) AddTransactionIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.AddTransactionIDs(ids...)
+	return _u
 }
 
 // AddTransactions adds the "transactions" edges to the Transaction entity.
-func (puo *ProfileUpdateOne) AddTransactions(t ...*Transaction) *ProfileUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *ProfileUpdateOne) AddTransactions(v ...*Transaction) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return puo.AddTransactionIDs(ids...)
+	return _u.AddTransactionIDs(ids...)
 }
 
 // Mutation returns the ProfileMutation object of the builder.
-func (puo *ProfileUpdateOne) Mutation() *ProfileMutation {
-	return puo.mutation
+func (_u *ProfileUpdateOne) Mutation() *ProfileMutation {
+	return _u.mutation
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (puo *ProfileUpdateOne) ClearUser() *ProfileUpdateOne {
-	puo.mutation.ClearUser()
-	return puo
+func (_u *ProfileUpdateOne) ClearUser() *ProfileUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // ClearAccounts clears all "accounts" edges to the Account entity.
-func (puo *ProfileUpdateOne) ClearAccounts() *ProfileUpdateOne {
-	puo.mutation.ClearAccounts()
-	return puo
+func (_u *ProfileUpdateOne) ClearAccounts() *ProfileUpdateOne {
+	_u.mutation.ClearAccounts()
+	return _u
 }
 
 // RemoveAccountIDs removes the "accounts" edge to Account entities by IDs.
-func (puo *ProfileUpdateOne) RemoveAccountIDs(ids ...int) *ProfileUpdateOne {
-	puo.mutation.RemoveAccountIDs(ids...)
-	return puo
+func (_u *ProfileUpdateOne) RemoveAccountIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.RemoveAccountIDs(ids...)
+	return _u
 }
 
 // RemoveAccounts removes "accounts" edges to Account entities.
-func (puo *ProfileUpdateOne) RemoveAccounts(a ...*Account) *ProfileUpdateOne {
-	ids := make([]int, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ProfileUpdateOne) RemoveAccounts(v ...*Account) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return puo.RemoveAccountIDs(ids...)
+	return _u.RemoveAccountIDs(ids...)
 }
 
 // ClearTransactions clears all "transactions" edges to the Transaction entity.
-func (puo *ProfileUpdateOne) ClearTransactions() *ProfileUpdateOne {
-	puo.mutation.ClearTransactions()
-	return puo
+func (_u *ProfileUpdateOne) ClearTransactions() *ProfileUpdateOne {
+	_u.mutation.ClearTransactions()
+	return _u
 }
 
 // RemoveTransactionIDs removes the "transactions" edge to Transaction entities by IDs.
-func (puo *ProfileUpdateOne) RemoveTransactionIDs(ids ...int) *ProfileUpdateOne {
-	puo.mutation.RemoveTransactionIDs(ids...)
-	return puo
+func (_u *ProfileUpdateOne) RemoveTransactionIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.RemoveTransactionIDs(ids...)
+	return _u
 }
 
 // RemoveTransactions removes "transactions" edges to Transaction entities.
-func (puo *ProfileUpdateOne) RemoveTransactions(t ...*Transaction) *ProfileUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *ProfileUpdateOne) RemoveTransactions(v ...*Transaction) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return puo.RemoveTransactionIDs(ids...)
+	return _u.RemoveTransactionIDs(ids...)
 }
 
 // Where appends a list predicates to the ProfileUpdate builder.
-func (puo *ProfileUpdateOne) Where(ps ...predicate.Profile) *ProfileUpdateOne {
-	puo.mutation.Where(ps...)
-	return puo
+func (_u *ProfileUpdateOne) Where(ps ...predicate.Profile) *ProfileUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (puo *ProfileUpdateOne) Select(field string, fields ...string) *ProfileUpdateOne {
-	puo.fields = append([]string{field}, fields...)
-	return puo
+func (_u *ProfileUpdateOne) Select(field string, fields ...string) *ProfileUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Profile entity.
-func (puo *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
-	puo.defaults()
-	return withHooks(ctx, puo.sqlSave, puo.mutation, puo.hooks)
+func (_u *ProfileUpdateOne) Save(ctx context.Context) (*Profile, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (puo *ProfileUpdateOne) SaveX(ctx context.Context) *Profile {
-	node, err := puo.Save(ctx)
+func (_u *ProfileUpdateOne) SaveX(ctx context.Context) *Profile {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -571,45 +571,45 @@ func (puo *ProfileUpdateOne) SaveX(ctx context.Context) *Profile {
 }
 
 // Exec executes the query on the entity.
-func (puo *ProfileUpdateOne) Exec(ctx context.Context) error {
-	_, err := puo.Save(ctx)
+func (_u *ProfileUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (puo *ProfileUpdateOne) ExecX(ctx context.Context) {
-	if err := puo.Exec(ctx); err != nil {
+func (_u *ProfileUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (puo *ProfileUpdateOne) defaults() {
-	if _, ok := puo.mutation.UpdateTime(); !ok {
+func (_u *ProfileUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := profile.UpdateDefaultUpdateTime()
-		puo.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (puo *ProfileUpdateOne) check() error {
-	if puo.mutation.UserCleared() && len(puo.mutation.UserIDs()) > 0 {
+func (_u *ProfileUpdateOne) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Profile.user"`)
 	}
 	return nil
 }
 
-func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err error) {
-	if err := puo.check(); err != nil {
+func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
-	id, ok := puo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Profile.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := puo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, profile.FieldID)
 		for _, f := range fields {
@@ -621,34 +621,34 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 			}
 		}
 	}
-	if ps := puo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := puo.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := puo.mutation.Locale(); ok {
+	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
-	if value, ok := puo.mutation.Currencies(); ok {
+	if value, ok := _u.mutation.Currencies(); ok {
 		_spec.SetField(profile.FieldCurrencies, field.TypeJSON, value)
 	}
-	if value, ok := puo.mutation.AppendedCurrencies(); ok {
+	if value, ok := _u.mutation.AppendedCurrencies(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, profile.FieldCurrencies, value)
 		})
 	}
-	if value, ok := puo.mutation.NetWorthGoal(); ok {
+	if value, ok := _u.mutation.NetWorthGoal(); ok {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 	}
-	if value, ok := puo.mutation.AddedNetWorthGoal(); ok {
+	if value, ok := _u.mutation.AddedNetWorthGoal(); ok {
 		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 	}
-	if puo.mutation.UserCleared() {
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -661,7 +661,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -677,7 +677,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if puo.mutation.AccountsCleared() {
+	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -690,7 +690,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !puo.mutation.AccountsCleared() {
+	if nodes := _u.mutation.RemovedAccountsIDs(); len(nodes) > 0 && !_u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -706,7 +706,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.AccountsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -722,7 +722,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if puo.mutation.TransactionsCleared() {
+	if _u.mutation.TransactionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -735,7 +735,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.RemovedTransactionsIDs(); len(nodes) > 0 && !puo.mutation.TransactionsCleared() {
+	if nodes := _u.mutation.RemovedTransactionsIDs(); len(nodes) > 0 && !_u.mutation.TransactionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -751,7 +751,7 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := puo.mutation.TransactionsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -767,10 +767,10 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Profile{config: puo.config}
+	_node = &Profile{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, puo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profile.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -778,6 +778,6 @@ func (puo *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err e
 		}
 		return nil, err
 	}
-	puo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

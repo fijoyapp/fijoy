@@ -35,44 +35,44 @@ type TransactionEntryQuery struct {
 }
 
 // Where adds a new predicate for the TransactionEntryQuery builder.
-func (teq *TransactionEntryQuery) Where(ps ...predicate.TransactionEntry) *TransactionEntryQuery {
-	teq.predicates = append(teq.predicates, ps...)
-	return teq
+func (_q *TransactionEntryQuery) Where(ps ...predicate.TransactionEntry) *TransactionEntryQuery {
+	_q.predicates = append(_q.predicates, ps...)
+	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (teq *TransactionEntryQuery) Limit(limit int) *TransactionEntryQuery {
-	teq.ctx.Limit = &limit
-	return teq
+func (_q *TransactionEntryQuery) Limit(limit int) *TransactionEntryQuery {
+	_q.ctx.Limit = &limit
+	return _q
 }
 
 // Offset to start from.
-func (teq *TransactionEntryQuery) Offset(offset int) *TransactionEntryQuery {
-	teq.ctx.Offset = &offset
-	return teq
+func (_q *TransactionEntryQuery) Offset(offset int) *TransactionEntryQuery {
+	_q.ctx.Offset = &offset
+	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (teq *TransactionEntryQuery) Unique(unique bool) *TransactionEntryQuery {
-	teq.ctx.Unique = &unique
-	return teq
+func (_q *TransactionEntryQuery) Unique(unique bool) *TransactionEntryQuery {
+	_q.ctx.Unique = &unique
+	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (teq *TransactionEntryQuery) Order(o ...transactionentry.OrderOption) *TransactionEntryQuery {
-	teq.order = append(teq.order, o...)
-	return teq
+func (_q *TransactionEntryQuery) Order(o ...transactionentry.OrderOption) *TransactionEntryQuery {
+	_q.order = append(_q.order, o...)
+	return _q
 }
 
 // QueryAccount chains the current query on the "account" edge.
-func (teq *TransactionEntryQuery) QueryAccount() *AccountQuery {
-	query := (&AccountClient{config: teq.config}).Query()
+func (_q *TransactionEntryQuery) QueryAccount() *AccountQuery {
+	query := (&AccountClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := teq.prepareQuery(ctx); err != nil {
+		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := teq.sqlQuery(ctx)
+		selector := _q.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
@@ -81,20 +81,20 @@ func (teq *TransactionEntryQuery) QueryAccount() *AccountQuery {
 			sqlgraph.To(account.Table, account.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.AccountTable, transactionentry.AccountColumn),
 		)
-		fromU = sqlgraph.SetNeighbors(teq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
 }
 
 // QueryTransaction chains the current query on the "transaction" edge.
-func (teq *TransactionEntryQuery) QueryTransaction() *TransactionQuery {
-	query := (&TransactionClient{config: teq.config}).Query()
+func (_q *TransactionEntryQuery) QueryTransaction() *TransactionQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := teq.prepareQuery(ctx); err != nil {
+		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := teq.sqlQuery(ctx)
+		selector := _q.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
@@ -103,7 +103,7 @@ func (teq *TransactionEntryQuery) QueryTransaction() *TransactionQuery {
 			sqlgraph.To(transaction.Table, transaction.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.TransactionTable, transactionentry.TransactionColumn),
 		)
-		fromU = sqlgraph.SetNeighbors(teq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
@@ -111,8 +111,8 @@ func (teq *TransactionEntryQuery) QueryTransaction() *TransactionQuery {
 
 // First returns the first TransactionEntry entity from the query.
 // Returns a *NotFoundError when no TransactionEntry was found.
-func (teq *TransactionEntryQuery) First(ctx context.Context) (*TransactionEntry, error) {
-	nodes, err := teq.Limit(1).All(setContextOp(ctx, teq.ctx, ent.OpQueryFirst))
+func (_q *TransactionEntryQuery) First(ctx context.Context) (*TransactionEntry, error) {
+	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -123,8 +123,8 @@ func (teq *TransactionEntryQuery) First(ctx context.Context) (*TransactionEntry,
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (teq *TransactionEntryQuery) FirstX(ctx context.Context) *TransactionEntry {
-	node, err := teq.First(ctx)
+func (_q *TransactionEntryQuery) FirstX(ctx context.Context) *TransactionEntry {
+	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -133,9 +133,9 @@ func (teq *TransactionEntryQuery) FirstX(ctx context.Context) *TransactionEntry 
 
 // FirstID returns the first TransactionEntry ID from the query.
 // Returns a *NotFoundError when no TransactionEntry ID was found.
-func (teq *TransactionEntryQuery) FirstID(ctx context.Context) (id int, err error) {
+func (_q *TransactionEntryQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = teq.Limit(1).IDs(setContextOp(ctx, teq.ctx, ent.OpQueryFirstID)); err != nil {
+	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -146,8 +146,8 @@ func (teq *TransactionEntryQuery) FirstID(ctx context.Context) (id int, err erro
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (teq *TransactionEntryQuery) FirstIDX(ctx context.Context) int {
-	id, err := teq.FirstID(ctx)
+func (_q *TransactionEntryQuery) FirstIDX(ctx context.Context) int {
+	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -157,8 +157,8 @@ func (teq *TransactionEntryQuery) FirstIDX(ctx context.Context) int {
 // Only returns a single TransactionEntry entity found by the query, ensuring it only returns one.
 // Returns a *NotSingularError when more than one TransactionEntry entity is found.
 // Returns a *NotFoundError when no TransactionEntry entities are found.
-func (teq *TransactionEntryQuery) Only(ctx context.Context) (*TransactionEntry, error) {
-	nodes, err := teq.Limit(2).All(setContextOp(ctx, teq.ctx, ent.OpQueryOnly))
+func (_q *TransactionEntryQuery) Only(ctx context.Context) (*TransactionEntry, error) {
+	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -173,8 +173,8 @@ func (teq *TransactionEntryQuery) Only(ctx context.Context) (*TransactionEntry, 
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (teq *TransactionEntryQuery) OnlyX(ctx context.Context) *TransactionEntry {
-	node, err := teq.Only(ctx)
+func (_q *TransactionEntryQuery) OnlyX(ctx context.Context) *TransactionEntry {
+	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -184,9 +184,9 @@ func (teq *TransactionEntryQuery) OnlyX(ctx context.Context) *TransactionEntry {
 // OnlyID is like Only, but returns the only TransactionEntry ID in the query.
 // Returns a *NotSingularError when more than one TransactionEntry ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (teq *TransactionEntryQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *TransactionEntryQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = teq.Limit(2).IDs(setContextOp(ctx, teq.ctx, ent.OpQueryOnlyID)); err != nil {
+	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -201,8 +201,8 @@ func (teq *TransactionEntryQuery) OnlyID(ctx context.Context) (id int, err error
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (teq *TransactionEntryQuery) OnlyIDX(ctx context.Context) int {
-	id, err := teq.OnlyID(ctx)
+func (_q *TransactionEntryQuery) OnlyIDX(ctx context.Context) int {
+	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -210,18 +210,18 @@ func (teq *TransactionEntryQuery) OnlyIDX(ctx context.Context) int {
 }
 
 // All executes the query and returns a list of TransactionEntries.
-func (teq *TransactionEntryQuery) All(ctx context.Context) ([]*TransactionEntry, error) {
-	ctx = setContextOp(ctx, teq.ctx, ent.OpQueryAll)
-	if err := teq.prepareQuery(ctx); err != nil {
+func (_q *TransactionEntryQuery) All(ctx context.Context) ([]*TransactionEntry, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
 	qr := querierAll[[]*TransactionEntry, *TransactionEntryQuery]()
-	return withInterceptors[[]*TransactionEntry](ctx, teq, qr, teq.inters)
+	return withInterceptors[[]*TransactionEntry](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (teq *TransactionEntryQuery) AllX(ctx context.Context) []*TransactionEntry {
-	nodes, err := teq.All(ctx)
+func (_q *TransactionEntryQuery) AllX(ctx context.Context) []*TransactionEntry {
+	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -229,20 +229,20 @@ func (teq *TransactionEntryQuery) AllX(ctx context.Context) []*TransactionEntry 
 }
 
 // IDs executes the query and returns a list of TransactionEntry IDs.
-func (teq *TransactionEntryQuery) IDs(ctx context.Context) (ids []int, err error) {
-	if teq.ctx.Unique == nil && teq.path != nil {
-		teq.Unique(true)
+func (_q *TransactionEntryQuery) IDs(ctx context.Context) (ids []int, err error) {
+	if _q.ctx.Unique == nil && _q.path != nil {
+		_q.Unique(true)
 	}
-	ctx = setContextOp(ctx, teq.ctx, ent.OpQueryIDs)
-	if err = teq.Select(transactionentry.FieldID).Scan(ctx, &ids); err != nil {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
+	if err = _q.Select(transactionentry.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (teq *TransactionEntryQuery) IDsX(ctx context.Context) []int {
-	ids, err := teq.IDs(ctx)
+func (_q *TransactionEntryQuery) IDsX(ctx context.Context) []int {
+	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -250,17 +250,17 @@ func (teq *TransactionEntryQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (teq *TransactionEntryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, teq.ctx, ent.OpQueryCount)
-	if err := teq.prepareQuery(ctx); err != nil {
+func (_q *TransactionEntryQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, teq, querierCount[*TransactionEntryQuery](), teq.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*TransactionEntryQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (teq *TransactionEntryQuery) CountX(ctx context.Context) int {
-	count, err := teq.Count(ctx)
+func (_q *TransactionEntryQuery) CountX(ctx context.Context) int {
+	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -268,9 +268,9 @@ func (teq *TransactionEntryQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (teq *TransactionEntryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, teq.ctx, ent.OpQueryExist)
-	switch _, err := teq.FirstID(ctx); {
+func (_q *TransactionEntryQuery) Exist(ctx context.Context) (bool, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
+	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
 	case err != nil:
@@ -281,8 +281,8 @@ func (teq *TransactionEntryQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (teq *TransactionEntryQuery) ExistX(ctx context.Context) bool {
-	exist, err := teq.Exist(ctx)
+func (_q *TransactionEntryQuery) ExistX(ctx context.Context) bool {
+	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -291,44 +291,44 @@ func (teq *TransactionEntryQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the TransactionEntryQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (teq *TransactionEntryQuery) Clone() *TransactionEntryQuery {
-	if teq == nil {
+func (_q *TransactionEntryQuery) Clone() *TransactionEntryQuery {
+	if _q == nil {
 		return nil
 	}
 	return &TransactionEntryQuery{
-		config:          teq.config,
-		ctx:             teq.ctx.Clone(),
-		order:           append([]transactionentry.OrderOption{}, teq.order...),
-		inters:          append([]Interceptor{}, teq.inters...),
-		predicates:      append([]predicate.TransactionEntry{}, teq.predicates...),
-		withAccount:     teq.withAccount.Clone(),
-		withTransaction: teq.withTransaction.Clone(),
+		config:          _q.config,
+		ctx:             _q.ctx.Clone(),
+		order:           append([]transactionentry.OrderOption{}, _q.order...),
+		inters:          append([]Interceptor{}, _q.inters...),
+		predicates:      append([]predicate.TransactionEntry{}, _q.predicates...),
+		withAccount:     _q.withAccount.Clone(),
+		withTransaction: _q.withTransaction.Clone(),
 		// clone intermediate query.
-		sql:  teq.sql.Clone(),
-		path: teq.path,
+		sql:  _q.sql.Clone(),
+		path: _q.path,
 	}
 }
 
 // WithAccount tells the query-builder to eager-load the nodes that are connected to
 // the "account" edge. The optional arguments are used to configure the query builder of the edge.
-func (teq *TransactionEntryQuery) WithAccount(opts ...func(*AccountQuery)) *TransactionEntryQuery {
-	query := (&AccountClient{config: teq.config}).Query()
+func (_q *TransactionEntryQuery) WithAccount(opts ...func(*AccountQuery)) *TransactionEntryQuery {
+	query := (&AccountClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	teq.withAccount = query
-	return teq
+	_q.withAccount = query
+	return _q
 }
 
 // WithTransaction tells the query-builder to eager-load the nodes that are connected to
 // the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
-func (teq *TransactionEntryQuery) WithTransaction(opts ...func(*TransactionQuery)) *TransactionEntryQuery {
-	query := (&TransactionClient{config: teq.config}).Query()
+func (_q *TransactionEntryQuery) WithTransaction(opts ...func(*TransactionQuery)) *TransactionEntryQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	teq.withTransaction = query
-	return teq
+	_q.withTransaction = query
+	return _q
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -345,10 +345,10 @@ func (teq *TransactionEntryQuery) WithTransaction(opts ...func(*TransactionQuery
 //		GroupBy(transactionentry.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (teq *TransactionEntryQuery) GroupBy(field string, fields ...string) *TransactionEntryGroupBy {
-	teq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &TransactionEntryGroupBy{build: teq}
-	grbuild.flds = &teq.ctx.Fields
+func (_q *TransactionEntryQuery) GroupBy(field string, fields ...string) *TransactionEntryGroupBy {
+	_q.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &TransactionEntryGroupBy{build: _q}
+	grbuild.flds = &_q.ctx.Fields
 	grbuild.label = transactionentry.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -366,56 +366,56 @@ func (teq *TransactionEntryQuery) GroupBy(field string, fields ...string) *Trans
 //	client.TransactionEntry.Query().
 //		Select(transactionentry.FieldCreateTime).
 //		Scan(ctx, &v)
-func (teq *TransactionEntryQuery) Select(fields ...string) *TransactionEntrySelect {
-	teq.ctx.Fields = append(teq.ctx.Fields, fields...)
-	sbuild := &TransactionEntrySelect{TransactionEntryQuery: teq}
+func (_q *TransactionEntryQuery) Select(fields ...string) *TransactionEntrySelect {
+	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
+	sbuild := &TransactionEntrySelect{TransactionEntryQuery: _q}
 	sbuild.label = transactionentry.Label
-	sbuild.flds, sbuild.scan = &teq.ctx.Fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
 // Aggregate returns a TransactionEntrySelect configured with the given aggregations.
-func (teq *TransactionEntryQuery) Aggregate(fns ...AggregateFunc) *TransactionEntrySelect {
-	return teq.Select().Aggregate(fns...)
+func (_q *TransactionEntryQuery) Aggregate(fns ...AggregateFunc) *TransactionEntrySelect {
+	return _q.Select().Aggregate(fns...)
 }
 
-func (teq *TransactionEntryQuery) prepareQuery(ctx context.Context) error {
-	for _, inter := range teq.inters {
+func (_q *TransactionEntryQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
 		}
 		if trv, ok := inter.(Traverser); ok {
-			if err := trv.Traverse(ctx, teq); err != nil {
+			if err := trv.Traverse(ctx, _q); err != nil {
 				return err
 			}
 		}
 	}
-	for _, f := range teq.ctx.Fields {
+	for _, f := range _q.ctx.Fields {
 		if !transactionentry.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
-	if teq.path != nil {
-		prev, err := teq.path(ctx)
+	if _q.path != nil {
+		prev, err := _q.path(ctx)
 		if err != nil {
 			return err
 		}
-		teq.sql = prev
+		_q.sql = prev
 	}
 	return nil
 }
 
-func (teq *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TransactionEntry, error) {
+func (_q *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TransactionEntry, error) {
 	var (
 		nodes       = []*TransactionEntry{}
-		withFKs     = teq.withFKs
-		_spec       = teq.querySpec()
+		withFKs     = _q.withFKs
+		_spec       = _q.querySpec()
 		loadedTypes = [2]bool{
-			teq.withAccount != nil,
-			teq.withTransaction != nil,
+			_q.withAccount != nil,
+			_q.withTransaction != nil,
 		}
 	)
-	if teq.withAccount != nil || teq.withTransaction != nil {
+	if _q.withAccount != nil || _q.withTransaction != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -425,44 +425,44 @@ func (teq *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook
 		return (*TransactionEntry).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &TransactionEntry{config: teq.config}
+		node := &TransactionEntry{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
-	if len(teq.modifiers) > 0 {
-		_spec.Modifiers = teq.modifiers
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
 	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
-	if err := sqlgraph.QueryNodes(ctx, teq.driver, _spec); err != nil {
+	if err := sqlgraph.QueryNodes(ctx, _q.driver, _spec); err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := teq.withAccount; query != nil {
-		if err := teq.loadAccount(ctx, query, nodes, nil,
+	if query := _q.withAccount; query != nil {
+		if err := _q.loadAccount(ctx, query, nodes, nil,
 			func(n *TransactionEntry, e *Account) { n.Edges.Account = e }); err != nil {
 			return nil, err
 		}
 	}
-	if query := teq.withTransaction; query != nil {
-		if err := teq.loadTransaction(ctx, query, nodes, nil,
+	if query := _q.withTransaction; query != nil {
+		if err := _q.loadTransaction(ctx, query, nodes, nil,
 			func(n *TransactionEntry, e *Transaction) { n.Edges.Transaction = e }); err != nil {
 			return nil, err
 		}
 	}
-	for i := range teq.loadTotal {
-		if err := teq.loadTotal[i](ctx, nodes); err != nil {
+	for i := range _q.loadTotal {
+		if err := _q.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (teq *TransactionEntryQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*TransactionEntry, init func(*TransactionEntry), assign func(*TransactionEntry, *Account)) error {
+func (_q *TransactionEntryQuery) loadAccount(ctx context.Context, query *AccountQuery, nodes []*TransactionEntry, init func(*TransactionEntry), assign func(*TransactionEntry, *Account)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TransactionEntry)
 	for i := range nodes {
@@ -494,7 +494,7 @@ func (teq *TransactionEntryQuery) loadAccount(ctx context.Context, query *Accoun
 	}
 	return nil
 }
-func (teq *TransactionEntryQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*TransactionEntry, init func(*TransactionEntry), assign func(*TransactionEntry, *Transaction)) error {
+func (_q *TransactionEntryQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*TransactionEntry, init func(*TransactionEntry), assign func(*TransactionEntry, *Transaction)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TransactionEntry)
 	for i := range nodes {
@@ -527,27 +527,27 @@ func (teq *TransactionEntryQuery) loadTransaction(ctx context.Context, query *Tr
 	return nil
 }
 
-func (teq *TransactionEntryQuery) sqlCount(ctx context.Context) (int, error) {
-	_spec := teq.querySpec()
-	if len(teq.modifiers) > 0 {
-		_spec.Modifiers = teq.modifiers
+func (_q *TransactionEntryQuery) sqlCount(ctx context.Context) (int, error) {
+	_spec := _q.querySpec()
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
 	}
-	_spec.Node.Columns = teq.ctx.Fields
-	if len(teq.ctx.Fields) > 0 {
-		_spec.Unique = teq.ctx.Unique != nil && *teq.ctx.Unique
+	_spec.Node.Columns = _q.ctx.Fields
+	if len(_q.ctx.Fields) > 0 {
+		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
 	}
-	return sqlgraph.CountNodes(ctx, teq.driver, _spec)
+	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (teq *TransactionEntryQuery) querySpec() *sqlgraph.QuerySpec {
+func (_q *TransactionEntryQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := sqlgraph.NewQuerySpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
-	_spec.From = teq.sql
-	if unique := teq.ctx.Unique; unique != nil {
+	_spec.From = _q.sql
+	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
-	} else if teq.path != nil {
+	} else if _q.path != nil {
 		_spec.Unique = true
 	}
-	if fields := teq.ctx.Fields; len(fields) > 0 {
+	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, transactionentry.FieldID)
 		for i := range fields {
@@ -556,20 +556,20 @@ func (teq *TransactionEntryQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if ps := teq.predicates; len(ps) > 0 {
+	if ps := _q.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if limit := teq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := teq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
-	if ps := teq.order; len(ps) > 0 {
+	if ps := _q.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
@@ -579,33 +579,33 @@ func (teq *TransactionEntryQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (teq *TransactionEntryQuery) sqlQuery(ctx context.Context) *sql.Selector {
-	builder := sql.Dialect(teq.driver.Dialect())
+func (_q *TransactionEntryQuery) sqlQuery(ctx context.Context) *sql.Selector {
+	builder := sql.Dialect(_q.driver.Dialect())
 	t1 := builder.Table(transactionentry.Table)
-	columns := teq.ctx.Fields
+	columns := _q.ctx.Fields
 	if len(columns) == 0 {
 		columns = transactionentry.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
-	if teq.sql != nil {
-		selector = teq.sql
+	if _q.sql != nil {
+		selector = _q.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if teq.ctx.Unique != nil && *teq.ctx.Unique {
+	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
-	for _, p := range teq.predicates {
+	for _, p := range _q.predicates {
 		p(selector)
 	}
-	for _, p := range teq.order {
+	for _, p := range _q.order {
 		p(selector)
 	}
-	if offset := teq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := teq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -618,41 +618,41 @@ type TransactionEntryGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (tegb *TransactionEntryGroupBy) Aggregate(fns ...AggregateFunc) *TransactionEntryGroupBy {
-	tegb.fns = append(tegb.fns, fns...)
-	return tegb
+func (_g *TransactionEntryGroupBy) Aggregate(fns ...AggregateFunc) *TransactionEntryGroupBy {
+	_g.fns = append(_g.fns, fns...)
+	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (tegb *TransactionEntryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tegb.build.ctx, ent.OpQueryGroupBy)
-	if err := tegb.build.prepareQuery(ctx); err != nil {
+func (_g *TransactionEntryGroupBy) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
+	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TransactionEntryQuery, *TransactionEntryGroupBy](ctx, tegb.build, tegb, tegb.build.inters, v)
+	return scanWithInterceptors[*TransactionEntryQuery, *TransactionEntryGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (tegb *TransactionEntryGroupBy) sqlScan(ctx context.Context, root *TransactionEntryQuery, v any) error {
+func (_g *TransactionEntryGroupBy) sqlScan(ctx context.Context, root *TransactionEntryQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
-	aggregation := make([]string, 0, len(tegb.fns))
-	for _, fn := range tegb.fns {
+	aggregation := make([]string, 0, len(_g.fns))
+	for _, fn := range _g.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
 	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(*tegb.flds)+len(tegb.fns))
-		for _, f := range *tegb.flds {
+		columns := make([]string, 0, len(*_g.flds)+len(_g.fns))
+		for _, f := range *_g.flds {
 			columns = append(columns, selector.C(f))
 		}
 		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
-	selector.GroupBy(selector.Columns(*tegb.flds...)...)
+	selector.GroupBy(selector.Columns(*_g.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := tegb.build.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _g.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
@@ -666,27 +666,27 @@ type TransactionEntrySelect struct {
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (tes *TransactionEntrySelect) Aggregate(fns ...AggregateFunc) *TransactionEntrySelect {
-	tes.fns = append(tes.fns, fns...)
-	return tes
+func (_s *TransactionEntrySelect) Aggregate(fns ...AggregateFunc) *TransactionEntrySelect {
+	_s.fns = append(_s.fns, fns...)
+	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (tes *TransactionEntrySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tes.ctx, ent.OpQuerySelect)
-	if err := tes.prepareQuery(ctx); err != nil {
+func (_s *TransactionEntrySelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
+	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TransactionEntryQuery, *TransactionEntrySelect](ctx, tes.TransactionEntryQuery, tes, tes.inters, v)
+	return scanWithInterceptors[*TransactionEntryQuery, *TransactionEntrySelect](ctx, _s.TransactionEntryQuery, _s, _s.inters, v)
 }
 
-func (tes *TransactionEntrySelect) sqlScan(ctx context.Context, root *TransactionEntryQuery, v any) error {
+func (_s *TransactionEntrySelect) sqlScan(ctx context.Context, root *TransactionEntryQuery, v any) error {
 	selector := root.sqlQuery(ctx)
-	aggregation := make([]string, 0, len(tes.fns))
-	for _, fn := range tes.fns {
+	aggregation := make([]string, 0, len(_s.fns))
+	for _, fn := range _s.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	switch n := len(*tes.selector.flds); {
+	switch n := len(*_s.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
 		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
@@ -694,7 +694,7 @@ func (tes *TransactionEntrySelect) sqlScan(ctx context.Context, root *Transactio
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := tes.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _s.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()

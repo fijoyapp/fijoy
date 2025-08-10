@@ -26,139 +26,139 @@ type TransactionUpdate struct {
 }
 
 // Where appends a list predicates to the TransactionUpdate builder.
-func (tu *TransactionUpdate) Where(ps ...predicate.Transaction) *TransactionUpdate {
-	tu.mutation.Where(ps...)
-	return tu
+func (_u *TransactionUpdate) Where(ps ...predicate.Transaction) *TransactionUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (tu *TransactionUpdate) SetUpdateTime(t time.Time) *TransactionUpdate {
-	tu.mutation.SetUpdateTime(t)
-	return tu
+func (_u *TransactionUpdate) SetUpdateTime(v time.Time) *TransactionUpdate {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetBalance sets the "balance" field.
-func (tu *TransactionUpdate) SetBalance(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.ResetBalance()
-	tu.mutation.SetBalance(d)
-	return tu
+func (_u *TransactionUpdate) SetBalance(v decimal.Decimal) *TransactionUpdate {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
 }
 
 // SetNillableBalance sets the "balance" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableBalance(d *decimal.Decimal) *TransactionUpdate {
-	if d != nil {
-		tu.SetBalance(*d)
+func (_u *TransactionUpdate) SetNillableBalance(v *decimal.Decimal) *TransactionUpdate {
+	if v != nil {
+		_u.SetBalance(*v)
 	}
-	return tu
+	return _u
 }
 
-// AddBalance adds d to the "balance" field.
-func (tu *TransactionUpdate) AddBalance(d decimal.Decimal) *TransactionUpdate {
-	tu.mutation.AddBalance(d)
-	return tu
+// AddBalance adds value to the "balance" field.
+func (_u *TransactionUpdate) AddBalance(v decimal.Decimal) *TransactionUpdate {
+	_u.mutation.AddBalance(v)
+	return _u
 }
 
 // SetNote sets the "note" field.
-func (tu *TransactionUpdate) SetNote(s string) *TransactionUpdate {
-	tu.mutation.SetNote(s)
-	return tu
+func (_u *TransactionUpdate) SetNote(v string) *TransactionUpdate {
+	_u.mutation.SetNote(v)
+	return _u
 }
 
 // SetNillableNote sets the "note" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableNote(s *string) *TransactionUpdate {
-	if s != nil {
-		tu.SetNote(*s)
+func (_u *TransactionUpdate) SetNillableNote(v *string) *TransactionUpdate {
+	if v != nil {
+		_u.SetNote(*v)
 	}
-	return tu
+	return _u
 }
 
 // ClearNote clears the value of the "note" field.
-func (tu *TransactionUpdate) ClearNote() *TransactionUpdate {
-	tu.mutation.ClearNote()
-	return tu
+func (_u *TransactionUpdate) ClearNote() *TransactionUpdate {
+	_u.mutation.ClearNote()
+	return _u
 }
 
 // SetDatetime sets the "datetime" field.
-func (tu *TransactionUpdate) SetDatetime(t time.Time) *TransactionUpdate {
-	tu.mutation.SetDatetime(t)
-	return tu
+func (_u *TransactionUpdate) SetDatetime(v time.Time) *TransactionUpdate {
+	_u.mutation.SetDatetime(v)
+	return _u
 }
 
 // SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (tu *TransactionUpdate) SetNillableDatetime(t *time.Time) *TransactionUpdate {
-	if t != nil {
-		tu.SetDatetime(*t)
+func (_u *TransactionUpdate) SetNillableDatetime(v *time.Time) *TransactionUpdate {
+	if v != nil {
+		_u.SetDatetime(*v)
 	}
-	return tu
+	return _u
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (tu *TransactionUpdate) SetProfileID(id int) *TransactionUpdate {
-	tu.mutation.SetProfileID(id)
-	return tu
+func (_u *TransactionUpdate) SetProfileID(id int) *TransactionUpdate {
+	_u.mutation.SetProfileID(id)
+	return _u
 }
 
 // SetProfile sets the "profile" edge to the Profile entity.
-func (tu *TransactionUpdate) SetProfile(p *Profile) *TransactionUpdate {
-	return tu.SetProfileID(p.ID)
+func (_u *TransactionUpdate) SetProfile(v *Profile) *TransactionUpdate {
+	return _u.SetProfileID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (tu *TransactionUpdate) AddTransactionEntryIDs(ids ...int) *TransactionUpdate {
-	tu.mutation.AddTransactionEntryIDs(ids...)
-	return tu
+func (_u *TransactionUpdate) AddTransactionEntryIDs(ids ...int) *TransactionUpdate {
+	_u.mutation.AddTransactionEntryIDs(ids...)
+	return _u
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
-func (tu *TransactionUpdate) AddTransactionEntries(t ...*TransactionEntry) *TransactionUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *TransactionUpdate) AddTransactionEntries(v ...*TransactionEntry) *TransactionUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tu.AddTransactionEntryIDs(ids...)
+	return _u.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
-func (tu *TransactionUpdate) Mutation() *TransactionMutation {
-	return tu.mutation
+func (_u *TransactionUpdate) Mutation() *TransactionMutation {
+	return _u.mutation
 }
 
 // ClearProfile clears the "profile" edge to the Profile entity.
-func (tu *TransactionUpdate) ClearProfile() *TransactionUpdate {
-	tu.mutation.ClearProfile()
-	return tu
+func (_u *TransactionUpdate) ClearProfile() *TransactionUpdate {
+	_u.mutation.ClearProfile()
+	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
-func (tu *TransactionUpdate) ClearTransactionEntries() *TransactionUpdate {
-	tu.mutation.ClearTransactionEntries()
-	return tu
+func (_u *TransactionUpdate) ClearTransactionEntries() *TransactionUpdate {
+	_u.mutation.ClearTransactionEntries()
+	return _u
 }
 
 // RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
-func (tu *TransactionUpdate) RemoveTransactionEntryIDs(ids ...int) *TransactionUpdate {
-	tu.mutation.RemoveTransactionEntryIDs(ids...)
-	return tu
+func (_u *TransactionUpdate) RemoveTransactionEntryIDs(ids ...int) *TransactionUpdate {
+	_u.mutation.RemoveTransactionEntryIDs(ids...)
+	return _u
 }
 
 // RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
-func (tu *TransactionUpdate) RemoveTransactionEntries(t ...*TransactionEntry) *TransactionUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *TransactionUpdate) RemoveTransactionEntries(v ...*TransactionEntry) *TransactionUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tu.RemoveTransactionEntryIDs(ids...)
+	return _u.RemoveTransactionEntryIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (tu *TransactionUpdate) Save(ctx context.Context) (int, error) {
-	tu.defaults()
-	return withHooks(ctx, tu.sqlSave, tu.mutation, tu.hooks)
+func (_u *TransactionUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tu *TransactionUpdate) SaveX(ctx context.Context) int {
-	affected, err := tu.Save(ctx)
+func (_u *TransactionUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -166,65 +166,65 @@ func (tu *TransactionUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (tu *TransactionUpdate) Exec(ctx context.Context) error {
-	_, err := tu.Save(ctx)
+func (_u *TransactionUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tu *TransactionUpdate) ExecX(ctx context.Context) {
-	if err := tu.Exec(ctx); err != nil {
+func (_u *TransactionUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tu *TransactionUpdate) defaults() {
-	if _, ok := tu.mutation.UpdateTime(); !ok {
+func (_u *TransactionUpdate) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := transaction.UpdateDefaultUpdateTime()
-		tu.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tu *TransactionUpdate) check() error {
-	if tu.mutation.ProfileCleared() && len(tu.mutation.ProfileIDs()) > 0 {
+func (_u *TransactionUpdate) check() error {
+	if _u.mutation.ProfileCleared() && len(_u.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.profile"`)
 	}
 	return nil
 }
 
-func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := tu.check(); err != nil {
-		return n, err
+func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
-	if ps := tu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tu.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := tu.mutation.Balance(); ok {
+	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.AddedBalance(); ok {
+	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := tu.mutation.Note(); ok {
+	if value, ok := _u.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 	}
-	if tu.mutation.NoteCleared() {
+	if _u.mutation.NoteCleared() {
 		_spec.ClearField(transaction.FieldNote, field.TypeString)
 	}
-	if value, ok := tu.mutation.Datetime(); ok {
+	if value, ok := _u.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 	}
-	if tu.mutation.ProfileCleared() {
+	if _u.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -237,7 +237,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.ProfileIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -253,7 +253,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tu.mutation.TransactionEntriesCleared() {
+	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -266,7 +266,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !tu.mutation.TransactionEntriesCleared() {
+	if nodes := _u.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -282,7 +282,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tu.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -298,7 +298,7 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, tu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transaction.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -306,8 +306,8 @@ func (tu *TransactionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	tu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // TransactionUpdateOne is the builder for updating a single Transaction entity.
@@ -319,146 +319,146 @@ type TransactionUpdateOne struct {
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (tuo *TransactionUpdateOne) SetUpdateTime(t time.Time) *TransactionUpdateOne {
-	tuo.mutation.SetUpdateTime(t)
-	return tuo
+func (_u *TransactionUpdateOne) SetUpdateTime(v time.Time) *TransactionUpdateOne {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetBalance sets the "balance" field.
-func (tuo *TransactionUpdateOne) SetBalance(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.ResetBalance()
-	tuo.mutation.SetBalance(d)
-	return tuo
+func (_u *TransactionUpdateOne) SetBalance(v decimal.Decimal) *TransactionUpdateOne {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
 }
 
 // SetNillableBalance sets the "balance" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableBalance(d *decimal.Decimal) *TransactionUpdateOne {
-	if d != nil {
-		tuo.SetBalance(*d)
+func (_u *TransactionUpdateOne) SetNillableBalance(v *decimal.Decimal) *TransactionUpdateOne {
+	if v != nil {
+		_u.SetBalance(*v)
 	}
-	return tuo
+	return _u
 }
 
-// AddBalance adds d to the "balance" field.
-func (tuo *TransactionUpdateOne) AddBalance(d decimal.Decimal) *TransactionUpdateOne {
-	tuo.mutation.AddBalance(d)
-	return tuo
+// AddBalance adds value to the "balance" field.
+func (_u *TransactionUpdateOne) AddBalance(v decimal.Decimal) *TransactionUpdateOne {
+	_u.mutation.AddBalance(v)
+	return _u
 }
 
 // SetNote sets the "note" field.
-func (tuo *TransactionUpdateOne) SetNote(s string) *TransactionUpdateOne {
-	tuo.mutation.SetNote(s)
-	return tuo
+func (_u *TransactionUpdateOne) SetNote(v string) *TransactionUpdateOne {
+	_u.mutation.SetNote(v)
+	return _u
 }
 
 // SetNillableNote sets the "note" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableNote(s *string) *TransactionUpdateOne {
-	if s != nil {
-		tuo.SetNote(*s)
+func (_u *TransactionUpdateOne) SetNillableNote(v *string) *TransactionUpdateOne {
+	if v != nil {
+		_u.SetNote(*v)
 	}
-	return tuo
+	return _u
 }
 
 // ClearNote clears the value of the "note" field.
-func (tuo *TransactionUpdateOne) ClearNote() *TransactionUpdateOne {
-	tuo.mutation.ClearNote()
-	return tuo
+func (_u *TransactionUpdateOne) ClearNote() *TransactionUpdateOne {
+	_u.mutation.ClearNote()
+	return _u
 }
 
 // SetDatetime sets the "datetime" field.
-func (tuo *TransactionUpdateOne) SetDatetime(t time.Time) *TransactionUpdateOne {
-	tuo.mutation.SetDatetime(t)
-	return tuo
+func (_u *TransactionUpdateOne) SetDatetime(v time.Time) *TransactionUpdateOne {
+	_u.mutation.SetDatetime(v)
+	return _u
 }
 
 // SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (tuo *TransactionUpdateOne) SetNillableDatetime(t *time.Time) *TransactionUpdateOne {
-	if t != nil {
-		tuo.SetDatetime(*t)
+func (_u *TransactionUpdateOne) SetNillableDatetime(v *time.Time) *TransactionUpdateOne {
+	if v != nil {
+		_u.SetDatetime(*v)
 	}
-	return tuo
+	return _u
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (tuo *TransactionUpdateOne) SetProfileID(id int) *TransactionUpdateOne {
-	tuo.mutation.SetProfileID(id)
-	return tuo
+func (_u *TransactionUpdateOne) SetProfileID(id int) *TransactionUpdateOne {
+	_u.mutation.SetProfileID(id)
+	return _u
 }
 
 // SetProfile sets the "profile" edge to the Profile entity.
-func (tuo *TransactionUpdateOne) SetProfile(p *Profile) *TransactionUpdateOne {
-	return tuo.SetProfileID(p.ID)
+func (_u *TransactionUpdateOne) SetProfile(v *Profile) *TransactionUpdateOne {
+	return _u.SetProfileID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (tuo *TransactionUpdateOne) AddTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
-	tuo.mutation.AddTransactionEntryIDs(ids...)
-	return tuo
+func (_u *TransactionUpdateOne) AddTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
+	_u.mutation.AddTransactionEntryIDs(ids...)
+	return _u
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
-func (tuo *TransactionUpdateOne) AddTransactionEntries(t ...*TransactionEntry) *TransactionUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *TransactionUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *TransactionUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tuo.AddTransactionEntryIDs(ids...)
+	return _u.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
-func (tuo *TransactionUpdateOne) Mutation() *TransactionMutation {
-	return tuo.mutation
+func (_u *TransactionUpdateOne) Mutation() *TransactionMutation {
+	return _u.mutation
 }
 
 // ClearProfile clears the "profile" edge to the Profile entity.
-func (tuo *TransactionUpdateOne) ClearProfile() *TransactionUpdateOne {
-	tuo.mutation.ClearProfile()
-	return tuo
+func (_u *TransactionUpdateOne) ClearProfile() *TransactionUpdateOne {
+	_u.mutation.ClearProfile()
+	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
-func (tuo *TransactionUpdateOne) ClearTransactionEntries() *TransactionUpdateOne {
-	tuo.mutation.ClearTransactionEntries()
-	return tuo
+func (_u *TransactionUpdateOne) ClearTransactionEntries() *TransactionUpdateOne {
+	_u.mutation.ClearTransactionEntries()
+	return _u
 }
 
 // RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
-func (tuo *TransactionUpdateOne) RemoveTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
-	tuo.mutation.RemoveTransactionEntryIDs(ids...)
-	return tuo
+func (_u *TransactionUpdateOne) RemoveTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
+	_u.mutation.RemoveTransactionEntryIDs(ids...)
+	return _u
 }
 
 // RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
-func (tuo *TransactionUpdateOne) RemoveTransactionEntries(t ...*TransactionEntry) *TransactionUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *TransactionUpdateOne) RemoveTransactionEntries(v ...*TransactionEntry) *TransactionUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return tuo.RemoveTransactionEntryIDs(ids...)
+	return _u.RemoveTransactionEntryIDs(ids...)
 }
 
 // Where appends a list predicates to the TransactionUpdate builder.
-func (tuo *TransactionUpdateOne) Where(ps ...predicate.Transaction) *TransactionUpdateOne {
-	tuo.mutation.Where(ps...)
-	return tuo
+func (_u *TransactionUpdateOne) Where(ps ...predicate.Transaction) *TransactionUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (tuo *TransactionUpdateOne) Select(field string, fields ...string) *TransactionUpdateOne {
-	tuo.fields = append([]string{field}, fields...)
-	return tuo
+func (_u *TransactionUpdateOne) Select(field string, fields ...string) *TransactionUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Transaction entity.
-func (tuo *TransactionUpdateOne) Save(ctx context.Context) (*Transaction, error) {
-	tuo.defaults()
-	return withHooks(ctx, tuo.sqlSave, tuo.mutation, tuo.hooks)
+func (_u *TransactionUpdateOne) Save(ctx context.Context) (*Transaction, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (tuo *TransactionUpdateOne) SaveX(ctx context.Context) *Transaction {
-	node, err := tuo.Save(ctx)
+func (_u *TransactionUpdateOne) SaveX(ctx context.Context) *Transaction {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -466,45 +466,45 @@ func (tuo *TransactionUpdateOne) SaveX(ctx context.Context) *Transaction {
 }
 
 // Exec executes the query on the entity.
-func (tuo *TransactionUpdateOne) Exec(ctx context.Context) error {
-	_, err := tuo.Save(ctx)
+func (_u *TransactionUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (tuo *TransactionUpdateOne) ExecX(ctx context.Context) {
-	if err := tuo.Exec(ctx); err != nil {
+func (_u *TransactionUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (tuo *TransactionUpdateOne) defaults() {
-	if _, ok := tuo.mutation.UpdateTime(); !ok {
+func (_u *TransactionUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := transaction.UpdateDefaultUpdateTime()
-		tuo.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (tuo *TransactionUpdateOne) check() error {
-	if tuo.mutation.ProfileCleared() && len(tuo.mutation.ProfileIDs()) > 0 {
+func (_u *TransactionUpdateOne) check() error {
+	if _u.mutation.ProfileCleared() && len(_u.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.profile"`)
 	}
 	return nil
 }
 
-func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction, err error) {
-	if err := tuo.check(); err != nil {
+func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
-	id, ok := tuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Transaction.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := tuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, transaction.FieldID)
 		for _, f := range fields {
@@ -516,32 +516,32 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 			}
 		}
 	}
-	if ps := tuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := tuo.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := tuo.mutation.Balance(); ok {
+	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := tuo.mutation.AddedBalance(); ok {
+	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := tuo.mutation.Note(); ok {
+	if value, ok := _u.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 	}
-	if tuo.mutation.NoteCleared() {
+	if _u.mutation.NoteCleared() {
 		_spec.ClearField(transaction.FieldNote, field.TypeString)
 	}
-	if value, ok := tuo.mutation.Datetime(); ok {
+	if value, ok := _u.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 	}
-	if tuo.mutation.ProfileCleared() {
+	if _u.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -554,7 +554,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.ProfileIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -570,7 +570,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if tuo.mutation.TransactionEntriesCleared() {
+	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -583,7 +583,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !tuo.mutation.TransactionEntriesCleared() {
+	if nodes := _u.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -599,7 +599,7 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := tuo.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -615,10 +615,10 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Transaction{config: tuo.config}
+	_node = &Transaction{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, tuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transaction.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -626,6 +626,6 @@ func (tuo *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transactio
 		}
 		return nil, err
 	}
-	tuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

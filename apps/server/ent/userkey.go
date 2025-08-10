@@ -77,7 +77,7 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the UserKey fields.
-func (uk *UserKey) assignValues(columns []string, values []any) error {
+func (_m *UserKey) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -88,40 +88,40 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			uk.ID = int(value.Int64)
+			_m.ID = int(value.Int64)
 		case userkey.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				uk.CreateTime = value.Time
+				_m.CreateTime = value.Time
 			}
 		case userkey.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
-				uk.UpdateTime = value.Time
+				_m.UpdateTime = value.Time
 			}
 		case userkey.FieldKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field key", values[i])
 			} else if value.Valid {
-				uk.Key = value.String
+				_m.Key = value.String
 			}
 		case userkey.FieldHashedPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field hashed_password", values[i])
 			} else if value.Valid {
-				uk.HashedPassword = value.String
+				_m.HashedPassword = value.String
 			}
 		case userkey.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_user_keys", value)
 			} else if value.Valid {
-				uk.user_user_keys = new(int)
-				*uk.user_user_keys = int(value.Int64)
+				_m.user_user_keys = new(int)
+				*_m.user_user_keys = int(value.Int64)
 			}
 		default:
-			uk.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -129,49 +129,49 @@ func (uk *UserKey) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the UserKey.
 // This includes values selected through modifiers, order, etc.
-func (uk *UserKey) Value(name string) (ent.Value, error) {
-	return uk.selectValues.Get(name)
+func (_m *UserKey) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryUser queries the "user" edge of the UserKey entity.
-func (uk *UserKey) QueryUser() *UserQuery {
-	return NewUserKeyClient(uk.config).QueryUser(uk)
+func (_m *UserKey) QueryUser() *UserQuery {
+	return NewUserKeyClient(_m.config).QueryUser(_m)
 }
 
 // Update returns a builder for updating this UserKey.
 // Note that you need to call UserKey.Unwrap() before calling this method if this UserKey
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (uk *UserKey) Update() *UserKeyUpdateOne {
-	return NewUserKeyClient(uk.config).UpdateOne(uk)
+func (_m *UserKey) Update() *UserKeyUpdateOne {
+	return NewUserKeyClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the UserKey entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (uk *UserKey) Unwrap() *UserKey {
-	_tx, ok := uk.config.driver.(*txDriver)
+func (_m *UserKey) Unwrap() *UserKey {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: UserKey is not a transactional entity")
 	}
-	uk.config.driver = _tx.drv
-	return uk
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (uk *UserKey) String() string {
+func (_m *UserKey) String() string {
 	var builder strings.Builder
 	builder.WriteString("UserKey(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", uk.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("create_time=")
-	builder.WriteString(uk.CreateTime.Format(time.ANSIC))
+	builder.WriteString(_m.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
-	builder.WriteString(uk.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("key=")
-	builder.WriteString(uk.Key)
+	builder.WriteString(_m.Key)
 	builder.WriteString(", ")
 	builder.WriteString("hashed_password=")
-	builder.WriteString(uk.HashedPassword)
+	builder.WriteString(_m.HashedPassword)
 	builder.WriteByte(')')
 	return builder.String()
 }

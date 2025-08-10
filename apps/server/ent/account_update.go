@@ -26,224 +26,224 @@ type AccountUpdate struct {
 }
 
 // Where appends a list predicates to the AccountUpdate builder.
-func (au *AccountUpdate) Where(ps ...predicate.Account) *AccountUpdate {
-	au.mutation.Where(ps...)
-	return au
+func (_u *AccountUpdate) Where(ps ...predicate.Account) *AccountUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (au *AccountUpdate) SetUpdateTime(t time.Time) *AccountUpdate {
-	au.mutation.SetUpdateTime(t)
-	return au
+func (_u *AccountUpdate) SetUpdateTime(v time.Time) *AccountUpdate {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (au *AccountUpdate) SetName(s string) *AccountUpdate {
-	au.mutation.SetName(s)
-	return au
+func (_u *AccountUpdate) SetName(v string) *AccountUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableName(s *string) *AccountUpdate {
-	if s != nil {
-		au.SetName(*s)
+func (_u *AccountUpdate) SetNillableName(v *string) *AccountUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return au
+	return _u
 }
 
 // SetInstitution sets the "institution" field.
-func (au *AccountUpdate) SetInstitution(s string) *AccountUpdate {
-	au.mutation.SetInstitution(s)
-	return au
+func (_u *AccountUpdate) SetInstitution(v string) *AccountUpdate {
+	_u.mutation.SetInstitution(v)
+	return _u
 }
 
 // SetNillableInstitution sets the "institution" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableInstitution(s *string) *AccountUpdate {
-	if s != nil {
-		au.SetInstitution(*s)
+func (_u *AccountUpdate) SetNillableInstitution(v *string) *AccountUpdate {
+	if v != nil {
+		_u.SetInstitution(*v)
 	}
-	return au
+	return _u
 }
 
 // SetInvestmentType sets the "investment_type" field.
-func (au *AccountUpdate) SetInvestmentType(at account.InvestmentType) *AccountUpdate {
-	au.mutation.SetInvestmentType(at)
-	return au
+func (_u *AccountUpdate) SetInvestmentType(v account.InvestmentType) *AccountUpdate {
+	_u.mutation.SetInvestmentType(v)
+	return _u
 }
 
 // SetNillableInvestmentType sets the "investment_type" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableInvestmentType(at *account.InvestmentType) *AccountUpdate {
-	if at != nil {
-		au.SetInvestmentType(*at)
+func (_u *AccountUpdate) SetNillableInvestmentType(v *account.InvestmentType) *AccountUpdate {
+	if v != nil {
+		_u.SetInvestmentType(*v)
 	}
-	return au
+	return _u
 }
 
 // SetAmount sets the "amount" field.
-func (au *AccountUpdate) SetAmount(d decimal.Decimal) *AccountUpdate {
-	au.mutation.ResetAmount()
-	au.mutation.SetAmount(d)
-	return au
+func (_u *AccountUpdate) SetAmount(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.ResetAmount()
+	_u.mutation.SetAmount(v)
+	return _u
 }
 
 // SetNillableAmount sets the "amount" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableAmount(d *decimal.Decimal) *AccountUpdate {
-	if d != nil {
-		au.SetAmount(*d)
+func (_u *AccountUpdate) SetNillableAmount(v *decimal.Decimal) *AccountUpdate {
+	if v != nil {
+		_u.SetAmount(*v)
 	}
-	return au
+	return _u
 }
 
-// AddAmount adds d to the "amount" field.
-func (au *AccountUpdate) AddAmount(d decimal.Decimal) *AccountUpdate {
-	au.mutation.AddAmount(d)
-	return au
+// AddAmount adds value to the "amount" field.
+func (_u *AccountUpdate) AddAmount(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.AddAmount(v)
+	return _u
 }
 
 // SetValue sets the "value" field.
-func (au *AccountUpdate) SetValue(d decimal.Decimal) *AccountUpdate {
-	au.mutation.ResetValue()
-	au.mutation.SetValue(d)
-	return au
+func (_u *AccountUpdate) SetValue(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.ResetValue()
+	_u.mutation.SetValue(v)
+	return _u
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableValue(d *decimal.Decimal) *AccountUpdate {
-	if d != nil {
-		au.SetValue(*d)
+func (_u *AccountUpdate) SetNillableValue(v *decimal.Decimal) *AccountUpdate {
+	if v != nil {
+		_u.SetValue(*v)
 	}
-	return au
+	return _u
 }
 
-// AddValue adds d to the "value" field.
-func (au *AccountUpdate) AddValue(d decimal.Decimal) *AccountUpdate {
-	au.mutation.AddValue(d)
-	return au
+// AddValue adds value to the "value" field.
+func (_u *AccountUpdate) AddValue(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.AddValue(v)
+	return _u
 }
 
 // SetFxRate sets the "fx_rate" field.
-func (au *AccountUpdate) SetFxRate(d decimal.Decimal) *AccountUpdate {
-	au.mutation.ResetFxRate()
-	au.mutation.SetFxRate(d)
-	return au
+func (_u *AccountUpdate) SetFxRate(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.ResetFxRate()
+	_u.mutation.SetFxRate(v)
+	return _u
 }
 
 // SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableFxRate(d *decimal.Decimal) *AccountUpdate {
-	if d != nil {
-		au.SetFxRate(*d)
+func (_u *AccountUpdate) SetNillableFxRate(v *decimal.Decimal) *AccountUpdate {
+	if v != nil {
+		_u.SetFxRate(*v)
 	}
-	return au
+	return _u
 }
 
-// AddFxRate adds d to the "fx_rate" field.
-func (au *AccountUpdate) AddFxRate(d decimal.Decimal) *AccountUpdate {
-	au.mutation.AddFxRate(d)
-	return au
+// AddFxRate adds value to the "fx_rate" field.
+func (_u *AccountUpdate) AddFxRate(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.AddFxRate(v)
+	return _u
 }
 
 // SetBalance sets the "balance" field.
-func (au *AccountUpdate) SetBalance(d decimal.Decimal) *AccountUpdate {
-	au.mutation.ResetBalance()
-	au.mutation.SetBalance(d)
-	return au
+func (_u *AccountUpdate) SetBalance(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
 }
 
 // SetNillableBalance sets the "balance" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableBalance(d *decimal.Decimal) *AccountUpdate {
-	if d != nil {
-		au.SetBalance(*d)
+func (_u *AccountUpdate) SetNillableBalance(v *decimal.Decimal) *AccountUpdate {
+	if v != nil {
+		_u.SetBalance(*v)
 	}
-	return au
+	return _u
 }
 
-// AddBalance adds d to the "balance" field.
-func (au *AccountUpdate) AddBalance(d decimal.Decimal) *AccountUpdate {
-	au.mutation.AddBalance(d)
-	return au
+// AddBalance adds value to the "balance" field.
+func (_u *AccountUpdate) AddBalance(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.AddBalance(v)
+	return _u
 }
 
 // SetArchived sets the "archived" field.
-func (au *AccountUpdate) SetArchived(b bool) *AccountUpdate {
-	au.mutation.SetArchived(b)
-	return au
+func (_u *AccountUpdate) SetArchived(v bool) *AccountUpdate {
+	_u.mutation.SetArchived(v)
+	return _u
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (au *AccountUpdate) SetNillableArchived(b *bool) *AccountUpdate {
-	if b != nil {
-		au.SetArchived(*b)
+func (_u *AccountUpdate) SetNillableArchived(v *bool) *AccountUpdate {
+	if v != nil {
+		_u.SetArchived(*v)
 	}
-	return au
+	return _u
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (au *AccountUpdate) SetProfileID(id int) *AccountUpdate {
-	au.mutation.SetProfileID(id)
-	return au
+func (_u *AccountUpdate) SetProfileID(id int) *AccountUpdate {
+	_u.mutation.SetProfileID(id)
+	return _u
 }
 
 // SetProfile sets the "profile" edge to the Profile entity.
-func (au *AccountUpdate) SetProfile(p *Profile) *AccountUpdate {
-	return au.SetProfileID(p.ID)
+func (_u *AccountUpdate) SetProfile(v *Profile) *AccountUpdate {
+	return _u.SetProfileID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (au *AccountUpdate) AddTransactionEntryIDs(ids ...int) *AccountUpdate {
-	au.mutation.AddTransactionEntryIDs(ids...)
-	return au
+func (_u *AccountUpdate) AddTransactionEntryIDs(ids ...int) *AccountUpdate {
+	_u.mutation.AddTransactionEntryIDs(ids...)
+	return _u
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
-func (au *AccountUpdate) AddTransactionEntries(t ...*TransactionEntry) *AccountUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *AccountUpdate) AddTransactionEntries(v ...*TransactionEntry) *AccountUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return au.AddTransactionEntryIDs(ids...)
+	return _u.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
-func (au *AccountUpdate) Mutation() *AccountMutation {
-	return au.mutation
+func (_u *AccountUpdate) Mutation() *AccountMutation {
+	return _u.mutation
 }
 
 // ClearProfile clears the "profile" edge to the Profile entity.
-func (au *AccountUpdate) ClearProfile() *AccountUpdate {
-	au.mutation.ClearProfile()
-	return au
+func (_u *AccountUpdate) ClearProfile() *AccountUpdate {
+	_u.mutation.ClearProfile()
+	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
-func (au *AccountUpdate) ClearTransactionEntries() *AccountUpdate {
-	au.mutation.ClearTransactionEntries()
-	return au
+func (_u *AccountUpdate) ClearTransactionEntries() *AccountUpdate {
+	_u.mutation.ClearTransactionEntries()
+	return _u
 }
 
 // RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
-func (au *AccountUpdate) RemoveTransactionEntryIDs(ids ...int) *AccountUpdate {
-	au.mutation.RemoveTransactionEntryIDs(ids...)
-	return au
+func (_u *AccountUpdate) RemoveTransactionEntryIDs(ids ...int) *AccountUpdate {
+	_u.mutation.RemoveTransactionEntryIDs(ids...)
+	return _u
 }
 
 // RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
-func (au *AccountUpdate) RemoveTransactionEntries(t ...*TransactionEntry) *AccountUpdate {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *AccountUpdate) RemoveTransactionEntries(v ...*TransactionEntry) *AccountUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return au.RemoveTransactionEntryIDs(ids...)
+	return _u.RemoveTransactionEntryIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (au *AccountUpdate) Save(ctx context.Context) (int, error) {
-	au.defaults()
-	return withHooks(ctx, au.sqlSave, au.mutation, au.hooks)
+func (_u *AccountUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (au *AccountUpdate) SaveX(ctx context.Context) int {
-	affected, err := au.Save(ctx)
+func (_u *AccountUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -251,101 +251,101 @@ func (au *AccountUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (au *AccountUpdate) Exec(ctx context.Context) error {
-	_, err := au.Save(ctx)
+func (_u *AccountUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (au *AccountUpdate) ExecX(ctx context.Context) {
-	if err := au.Exec(ctx); err != nil {
+func (_u *AccountUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (au *AccountUpdate) defaults() {
-	if _, ok := au.mutation.UpdateTime(); !ok {
+func (_u *AccountUpdate) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := account.UpdateDefaultUpdateTime()
-		au.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (au *AccountUpdate) check() error {
-	if v, ok := au.mutation.Name(); ok {
+func (_u *AccountUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := account.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
-	if v, ok := au.mutation.Institution(); ok {
+	if v, ok := _u.mutation.Institution(); ok {
 		if err := account.InstitutionValidator(v); err != nil {
 			return &ValidationError{Name: "institution", err: fmt.Errorf(`ent: validator failed for field "Account.institution": %w`, err)}
 		}
 	}
-	if v, ok := au.mutation.InvestmentType(); ok {
+	if v, ok := _u.mutation.InvestmentType(); ok {
 		if err := account.InvestmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
 		}
 	}
-	if au.mutation.ProfileCleared() && len(au.mutation.ProfileIDs()) > 0 {
+	if _u.mutation.ProfileCleared() && len(_u.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Account.profile"`)
 	}
 	return nil
 }
 
-func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := au.check(); err != nil {
-		return n, err
+func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(account.Table, account.Columns, sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt))
-	if ps := au.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := au.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(account.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := au.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 	}
-	if value, ok := au.mutation.Institution(); ok {
+	if value, ok := _u.mutation.Institution(); ok {
 		_spec.SetField(account.FieldInstitution, field.TypeString, value)
 	}
-	if value, ok := au.mutation.InvestmentType(); ok {
+	if value, ok := _u.mutation.InvestmentType(); ok {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
 	}
-	if value, ok := au.mutation.Amount(); ok {
+	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.AddedAmount(); ok {
+	if value, ok := _u.mutation.AddedAmount(); ok {
 		_spec.AddField(account.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.Value(); ok {
+	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.AddedValue(); ok {
+	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(account.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.FxRate(); ok {
+	if value, ok := _u.mutation.FxRate(); ok {
 		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.AddedFxRate(); ok {
+	if value, ok := _u.mutation.AddedFxRate(); ok {
 		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.Balance(); ok {
+	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.AddedBalance(); ok {
+	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := au.mutation.Archived(); ok {
+	if value, ok := _u.mutation.Archived(); ok {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 	}
-	if au.mutation.ProfileCleared() {
+	if _u.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -358,7 +358,7 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.ProfileIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -374,7 +374,7 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if au.mutation.TransactionEntriesCleared() {
+	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -387,7 +387,7 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !au.mutation.TransactionEntriesCleared() {
+	if nodes := _u.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -403,7 +403,7 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -419,7 +419,7 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{account.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -427,8 +427,8 @@ func (au *AccountUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	au.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // AccountUpdateOne is the builder for updating a single Account entity.
@@ -440,231 +440,231 @@ type AccountUpdateOne struct {
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (auo *AccountUpdateOne) SetUpdateTime(t time.Time) *AccountUpdateOne {
-	auo.mutation.SetUpdateTime(t)
-	return auo
+func (_u *AccountUpdateOne) SetUpdateTime(v time.Time) *AccountUpdateOne {
+	_u.mutation.SetUpdateTime(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (auo *AccountUpdateOne) SetName(s string) *AccountUpdateOne {
-	auo.mutation.SetName(s)
-	return auo
+func (_u *AccountUpdateOne) SetName(v string) *AccountUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableName(s *string) *AccountUpdateOne {
-	if s != nil {
-		auo.SetName(*s)
+func (_u *AccountUpdateOne) SetNillableName(v *string) *AccountUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetInstitution sets the "institution" field.
-func (auo *AccountUpdateOne) SetInstitution(s string) *AccountUpdateOne {
-	auo.mutation.SetInstitution(s)
-	return auo
+func (_u *AccountUpdateOne) SetInstitution(v string) *AccountUpdateOne {
+	_u.mutation.SetInstitution(v)
+	return _u
 }
 
 // SetNillableInstitution sets the "institution" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableInstitution(s *string) *AccountUpdateOne {
-	if s != nil {
-		auo.SetInstitution(*s)
+func (_u *AccountUpdateOne) SetNillableInstitution(v *string) *AccountUpdateOne {
+	if v != nil {
+		_u.SetInstitution(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetInvestmentType sets the "investment_type" field.
-func (auo *AccountUpdateOne) SetInvestmentType(at account.InvestmentType) *AccountUpdateOne {
-	auo.mutation.SetInvestmentType(at)
-	return auo
+func (_u *AccountUpdateOne) SetInvestmentType(v account.InvestmentType) *AccountUpdateOne {
+	_u.mutation.SetInvestmentType(v)
+	return _u
 }
 
 // SetNillableInvestmentType sets the "investment_type" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableInvestmentType(at *account.InvestmentType) *AccountUpdateOne {
-	if at != nil {
-		auo.SetInvestmentType(*at)
+func (_u *AccountUpdateOne) SetNillableInvestmentType(v *account.InvestmentType) *AccountUpdateOne {
+	if v != nil {
+		_u.SetInvestmentType(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetAmount sets the "amount" field.
-func (auo *AccountUpdateOne) SetAmount(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.ResetAmount()
-	auo.mutation.SetAmount(d)
-	return auo
+func (_u *AccountUpdateOne) SetAmount(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.ResetAmount()
+	_u.mutation.SetAmount(v)
+	return _u
 }
 
 // SetNillableAmount sets the "amount" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableAmount(d *decimal.Decimal) *AccountUpdateOne {
-	if d != nil {
-		auo.SetAmount(*d)
+func (_u *AccountUpdateOne) SetNillableAmount(v *decimal.Decimal) *AccountUpdateOne {
+	if v != nil {
+		_u.SetAmount(*v)
 	}
-	return auo
+	return _u
 }
 
-// AddAmount adds d to the "amount" field.
-func (auo *AccountUpdateOne) AddAmount(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.AddAmount(d)
-	return auo
+// AddAmount adds value to the "amount" field.
+func (_u *AccountUpdateOne) AddAmount(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.AddAmount(v)
+	return _u
 }
 
 // SetValue sets the "value" field.
-func (auo *AccountUpdateOne) SetValue(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.ResetValue()
-	auo.mutation.SetValue(d)
-	return auo
+func (_u *AccountUpdateOne) SetValue(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.ResetValue()
+	_u.mutation.SetValue(v)
+	return _u
 }
 
 // SetNillableValue sets the "value" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableValue(d *decimal.Decimal) *AccountUpdateOne {
-	if d != nil {
-		auo.SetValue(*d)
+func (_u *AccountUpdateOne) SetNillableValue(v *decimal.Decimal) *AccountUpdateOne {
+	if v != nil {
+		_u.SetValue(*v)
 	}
-	return auo
+	return _u
 }
 
-// AddValue adds d to the "value" field.
-func (auo *AccountUpdateOne) AddValue(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.AddValue(d)
-	return auo
+// AddValue adds value to the "value" field.
+func (_u *AccountUpdateOne) AddValue(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.AddValue(v)
+	return _u
 }
 
 // SetFxRate sets the "fx_rate" field.
-func (auo *AccountUpdateOne) SetFxRate(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.ResetFxRate()
-	auo.mutation.SetFxRate(d)
-	return auo
+func (_u *AccountUpdateOne) SetFxRate(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.ResetFxRate()
+	_u.mutation.SetFxRate(v)
+	return _u
 }
 
 // SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableFxRate(d *decimal.Decimal) *AccountUpdateOne {
-	if d != nil {
-		auo.SetFxRate(*d)
+func (_u *AccountUpdateOne) SetNillableFxRate(v *decimal.Decimal) *AccountUpdateOne {
+	if v != nil {
+		_u.SetFxRate(*v)
 	}
-	return auo
+	return _u
 }
 
-// AddFxRate adds d to the "fx_rate" field.
-func (auo *AccountUpdateOne) AddFxRate(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.AddFxRate(d)
-	return auo
+// AddFxRate adds value to the "fx_rate" field.
+func (_u *AccountUpdateOne) AddFxRate(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.AddFxRate(v)
+	return _u
 }
 
 // SetBalance sets the "balance" field.
-func (auo *AccountUpdateOne) SetBalance(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.ResetBalance()
-	auo.mutation.SetBalance(d)
-	return auo
+func (_u *AccountUpdateOne) SetBalance(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
 }
 
 // SetNillableBalance sets the "balance" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableBalance(d *decimal.Decimal) *AccountUpdateOne {
-	if d != nil {
-		auo.SetBalance(*d)
+func (_u *AccountUpdateOne) SetNillableBalance(v *decimal.Decimal) *AccountUpdateOne {
+	if v != nil {
+		_u.SetBalance(*v)
 	}
-	return auo
+	return _u
 }
 
-// AddBalance adds d to the "balance" field.
-func (auo *AccountUpdateOne) AddBalance(d decimal.Decimal) *AccountUpdateOne {
-	auo.mutation.AddBalance(d)
-	return auo
+// AddBalance adds value to the "balance" field.
+func (_u *AccountUpdateOne) AddBalance(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.AddBalance(v)
+	return _u
 }
 
 // SetArchived sets the "archived" field.
-func (auo *AccountUpdateOne) SetArchived(b bool) *AccountUpdateOne {
-	auo.mutation.SetArchived(b)
-	return auo
+func (_u *AccountUpdateOne) SetArchived(v bool) *AccountUpdateOne {
+	_u.mutation.SetArchived(v)
+	return _u
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (auo *AccountUpdateOne) SetNillableArchived(b *bool) *AccountUpdateOne {
-	if b != nil {
-		auo.SetArchived(*b)
+func (_u *AccountUpdateOne) SetNillableArchived(v *bool) *AccountUpdateOne {
+	if v != nil {
+		_u.SetArchived(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
-func (auo *AccountUpdateOne) SetProfileID(id int) *AccountUpdateOne {
-	auo.mutation.SetProfileID(id)
-	return auo
+func (_u *AccountUpdateOne) SetProfileID(id int) *AccountUpdateOne {
+	_u.mutation.SetProfileID(id)
+	return _u
 }
 
 // SetProfile sets the "profile" edge to the Profile entity.
-func (auo *AccountUpdateOne) SetProfile(p *Profile) *AccountUpdateOne {
-	return auo.SetProfileID(p.ID)
+func (_u *AccountUpdateOne) SetProfile(v *Profile) *AccountUpdateOne {
+	return _u.SetProfileID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
-func (auo *AccountUpdateOne) AddTransactionEntryIDs(ids ...int) *AccountUpdateOne {
-	auo.mutation.AddTransactionEntryIDs(ids...)
-	return auo
+func (_u *AccountUpdateOne) AddTransactionEntryIDs(ids ...int) *AccountUpdateOne {
+	_u.mutation.AddTransactionEntryIDs(ids...)
+	return _u
 }
 
 // AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
-func (auo *AccountUpdateOne) AddTransactionEntries(t ...*TransactionEntry) *AccountUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *AccountUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *AccountUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return auo.AddTransactionEntryIDs(ids...)
+	return _u.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
-func (auo *AccountUpdateOne) Mutation() *AccountMutation {
-	return auo.mutation
+func (_u *AccountUpdateOne) Mutation() *AccountMutation {
+	return _u.mutation
 }
 
 // ClearProfile clears the "profile" edge to the Profile entity.
-func (auo *AccountUpdateOne) ClearProfile() *AccountUpdateOne {
-	auo.mutation.ClearProfile()
-	return auo
+func (_u *AccountUpdateOne) ClearProfile() *AccountUpdateOne {
+	_u.mutation.ClearProfile()
+	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
-func (auo *AccountUpdateOne) ClearTransactionEntries() *AccountUpdateOne {
-	auo.mutation.ClearTransactionEntries()
-	return auo
+func (_u *AccountUpdateOne) ClearTransactionEntries() *AccountUpdateOne {
+	_u.mutation.ClearTransactionEntries()
+	return _u
 }
 
 // RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
-func (auo *AccountUpdateOne) RemoveTransactionEntryIDs(ids ...int) *AccountUpdateOne {
-	auo.mutation.RemoveTransactionEntryIDs(ids...)
-	return auo
+func (_u *AccountUpdateOne) RemoveTransactionEntryIDs(ids ...int) *AccountUpdateOne {
+	_u.mutation.RemoveTransactionEntryIDs(ids...)
+	return _u
 }
 
 // RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
-func (auo *AccountUpdateOne) RemoveTransactionEntries(t ...*TransactionEntry) *AccountUpdateOne {
-	ids := make([]int, len(t))
-	for i := range t {
-		ids[i] = t[i].ID
+func (_u *AccountUpdateOne) RemoveTransactionEntries(v ...*TransactionEntry) *AccountUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return auo.RemoveTransactionEntryIDs(ids...)
+	return _u.RemoveTransactionEntryIDs(ids...)
 }
 
 // Where appends a list predicates to the AccountUpdate builder.
-func (auo *AccountUpdateOne) Where(ps ...predicate.Account) *AccountUpdateOne {
-	auo.mutation.Where(ps...)
-	return auo
+func (_u *AccountUpdateOne) Where(ps ...predicate.Account) *AccountUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (auo *AccountUpdateOne) Select(field string, fields ...string) *AccountUpdateOne {
-	auo.fields = append([]string{field}, fields...)
-	return auo
+func (_u *AccountUpdateOne) Select(field string, fields ...string) *AccountUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Account entity.
-func (auo *AccountUpdateOne) Save(ctx context.Context) (*Account, error) {
-	auo.defaults()
-	return withHooks(ctx, auo.sqlSave, auo.mutation, auo.hooks)
+func (_u *AccountUpdateOne) Save(ctx context.Context) (*Account, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (auo *AccountUpdateOne) SaveX(ctx context.Context) *Account {
-	node, err := auo.Save(ctx)
+func (_u *AccountUpdateOne) SaveX(ctx context.Context) *Account {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -672,60 +672,60 @@ func (auo *AccountUpdateOne) SaveX(ctx context.Context) *Account {
 }
 
 // Exec executes the query on the entity.
-func (auo *AccountUpdateOne) Exec(ctx context.Context) error {
-	_, err := auo.Save(ctx)
+func (_u *AccountUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (auo *AccountUpdateOne) ExecX(ctx context.Context) {
-	if err := auo.Exec(ctx); err != nil {
+func (_u *AccountUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (auo *AccountUpdateOne) defaults() {
-	if _, ok := auo.mutation.UpdateTime(); !ok {
+func (_u *AccountUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
 		v := account.UpdateDefaultUpdateTime()
-		auo.mutation.SetUpdateTime(v)
+		_u.mutation.SetUpdateTime(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (auo *AccountUpdateOne) check() error {
-	if v, ok := auo.mutation.Name(); ok {
+func (_u *AccountUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := account.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
-	if v, ok := auo.mutation.Institution(); ok {
+	if v, ok := _u.mutation.Institution(); ok {
 		if err := account.InstitutionValidator(v); err != nil {
 			return &ValidationError{Name: "institution", err: fmt.Errorf(`ent: validator failed for field "Account.institution": %w`, err)}
 		}
 	}
-	if v, ok := auo.mutation.InvestmentType(); ok {
+	if v, ok := _u.mutation.InvestmentType(); ok {
 		if err := account.InvestmentTypeValidator(v); err != nil {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
 		}
 	}
-	if auo.mutation.ProfileCleared() && len(auo.mutation.ProfileIDs()) > 0 {
+	if _u.mutation.ProfileCleared() && len(_u.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Account.profile"`)
 	}
 	return nil
 }
 
-func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err error) {
-	if err := auo.check(); err != nil {
+func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(account.Table, account.Columns, sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt))
-	id, ok := auo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Account.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := auo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, account.FieldID)
 		for _, f := range fields {
@@ -737,53 +737,53 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 			}
 		}
 	}
-	if ps := auo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := auo.mutation.UpdateTime(); ok {
+	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(account.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := auo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 	}
-	if value, ok := auo.mutation.Institution(); ok {
+	if value, ok := _u.mutation.Institution(); ok {
 		_spec.SetField(account.FieldInstitution, field.TypeString, value)
 	}
-	if value, ok := auo.mutation.InvestmentType(); ok {
+	if value, ok := _u.mutation.InvestmentType(); ok {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
 	}
-	if value, ok := auo.mutation.Amount(); ok {
+	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(account.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.AddedAmount(); ok {
+	if value, ok := _u.mutation.AddedAmount(); ok {
 		_spec.AddField(account.FieldAmount, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.Value(); ok {
+	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.AddedValue(); ok {
+	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(account.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.FxRate(); ok {
+	if value, ok := _u.mutation.FxRate(); ok {
 		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.AddedFxRate(); ok {
+	if value, ok := _u.mutation.AddedFxRate(); ok {
 		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.Balance(); ok {
+	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.AddedBalance(); ok {
+	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
 	}
-	if value, ok := auo.mutation.Archived(); ok {
+	if value, ok := _u.mutation.Archived(); ok {
 		_spec.SetField(account.FieldArchived, field.TypeBool, value)
 	}
-	if auo.mutation.ProfileCleared() {
+	if _u.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -796,7 +796,7 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.ProfileIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -812,7 +812,7 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if auo.mutation.TransactionEntriesCleared() {
+	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -825,7 +825,7 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !auo.mutation.TransactionEntriesCleared() {
+	if nodes := _u.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -841,7 +841,7 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -857,10 +857,10 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Account{config: auo.config}
+	_node = &Account{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, auo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{account.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -868,6 +868,6 @@ func (auo *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err e
 		}
 		return nil, err
 	}
-	auo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

@@ -95,7 +95,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Transaction fields.
-func (t *Transaction) assignValues(columns []string, values []any) error {
+func (_m *Transaction) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -106,46 +106,46 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			t.ID = int(value.Int64)
+			_m.ID = int(value.Int64)
 		case transaction.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
-				t.CreateTime = value.Time
+				_m.CreateTime = value.Time
 			}
 		case transaction.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
-				t.UpdateTime = value.Time
+				_m.UpdateTime = value.Time
 			}
 		case transaction.FieldBalance:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value != nil {
-				t.Balance = *value
+				_m.Balance = *value
 			}
 		case transaction.FieldNote:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field note", values[i])
 			} else if value.Valid {
-				t.Note = value.String
+				_m.Note = value.String
 			}
 		case transaction.FieldDatetime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field datetime", values[i])
 			} else if value.Valid {
-				t.Datetime = value.Time
+				_m.Datetime = value.Time
 			}
 		case transaction.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field profile_transactions", value)
 			} else if value.Valid {
-				t.profile_transactions = new(int)
-				*t.profile_transactions = int(value.Int64)
+				_m.profile_transactions = new(int)
+				*_m.profile_transactions = int(value.Int64)
 			}
 		default:
-			t.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -153,82 +153,82 @@ func (t *Transaction) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Transaction.
 // This includes values selected through modifiers, order, etc.
-func (t *Transaction) Value(name string) (ent.Value, error) {
-	return t.selectValues.Get(name)
+func (_m *Transaction) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryProfile queries the "profile" edge of the Transaction entity.
-func (t *Transaction) QueryProfile() *ProfileQuery {
-	return NewTransactionClient(t.config).QueryProfile(t)
+func (_m *Transaction) QueryProfile() *ProfileQuery {
+	return NewTransactionClient(_m.config).QueryProfile(_m)
 }
 
 // QueryTransactionEntries queries the "transaction_entries" edge of the Transaction entity.
-func (t *Transaction) QueryTransactionEntries() *TransactionEntryQuery {
-	return NewTransactionClient(t.config).QueryTransactionEntries(t)
+func (_m *Transaction) QueryTransactionEntries() *TransactionEntryQuery {
+	return NewTransactionClient(_m.config).QueryTransactionEntries(_m)
 }
 
 // Update returns a builder for updating this Transaction.
 // Note that you need to call Transaction.Unwrap() before calling this method if this Transaction
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (t *Transaction) Update() *TransactionUpdateOne {
-	return NewTransactionClient(t.config).UpdateOne(t)
+func (_m *Transaction) Update() *TransactionUpdateOne {
+	return NewTransactionClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Transaction entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (t *Transaction) Unwrap() *Transaction {
-	_tx, ok := t.config.driver.(*txDriver)
+func (_m *Transaction) Unwrap() *Transaction {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Transaction is not a transactional entity")
 	}
-	t.config.driver = _tx.drv
-	return t
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (t *Transaction) String() string {
+func (_m *Transaction) String() string {
 	var builder strings.Builder
 	builder.WriteString("Transaction(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", t.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("create_time=")
-	builder.WriteString(t.CreateTime.Format(time.ANSIC))
+	builder.WriteString(_m.CreateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
-	builder.WriteString(t.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
-	builder.WriteString(fmt.Sprintf("%v", t.Balance))
+	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
 	builder.WriteString(", ")
 	builder.WriteString("note=")
-	builder.WriteString(t.Note)
+	builder.WriteString(_m.Note)
 	builder.WriteString(", ")
 	builder.WriteString("datetime=")
-	builder.WriteString(t.Datetime.Format(time.ANSIC))
+	builder.WriteString(_m.Datetime.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
 // NamedTransactionEntries returns the TransactionEntries named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (t *Transaction) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
-	if t.Edges.namedTransactionEntries == nil {
+func (_m *Transaction) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
+	if _m.Edges.namedTransactionEntries == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := t.Edges.namedTransactionEntries[name]
+	nodes, ok := _m.Edges.namedTransactionEntries[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (t *Transaction) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
-	if t.Edges.namedTransactionEntries == nil {
-		t.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
+func (_m *Transaction) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
+	if _m.Edges.namedTransactionEntries == nil {
+		_m.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
 	}
 	if len(edges) == 0 {
-		t.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
+		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
 	} else {
-		t.Edges.namedTransactionEntries[name] = append(t.Edges.namedTransactionEntries[name], edges...)
+		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
 	}
 }
 
