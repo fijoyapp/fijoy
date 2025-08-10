@@ -87,7 +87,7 @@ function Page() {
         profilesRef={data.profiles}
       >
         <AppSidebar />
-        <body className="flex h-screen w-full flex-col">
+        <div className="flex h-screen w-full flex-col">
           <header className="flex h-12 flex-shrink-0 items-center">
             <div className="px-2" />
             <SidebarTrigger className="size-4" />
@@ -111,7 +111,7 @@ function Page() {
           <main className="mx-4 mb-4 flex-1 overflow-y-auto rounded-lg p-2">
             <Outlet />
           </main>
-        </body>
+        </div>
       </ProfileProvider>
     </SidebarProvider>
   );
