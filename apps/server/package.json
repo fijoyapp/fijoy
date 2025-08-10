@@ -11,9 +11,9 @@
   },
   "devDependencies": {
     "@graphql-tools/load-files": "^7.0.1",
-    "@graphql-tools/merge": "^9.0.24",
+    "@graphql-tools/merge": "^9.1.1",
     "graphql": "^16.11.0",
     "prettier": "^3.6.2",
-    "prettier-plugin-sql": "^0.19.1"
+    "prettier-plugin-sql": "^0.19.2"
   }
 }
