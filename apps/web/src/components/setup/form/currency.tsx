@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
 import { ChevronsUpDown, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ import type {
   currencyFragment$key,
 } from "@/lib/queries/__generated__/currencyFragment.graphql";
 import { CurrencyFragment } from "@/lib/queries/currency";
-import { useFormat } from "@/hooks/use-format";
+import currency from "currency.js";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -61,7 +61,23 @@ export function CurrencyField<T extends FieldValues>({
   const [selectableCurrencies, setSelectableCurrencies] =
     useState<currencyFragment$data>(data);
 
-  const { getCurrencyDisplay } = useFormat();
+  const getCurrencyDisplay = useCallback(
+    (
+      quantity: string,
+      currencyCode: string,
+      locale?: string,
+      opts?: Intl.NumberFormatOptions,
+    ): string => {
+      const curr = currency(quantity);
+
+      return Intl.NumberFormat(locale, {
+        ...opts,
+        currency: currencyCode,
+        style: "currency",
+      }).format(curr.value);
+    },
+    [],
+  );
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
