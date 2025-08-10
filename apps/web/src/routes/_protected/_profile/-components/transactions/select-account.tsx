@@ -26,6 +26,7 @@ type SelectAccountProps<T extends FieldValues> = {
   label: string;
   description: string;
   fragmentRef: selectAccountFragment$key;
+  currencyTickerOnly?: boolean;
 };
 
 const fragment = graphql`
@@ -37,6 +38,7 @@ const fragment = graphql`
           name
           amount
           currencySymbol
+          tickerType
         }
       }
     }
@@ -49,6 +51,7 @@ export function SelectAccount<T extends FieldValues>({
   label,
   description,
   fragmentRef,
+  currencyTickerOnly = true,
 }: SelectAccountProps<T>) {
   const { getCurrencyDisplay } = useFormat();
   const data = useFragment(fragment, fragmentRef);
@@ -68,19 +71,27 @@ export function SelectAccount<T extends FieldValues>({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {data.accounts.edges?.map((account) => {
-                invariant(account?.node?.id);
-                return (
-                  <SelectItem key={account.node.id} value={account.node.id}>
-                    {account.node.name} (
-                    {getCurrencyDisplay(
-                      account.node.amount.toString(),
-                      account.node.currencySymbol,
-                    )}
-                    )
-                  </SelectItem>
-                );
-              })}
+              {data.accounts.edges
+                ?.filter((account) => {
+                  if (!currencyTickerOnly) {
+                    return true;
+                  }
+
+                  return account?.node?.tickerType === "currency";
+                })
+                .map((account) => {
+                  invariant(account?.node?.id);
+                  return (
+                    <SelectItem key={account.node.id} value={account.node.id}>
+                      {account.node.name} (
+                      {getCurrencyDisplay(
+                        account.node.amount.toString(),
+                        account.node.currencySymbol,
+                      )}
+                      )
+                    </SelectItem>
+                  );
+                })}
             </SelectContent>
           </Select>
           <FormMessage />

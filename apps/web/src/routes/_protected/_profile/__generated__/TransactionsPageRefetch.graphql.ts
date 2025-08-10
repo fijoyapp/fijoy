@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7faf61ed2e692825bdb6e7dafd1845c3>>
+ * @generated SignedSource<<c658b52d205066b5b358c7ceb029d46d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -220,7 +220,14 @@ return {
                   (v1/*: any*/),
                   (v4/*: any*/),
                   (v3/*: any*/),
-                  (v5/*: any*/)
+                  (v5/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "tickerType",
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -233,12 +240,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "853dcee28673f130580423546f041125",
+    "cacheID": "101e3dc8aad64b76d187edd3640f9456",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        amount\n        currencySymbol\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        amount\n        currencySymbol\n        tickerType\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n"
   }
 };
 })();

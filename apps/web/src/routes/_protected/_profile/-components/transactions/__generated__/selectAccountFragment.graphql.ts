@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b764e898acb7675e71c7040bda7c1858>>
+ * @generated SignedSource<<498d599b5681bc34116103fd959aa425>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type AccountTickerType = "crypto" | "currency" | "stock" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type selectAccountFragment$data = {
   readonly accounts: {
@@ -18,6 +19,7 @@ export type selectAccountFragment$data = {
         readonly currencySymbol: string;
         readonly id: string;
         readonly name: string;
+        readonly tickerType: AccountTickerType;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -95,6 +97,13 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "currencySymbol",
                   "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "tickerType",
+                  "storageKey": null
                 }
               ],
               "storageKey": null
@@ -110,6 +119,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "6a0758a98ae50de48914d36682d41f65";
+(node as any).hash = "f744aea68825e227012123410328463e";
 
 export default node;
