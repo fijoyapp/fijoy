@@ -25,12 +25,12 @@ import {
 import { useFragment } from "react-relay";
 import { useMemo, useState, type ReactNode } from "react";
 import { useProfile } from "@/hooks/use-profile";
-import { getCurrencyDisplay } from "@/lib/money";
 import invariant from "tiny-invariant";
 import { match } from "ts-pattern";
 import { capitalize } from "lodash";
 import currency from "currency.js";
 import { getRouteApi } from "@tanstack/react-router";
+import { useFormat } from "@/hooks/use-format";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
@@ -71,6 +71,7 @@ export default function AccountDataTable({
 
   const data = useFragment(AccountDataTableFragment, accountDataTableFragment);
   const { profile } = useProfile();
+  const { getCurrencyDisplay } = useFormat();
 
   const columns: ColumnDef<Account>[] = useMemo(
     (): ColumnDef<Account>[] => [
@@ -131,17 +132,12 @@ export default function AccountDataTable({
               {match(accountType)
                 .with("investment", () => (
                   <div>
-                    {money} x{" "}
-                    {getCurrencyDisplay(value, currencySymbol, profile.locale, {
-                      compact: false,
-                    })}
+                    {money} x {getCurrencyDisplay(value, currencySymbol)}
                   </div>
                 ))
                 .otherwise(() => (
                   <div className="font-mono">
-                    {getCurrencyDisplay(money, currencySymbol, profile.locale, {
-                      compact: false,
-                    })}
+                    {getCurrencyDisplay(money, currencySymbol)}
                   </div>
                 ))}
             </div>
@@ -171,10 +167,6 @@ export default function AccountDataTable({
                 {getCurrencyDisplay(
                   total?.toString() || "",
                   profile.currencies[0],
-                  profile.locale,
-                  {
-                    compact: false,
-                  },
                 )}
               </div>
             );
@@ -184,20 +176,13 @@ export default function AccountDataTable({
           const money = row.original.balance;
           return (
             <div className="text-right font-mono">
-              {getCurrencyDisplay(
-                money,
-                profile.currencies[0],
-                profile.locale,
-                {
-                  compact: false,
-                },
-              )}
+              {getCurrencyDisplay(money, profile.currencies[0])}
             </div>
           );
         },
       },
     ],
-    [profile, groupby],
+    [profile, groupby, getCurrencyDisplay],
   );
 
   const filteredData = useMemo(() => {

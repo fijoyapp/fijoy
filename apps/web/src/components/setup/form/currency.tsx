@@ -27,13 +27,13 @@ import { ChevronsUpDown, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { currencyCodeToName } from "@/config/currency";
 import { cn } from "@/lib/utils";
-import { getCurrencyDisplay } from "@/lib/money";
 import { useFragment } from "react-relay";
 import type {
   currencyFragment$data,
   currencyFragment$key,
 } from "@/lib/queries/__generated__/currencyFragment.graphql";
 import { CurrencyFragment } from "@/lib/queries/currency";
+import { useFormat } from "@/hooks/use-format";
 
 type CurrencyFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -60,6 +60,8 @@ export function CurrencyField<T extends FieldValues>({
 
   const [selectableCurrencies, setSelectableCurrencies] =
     useState<currencyFragment$data>(data);
+
+  const { getCurrencyDisplay } = useFormat();
 
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -159,9 +161,7 @@ export function CurrencyField<T extends FieldValues>({
                       </span>
 
                       <span className="text-muted-foreground text-sm">
-                        {getCurrencyDisplay("420", curr, locale, {
-                          compact: false,
-                        })}
+                        {getCurrencyDisplay("420", curr, locale)}
                       </span>
                     </div>
 

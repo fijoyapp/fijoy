@@ -1,11 +1,11 @@
 import { CardContent } from "@/components/ui/card";
 import { useProfile } from "@/hooks/use-profile";
-import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
 import { CreditCard } from "lucide-react";
 import type { cardFragment$key } from "../__generated__/cardFragment.graphql";
 import { useFragment } from "react-relay";
 import { CardFragment } from "../card-fragment";
+import { useFormat } from "@/hooks/use-format";
 
 type LiabilityCardProps = {
   account: cardFragment$key;
@@ -15,6 +15,7 @@ export function LiabilityCard({ account }: LiabilityCardProps) {
   const { profile } = useProfile();
   const data = useFragment(CardFragment, account);
 
+  const { getCurrencyDisplay } = useFormat();
   if (!profile) {
     return null;
   }
@@ -35,16 +36,7 @@ export function LiabilityCard({ account }: LiabilityCardProps) {
       <div className="grow"></div>
 
       <div className="flex flex-col items-end">
-        <div>
-          {getCurrencyDisplay(
-            data.amount,
-            data.currencySymbol,
-            profile.locale,
-            {
-              compact: false,
-            },
-          )}
-        </div>
+        <div>{getCurrencyDisplay(data.amount, data.currencySymbol)}</div>
         <div className="text-muted-foreground text-xs">
           {getPrettyTime(new Date(data.updateTime))}
         </div>

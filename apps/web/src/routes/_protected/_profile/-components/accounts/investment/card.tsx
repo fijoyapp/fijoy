@@ -1,12 +1,12 @@
 import { CardContent } from "@/components/ui/card";
 import { useProfile } from "@/hooks/use-profile";
-import { getCurrencyDisplay } from "@/lib/money";
 import { getPrettyTime } from "@/lib/time";
 import { ChartCandlestick } from "lucide-react";
 import type { cardFragment$key } from "../__generated__/cardFragment.graphql";
 import { CardFragment } from "../card-fragment";
 import { useFragment } from "react-relay";
 import currency from "currency.js";
+import { useFormat } from "@/hooks/use-format";
 
 type InvestmentCardProps = {
   account: cardFragment$key;
@@ -15,6 +15,8 @@ type InvestmentCardProps = {
 export function InvestmentCard({ account }: InvestmentCardProps) {
   const { profile } = useProfile();
   const data = useFragment(CardFragment, account);
+  const { getCurrencyDisplay } = useFormat();
+
   if (!profile) {
     return null;
   }
@@ -39,10 +41,6 @@ export function InvestmentCard({ account }: InvestmentCardProps) {
           {getCurrencyDisplay(
             currency(data.value).multiply(currency(data.amount)).toString(),
             data.currencySymbol,
-            profile.locale,
-            {
-              compact: false,
-            },
           )}
         </div>
         <div className="text-muted-foreground text-xs">

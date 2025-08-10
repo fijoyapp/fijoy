@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/card";
 import { Coins, CreditCard, PiggyBank, Wallet } from "lucide-react";
 import { getOverallStats } from "@/lib/account";
-import { getCurrencyDisplay } from "@/lib/money";
 import { useProfile } from "@/hooks/use-profile";
 import { useMemo } from "react";
 import currency from "currency.js";
@@ -14,6 +13,7 @@ import { graphql } from "relay-runtime";
 import type { netWorthInfoFragment$key } from "./__generated__/netWorthInfoFragment.graphql";
 import invariant from "tiny-invariant";
 import { useFragment } from "react-relay";
+import { useFormat } from "@/hooks/use-format";
 
 type Props = {
   netWorthInfoFragment: netWorthInfoFragment$key;
@@ -46,6 +46,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
     () => getOverallStats(accountEdges),
     [accountEdges],
   );
+  const { getCurrencyDisplay } = useFormat();
 
   const { profile } = useProfile();
   if (!profile) {
@@ -57,12 +58,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
-            {getCurrencyDisplay(
-              asset.toString(),
-              profile.currencies[0],
-              profile.locale,
-              { compact: false },
-            )}
+            {getCurrencyDisplay(asset.toString(), profile.currencies[0])}
           </CardTitle>
           <CardDescription>Asset</CardDescription>
         </CardHeader>
@@ -73,12 +69,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
-            {getCurrencyDisplay(
-              liability.toString(),
-              profile.currencies[0],
-              profile.locale,
-              { compact: false },
-            )}
+            {getCurrencyDisplay(liability.toString(), profile.currencies[0])}
           </CardTitle>
           <CardDescription>Liability</CardDescription>
         </CardHeader>
@@ -90,12 +81,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
-            {getCurrencyDisplay(
-              netWorth.toString(),
-              profile.currencies[0],
-              profile.locale,
-              { compact: false },
-            )}
+            {getCurrencyDisplay(netWorth.toString(), profile.currencies[0])}
           </CardTitle>
           <CardDescription>Net Worth</CardDescription>
         </CardHeader>
@@ -117,9 +103,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
             {getCurrencyDisplay(
               profile.netWorthGoal.toString(),
               profile.currencies[0],
-              profile.locale,
-              { compact: false },
-            )}{" "}
+            )}
             Goal
           </CardDescription>
         </CardHeader>

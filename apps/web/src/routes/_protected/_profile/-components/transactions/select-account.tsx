@@ -13,13 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useProfile } from "@/hooks/use-profile";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import { useFragment } from "react-relay";
 import { graphql } from "relay-runtime";
 import type { selectAccountFragment$key } from "./__generated__/selectAccountFragment.graphql";
 import invariant from "tiny-invariant";
-import { getCurrencyDisplay } from "@/lib/money";
+import { useFormat } from "@/hooks/use-format";
 
 type SelectAccountProps<T extends FieldValues> = {
   control: Control<T>;
@@ -51,8 +50,7 @@ export function SelectAccount<T extends FieldValues>({
   description,
   fragmentRef,
 }: SelectAccountProps<T>) {
-  const { profile } = useProfile();
-
+  const { getCurrencyDisplay } = useFormat();
   const data = useFragment(fragment, fragmentRef);
 
   return (
@@ -78,8 +76,6 @@ export function SelectAccount<T extends FieldValues>({
                     {getCurrencyDisplay(
                       account.node.amount.toString(),
                       account.node.currencySymbol,
-                      profile.locale,
-                      { compact: false },
                     )}
                     )
                   </SelectItem>
