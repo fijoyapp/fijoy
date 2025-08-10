@@ -1361,6 +1361,7 @@ type ProfileMutation struct {
 	id                  *int
 	create_time         *time.Time
 	update_time         *time.Time
+	name                *string
 	locale              *string
 	currencies          *[]string
 	appendcurrencies    []string
@@ -1554,6 +1555,42 @@ func (m *ProfileMutation) OldUpdateTime(ctx context.Context) (v time.Time, err e
 // ResetUpdateTime resets all changes to the "update_time" field.
 func (m *ProfileMutation) ResetUpdateTime() {
 	m.update_time = nil
+}
+
+// SetName sets the "name" field.
+func (m *ProfileMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ProfileMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Profile entity.
+// If the Profile object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProfileMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ProfileMutation) ResetName() {
+	m.name = nil
 }
 
 // SetLocale sets the "locale" field.
@@ -1880,12 +1917,15 @@ func (m *ProfileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProfileMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, profile.FieldCreateTime)
 	}
 	if m.update_time != nil {
 		fields = append(fields, profile.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, profile.FieldName)
 	}
 	if m.locale != nil {
 		fields = append(fields, profile.FieldLocale)
@@ -1908,6 +1948,8 @@ func (m *ProfileMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case profile.FieldUpdateTime:
 		return m.UpdateTime()
+	case profile.FieldName:
+		return m.Name()
 	case profile.FieldLocale:
 		return m.Locale()
 	case profile.FieldCurrencies:
@@ -1927,6 +1969,8 @@ func (m *ProfileMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreateTime(ctx)
 	case profile.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
+	case profile.FieldName:
+		return m.OldName(ctx)
 	case profile.FieldLocale:
 		return m.OldLocale(ctx)
 	case profile.FieldCurrencies:
@@ -1955,6 +1999,13 @@ func (m *ProfileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdateTime(v)
+		return nil
+	case profile.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
 		return nil
 	case profile.FieldLocale:
 		v, ok := value.(string)
@@ -2046,6 +2097,9 @@ func (m *ProfileMutation) ResetField(name string) error {
 		return nil
 	case profile.FieldUpdateTime:
 		m.ResetUpdateTime()
+		return nil
+	case profile.FieldName:
+		m.ResetName()
 		return nil
 	case profile.FieldLocale:
 		m.ResetLocale()

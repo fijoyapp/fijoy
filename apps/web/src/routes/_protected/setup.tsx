@@ -112,23 +112,25 @@ function ProfilePicker() {
 
         <div className="py-2"></div>
 
-        {profiles.map((profile) => (
-          <Card key={profile.id}>
-            <CardContent className="flex py-4">
-              <div>{profile.id}</div>
-              <div className="grow"></div>
-              <Button
-                size="icon"
-                variant="default"
-                onClick={() => {
-                  setProfile(profile.id);
-                }}
-              >
-                <ArrowRight />
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+        <div className="flex-col space-y-2">
+          {profiles.map((profile) => (
+            <Card key={profile.id}>
+              <CardContent className="flex py-4">
+                <div>{profile.name}</div>
+                <div className="grow"></div>
+                <Button
+                  size="icon"
+                  variant="default"
+                  onClick={() => {
+                    setProfile(profile.id);
+                  }}
+                >
+                  <ArrowRight />
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );

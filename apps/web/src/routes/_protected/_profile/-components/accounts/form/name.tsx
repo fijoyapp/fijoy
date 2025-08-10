@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,6 +14,7 @@ type NameFieldProps<T extends FieldValues> = {
   name: Path<T>;
   label: string;
   placeholder: string;
+  description?: string;
 };
 
 export function NameField<T extends FieldValues>({
@@ -20,6 +22,7 @@ export function NameField<T extends FieldValues>({
   name,
   label,
   placeholder,
+  description,
 }: NameFieldProps<T>) {
   return (
     <FormField
@@ -28,6 +31,7 @@ export function NameField<T extends FieldValues>({
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
+          <FormDescription>{description}</FormDescription>
           <FormControl>
             <Input placeholder={placeholder} data-1p-ignore {...field} />
           </FormControl>

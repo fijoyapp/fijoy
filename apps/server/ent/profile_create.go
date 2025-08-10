@@ -52,6 +52,12 @@ func (_c *ProfileCreate) SetNillableUpdateTime(v *time.Time) *ProfileCreate {
 	return _c
 }
 
+// SetName sets the "name" field.
+func (_c *ProfileCreate) SetName(v string) *ProfileCreate {
+	_c.mutation.SetName(v)
+	return _c
+}
+
 // SetLocale sets the "locale" field.
 func (_c *ProfileCreate) SetLocale(v string) *ProfileCreate {
 	_c.mutation.SetLocale(v)
@@ -170,6 +176,9 @@ func (_c *ProfileCreate) check() error {
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Profile.update_time"`)}
 	}
+	if _, ok := _c.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Profile.name"`)}
+	}
 	if _, ok := _c.mutation.Locale(); !ok {
 		return &ValidationError{Name: "locale", err: errors.New(`ent: missing required field "Profile.locale"`)}
 	}
@@ -221,6 +230,10 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
+	}
+	if value, ok := _c.mutation.Name(); ok {
+		_spec.SetField(profile.FieldName, field.TypeString, value)
+		_node.Name = value
 	}
 	if value, ok := _c.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)

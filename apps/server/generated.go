@@ -117,6 +117,7 @@ type ComplexityRoot struct {
 		Currencies   func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Locale       func(childComplexity int) int
+		Name         func(childComplexity int) int
 		NetWorthGoal func(childComplexity int) int
 		Transactions func(childComplexity int) int
 		UpdateTime   func(childComplexity int) int
@@ -549,6 +550,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Profile.Locale(childComplexity), true
+
+	case "Profile.name":
+		if e.complexity.Profile.Name == nil {
+			break
+		}
+
+		return e.complexity.Profile.Name(childComplexity), true
 
 	case "Profile.netWorthGoal":
 		if e.complexity.Profile.NetWorthGoal == nil {
@@ -1923,6 +1931,8 @@ func (ec *executionContext) fieldContext_Account_profile(_ context.Context, fiel
 				return ec.fieldContext_Profile_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
 			case "locale":
 				return ec.fieldContext_Profile_locale(ctx, field)
 			case "currencies":
@@ -2402,6 +2412,8 @@ func (ec *executionContext) fieldContext_Mutation_createProfile(ctx context.Cont
 				return ec.fieldContext_Profile_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
 			case "locale":
 				return ec.fieldContext_Profile_locale(ctx, field)
 			case "currencies":
@@ -2477,6 +2489,8 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 				return ec.fieldContext_Profile_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
 			case "locale":
 				return ec.fieldContext_Profile_locale(ctx, field)
 			case "currencies":
@@ -3048,6 +3062,50 @@ func (ec *executionContext) fieldContext_Profile_updateTime(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Profile_name(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Profile_locale(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Profile_locale(ctx, field)
 	if err != nil {
@@ -3589,6 +3647,8 @@ func (ec *executionContext) fieldContext_Query_profiles(_ context.Context, field
 				return ec.fieldContext_Profile_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
 			case "locale":
 				return ec.fieldContext_Profile_locale(ctx, field)
 			case "currencies":
@@ -4216,6 +4276,8 @@ func (ec *executionContext) fieldContext_Transaction_profile(_ context.Context, 
 				return ec.fieldContext_Profile_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
 			case "locale":
 				return ec.fieldContext_Profile_locale(ctx, field)
 			case "currencies":
@@ -5267,6 +5329,8 @@ func (ec *executionContext) fieldContext_User_profiles(_ context.Context, field 
 				return ec.fieldContext_Profile_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
 			case "locale":
 				return ec.fieldContext_Profile_locale(ctx, field)
 			case "currencies":
@@ -7625,7 +7689,7 @@ func (ec *executionContext) unmarshalInputCreateProfileInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "currencies", "netWorthGoal", "accountIDs", "transactionIDs"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "currencies", "netWorthGoal", "accountIDs", "transactionIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7646,6 +7710,13 @@ func (ec *executionContext) unmarshalInputCreateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.UpdateTime = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
 		case "currencies":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencies"))
 			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
@@ -8037,7 +8108,7 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "currencies", "appendCurrencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccounts", "addTransactionIDs", "removeTransactionIDs", "clearTransactions"}
+	fieldsInOrder := [...]string{"updateTime", "name", "currencies", "appendCurrencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccounts", "addTransactionIDs", "removeTransactionIDs", "clearTransactions"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8051,6 +8122,13 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.UpdateTime = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
 		case "currencies":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencies"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
@@ -8869,6 +8947,11 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "updateTime":
 			out.Values[i] = ec._Profile_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._Profile_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

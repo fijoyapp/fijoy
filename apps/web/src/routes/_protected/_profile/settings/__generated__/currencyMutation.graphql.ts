@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6739408e04da3b26eac19d2e48b6bd63>>
+ * @generated SignedSource<<34c6ce446cd4c33a6d1a6f77e5e7d2e6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -125,6 +125,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "netWorthGoal",
             "storageKey": null
           }
@@ -134,12 +141,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e1cf23eb6b2b744b9e6513d774c219b7",
+    "cacheID": "1f6cd2106a15f5e89947cdcdb578074b",
     "id": null,
     "metadata": {},
     "name": "currencyMutation",
     "operationKind": "mutation",
-    "text": "mutation currencyMutation(\n  $id: ID!\n  $currencies: [String!]!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profileFragment\n    id\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  netWorthGoal\n}\n"
+    "text": "mutation currencyMutation(\n  $id: ID!\n  $currencies: [String!]!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profileFragment\n    id\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  name\n  netWorthGoal\n}\n"
   }
 };
 })();

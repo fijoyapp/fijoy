@@ -24,6 +24,8 @@ type Profile struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Locale holds the value of the "locale" field.
 	Locale string `json:"locale,omitempty"`
 	// Currencies holds the value of the "currencies" field.
@@ -95,7 +97,7 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case profile.FieldID:
 			values[i] = new(sql.NullInt64)
-		case profile.FieldLocale:
+		case profile.FieldName, profile.FieldLocale:
 			values[i] = new(sql.NullString)
 		case profile.FieldCreateTime, profile.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -133,6 +135,12 @@ func (_m *Profile) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
+			}
+		case profile.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				_m.Name = value.String
 			}
 		case profile.FieldLocale:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -217,6 +225,9 @@ func (_m *Profile) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("locale=")
 	builder.WriteString(_m.Locale)

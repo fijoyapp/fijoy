@@ -235,6 +235,11 @@ func (_q *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, profile.FieldUpdateTime)
 				fieldSeen[profile.FieldUpdateTime] = struct{}{}
 			}
+		case "name":
+			if _, ok := fieldSeen[profile.FieldName]; !ok {
+				selectedFields = append(selectedFields, profile.FieldName)
+				fieldSeen[profile.FieldName] = struct{}{}
+			}
 		case "locale":
 			if _, ok := fieldSeen[profile.FieldLocale]; !ok {
 				selectedFields = append(selectedFields, profile.FieldLocale)

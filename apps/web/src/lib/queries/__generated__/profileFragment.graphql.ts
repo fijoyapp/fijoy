@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1b6b21fe53fd9106c4037bcc3879dfa2>>
+ * @generated SignedSource<<405784f389dd8e34f736cb8a6e34ec86>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type profileFragment$data = ReadonlyArray<{
   readonly currencies: ReadonlyArray<string>;
   readonly id: string;
   readonly locale: string;
+  readonly name: string;
   readonly netWorthGoal: string;
   readonly " $fragmentType": "profileFragment";
 }>;
@@ -55,6 +56,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "netWorthGoal",
       "storageKey": null
     }
@@ -63,6 +71,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "5e04d433333de77d38b07f13f0742e68";
+(node as any).hash = "6ffb8a80e0d1dfe68260c19d3cff7502";
 
 export default node;

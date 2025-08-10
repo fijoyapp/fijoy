@@ -18,6 +18,8 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// FieldLocale holds the string denoting the locale field in the database.
 	FieldLocale = "locale"
 	// FieldCurrencies holds the string denoting the currencies field in the database.
@@ -60,6 +62,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldName,
 	FieldLocale,
 	FieldCurrencies,
 	FieldNetWorthGoal,
@@ -111,6 +114,11 @@ func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdateTime orders the results by the update_time field.
 func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // ByLocale orders the results by the locale field.

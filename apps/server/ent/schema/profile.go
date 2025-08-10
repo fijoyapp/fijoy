@@ -35,6 +35,8 @@ func (Profile) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
 
+		field.String("name"),
+
 		field.String("locale").
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput),

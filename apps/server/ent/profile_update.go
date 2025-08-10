@@ -39,6 +39,20 @@ func (_u *ProfileUpdate) SetUpdateTime(v time.Time) *ProfileUpdate {
 	return _u
 }
 
+// SetName sets the "name" field.
+func (_u *ProfileUpdate) SetName(v string) *ProfileUpdate {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *ProfileUpdate) SetNillableName(v *string) *ProfileUpdate {
+	if v != nil {
+		_u.SetName(*v)
+	}
+	return _u
+}
+
 // SetLocale sets the "locale" field.
 func (_u *ProfileUpdate) SetLocale(v string) *ProfileUpdate {
 	_u.mutation.SetLocale(v)
@@ -239,6 +253,9 @@ func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(profile.FieldName, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)
 	}
@@ -398,6 +415,20 @@ type ProfileUpdateOne struct {
 // SetUpdateTime sets the "update_time" field.
 func (_u *ProfileUpdateOne) SetUpdateTime(v time.Time) *ProfileUpdateOne {
 	_u.mutation.SetUpdateTime(v)
+	return _u
+}
+
+// SetName sets the "name" field.
+func (_u *ProfileUpdateOne) SetName(v string) *ProfileUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (_u *ProfileUpdateOne) SetNillableName(v *string) *ProfileUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
+	}
 	return _u
 }
 
@@ -630,6 +661,9 @@ func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err er
 	}
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(profile.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Name(); ok {
+		_spec.SetField(profile.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(profile.FieldLocale, field.TypeString, value)

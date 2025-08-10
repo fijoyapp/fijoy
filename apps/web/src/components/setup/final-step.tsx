@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z, type TypeOf } from "zod";
 import { toast } from "sonner";
-import { useRouter } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
@@ -18,16 +18,28 @@ import {
 import type { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
 import { rootQuery } from "@/routes/__root";
 import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import { Form } from "../ui/form";
+import { Button } from "../ui/button";
+import { NameField } from "@/routes/_protected/_profile/-components/accounts/form/name";
 
 const formSchema = z.object({
   currency: CurrencyStepData,
   goal: GoalStepData,
+  name: z.string(),
 });
 
 const profileCreateMutation = graphql`
-  mutation finalStepMutation($currencies: [String!]!, $netWorthGoal: String!) {
+  mutation finalStepMutation(
+    $currencies: [String!]!
+    $netWorthGoal: String!
+    $name: String!
+  ) {
     createProfile(
-      input: { currencies: $currencies, netWorthGoal: $netWorthGoal }
+      input: {
+        currencies: $currencies
+        netWorthGoal: $netWorthGoal
+        name: $name
+      }
     ) {
       id
     }
@@ -116,6 +128,7 @@ const FinalStep = ({ rootQueryRef }: Props) => {
       new Promise((resolve, reject) => {
         commitMutation({
           variables: {
+            name: values.name,
             currencies: values.currency.currencies,
             netWorthGoal: values.goal.net_worth_goal,
           },
@@ -141,22 +154,37 @@ const FinalStep = ({ rootQueryRef }: Props) => {
     );
   }
 
-  // this makes sure that the mutation only fires once in strict mode
-  const hasFired = useRef(false);
-  useEffect(() => {
-    if (hasFired.current) {
-      return;
-    }
-    hasFired.current = true;
-    onSubmit();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
-    <div className="flex items-center justify-center gap-2">
-      <Icons.spinner />
-      <div>Working on it...</div>
-    </div>
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <NameField
+            control={form.control}
+            name="name"
+            label="Name"
+            placeholder="Give your profile a name"
+          />
+
+          <div className="flex-col space-x-2">
+            <Button
+              type="submit"
+              className="col-span-2"
+              disabled={isMutationInFlight}
+            >
+              Create
+            </Button>
+            <Button
+              type="button"
+              className="col-span-2"
+              variant={"secondary"}
+              asChild
+            >
+              <Link to="/setup">Cancel</Link>
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ export const ProfileFragment = graphql`
     id
     currencies
     locale
+    name
     netWorthGoal
   }
 `;

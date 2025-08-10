@@ -47,6 +47,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
 		{Name: "locale", Type: field.TypeString},
 		{Name: "currencies", Type: field.TypeJSON},
 		{Name: "net_worth_goal", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
@@ -60,7 +61,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "profiles_users_profiles",
-				Columns:    []*schema.Column{ProfilesColumns[6]},
+				Columns:    []*schema.Column{ProfilesColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
