@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<510225aed34a3d0cdac3fb69c461241d>>
+ * @generated SignedSource<<b764e898acb7675e71c7040bda7c1858>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,8 @@ export type selectAccountFragment$data = {
   readonly accounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly amount: string;
+        readonly currencySymbol: string;
         readonly id: string;
         readonly name: string;
       } | null | undefined;
@@ -79,6 +81,20 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "name",
                   "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "amount",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "currencySymbol",
+                  "storageKey": null
                 }
               ],
               "storageKey": null
@@ -94,6 +110,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "dbd1661af2249a87ae2df643befb0089";
+(node as any).hash = "6a0758a98ae50de48914d36682d41f65";
 
 export default node;

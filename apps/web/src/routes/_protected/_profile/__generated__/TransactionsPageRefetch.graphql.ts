@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6f7999e1e328015723f290942545bc54>>
+ * @generated SignedSource<<7faf61ed2e692825bdb6e7dafd1845c3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,7 +45,21 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "amount",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "currencySymbol",
   "storageKey": null
 };
 return {
@@ -119,13 +133,7 @@ return {
                     "plural": true,
                     "selections": [
                       (v1/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "amount",
-                        "storageKey": null
-                      },
+                      (v3/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -149,14 +157,8 @@ return {
                         "name": "account",
                         "plural": false,
                         "selections": [
-                          (v3/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "currencySymbol",
-                            "storageKey": null
-                          },
+                          (v4/*: any*/),
+                          (v5/*: any*/),
                           (v1/*: any*/)
                         ],
                         "storageKey": null
@@ -216,7 +218,9 @@ return {
                 "plural": false,
                 "selections": [
                   (v1/*: any*/),
-                  (v3/*: any*/)
+                  (v4/*: any*/),
+                  (v3/*: any*/),
+                  (v5/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -229,12 +233,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cca0c34fa8db0a2d45e150bc3ce5ecea",
+    "cacheID": "853dcee28673f130580423546f041125",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        name\n        amount\n        currencySymbol\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        transactionEntries {\n          id\n          amount\n          value\n          fxRate\n          balance\n          account {\n            name\n            currencySymbol\n            id\n          }\n        }\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n"
   }
 };
 })();
