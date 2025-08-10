@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFragment } from "react-relay";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useProfile } from "@/hooks/use-profile";
 import invariant from "tiny-invariant";
 import { match } from "ts-pattern";
@@ -208,6 +208,13 @@ function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  // NOTE: https://github.com/TanStack/table/issues/5026
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const grouping = useMemo(() => {
@@ -237,6 +244,8 @@ function DataTable<TData, TValue>({
     getGroupedRowModel: getGroupedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
   });
+
+  if (!hasMounted) return null;
 
   return (
     <div className="bg-card rounded-md border">
