@@ -19,7 +19,6 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@sentry/react": "^9.45.0",
-    "@sentry/vite-plugin": "^3.6.1",
     "@t3-oss/env-core": "^0.13.8",
     "@tanstack/react-query": "^5.84.2",
     "@tanstack/react-query-devtools": "^5.84.2",
@@ -60,6 +59,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.33.0",
     "@tailwindcss/postcss": "^4.1.11",
+    "@sentry/vite-plugin": "^3.6.1",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/eslint-plugin-router": "^1.131.2",
     "@tanstack/router-vite-plugin": "^1.131.2",
