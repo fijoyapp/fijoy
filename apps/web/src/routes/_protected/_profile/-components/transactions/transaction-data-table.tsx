@@ -37,17 +37,17 @@ const TransactionDataTableFragment = graphql`
           note
           datetime @required(action: THROW)
           balance @required(action: THROW)
-          transactionEntries {
-            id
-            amount
-            value
-            fxRate
-            balance
-            account {
-              name
-              currencySymbol
-            }
-          }
+          # transactionEntries {
+          #   id
+          #   amount
+          #   value
+          #   fxRate
+          #   balance
+          #   account {
+          #     name
+          #     currencySymbol
+          #   }
+          # }
         }
       }
       pageInfo {
@@ -83,11 +83,17 @@ export default function TransactionDataTable({
         id: "note",
         accessorKey: "note",
         header: "Note",
+        cell: ({ row }) => {
+          return <div>{row.original?.note}</div>;
+        },
       },
       {
         id: "datetime",
         accessorKey: "datetime",
         header: "Datetime",
+        cell: ({ row }) => {
+          return <div>{row.original?.datetime}</div>;
+        },
       },
       {
         id: "balance",

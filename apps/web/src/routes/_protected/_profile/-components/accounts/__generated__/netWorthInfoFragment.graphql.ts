@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d6945b68e0318fa629087df675e5675f>>
+ * @generated SignedSource<<45f9a374b5442b1245cf1147caf5deec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,6 @@ export type netWorthInfoFragment$data = {
         readonly accountType: AccountAccountType;
         readonly balance: string;
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"cardFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
     readonly pageInfo: {
@@ -88,11 +87,6 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "balance",
                   "storageKey": null
-                },
-                {
-                  "args": null,
-                  "kind": "FragmentSpread",
-                  "name": "cardFragment"
                 }
               ],
               "storageKey": null
@@ -126,6 +120,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "4c9b1865b567e3460df56e746bba4c22";
+(node as any).hash = "c3c5e1bf84339d3250e40550737efd54";
 
 export default node;

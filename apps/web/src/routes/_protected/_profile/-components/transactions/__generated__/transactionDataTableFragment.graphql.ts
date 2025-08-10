@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<255709b037af47bceb7691353fe201ff>>
+ * @generated SignedSource<<dfa28f177f35715389e7706397c039ff>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,17 +18,6 @@ export type transactionDataTableFragment$data = {
         readonly datetime: any;
         readonly id: string;
         readonly note: string | null | undefined;
-        readonly transactionEntries: ReadonlyArray<{
-          readonly account: {
-            readonly currencySymbol: string;
-            readonly name: string;
-          };
-          readonly amount: string;
-          readonly balance: string;
-          readonly fxRate: string;
-          readonly id: string;
-          readonly value: string;
-        }> | null | undefined;
       } | null | undefined;
     } | null | undefined> | null | undefined;
     readonly pageInfo: {
@@ -42,22 +31,7 @@ export type transactionDataTableFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"transactionDataTableFragment">;
 };
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "balance",
-  "storageKey": null
-};
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -93,7 +67,13 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -114,67 +94,14 @@ return {
                 },
                 {
                   "kind": "RequiredField",
-                  "field": (v1/*: any*/),
+                  "field": {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "balance",
+                    "storageKey": null
+                  },
                   "action": "THROW"
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "TransactionEntry",
-                  "kind": "LinkedField",
-                  "name": "transactionEntries",
-                  "plural": true,
-                  "selections": [
-                    (v0/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "amount",
-                      "storageKey": null
-                    },
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "value",
-                      "storageKey": null
-                    },
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "fxRate",
-                      "storageKey": null
-                    },
-                    (v1/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "Account",
-                      "kind": "LinkedField",
-                      "name": "account",
-                      "plural": false,
-                      "selections": [
-                        {
-                          "alias": null,
-                          "args": null,
-                          "kind": "ScalarField",
-                          "name": "name",
-                          "storageKey": null
-                        },
-                        {
-                          "alias": null,
-                          "args": null,
-                          "kind": "ScalarField",
-                          "name": "currencySymbol",
-                          "storageKey": null
-                        }
-                      ],
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
                 }
               ],
               "storageKey": null
@@ -207,8 +134,7 @@ return {
   "type": "Query",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "4447785db07b9440d0a754acd21f00ba";
+(node as any).hash = "079fb88b56a57a662a914b963f2cbb2f";
 
 export default node;

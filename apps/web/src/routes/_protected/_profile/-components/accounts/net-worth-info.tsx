@@ -23,11 +23,11 @@ const NetWorthInfoFragment = graphql`
   fragment netWorthInfoFragment on Query {
     accounts(first: 20) {
       edges {
+        # eslint-disable-next-line relay/unused-fields
         node {
           id
           accountType
           balance
-          ...cardFragment
         }
       }
       pageInfo {

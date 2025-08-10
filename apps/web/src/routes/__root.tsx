@@ -11,18 +11,24 @@ interface RouterContext {
   environment: IEnvironment;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const rootQuery = graphql`
   query RootQuery($hasUser: Boolean!, $hasProfile: Boolean!) {
     user @include(if: $hasUser) {
+      # eslint-disable-next-line relay/must-colocate-fragment-spreads
       ...userFragment
     }
     profiles @include(if: $hasUser) {
+      # eslint-disable-next-line relay/must-colocate-fragment-spreads
       ...profileFragment
     }
     currencies {
+      # eslint-disable-next-line relay/must-colocate-fragment-spreads
       ...currencyFragment
     }
+    # eslint-disable-next-line relay/must-colocate-fragment-spreads
     ...accountsPageFragment @include(if: $hasProfile)
+    # eslint-disable-next-line relay/must-colocate-fragment-spreads
     ...transactionsPageFragment @include(if: $hasProfile)
   }
 `;

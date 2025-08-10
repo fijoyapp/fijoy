@@ -12,6 +12,7 @@ export interface ProfileContext {
   profilesRef: profileFragment$key;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ProfileContext = createContext<ProfileContext | null>(null);
 
 export function ProfileProvider({
