@@ -1,13 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z, type TypeOf } from "zod";
+import { z } from "zod";
 import { toast } from "sonner";
 import { Link, useRouter } from "@tanstack/react-router";
 import { CurrencyStepData, GoalStepData } from "@/types/setup";
-import { Icons } from "../icons";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import { fetchQuery, graphql } from "relay-runtime";
 import {
   type PreloadedQuery,
@@ -71,7 +70,7 @@ const FinalStep = ({ rootQueryRef }: Props) => {
     })),
   );
 
-  const form = useForm<TypeOf<typeof formSchema>>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       currency: currencyStepData,

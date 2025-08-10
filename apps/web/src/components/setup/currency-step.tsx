@@ -6,9 +6,9 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { CurrencyStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
-import { type TypeOf } from "zod";
 import { CurrencyField } from "./form/currency";
 import type { currencyFragment$key } from "@/lib/queries/__generated__/currencyFragment.graphql";
+import type z from "zod";
 
 const formSchema = CurrencyStepData;
 
@@ -26,12 +26,12 @@ const CurrencyStep = ({ currencies }: CurrencyStepProps) => {
     })),
   );
 
-  const form = useForm<TypeOf<typeof formSchema>>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: currencyStepData,
   });
 
-  function onSubmit(values: TypeOf<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setCurrencyStepData(values);
     router.navigate({
       from: "/setup",

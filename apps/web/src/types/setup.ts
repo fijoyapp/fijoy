@@ -1,8 +1,8 @@
-import { z, type TypeOf } from "zod";
+import { z } from "zod";
 
 export const SetupStep = z.enum(["currency", "goal", "final"]);
 
-export type SetupStep = TypeOf<typeof SetupStep>;
+export type SetupStep = z.infer<typeof SetupStep>;
 
 export const CurrencyStepData = z.object({
   currencies: z.array(z.string()).min(1, {
@@ -10,10 +10,10 @@ export const CurrencyStepData = z.object({
   }),
 });
 
-export type CurrencyStepData = TypeOf<typeof CurrencyStepData>;
+export type CurrencyStepData = z.infer<typeof CurrencyStepData>;
 
 export const GoalStepData = z.object({
   net_worth_goal: z.string(),
 });
 
-export type GoalStepData = TypeOf<typeof GoalStepData>;
+export type GoalStepData = z.infer<typeof GoalStepData>;

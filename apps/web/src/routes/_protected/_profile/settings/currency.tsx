@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { z, type TypeOf } from "zod";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormMessage } from "@/components/ui/form";
@@ -45,14 +45,14 @@ function Page() {
 
   const data = usePreloadedQuery(rootQuery, rootQueryRef);
 
-  const form = useForm<TypeOf<typeof currencyFormSchema>>({
+  const form = useForm<z.infer<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),
     defaultValues: {
       currencies: [...profile.currencies],
     },
   });
 
-  function onUpdateCurrencySubmit(values: TypeOf<typeof currencyFormSchema>) {
+  function onUpdateCurrencySubmit(values: z.infer<typeof currencyFormSchema>) {
     commitMutation({
       variables: {
         id: profile.id,

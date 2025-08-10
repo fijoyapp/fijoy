@@ -1,4 +1,4 @@
-import { z, type TypeOf } from "zod";
+import { z } from "zod";
 
 export const AccountType = z.enum([
   "investment",
@@ -8,7 +8,7 @@ export const AccountType = z.enum([
   "receivable",
 ]);
 
-export type AccountType = TypeOf<typeof AccountType>;
+export type AccountType = z.infer<typeof AccountType>;
 
 export type AccountTypeDetail = {
   name: string;

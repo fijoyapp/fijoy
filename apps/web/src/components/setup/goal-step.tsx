@@ -6,11 +6,11 @@ import { Link, Navigate, useRouter } from "@tanstack/react-router";
 import { GoalStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
-import { type TypeOf } from "zod";
 import { MoneyField } from "./form/money";
 import type { currencyFragment$key } from "@/lib/queries/__generated__/currencyFragment.graphql";
 import { CurrencyFragment } from "@/lib/queries/currency";
 import { useFragment } from "react-relay";
+import type z from "zod";
 
 const formSchema = GoalStepData;
 
@@ -31,12 +31,12 @@ const GoalStep = ({ currencies }: GoalStepProps) => {
 
   const data = useFragment(CurrencyFragment, currencies);
 
-  const form = useForm<TypeOf<typeof formSchema>>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: goalStepData,
   });
 
-  function onSubmit(values: TypeOf<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setGoalStepData(values);
     router.navigate({
       from: "/setup",
