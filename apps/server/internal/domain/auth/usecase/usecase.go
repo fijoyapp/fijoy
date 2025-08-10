@@ -14,7 +14,7 @@ type AuthUseCase interface {
 	LocalLogin(ctx context.Context) (*ent.User, error)
 	GoogleLogin(ctx context.Context, email string, googleID string) (*ent.User, error)
 
-	GetProfileID(ctx context.Context, userID int) (int, error)
+	GetUserProfiles(ctx context.Context, userID int) ([]*ent.Profile, error)
 }
 
 type authUseCase struct {
@@ -27,16 +27,13 @@ func New(userRepo repository.UserRepository, userKeyRepo repository.UserKeyRepos
 	return &authUseCase{userRepo: userRepo, userKeyRepo: userKeyRepo, client: client}
 }
 
-func (u *authUseCase) GetProfileID(ctx context.Context, userID int) (int, error) {
-	profile, err := u.client.Profile.Query().Where(profile.HasUserWith(user.ID(userID))).Only(ctx)
+func (u *authUseCase) GetUserProfiles(ctx context.Context, userID int) ([]*ent.Profile, error) {
+	profiles, err := u.client.Profile.Query().Where(profile.HasUserWith(user.ID(userID))).All(ctx)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return 0, nil
-		}
-		return 0, err
+		return []*ent.Profile{}, err
 	}
 
-	return profile.ID, nil
+	return profiles, nil
 }
 
 func (u *authUseCase) LocalLogin(ctx context.Context) (*ent.User, error) {

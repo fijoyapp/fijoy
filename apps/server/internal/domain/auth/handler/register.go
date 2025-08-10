@@ -6,6 +6,7 @@ import (
 	auth_usecase "fijoy/internal/domain/auth/usecase"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth/v5"
 )
 
 func RegisterHTTPEndpoints(
@@ -27,5 +28,12 @@ func RegisterHTTPEndpoints(
 		r.Get("/google/login", handler.googleLogin)
 		r.Get("/google/callback", handler.googleCallback)
 		r.Get("/logout", handler.logout)
+
+		r.Group(func(r chi.Router) {
+			r.Use(jwtauth.Verifier(authConfig.JWT_AUTH))
+			r.Use(jwtauth.Authenticator(authConfig.JWT_AUTH))
+
+			r.Post("/set-profile", handler.setProfile)
+		})
 	})
 }

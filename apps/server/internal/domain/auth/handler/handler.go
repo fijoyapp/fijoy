@@ -57,6 +57,36 @@ func (h *authHandler) logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, h.serverConfig.WEB_URL, http.StatusFound)
 }
 
+func (h *authHandler) setProfile(w http.ResponseWriter, r *http.Request) {
+	authData, err := auth.GetUserDataFromContext(r.Context())
+	if err != nil {
+		http.Error(w, "failed to get user data from context: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	profiles, err := h.authUseCase.GetUserProfiles(r.Context(), authData.UserID)
+	if err != nil {
+		http.Error(w, "failed to get user profiles: "+err.Error(), http.StatusInternalServerError)
+	}
+
+	requestedProfileID := r.FormValue("profile_id")
+	for _, profile := range profiles {
+		if fmt.Sprint(profile.ID) == requestedProfileID {
+			claims := map[string]any{
+				"user_id":    authData.UserID,
+				"profile_id": profile.ID,
+			}
+
+			_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)
+
+			auth.SetJwtCookie(r.Context(), tokenString)
+			http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
+		}
+	}
+
+	http.Error(w, "profile not found", http.StatusInternalServerError)
+}
+
 func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	user, err := h.authUseCase.LocalLogin(ctx)
@@ -67,15 +97,6 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 
 	claims := map[string]any{
 		"user_id": user.ID,
-	}
-
-	profileID, err := h.authUseCase.GetProfileID(ctx, user.ID)
-	fmt.Println("profileId", profileID)
-	if err != nil {
-		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
-	}
-	if profileID != 0 {
-		claims["profile_id"] = profileID
 	}
 
 	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)
@@ -137,14 +158,6 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 
 	claims := map[string]any{
 		"user_id": user.ID,
-	}
-
-	profileID, err := h.authUseCase.GetProfileID(ctx, user.ID)
-	if err != nil {
-		http.Error(w, "failed to get profile id: "+err.Error(), http.StatusInternalServerError)
-	}
-	if profileID != 0 {
-		claims["profile_id"] = profileID
 	}
 
 	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)

@@ -20,6 +20,9 @@ import { ProfileFragment } from "@/lib/queries/profile";
 import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import { useCallback } from "react";
+import { env } from "@/env";
+import { toast } from "sonner";
 
 const setupSearchSchema = z.object({
   step: SetupStep.optional(),
@@ -71,6 +74,25 @@ function ProfilePicker() {
     ProfileFragment,
     data.profiles,
   );
+
+  const setProfile = useCallback(async (profileID: string) => {
+    const response = await fetch(env.VITE_SERVER_URL + "/v1/auth/set-profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `profile_id=${encodeURIComponent(profileID)}`,
+      credentials: "include",
+      redirect: "manual",
+    });
+
+    if (response.type === "opaqueredirect" || response.status === 302) {
+      window.location.href = "/home";
+    } else {
+      toast.error("Failed to load profile, please try again!");
+    }
+  }, []);
+
   invariant(profiles);
 
   return (
@@ -95,11 +117,14 @@ function ProfilePicker() {
             <CardContent className="flex py-4">
               <div>{profile.id}</div>
               <div className="grow"></div>
-              <Button size="icon" variant="default" asChild>
-                <Link to={"/home"}>
-                  {/* TODO: Implement profile selection */}
-                  <ArrowRight />
-                </Link>
+              <Button
+                size="icon"
+                variant="default"
+                onClick={() => {
+                  setProfile(profile.id);
+                }}
+              >
+                <ArrowRight />
               </Button>
             </CardContent>
           </Card>

@@ -119,22 +119,20 @@ func main() {
 	authUseCase := auth_usecase.New(userRepo, userKeyRepo, entClient)
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.RequestID)
-	r.Use(fijoy_middleware.LoggerMiddleware(logger))
-	r.Use(fijoy_middleware.CookieMiddleWare())
-	r.Use(sentryMiddleware.Handle)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
-		// AllowedOrigins: []string{"https://*", "http://*"},
-		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
+		AllowedOrigins:   []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "sentry-trace", "baggage"},
 		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 		Debug:            false,
 	}))
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.RequestID)
+	r.Use(fijoy_middleware.LoggerMiddleware(logger))
+	r.Use(fijoy_middleware.CookieMiddleWare())
+	r.Use(sentryMiddleware.Handle)
 
 	// TODO: migrate to this, also get rid of default server as it is not prod ready
 	// nolint:staticcheck
