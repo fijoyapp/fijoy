@@ -15,7 +15,7 @@ type MoneyFieldProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   label: string;
-  currency: string;
+  currency?: string;
   onValueChange: (value: string) => void;
   description?: string;
 };
@@ -28,7 +28,7 @@ export function MoneyField<T extends FieldValues>({
   onValueChange,
   description,
 }: MoneyFieldProps<T>) {
-  const { profile } = useProfile();
+  const { profile, defaultCurrency } = useProfile();
   if (!profile) {
     return null;
   }
@@ -52,7 +52,7 @@ export function MoneyField<T extends FieldValues>({
               onValueChange={(value) => onValueChange(value || "")}
               intlConfig={{
                 locale: profile.locale,
-                currency,
+                currency: currency ?? defaultCurrency,
               }}
             />
           </FormControl>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f3c44131d1d5687351dc2857eba69465>>
+ * @generated SignedSource<<a935d82e0d8c276586b0cf5d0d767863>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,14 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type newExpenseFragment$data = {
+  readonly accounts: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly currencySymbol: string;
+        readonly id: string;
+      } | null | undefined;
+    } | null | undefined> | null | undefined;
+  };
   readonly " $fragmentSpreads": FragmentRefs<"selectAccountFragment">;
   readonly " $fragmentType": "newExpenseFragment";
 };
@@ -29,12 +37,65 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "FragmentSpread",
       "name": "selectAccountFragment"
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "first",
+          "value": 20
+        }
+      ],
+      "concreteType": "AccountConnection",
+      "kind": "LinkedField",
+      "name": "accounts",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "AccountEdge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "Account",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "currencySymbol",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": "accounts(first:20)"
     }
   ],
   "type": "Query",
   "abstractKey": null
 };
 
-(node as any).hash = "3eeeb129cf18065541582c8a14e3598b";
+(node as any).hash = "a6ea68c476e134e25d2731f3e1a4869b";
 
 export default node;
