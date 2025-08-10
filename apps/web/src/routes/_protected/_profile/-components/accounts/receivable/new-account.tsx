@@ -38,7 +38,7 @@ const NewAccountReceivableMutation = graphql`
 `;
 
 export function NewReceivable() {
-  const { profile } = useProfile();
+  const { defaultCurrency } = useProfile();
 
   const router = useRouter();
   const [commitMutation, isMutationInFlight] =
@@ -47,7 +47,7 @@ export function NewReceivable() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      symbol: profile?.currencies[0],
+      symbol: defaultCurrency,
     },
   });
 

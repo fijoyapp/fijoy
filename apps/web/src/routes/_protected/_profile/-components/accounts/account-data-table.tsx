@@ -70,7 +70,7 @@ export default function AccountDataTable({
   const { groupby } = routeApi.useSearch();
 
   const data = useFragment(AccountDataTableFragment, accountDataTableFragment);
-  const { profile } = useProfile();
+  const { defaultCurrency } = useProfile();
   const { getCurrencyDisplay } = useFormat();
 
   const columns: ColumnDef<Account>[] = useMemo(
@@ -164,10 +164,7 @@ export default function AccountDataTable({
 
             return (
               <div className="text-right font-mono">
-                {getCurrencyDisplay(
-                  total?.toString() || "",
-                  profile.currencies[0],
-                )}
+                {getCurrencyDisplay(total?.toString() || "", defaultCurrency)}
               </div>
             );
           }
@@ -176,13 +173,13 @@ export default function AccountDataTable({
           const money = row.original.balance;
           return (
             <div className="text-right font-mono">
-              {getCurrencyDisplay(money, profile.currencies[0])}
+              {getCurrencyDisplay(money, defaultCurrency)}
             </div>
           );
         },
       },
     ],
-    [profile, groupby, getCurrencyDisplay],
+    [defaultCurrency, groupby, getCurrencyDisplay],
   );
 
   const filteredData = useMemo(() => {
@@ -191,10 +188,6 @@ export default function AccountDataTable({
       []
     );
   }, [data]);
-
-  if (!profile) {
-    return null;
-  }
 
   return <DataTable columns={columns} data={filteredData} />;
 }

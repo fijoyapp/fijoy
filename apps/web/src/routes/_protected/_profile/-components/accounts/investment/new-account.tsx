@@ -44,7 +44,7 @@ const NewAccountInvestmentMutation = graphql`
 `;
 
 export function NewInvestment() {
-  const { profile } = useProfile();
+  const { defaultCurrency } = useProfile();
 
   const router = useRouter();
   const [commitMutation, isMutationInFlight] =
@@ -53,7 +53,7 @@ export function NewInvestment() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      symbol: profile?.currencies[0],
+      symbol: defaultCurrency,
     },
   });
 
@@ -81,7 +81,6 @@ export function NewInvestment() {
           });
         }
       },
-      // optimisticUpdater: (store) => {},
     });
   }
 

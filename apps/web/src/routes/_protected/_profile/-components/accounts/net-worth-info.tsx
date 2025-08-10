@@ -48,17 +48,14 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
   );
   const { getCurrencyDisplay } = useFormat();
 
-  const { profile } = useProfile();
-  if (!profile) {
-    return null;
-  }
+  const { defaultCurrency, profile } = useProfile();
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
-            {getCurrencyDisplay(asset.toString(), profile.currencies[0])}
+            {getCurrencyDisplay(asset.toString(), defaultCurrency)}
           </CardTitle>
           <CardDescription>Asset</CardDescription>
         </CardHeader>
@@ -69,7 +66,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
-            {getCurrencyDisplay(liability.toString(), profile.currencies[0])}
+            {getCurrencyDisplay(liability.toString(), defaultCurrency)}
           </CardTitle>
           <CardDescription>Liability</CardDescription>
         </CardHeader>
@@ -81,7 +78,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
       <Card className="flex items-center">
         <CardHeader>
           <CardTitle>
-            {getCurrencyDisplay(netWorth.toString(), profile.currencies[0])}
+            {getCurrencyDisplay(netWorth.toString(), defaultCurrency)}
           </CardTitle>
           <CardDescription>Net Worth</CardDescription>
         </CardHeader>
@@ -102,7 +99,7 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
           <CardDescription>
             {getCurrencyDisplay(
               profile.netWorthGoal.toString(),
-              profile.currencies[0],
+              defaultCurrency,
             )}{" "}
             Goal
           </CardDescription>

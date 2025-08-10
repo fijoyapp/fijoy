@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5850c3d6d1748a060ad430e359ca7d23>>
+ * @generated SignedSource<<255709b037af47bceb7691353fe201ff>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -102,13 +102,21 @@ return {
                   "storageKey": null
                 },
                 {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "datetime",
-                  "storageKey": null
+                  "kind": "RequiredField",
+                  "field": {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "datetime",
+                    "storageKey": null
+                  },
+                  "action": "THROW"
                 },
-                (v1/*: any*/),
+                {
+                  "kind": "RequiredField",
+                  "field": (v1/*: any*/),
+                  "action": "THROW"
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -201,6 +209,6 @@ return {
 };
 })();
 
-(node as any).hash = "8c3fec3afb64a57ae4f5cf7316fbb47a";
+(node as any).hash = "4447785db07b9440d0a754acd21f00ba";
 
 export default node;

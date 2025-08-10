@@ -6,6 +6,7 @@ import type {
 
 export interface ProfileContext {
   profile: profileFragment$data[number];
+  defaultCurrency: string;
   profileRef: profileFragment$key[number];
   profiles: profileFragment$data;
   profilesRef: profileFragment$key;
@@ -28,7 +29,13 @@ export function ProfileProvider({
 }) {
   return (
     <ProfileContext.Provider
-      value={{ profile, profileRef, profiles, profilesRef }}
+      value={{
+        profile,
+        profileRef,
+        profiles,
+        profilesRef,
+        defaultCurrency: profile.currencies[0],
+      }}
     >
       {children}
     </ProfileContext.Provider>

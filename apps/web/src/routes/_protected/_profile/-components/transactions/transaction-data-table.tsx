@@ -25,6 +25,8 @@ import type {
   transactionDataTableFragment$data,
   transactionDataTableFragment$key,
 } from "./__generated__/transactionDataTableFragment.graphql";
+import { useFormat } from "@/hooks/use-format";
+import invariant from "tiny-invariant";
 
 const TransactionDataTableFragment = graphql`
   fragment transactionDataTableFragment on Query {
@@ -33,8 +35,8 @@ const TransactionDataTableFragment = graphql`
         node {
           id
           note
-          datetime
-          balance
+          datetime @required(action: THROW)
+          balance @required(action: THROW)
           transactionEntries {
             id
             amount
@@ -72,7 +74,8 @@ export default function TransactionDataTable({
     TransactionDataTableFragment,
     transactionDataTableFragment,
   );
-  const { profile } = useProfile();
+  const { defaultCurrency } = useProfile();
+  const { getCurrencyDisplay } = useFormat();
 
   const columns: ColumnDef<Transaction>[] = useMemo(
     (): ColumnDef<Transaction>[] => [
@@ -81,15 +84,23 @@ export default function TransactionDataTable({
         accessorKey: "note",
         header: "Note",
       },
-      // {
-      //   id: "account.name",
-      //   accessorKey: "account.name",
-      //   header: "Account Name",
-      // },
       {
         id: "datetime",
         accessorKey: "datetime",
         header: "Datetime",
+      },
+      {
+        id: "balance",
+        accessorKey: "balance",
+        header: "",
+        cell: ({ row }) => {
+          invariant(row.original, "Row original should not be null");
+          return (
+            <div>
+              {getCurrencyDisplay(row.original.balance, defaultCurrency)}
+            </div>
+          );
+        },
       },
       // {
       //   accessorKey: "amount",
@@ -139,7 +150,7 @@ export default function TransactionDataTable({
       //   },
       // },
     ],
-    [profile],
+    [defaultCurrency, getCurrencyDisplay],
   );
 
   const filteredData = useMemo(() => {
@@ -149,10 +160,6 @@ export default function TransactionDataTable({
         .filter((node) => !!node) ?? []
     );
   }, [data]);
-
-  if (!profile) {
-    return null;
-  }
 
   return <DataTable columns={columns} data={filteredData} />;
 }
