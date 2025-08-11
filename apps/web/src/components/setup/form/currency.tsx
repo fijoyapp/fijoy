@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useCallback, useEffect, useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ChevronsUpDown, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { currencyCodeToName } from "@/config/currency";
