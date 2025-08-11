@@ -134,29 +134,31 @@ const NewExpense = ({ fragmentRef }: Props) => {
               <SheetDescription></SheetDescription>
             </SheetHeader>
 
-            <SelectAccount
-              control={form.control}
-              name="account"
-              label="Account"
-              description="Select an account"
-              fragmentRef={data}
-            />
+            <div className="grid flex-1 auto-rows-min gap-6 px-4">
+              <SelectAccount
+                control={form.control}
+                name="account"
+                label="Account"
+                description="Select an account"
+                fragmentRef={data}
+              />
 
-            <MoneyField
-              control={form.control}
-              name="total"
-              label="Total"
-              onValueChange={(value) => form.setValue("total", value)}
-              currency={selectedAccount?.currencySymbol}
-              description="Total amount of the expense"
-            />
+              <MoneyField
+                control={form.control}
+                name="total"
+                label="Total"
+                onValueChange={(value) => form.setValue("total", value)}
+                currency={selectedAccount?.currencySymbol}
+                description="Total amount of the expense"
+              />
 
-            <NameField
-              control={form.control}
-              name="note"
-              label="Note"
-              placeholder="Groceries, restaurant, etc."
-            />
+              <NameField
+                control={form.control}
+                name="note"
+                label="Note"
+                placeholder="Groceries, restaurant, etc."
+              />
+            </div>
             <SheetFooter>
               <Button type="submit" className="" disabled={isMutationInFlight}>
                 Create

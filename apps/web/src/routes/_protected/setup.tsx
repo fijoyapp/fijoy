@@ -90,7 +90,7 @@ function ProfilePicker() {
         <div className="flex-col space-y-2">
           {profiles.map((profile) => (
             <Card key={profile.id}>
-              <CardContent className="flex py-4">
+              <CardContent className="flex">
                 <div>{profile.name}</div>
                 <div className="grow"></div>
                 <Button

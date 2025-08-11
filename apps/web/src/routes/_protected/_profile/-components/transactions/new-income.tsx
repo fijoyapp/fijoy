@@ -66,13 +66,15 @@ const NewIncome = ({ fragmentRef }: Props) => {
               <SheetDescription></SheetDescription>
             </SheetHeader>
 
-            <SelectAccount
-              control={form.control}
-              name="account"
-              label="Account"
-              description="Select an account"
-              fragmentRef={data}
-            />
+            <div className="grid flex-1 auto-rows-min gap-6 px-4">
+              <SelectAccount
+                control={form.control}
+                name="account"
+                label="Account"
+                description="Select an account"
+                fragmentRef={data}
+              />
+            </div>
           </SheetContent>
         </Sheet>
       </form>

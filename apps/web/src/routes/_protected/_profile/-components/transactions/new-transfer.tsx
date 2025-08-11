@@ -67,20 +67,22 @@ const NewTransfer = ({ fragmentRef }: Props) => {
               <SheetDescription></SheetDescription>
             </SheetHeader>
 
-            <SelectAccount
-              control={form.control}
-              name="fromAccount"
-              label="From account"
-              description="Select an account"
-              fragmentRef={data}
-            />
-            <SelectAccount
-              control={form.control}
-              name="toAccount"
-              label="To account"
-              description="Select an account"
-              fragmentRef={data}
-            />
+            <div className="grid flex-1 auto-rows-min gap-6 px-4">
+              <SelectAccount
+                control={form.control}
+                name="fromAccount"
+                label="From account"
+                description="Select an account"
+                fragmentRef={data}
+              />
+              <SelectAccount
+                control={form.control}
+                name="toAccount"
+                label="To account"
+                description="Select an account"
+                fragmentRef={data}
+              />
+            </div>
           </SheetContent>
         </Sheet>
       </form>

@@ -76,8 +76,6 @@ function Page() {
           className="space-y-8"
         >
           <Card>
-            <div className="py-3"></div>
-
             <CardContent>
               <CurrencyField
                 control={form.control}
@@ -89,7 +87,7 @@ function Page() {
                 }}
               />
             </CardContent>
-            <CardFooter className="space-x-4 border-t px-6 py-4">
+            <CardFooter className="">
               <AnimatePresence mode="wait" initial={false}>
                 <Button
                   disabled={form.formState.isSubmitting || isMutationInFlight}

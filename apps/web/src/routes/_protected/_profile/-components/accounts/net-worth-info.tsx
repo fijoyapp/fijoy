@@ -1,10 +1,12 @@
 import {
   Card,
+  // CardAction,
+  // CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Coins, CreditCard, PiggyBank, Wallet } from "lucide-react";
+// import { Coins, CreditCard, PiggyBank, Wallet } from "lucide-react";
 import { getOverallStats } from "@/lib/account";
 import { useProfile } from "@/hooks/use-profile";
 import { useMemo } from "react";
@@ -14,6 +16,7 @@ import type { netWorthInfoFragment$key } from "./__generated__/netWorthInfoFragm
 import invariant from "tiny-invariant";
 import { useFragment } from "react-relay";
 import { useFormat } from "@/hooks/use-format";
+// import { Badge } from "@/components/ui/badge";
 
 type Props = {
   netWorthInfoFragment: netWorthInfoFragment$key;
@@ -52,42 +55,46 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-      <Card className="flex items-center">
+      <Card className="">
         <CardHeader>
           <CardTitle>
             {getCurrencyDisplay(asset.toString(), defaultCurrency)}
           </CardTitle>
           <CardDescription>Asset</CardDescription>
+          {/* <CardAction> */}
+          {/*   <Badge variant="outline"> */}
+          {/*     <Wallet /> */}
+          {/*   </Badge> */}
+          {/* </CardAction> */}
         </CardHeader>
-        <div className="grow"></div>
-        <Wallet />
-        <div className="px-4"></div>
       </Card>
-      <Card className="flex items-center">
+      <Card className="">
         <CardHeader>
           <CardTitle>
             {getCurrencyDisplay(liability.toString(), defaultCurrency)}
           </CardTitle>
           <CardDescription>Liability</CardDescription>
+          {/* <CardAction> */}
+          {/*   <Badge variant="outline"> */}
+          {/*     <CreditCard /> */}
+          {/*   </Badge> */}
+          {/* </CardAction> */}
         </CardHeader>
-
-        <div className="grow"></div>
-        <CreditCard />
-        <div className="px-4"></div>
       </Card>
-      <Card className="flex items-center">
+      <Card className="">
         <CardHeader>
           <CardTitle>
             {getCurrencyDisplay(netWorth.toString(), defaultCurrency)}
           </CardTitle>
           <CardDescription>Net Worth</CardDescription>
+          {/* <CardAction> */}
+          {/*   <Badge variant="outline"> */}
+          {/*     <Coins /> */}
+          {/*   </Badge> */}
+          {/* </CardAction> */}
         </CardHeader>
-
-        <div className="grow"></div>
-        <Coins />
-        <div className="px-4"></div>
       </Card>
-      <Card className="flex items-center">
+      <Card className="">
         <CardHeader>
           <CardTitle>
             {netWorth
@@ -103,11 +110,12 @@ const NetWorthInfo = ({ netWorthInfoFragment }: Props) => {
             )}{" "}
             Goal
           </CardDescription>
+          {/* <CardAction> */}
+          {/*   <Badge variant="outline"> */}
+          {/*     <PiggyBank /> */}
+          {/*   </Badge> */}
+          {/* </CardAction> */}
         </CardHeader>
-
-        <div className="grow"></div>
-        <PiggyBank />
-        <div className="px-4"></div>
       </Card>
     </div>
   );

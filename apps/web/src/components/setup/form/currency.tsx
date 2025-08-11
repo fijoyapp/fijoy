@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useCallback, useEffect, useState } from "react";
-import { Card, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ChevronsUpDown, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { currencyCodeToName } from "@/config/currency";
@@ -169,7 +169,7 @@ export function CurrencyField<T extends FieldValues>({
             )!.locale;
             return (
               <Card key={curr}>
-                <CardHeader className="p-4">
+                <CardContent className="">
                   <div className="flex items-center">
                     <div className="flex flex-col">
                       <span>
@@ -235,7 +235,7 @@ export function CurrencyField<T extends FieldValues>({
                       </Button>
                     )}
                   </div>
-                </CardHeader>
+                </CardContent>
               </Card>
             );
           })}

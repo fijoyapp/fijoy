@@ -7,9 +7,9 @@ export const Route = createFileRoute("/_public")({
 
 function Public() {
   return (
-    <>
+    <div className="h-screen">
       <PublicHeader />
       <Outlet />
-    </>
+    </div>
   );
 }

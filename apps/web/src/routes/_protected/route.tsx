@@ -20,8 +20,10 @@ function Protected() {
   invariant(user, "User data is required for protected routes");
 
   return (
-    <AuthProvider user={user}>
-      <Outlet />
-    </AuthProvider>
+    <div className="h-screen">
+      <AuthProvider user={user}>
+        <Outlet />
+      </AuthProvider>
+    </div>
   );
 }
