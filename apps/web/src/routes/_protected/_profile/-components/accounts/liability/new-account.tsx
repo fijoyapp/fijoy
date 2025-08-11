@@ -16,7 +16,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { MoneyField } from "../form/money";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { graphql } from "relay-runtime";
+import { ConnectionHandler, graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import type { newAccountLiabilityMutation } from "./__generated__/newAccountLiabilityMutation.graphql";
 
@@ -30,9 +30,21 @@ const formSchema = z.object({
 });
 
 const NewAccountLiabilityMutation = graphql`
-  mutation newAccountLiabilityMutation($input: CreateAccountInput!) {
-    createAccount(input: $input) {
-      id
+  mutation newAccountLiabilityMutation(
+    $input: CreateAccountInput!
+    $connections: [ID!]!
+  ) {
+    createAccount(input: $input) @appendEdge(connections: $connections) {
+      node {
+        id
+        name
+        accountType
+        balance
+        institution
+        value
+        currencySymbol
+        amount
+      }
     }
   }
 `;
@@ -53,8 +65,13 @@ export function NewLiability() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const connectionID = ConnectionHandler.getConnectionID(
+      "client:root",
+      "AccountDataTable_accounts",
+    );
     commitMutation({
       variables: {
+        connections: [connectionID],
         input: {
           amount: values.balance,
           accountType: "liability",
@@ -98,7 +115,7 @@ export function NewLiability() {
                 control={form.control}
                 name="institution"
                 label="Institution"
-                placeholder="Which institution does this account belong to? e.g. Wealthimple"
+                placeholder="Which institution does this account belong to? e.g. Wealthsimple"
               />
 
               <CurrencyField

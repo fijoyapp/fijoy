@@ -23,7 +23,7 @@ import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { AmountField } from "../form/amount";
 import { match } from "ts-pattern";
-import { graphql } from "relay-runtime";
+import { ConnectionHandler, graphql } from "relay-runtime";
 import { useProfile } from "@/hooks/use-profile";
 import { useMutation } from "react-relay";
 import type { newAccountInvestmentMutation } from "./__generated__/newAccountInvestmentMutation.graphql";
@@ -36,9 +36,21 @@ const formSchema = z.object({
 });
 
 const NewAccountInvestmentMutation = graphql`
-  mutation newAccountInvestmentMutation($input: CreateAccountInput!) {
-    createAccount(input: $input) {
-      id
+  mutation newAccountInvestmentMutation(
+    $input: CreateAccountInput!
+    $connections: [ID!]!
+  ) {
+    createAccount(input: $input) @appendEdge(connections: $connections) {
+      node {
+        id
+        name
+        accountType
+        balance
+        institution
+        value
+        currencySymbol
+        amount
+      }
     }
   }
 `;
@@ -59,8 +71,13 @@ export function NewInvestment() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const connectionID = ConnectionHandler.getConnectionID(
+      "client:root",
+      "AccountDataTable_accounts",
+    );
     commitMutation({
       variables: {
+        connections: [connectionID],
         input: {
           amount: values.amount,
           investmentType: "taxable", // TODO: customize
@@ -150,7 +167,7 @@ export function NewInvestment() {
                 control={form.control}
                 name="institution"
                 label="Institution"
-                placeholder="Which institution does this account belong to? e.g. Wealthimple"
+                placeholder="Which institution does this account belong to? e.g. Wealthsimple"
               />
 
               <AmountField

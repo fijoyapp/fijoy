@@ -34,7 +34,7 @@ import { useFormat } from "@/hooks/use-format";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
-    accounts(first: 1000) {
+    accounts(first: 1000) @connection(key: "AccountDataTable_accounts") {
       edges {
         node {
           id @required(action: THROW)

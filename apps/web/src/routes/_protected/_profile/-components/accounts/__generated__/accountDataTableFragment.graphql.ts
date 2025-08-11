@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f6ef1c99d198e88ad809b78dbe124b57>>
+ * @generated SignedSource<<2a68f26594e456f34a2437360bbfd0c3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -39,21 +39,26 @@ export type accountDataTableFragment$key = {
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "connection": [
+      {
+        "count": null,
+        "cursor": null,
+        "direction": "forward",
+        "path": [
+          "accounts"
+        ]
+      }
+    ]
+  },
   "name": "accountDataTableFragment",
   "selections": [
     {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Literal",
-          "name": "first",
-          "value": 1000
-        }
-      ],
+      "alias": "accounts",
+      "args": null,
       "concreteType": "AccountConnection",
       "kind": "LinkedField",
-      "name": "accounts",
+      "name": "__AccountDataTable_accounts_connection",
       "plural": false,
       "selections": [
         {
@@ -143,8 +148,22 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "amount",
                   "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "__typename",
+                  "storageKey": null
                 }
               ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "cursor",
               "storageKey": null
             }
           ],
@@ -164,18 +183,25 @@ const node: ReaderFragment = {
               "kind": "ScalarField",
               "name": "hasNextPage",
               "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "endCursor",
+              "storageKey": null
             }
           ],
           "storageKey": null
         }
       ],
-      "storageKey": "accounts(first:1000)"
+      "storageKey": null
     }
   ],
   "type": "Query",
   "abstractKey": null
 };
 
-(node as any).hash = "77598d4c6cb8c47bebbb4a12578c0d72";
+(node as any).hash = "f7a5b3dd1a8f711d9f1374b7e1359536";
 
 export default node;

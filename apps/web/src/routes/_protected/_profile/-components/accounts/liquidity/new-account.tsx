@@ -16,7 +16,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { MoneyField } from "../form/money";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { graphql } from "relay-runtime";
+import { ConnectionHandler, graphql } from "relay-runtime";
 import { useMutation } from "react-relay";
 import type { newAccountLiquidityMutation } from "./__generated__/newAccountLiquidityMutation.graphql";
 
@@ -30,9 +30,21 @@ const formSchema = z.object({
 });
 
 const NewAccountLiquidityMutation = graphql`
-  mutation newAccountLiquidityMutation($input: CreateAccountInput!) {
-    createAccount(input: $input) {
-      id
+  mutation newAccountLiquidityMutation(
+    $input: CreateAccountInput!
+    $connections: [ID!]!
+  ) {
+    createAccount(input: $input) @appendEdge(connections: $connections) {
+      node {
+        id
+        name
+        accountType
+        balance
+        institution
+        value
+        currencySymbol
+        amount
+      }
     }
   }
 `;
@@ -53,8 +65,14 @@ export function NewLiquidity() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const connectionID = ConnectionHandler.getConnectionID(
+      "client:root",
+      "AccountDataTable_accounts",
+    );
+
     commitMutation({
       variables: {
+        connections: [connectionID],
         input: {
           amount: values.balance,
           accountType: "liquidity",

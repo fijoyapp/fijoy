@@ -197,7 +197,7 @@ type AccountResolver interface {
 type MutationResolver interface {
 	CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error)
 	UpdateProfile(ctx context.Context, id int, input ent.UpdateProfileInput) (*ent.Profile, error)
-	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error)
+	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error)
 	CreateTransactionWithTransactionEntries(ctx context.Context, input CreateTransactionWithTransactionEntriesInput) (*ent.Transaction, error)
 	CreateTransactionEntry(ctx context.Context, input ent.CreateTransactionEntryInput) (*ent.TransactionEntry, error)
 }
@@ -2556,9 +2556,9 @@ func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.Account)
+	res := resTmp.(*ent.AccountEdge)
 	fc.Result = res
-	return ec.marshalNAccount2ᚖfijoyᚋentᚐAccount(ctx, field.Selections, res)
+	return ec.marshalNAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2569,42 +2569,12 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Account_id(ctx, field)
-			case "createTime":
-				return ec.fieldContext_Account_createTime(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Account_updateTime(ctx, field)
-			case "name":
-				return ec.fieldContext_Account_name(ctx, field)
-			case "institution":
-				return ec.fieldContext_Account_institution(ctx, field)
-			case "accountType":
-				return ec.fieldContext_Account_accountType(ctx, field)
-			case "investmentType":
-				return ec.fieldContext_Account_investmentType(ctx, field)
-			case "currencySymbol":
-				return ec.fieldContext_Account_currencySymbol(ctx, field)
-			case "ticker":
-				return ec.fieldContext_Account_ticker(ctx, field)
-			case "tickerType":
-				return ec.fieldContext_Account_tickerType(ctx, field)
-			case "amount":
-				return ec.fieldContext_Account_amount(ctx, field)
-			case "value":
-				return ec.fieldContext_Account_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_Account_fxRate(ctx, field)
-			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
-			case "archived":
-				return ec.fieldContext_Account_archived(ctx, field)
-			case "profile":
-				return ec.fieldContext_Account_profile(ctx, field)
-			case "transactionEntries":
-				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			case "node":
+				return ec.fieldContext_AccountEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_AccountEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AccountEdge", field.Name)
 		},
 	}
 	defer func() {
@@ -10484,10 +10454,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAccount2fijoyᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v ent.Account) graphql.Marshaler {
-	return ec._Account(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNAccount2ᚖfijoyᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v *ent.Account) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -10520,6 +10486,20 @@ func (ec *executionContext) marshalNAccountConnection2ᚖfijoyᚋentᚐAccountCo
 		return graphql.Null
 	}
 	return ec._AccountConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAccountEdge2fijoyᚋentᚐAccountEdge(ctx context.Context, sel ast.SelectionSet, v ent.AccountEdge) graphql.Marshaler {
+	return ec._AccountEdge(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx context.Context, sel ast.SelectionSet, v *ent.AccountEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AccountEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNAccountInvestmentType2fijoyᚋentᚋaccountᚐInvestmentType(ctx context.Context, v any) (account.InvestmentType, error) {

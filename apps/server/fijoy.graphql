@@ -19,7 +19,7 @@ type Mutation {
   createProfile(input: CreateProfileInput!): Profile!
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
 
-  createAccount(input: CreateAccountInput!): Account!
+  createAccount(input: CreateAccountInput!): AccountEdge!
   # updateAccount(id: ID!, input: UpdateAccountInput!): Account!
 
   createTransactionWithTransactionEntries(
