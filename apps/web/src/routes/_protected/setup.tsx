@@ -16,13 +16,13 @@ import { useFragment, usePreloadedQuery } from "react-relay";
 import { rootQuery } from "../__root";
 import type { RootQuery } from "../__generated__/RootQuery.graphql";
 import { Button } from "@/components/ui/button";
-import { ProfileFragment } from "@/lib/queries/profile";
-import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { useCallback } from "react";
 import { env } from "@/env";
 import { toast } from "sonner";
+import type { profilesFragment$key } from "@/lib/queries/__generated__/profilesFragment.graphql";
+import { ProfilesFragment } from "@/lib/queries/profiles";
 
 const setupSearchSchema = z.object({
   step: SetupStep.optional(),
@@ -70,8 +70,8 @@ function ProfilePicker() {
 
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
 
-  const profiles = useFragment<profileFragment$key>(
-    ProfileFragment,
+  const profiles = useFragment<profilesFragment$key>(
+    ProfilesFragment,
     data.profiles,
   );
 

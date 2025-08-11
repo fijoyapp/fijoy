@@ -129,6 +129,7 @@ type ComplexityRoot struct {
 		Currencies   func(childComplexity int) int
 		Node         func(childComplexity int, id int) int
 		Nodes        func(childComplexity int, ids []int) int
+		Profile      func(childComplexity int) int
 		Profiles     func(childComplexity int) int
 		Transactions func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
 		User         func(childComplexity int) int
@@ -209,6 +210,7 @@ type QueryResolver interface {
 	Accounts(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.AccountConnection, error)
 	Profiles(ctx context.Context) ([]*ent.Profile, error)
 	Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.TransactionConnection, error)
+	Profile(ctx context.Context) (*ent.Profile, error)
 	User(ctx context.Context) (*ent.User, error)
 	Currencies(ctx context.Context) ([]*Currency, error)
 }
@@ -628,6 +630,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]int)), true
+
+	case "Query.profile":
+		if e.complexity.Query.Profile == nil {
+			break
+		}
+
+		return e.complexity.Query.Profile(childComplexity), true
 
 	case "Query.profiles":
 		if e.complexity.Query.Profiles == nil {
@@ -3727,6 +3736,72 @@ func (ec *executionContext) fieldContext_Query_transactions(ctx context.Context,
 	if fc.Args, err = ec.field_Query_transactions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_profile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_profile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Profile(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Profile)
+	fc.Result = res
+	return ec.marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_profile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Profile_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Profile_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Profile_locale(ctx, field)
+			case "currencies":
+				return ec.fieldContext_Profile_currencies(ctx, field)
+			case "netWorthGoal":
+				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
+			case "user":
+				return ec.fieldContext_Profile_user(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -9240,6 +9315,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_transactions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "profile":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_profile(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

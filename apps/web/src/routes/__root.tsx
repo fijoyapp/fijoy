@@ -20,8 +20,10 @@ export const rootQuery = graphql`
     }
     profiles @include(if: $hasUser) {
       # eslint-disable-next-line relay/must-colocate-fragment-spreads
-      ...profileFragment
+      ...profilesFragment
     }
+    # eslint-disable-next-line relay/must-colocate-fragment-spreads
+    ...profileFragment @include(if: $hasProfile)
     currencies {
       # eslint-disable-next-line relay/must-colocate-fragment-spreads
       ...currencyFragment

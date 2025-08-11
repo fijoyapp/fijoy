@@ -31,7 +31,7 @@ const variants = {
 const CurrencyMutation = graphql`
   mutation currencyMutation($id: ID!, $currencies: [String!]!) {
     updateProfile(id: $id, input: { currencies: $currencies }) {
-      ...profileFragment
+      ...profilesFragment
     }
   }
 `;

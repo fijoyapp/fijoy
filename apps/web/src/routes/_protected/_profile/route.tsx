@@ -14,14 +14,14 @@ import {
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
 import { useFragment, usePreloadedQuery } from "react-relay";
-import type { profileFragment$key } from "@/lib/queries/__generated__/profileFragment.graphql";
 import { ProfileProvider } from "@/profile";
 import { rootQuery } from "@/routes/__root";
 import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
-import { ProfileFragment } from "@/lib/queries/profile";
+import { ProfilesFragment } from "@/lib/queries/profiles";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./-components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
+import type { profilesFragment$key } from "@/lib/queries/__generated__/profilesFragment.graphql";
 
 export const Route = createFileRoute("/_protected/_profile")({
   pendingComponent: CenterLoadingSpinner,
@@ -50,8 +50,8 @@ function Page() {
   const { rootQueryRef } = Route.useRouteContext();
 
   const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
-  const profiles = useFragment<profileFragment$key>(
-    ProfileFragment,
+  const profiles = useFragment<profilesFragment$key>(
+    ProfilesFragment,
     data.profiles,
   );
   // const environment = useRelayEnvironment();
@@ -81,10 +81,9 @@ function Page() {
   return (
     <SidebarProvider>
       <ProfileProvider
-        profile={profiles[0]}
-        profileRef={data.profiles[0]}
         profiles={profiles}
         profilesRef={data.profiles}
+        profileRef={data}
       >
         <AppSidebar />
         <div className="flex h-screen w-full flex-col">

@@ -1,41 +1,60 @@
 import { createContext } from "react";
+import { graphql, useFragment } from "react-relay";
+import type {
+  profilesFragment$data,
+  profilesFragment$key,
+} from "./lib/queries/__generated__/profilesFragment.graphql";
 import type {
   profileFragment$data,
   profileFragment$key,
-} from "./lib/queries/__generated__/profileFragment.graphql";
+} from "./__generated__/profileFragment.graphql";
 
 export interface ProfileContext {
-  profile: profileFragment$data[number];
+  profile: profileFragment$data["profile"];
   defaultCurrency: string;
-  profileRef: profileFragment$key[number];
-  profiles: profileFragment$data;
-  profilesRef: profileFragment$key;
+  profileRef: profileFragment$key;
+  profiles: profilesFragment$data;
+  profilesRef: profilesFragment$key;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const ProfileContext = createContext<ProfileContext | null>(null);
 
+const fragment = graphql`
+  fragment profileFragment on Query {
+    profile {
+      # eslint-disable-next-line relay/unused-fields
+      id
+      # eslint-disable-next-line relay/unused-fields
+      name
+      currencies
+      # eslint-disable-next-line relay/unused-fields
+      netWorthGoal
+    }
+  }
+`;
+
 export function ProfileProvider({
   children,
-  profile,
   profileRef,
   profiles,
   profilesRef,
 }: {
   children: React.ReactNode;
-  profile: profileFragment$data[number];
-  profileRef: profileFragment$key[number];
-  profiles: profileFragment$data;
-  profilesRef: profileFragment$key;
+  profileRef: profileFragment$key;
+  profiles: profilesFragment$data;
+  profilesRef: profilesFragment$key;
 }) {
+  const data = useFragment(fragment, profileRef);
+
   return (
     <ProfileContext.Provider
       value={{
-        profile,
+        profile: data.profile,
         profileRef,
         profiles,
         profilesRef,
-        defaultCurrency: profile.currencies[0],
+        defaultCurrency: data.profile.currencies[0],
       }}
     >
       {children}

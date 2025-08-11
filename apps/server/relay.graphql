@@ -315,6 +315,7 @@ type Query {
     """
     last: Int
   ): TransactionConnection!
+  profile: Profile!
   user: User!
   currencies: [Currency!]!
 }

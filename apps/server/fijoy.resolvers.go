@@ -242,6 +242,16 @@ func (r *mutationResolver) CreateTransactionEntry(ctx context.Context, input ent
 	return transactionEntry, nil
 }
 
+// Profile is the resolver for the profile field.
+func (r *queryResolver) Profile(ctx context.Context) (*ent.Profile, error) {
+	authData, err := auth.GetAuthDataFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.client.Profile.Query().Where(profile.ID(authData.ProfileID)).Only(ctx)
+}
+
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context) (*ent.User, error) {
 	authData, err := auth.GetUserDataFromContext(ctx)

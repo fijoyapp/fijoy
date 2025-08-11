@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<34c6ce446cd4c33a6d1a6f77e5e7d2e6>>
+ * @generated SignedSource<<c0a2c2c43c39cd353480a40483ab62db>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,7 @@ export type currencyMutation$variables = {
 };
 export type currencyMutation$data = {
   readonly updateProfile: {
-    readonly " $fragmentSpreads": FragmentRefs<"profileFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"profilesFragment">;
   };
 };
 export type currencyMutation = {
@@ -74,7 +74,7 @@ return {
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "profileFragment"
+            "name": "profilesFragment"
           }
         ],
         "storageKey": null
@@ -141,16 +141,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1f6cd2106a15f5e89947cdcdb578074b",
+    "cacheID": "c5ac9bff5284d592cef9fb9626ecc2dc",
     "id": null,
     "metadata": {},
     "name": "currencyMutation",
     "operationKind": "mutation",
-    "text": "mutation currencyMutation(\n  $id: ID!\n  $currencies: [String!]!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profileFragment\n    id\n  }\n}\n\nfragment profileFragment on Profile {\n  id\n  currencies\n  locale\n  name\n  netWorthGoal\n}\n"
+    "text": "mutation currencyMutation(\n  $id: ID!\n  $currencies: [String!]!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profilesFragment\n    id\n  }\n}\n\nfragment profilesFragment on Profile {\n  id\n  currencies\n  locale\n  name\n  netWorthGoal\n}\n"
   }
 };
 })();
 
-(node as any).hash = "57f2d55ad1b3f3367bb98735fc1dddcd";
+(node as any).hash = "137400553617cd2506ac4d3bd653b5e6";
 
 export default node;
