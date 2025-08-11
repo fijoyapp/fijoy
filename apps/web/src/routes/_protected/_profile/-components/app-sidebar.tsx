@@ -22,7 +22,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link, type ValidateLinkOptions } from "@tanstack/react-router";
+import {
+  Link,
+  useMatchRoute,
+  type ValidateLinkOptions,
+} from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -88,6 +92,7 @@ const settingsLinks: NavLink[] = [
 export function AppSidebar() {
   const { profile, profiles } = useProfile();
   const { user } = useAuth();
+  const matchRoute = useMatchRoute();
   return (
     <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader>
@@ -124,7 +129,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {fijoyLinks.map((item) => (
                 <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={!!matchRoute({ to: item.link.to })}
+                  >
                     <Link {...item.link}>
                       <item.icon />
                       <span>{item.name}</span>
@@ -141,7 +149,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {settingsLinks.map((item) => (
                 <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={!!matchRoute({ to: item.link.to })}
+                  >
                     <Link {...item.link}>
                       <item.icon />
                       <span>{item.name}</span>
