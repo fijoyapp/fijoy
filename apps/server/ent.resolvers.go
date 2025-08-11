@@ -85,6 +85,7 @@ func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[i
 
 	return r.client.Transaction.Query().
 		Where(transaction.HasProfileWith(profile.ID(authData.ProfileID))).
+		Order(ent.Desc(transaction.FieldDatetime)).
 		Paginate(ctx, after, first, before, last)
 }
 
@@ -248,14 +249,16 @@ func (r *Resolver) UpdateTransactionEntryInput() UpdateTransactionEntryInputReso
 	return &updateTransactionEntryInputResolver{r}
 }
 
-type accountResolver struct{ *Resolver }
-type profileResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type transactionResolver struct{ *Resolver }
-type transactionEntryResolver struct{ *Resolver }
-type createAccountInputResolver struct{ *Resolver }
-type createProfileInputResolver struct{ *Resolver }
-type createTransactionEntryInputResolver struct{ *Resolver }
-type updateAccountInputResolver struct{ *Resolver }
-type updateProfileInputResolver struct{ *Resolver }
-type updateTransactionEntryInputResolver struct{ *Resolver }
+type (
+	accountResolver                     struct{ *Resolver }
+	profileResolver                     struct{ *Resolver }
+	queryResolver                       struct{ *Resolver }
+	transactionResolver                 struct{ *Resolver }
+	transactionEntryResolver            struct{ *Resolver }
+	createAccountInputResolver          struct{ *Resolver }
+	createProfileInputResolver          struct{ *Resolver }
+	createTransactionEntryInputResolver struct{ *Resolver }
+	updateAccountInputResolver          struct{ *Resolver }
+	updateProfileInputResolver          struct{ *Resolver }
+	updateTransactionEntryInputResolver struct{ *Resolver }
+)
