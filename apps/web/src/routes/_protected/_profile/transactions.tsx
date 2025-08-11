@@ -1,12 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import {
-  graphql,
-  usePreloadedQuery,
-  useRefetchableFragment,
-} from "react-relay";
-import { rootQuery } from "@/routes/__root";
-import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
+import { graphql, useRefetchableFragment } from "react-relay";
 import type { TransactionsPageRefetch } from "./__generated__/TransactionsPageRefetch.graphql";
 import type { transactionsPageFragment$key } from "./__generated__/transactionsPageFragment.graphql";
 import TransactionDataTable from "./-components/transactions/transaction-data-table";
@@ -17,6 +11,7 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import NewIncome from "./-components/transactions/new-income";
 import NewExpense from "./-components/transactions/new-expense";
 import NewTransfer from "./-components/transactions/new-transfer";
+import { useData } from "@/hooks/use-data";
 
 const Add = z.enum(["income", "expense", "transfer"]).optional();
 const transactionsRouteSchema = z.object({
@@ -44,7 +39,7 @@ const TransactionsPageFragment = graphql`
 
 function Page() {
   const navigate = useNavigate();
-  const { rootQueryRef } = Route.useRouteContext();
+  const { data } = useData();
   const { add } = Route.useSearch();
 
   const navigateTo = useCallback(
@@ -80,8 +75,6 @@ function Page() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [navigateTo, add]);
-
-  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [fragmentData, refetch] = useRefetchableFragment<

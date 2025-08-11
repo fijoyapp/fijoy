@@ -12,15 +12,14 @@ import { z } from "zod";
 import CurrencyStep from "@/components/setup/currency-step";
 import FinalStep from "@/components/setup/final-step";
 import GoalStep from "@/components/setup/goal-step";
-import { useFragment, usePreloadedQuery } from "react-relay";
-import { rootQuery } from "../__root";
-import type { RootQuery } from "../__generated__/RootQuery.graphql";
+import { useFragment } from "react-relay";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import type { profilesFragment$key } from "@/lib/queries/__generated__/profilesFragment.graphql";
 import { ProfilesFragment } from "@/lib/queries/profiles";
 import { setProfile } from "@/lib/profile";
+import { useData } from "@/hooks/use-data";
 
 const setupSearchSchema = z.object({
   step: SetupStep.optional(),
@@ -40,9 +39,7 @@ function Setup() {
 }
 
 function SetupProfile({ step }: { step: SetupStep }) {
-  const { rootQueryRef } = Route.useRouteContext();
-
-  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
+  const { data } = useData();
 
   return (
     <div className="container mx-auto max-w-(--breakpoint-2xl)">
@@ -56,7 +53,7 @@ function SetupProfile({ step }: { step: SetupStep }) {
         {match(step)
           .with("currency", () => <CurrencyStep currencies={data.currencies} />)
           .with("goal", () => <GoalStep currencies={data.currencies} />)
-          .with("final", () => <FinalStep rootQueryRef={rootQueryRef} />)
+          .with("final", () => <FinalStep />)
           .exhaustive()}
       </div>
     </div>
@@ -64,9 +61,7 @@ function SetupProfile({ step }: { step: SetupStep }) {
 }
 
 function ProfilePicker() {
-  const { rootQueryRef } = Route.useRouteContext();
-
-  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
+  const { data } = useData();
 
   const profiles = useFragment<profilesFragment$key>(
     ProfilesFragment,

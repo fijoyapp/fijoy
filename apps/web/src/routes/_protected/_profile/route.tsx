@@ -13,15 +13,14 @@ import {
   PageHeaderHeading,
 } from "@/components/page-header";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { useFragment, usePreloadedQuery } from "react-relay";
+import { useFragment } from "react-relay";
 import { ProfileProvider } from "@/profile";
-import { rootQuery } from "@/routes/__root";
-import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { ProfilesFragment } from "@/lib/queries/profiles";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./-components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import type { profilesFragment$key } from "@/lib/queries/__generated__/profilesFragment.graphql";
+import { useData } from "@/hooks/use-data";
 
 export const Route = createFileRoute("/_protected/_profile")({
   pendingComponent: CenterLoadingSpinner,
@@ -47,9 +46,8 @@ function Page() {
   // const [sheetOpen, setSheetOpen] = useState(false);
 
   // const [activeTab, setActiveTab] = useState<string | null>(null);
-  const { rootQueryRef } = Route.useRouteContext();
+  const { data } = useData();
 
-  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
   const profiles = useFragment<profilesFragment$key>(
     ProfilesFragment,
     data.profiles,

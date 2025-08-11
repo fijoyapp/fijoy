@@ -1,10 +1,17 @@
 import { QueryClient } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import {
+  Outlet,
+  createRootRouteWithContext,
+  useMatches,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { useLazyLoadQuery } from "react-relay";
 import { graphql, type IEnvironment } from "relay-runtime";
-import { loadQuery } from "react-relay";
-import { type RootQuery } from "./__generated__/RootQuery.graphql";
+import type { RootQuery } from "./__generated__/RootQuery.graphql";
+import { DataProvider } from "@/data";
+// import { loadQuery } from "react-relay";
+// import { type RootQuery } from "./__generated__/RootQuery.graphql";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -37,32 +44,28 @@ export const rootQuery = graphql`
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
-  beforeLoad: (ctx) => {
-    const currentRouteId: string = ctx.matches[ctx.matches.length - 1].id;
-
-    const hasProfile = currentRouteId.startsWith("/_protected/_profile");
-    const hasUser = currentRouteId.startsWith("/_protected");
-
-    const rootQueryRef = loadQuery<RootQuery>(
-      ctx.context.environment,
-      rootQuery,
-      { hasProfile, hasUser },
-      { fetchPolicy: "store-or-network" },
-    );
-    return { rootQueryRef };
-  },
 });
 
 function RootLayout() {
+  const matches = useMatches();
+  const currentRouteId = matches[matches.length - 1].id;
+
+  const hasProfile = currentRouteId.startsWith("/_protected/_profile");
+  const hasUser = currentRouteId.startsWith("/_protected");
+
+  const data = useLazyLoadQuery<RootQuery>(rootQuery, { hasProfile, hasUser });
+
   return (
     <>
-      <Outlet />
-      {!import.meta.env.PROD && (
-        <>
-          <TanStackRouterDevtools position="bottom-right" />
-          {/* <ReactQueryDevtools /> */}
-        </>
-      )}
+      <DataProvider data={data}>
+        <Outlet />
+        {!import.meta.env.PROD && (
+          <>
+            <TanStackRouterDevtools position="bottom-right" />
+            {/* <ReactQueryDevtools /> */}
+          </>
+        )}
+      </DataProvider>
     </>
   );
 }

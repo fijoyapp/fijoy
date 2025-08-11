@@ -1,12 +1,11 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import invariant from "tiny-invariant";
 import CenterLoadingSpinner from "@/components/center-loading-spinner";
-import { useFragment, usePreloadedQuery } from "react-relay";
-import { type RootQuery } from "../__generated__/RootQuery.graphql";
-import { rootQuery } from "../__root";
+import { useFragment } from "react-relay";
 import { type userFragment$key } from "@/lib/queries/__generated__/userFragment.graphql";
 import { UserFragment } from "@/lib/queries/user";
 import { AuthProvider } from "@/auth";
+import { useData } from "@/hooks/use-data";
 
 export const Route = createFileRoute("/_protected")({
   pendingComponent: CenterLoadingSpinner,
@@ -14,9 +13,8 @@ export const Route = createFileRoute("/_protected")({
 });
 
 function Protected() {
-  const { rootQueryRef } = Route.useRouteContext();
+  const { data } = useData();
 
-  const data = usePreloadedQuery<RootQuery>(rootQuery, rootQueryRef);
   const user = useFragment<userFragment$key>(UserFragment, data.user);
 
   invariant(user, "User data is required for protected routes");

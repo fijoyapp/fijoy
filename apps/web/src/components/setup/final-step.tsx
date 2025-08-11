@@ -6,17 +6,9 @@ import { Link, useRouter } from "@tanstack/react-router";
 import { CurrencyStepData, GoalStepData } from "@/types/setup";
 import { useSetupStore } from "@/store/setup";
 import { useShallow } from "zustand/shallow";
-import { useCallback } from "react";
-import { fetchQuery, graphql } from "relay-runtime";
-import {
-  type PreloadedQuery,
-  useMutation,
-  useQueryLoader,
-  useRelayEnvironment,
-} from "react-relay";
+import { graphql } from "relay-runtime";
+import { useMutation } from "react-relay";
 import type { finalStepMutation } from "./__generated__/finalStepMutation.graphql";
-import { rootQuery } from "@/routes/__root";
-import type { RootQuery } from "@/routes/__generated__/RootQuery.graphql";
 import { Form } from "../ui/form";
 import { Button } from "../ui/button";
 import { NameField } from "@/routes/_protected/_profile/-components/accounts/form/name";
@@ -45,21 +37,14 @@ const profileCreateMutation = graphql`
   }
 `;
 
-type Props = {
-  rootQueryRef: PreloadedQuery<RootQuery>;
-};
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+type Props = {};
 
-const FinalStep = ({ rootQueryRef }: Props) => {
-  const environment = useRelayEnvironment();
+// eslint-disable-next-line no-empty-pattern
+const FinalStep = ({}: Props) => {
   const router = useRouter();
   const [commitMutation, isMutationInFlight] = useMutation<finalStepMutation>(
     profileCreateMutation,
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, loadQuery] = useQueryLoader(
-    rootQuery,
-    rootQueryRef /* initial query ref */,
   );
 
   const { currencyStepData, goalStepData, reset } = useSetupStore(
@@ -77,36 +62,6 @@ const FinalStep = ({ rootQueryRef }: Props) => {
       goal: goalStepData,
     },
   });
-
-  const refresh = useCallback(() => {
-    return new Promise<void>((resolve, reject) => {
-      // fetchQuery will fetch the query and write
-      // the data to the Relay store. This will ensure
-      // that when we re-render, the data is already
-      // cached and we don't suspend
-      fetchQuery<RootQuery>(environment, rootQuery, {
-        hasProfile: true,
-        hasUser: true,
-      }).subscribe({
-        complete: () => {
-          // *After* the query has been fetched, we call
-          // loadQuery again to re-render with a new
-          // queryRef.
-          // At this point the data for the query should
-          // be cached, so we use the 'store-only'
-          // fetchPolicy to avoid suspending.
-          loadQuery(
-            { hasProfile: true, hasUser: true },
-            { fetchPolicy: "store-only" },
-          );
-          resolve();
-        },
-        error: (e: Error) => {
-          reject(e);
-        },
-      });
-    });
-  }, [environment, loadQuery]);
 
   async function onSubmit() {
     if (isMutationInFlight) {
@@ -139,7 +94,6 @@ const FinalStep = ({ rootQueryRef }: Props) => {
       }),
       {
         success: async () => {
-          await refresh();
           reset();
           router.navigate({
             to: "/home",

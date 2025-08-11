@@ -10,10 +10,10 @@ import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { CurrencyField } from "@/components/setup/form/currency";
-import { graphql, useMutation, usePreloadedQuery } from "react-relay";
+import { graphql, useMutation } from "react-relay";
 import { useProfile } from "@/hooks/use-profile";
-import { rootQuery } from "@/routes/__root";
 import type { currenciesMutation } from "./__generated__/currenciesMutation.graphql";
+import { useData } from "@/hooks/use-data";
 
 export const Route = createFileRoute(
   "/_protected/_profile/settings/currencies",
@@ -39,13 +39,11 @@ const CurrenciesMutation = graphql`
 `;
 
 function Page() {
-  const { rootQueryRef } = Route.useRouteContext();
+  const { data } = useData();
   const { profile } = useProfile();
 
   const [commitMutation, isMutationInFlight] =
     useMutation<currenciesMutation>(CurrenciesMutation);
-
-  const data = usePreloadedQuery(rootQuery, rootQueryRef);
 
   const form = useForm<z.infer<typeof currencyFormSchema>>({
     resolver: zodResolver(currencyFormSchema),
