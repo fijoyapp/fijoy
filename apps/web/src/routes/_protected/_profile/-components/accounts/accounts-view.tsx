@@ -39,50 +39,52 @@ export function AccountsView({ accountsViewFragment }: AccountsViewProps) {
   const data = useFragment(AccountsViewFragment, accountsViewFragment);
 
   return (
-    <div className={cn("min-h-full w-full")}>
+    <div className={cn("flex h-full w-full flex-col")}>
       <NetWorthInfo netWorthInfoFragment={data} />
 
       <div className="py-2"></div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button>New Account</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Select a type</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <Link to={"/accounts"} search={{ add: "liquidity" }}>
-            <DropdownMenuItem>
-              <PiggyBank className="mr-2 h-4 w-4" />
-              <span>Liquitity</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: "investment" }}>
-            <DropdownMenuItem>
-              <ChartCandlestick className="mr-2 h-4 w-4" />
-              <span>Investment</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: "property" }}>
-            <DropdownMenuItem>
-              <House className="mr-2 h-4 w-4" />
-              <span>Property</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: "receivable" }}>
-            <DropdownMenuItem>
-              <HandCoins className="mr-2 h-4 w-4" />
-              <span>Receivable</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link to={"/accounts"} search={{ add: "liability" }}>
-            <DropdownMenuItem>
-              <CreditCard className="mr-2 h-4 w-4" />
-              <span>Liability</span>
-            </DropdownMenuItem>
-          </Link>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button>New Account</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Select a type</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <Link to={"/accounts"} search={{ add: "liquidity" }}>
+              <DropdownMenuItem>
+                <PiggyBank className="mr-2 h-4 w-4" />
+                <span>Liquitity</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: "investment" }}>
+              <DropdownMenuItem>
+                <ChartCandlestick className="mr-2 h-4 w-4" />
+                <span>Investment</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: "property" }}>
+              <DropdownMenuItem>
+                <House className="mr-2 h-4 w-4" />
+                <span>Property</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: "receivable" }}>
+              <DropdownMenuItem>
+                <HandCoins className="mr-2 h-4 w-4" />
+                <span>Receivable</span>
+              </DropdownMenuItem>
+            </Link>
+            <Link to={"/accounts"} search={{ add: "liability" }}>
+              <DropdownMenuItem>
+                <CreditCard className="mr-2 h-4 w-4" />
+                <span>Liability</span>
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <div className="py-2"></div>
 

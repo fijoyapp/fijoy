@@ -27,6 +27,7 @@ import type {
 } from "./__generated__/transactionDataTableFragment.graphql";
 import { useFormat } from "@/hooks/use-format";
 import invariant from "tiny-invariant";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const TransactionDataTableFragment = graphql`
   fragment transactionDataTableFragment on Query {
@@ -194,7 +195,7 @@ function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="bg-card rounded-md border">
+    <ScrollArea className="bg-card h-full rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -237,6 +238,6 @@ function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-    </div>
+    </ScrollArea>
   );
 }

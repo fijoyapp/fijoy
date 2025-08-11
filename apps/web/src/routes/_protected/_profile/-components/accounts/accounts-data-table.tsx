@@ -31,6 +31,7 @@ import type {
   accountsDataTableFragment$data,
   accountsDataTableFragment$key,
 } from "./__generated__/accountsDataTableFragment.graphql";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const AccountsDataTableFragment = graphql`
   fragment accountsDataTableFragment on Query {
@@ -248,7 +249,7 @@ function DataTable<TData, TValue>({
   if (!hasMounted) return null;
 
   return (
-    <div className="bg-card rounded-md border">
+    <ScrollArea className="bg-card overflow-y-auto rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => {
@@ -315,6 +316,6 @@ function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
-    </div>
+    </ScrollArea>
   );
 }
