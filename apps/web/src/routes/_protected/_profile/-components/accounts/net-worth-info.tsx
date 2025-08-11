@@ -21,7 +21,7 @@ type Props = {
 
 const NetWorthInfoFragment = graphql`
   fragment netWorthInfoFragment on Query {
-    accounts(first: 20) {
+    accounts(first: 1000) {
       edges {
         # eslint-disable-next-line relay/unused-fields
         node {

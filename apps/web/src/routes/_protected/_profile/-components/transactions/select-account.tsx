@@ -31,7 +31,7 @@ type SelectAccountProps<T extends FieldValues> = {
 
 const fragment = graphql`
   fragment selectAccountFragment on Query {
-    accounts(first: 20) {
+    accounts(first: 1000) {
       edges {
         node {
           id @required(action: THROW)

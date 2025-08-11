@@ -37,7 +37,7 @@ const routeApi = getRouteApi("/_protected/_profile/transactions");
 const fragment = graphql`
   fragment newExpenseFragment on Query {
     ...selectAccountFragment
-    accounts(first: 20) {
+    accounts(first: 1000) {
       edges {
         node {
           id

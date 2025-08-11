@@ -34,7 +34,7 @@ import { useFormat } from "@/hooks/use-format";
 
 const AccountDataTableFragment = graphql`
   fragment accountDataTableFragment on Query {
-    accounts(first: 20) {
+    accounts(first: 1000) {
       edges {
         node {
           id @required(action: THROW)
@@ -131,7 +131,7 @@ export default function AccountDataTable({
             <div className="text-right">
               {match(accountType)
                 .with("investment", () => (
-                  <div>
+                  <div className="font-mono">
                     {money} x {getCurrencyDisplay(value, currencySymbol)}
                   </div>
                 ))
@@ -154,9 +154,13 @@ export default function AccountDataTable({
           if (row.getIsGrouped()) {
             const total = row
               .getLeafRows()
-              ?.filter(
-                (a) => a.original?.accountType === row.original?.accountType,
-              )
+              ?.filter((a) => {
+                if (groupby === "accountType") {
+                  return a.original?.accountType === row.original?.accountType;
+                } else if (groupby === "institution") {
+                  return a.original?.institution === row.original?.institution;
+                }
+              })
               .reduce(
                 (c, p) => currency(p?.original?.balance || 0).add(c),
                 currency(0),
