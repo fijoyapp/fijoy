@@ -4,18 +4,34 @@ import {
   Settings,
   History,
   type LucideIcon,
+  ChevronDown,
+  CircleUser,
+  Coins,
+  ChevronUp,
 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link, type ValidateLinkOptions } from "@tanstack/react-router";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useProfile } from "@/hooks/use-profile";
+import { setProfile } from "@/lib/profile";
+import { useAuth } from "@/hooks/use-auth";
+import { logout } from "@/lib/auth";
 
 type NavLink = {
   link: ValidateLinkOptions;
@@ -58,8 +74,37 @@ const navLinks: NavLink[] = [
 ];
 
 export function AppSidebar() {
+  const { profile, profiles } = useProfile();
+  const { user } = useAuth();
   return (
     <Sidebar variant="sidebar" collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton>
+                  <Coins />
+                  {profile.name}
+                  <ChevronDown className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
+                {profiles.map((p) => {
+                  return (
+                    <DropdownMenuItem
+                      key={p.id}
+                      onSelect={() => setProfile(p.id)}
+                    >
+                      <span>{p.name}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Fijoy</SidebarGroupLabel>
@@ -79,6 +124,28 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton>
+                  <CircleUser /> {user.email}
+                  <ChevronUp className="ml-auto" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                side="top"
+                className="w-[--radix-popper-anchor-width]"
+              >
+                <DropdownMenuItem onSelect={() => logout()}>
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

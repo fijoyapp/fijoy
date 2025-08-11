@@ -18,11 +18,9 @@ import type { RootQuery } from "../__generated__/RootQuery.graphql";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
-import { useCallback } from "react";
-import { env } from "@/env";
-import { toast } from "sonner";
 import type { profilesFragment$key } from "@/lib/queries/__generated__/profilesFragment.graphql";
 import { ProfilesFragment } from "@/lib/queries/profiles";
+import { setProfile } from "@/lib/profile";
 
 const setupSearchSchema = z.object({
   step: SetupStep.optional(),
@@ -74,24 +72,6 @@ function ProfilePicker() {
     ProfilesFragment,
     data.profiles,
   );
-
-  const setProfile = useCallback(async (profileID: string) => {
-    const response = await fetch(env.VITE_SERVER_URL + "/v1/auth/set-profile", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `profile_id=${encodeURIComponent(profileID)}`,
-      credentials: "include",
-      redirect: "manual",
-    });
-
-    if (response.type === "opaqueredirect" || response.status === 302) {
-      window.location.href = "/home";
-    } else {
-      toast.error("Failed to load profile, please try again!");
-    }
-  }, []);
 
   invariant(profiles);
 
