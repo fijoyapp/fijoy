@@ -91,6 +91,11 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	CreateAccountResponse struct {
+		AccountEdge     func(childComplexity int) int
+		TransactionEdge func(childComplexity int) int
+	}
+
 	Currency struct {
 		Code   func(childComplexity int) int
 		Locale func(childComplexity int) int
@@ -197,7 +202,7 @@ type AccountResolver interface {
 type MutationResolver interface {
 	CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error)
 	UpdateProfile(ctx context.Context, id int, input ent.UpdateProfileInput) (*ent.Profile, error)
-	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error)
+	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*CreateAccountResponse, error)
 	CreateTransactionWithTransactionEntries(ctx context.Context, input CreateTransactionWithTransactionEntriesInput) (*ent.Transaction, error)
 	CreateTransactionEntry(ctx context.Context, input ent.CreateTransactionEntryInput) (*ent.TransactionEntry, error)
 }
@@ -415,6 +420,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.AccountEdge.Node(childComplexity), true
+
+	case "CreateAccountResponse.accountEdge":
+		if e.complexity.CreateAccountResponse.AccountEdge == nil {
+			break
+		}
+
+		return e.complexity.CreateAccountResponse.AccountEdge(childComplexity), true
+
+	case "CreateAccountResponse.transactionEdge":
+		if e.complexity.CreateAccountResponse.TransactionEdge == nil {
+			break
+		}
+
+		return e.complexity.CreateAccountResponse.TransactionEdge(childComplexity), true
 
 	case "Currency.code":
 		if e.complexity.Currency.Code == nil {
@@ -2288,6 +2307,106 @@ func (ec *executionContext) fieldContext_AccountEdge_cursor(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _CreateAccountResponse_accountEdge(ctx context.Context, field graphql.CollectedField, obj *CreateAccountResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateAccountResponse_accountEdge(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountEdge, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.AccountEdge)
+	fc.Result = res
+	return ec.marshalNAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateAccountResponse_accountEdge(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateAccountResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_AccountEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_AccountEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AccountEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateAccountResponse_transactionEdge(ctx context.Context, field graphql.CollectedField, obj *CreateAccountResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateAccountResponse_transactionEdge(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TransactionEdge, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.TransactionEdge)
+	fc.Result = res
+	return ec.marshalNTransactionEdge2ᚖfijoyᚋentᚐTransactionEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateAccountResponse_transactionEdge(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateAccountResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_TransactionEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_TransactionEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Currency_code(ctx context.Context, field graphql.CollectedField, obj *Currency) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Currency_code(ctx, field)
 	if err != nil {
@@ -2556,9 +2675,9 @@ func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*ent.AccountEdge)
+	res := resTmp.(*CreateAccountResponse)
 	fc.Result = res
-	return ec.marshalNAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx, field.Selections, res)
+	return ec.marshalNCreateAccountResponse2ᚖfijoyᚐCreateAccountResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2569,12 +2688,12 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "node":
-				return ec.fieldContext_AccountEdge_node(ctx, field)
-			case "cursor":
-				return ec.fieldContext_AccountEdge_cursor(ctx, field)
+			case "accountEdge":
+				return ec.fieldContext_CreateAccountResponse_accountEdge(ctx, field)
+			case "transactionEdge":
+				return ec.fieldContext_CreateAccountResponse_transactionEdge(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type AccountEdge", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateAccountResponse", field.Name)
 		},
 	}
 	defer func() {
@@ -8800,6 +8919,50 @@ func (ec *executionContext) _AccountEdge(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var createAccountResponseImplementors = []string{"CreateAccountResponse"}
+
+func (ec *executionContext) _CreateAccountResponse(ctx context.Context, sel ast.SelectionSet, obj *CreateAccountResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createAccountResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateAccountResponse")
+		case "accountEdge":
+			out.Values[i] = ec._CreateAccountResponse_accountEdge(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "transactionEdge":
+			out.Values[i] = ec._CreateAccountResponse_transactionEdge(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var currencyImplementors = []string{"Currency"}
 
 func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet, obj *Currency) graphql.Marshaler {
@@ -10488,10 +10651,6 @@ func (ec *executionContext) marshalNAccountConnection2ᚖfijoyᚋentᚐAccountCo
 	return ec._AccountConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNAccountEdge2fijoyᚋentᚐAccountEdge(ctx context.Context, sel ast.SelectionSet, v ent.AccountEdge) graphql.Marshaler {
-	return ec._AccountEdge(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNAccountEdge2ᚖfijoyᚋentᚐAccountEdge(ctx context.Context, sel ast.SelectionSet, v *ent.AccountEdge) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -10541,6 +10700,20 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 func (ec *executionContext) unmarshalNCreateAccountInput2fijoyᚋentᚐCreateAccountInput(ctx context.Context, v any) (ent.CreateAccountInput, error) {
 	res, err := ec.unmarshalInputCreateAccountInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCreateAccountResponse2fijoyᚐCreateAccountResponse(ctx context.Context, sel ast.SelectionSet, v CreateAccountResponse) graphql.Marshaler {
+	return ec._CreateAccountResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNCreateAccountResponse2ᚖfijoyᚐCreateAccountResponse(ctx context.Context, sel ast.SelectionSet, v *CreateAccountResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CreateAccountResponse(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNCreateProfileInput2fijoyᚋentᚐCreateProfileInput(ctx context.Context, v any) (ent.CreateProfileInput, error) {
@@ -10892,6 +11065,16 @@ func (ec *executionContext) marshalNTransactionConnection2ᚖfijoyᚋentᚐTrans
 		return graphql.Null
 	}
 	return ec._TransactionConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTransactionEdge2ᚖfijoyᚋentᚐTransactionEdge(ctx context.Context, sel ast.SelectionSet, v *ent.TransactionEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TransactionEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNTransactionEntry2fijoyᚋentᚐTransactionEntry(ctx context.Context, sel ast.SelectionSet, v ent.TransactionEntry) graphql.Marshaler {

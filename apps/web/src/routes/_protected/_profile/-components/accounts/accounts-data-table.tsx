@@ -10,10 +10,6 @@ import {
   type ExpandedState,
 } from "@tanstack/react-table";
 import { graphql } from "relay-runtime";
-import type {
-  accountDataTableFragment$data,
-  accountDataTableFragment$key,
-} from "./__generated__/accountDataTableFragment.graphql";
 import {
   Table,
   TableBody,
@@ -31,10 +27,14 @@ import { capitalize } from "lodash";
 import currency from "currency.js";
 import { getRouteApi } from "@tanstack/react-router";
 import { useFormat } from "@/hooks/use-format";
+import type {
+  accountsDataTableFragment$data,
+  accountsDataTableFragment$key,
+} from "./__generated__/accountsDataTableFragment.graphql";
 
-const AccountDataTableFragment = graphql`
-  fragment accountDataTableFragment on Query {
-    accounts(first: 1000) @connection(key: "AccountDataTable_accounts") {
+const AccountsDataTableFragment = graphql`
+  fragment accountsDataTableFragment on Query {
+    accounts(first: 1000) @connection(key: "AccountsDataTable_accounts") {
       edges {
         node {
           id @required(action: THROW)
@@ -55,21 +55,24 @@ const AccountDataTableFragment = graphql`
 `;
 
 type Account = NonNullable<
-  NonNullable<accountDataTableFragment$data["accounts"]["edges"]>[number]
+  NonNullable<accountsDataTableFragment$data["accounts"]["edges"]>[number]
 >["node"];
 
 type AccountDataTableProps = {
-  accountDataTableFragment: accountDataTableFragment$key;
+  accountsDataTableFragment: accountsDataTableFragment$key;
 };
 
 const routeApi = getRouteApi("/_protected/_profile/accounts");
 
 export default function AccountDataTable({
-  accountDataTableFragment,
+  accountsDataTableFragment,
 }: AccountDataTableProps) {
   const { groupby } = routeApi.useSearch();
 
-  const data = useFragment(AccountDataTableFragment, accountDataTableFragment);
+  const data = useFragment(
+    AccountsDataTableFragment,
+    accountsDataTableFragment,
+  );
   const { defaultCurrency } = useProfile();
   const { getCurrencyDisplay } = useFormat();
 

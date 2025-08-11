@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0315827e15ca1f7c456e9260dcb6d4ea>>
+ * @generated SignedSource<<eeeb2fac983d201598afa49268fb804d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -182,19 +182,19 @@ return {
         "args": (v0/*: any*/),
         "filters": null,
         "handle": "connection",
-        "key": "AccountDataTable_accounts",
+        "key": "AccountsDataTable_accounts",
         "kind": "LinkedHandle",
         "name": "accounts"
       }
     ]
   },
   "params": {
-    "cacheID": "0c109f6be5bf437c02c1341bfae62a3d",
+    "cacheID": "0142c17c04ca2bace898d8c1c066d0f5",
     "id": null,
     "metadata": {},
     "name": "AccountsPageRefetch",
     "operationKind": "query",
-    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountDataTableFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencySymbol\n        amount\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountDataTableFragment\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountsDataTableFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencySymbol\n        amount\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountsDataTableFragment\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

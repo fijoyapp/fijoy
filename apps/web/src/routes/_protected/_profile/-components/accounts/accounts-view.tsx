@@ -21,7 +21,7 @@ import { graphql } from "relay-runtime";
 import type { accountsViewFragment$key } from "./__generated__/accountsViewFragment.graphql";
 import { useFragment } from "react-relay";
 import NetWorthInfo from "./net-worth-info";
-import AccountDataTable from "./account-data-table";
+import AccountDataTable from "./accounts-data-table";
 
 type AccountsViewProps = {
   accountsViewFragment: accountsViewFragment$key;
@@ -31,7 +31,7 @@ const AccountsViewFragment = graphql`
   fragment accountsViewFragment on Query {
     ...netWorthInfoFragment
     # ...accountListViewFragment
-    ...accountDataTableFragment
+    ...accountsDataTableFragment
   }
 `;
 
@@ -87,7 +87,7 @@ export function AccountsView({ accountsViewFragment }: AccountsViewProps) {
       <div className="py-2"></div>
 
       {/* <AccountListView accountListViewFragment={data} /> */}
-      <AccountDataTable accountDataTableFragment={data} />
+      <AccountDataTable accountsDataTableFragment={data} />
     </div>
   );
 }

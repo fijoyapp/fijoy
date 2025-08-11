@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+type CreateAccountResponse struct {
+	AccountEdge     *ent.AccountEdge     `json:"accountEdge"`
+	TransactionEdge *ent.TransactionEdge `json:"transactionEdge"`
+}
+
 type CreateTransactionWithTransactionEntriesInput struct {
 	Note               *string                            `json:"note,omitempty"`
 	Datetime           *time.Time                         `json:"datetime,omitempty"`

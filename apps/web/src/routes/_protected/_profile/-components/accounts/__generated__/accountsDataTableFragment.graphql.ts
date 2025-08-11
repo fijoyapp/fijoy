@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4112c24d3ef9cbab5bc6083d46705609>>
+ * @generated SignedSource<<9d7612b354179c9473e3060c01981737>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,26 +9,31 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type AccountAccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
-export type transactionDataTableFragment$data = {
-  readonly transactions: {
+export type accountsDataTableFragment$data = {
+  readonly accounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly accountType: AccountAccountType;
+        readonly amount: string;
         readonly balance: string;
-        readonly datetime: any;
+        readonly currencySymbol: string;
         readonly id: string;
-        readonly note: string | null | undefined;
+        readonly institution: string;
+        readonly name: string;
+        readonly value: string;
       } | null | undefined;
     } | null | undefined> | null | undefined;
     readonly pageInfo: {
       readonly hasNextPage: boolean;
     };
   };
-  readonly " $fragmentType": "transactionDataTableFragment";
+  readonly " $fragmentType": "accountsDataTableFragment";
 };
-export type transactionDataTableFragment$key = {
-  readonly " $data"?: transactionDataTableFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"transactionDataTableFragment">;
+export type accountsDataTableFragment$key = {
+  readonly " $data"?: accountsDataTableFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"accountsDataTableFragment">;
 };
 
 const node: ReaderFragment = {
@@ -41,25 +46,25 @@ const node: ReaderFragment = {
         "cursor": null,
         "direction": "forward",
         "path": [
-          "transactions"
+          "accounts"
         ]
       }
     ]
   },
-  "name": "transactionDataTableFragment",
+  "name": "accountsDataTableFragment",
   "selections": [
     {
-      "alias": "transactions",
+      "alias": "accounts",
       "args": null,
-      "concreteType": "TransactionConnection",
+      "concreteType": "AccountConnection",
       "kind": "LinkedField",
-      "name": "__TransactionsDataTable_transactions_connection",
+      "name": "__AccountsDataTable_accounts_connection",
       "plural": false,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "concreteType": "TransactionEdge",
+          "concreteType": "AccountEdge",
           "kind": "LinkedField",
           "name": "edges",
           "plural": true,
@@ -67,32 +72,18 @@ const node: ReaderFragment = {
             {
               "alias": null,
               "args": null,
-              "concreteType": "Transaction",
+              "concreteType": "Account",
               "kind": "LinkedField",
               "name": "node",
               "plural": false,
               "selections": [
                 {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "id",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "note",
-                  "storageKey": null
-                },
-                {
                   "kind": "RequiredField",
                   "field": {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "datetime",
+                    "name": "id",
                     "storageKey": null
                   },
                   "action": "THROW"
@@ -103,10 +94,60 @@ const node: ReaderFragment = {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "balance",
+                    "name": "name",
                     "storageKey": null
                   },
                   "action": "THROW"
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "accountType",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "balance",
+                  "storageKey": null
+                },
+                {
+                  "kind": "RequiredField",
+                  "field": {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "institution",
+                    "storageKey": null
+                  },
+                  "action": "THROW"
+                },
+                {
+                  "kind": "RequiredField",
+                  "field": {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "value",
+                    "storageKey": null
+                  },
+                  "action": "THROW"
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "currencySymbol",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "amount",
+                  "storageKey": null
                 },
                 {
                   "alias": null,
@@ -161,6 +202,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "741978c5b5996e21866f1f4745d5e138";
+(node as any).hash = "23d3f8401c03d17a00ed65586b38ccae";
 
 export default node;

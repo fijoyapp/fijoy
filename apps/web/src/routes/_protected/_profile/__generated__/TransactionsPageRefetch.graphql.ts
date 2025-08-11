@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<18e1d3003c2bdabbfeef1154626f8c3a>>
+ * @generated SignedSource<<f1c3dd398a8b5ebb114dc6df23329c30>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,7 +20,14 @@ export type TransactionsPageRefetch = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
+var v0 = [
+  {
+    "kind": "Literal",
+    "name": "first",
+    "value": 20
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -51,13 +58,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Literal",
-            "name": "first",
-            "value": 20
-          }
-        ],
+        "args": (v0/*: any*/),
         "concreteType": "TransactionConnection",
         "kind": "LinkedField",
         "name": "transactions",
@@ -79,7 +80,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/),
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -100,8 +101,22 @@ return {
                     "kind": "ScalarField",
                     "name": "balance",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "__typename",
+                    "storageKey": null
                   }
                 ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "cursor",
                 "storageKey": null
               }
             ],
@@ -121,12 +136,28 @@ return {
                 "kind": "ScalarField",
                 "name": "hasNextPage",
                 "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "endCursor",
+                "storageKey": null
               }
             ],
             "storageKey": null
           }
         ],
         "storageKey": "transactions(first:20)"
+      },
+      {
+        "alias": null,
+        "args": (v0/*: any*/),
+        "filters": null,
+        "handle": "connection",
+        "key": "TransactionsDataTable_transactions",
+        "kind": "LinkedHandle",
+        "name": "transactions"
       },
       {
         "alias": null,
@@ -158,7 +189,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/),
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -199,12 +230,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a7d2e389869debafb5fe4c95c2a8d694",
+    "cacheID": "5e61215800c5f5a29803165b4e67d817",
     "id": null,
     "metadata": {},
     "name": "TransactionsPageRefetch",
     "operationKind": "query",
-    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        currencySymbol\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        amount\n        currencySymbol\n        tickerType\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n"
+    "text": "query TransactionsPageRefetch {\n  ...transactionsPageFragment\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        currencySymbol\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        amount\n        currencySymbol\n        tickerType\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        datetime\n        balance\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n"
   }
 };
 })();

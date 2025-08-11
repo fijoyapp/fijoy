@@ -79,7 +79,7 @@ func (r *mutationResolver) UpdateProfile(ctx context.Context, id int, input ent.
 }
 
 // CreateAccount is the resolver for the createAccount field.
-func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error) {
+func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*CreateAccountResponse, error) {
 	client := ent.FromContext(ctx)
 	userData, err := auth.GetAuthDataFromContext(ctx)
 	if err != nil {
@@ -156,12 +156,20 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		}},
 		Datetime: &time.Time{},
 	}
-	_, err = r.CreateTransactionWithTransactionEntries(ctx, createTransactionInput)
+	transaction, err := r.CreateTransactionWithTransactionEntries(ctx, createTransactionInput)
 	if err != nil {
 		return nil, err
 	}
 
-	return account.ToEdge(ent.DefaultAccountOrder), nil
+	account, err = client.Account.Get(ctx, account.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get account after creation: %w", err)
+	}
+
+	return &CreateAccountResponse{
+		AccountEdge:     account.ToEdge(ent.DefaultAccountOrder),
+		TransactionEdge: transaction.ToEdge(ent.DefaultTransactionOrder),
+	}, nil
 }
 
 // CreateTransactionWithTransactionEntries is the resolver for the createTransactionWithTransactionEntries field.

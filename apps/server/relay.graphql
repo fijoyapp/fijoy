@@ -489,10 +489,15 @@ input CreateTransactionWithTransactionEntriesInput {
   transactionEntries: [CreateTransactionEntryInput!]!
 }
 
+type CreateAccountResponse {
+  accountEdge: AccountEdge!
+  transactionEdge: TransactionEdge!
+}
+
 type Mutation {
   createProfile(input: CreateProfileInput!): Profile!
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
-  createAccount(input: CreateAccountInput!): AccountEdge!
+  createAccount(input: CreateAccountInput!): CreateAccountResponse!
   createTransactionWithTransactionEntries(
     input: CreateTransactionWithTransactionEntriesInput!
   ): Transaction!

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fee4bddb4ad0c4b9fd126e7a62ae7d67>>
+ * @generated SignedSource<<ce3dd9873dcb2c6b7a96c6e4f6307bd2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,21 +27,32 @@ export type CreateAccountInput = {
   updateTime?: any | null | undefined;
 };
 export type newAccountLiquidityMutation$variables = {
-  connections: ReadonlyArray<string>;
+  accountConnections: ReadonlyArray<string>;
   input: CreateAccountInput;
+  transactionConnections: ReadonlyArray<string>;
 };
 export type newAccountLiquidityMutation$data = {
   readonly createAccount: {
-    readonly node: {
-      readonly accountType: AccountAccountType;
-      readonly amount: string;
-      readonly balance: string;
-      readonly currencySymbol: string;
-      readonly id: string;
-      readonly institution: string;
-      readonly name: string;
-      readonly value: string;
-    } | null | undefined;
+    readonly accountEdge: {
+      readonly node: {
+        readonly accountType: AccountAccountType;
+        readonly amount: string;
+        readonly balance: string;
+        readonly currencySymbol: string;
+        readonly id: string;
+        readonly institution: string;
+        readonly name: string;
+        readonly value: string;
+      } | null | undefined;
+    };
+    readonly transactionEdge: {
+      readonly node: {
+        readonly balance: string;
+        readonly datetime: any;
+        readonly id: string;
+        readonly note: string | null | undefined;
+      } | null | undefined;
+    };
   };
 };
 export type newAccountLiquidityMutation = {
@@ -53,26 +64,45 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "connections"
+  "name": "accountConnections"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
   "name": "input"
 },
-v2 = [
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "transactionConnections"
+},
+v3 = [
   {
     "kind": "Variable",
     "name": "input",
     "variableName": "input"
   }
 ],
-v3 = {
+v4 = {
   "alias": null,
-  "args": (v2/*: any*/),
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "balance",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
   "concreteType": "AccountEdge",
   "kind": "LinkedField",
-  "name": "createAccount",
+  "name": "accountEdge",
   "plural": false,
   "selections": [
     {
@@ -83,13 +113,7 @@ v3 = {
       "name": "node",
       "plural": false,
       "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "id",
-          "storageKey": null
-        },
+        (v4/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -104,13 +128,7 @@ v3 = {
           "name": "accountType",
           "storageKey": null
         },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "balance",
-          "storageKey": null
-        },
+        (v5/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -144,18 +162,69 @@ v3 = {
     }
   ],
   "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "TransactionEdge",
+  "kind": "LinkedField",
+  "name": "transactionEdge",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "Transaction",
+      "kind": "LinkedField",
+      "name": "node",
+      "plural": false,
+      "selections": [
+        (v4/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "datetime",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "note",
+          "storageKey": null
+        },
+        (v5/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "newAccountLiquidityMutation",
     "selections": [
-      (v3/*: any*/)
+      {
+        "alias": null,
+        "args": (v3/*: any*/),
+        "concreteType": "CreateAccountResponse",
+        "kind": "LinkedField",
+        "name": "createAccount",
+        "plural": false,
+        "selections": [
+          (v6/*: any*/),
+          (v7/*: any*/)
+        ],
+        "storageKey": null
+      }
     ],
     "type": "Mutation",
     "abstractKey": null
@@ -164,41 +233,70 @@ return {
   "operation": {
     "argumentDefinitions": [
       (v1/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Operation",
     "name": "newAccountLiquidityMutation",
     "selections": [
-      (v3/*: any*/),
       {
         "alias": null,
-        "args": (v2/*: any*/),
-        "filters": null,
-        "handle": "appendEdge",
-        "key": "",
-        "kind": "LinkedHandle",
+        "args": (v3/*: any*/),
+        "concreteType": "CreateAccountResponse",
+        "kind": "LinkedField",
         "name": "createAccount",
-        "handleArgs": [
+        "plural": false,
+        "selections": [
+          (v6/*: any*/),
           {
-            "kind": "Variable",
-            "name": "connections",
-            "variableName": "connections"
+            "alias": null,
+            "args": null,
+            "filters": null,
+            "handle": "prependEdge",
+            "key": "",
+            "kind": "LinkedHandle",
+            "name": "accountEdge",
+            "handleArgs": [
+              {
+                "kind": "Variable",
+                "name": "connections",
+                "variableName": "accountConnections"
+              }
+            ]
+          },
+          (v7/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "filters": null,
+            "handle": "prependEdge",
+            "key": "",
+            "kind": "LinkedHandle",
+            "name": "transactionEdge",
+            "handleArgs": [
+              {
+                "kind": "Variable",
+                "name": "connections",
+                "variableName": "transactionConnections"
+              }
+            ]
           }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "6c4a16fc8d185df4865ae0cef397e3dd",
+    "cacheID": "f9b27a3a99c013b84e39afcb3313380a",
     "id": null,
     "metadata": {},
     "name": "newAccountLiquidityMutation",
     "operationKind": "mutation",
-    "text": "mutation newAccountLiquidityMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    node {\n      id\n      name\n      accountType\n      balance\n      institution\n      value\n      currencySymbol\n      amount\n    }\n  }\n}\n"
+    "text": "mutation newAccountLiquidityMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    accountEdge {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencySymbol\n        amount\n      }\n    }\n    transactionEdge {\n      node {\n        id\n        datetime\n        note\n        balance\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9e6901bd332c0323b8954ea1f73bac70";
+(node as any).hash = "b022684cce68f0fb82c0f2ba00c73e6e";
 
 export default node;

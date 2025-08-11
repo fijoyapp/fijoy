@@ -38,18 +38,29 @@ const formSchema = z.object({
 const NewAccountInvestmentMutation = graphql`
   mutation newAccountInvestmentMutation(
     $input: CreateAccountInput!
-    $connections: [ID!]!
+    $accountConnections: [ID!]!
+    $transactionConnections: [ID!]!
   ) {
-    createAccount(input: $input) @appendEdge(connections: $connections) {
-      node {
-        id
-        name
-        accountType
-        balance
-        institution
-        value
-        currencySymbol
-        amount
+    createAccount(input: $input) {
+      accountEdge @appendEdge(connections: $accountConnections) {
+        node {
+          id
+          name
+          accountType
+          balance
+          institution
+          value
+          currencySymbol
+          amount
+        }
+      }
+      transactionEdge @appendEdge(connections: $transactionConnections) {
+        node {
+          id
+          datetime
+          note
+          balance
+        }
       }
     }
   }
@@ -71,13 +82,19 @@ export function NewInvestment() {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const connectionID = ConnectionHandler.getConnectionID(
+    const accountsConnectionID = ConnectionHandler.getConnectionID(
       "client:root",
-      "AccountDataTable_accounts",
+      "AccountsDataTable_accounts",
     );
+    const transactionsConnectionID = ConnectionHandler.getConnectionID(
+      "client:root",
+      "TransactionsDataTable_transactions",
+    );
+
     commitMutation({
       variables: {
-        connections: [connectionID],
+        accountConnections: [accountsConnectionID],
+        transactionConnections: [transactionsConnectionID],
         input: {
           amount: values.amount,
           investmentType: "taxable", // TODO: customize

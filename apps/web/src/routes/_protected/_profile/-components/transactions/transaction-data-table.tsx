@@ -30,7 +30,8 @@ import invariant from "tiny-invariant";
 
 const TransactionDataTableFragment = graphql`
   fragment transactionDataTableFragment on Query {
-    transactions(first: 20) {
+    transactions(first: 20)
+      @connection(key: "TransactionsDataTable_transactions") {
       edges {
         node {
           id
