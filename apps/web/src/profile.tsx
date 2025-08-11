@@ -30,6 +30,7 @@ const fragment = graphql`
       currencies
       # eslint-disable-next-line relay/unused-fields
       netWorthGoal
+      # eslint-disable-next-line relay/unused-fields
       locale
     }
   }
