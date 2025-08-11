@@ -1,13 +1,14 @@
 import {
   Home,
   Landmark,
-  Settings,
   History,
   type LucideIcon,
   ChevronDown,
   CircleUser,
   Coins,
   ChevronUp,
+  DollarSign,
+  Menu,
 } from "lucide-react";
 import {
   Sidebar,
@@ -40,7 +41,7 @@ type NavLink = {
   fuzzy: boolean;
 };
 
-const navLinks: NavLink[] = [
+const fijoyLinks: NavLink[] = [
   {
     name: "Home",
     link: { to: "/home" },
@@ -63,12 +64,23 @@ const navLinks: NavLink[] = [
     icon: History,
     fuzzy: true,
   },
+];
+
+const settingsLinks: NavLink[] = [
   {
-    name: "Settings",
+    name: "Categories",
     link: {
-      to: "/settings",
+      to: "/settings/categories",
     },
-    icon: Settings,
+    icon: Menu,
+    fuzzy: true,
+  },
+  {
+    name: "Currency",
+    link: {
+      to: "/settings/currency",
+    },
+    icon: DollarSign,
     fuzzy: true,
   },
 ];
@@ -110,7 +122,24 @@ export function AppSidebar() {
           <SidebarGroupLabel>Fijoy</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navLinks.map((item) => (
+              {fijoyLinks.map((item) => (
+                <SidebarMenuItem key={item.name}>
+                  <SidebarMenuButton asChild>
+                    <Link {...item.link}>
+                      <item.icon />
+                      <span>{item.name}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Settings</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {settingsLinks.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild>
                     <Link {...item.link}>

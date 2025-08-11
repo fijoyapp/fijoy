@@ -102,8 +102,11 @@ function Page() {
             {matchRoute({ to: "/transactions", fuzzy: true }) && (
               <div className="font-medium">Transactions</div>
             )}
-            {matchRoute({ to: "/settings", fuzzy: true }) && (
-              <div className="font-medium">Settings</div>
+            {matchRoute({ to: "/settings/categories" }) && (
+              <div className="font-medium">Categories</div>
+            )}
+            {matchRoute({ to: "/settings/currency" }) && (
+              <div className="font-medium">Currency</div>
             )}
             <div className="grow"></div>
           </header>
