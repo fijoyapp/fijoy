@@ -13,9 +13,11 @@ import { CurrencyField } from "@/components/setup/form/currency";
 import { graphql, useMutation, usePreloadedQuery } from "react-relay";
 import { useProfile } from "@/hooks/use-profile";
 import { rootQuery } from "@/routes/__root";
-import type { currencyMutation } from "./__generated__/currencyMutation.graphql";
+import type { currenciesMutation } from "./__generated__/currenciesMutation.graphql";
 
-export const Route = createFileRoute("/_protected/_profile/settings/currency")({
+export const Route = createFileRoute(
+  "/_protected/_profile/settings/currencies",
+)({
   component: Page,
 });
 
@@ -28,8 +30,8 @@ const variants = {
   visible: { opacity: 1, scale: 1 },
 };
 
-const CurrencyMutation = graphql`
-  mutation currencyMutation($id: ID!, $currencies: [String!]!) {
+const CurrenciesMutation = graphql`
+  mutation currenciesMutation($id: ID!, $currencies: [String!]!) {
     updateProfile(id: $id, input: { currencies: $currencies }) {
       ...profilesFragment
     }
@@ -41,7 +43,7 @@ function Page() {
   const { profile } = useProfile();
 
   const [commitMutation, isMutationInFlight] =
-    useMutation<currencyMutation>(CurrencyMutation);
+    useMutation<currenciesMutation>(CurrenciesMutation);
 
   const data = usePreloadedQuery(rootQuery, rootQueryRef);
 

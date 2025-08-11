@@ -9,6 +9,7 @@ import {
   ChevronUp,
   DollarSign,
   Menu,
+  UsersRound,
 } from "lucide-react";
 import {
   Sidebar,
@@ -80,11 +81,19 @@ const settingsLinks: NavLink[] = [
     fuzzy: true,
   },
   {
-    name: "Currency",
+    name: "Currencies",
     link: {
-      to: "/settings/currency",
+      to: "/settings/currencies",
     },
     icon: DollarSign,
+    fuzzy: true,
+  },
+  {
+    name: "Profiles",
+    link: {
+      to: "/settings/profiles",
+    },
+    icon: UsersRound,
     fuzzy: true,
   },
 ];

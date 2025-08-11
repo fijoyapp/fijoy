@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c0a2c2c43c39cd353480a40483ab62db>>
+ * @generated SignedSource<<2a0b4e289aa741bc4a5bd9ba1fd6ac5b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,18 +10,18 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type currencyMutation$variables = {
+export type currenciesMutation$variables = {
   currencies: ReadonlyArray<string>;
   id: string;
 };
-export type currencyMutation$data = {
+export type currenciesMutation$data = {
   readonly updateProfile: {
     readonly " $fragmentSpreads": FragmentRefs<"profilesFragment">;
   };
 };
-export type currencyMutation = {
-  response: currencyMutation$data;
-  variables: currencyMutation$variables;
+export type currenciesMutation = {
+  response: currenciesMutation$data;
+  variables: currenciesMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -61,7 +61,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "currencyMutation",
+    "name": "currenciesMutation",
     "selections": [
       {
         "alias": null,
@@ -90,7 +90,7 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "currencyMutation",
+    "name": "currenciesMutation",
     "selections": [
       {
         "alias": null,
@@ -141,16 +141,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c5ac9bff5284d592cef9fb9626ecc2dc",
+    "cacheID": "2a658b91b95e5b18bb2795fa0b3793b3",
     "id": null,
     "metadata": {},
-    "name": "currencyMutation",
+    "name": "currenciesMutation",
     "operationKind": "mutation",
-    "text": "mutation currencyMutation(\n  $id: ID!\n  $currencies: [String!]!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profilesFragment\n    id\n  }\n}\n\nfragment profilesFragment on Profile {\n  id\n  currencies\n  locale\n  name\n  netWorthGoal\n}\n"
+    "text": "mutation currenciesMutation(\n  $id: ID!\n  $currencies: [String!]!\n) {\n  updateProfile(id: $id, input: {currencies: $currencies}) {\n    ...profilesFragment\n    id\n  }\n}\n\nfragment profilesFragment on Profile {\n  id\n  currencies\n  locale\n  name\n  netWorthGoal\n}\n"
   }
 };
 })();
 
-(node as any).hash = "137400553617cd2506ac4d3bd653b5e6";
+(node as any).hash = "3524718ba135d4b0e21e8166c17cdb78";
 
 export default node;

@@ -105,8 +105,11 @@ function Page() {
             {matchRoute({ to: "/settings/categories" }) && (
               <div className="font-medium">Categories</div>
             )}
-            {matchRoute({ to: "/settings/currency" }) && (
-              <div className="font-medium">Currency</div>
+            {matchRoute({ to: "/settings/currencies" }) && (
+              <div className="font-medium">Currencies</div>
+            )}
+            {matchRoute({ to: "/settings/profiles" }) && (
+              <div className="font-medium">Profiles</div>
             )}
             <div className="grow"></div>
           </header>
