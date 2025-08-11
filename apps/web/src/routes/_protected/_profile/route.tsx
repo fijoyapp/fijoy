@@ -100,7 +100,7 @@ function Page() {
               <div className="font-medium">Accounts</div>
             )}
             {matchRoute({ to: "/transactions", fuzzy: true }) && (
-              <div className="font-medium">Transctions</div>
+              <div className="font-medium">Transactions</div>
             )}
             {matchRoute({ to: "/settings", fuzzy: true }) && (
               <div className="font-medium">Settings</div>
