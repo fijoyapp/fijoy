@@ -282,6 +282,34 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
 	return currencies, nil
 }
 
+// AssetInfo is the resolver for the assetInfo field.
+func (r *queryResolver) AssetInfo(ctx context.Context, symbol string) (*AssetInfo, error) {
+	assetInfo, err := r.marketDataClient.GetAssetInfo(ctx, symbol)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get asset info: %w", err)
+	}
+
+	return &AssetInfo{
+		Symbol:       assetInfo.Symbol,
+		Name:         assetInfo.Name,
+		Exchange:     assetInfo.Exchange,
+		Currency:     assetInfo.Currency,
+		CurrentPrice: assetInfo.CurrentPrice.String(),
+	}, nil
+}
+
+// FxRate is the resolver for the fxRate field.
+func (r *queryResolver) FxRate(ctx context.Context, fromCurrency string, toCurrency string) (*FXRate, error) {
+	fxRate, err := r.marketDataClient.GetFxRate(ctx, fromCurrency, toCurrency)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get fx rate: %w", err)
+	}
+
+	return &FXRate{
+		Rate: fxRate.Rate.String(),
+	}, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 

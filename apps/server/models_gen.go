@@ -7,6 +7,14 @@ import (
 	"time"
 )
 
+type AssetInfo struct {
+	Symbol       string `json:"symbol"`
+	Name         string `json:"name"`
+	Exchange     string `json:"exchange"`
+	Currency     string `json:"currency"`
+	CurrentPrice string `json:"currentPrice"`
+}
+
 type CreateAccountResponse struct {
 	AccountEdge     *ent.AccountEdge     `json:"accountEdge"`
 	TransactionEdge *ent.TransactionEdge `json:"transactionEdge"`
@@ -21,4 +29,8 @@ type CreateTransactionWithTransactionEntriesInput struct {
 type Currency struct {
 	Code   string `json:"code"`
 	Locale string `json:"locale"`
+}
+
+type FXRate struct {
+	Rate string `json:"rate"`
 }

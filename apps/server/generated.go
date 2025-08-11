@@ -91,6 +91,14 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	AssetInfo struct {
+		Currency     func(childComplexity int) int
+		CurrentPrice func(childComplexity int) int
+		Exchange     func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Symbol       func(childComplexity int) int
+	}
+
 	CreateAccountResponse struct {
 		AccountEdge     func(childComplexity int) int
 		TransactionEdge func(childComplexity int) int
@@ -99,6 +107,10 @@ type ComplexityRoot struct {
 	Currency struct {
 		Code   func(childComplexity int) int
 		Locale func(childComplexity int) int
+	}
+
+	FXRate struct {
+		Rate func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -131,7 +143,9 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Accounts     func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
+		AssetInfo    func(childComplexity int, symbol string) int
 		Currencies   func(childComplexity int) int
+		FxRate       func(childComplexity int, fromCurrency string, toCurrency string) int
 		Node         func(childComplexity int, id int) int
 		Nodes        func(childComplexity int, ids []int) int
 		Profile      func(childComplexity int) int
@@ -218,6 +232,8 @@ type QueryResolver interface {
 	Profile(ctx context.Context) (*ent.Profile, error)
 	User(ctx context.Context) (*ent.User, error)
 	Currencies(ctx context.Context) ([]*Currency, error)
+	AssetInfo(ctx context.Context, symbol string) (*AssetInfo, error)
+	FxRate(ctx context.Context, fromCurrency string, toCurrency string) (*FXRate, error)
 }
 type TransactionResolver interface {
 	Balance(ctx context.Context, obj *ent.Transaction) (string, error)
@@ -421,6 +437,41 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.AccountEdge.Node(childComplexity), true
 
+	case "AssetInfo.currency":
+		if e.complexity.AssetInfo.Currency == nil {
+			break
+		}
+
+		return e.complexity.AssetInfo.Currency(childComplexity), true
+
+	case "AssetInfo.currentPrice":
+		if e.complexity.AssetInfo.CurrentPrice == nil {
+			break
+		}
+
+		return e.complexity.AssetInfo.CurrentPrice(childComplexity), true
+
+	case "AssetInfo.exchange":
+		if e.complexity.AssetInfo.Exchange == nil {
+			break
+		}
+
+		return e.complexity.AssetInfo.Exchange(childComplexity), true
+
+	case "AssetInfo.name":
+		if e.complexity.AssetInfo.Name == nil {
+			break
+		}
+
+		return e.complexity.AssetInfo.Name(childComplexity), true
+
+	case "AssetInfo.symbol":
+		if e.complexity.AssetInfo.Symbol == nil {
+			break
+		}
+
+		return e.complexity.AssetInfo.Symbol(childComplexity), true
+
 	case "CreateAccountResponse.accountEdge":
 		if e.complexity.CreateAccountResponse.AccountEdge == nil {
 			break
@@ -448,6 +499,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Currency.Locale(childComplexity), true
+
+	case "FXRate.rate":
+		if e.complexity.FXRate.Rate == nil {
+			break
+		}
+
+		return e.complexity.FXRate.Rate(childComplexity), true
 
 	case "Mutation.createAccount":
 		if e.complexity.Mutation.CreateAccount == nil {
@@ -619,12 +677,36 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Accounts(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int)), true
 
+	case "Query.assetInfo":
+		if e.complexity.Query.AssetInfo == nil {
+			break
+		}
+
+		args, err := ec.field_Query_assetInfo_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AssetInfo(childComplexity, args["symbol"].(string)), true
+
 	case "Query.currencies":
 		if e.complexity.Query.Currencies == nil {
 			break
 		}
 
 		return e.complexity.Query.Currencies(childComplexity), true
+
+	case "Query.fxRate":
+		if e.complexity.Query.FxRate == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fxRate_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FxRate(childComplexity, args["fromCurrency"].(string), args["toCurrency"].(string)), true
 
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
@@ -1151,6 +1233,33 @@ func (ec *executionContext) field_Query_accounts_args(ctx context.Context, rawAr
 		return nil, err
 	}
 	args["last"] = arg3
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_assetInfo_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "symbol", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["symbol"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fxRate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "fromCurrency", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["fromCurrency"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "toCurrency", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["toCurrency"] = arg1
 	return args, nil
 }
 
@@ -2307,6 +2416,226 @@ func (ec *executionContext) fieldContext_AccountEdge_cursor(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _AssetInfo_symbol(ctx context.Context, field graphql.CollectedField, obj *AssetInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AssetInfo_symbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AssetInfo_symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AssetInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AssetInfo_name(ctx context.Context, field graphql.CollectedField, obj *AssetInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AssetInfo_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AssetInfo_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AssetInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AssetInfo_exchange(ctx context.Context, field graphql.CollectedField, obj *AssetInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AssetInfo_exchange(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Exchange, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AssetInfo_exchange(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AssetInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AssetInfo_currency(ctx context.Context, field graphql.CollectedField, obj *AssetInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AssetInfo_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Currency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AssetInfo_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AssetInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AssetInfo_currentPrice(ctx context.Context, field graphql.CollectedField, obj *AssetInfo) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AssetInfo_currentPrice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrentPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AssetInfo_currentPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AssetInfo",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CreateAccountResponse_accountEdge(ctx context.Context, field graphql.CollectedField, obj *CreateAccountResponse) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_CreateAccountResponse_accountEdge(ctx, field)
 	if err != nil {
@@ -2485,6 +2814,50 @@ func (ec *executionContext) _Currency_locale(ctx context.Context, field graphql.
 func (ec *executionContext) fieldContext_Currency_locale(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Currency",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRate_rate(ctx context.Context, field graphql.CollectedField, obj *FXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FXRate_rate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Rate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FXRate_rate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRate",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3999,6 +4372,132 @@ func (ec *executionContext) fieldContext_Query_currencies(_ context.Context, fie
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_assetInfo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_assetInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AssetInfo(rctx, fc.Args["symbol"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*AssetInfo)
+	fc.Result = res
+	return ec.marshalNAssetInfo2ᚖfijoyᚐAssetInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_assetInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "symbol":
+				return ec.fieldContext_AssetInfo_symbol(ctx, field)
+			case "name":
+				return ec.fieldContext_AssetInfo_name(ctx, field)
+			case "exchange":
+				return ec.fieldContext_AssetInfo_exchange(ctx, field)
+			case "currency":
+				return ec.fieldContext_AssetInfo_currency(ctx, field)
+			case "currentPrice":
+				return ec.fieldContext_AssetInfo_currentPrice(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AssetInfo", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_assetInfo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_fxRate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fxRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().FxRate(rctx, fc.Args["fromCurrency"].(string), fc.Args["toCurrency"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*FXRate)
+	fc.Result = res
+	return ec.marshalNFXRate2ᚖfijoyᚐFXRate(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_fxRate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "rate":
+				return ec.fieldContext_FXRate_rate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FXRate", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_fxRate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -8919,6 +9418,65 @@ func (ec *executionContext) _AccountEdge(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var assetInfoImplementors = []string{"AssetInfo"}
+
+func (ec *executionContext) _AssetInfo(ctx context.Context, sel ast.SelectionSet, obj *AssetInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, assetInfoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AssetInfo")
+		case "symbol":
+			out.Values[i] = ec._AssetInfo_symbol(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._AssetInfo_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "exchange":
+			out.Values[i] = ec._AssetInfo_exchange(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "currency":
+			out.Values[i] = ec._AssetInfo_currency(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "currentPrice":
+			out.Values[i] = ec._AssetInfo_currentPrice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var createAccountResponseImplementors = []string{"CreateAccountResponse"}
 
 func (ec *executionContext) _CreateAccountResponse(ctx context.Context, sel ast.SelectionSet, obj *CreateAccountResponse) graphql.Marshaler {
@@ -8981,6 +9539,45 @@ func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "locale":
 			out.Values[i] = ec._Currency_locale(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var fXRateImplementors = []string{"FXRate"}
+
+func (ec *executionContext) _FXRate(ctx context.Context, sel ast.SelectionSet, obj *FXRate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, fXRateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FXRate")
+		case "rate":
+			out.Values[i] = ec._FXRate_rate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -9514,6 +10111,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_currencies(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "assetInfo":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_assetInfo(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "fxRate":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fxRate(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -10681,6 +11322,20 @@ func (ec *executionContext) marshalNAccountTickerType2fijoyᚋentᚋaccountᚐTi
 	return v
 }
 
+func (ec *executionContext) marshalNAssetInfo2fijoyᚐAssetInfo(ctx context.Context, sel ast.SelectionSet, v AssetInfo) graphql.Marshaler {
+	return ec._AssetInfo(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAssetInfo2ᚖfijoyᚐAssetInfo(ctx context.Context, sel ast.SelectionSet, v *AssetInfo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AssetInfo(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -10813,6 +11468,20 @@ func (ec *executionContext) unmarshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCur
 
 func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v entgql.Cursor[int]) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNFXRate2fijoyᚐFXRate(ctx context.Context, sel ast.SelectionSet, v FXRate) graphql.Marshaler {
+	return ec._FXRate(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFXRate2ᚖfijoyᚐFXRate(ctx context.Context, sel ast.SelectionSet, v *FXRate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._FXRate(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2int(ctx context.Context, v any) (int, error) {

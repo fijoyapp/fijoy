@@ -2,6 +2,20 @@ extend type Query {
   profile: Profile!
   user: User!
   currencies: [Currency!]!
+  assetInfo(symbol: String!): AssetInfo!
+  fxRate(fromCurrency: String!, toCurrency: String!): FXRate!
+}
+
+type AssetInfo {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
+type FXRate {
+  rate: String!
 }
 
 type Currency {
