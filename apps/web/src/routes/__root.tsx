@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { graphql, type IEnvironment } from "relay-runtime";
@@ -60,7 +60,7 @@ function RootLayout() {
       {!import.meta.env.PROD && (
         <>
           <TanStackRouterDevtools position="bottom-right" />
-          <ReactQueryDevtools />
+          {/* <ReactQueryDevtools /> */}
         </>
       )}
     </>
