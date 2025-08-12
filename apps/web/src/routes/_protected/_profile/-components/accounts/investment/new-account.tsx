@@ -91,6 +91,7 @@ type Props = {
 
 export function NewInvestment({ fragmentRef }: Props) {
   const { getCurrencyDisplay } = useFormat();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, startTransition] = useTransition();
   const router = useRouter();
   const [commitMutation, isMutationInFlight] =
