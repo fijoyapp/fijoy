@@ -89,7 +89,10 @@ function Page() {
             <div className="px-2" />
             <SidebarTrigger className="size-4" />
             <div className="px-2" />
-            <Separator orientation="vertical" className="h-8" />
+            <Separator
+              orientation="vertical"
+              className="data-[orientation=vertical]:h-6"
+            />
             <div className="px-2" />
             {matchRoute({ to: "/home" }) && (
               <div className="font-medium">Home</div>
