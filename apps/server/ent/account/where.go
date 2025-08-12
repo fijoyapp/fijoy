@@ -76,9 +76,9 @@ func Institution(v string) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldInstitution, v))
 }
 
-// CurrencySymbol applies equality check predicate on the "currency_symbol" field. It's identical to CurrencySymbolEQ.
-func CurrencySymbol(v string) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldCurrencySymbol, v))
+// CurrencyCode applies equality check predicate on the "currency_code" field. It's identical to CurrencyCodeEQ.
+func CurrencyCode(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldCurrencyCode, v))
 }
 
 // Ticker applies equality check predicate on the "ticker" field. It's identical to TickerEQ.
@@ -94,11 +94,6 @@ func Amount(v decimal.Decimal) predicate.Account {
 // Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
 func Value(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldValue, v))
-}
-
-// FxRate applies equality check predicate on the "fx_rate" field. It's identical to FxRateEQ.
-func FxRate(v decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldFxRate, v))
 }
 
 // Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
@@ -361,69 +356,69 @@ func InvestmentTypeNotIn(vs ...InvestmentType) predicate.Account {
 	return predicate.Account(sql.FieldNotIn(FieldInvestmentType, vs...))
 }
 
-// CurrencySymbolEQ applies the EQ predicate on the "currency_symbol" field.
-func CurrencySymbolEQ(v string) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldCurrencySymbol, v))
+// CurrencyCodeEQ applies the EQ predicate on the "currency_code" field.
+func CurrencyCodeEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolNEQ applies the NEQ predicate on the "currency_symbol" field.
-func CurrencySymbolNEQ(v string) predicate.Account {
-	return predicate.Account(sql.FieldNEQ(FieldCurrencySymbol, v))
+// CurrencyCodeNEQ applies the NEQ predicate on the "currency_code" field.
+func CurrencyCodeNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolIn applies the In predicate on the "currency_symbol" field.
-func CurrencySymbolIn(vs ...string) predicate.Account {
-	return predicate.Account(sql.FieldIn(FieldCurrencySymbol, vs...))
+// CurrencyCodeIn applies the In predicate on the "currency_code" field.
+func CurrencyCodeIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldCurrencyCode, vs...))
 }
 
-// CurrencySymbolNotIn applies the NotIn predicate on the "currency_symbol" field.
-func CurrencySymbolNotIn(vs ...string) predicate.Account {
-	return predicate.Account(sql.FieldNotIn(FieldCurrencySymbol, vs...))
+// CurrencyCodeNotIn applies the NotIn predicate on the "currency_code" field.
+func CurrencyCodeNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldCurrencyCode, vs...))
 }
 
-// CurrencySymbolGT applies the GT predicate on the "currency_symbol" field.
-func CurrencySymbolGT(v string) predicate.Account {
-	return predicate.Account(sql.FieldGT(FieldCurrencySymbol, v))
+// CurrencyCodeGT applies the GT predicate on the "currency_code" field.
+func CurrencyCodeGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolGTE applies the GTE predicate on the "currency_symbol" field.
-func CurrencySymbolGTE(v string) predicate.Account {
-	return predicate.Account(sql.FieldGTE(FieldCurrencySymbol, v))
+// CurrencyCodeGTE applies the GTE predicate on the "currency_code" field.
+func CurrencyCodeGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolLT applies the LT predicate on the "currency_symbol" field.
-func CurrencySymbolLT(v string) predicate.Account {
-	return predicate.Account(sql.FieldLT(FieldCurrencySymbol, v))
+// CurrencyCodeLT applies the LT predicate on the "currency_code" field.
+func CurrencyCodeLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolLTE applies the LTE predicate on the "currency_symbol" field.
-func CurrencySymbolLTE(v string) predicate.Account {
-	return predicate.Account(sql.FieldLTE(FieldCurrencySymbol, v))
+// CurrencyCodeLTE applies the LTE predicate on the "currency_code" field.
+func CurrencyCodeLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolContains applies the Contains predicate on the "currency_symbol" field.
-func CurrencySymbolContains(v string) predicate.Account {
-	return predicate.Account(sql.FieldContains(FieldCurrencySymbol, v))
+// CurrencyCodeContains applies the Contains predicate on the "currency_code" field.
+func CurrencyCodeContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolHasPrefix applies the HasPrefix predicate on the "currency_symbol" field.
-func CurrencySymbolHasPrefix(v string) predicate.Account {
-	return predicate.Account(sql.FieldHasPrefix(FieldCurrencySymbol, v))
+// CurrencyCodeHasPrefix applies the HasPrefix predicate on the "currency_code" field.
+func CurrencyCodeHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolHasSuffix applies the HasSuffix predicate on the "currency_symbol" field.
-func CurrencySymbolHasSuffix(v string) predicate.Account {
-	return predicate.Account(sql.FieldHasSuffix(FieldCurrencySymbol, v))
+// CurrencyCodeHasSuffix applies the HasSuffix predicate on the "currency_code" field.
+func CurrencyCodeHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolEqualFold applies the EqualFold predicate on the "currency_symbol" field.
-func CurrencySymbolEqualFold(v string) predicate.Account {
-	return predicate.Account(sql.FieldEqualFold(FieldCurrencySymbol, v))
+// CurrencyCodeEqualFold applies the EqualFold predicate on the "currency_code" field.
+func CurrencyCodeEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldCurrencyCode, v))
 }
 
-// CurrencySymbolContainsFold applies the ContainsFold predicate on the "currency_symbol" field.
-func CurrencySymbolContainsFold(v string) predicate.Account {
-	return predicate.Account(sql.FieldContainsFold(FieldCurrencySymbol, v))
+// CurrencyCodeContainsFold applies the ContainsFold predicate on the "currency_code" field.
+func CurrencyCodeContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldCurrencyCode, v))
 }
 
 // TickerEQ applies the EQ predicate on the "ticker" field.
@@ -591,46 +586,6 @@ func ValueLTE(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldValue, v))
 }
 
-// FxRateEQ applies the EQ predicate on the "fx_rate" field.
-func FxRateEQ(v decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldFxRate, v))
-}
-
-// FxRateNEQ applies the NEQ predicate on the "fx_rate" field.
-func FxRateNEQ(v decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldNEQ(FieldFxRate, v))
-}
-
-// FxRateIn applies the In predicate on the "fx_rate" field.
-func FxRateIn(vs ...decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldIn(FieldFxRate, vs...))
-}
-
-// FxRateNotIn applies the NotIn predicate on the "fx_rate" field.
-func FxRateNotIn(vs ...decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldNotIn(FieldFxRate, vs...))
-}
-
-// FxRateGT applies the GT predicate on the "fx_rate" field.
-func FxRateGT(v decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldGT(FieldFxRate, v))
-}
-
-// FxRateGTE applies the GTE predicate on the "fx_rate" field.
-func FxRateGTE(v decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldGTE(FieldFxRate, v))
-}
-
-// FxRateLT applies the LT predicate on the "fx_rate" field.
-func FxRateLT(v decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldLT(FieldFxRate, v))
-}
-
-// FxRateLTE applies the LTE predicate on the "fx_rate" field.
-func FxRateLTE(v decimal.Decimal) predicate.Account {
-	return predicate.Account(sql.FieldLTE(FieldFxRate, v))
-}
-
 // BalanceEQ applies the EQ predicate on the "balance" field.
 func BalanceEQ(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldBalance, v))
@@ -719,6 +674,29 @@ func HasTransactionEntries() predicate.Account {
 func HasTransactionEntriesWith(preds ...predicate.TransactionEntry) predicate.Account {
 	return predicate.Account(func(s *sql.Selector) {
 		step := newTransactionEntriesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSnapshotAccounts applies the HasEdge predicate on the "snapshot_accounts" edge.
+func HasSnapshotAccounts() predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, SnapshotAccountsTable, SnapshotAccountsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSnapshotAccountsWith applies the HasEdge predicate on the "snapshot_accounts" edge with a given conditions (other predicates).
+func HasSnapshotAccountsWith(preds ...predicate.SnapshotAccount) predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := newSnapshotAccountsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

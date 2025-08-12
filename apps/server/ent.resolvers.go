@@ -29,11 +29,6 @@ func (r *accountResolver) Value(ctx context.Context, obj *ent.Account) (string, 
 	return obj.Value.String(), nil
 }
 
-// FxRate is the resolver for the fxRate field.
-func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (string, error) {
-	return obj.FxRate.String(), nil
-}
-
 // Balance is the resolver for the balance field.
 func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string, error) {
 	return obj.Balance.String(), nil
@@ -66,6 +61,11 @@ func (r *queryResolver) Accounts(ctx context.Context, after *entgql.Cursor[int],
 		Paginate(ctx, after, first, before, last)
 }
 
+// Categories is the resolver for the categories field.
+func (r *queryResolver) Categories(ctx context.Context) ([]*ent.Category, error) {
+	panic(fmt.Errorf("not implemented: Categories - categories"))
+}
+
 // Profiles is the resolver for the profiles field.
 func (r *queryResolver) Profiles(ctx context.Context) ([]*ent.Profile, error) {
 	authData, err := auth.GetUserDataFromContext(ctx)
@@ -74,6 +74,21 @@ func (r *queryResolver) Profiles(ctx context.Context) ([]*ent.Profile, error) {
 	}
 
 	return r.client.Profile.Query().Where(profile.HasUserWith(user.ID(authData.UserID))).All(ctx)
+}
+
+// Snapshots is the resolver for the snapshots field.
+func (r *queryResolver) Snapshots(ctx context.Context) ([]*ent.Snapshot, error) {
+	panic(fmt.Errorf("not implemented: Snapshots - snapshots"))
+}
+
+// SnapshotAccounts is the resolver for the snapshotAccounts field.
+func (r *queryResolver) SnapshotAccounts(ctx context.Context) ([]*ent.SnapshotAccount, error) {
+	panic(fmt.Errorf("not implemented: SnapshotAccounts - snapshotAccounts"))
+}
+
+// SnapshotFxRates is the resolver for the snapshotFxRates field.
+func (r *queryResolver) SnapshotFxRates(ctx context.Context) ([]*ent.SnapshotFXRate, error) {
+	panic(fmt.Errorf("not implemented: SnapshotFxRates - snapshotFxRates"))
 }
 
 // Transactions is the resolver for the transactions field.
@@ -85,13 +100,28 @@ func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[i
 
 	return r.client.Transaction.Query().
 		Where(transaction.HasProfileWith(profile.ID(authData.ProfileID))).
-		Order(ent.Desc(transaction.FieldDatetime)).
+		Order(ent.Desc(transaction.FieldCreateTime)).
 		Paginate(ctx, after, first, before, last)
 }
 
+// Amount is the resolver for the amount field.
+func (r *snapshotAccountResolver) Amount(ctx context.Context, obj *ent.SnapshotAccount) (string, error) {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// Value is the resolver for the value field.
+func (r *snapshotAccountResolver) Value(ctx context.Context, obj *ent.SnapshotAccount) (string, error) {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+
 // Balance is the resolver for the balance field.
-func (r *transactionResolver) Balance(ctx context.Context, obj *ent.Transaction) (string, error) {
-	return obj.Balance.String(), nil
+func (r *snapshotAccountResolver) Balance(ctx context.Context, obj *ent.SnapshotAccount) (string, error) {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+
+// FxRate is the resolver for the fxRate field.
+func (r *snapshotFXRateResolver) FxRate(ctx context.Context, obj *ent.SnapshotFXRate) (string, error) {
+	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
 }
 
 // Amount is the resolver for the amount field.
@@ -102,11 +132,6 @@ func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.Transact
 // Value is the resolver for the value field.
 func (r *transactionEntryResolver) Value(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
 	return obj.Value.String(), nil
-}
-
-// FxRate is the resolver for the fxRate field.
-func (r *transactionEntryResolver) FxRate(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
-	return obj.FxRate.String(), nil
 }
 
 // Balance is the resolver for the balance field.
@@ -213,8 +238,11 @@ func (r *Resolver) Profile() ProfileResolver { return &profileResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-// Transaction returns TransactionResolver implementation.
-func (r *Resolver) Transaction() TransactionResolver { return &transactionResolver{r} }
+// SnapshotAccount returns SnapshotAccountResolver implementation.
+func (r *Resolver) SnapshotAccount() SnapshotAccountResolver { return &snapshotAccountResolver{r} }
+
+// SnapshotFXRate returns SnapshotFXRateResolver implementation.
+func (r *Resolver) SnapshotFXRate() SnapshotFXRateResolver { return &snapshotFXRateResolver{r} }
 
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
@@ -252,7 +280,8 @@ func (r *Resolver) UpdateTransactionEntryInput() UpdateTransactionEntryInputReso
 type accountResolver struct{ *Resolver }
 type profileResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type transactionResolver struct{ *Resolver }
+type snapshotAccountResolver struct{ *Resolver }
+type snapshotFXRateResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
 type createProfileInputResolver struct{ *Resolver }

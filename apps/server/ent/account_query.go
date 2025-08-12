@@ -8,6 +8,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshotaccount"
 	"fijoy/ent/transactionentry"
 	"fmt"
 	"math"
@@ -27,10 +28,12 @@ type AccountQuery struct {
 	predicates                  []predicate.Account
 	withProfile                 *ProfileQuery
 	withTransactionEntries      *TransactionEntryQuery
+	withSnapshotAccounts        *SnapshotAccountQuery
 	withFKs                     bool
 	modifiers                   []func(*sql.Selector)
 	loadTotal                   []func(context.Context, []*Account) error
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
+	withNamedSnapshotAccounts   map[string]*SnapshotAccountQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -104,6 +107,28 @@ func (_q *AccountQuery) QueryTransactionEntries() *TransactionEntryQuery {
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionEntriesTable, account.TransactionEntriesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySnapshotAccounts chains the current query on the "snapshot_accounts" edge.
+func (_q *AccountQuery) QuerySnapshotAccounts() *SnapshotAccountQuery {
+	query := (&SnapshotAccountClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, selector),
+			sqlgraph.To(snapshotaccount.Table, snapshotaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.SnapshotAccountsTable, account.SnapshotAccountsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -305,6 +330,7 @@ func (_q *AccountQuery) Clone() *AccountQuery {
 		predicates:             append([]predicate.Account{}, _q.predicates...),
 		withProfile:            _q.withProfile.Clone(),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
+		withSnapshotAccounts:   _q.withSnapshotAccounts.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -330,6 +356,17 @@ func (_q *AccountQuery) WithTransactionEntries(opts ...func(*TransactionEntryQue
 		opt(query)
 	}
 	_q.withTransactionEntries = query
+	return _q
+}
+
+// WithSnapshotAccounts tells the query-builder to eager-load the nodes that are connected to
+// the "snapshot_accounts" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithSnapshotAccounts(opts ...func(*SnapshotAccountQuery)) *AccountQuery {
+	query := (&SnapshotAccountClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withSnapshotAccounts = query
 	return _q
 }
 
@@ -412,9 +449,10 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		nodes       = []*Account{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withProfile != nil,
 			_q.withTransactionEntries != nil,
+			_q.withSnapshotAccounts != nil,
 		}
 	)
 	if _q.withProfile != nil {
@@ -459,10 +497,24 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			return nil, err
 		}
 	}
+	if query := _q.withSnapshotAccounts; query != nil {
+		if err := _q.loadSnapshotAccounts(ctx, query, nodes,
+			func(n *Account) { n.Edges.SnapshotAccounts = []*SnapshotAccount{} },
+			func(n *Account, e *SnapshotAccount) { n.Edges.SnapshotAccounts = append(n.Edges.SnapshotAccounts, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range _q.withNamedTransactionEntries {
 		if err := _q.loadTransactionEntries(ctx, query, nodes,
 			func(n *Account) { n.appendNamedTransactionEntries(name) },
 			func(n *Account, e *TransactionEntry) { n.appendNamedTransactionEntries(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedSnapshotAccounts {
+		if err := _q.loadSnapshotAccounts(ctx, query, nodes,
+			func(n *Account) { n.appendNamedSnapshotAccounts(name) },
+			func(n *Account, e *SnapshotAccount) { n.appendNamedSnapshotAccounts(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -532,6 +584,37 @@ func (_q *AccountQuery) loadTransactionEntries(ctx context.Context, query *Trans
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "account_transaction_entries" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *AccountQuery) loadSnapshotAccounts(ctx context.Context, query *SnapshotAccountQuery, nodes []*Account, init func(*Account), assign func(*Account, *SnapshotAccount)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Account)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.SnapshotAccount(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(account.SnapshotAccountsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.account_snapshot_accounts
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "account_snapshot_accounts" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "account_snapshot_accounts" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -633,6 +716,20 @@ func (_q *AccountQuery) WithNamedTransactionEntries(name string, opts ...func(*T
 		_q.withNamedTransactionEntries = make(map[string]*TransactionEntryQuery)
 	}
 	_q.withNamedTransactionEntries[name] = query
+	return _q
+}
+
+// WithNamedSnapshotAccounts tells the query-builder to eager-load the nodes that are connected to the "snapshot_accounts"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithNamedSnapshotAccounts(name string, opts ...func(*SnapshotAccountQuery)) *AccountQuery {
+	query := (&SnapshotAccountClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedSnapshotAccounts == nil {
+		_q.withNamedSnapshotAccounts = make(map[string]*SnapshotAccountQuery)
+	}
+	_q.withNamedSnapshotAccounts[name] = query
 	return _q
 }
 

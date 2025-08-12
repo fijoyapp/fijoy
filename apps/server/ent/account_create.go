@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshotaccount"
 	"fijoy/ent/transactionentry"
 	"fmt"
 	"time"
@@ -75,9 +76,9 @@ func (_c *AccountCreate) SetInvestmentType(v account.InvestmentType) *AccountCre
 	return _c
 }
 
-// SetCurrencySymbol sets the "currency_symbol" field.
-func (_c *AccountCreate) SetCurrencySymbol(v string) *AccountCreate {
-	_c.mutation.SetCurrencySymbol(v)
+// SetCurrencyCode sets the "currency_code" field.
+func (_c *AccountCreate) SetCurrencyCode(v string) *AccountCreate {
+	_c.mutation.SetCurrencyCode(v)
 	return _c
 }
 
@@ -102,12 +103,6 @@ func (_c *AccountCreate) SetAmount(v decimal.Decimal) *AccountCreate {
 // SetValue sets the "value" field.
 func (_c *AccountCreate) SetValue(v decimal.Decimal) *AccountCreate {
 	_c.mutation.SetValue(v)
-	return _c
-}
-
-// SetFxRate sets the "fx_rate" field.
-func (_c *AccountCreate) SetFxRate(v decimal.Decimal) *AccountCreate {
-	_c.mutation.SetFxRate(v)
 	return _c
 }
 
@@ -155,6 +150,21 @@ func (_c *AccountCreate) AddTransactionEntries(v ...*TransactionEntry) *AccountC
 		ids[i] = v[i].ID
 	}
 	return _c.AddTransactionEntryIDs(ids...)
+}
+
+// AddSnapshotAccountIDs adds the "snapshot_accounts" edge to the SnapshotAccount entity by IDs.
+func (_c *AccountCreate) AddSnapshotAccountIDs(ids ...int) *AccountCreate {
+	_c.mutation.AddSnapshotAccountIDs(ids...)
+	return _c
+}
+
+// AddSnapshotAccounts adds the "snapshot_accounts" edges to the SnapshotAccount entity.
+func (_c *AccountCreate) AddSnapshotAccounts(v ...*SnapshotAccount) *AccountCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddSnapshotAccountIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -246,12 +256,12 @@ func (_c *AccountCreate) check() error {
 			return &ValidationError{Name: "investment_type", err: fmt.Errorf(`ent: validator failed for field "Account.investment_type": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.CurrencySymbol(); !ok {
-		return &ValidationError{Name: "currency_symbol", err: errors.New(`ent: missing required field "Account.currency_symbol"`)}
+	if _, ok := _c.mutation.CurrencyCode(); !ok {
+		return &ValidationError{Name: "currency_code", err: errors.New(`ent: missing required field "Account.currency_code"`)}
 	}
-	if v, ok := _c.mutation.CurrencySymbol(); ok {
-		if err := account.CurrencySymbolValidator(v); err != nil {
-			return &ValidationError{Name: "currency_symbol", err: fmt.Errorf(`ent: validator failed for field "Account.currency_symbol": %w`, err)}
+	if v, ok := _c.mutation.CurrencyCode(); ok {
+		if err := account.CurrencyCodeValidator(v); err != nil {
+			return &ValidationError{Name: "currency_code", err: fmt.Errorf(`ent: validator failed for field "Account.currency_code": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.Ticker(); !ok {
@@ -275,9 +285,6 @@ func (_c *AccountCreate) check() error {
 	}
 	if _, ok := _c.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Account.value"`)}
-	}
-	if _, ok := _c.mutation.FxRate(); !ok {
-		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "Account.fx_rate"`)}
 	}
 	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}
@@ -338,9 +345,9 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_spec.SetField(account.FieldInvestmentType, field.TypeEnum, value)
 		_node.InvestmentType = value
 	}
-	if value, ok := _c.mutation.CurrencySymbol(); ok {
-		_spec.SetField(account.FieldCurrencySymbol, field.TypeString, value)
-		_node.CurrencySymbol = value
+	if value, ok := _c.mutation.CurrencyCode(); ok {
+		_spec.SetField(account.FieldCurrencyCode, field.TypeString, value)
+		_node.CurrencyCode = value
 	}
 	if value, ok := _c.mutation.Ticker(); ok {
 		_spec.SetField(account.FieldTicker, field.TypeString, value)
@@ -357,10 +364,6 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Value(); ok {
 		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
 		_node.Value = value
-	}
-	if value, ok := _c.mutation.FxRate(); ok {
-		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
-		_node.FxRate = value
 	}
 	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
@@ -396,6 +399,22 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.SnapshotAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.SnapshotAccountsTable,
+			Columns: []string{account.SnapshotAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshotaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

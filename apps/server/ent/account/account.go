@@ -29,8 +29,8 @@ const (
 	FieldAccountType = "account_type"
 	// FieldInvestmentType holds the string denoting the investment_type field in the database.
 	FieldInvestmentType = "investment_type"
-	// FieldCurrencySymbol holds the string denoting the currency_symbol field in the database.
-	FieldCurrencySymbol = "currency_symbol"
+	// FieldCurrencyCode holds the string denoting the currency_code field in the database.
+	FieldCurrencyCode = "currency_code"
 	// FieldTicker holds the string denoting the ticker field in the database.
 	FieldTicker = "ticker"
 	// FieldTickerType holds the string denoting the ticker_type field in the database.
@@ -39,8 +39,6 @@ const (
 	FieldAmount = "amount"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
-	// FieldFxRate holds the string denoting the fx_rate field in the database.
-	FieldFxRate = "fx_rate"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
 	// FieldArchived holds the string denoting the archived field in the database.
@@ -49,6 +47,8 @@ const (
 	EdgeProfile = "profile"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
+	// EdgeSnapshotAccounts holds the string denoting the snapshot_accounts edge name in mutations.
+	EdgeSnapshotAccounts = "snapshot_accounts"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
 	// ProfileTable is the table that holds the profile relation/edge.
@@ -65,6 +65,13 @@ const (
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
 	TransactionEntriesColumn = "account_transaction_entries"
+	// SnapshotAccountsTable is the table that holds the snapshot_accounts relation/edge.
+	SnapshotAccountsTable = "snapshot_accounts"
+	// SnapshotAccountsInverseTable is the table name for the SnapshotAccount entity.
+	// It exists in this package in order to avoid circular dependency with the "snapshotaccount" package.
+	SnapshotAccountsInverseTable = "snapshot_accounts"
+	// SnapshotAccountsColumn is the table column denoting the snapshot_accounts relation/edge.
+	SnapshotAccountsColumn = "account_snapshot_accounts"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -76,12 +83,11 @@ var Columns = []string{
 	FieldInstitution,
 	FieldAccountType,
 	FieldInvestmentType,
-	FieldCurrencySymbol,
+	FieldCurrencyCode,
 	FieldTicker,
 	FieldTickerType,
 	FieldAmount,
 	FieldValue,
-	FieldFxRate,
 	FieldBalance,
 	FieldArchived,
 }
@@ -118,8 +124,8 @@ var (
 	NameValidator func(string) error
 	// InstitutionValidator is a validator for the "institution" field. It is called by the builders before save.
 	InstitutionValidator func(string) error
-	// CurrencySymbolValidator is a validator for the "currency_symbol" field. It is called by the builders before save.
-	CurrencySymbolValidator func(string) error
+	// CurrencyCodeValidator is a validator for the "currency_code" field. It is called by the builders before save.
+	CurrencyCodeValidator func(string) error
 	// TickerValidator is a validator for the "ticker" field. It is called by the builders before save.
 	TickerValidator func(string) error
 	// DefaultArchived holds the default value on creation for the "archived" field.
@@ -240,9 +246,9 @@ func ByInvestmentType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldInvestmentType, opts...).ToFunc()
 }
 
-// ByCurrencySymbol orders the results by the currency_symbol field.
-func ByCurrencySymbol(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCurrencySymbol, opts...).ToFunc()
+// ByCurrencyCode orders the results by the currency_code field.
+func ByCurrencyCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencyCode, opts...).ToFunc()
 }
 
 // ByTicker orders the results by the ticker field.
@@ -263,11 +269,6 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByValue orders the results by the value field.
 func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
-}
-
-// ByFxRate orders the results by the fx_rate field.
-func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldFxRate, opts...).ToFunc()
 }
 
 // ByBalance orders the results by the balance field.
@@ -300,6 +301,20 @@ func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// BySnapshotAccountsCount orders the results by snapshot_accounts count.
+func BySnapshotAccountsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newSnapshotAccountsStep(), opts...)
+	}
+}
+
+// BySnapshotAccounts orders the results by snapshot_accounts terms.
+func BySnapshotAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSnapshotAccountsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newProfileStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -312,6 +327,13 @@ func newTransactionEntriesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
+	)
+}
+func newSnapshotAccountsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SnapshotAccountsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, SnapshotAccountsTable, SnapshotAccountsColumn),
 	)
 }
 

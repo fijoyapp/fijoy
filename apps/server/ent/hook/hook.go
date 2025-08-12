@@ -20,6 +20,18 @@ func (f AccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountMutation", m)
 }
 
+// The CategoryFunc type is an adapter to allow the use of ordinary
+// function as Category mutator.
+type CategoryFunc func(context.Context, *ent.CategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CategoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CategoryMutation", m)
+}
+
 // The ProfileFunc type is an adapter to allow the use of ordinary
 // function as Profile mutator.
 type ProfileFunc func(context.Context, *ent.ProfileMutation) (ent.Value, error)
@@ -30,6 +42,42 @@ func (f ProfileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProfileMutation", m)
+}
+
+// The SnapshotFunc type is an adapter to allow the use of ordinary
+// function as Snapshot mutator.
+type SnapshotFunc func(context.Context, *ent.SnapshotMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SnapshotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SnapshotMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SnapshotMutation", m)
+}
+
+// The SnapshotAccountFunc type is an adapter to allow the use of ordinary
+// function as SnapshotAccount mutator.
+type SnapshotAccountFunc func(context.Context, *ent.SnapshotAccountMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SnapshotAccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SnapshotAccountMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SnapshotAccountMutation", m)
+}
+
+// The SnapshotFXRateFunc type is an adapter to allow the use of ordinary
+// function as SnapshotFXRate mutator.
+type SnapshotFXRateFunc func(context.Context, *ent.SnapshotFXRateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SnapshotFXRateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SnapshotFXRateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SnapshotFXRateMutation", m)
 }
 
 // The TransactionFunc type is an adapter to allow the use of ordinary

@@ -9,8 +9,20 @@ import (
 // Account is the predicate function for account builders.
 type Account func(*sql.Selector)
 
+// Category is the predicate function for category builders.
+type Category func(*sql.Selector)
+
 // Profile is the predicate function for profile builders.
 type Profile func(*sql.Selector)
+
+// Snapshot is the predicate function for snapshot builders.
+type Snapshot func(*sql.Selector)
+
+// SnapshotAccount is the predicate function for snapshotaccount builders.
+type SnapshotAccount func(*sql.Selector)
+
+// SnapshotFXRate is the predicate function for snapshotfxrate builders.
+type SnapshotFXRate func(*sql.Selector)
 
 // Transaction is the predicate function for transaction builders.
 type Transaction func(*sql.Selector)

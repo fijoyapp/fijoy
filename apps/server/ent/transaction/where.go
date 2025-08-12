@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/shopspring/decimal"
 )
 
 // ID filters vertices based on their ID field.
@@ -66,19 +65,9 @@ func UpdateTime(v time.Time) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldUpdateTime, v))
 }
 
-// Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
-func Balance(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldBalance, v))
-}
-
 // Note applies equality check predicate on the "note" field. It's identical to NoteEQ.
 func Note(v string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldNote, v))
-}
-
-// Datetime applies equality check predicate on the "datetime" field. It's identical to DatetimeEQ.
-func Datetime(v time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldDatetime, v))
 }
 
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
@@ -161,46 +150,6 @@ func UpdateTimeLTE(v time.Time) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldUpdateTime, v))
 }
 
-// BalanceEQ applies the EQ predicate on the "balance" field.
-func BalanceEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldBalance, v))
-}
-
-// BalanceNEQ applies the NEQ predicate on the "balance" field.
-func BalanceNEQ(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNEQ(FieldBalance, v))
-}
-
-// BalanceIn applies the In predicate on the "balance" field.
-func BalanceIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldIn(FieldBalance, vs...))
-}
-
-// BalanceNotIn applies the NotIn predicate on the "balance" field.
-func BalanceNotIn(vs ...decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNotIn(FieldBalance, vs...))
-}
-
-// BalanceGT applies the GT predicate on the "balance" field.
-func BalanceGT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGT(FieldBalance, v))
-}
-
-// BalanceGTE applies the GTE predicate on the "balance" field.
-func BalanceGTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGTE(FieldBalance, v))
-}
-
-// BalanceLT applies the LT predicate on the "balance" field.
-func BalanceLT(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLT(FieldBalance, v))
-}
-
-// BalanceLTE applies the LTE predicate on the "balance" field.
-func BalanceLTE(v decimal.Decimal) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLTE(FieldBalance, v))
-}
-
 // NoteEQ applies the EQ predicate on the "note" field.
 func NoteEQ(v string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldNote, v))
@@ -276,46 +225,6 @@ func NoteContainsFold(v string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldContainsFold(FieldNote, v))
 }
 
-// DatetimeEQ applies the EQ predicate on the "datetime" field.
-func DatetimeEQ(v time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldEQ(FieldDatetime, v))
-}
-
-// DatetimeNEQ applies the NEQ predicate on the "datetime" field.
-func DatetimeNEQ(v time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNEQ(FieldDatetime, v))
-}
-
-// DatetimeIn applies the In predicate on the "datetime" field.
-func DatetimeIn(vs ...time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldIn(FieldDatetime, vs...))
-}
-
-// DatetimeNotIn applies the NotIn predicate on the "datetime" field.
-func DatetimeNotIn(vs ...time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldNotIn(FieldDatetime, vs...))
-}
-
-// DatetimeGT applies the GT predicate on the "datetime" field.
-func DatetimeGT(v time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGT(FieldDatetime, v))
-}
-
-// DatetimeGTE applies the GTE predicate on the "datetime" field.
-func DatetimeGTE(v time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldGTE(FieldDatetime, v))
-}
-
-// DatetimeLT applies the LT predicate on the "datetime" field.
-func DatetimeLT(v time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLT(FieldDatetime, v))
-}
-
-// DatetimeLTE applies the LTE predicate on the "datetime" field.
-func DatetimeLTE(v time.Time) predicate.Transaction {
-	return predicate.Transaction(sql.FieldLTE(FieldDatetime, v))
-}
-
 // HasProfile applies the HasEdge predicate on the "profile" edge.
 func HasProfile() predicate.Transaction {
 	return predicate.Transaction(func(s *sql.Selector) {
@@ -331,6 +240,29 @@ func HasProfile() predicate.Transaction {
 func HasProfileWith(preds ...predicate.Profile) predicate.Transaction {
 	return predicate.Transaction(func(s *sql.Selector) {
 		step := newProfileStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasCategory applies the HasEdge predicate on the "category" edge.
+func HasCategory() predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CategoryTable, CategoryColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCategoryWith applies the HasEdge predicate on the "category" edge with a given conditions (other predicates).
+func HasCategoryWith(preds ...predicate.Category) predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := newCategoryStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -2,4 +2,4 @@
 
 package internal
 
-const IncrementStarts = "{\"accounts\":0,\"profiles\":4294967296,\"transaction_entries\":12884901888,\"transactions\":8589934592,\"user_keys\":21474836480,\"users\":17179869184}"
+const IncrementStarts = "{\"accounts\":0,\"categories\":38654705664,\"profiles\":4294967296,\"snapshot_accounts\":30064771072,\"snapshot_fx_rates\":34359738368,\"snapshots\":25769803776,\"transaction_entries\":12884901888,\"transactions\":8589934592,\"user_keys\":21474836480,\"users\":17179869184}"

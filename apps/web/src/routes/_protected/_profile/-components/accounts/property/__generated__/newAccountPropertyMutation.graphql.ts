@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<30756bbb47042d20c91d9b3a52d57c44>>
+ * @generated SignedSource<<aa5e6a9bd72a1b659b2a4e87f21f463d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,10 +17,11 @@ export type CreateAccountInput = {
   amount: string;
   archived?: boolean | null | undefined;
   createTime?: any | null | undefined;
-  currencySymbol: string;
+  currencyCode: string;
   institution: string;
   investmentType: AccountInvestmentType;
   name: string;
+  snapshotAccountIDs?: ReadonlyArray<string> | null | undefined;
   ticker: string;
   tickerType: AccountTickerType;
   transactionEntryIDs?: ReadonlyArray<string> | null | undefined;
@@ -38,7 +39,7 @@ export type newAccountPropertyMutation$data = {
         readonly accountType: AccountAccountType;
         readonly amount: string;
         readonly balance: string;
-        readonly currencySymbol: string;
+        readonly currencyCode: string;
         readonly id: string;
         readonly institution: string;
         readonly name: string;
@@ -47,8 +48,7 @@ export type newAccountPropertyMutation$data = {
     };
     readonly transactionEdge: {
       readonly node: {
-        readonly balance: string;
-        readonly datetime: any;
+        readonly createTime: any;
         readonly id: string;
         readonly note: string | null | undefined;
       } | null | undefined;
@@ -93,13 +93,6 @@ v4 = {
 v5 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "balance",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
   "concreteType": "AccountEdge",
   "kind": "LinkedField",
   "name": "accountEdge",
@@ -128,7 +121,13 @@ v6 = {
           "name": "accountType",
           "storageKey": null
         },
-        (v5/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "balance",
+          "storageKey": null
+        },
         {
           "alias": null,
           "args": null,
@@ -147,7 +146,7 @@ v6 = {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "currencySymbol",
+          "name": "currencyCode",
           "storageKey": null
         },
         {
@@ -163,7 +162,7 @@ v6 = {
   ],
   "storageKey": null
 },
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "TransactionEdge",
@@ -184,7 +183,7 @@ v7 = {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "datetime",
+          "name": "createTime",
           "storageKey": null
         },
         {
@@ -193,8 +192,7 @@ v7 = {
           "kind": "ScalarField",
           "name": "note",
           "storageKey": null
-        },
-        (v5/*: any*/)
+        }
       ],
       "storageKey": null
     }
@@ -220,8 +218,8 @@ return {
         "name": "createAccount",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
-          (v7/*: any*/)
+          (v5/*: any*/),
+          (v6/*: any*/)
         ],
         "storageKey": null
       }
@@ -247,7 +245,7 @@ return {
         "name": "createAccount",
         "plural": false,
         "selections": [
-          (v6/*: any*/),
+          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -264,7 +262,7 @@ return {
               }
             ]
           },
-          (v7/*: any*/),
+          (v6/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -287,16 +285,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "85c9dab5efe41f64701f072e5312feaa",
+    "cacheID": "111388e6d2e239cf64b359e7c3b1656b",
     "id": null,
     "metadata": {},
     "name": "newAccountPropertyMutation",
     "operationKind": "mutation",
-    "text": "mutation newAccountPropertyMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    accountEdge {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencySymbol\n        amount\n      }\n    }\n    transactionEdge {\n      node {\n        id\n        datetime\n        note\n        balance\n      }\n    }\n  }\n}\n"
+    "text": "mutation newAccountPropertyMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    accountEdge {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencyCode\n        amount\n      }\n    }\n    transactionEdge {\n      node {\n        id\n        createTime\n        note\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4c8880feaab19ee729b558abed47ad86";
+(node as any).hash = "d89bd872957710661485e340da0cd2a5";
 
 export default node;

@@ -51,6 +51,20 @@ func (_c *TransactionEntryCreate) SetNillableUpdateTime(v *time.Time) *Transacti
 	return _c
 }
 
+// SetNote sets the "note" field.
+func (_c *TransactionEntryCreate) SetNote(v string) *TransactionEntryCreate {
+	_c.mutation.SetNote(v)
+	return _c
+}
+
+// SetNillableNote sets the "note" field if the given value is not nil.
+func (_c *TransactionEntryCreate) SetNillableNote(v *string) *TransactionEntryCreate {
+	if v != nil {
+		_c.SetNote(*v)
+	}
+	return _c
+}
+
 // SetAmount sets the "amount" field.
 func (_c *TransactionEntryCreate) SetAmount(v decimal.Decimal) *TransactionEntryCreate {
 	_c.mutation.SetAmount(v)
@@ -60,12 +74,6 @@ func (_c *TransactionEntryCreate) SetAmount(v decimal.Decimal) *TransactionEntry
 // SetValue sets the "value" field.
 func (_c *TransactionEntryCreate) SetValue(v decimal.Decimal) *TransactionEntryCreate {
 	_c.mutation.SetValue(v)
-	return _c
-}
-
-// SetFxRate sets the "fx_rate" field.
-func (_c *TransactionEntryCreate) SetFxRate(v decimal.Decimal) *TransactionEntryCreate {
-	_c.mutation.SetFxRate(v)
 	return _c
 }
 
@@ -156,9 +164,6 @@ func (_c *TransactionEntryCreate) check() error {
 	if _, ok := _c.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "TransactionEntry.value"`)}
 	}
-	if _, ok := _c.mutation.FxRate(); !ok {
-		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "TransactionEntry.fx_rate"`)}
-	}
 	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "TransactionEntry.balance"`)}
 	}
@@ -202,6 +207,10 @@ func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cre
 		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
+	if value, ok := _c.mutation.Note(); ok {
+		_spec.SetField(transactionentry.FieldNote, field.TypeString, value)
+		_node.Note = value
+	}
 	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
@@ -209,10 +218,6 @@ func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cre
 	if value, ok := _c.mutation.Value(); ok {
 		_spec.SetField(transactionentry.FieldValue, field.TypeFloat64, value)
 		_node.Value = value
-	}
-	if value, ok := _c.mutation.FxRate(); ok {
-		_spec.SetField(transactionentry.FieldFxRate, field.TypeFloat64, value)
-		_node.FxRate = value
 	}
 	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)

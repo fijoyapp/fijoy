@@ -28,6 +28,38 @@ func (_m *Account) TransactionEntries(ctx context.Context) (result []*Transactio
 	return result, err
 }
 
+func (_m *Account) SnapshotAccounts(ctx context.Context) (result []*SnapshotAccount, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedSnapshotAccounts(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.SnapshotAccountsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QuerySnapshotAccounts().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Category) Profile(ctx context.Context) (*Profile, error) {
+	result, err := _m.Edges.ProfileOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryProfile().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *Category) Transactions(ctx context.Context) (result []*Transaction, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedTransactions(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.TransactionsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryTransactions().All(ctx)
+	}
+	return result, err
+}
+
 func (_m *Profile) User(ctx context.Context) (*User, error) {
 	result, err := _m.Edges.UserOrErr()
 	if IsNotLoaded(err) {
@@ -60,10 +92,98 @@ func (_m *Profile) Transactions(ctx context.Context) (result []*Transaction, err
 	return result, err
 }
 
+func (_m *Profile) Snapshots(ctx context.Context) (result []*Snapshot, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedSnapshots(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.SnapshotsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QuerySnapshots().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Profile) Categories(ctx context.Context) (result []*Category, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedCategories(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.CategoriesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryCategories().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Snapshot) Profile(ctx context.Context) (*Profile, error) {
+	result, err := _m.Edges.ProfileOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryProfile().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *Snapshot) SnapshotAccounts(ctx context.Context) (result []*SnapshotAccount, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedSnapshotAccounts(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.SnapshotAccountsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QuerySnapshotAccounts().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Snapshot) SnapshotFxRates(ctx context.Context) (result []*SnapshotFXRate, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedSnapshotFxRates(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.SnapshotFxRatesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QuerySnapshotFxRates().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *SnapshotAccount) Account(ctx context.Context) (*Account, error) {
+	result, err := _m.Edges.AccountOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryAccount().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *SnapshotAccount) Snapshot(ctx context.Context) (*Snapshot, error) {
+	result, err := _m.Edges.SnapshotOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QuerySnapshot().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *SnapshotFXRate) Snapshot(ctx context.Context) (*Snapshot, error) {
+	result, err := _m.Edges.SnapshotOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QuerySnapshot().Only(ctx)
+	}
+	return result, err
+}
+
 func (_m *Transaction) Profile(ctx context.Context) (*Profile, error) {
 	result, err := _m.Edges.ProfileOrErr()
 	if IsNotLoaded(err) {
 		result, err = _m.QueryProfile().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *Transaction) Category(ctx context.Context) (*Category, error) {
+	result, err := _m.Edges.CategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryCategory().Only(ctx)
 	}
 	return result, err
 }

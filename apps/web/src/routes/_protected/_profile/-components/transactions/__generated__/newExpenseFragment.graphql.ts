@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0a0f4ddedb3f2955abc58ae1df0b728e>>
+ * @generated SignedSource<<2fe64b5104d924547c795c4a0cfd66ed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type newExpenseFragment$data = {
   readonly accounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly currencySymbol: string;
+        readonly currencyCode: string;
         readonly id: string;
       } | null | undefined;
     } | null | undefined> | null | undefined;
@@ -79,7 +79,7 @@ const node: ReaderFragment = {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
-                  "name": "currencySymbol",
+                  "name": "currencyCode",
                   "storageKey": null
                 }
               ],
@@ -96,6 +96,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "8757536e3a958607a2b7ceab5a6ccef0";
+(node as any).hash = "d452cd902af65bd1454c0c734ba70b6f";
 
 export default node;
