@@ -9,6 +9,7 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/99designs/gqlgen v0.17.78
 	github.com/caarlos0/env/v11 v11.3.1
+	github.com/fijoyapp/finance-go v0.1.0
 	github.com/getsentry/sentry-go v0.35.0
 	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-chi/cors v1.2.2
@@ -16,7 +17,6 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
-	github.com/piquette/finance-go v1.1.0
 	github.com/rs/cors v1.11.1
 	github.com/samber/lo v1.51.0
 	github.com/shopspring/decimal v1.4.0
@@ -73,5 +73,3 @@ require (
 	golang.org/x/tools v0.36.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/piquette/finance-go => github.com/psanford/finance-go v0.0.0-20250222221941-906a725c60a0

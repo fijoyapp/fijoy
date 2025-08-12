@@ -3,7 +3,7 @@ package market
 import (
 	"context"
 
-	"github.com/piquette/finance-go/equity"
+	"github.com/fijoyapp/finance-go/equity"
 	"github.com/shopspring/decimal"
 )
 
