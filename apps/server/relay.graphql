@@ -508,6 +508,11 @@ type CreateAccountResponse {
   transactionEdge: TransactionEdge!
 }
 
+type RefreshAccountsResponse {
+  accounts: [Account!]!
+  transactions: [Transaction!]!
+}
+
 type Mutation {
   createProfile(input: CreateProfileInput!): Profile!
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
@@ -516,6 +521,7 @@ type Mutation {
     input: CreateTransactionWithTransactionEntriesInput!
   ): Transaction!
   createTransactionEntry(input: CreateTransactionEntryInput!): TransactionEntry!
+  refreshAccounts: RefreshAccountsResponse!
 }
 
 schema {

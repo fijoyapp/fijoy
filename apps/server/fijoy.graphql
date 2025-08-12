@@ -2,6 +2,7 @@ extend type Query {
   profile: Profile!
   user: User!
   currencies: [Currency!]!
+
   assetInfo(symbol: String!): AssetInfo
   fxRate(fromCurrency: String!, toCurrency: String!): FXRate
 }
@@ -34,6 +35,11 @@ type CreateAccountResponse {
   transactionEdge: TransactionEdge!
 }
 
+type RefreshAccountsResponse {
+  accounts: [Account!]!
+  transactions: [Transaction!]!
+}
+
 type Mutation {
   createProfile(input: CreateProfileInput!): Profile!
   updateProfile(id: ID!, input: UpdateProfileInput!): Profile!
@@ -47,4 +53,6 @@ type Mutation {
   # updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
 
   createTransactionEntry(input: CreateTransactionEntryInput!): TransactionEntry!
+
+  refreshAccounts: RefreshAccountsResponse!
 }

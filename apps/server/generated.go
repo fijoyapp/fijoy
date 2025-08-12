@@ -118,6 +118,7 @@ type ComplexityRoot struct {
 		CreateProfile                           func(childComplexity int, input ent.CreateProfileInput) int
 		CreateTransactionEntry                  func(childComplexity int, input ent.CreateTransactionEntryInput) int
 		CreateTransactionWithTransactionEntries func(childComplexity int, input CreateTransactionWithTransactionEntriesInput) int
+		RefreshAccounts                         func(childComplexity int) int
 		UpdateProfile                           func(childComplexity int, id int, input ent.UpdateProfileInput) int
 	}
 
@@ -152,6 +153,11 @@ type ComplexityRoot struct {
 		Profiles     func(childComplexity int) int
 		Transactions func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
 		User         func(childComplexity int) int
+	}
+
+	RefreshAccountsResponse struct {
+		Accounts     func(childComplexity int) int
+		Transactions func(childComplexity int) int
 	}
 
 	Transaction struct {
@@ -219,6 +225,7 @@ type MutationResolver interface {
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*CreateAccountResponse, error)
 	CreateTransactionWithTransactionEntries(ctx context.Context, input CreateTransactionWithTransactionEntriesInput) (*ent.Transaction, error)
 	CreateTransactionEntry(ctx context.Context, input ent.CreateTransactionEntryInput) (*ent.TransactionEntry, error)
+	RefreshAccounts(ctx context.Context) (*RefreshAccountsResponse, error)
 }
 type ProfileResolver interface {
 	NetWorthGoal(ctx context.Context, obj *ent.Profile) (string, error)
@@ -555,6 +562,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateTransactionWithTransactionEntries(childComplexity, args["input"].(CreateTransactionWithTransactionEntriesInput)), true
 
+	case "Mutation.refreshAccounts":
+		if e.complexity.Mutation.RefreshAccounts == nil {
+			break
+		}
+
+		return e.complexity.Mutation.RefreshAccounts(childComplexity), true
+
 	case "Mutation.updateProfile":
 		if e.complexity.Mutation.UpdateProfile == nil {
 			break
@@ -764,6 +778,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.User(childComplexity), true
+
+	case "RefreshAccountsResponse.accounts":
+		if e.complexity.RefreshAccountsResponse.Accounts == nil {
+			break
+		}
+
+		return e.complexity.RefreshAccountsResponse.Accounts(childComplexity), true
+
+	case "RefreshAccountsResponse.transactions":
+		if e.complexity.RefreshAccountsResponse.Transactions == nil {
+			break
+		}
+
+		return e.complexity.RefreshAccountsResponse.Transactions(childComplexity), true
 
 	case "Transaction.balance":
 		if e.complexity.Transaction.Balance == nil {
@@ -3231,6 +3259,56 @@ func (ec *executionContext) fieldContext_Mutation_createTransactionEntry(ctx con
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_refreshAccounts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_refreshAccounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RefreshAccounts(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*RefreshAccountsResponse)
+	fc.Result = res
+	return ec.marshalNRefreshAccountsResponse2ᚖfijoyᚐRefreshAccountsResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_refreshAccounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accounts":
+				return ec.fieldContext_RefreshAccountsResponse_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_RefreshAccountsResponse_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshAccountsResponse", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PageInfo_hasNextPage(ctx context.Context, field graphql.CollectedField, obj *entgql.PageInfo[int]) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_hasNextPage(ctx, field)
 	if err != nil {
@@ -4622,6 +4700,148 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshAccountsResponse_accounts(ctx context.Context, field graphql.CollectedField, obj *RefreshAccountsResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshAccountsResponse_accounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Accounts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Account)
+	fc.Result = res
+	return ec.marshalNAccount2ᚕᚖfijoyᚋentᚐAccountᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshAccountsResponse_accounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshAccountsResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Account_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Account_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Account_name(ctx, field)
+			case "institution":
+				return ec.fieldContext_Account_institution(ctx, field)
+			case "accountType":
+				return ec.fieldContext_Account_accountType(ctx, field)
+			case "investmentType":
+				return ec.fieldContext_Account_investmentType(ctx, field)
+			case "currencySymbol":
+				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "ticker":
+				return ec.fieldContext_Account_ticker(ctx, field)
+			case "tickerType":
+				return ec.fieldContext_Account_tickerType(ctx, field)
+			case "amount":
+				return ec.fieldContext_Account_amount(ctx, field)
+			case "value":
+				return ec.fieldContext_Account_value(ctx, field)
+			case "fxRate":
+				return ec.fieldContext_Account_fxRate(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
+			case "archived":
+				return ec.fieldContext_Account_archived(ctx, field)
+			case "profile":
+				return ec.fieldContext_Account_profile(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshAccountsResponse_transactions(ctx context.Context, field graphql.CollectedField, obj *RefreshAccountsResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshAccountsResponse_transactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Transactions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Transaction)
+	fc.Result = res
+	return ec.marshalNTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshAccountsResponse_transactions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshAccountsResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Transaction_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Transaction_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "balance":
+				return ec.fieldContext_Transaction_balance(ctx, field)
+			case "note":
+				return ec.fieldContext_Transaction_note(ctx, field)
+			case "datetime":
+				return ec.fieldContext_Transaction_datetime(ctx, field)
+			case "profile":
+				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
 		},
 	}
 	return fc, nil
@@ -9652,6 +9872,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "refreshAccounts":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_refreshAccounts(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10163,6 +10390,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var refreshAccountsResponseImplementors = []string{"RefreshAccountsResponse"}
+
+func (ec *executionContext) _RefreshAccountsResponse(ctx context.Context, sel ast.SelectionSet, obj *RefreshAccountsResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, refreshAccountsResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RefreshAccountsResponse")
+		case "accounts":
+			out.Values[i] = ec._RefreshAccountsResponse_accounts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "transactions":
+			out.Values[i] = ec._RefreshAccountsResponse_transactions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -11246,6 +11517,50 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAccount2ᚕᚖfijoyᚋentᚐAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Account) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAccount2ᚖfijoyᚋentᚐAccount(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNAccount2ᚖfijoyᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v *ent.Account) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -11606,6 +11921,20 @@ func (ec *executionContext) marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx context
 	return ec._Profile(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNRefreshAccountsResponse2fijoyᚐRefreshAccountsResponse(ctx context.Context, sel ast.SelectionSet, v RefreshAccountsResponse) graphql.Marshaler {
+	return ec._RefreshAccountsResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRefreshAccountsResponse2ᚖfijoyᚐRefreshAccountsResponse(ctx context.Context, sel ast.SelectionSet, v *RefreshAccountsResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RefreshAccountsResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11670,6 +11999,50 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 
 func (ec *executionContext) marshalNTransaction2fijoyᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v ent.Transaction) graphql.Marshaler {
 	return ec._Transaction(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Transaction) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNTransaction2ᚖfijoyᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {

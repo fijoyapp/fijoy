@@ -34,3 +34,8 @@ type Currency struct {
 type FXRate struct {
 	Rate string `json:"rate"`
 }
+
+type RefreshAccountsResponse struct {
+	Accounts     []*ent.Account     `json:"accounts"`
+	Transactions []*ent.Transaction `json:"transactions"`
+}

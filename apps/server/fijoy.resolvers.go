@@ -250,6 +250,11 @@ func (r *mutationResolver) CreateTransactionEntry(ctx context.Context, input ent
 	return transactionEntry, nil
 }
 
+// RefreshAccounts is the resolver for the refreshAccounts field.
+func (r *mutationResolver) RefreshAccounts(ctx context.Context) (*RefreshAccountsResponse, error) {
+	panic(fmt.Errorf("not implemented: RefreshAccounts - refreshAccounts"))
+}
+
 // Profile is the resolver for the profile field.
 func (r *queryResolver) Profile(ctx context.Context) (*ent.Profile, error) {
 	authData, err := auth.GetAuthDataFromContext(ctx)
