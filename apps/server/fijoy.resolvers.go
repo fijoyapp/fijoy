@@ -44,7 +44,7 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 	profile, err := client.Profile.Create().
 		SetInput(input).
 		SetLocale(defaultCurrency.Locale).
-		SetUserID(userData.UserID).
+		AddUserIDs(userData.UserID).
 		Save(ctx)
 
 	_, tokenString, _ := r.authConfig.JWT_AUTH.Encode(

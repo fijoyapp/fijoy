@@ -73,7 +73,7 @@ func (r *queryResolver) Profiles(ctx context.Context) ([]*ent.Profile, error) {
 		return nil, err
 	}
 
-	return r.client.Profile.Query().Where(profile.HasUserWith(user.ID(authData.UserID))).All(ctx)
+	return r.client.Profile.Query().Where(profile.HasUsersWith(user.ID(authData.UserID))).All(ctx)
 }
 
 // Snapshots is the resolver for the snapshots field.

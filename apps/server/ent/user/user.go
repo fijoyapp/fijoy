@@ -24,6 +24,8 @@ const (
 	EdgeUserKeys = "user_keys"
 	// EdgeProfiles holds the string denoting the profiles edge name in mutations.
 	EdgeProfiles = "profiles"
+	// EdgeUserProfiles holds the string denoting the user_profiles edge name in mutations.
+	EdgeUserProfiles = "user_profiles"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// UserKeysTable is the table that holds the user_keys relation/edge.
@@ -33,13 +35,18 @@ const (
 	UserKeysInverseTable = "user_keys"
 	// UserKeysColumn is the table column denoting the user_keys relation/edge.
 	UserKeysColumn = "user_user_keys"
-	// ProfilesTable is the table that holds the profiles relation/edge.
-	ProfilesTable = "profiles"
+	// ProfilesTable is the table that holds the profiles relation/edge. The primary key declared below.
+	ProfilesTable = "user_profiles"
 	// ProfilesInverseTable is the table name for the Profile entity.
 	// It exists in this package in order to avoid circular dependency with the "profile" package.
 	ProfilesInverseTable = "profiles"
-	// ProfilesColumn is the table column denoting the profiles relation/edge.
-	ProfilesColumn = "user_profiles"
+	// UserProfilesTable is the table that holds the user_profiles relation/edge.
+	UserProfilesTable = "user_profiles"
+	// UserProfilesInverseTable is the table name for the UserProfile entity.
+	// It exists in this package in order to avoid circular dependency with the "userprofile" package.
+	UserProfilesInverseTable = "user_profiles"
+	// UserProfilesColumn is the table column denoting the user_profiles relation/edge.
+	UserProfilesColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -49,6 +56,12 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldEmail,
 }
+
+var (
+	// ProfilesPrimaryKey and ProfilesColumn2 are the table columns denoting the
+	// primary key for the profiles relation (M2M).
+	ProfilesPrimaryKey = []string{"user_id", "profile_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -121,6 +134,20 @@ func ByProfiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newProfilesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUserProfilesCount orders the results by user_profiles count.
+func ByUserProfilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserProfilesStep(), opts...)
+	}
+}
+
+// ByUserProfiles orders the results by user_profiles terms.
+func ByUserProfiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserProfilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserKeysStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -132,6 +159,13 @@ func newProfilesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ProfilesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ProfilesTable, ProfilesColumn),
+		sqlgraph.Edge(sqlgraph.M2M, false, ProfilesTable, ProfilesPrimaryKey...),
+	)
+}
+func newUserProfilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserProfilesInverseTable, UserProfilesColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserProfilesTable, UserProfilesColumn),
 	)
 }

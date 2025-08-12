@@ -42,8 +42,6 @@ func (User) Edges() []ent.Edge {
 				entsql.OnDelete(entsql.Cascade),
 			),
 		edge.To("profiles", Profile.Type).
-			Annotations(
-				entsql.OnDelete(entsql.Cascade),
-			),
+			Through("user_profiles", UserProfile.Type),
 	}
 }

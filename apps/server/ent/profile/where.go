@@ -331,21 +331,21 @@ func NetWorthGoalLTE(v decimal.Decimal) predicate.Profile {
 	return predicate.Profile(sql.FieldLTE(FieldNetWorthGoal, v))
 }
 
-// HasUser applies the HasEdge predicate on the "user" edge.
-func HasUser() predicate.Profile {
+// HasUsers applies the HasEdge predicate on the "users" edge.
+func HasUsers() predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
-func HasUserWith(preds ...predicate.User) predicate.Profile {
+// HasUsersWith applies the HasEdge predicate on the "users" edge with a given conditions (other predicates).
+func HasUsersWith(preds ...predicate.User) predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {
-		step := newUserStep()
+		step := newUsersStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -438,6 +438,29 @@ func HasCategories() predicate.Profile {
 func HasCategoriesWith(preds ...predicate.Category) predicate.Profile {
 	return predicate.Profile(func(s *sql.Selector) {
 		step := newCategoriesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUserProfiles applies the HasEdge predicate on the "user_profiles" edge.
+func HasUserProfiles() predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, UserProfilesTable, UserProfilesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserProfilesWith applies the HasEdge predicate on the "user_profiles" edge with a given conditions (other predicates).
+func HasUserProfilesWith(preds ...predicate.UserProfile) predicate.Profile {
+	return predicate.Profile(func(s *sql.Selector) {
+		step := newUserProfilesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -304,16 +304,18 @@ func (_q *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
-		case "user":
+		case "users":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
 				query = (&UserClient{config: _q.config}).Query()
 			)
-			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
 				return err
 			}
-			_q.withUser = query
+			_q.WithNamedUsers(alias, func(wq *UserQuery) {
+				*wq = *query
+			})
 
 		case "accounts":
 			var (

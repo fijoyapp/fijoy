@@ -57,13 +57,14 @@ func (Profile) Fields() []ent.Field {
 // Edges of the Profile.
 func (Profile) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("profiles").
-			Unique().
-			Required().
+		edge.From("users", User.Type).Ref("profiles").
+			Through("user_profiles", UserProfile.Type).
+		Required().
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			),
+
 		edge.To("accounts", Account.Type).
 			Annotations(
 				entsql.OnDelete(entsql.Cascade),

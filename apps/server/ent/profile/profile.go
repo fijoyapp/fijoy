@@ -26,8 +26,8 @@ const (
 	FieldCurrencies = "currencies"
 	// FieldNetWorthGoal holds the string denoting the net_worth_goal field in the database.
 	FieldNetWorthGoal = "net_worth_goal"
-	// EdgeUser holds the string denoting the user edge name in mutations.
-	EdgeUser = "user"
+	// EdgeUsers holds the string denoting the users edge name in mutations.
+	EdgeUsers = "users"
 	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
 	EdgeAccounts = "accounts"
 	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
@@ -36,15 +36,15 @@ const (
 	EdgeSnapshots = "snapshots"
 	// EdgeCategories holds the string denoting the categories edge name in mutations.
 	EdgeCategories = "categories"
+	// EdgeUserProfiles holds the string denoting the user_profiles edge name in mutations.
+	EdgeUserProfiles = "user_profiles"
 	// Table holds the table name of the profile in the database.
 	Table = "profiles"
-	// UserTable is the table that holds the user relation/edge.
-	UserTable = "profiles"
-	// UserInverseTable is the table name for the User entity.
+	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
+	UsersTable = "user_profiles"
+	// UsersInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
-	UserInverseTable = "users"
-	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_profiles"
+	UsersInverseTable = "users"
 	// AccountsTable is the table that holds the accounts relation/edge.
 	AccountsTable = "accounts"
 	// AccountsInverseTable is the table name for the Account entity.
@@ -73,6 +73,13 @@ const (
 	CategoriesInverseTable = "categories"
 	// CategoriesColumn is the table column denoting the categories relation/edge.
 	CategoriesColumn = "profile_categories"
+	// UserProfilesTable is the table that holds the user_profiles relation/edge.
+	UserProfilesTable = "user_profiles"
+	// UserProfilesInverseTable is the table name for the UserProfile entity.
+	// It exists in this package in order to avoid circular dependency with the "userprofile" package.
+	UserProfilesInverseTable = "user_profiles"
+	// UserProfilesColumn is the table column denoting the user_profiles relation/edge.
+	UserProfilesColumn = "profile_id"
 )
 
 // Columns holds all SQL columns for profile fields.
@@ -86,21 +93,16 @@ var Columns = []string{
 	FieldNetWorthGoal,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "profiles"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"user_profiles",
-}
+var (
+	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
+	// primary key for the users relation (M2M).
+	UsersPrimaryKey = []string{"user_id", "profile_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -149,10 +151,17 @@ func ByNetWorthGoal(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNetWorthGoal, opts...).ToFunc()
 }
 
-// ByUserField orders the results by user field.
-func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByUsersCount orders the results by users count.
+func ByUsersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newUsersStep(), opts...)
+	}
+}
+
+// ByUsers orders the results by users terms.
+func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -211,11 +220,25 @@ func ByCategories(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newCategoriesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-func newUserStep() *sqlgraph.Step {
+
+// ByUserProfilesCount orders the results by user_profiles count.
+func ByUserProfilesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserProfilesStep(), opts...)
+	}
+}
+
+// ByUserProfiles orders the results by user_profiles terms.
+func ByUserProfiles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserProfilesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newUsersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+		sqlgraph.To(UsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
 	)
 }
 func newAccountsStep() *sqlgraph.Step {
@@ -244,5 +267,12 @@ func newCategoriesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CategoriesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, CategoriesTable, CategoriesColumn),
+	)
+}
+func newUserProfilesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserProfilesInverseTable, UserProfilesColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserProfilesTable, UserProfilesColumn),
 	)
 }

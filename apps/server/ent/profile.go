@@ -5,7 +5,6 @@ package ent
 import (
 	"encoding/json"
 	"fijoy/ent/profile"
-	"fijoy/ent/user"
 	"fmt"
 	"strings"
 	"time"
@@ -34,15 +33,14 @@ type Profile struct {
 	NetWorthGoal decimal.Decimal `json:"net_worth_goal,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ProfileQuery when eager-loading is set.
-	Edges         ProfileEdges `json:"edges"`
-	user_profiles *int
-	selectValues  sql.SelectValues
+	Edges        ProfileEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // ProfileEdges holds the relations/edges for other nodes in the graph.
 type ProfileEdges struct {
-	// User holds the value of the user edge.
-	User *User `json:"user,omitempty"`
+	// Users holds the value of the users edge.
+	Users []*User `json:"users,omitempty"`
 	// Accounts holds the value of the accounts edge.
 	Accounts []*Account `json:"accounts,omitempty"`
 	// Transactions holds the value of the transactions edge.
@@ -51,27 +49,29 @@ type ProfileEdges struct {
 	Snapshots []*Snapshot `json:"snapshots,omitempty"`
 	// Categories holds the value of the categories edge.
 	Categories []*Category `json:"categories,omitempty"`
+	// UserProfiles holds the value of the user_profiles edge.
+	UserProfiles []*UserProfile `json:"user_profiles,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
 	totalCount [5]map[string]int
 
+	namedUsers        map[string][]*User
 	namedAccounts     map[string][]*Account
 	namedTransactions map[string][]*Transaction
 	namedSnapshots    map[string][]*Snapshot
 	namedCategories   map[string][]*Category
+	namedUserProfiles map[string][]*UserProfile
 }
 
-// UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ProfileEdges) UserOrErr() (*User, error) {
-	if e.User != nil {
-		return e.User, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: user.Label}
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProfileEdges) UsersOrErr() ([]*User, error) {
+	if e.loadedTypes[0] {
+		return e.Users, nil
 	}
-	return nil, &NotLoadedError{edge: "user"}
+	return nil, &NotLoadedError{edge: "users"}
 }
 
 // AccountsOrErr returns the Accounts value or an error if the edge
@@ -110,6 +110,15 @@ func (e ProfileEdges) CategoriesOrErr() ([]*Category, error) {
 	return nil, &NotLoadedError{edge: "categories"}
 }
 
+// UserProfilesOrErr returns the UserProfiles value or an error if the edge
+// was not loaded in eager-loading.
+func (e ProfileEdges) UserProfilesOrErr() ([]*UserProfile, error) {
+	if e.loadedTypes[5] {
+		return e.UserProfiles, nil
+	}
+	return nil, &NotLoadedError{edge: "user_profiles"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Profile) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -125,8 +134,6 @@ func (*Profile) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case profile.FieldCreateTime, profile.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case profile.ForeignKeys[0]: // user_profiles
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -186,13 +193,6 @@ func (_m *Profile) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				_m.NetWorthGoal = *value
 			}
-		case profile.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_profiles", value)
-			} else if value.Valid {
-				_m.user_profiles = new(int)
-				*_m.user_profiles = int(value.Int64)
-			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -206,9 +206,9 @@ func (_m *Profile) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the Profile entity.
-func (_m *Profile) QueryUser() *UserQuery {
-	return NewProfileClient(_m.config).QueryUser(_m)
+// QueryUsers queries the "users" edge of the Profile entity.
+func (_m *Profile) QueryUsers() *UserQuery {
+	return NewProfileClient(_m.config).QueryUsers(_m)
 }
 
 // QueryAccounts queries the "accounts" edge of the Profile entity.
@@ -229,6 +229,11 @@ func (_m *Profile) QuerySnapshots() *SnapshotQuery {
 // QueryCategories queries the "categories" edge of the Profile entity.
 func (_m *Profile) QueryCategories() *CategoryQuery {
 	return NewProfileClient(_m.config).QueryCategories(_m)
+}
+
+// QueryUserProfiles queries the "user_profiles" edge of the Profile entity.
+func (_m *Profile) QueryUserProfiles() *UserProfileQuery {
+	return NewProfileClient(_m.config).QueryUserProfiles(_m)
 }
 
 // Update returns a builder for updating this Profile.
@@ -273,6 +278,30 @@ func (_m *Profile) String() string {
 	builder.WriteString(fmt.Sprintf("%v", _m.NetWorthGoal))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedUsers returns the Users named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Profile) NamedUsers(name string) ([]*User, error) {
+	if _m.Edges.namedUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Profile) appendNamedUsers(name string, edges ...*User) {
+	if _m.Edges.namedUsers == nil {
+		_m.Edges.namedUsers = make(map[string][]*User)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedUsers[name] = []*User{}
+	} else {
+		_m.Edges.namedUsers[name] = append(_m.Edges.namedUsers[name], edges...)
+	}
 }
 
 // NamedAccounts returns the Accounts named value or an error if the edge was not
@@ -368,6 +397,30 @@ func (_m *Profile) appendNamedCategories(name string, edges ...*Category) {
 		_m.Edges.namedCategories[name] = []*Category{}
 	} else {
 		_m.Edges.namedCategories[name] = append(_m.Edges.namedCategories[name], edges...)
+	}
+}
+
+// NamedUserProfiles returns the UserProfiles named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Profile) NamedUserProfiles(name string) ([]*UserProfile, error) {
+	if _m.Edges.namedUserProfiles == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedUserProfiles[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Profile) appendNamedUserProfiles(name string, edges ...*UserProfile) {
+	if _m.Edges.namedUserProfiles == nil {
+		_m.Edges.namedUserProfiles = make(map[string][]*UserProfile)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedUserProfiles[name] = []*UserProfile{}
+	} else {
+		_m.Edges.namedUserProfiles[name] = append(_m.Edges.namedUserProfiles[name], edges...)
 	}
 }
 

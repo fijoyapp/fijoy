@@ -35,3 +35,6 @@ type User func(*sql.Selector)
 
 // UserKey is the predicate function for userkey builders.
 type UserKey func(*sql.Selector)
+
+// UserProfile is the predicate function for userprofile builders.
+type UserProfile func(*sql.Selector)

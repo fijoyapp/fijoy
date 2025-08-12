@@ -84,15 +84,19 @@ func (_c *ProfileCreate) SetID(v int) *ProfileCreate {
 	return _c
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_c *ProfileCreate) SetUserID(id int) *ProfileCreate {
-	_c.mutation.SetUserID(id)
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (_c *ProfileCreate) AddUserIDs(ids ...int) *ProfileCreate {
+	_c.mutation.AddUserIDs(ids...)
 	return _c
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (_c *ProfileCreate) SetUser(v *User) *ProfileCreate {
-	return _c.SetUserID(v.ID)
+// AddUsers adds the "users" edges to the User entity.
+func (_c *ProfileCreate) AddUsers(v ...*User) *ProfileCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddUserIDs(ids...)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
@@ -220,8 +224,8 @@ func (_c *ProfileCreate) check() error {
 	if _, ok := _c.mutation.NetWorthGoal(); !ok {
 		return &ValidationError{Name: "net_worth_goal", err: errors.New(`ent: missing required field "Profile.net_worth_goal"`)}
 	}
-	if len(_c.mutation.UserIDs()) == 0 {
-		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Profile.user"`)}
+	if len(_c.mutation.UsersIDs()) == 0 {
+		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Profile.users"`)}
 	}
 	return nil
 }
@@ -279,12 +283,12 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 		_node.NetWorthGoal = value
 	}
-	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   profile.UserTable,
-			Columns: []string{profile.UserColumn},
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -293,7 +297,6 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_profiles = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.AccountsIDs(); len(nodes) > 0 {
