@@ -21,6 +21,7 @@ import (
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
+	"fijoy/ent/userprofile"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -53,6 +54,8 @@ type Client struct {
 	User *UserClient
 	// UserKey is the client for interacting with the UserKey builders.
 	UserKey *UserKeyClient
+	// UserProfile is the client for interacting with the UserProfile builders.
+	UserProfile *UserProfileClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -74,6 +77,7 @@ func (c *Client) init() {
 	c.TransactionEntry = NewTransactionEntryClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserKey = NewUserKeyClient(c.config)
+	c.UserProfile = NewUserProfileClient(c.config)
 }
 
 type (
@@ -176,6 +180,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		TransactionEntry: NewTransactionEntryClient(cfg),
 		User:             NewUserClient(cfg),
 		UserKey:          NewUserKeyClient(cfg),
+		UserProfile:      NewUserProfileClient(cfg),
 	}, nil
 }
 
@@ -205,6 +210,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		TransactionEntry: NewTransactionEntryClient(cfg),
 		User:             NewUserClient(cfg),
 		UserKey:          NewUserKeyClient(cfg),
+		UserProfile:      NewUserProfileClient(cfg),
 	}, nil
 }
 
@@ -236,6 +242,7 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Account, c.Category, c.Profile, c.Snapshot, c.SnapshotAccount,
 		c.SnapshotFXRate, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
+		c.UserProfile,
 	} {
 		n.Use(hooks...)
 	}
@@ -247,6 +254,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Account, c.Category, c.Profile, c.Snapshot, c.SnapshotAccount,
 		c.SnapshotFXRate, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
+		c.UserProfile,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -275,6 +283,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.User.mutate(ctx, m)
 	case *UserKeyMutation:
 		return c.UserKey.mutate(ctx, m)
+	case *UserProfileMutation:
+		return c.UserProfile.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -734,15 +744,15 @@ func (c *ProfileClient) GetX(ctx context.Context, id int) *Profile {
 	return obj
 }
 
-// QueryUser queries the user edge of a Profile.
-func (c *ProfileClient) QueryUser(_m *Profile) *UserQuery {
+// QueryUsers queries the users edge of a Profile.
+func (c *ProfileClient) QueryUsers(_m *Profile) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, profile.UserTable, profile.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, profile.UsersTable, profile.UsersPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -807,6 +817,22 @@ func (c *ProfileClient) QueryCategories(_m *Profile) *CategoryQuery {
 			sqlgraph.From(profile.Table, profile.FieldID, id),
 			sqlgraph.To(category.Table, category.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, profile.CategoriesTable, profile.CategoriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUserProfiles queries the user_profiles edge of a Profile.
+func (c *ProfileClient) QueryUserProfiles(_m *Profile) *UserProfileQuery {
+	query := (&UserProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, id),
+			sqlgraph.To(userprofile.Table, userprofile.ProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, profile.UserProfilesTable, profile.UserProfilesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1812,7 +1838,23 @@ func (c *UserClient) QueryProfiles(_m *User) *ProfileQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(profile.Table, profile.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ProfilesTable, user.ProfilesColumn),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.ProfilesTable, user.ProfilesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUserProfiles queries the user_profiles edge of a User.
+func (c *UserClient) QueryUserProfiles(_m *User) *UserProfileQuery {
+	query := (&UserProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(userprofile.Table, userprofile.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.UserProfilesTable, user.UserProfilesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1994,14 +2036,130 @@ func (c *UserKeyClient) mutate(ctx context.Context, m *UserKeyMutation) (Value, 
 	}
 }
 
+// UserProfileClient is a client for the UserProfile schema.
+type UserProfileClient struct {
+	config
+}
+
+// NewUserProfileClient returns a client for the UserProfile from the given config.
+func NewUserProfileClient(c config) *UserProfileClient {
+	return &UserProfileClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userprofile.Hooks(f(g(h())))`.
+func (c *UserProfileClient) Use(hooks ...Hook) {
+	c.hooks.UserProfile = append(c.hooks.UserProfile, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userprofile.Intercept(f(g(h())))`.
+func (c *UserProfileClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserProfile = append(c.inters.UserProfile, interceptors...)
+}
+
+// Create returns a builder for creating a UserProfile entity.
+func (c *UserProfileClient) Create() *UserProfileCreate {
+	mutation := newUserProfileMutation(c.config, OpCreate)
+	return &UserProfileCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserProfile entities.
+func (c *UserProfileClient) CreateBulk(builders ...*UserProfileCreate) *UserProfileCreateBulk {
+	return &UserProfileCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserProfileClient) MapCreateBulk(slice any, setFunc func(*UserProfileCreate, int)) *UserProfileCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserProfileCreateBulk{err: fmt.Errorf("calling to UserProfileClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserProfileCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserProfileCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserProfile.
+func (c *UserProfileClient) Update() *UserProfileUpdate {
+	mutation := newUserProfileMutation(c.config, OpUpdate)
+	return &UserProfileUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserProfileClient) UpdateOne(_m *UserProfile) *UserProfileUpdateOne {
+	mutation := newUserProfileMutation(c.config, OpUpdateOne)
+	mutation.user = &_m.UserID
+	mutation.profile = &_m.ProfileID
+	return &UserProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserProfile.
+func (c *UserProfileClient) Delete() *UserProfileDelete {
+	mutation := newUserProfileMutation(c.config, OpDelete)
+	return &UserProfileDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Query returns a query builder for UserProfile.
+func (c *UserProfileClient) Query() *UserProfileQuery {
+	return &UserProfileQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserProfile},
+		inters: c.Interceptors(),
+	}
+}
+
+// QueryUser queries the user edge of a UserProfile.
+func (c *UserProfileClient) QueryUser(_m *UserProfile) *UserQuery {
+	return c.Query().
+		Where(userprofile.UserID(_m.UserID), userprofile.ProfileID(_m.ProfileID)).
+		QueryUser()
+}
+
+// QueryProfile queries the profile edge of a UserProfile.
+func (c *UserProfileClient) QueryProfile(_m *UserProfile) *ProfileQuery {
+	return c.Query().
+		Where(userprofile.UserID(_m.UserID), userprofile.ProfileID(_m.ProfileID)).
+		QueryProfile()
+}
+
+// Hooks returns the client hooks.
+func (c *UserProfileClient) Hooks() []Hook {
+	return c.hooks.UserProfile
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserProfileClient) Interceptors() []Interceptor {
+	return c.inters.UserProfile
+}
+
+func (c *UserProfileClient) mutate(ctx context.Context, m *UserProfileMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserProfileCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserProfileUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserProfileUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserProfileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserProfile mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
 		Account, Category, Profile, Snapshot, SnapshotAccount, SnapshotFXRate,
-		Transaction, TransactionEntry, User, UserKey []ent.Hook
+		Transaction, TransactionEntry, User, UserKey, UserProfile []ent.Hook
 	}
 	inters struct {
 		Account, Category, Profile, Snapshot, SnapshotAccount, SnapshotFXRate,
-		Transaction, TransactionEntry, User, UserKey []ent.Interceptor
+		Transaction, TransactionEntry, User, UserKey, UserProfile []ent.Interceptor
 	}
 )

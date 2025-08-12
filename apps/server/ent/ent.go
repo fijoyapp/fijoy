@@ -15,6 +15,7 @@ import (
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
+	"fijoy/ent/userprofile"
 	"fmt"
 	"reflect"
 	"sync"
@@ -92,6 +93,7 @@ func checkColumn(t, c string) error {
 			transactionentry.Table: transactionentry.ValidColumn,
 			user.Table:             user.ValidColumn,
 			userkey.Table:          userkey.ValidColumn,
+			userprofile.Table:      userprofile.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

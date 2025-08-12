@@ -12,6 +12,7 @@ import (
 	"fijoy/ent/snapshot"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
+	"fijoy/ent/userprofile"
 	"fmt"
 	"math"
 
@@ -28,18 +29,20 @@ type ProfileQuery struct {
 	order                 []profile.OrderOption
 	inters                []Interceptor
 	predicates            []predicate.Profile
-	withUser              *UserQuery
+	withUsers             *UserQuery
 	withAccounts          *AccountQuery
 	withTransactions      *TransactionQuery
 	withSnapshots         *SnapshotQuery
 	withCategories        *CategoryQuery
-	withFKs               bool
+	withUserProfiles      *UserProfileQuery
 	modifiers             []func(*sql.Selector)
 	loadTotal             []func(context.Context, []*Profile) error
+	withNamedUsers        map[string]*UserQuery
 	withNamedAccounts     map[string]*AccountQuery
 	withNamedTransactions map[string]*TransactionQuery
 	withNamedSnapshots    map[string]*SnapshotQuery
 	withNamedCategories   map[string]*CategoryQuery
+	withNamedUserProfiles map[string]*UserProfileQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,8 +79,8 @@ func (_q *ProfileQuery) Order(o ...profile.OrderOption) *ProfileQuery {
 	return _q
 }
 
-// QueryUser chains the current query on the "user" edge.
-func (_q *ProfileQuery) QueryUser() *UserQuery {
+// QueryUsers chains the current query on the "users" edge.
+func (_q *ProfileQuery) QueryUsers() *UserQuery {
 	query := (&UserClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -90,7 +93,7 @@ func (_q *ProfileQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, profile.UserTable, profile.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2M, true, profile.UsersTable, profile.UsersPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -179,6 +182,28 @@ func (_q *ProfileQuery) QueryCategories() *CategoryQuery {
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(category.Table, category.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, profile.CategoriesTable, profile.CategoriesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUserProfiles chains the current query on the "user_profiles" edge.
+func (_q *ProfileQuery) QueryUserProfiles() *UserProfileQuery {
+	query := (&UserProfileClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, selector),
+			sqlgraph.To(userprofile.Table, userprofile.ProfileColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, profile.UserProfilesTable, profile.UserProfilesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -378,25 +403,26 @@ func (_q *ProfileQuery) Clone() *ProfileQuery {
 		order:            append([]profile.OrderOption{}, _q.order...),
 		inters:           append([]Interceptor{}, _q.inters...),
 		predicates:       append([]predicate.Profile{}, _q.predicates...),
-		withUser:         _q.withUser.Clone(),
+		withUsers:        _q.withUsers.Clone(),
 		withAccounts:     _q.withAccounts.Clone(),
 		withTransactions: _q.withTransactions.Clone(),
 		withSnapshots:    _q.withSnapshots.Clone(),
 		withCategories:   _q.withCategories.Clone(),
+		withUserProfiles: _q.withUserProfiles.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
-// WithUser tells the query-builder to eager-load the nodes that are connected to
-// the "user" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *ProfileQuery) WithUser(opts ...func(*UserQuery)) *ProfileQuery {
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithUsers(opts ...func(*UserQuery)) *ProfileQuery {
 	query := (&UserClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withUser = query
+	_q.withUsers = query
 	return _q
 }
 
@@ -441,6 +467,17 @@ func (_q *ProfileQuery) WithCategories(opts ...func(*CategoryQuery)) *ProfileQue
 		opt(query)
 	}
 	_q.withCategories = query
+	return _q
+}
+
+// WithUserProfiles tells the query-builder to eager-load the nodes that are connected to
+// the "user_profiles" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithUserProfiles(opts ...func(*UserProfileQuery)) *ProfileQuery {
+	query := (&UserProfileClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withUserProfiles = query
 	return _q
 }
 
@@ -521,22 +558,16 @@ func (_q *ProfileQuery) prepareQuery(ctx context.Context) error {
 func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Profile, error) {
 	var (
 		nodes       = []*Profile{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [5]bool{
-			_q.withUser != nil,
+		loadedTypes = [6]bool{
+			_q.withUsers != nil,
 			_q.withAccounts != nil,
 			_q.withTransactions != nil,
 			_q.withSnapshots != nil,
 			_q.withCategories != nil,
+			_q.withUserProfiles != nil,
 		}
 	)
-	if _q.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, profile.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Profile).scanValues(nil, columns)
 	}
@@ -558,9 +589,10 @@ func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withUser; query != nil {
-		if err := _q.loadUser(ctx, query, nodes, nil,
-			func(n *Profile, e *User) { n.Edges.User = e }); err != nil {
+	if query := _q.withUsers; query != nil {
+		if err := _q.loadUsers(ctx, query, nodes,
+			func(n *Profile) { n.Edges.Users = []*User{} },
+			func(n *Profile, e *User) { n.Edges.Users = append(n.Edges.Users, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -592,6 +624,20 @@ func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 			return nil, err
 		}
 	}
+	if query := _q.withUserProfiles; query != nil {
+		if err := _q.loadUserProfiles(ctx, query, nodes,
+			func(n *Profile) { n.Edges.UserProfiles = []*UserProfile{} },
+			func(n *Profile, e *UserProfile) { n.Edges.UserProfiles = append(n.Edges.UserProfiles, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedUsers {
+		if err := _q.loadUsers(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedUsers(name) },
+			func(n *Profile, e *User) { n.appendNamedUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range _q.withNamedAccounts {
 		if err := _q.loadAccounts(ctx, query, nodes,
 			func(n *Profile) { n.appendNamedAccounts(name) },
@@ -620,6 +666,13 @@ func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 			return nil, err
 		}
 	}
+	for name, query := range _q.withNamedUserProfiles {
+		if err := _q.loadUserProfiles(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedUserProfiles(name) },
+			func(n *Profile, e *UserProfile) { n.appendNamedUserProfiles(name, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range _q.loadTotal {
 		if err := _q.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
@@ -628,34 +681,63 @@ func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 	return nodes, nil
 }
 
-func (_q *ProfileQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *User)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Profile)
-	for i := range nodes {
-		if nodes[i].user_profiles == nil {
-			continue
+func (_q *ProfileQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *User)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[int]*Profile)
+	nids := make(map[int]map[*Profile]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
 		}
-		fk := *nodes[i].user_profiles
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	if len(ids) == 0 {
-		return nil
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(profile.UsersTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(profile.UsersPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(profile.UsersPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(profile.UsersPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
 	}
-	query.Where(user.IDIn(ids...))
-	neighbors, err := query.All(ctx)
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullInt64)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := int(values[0].(*sql.NullInt64).Int64)
+				inValue := int(values[1].(*sql.NullInt64).Int64)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Profile]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_profiles" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "users" node returned %v`, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -784,6 +866,36 @@ func (_q *ProfileQuery) loadCategories(ctx context.Context, query *CategoryQuery
 	}
 	return nil
 }
+func (_q *ProfileQuery) loadUserProfiles(ctx context.Context, query *UserProfileQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *UserProfile)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Profile)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(userprofile.FieldProfileID)
+	}
+	query.Where(predicate.UserProfile(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(profile.UserProfilesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ProfileID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_id" returned %v for node %v`, fk, n)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (_q *ProfileQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
@@ -869,6 +981,20 @@ func (_q *ProfileQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
+// WithNamedUsers tells the query-builder to eager-load the nodes that are connected to the "users"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithNamedUsers(name string, opts ...func(*UserQuery)) *ProfileQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedUsers == nil {
+		_q.withNamedUsers = make(map[string]*UserQuery)
+	}
+	_q.withNamedUsers[name] = query
+	return _q
+}
+
 // WithNamedAccounts tells the query-builder to eager-load the nodes that are connected to the "accounts"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (_q *ProfileQuery) WithNamedAccounts(name string, opts ...func(*AccountQuery)) *ProfileQuery {
@@ -922,6 +1048,20 @@ func (_q *ProfileQuery) WithNamedCategories(name string, opts ...func(*CategoryQ
 		_q.withNamedCategories = make(map[string]*CategoryQuery)
 	}
 	_q.withNamedCategories[name] = query
+	return _q
+}
+
+// WithNamedUserProfiles tells the query-builder to eager-load the nodes that are connected to the "user_profiles"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithNamedUserProfiles(name string, opts ...func(*UserProfileQuery)) *ProfileQuery {
+	query := (&UserProfileClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedUserProfiles == nil {
+		_q.withNamedUserProfiles = make(map[string]*UserProfileQuery)
+	}
+	_q.withNamedUserProfiles[name] = query
 	return _q
 }
 

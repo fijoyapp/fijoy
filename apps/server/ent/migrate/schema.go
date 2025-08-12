@@ -73,21 +73,12 @@ var (
 		{Name: "locale", Type: field.TypeString},
 		{Name: "currencies", Type: field.TypeJSON},
 		{Name: "net_worth_goal", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
-		{Name: "user_profiles", Type: field.TypeInt},
 	}
 	// ProfilesTable holds the schema information for the "profiles" table.
 	ProfilesTable = &schema.Table{
 		Name:       "profiles",
 		Columns:    ProfilesColumns,
 		PrimaryKey: []*schema.Column{ProfilesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "profiles_users_profiles",
-				Columns:    []*schema.Column{ProfilesColumns[7]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
 	}
 	// SnapshotsColumns holds the columns for the "snapshots" table.
 	SnapshotsColumns = []*schema.Column{
@@ -263,6 +254,32 @@ var (
 			},
 		},
 	}
+	// UserProfilesColumns holds the columns for the "user_profiles" table.
+	UserProfilesColumns = []*schema.Column{
+		{Name: "permission", Type: field.TypeEnum, Enums: []string{"owner", "admin", "viewer"}},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "profile_id", Type: field.TypeInt},
+	}
+	// UserProfilesTable holds the schema information for the "user_profiles" table.
+	UserProfilesTable = &schema.Table{
+		Name:       "user_profiles",
+		Columns:    UserProfilesColumns,
+		PrimaryKey: []*schema.Column{UserProfilesColumns[1], UserProfilesColumns[2]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_profiles_users_user",
+				Columns:    []*schema.Column{UserProfilesColumns[1]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_profiles_profiles_profile",
+				Columns:    []*schema.Column{UserProfilesColumns[2]},
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
@@ -275,6 +292,7 @@ var (
 		TransactionEntriesTable,
 		UsersTable,
 		UserKeysTable,
+		UserProfilesTable,
 	}
 )
 
@@ -287,7 +305,6 @@ func init() {
 	CategoriesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(38654705664),
 	}
-	ProfilesTable.ForeignKeys[0].RefTable = UsersTable
 	ProfilesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(4294967296),
 	}
@@ -320,5 +337,10 @@ func init() {
 	UserKeysTable.ForeignKeys[0].RefTable = UsersTable
 	UserKeysTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(21474836480),
+	}
+	UserProfilesTable.ForeignKeys[0].RefTable = UsersTable
+	UserProfilesTable.ForeignKeys[1].RefTable = ProfilesTable
+	UserProfilesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(42949672960),
 	}
 }

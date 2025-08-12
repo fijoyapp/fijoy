@@ -60,10 +60,14 @@ func (_m *Category) Transactions(ctx context.Context) (result []*Transaction, er
 	return result, err
 }
 
-func (_m *Profile) User(ctx context.Context) (*User, error) {
-	result, err := _m.Edges.UserOrErr()
+func (_m *Profile) Users(ctx context.Context) (result []*User, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.UsersOrErr()
+	}
 	if IsNotLoaded(err) {
-		result, err = _m.QueryUser().Only(ctx)
+		result, err = _m.QueryUsers().All(ctx)
 	}
 	return result, err
 }
