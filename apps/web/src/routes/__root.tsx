@@ -1,15 +1,12 @@
 import { QueryClient } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {
-  Outlet,
-  createRootRouteWithContext,
-  useMatches,
-} from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useLazyLoadQuery } from "react-relay";
+import { loadQuery, usePreloadedQuery } from "react-relay";
 import { graphql, type IEnvironment } from "relay-runtime";
 import type { RootQuery } from "./__generated__/RootQuery.graphql";
 import { DataProvider } from "@/data";
+import CenterLoadingSpinner from "@/components/center-loading-spinner";
 // import { loadQuery } from "react-relay";
 // import { type RootQuery } from "./__generated__/RootQuery.graphql";
 
@@ -44,16 +41,34 @@ export const rootQuery = graphql`
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
+  wrapInSuspense: true,
+  beforeLoad: async ({ context, matches }) => {
+    const currentRouteId = matches[matches.length - 1].id;
+
+    const hasProfile = currentRouteId.startsWith("/_protected/_profile");
+    const hasUser = currentRouteId.startsWith("/_protected");
+    return {
+      loadRootQuery: async () => {
+        const rootQueryRef = loadQuery<RootQuery>(
+          context.environment,
+          rootQuery,
+          { hasProfile, hasUser },
+          { fetchPolicy: "store-or-network" },
+        );
+        return { rootQueryRef };
+      },
+    };
+  },
+  loader: ({ context: { loadRootQuery } }) => {
+    return loadRootQuery();
+  },
+  pendingComponent: CenterLoadingSpinner,
 });
 
 function RootLayout() {
-  const matches = useMatches();
-  const currentRouteId = matches[matches.length - 1].id;
+  const { rootQueryRef } = Route.useLoaderData();
 
-  const hasProfile = currentRouteId.startsWith("/_protected/_profile");
-  const hasUser = currentRouteId.startsWith("/_protected");
-
-  const data = useLazyLoadQuery<RootQuery>(rootQuery, { hasProfile, hasUser });
+  const data = usePreloadedQuery(rootQuery, rootQueryRef);
 
   return (
     <>
