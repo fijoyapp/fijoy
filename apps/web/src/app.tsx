@@ -4,7 +4,8 @@ import { queryClient } from "./lib/query";
 import { environment } from "./environment";
 
 // Create a new router instance
-const router = createRouter({
+// eslint-disable-next-line react-refresh/only-export-components
+export const router = createRouter({
   routeTree,
   context: {
     queryClient,

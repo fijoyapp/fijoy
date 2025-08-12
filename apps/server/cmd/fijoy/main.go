@@ -60,6 +60,10 @@ func main() {
 	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
 	if err := sentry.Init(sentry.ClientOptions{
 		Dsn: cfg.Sentry.SENTRY_DSN_SERVER,
+
+		SendDefaultPII: true,
+		EnableTracing:  true,
+		EnableLogs:     true,
 		// Set TracesSampleRate to 1.0 to capture 100%
 		// of transactions for tracing.
 		// We recommend adjusting this value in production,
@@ -98,7 +102,9 @@ func main() {
 	}
 
 	sentryMiddleware := sentryhttp.New(sentryhttp.Options{
-		Repanic: true,
+		Repanic:         true,
+		WaitForDelivery: false,
+		Timeout:         5 * time.Second,
 	})
 
 	analyticsService := analytics_usecase.New(cfg.Analytics)

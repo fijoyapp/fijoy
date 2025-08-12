@@ -9,7 +9,7 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/99designs/gqlgen v0.17.78
 	github.com/caarlos0/env/v11 v11.3.1
-	github.com/fijoyapp/finance-go v0.1.0
+	github.com/fijoyapp/finance-go v0.1.1
 	github.com/getsentry/sentry-go v0.35.0
 	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-chi/cors v1.2.2
@@ -27,7 +27,7 @@ require (
 	google.golang.org/protobuf v1.36.7
 )
 
-require golang.org/x/exp v0.0.0-20250808145144-a408d31f581a // indirect
+require golang.org/x/exp v0.0.0-20250811191247-51f88131bc50 // indirect
 
 require (
 	ariga.io/atlas v0.36.1 // indirect
