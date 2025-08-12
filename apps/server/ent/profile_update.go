@@ -6,8 +6,10 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"fmt"
@@ -141,6 +143,36 @@ func (_u *ProfileUpdate) AddTransactions(v ...*Transaction) *ProfileUpdate {
 	return _u.AddTransactionIDs(ids...)
 }
 
+// AddSnapshotIDs adds the "snapshots" edge to the Snapshot entity by IDs.
+func (_u *ProfileUpdate) AddSnapshotIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.AddSnapshotIDs(ids...)
+	return _u
+}
+
+// AddSnapshots adds the "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdate) AddSnapshots(v ...*Snapshot) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddSnapshotIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Category entity by IDs.
+func (_u *ProfileUpdate) AddCategoryIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.AddCategoryIDs(ids...)
+	return _u
+}
+
+// AddCategories adds the "categories" edges to the Category entity.
+func (_u *ProfileUpdate) AddCategories(v ...*Category) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCategoryIDs(ids...)
+}
+
 // Mutation returns the ProfileMutation object of the builder.
 func (_u *ProfileUpdate) Mutation() *ProfileMutation {
 	return _u.mutation
@@ -192,6 +224,48 @@ func (_u *ProfileUpdate) RemoveTransactions(v ...*Transaction) *ProfileUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionIDs(ids...)
+}
+
+// ClearSnapshots clears all "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdate) ClearSnapshots() *ProfileUpdate {
+	_u.mutation.ClearSnapshots()
+	return _u
+}
+
+// RemoveSnapshotIDs removes the "snapshots" edge to Snapshot entities by IDs.
+func (_u *ProfileUpdate) RemoveSnapshotIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.RemoveSnapshotIDs(ids...)
+	return _u
+}
+
+// RemoveSnapshots removes "snapshots" edges to Snapshot entities.
+func (_u *ProfileUpdate) RemoveSnapshots(v ...*Snapshot) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveSnapshotIDs(ids...)
+}
+
+// ClearCategories clears all "categories" edges to the Category entity.
+func (_u *ProfileUpdate) ClearCategories() *ProfileUpdate {
+	_u.mutation.ClearCategories()
+	return _u
+}
+
+// RemoveCategoryIDs removes the "categories" edge to Category entities by IDs.
+func (_u *ProfileUpdate) RemoveCategoryIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.RemoveCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveCategories removes "categories" edges to Category entities.
+func (_u *ProfileUpdate) RemoveCategories(v ...*Category) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCategoryIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -392,6 +466,96 @@ func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedSnapshotsIDs(); len(nodes) > 0 && !_u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.SnapshotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCategoriesIDs(); len(nodes) > 0 && !_u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{profile.Label}
@@ -520,6 +684,36 @@ func (_u *ProfileUpdateOne) AddTransactions(v ...*Transaction) *ProfileUpdateOne
 	return _u.AddTransactionIDs(ids...)
 }
 
+// AddSnapshotIDs adds the "snapshots" edge to the Snapshot entity by IDs.
+func (_u *ProfileUpdateOne) AddSnapshotIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.AddSnapshotIDs(ids...)
+	return _u
+}
+
+// AddSnapshots adds the "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdateOne) AddSnapshots(v ...*Snapshot) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddSnapshotIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Category entity by IDs.
+func (_u *ProfileUpdateOne) AddCategoryIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.AddCategoryIDs(ids...)
+	return _u
+}
+
+// AddCategories adds the "categories" edges to the Category entity.
+func (_u *ProfileUpdateOne) AddCategories(v ...*Category) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCategoryIDs(ids...)
+}
+
 // Mutation returns the ProfileMutation object of the builder.
 func (_u *ProfileUpdateOne) Mutation() *ProfileMutation {
 	return _u.mutation
@@ -571,6 +765,48 @@ func (_u *ProfileUpdateOne) RemoveTransactions(v ...*Transaction) *ProfileUpdate
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionIDs(ids...)
+}
+
+// ClearSnapshots clears all "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdateOne) ClearSnapshots() *ProfileUpdateOne {
+	_u.mutation.ClearSnapshots()
+	return _u
+}
+
+// RemoveSnapshotIDs removes the "snapshots" edge to Snapshot entities by IDs.
+func (_u *ProfileUpdateOne) RemoveSnapshotIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.RemoveSnapshotIDs(ids...)
+	return _u
+}
+
+// RemoveSnapshots removes "snapshots" edges to Snapshot entities.
+func (_u *ProfileUpdateOne) RemoveSnapshots(v ...*Snapshot) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveSnapshotIDs(ids...)
+}
+
+// ClearCategories clears all "categories" edges to the Category entity.
+func (_u *ProfileUpdateOne) ClearCategories() *ProfileUpdateOne {
+	_u.mutation.ClearCategories()
+	return _u
+}
+
+// RemoveCategoryIDs removes the "categories" edge to Category entities by IDs.
+func (_u *ProfileUpdateOne) RemoveCategoryIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.RemoveCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveCategories removes "categories" edges to Category entities.
+func (_u *ProfileUpdateOne) RemoveCategories(v ...*Category) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCategoryIDs(ids...)
 }
 
 // Where appends a list predicates to the ProfileUpdate builder.
@@ -794,6 +1030,96 @@ func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedSnapshotsIDs(); len(nodes) > 0 && !_u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.SnapshotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCategoriesIDs(); len(nodes) > 0 && !_u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

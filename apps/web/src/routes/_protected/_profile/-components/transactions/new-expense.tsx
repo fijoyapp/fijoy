@@ -41,7 +41,7 @@ const fragment = graphql`
       edges {
         node {
           id
-          currencySymbol
+          currencyCode
         }
       }
     }
@@ -54,10 +54,10 @@ const mutation = graphql`
   ) {
     createTransactionWithTransactionEntries(input: $input) {
       id
-      datetime
+      createTime
       note
-      balance
       transactionEntries {
+        note
         account {
           id
           balance
@@ -148,7 +148,7 @@ const NewExpense = ({ fragmentRef }: Props) => {
                 name="total"
                 label="Total"
                 onValueChange={(value) => form.setValue("total", value)}
-                currency={selectedAccount?.currencySymbol}
+                currency={selectedAccount?.currencyCode}
                 description="Total amount of the expense"
               />
 

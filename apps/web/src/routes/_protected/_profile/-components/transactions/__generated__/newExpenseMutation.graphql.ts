@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3d9130defd0e44a0c21d3b4a6043a734>>
+ * @generated SignedSource<<fb118ca7bdb6b000cb3a0049642192e6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type CreateTransactionEntryInput = {
   accountID: string;
   amount: string;
   createTime?: any | null | undefined;
+  note?: string | null | undefined;
   transactionID: string;
   updateTime?: any | null | undefined;
 };
@@ -26,8 +27,7 @@ export type newExpenseMutation$variables = {
 };
 export type newExpenseMutation$data = {
   readonly createTransactionWithTransactionEntries: {
-    readonly balance: string;
-    readonly datetime: any;
+    readonly createTime: any;
     readonly id: string;
     readonly note: string | null | undefined;
     readonly transactionEntries: ReadonlyArray<{
@@ -36,6 +36,7 @@ export type newExpenseMutation$data = {
         readonly balance: string;
         readonly id: string;
       };
+      readonly note: string | null | undefined;
     }> | null | undefined;
   };
 };
@@ -70,7 +71,7 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "datetime",
+  "name": "createTime",
   "storageKey": null
 },
 v4 = {
@@ -83,20 +84,19 @@ v4 = {
 v5 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "balance",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
   "concreteType": "Account",
   "kind": "LinkedField",
   "name": "account",
   "plural": false,
   "selections": [
     (v2/*: any*/),
-    (v5/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "balance",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -125,7 +125,6 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -134,7 +133,8 @@ return {
             "name": "transactionEntries",
             "plural": true,
             "selections": [
-              (v6/*: any*/)
+              (v4/*: any*/),
+              (v5/*: any*/)
             ],
             "storageKey": null
           }
@@ -162,7 +162,6 @@ return {
           (v2/*: any*/),
           (v3/*: any*/),
           (v4/*: any*/),
-          (v5/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -171,7 +170,8 @@ return {
             "name": "transactionEntries",
             "plural": true,
             "selections": [
-              (v6/*: any*/),
+              (v4/*: any*/),
+              (v5/*: any*/),
               (v2/*: any*/)
             ],
             "storageKey": null
@@ -182,16 +182,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e57654ba686e4629f5060400c2212966",
+    "cacheID": "cc1fd4e1ce5b5ac491062f4c0c858fd4",
     "id": null,
     "metadata": {},
     "name": "newExpenseMutation",
     "operationKind": "mutation",
-    "text": "mutation newExpenseMutation(\n  $input: CreateTransactionWithTransactionEntriesInput!\n) {\n  createTransactionWithTransactionEntries(input: $input) {\n    id\n    datetime\n    note\n    balance\n    transactionEntries {\n      account {\n        id\n        balance\n        amount\n      }\n      id\n    }\n  }\n}\n"
+    "text": "mutation newExpenseMutation(\n  $input: CreateTransactionWithTransactionEntriesInput!\n) {\n  createTransactionWithTransactionEntries(input: $input) {\n    id\n    createTime\n    note\n    transactionEntries {\n      note\n      account {\n        id\n        balance\n        amount\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a0f6613040e9f4bf3d79269dc54633b8";
+(node as any).hash = "b3e011d6b257472dc29151035f218dff";
 
 export default node;

@@ -12,7 +12,11 @@ import (
 	"fijoy/ent/migrate"
 
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
+	"fijoy/ent/snapshotaccount"
+	"fijoy/ent/snapshotfxrate"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
@@ -31,8 +35,16 @@ type Client struct {
 	Schema *migrate.Schema
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
+	// Category is the client for interacting with the Category builders.
+	Category *CategoryClient
 	// Profile is the client for interacting with the Profile builders.
 	Profile *ProfileClient
+	// Snapshot is the client for interacting with the Snapshot builders.
+	Snapshot *SnapshotClient
+	// SnapshotAccount is the client for interacting with the SnapshotAccount builders.
+	SnapshotAccount *SnapshotAccountClient
+	// SnapshotFXRate is the client for interacting with the SnapshotFXRate builders.
+	SnapshotFXRate *SnapshotFXRateClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
 	// TransactionEntry is the client for interacting with the TransactionEntry builders.
@@ -53,7 +65,11 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Account = NewAccountClient(c.config)
+	c.Category = NewCategoryClient(c.config)
 	c.Profile = NewProfileClient(c.config)
+	c.Snapshot = NewSnapshotClient(c.config)
+	c.SnapshotAccount = NewSnapshotAccountClient(c.config)
+	c.SnapshotFXRate = NewSnapshotFXRateClient(c.config)
 	c.Transaction = NewTransactionClient(c.config)
 	c.TransactionEntry = NewTransactionEntryClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -151,7 +167,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:              ctx,
 		config:           cfg,
 		Account:          NewAccountClient(cfg),
+		Category:         NewCategoryClient(cfg),
 		Profile:          NewProfileClient(cfg),
+		Snapshot:         NewSnapshotClient(cfg),
+		SnapshotAccount:  NewSnapshotAccountClient(cfg),
+		SnapshotFXRate:   NewSnapshotFXRateClient(cfg),
 		Transaction:      NewTransactionClient(cfg),
 		TransactionEntry: NewTransactionEntryClient(cfg),
 		User:             NewUserClient(cfg),
@@ -176,7 +196,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:              ctx,
 		config:           cfg,
 		Account:          NewAccountClient(cfg),
+		Category:         NewCategoryClient(cfg),
 		Profile:          NewProfileClient(cfg),
+		Snapshot:         NewSnapshotClient(cfg),
+		SnapshotAccount:  NewSnapshotAccountClient(cfg),
+		SnapshotFXRate:   NewSnapshotFXRateClient(cfg),
 		Transaction:      NewTransactionClient(cfg),
 		TransactionEntry: NewTransactionEntryClient(cfg),
 		User:             NewUserClient(cfg),
@@ -210,7 +234,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Account, c.Profile, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
+		c.Account, c.Category, c.Profile, c.Snapshot, c.SnapshotAccount,
+		c.SnapshotFXRate, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
 	} {
 		n.Use(hooks...)
 	}
@@ -220,7 +245,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Account, c.Profile, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
+		c.Account, c.Category, c.Profile, c.Snapshot, c.SnapshotAccount,
+		c.SnapshotFXRate, c.Transaction, c.TransactionEntry, c.User, c.UserKey,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -231,8 +257,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AccountMutation:
 		return c.Account.mutate(ctx, m)
+	case *CategoryMutation:
+		return c.Category.mutate(ctx, m)
 	case *ProfileMutation:
 		return c.Profile.mutate(ctx, m)
+	case *SnapshotMutation:
+		return c.Snapshot.mutate(ctx, m)
+	case *SnapshotAccountMutation:
+		return c.SnapshotAccount.mutate(ctx, m)
+	case *SnapshotFXRateMutation:
+		return c.SnapshotFXRate.mutate(ctx, m)
 	case *TransactionMutation:
 		return c.Transaction.mutate(ctx, m)
 	case *TransactionEntryMutation:
@@ -386,6 +420,22 @@ func (c *AccountClient) QueryTransactionEntries(_m *Account) *TransactionEntryQu
 	return query
 }
 
+// QuerySnapshotAccounts queries the snapshot_accounts edge of a Account.
+func (c *AccountClient) QuerySnapshotAccounts(_m *Account) *SnapshotAccountQuery {
+	query := (&SnapshotAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, id),
+			sqlgraph.To(snapshotaccount.Table, snapshotaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.SnapshotAccountsTable, account.SnapshotAccountsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AccountClient) Hooks() []Hook {
 	return c.hooks.Account
@@ -408,6 +458,171 @@ func (c *AccountClient) mutate(ctx context.Context, m *AccountMutation) (Value, 
 		return (&AccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Account mutation op: %q", m.Op())
+	}
+}
+
+// CategoryClient is a client for the Category schema.
+type CategoryClient struct {
+	config
+}
+
+// NewCategoryClient returns a client for the Category from the given config.
+func NewCategoryClient(c config) *CategoryClient {
+	return &CategoryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `category.Hooks(f(g(h())))`.
+func (c *CategoryClient) Use(hooks ...Hook) {
+	c.hooks.Category = append(c.hooks.Category, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `category.Intercept(f(g(h())))`.
+func (c *CategoryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Category = append(c.inters.Category, interceptors...)
+}
+
+// Create returns a builder for creating a Category entity.
+func (c *CategoryClient) Create() *CategoryCreate {
+	mutation := newCategoryMutation(c.config, OpCreate)
+	return &CategoryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Category entities.
+func (c *CategoryClient) CreateBulk(builders ...*CategoryCreate) *CategoryCreateBulk {
+	return &CategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CategoryClient) MapCreateBulk(slice any, setFunc func(*CategoryCreate, int)) *CategoryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CategoryCreateBulk{err: fmt.Errorf("calling to CategoryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CategoryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CategoryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Category.
+func (c *CategoryClient) Update() *CategoryUpdate {
+	mutation := newCategoryMutation(c.config, OpUpdate)
+	return &CategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CategoryClient) UpdateOne(_m *Category) *CategoryUpdateOne {
+	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategory(_m))
+	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CategoryClient) UpdateOneID(id int) *CategoryUpdateOne {
+	mutation := newCategoryMutation(c.config, OpUpdateOne, withCategoryID(id))
+	return &CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Category.
+func (c *CategoryClient) Delete() *CategoryDelete {
+	mutation := newCategoryMutation(c.config, OpDelete)
+	return &CategoryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CategoryClient) DeleteOne(_m *Category) *CategoryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CategoryClient) DeleteOneID(id int) *CategoryDeleteOne {
+	builder := c.Delete().Where(category.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CategoryDeleteOne{builder}
+}
+
+// Query returns a query builder for Category.
+func (c *CategoryClient) Query() *CategoryQuery {
+	return &CategoryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCategory},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Category entity by its id.
+func (c *CategoryClient) Get(ctx context.Context, id int) (*Category, error) {
+	return c.Query().Where(category.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CategoryClient) GetX(ctx context.Context, id int) *Category {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProfile queries the profile edge of a Category.
+func (c *CategoryClient) QueryProfile(_m *Category) *ProfileQuery {
+	query := (&ProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(category.Table, category.FieldID, id),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, category.ProfileTable, category.ProfileColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransactions queries the transactions edge of a Category.
+func (c *CategoryClient) QueryTransactions(_m *Category) *TransactionQuery {
+	query := (&TransactionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(category.Table, category.FieldID, id),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, category.TransactionsTable, category.TransactionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *CategoryClient) Hooks() []Hook {
+	return c.hooks.Category
+}
+
+// Interceptors returns the client interceptors.
+func (c *CategoryClient) Interceptors() []Interceptor {
+	return c.inters.Category
+}
+
+func (c *CategoryClient) mutate(ctx context.Context, m *CategoryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CategoryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CategoryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CategoryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CategoryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Category mutation op: %q", m.Op())
 	}
 }
 
@@ -567,6 +782,38 @@ func (c *ProfileClient) QueryTransactions(_m *Profile) *TransactionQuery {
 	return query
 }
 
+// QuerySnapshots queries the snapshots edge of a Profile.
+func (c *ProfileClient) QuerySnapshots(_m *Profile) *SnapshotQuery {
+	query := (&SnapshotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, id),
+			sqlgraph.To(snapshot.Table, snapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.SnapshotsTable, profile.SnapshotsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCategories queries the categories edge of a Profile.
+func (c *ProfileClient) QueryCategories(_m *Profile) *CategoryQuery {
+	query := (&CategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, id),
+			sqlgraph.To(category.Table, category.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.CategoriesTable, profile.CategoriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ProfileClient) Hooks() []Hook {
 	return c.hooks.Profile
@@ -589,6 +836,501 @@ func (c *ProfileClient) mutate(ctx context.Context, m *ProfileMutation) (Value, 
 		return (&ProfileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Profile mutation op: %q", m.Op())
+	}
+}
+
+// SnapshotClient is a client for the Snapshot schema.
+type SnapshotClient struct {
+	config
+}
+
+// NewSnapshotClient returns a client for the Snapshot from the given config.
+func NewSnapshotClient(c config) *SnapshotClient {
+	return &SnapshotClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `snapshot.Hooks(f(g(h())))`.
+func (c *SnapshotClient) Use(hooks ...Hook) {
+	c.hooks.Snapshot = append(c.hooks.Snapshot, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `snapshot.Intercept(f(g(h())))`.
+func (c *SnapshotClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Snapshot = append(c.inters.Snapshot, interceptors...)
+}
+
+// Create returns a builder for creating a Snapshot entity.
+func (c *SnapshotClient) Create() *SnapshotCreate {
+	mutation := newSnapshotMutation(c.config, OpCreate)
+	return &SnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Snapshot entities.
+func (c *SnapshotClient) CreateBulk(builders ...*SnapshotCreate) *SnapshotCreateBulk {
+	return &SnapshotCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SnapshotClient) MapCreateBulk(slice any, setFunc func(*SnapshotCreate, int)) *SnapshotCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SnapshotCreateBulk{err: fmt.Errorf("calling to SnapshotClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SnapshotCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SnapshotCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Snapshot.
+func (c *SnapshotClient) Update() *SnapshotUpdate {
+	mutation := newSnapshotMutation(c.config, OpUpdate)
+	return &SnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SnapshotClient) UpdateOne(_m *Snapshot) *SnapshotUpdateOne {
+	mutation := newSnapshotMutation(c.config, OpUpdateOne, withSnapshot(_m))
+	return &SnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SnapshotClient) UpdateOneID(id int) *SnapshotUpdateOne {
+	mutation := newSnapshotMutation(c.config, OpUpdateOne, withSnapshotID(id))
+	return &SnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Snapshot.
+func (c *SnapshotClient) Delete() *SnapshotDelete {
+	mutation := newSnapshotMutation(c.config, OpDelete)
+	return &SnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SnapshotClient) DeleteOne(_m *Snapshot) *SnapshotDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SnapshotClient) DeleteOneID(id int) *SnapshotDeleteOne {
+	builder := c.Delete().Where(snapshot.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SnapshotDeleteOne{builder}
+}
+
+// Query returns a query builder for Snapshot.
+func (c *SnapshotClient) Query() *SnapshotQuery {
+	return &SnapshotQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSnapshot},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Snapshot entity by its id.
+func (c *SnapshotClient) Get(ctx context.Context, id int) (*Snapshot, error) {
+	return c.Query().Where(snapshot.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SnapshotClient) GetX(ctx context.Context, id int) *Snapshot {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryProfile queries the profile edge of a Snapshot.
+func (c *SnapshotClient) QueryProfile(_m *Snapshot) *ProfileQuery {
+	query := (&ProfileClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(snapshot.Table, snapshot.FieldID, id),
+			sqlgraph.To(profile.Table, profile.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, snapshot.ProfileTable, snapshot.ProfileColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySnapshotAccounts queries the snapshot_accounts edge of a Snapshot.
+func (c *SnapshotClient) QuerySnapshotAccounts(_m *Snapshot) *SnapshotAccountQuery {
+	query := (&SnapshotAccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(snapshot.Table, snapshot.FieldID, id),
+			sqlgraph.To(snapshotaccount.Table, snapshotaccount.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, snapshot.SnapshotAccountsTable, snapshot.SnapshotAccountsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySnapshotFxRates queries the snapshot_fx_rates edge of a Snapshot.
+func (c *SnapshotClient) QuerySnapshotFxRates(_m *Snapshot) *SnapshotFXRateQuery {
+	query := (&SnapshotFXRateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(snapshot.Table, snapshot.FieldID, id),
+			sqlgraph.To(snapshotfxrate.Table, snapshotfxrate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, snapshot.SnapshotFxRatesTable, snapshot.SnapshotFxRatesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SnapshotClient) Hooks() []Hook {
+	return c.hooks.Snapshot
+}
+
+// Interceptors returns the client interceptors.
+func (c *SnapshotClient) Interceptors() []Interceptor {
+	return c.inters.Snapshot
+}
+
+func (c *SnapshotClient) mutate(ctx context.Context, m *SnapshotMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SnapshotCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SnapshotUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SnapshotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SnapshotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Snapshot mutation op: %q", m.Op())
+	}
+}
+
+// SnapshotAccountClient is a client for the SnapshotAccount schema.
+type SnapshotAccountClient struct {
+	config
+}
+
+// NewSnapshotAccountClient returns a client for the SnapshotAccount from the given config.
+func NewSnapshotAccountClient(c config) *SnapshotAccountClient {
+	return &SnapshotAccountClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `snapshotaccount.Hooks(f(g(h())))`.
+func (c *SnapshotAccountClient) Use(hooks ...Hook) {
+	c.hooks.SnapshotAccount = append(c.hooks.SnapshotAccount, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `snapshotaccount.Intercept(f(g(h())))`.
+func (c *SnapshotAccountClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SnapshotAccount = append(c.inters.SnapshotAccount, interceptors...)
+}
+
+// Create returns a builder for creating a SnapshotAccount entity.
+func (c *SnapshotAccountClient) Create() *SnapshotAccountCreate {
+	mutation := newSnapshotAccountMutation(c.config, OpCreate)
+	return &SnapshotAccountCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SnapshotAccount entities.
+func (c *SnapshotAccountClient) CreateBulk(builders ...*SnapshotAccountCreate) *SnapshotAccountCreateBulk {
+	return &SnapshotAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SnapshotAccountClient) MapCreateBulk(slice any, setFunc func(*SnapshotAccountCreate, int)) *SnapshotAccountCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SnapshotAccountCreateBulk{err: fmt.Errorf("calling to SnapshotAccountClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SnapshotAccountCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SnapshotAccountCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SnapshotAccount.
+func (c *SnapshotAccountClient) Update() *SnapshotAccountUpdate {
+	mutation := newSnapshotAccountMutation(c.config, OpUpdate)
+	return &SnapshotAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SnapshotAccountClient) UpdateOne(_m *SnapshotAccount) *SnapshotAccountUpdateOne {
+	mutation := newSnapshotAccountMutation(c.config, OpUpdateOne, withSnapshotAccount(_m))
+	return &SnapshotAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SnapshotAccountClient) UpdateOneID(id int) *SnapshotAccountUpdateOne {
+	mutation := newSnapshotAccountMutation(c.config, OpUpdateOne, withSnapshotAccountID(id))
+	return &SnapshotAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SnapshotAccount.
+func (c *SnapshotAccountClient) Delete() *SnapshotAccountDelete {
+	mutation := newSnapshotAccountMutation(c.config, OpDelete)
+	return &SnapshotAccountDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SnapshotAccountClient) DeleteOne(_m *SnapshotAccount) *SnapshotAccountDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SnapshotAccountClient) DeleteOneID(id int) *SnapshotAccountDeleteOne {
+	builder := c.Delete().Where(snapshotaccount.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SnapshotAccountDeleteOne{builder}
+}
+
+// Query returns a query builder for SnapshotAccount.
+func (c *SnapshotAccountClient) Query() *SnapshotAccountQuery {
+	return &SnapshotAccountQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSnapshotAccount},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SnapshotAccount entity by its id.
+func (c *SnapshotAccountClient) Get(ctx context.Context, id int) (*SnapshotAccount, error) {
+	return c.Query().Where(snapshotaccount.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SnapshotAccountClient) GetX(ctx context.Context, id int) *SnapshotAccount {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a SnapshotAccount.
+func (c *SnapshotAccountClient) QueryAccount(_m *SnapshotAccount) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(snapshotaccount.Table, snapshotaccount.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, snapshotaccount.AccountTable, snapshotaccount.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySnapshot queries the snapshot edge of a SnapshotAccount.
+func (c *SnapshotAccountClient) QuerySnapshot(_m *SnapshotAccount) *SnapshotQuery {
+	query := (&SnapshotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(snapshotaccount.Table, snapshotaccount.FieldID, id),
+			sqlgraph.To(snapshot.Table, snapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, snapshotaccount.SnapshotTable, snapshotaccount.SnapshotColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SnapshotAccountClient) Hooks() []Hook {
+	return c.hooks.SnapshotAccount
+}
+
+// Interceptors returns the client interceptors.
+func (c *SnapshotAccountClient) Interceptors() []Interceptor {
+	return c.inters.SnapshotAccount
+}
+
+func (c *SnapshotAccountClient) mutate(ctx context.Context, m *SnapshotAccountMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SnapshotAccountCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SnapshotAccountUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SnapshotAccountUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SnapshotAccountDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SnapshotAccount mutation op: %q", m.Op())
+	}
+}
+
+// SnapshotFXRateClient is a client for the SnapshotFXRate schema.
+type SnapshotFXRateClient struct {
+	config
+}
+
+// NewSnapshotFXRateClient returns a client for the SnapshotFXRate from the given config.
+func NewSnapshotFXRateClient(c config) *SnapshotFXRateClient {
+	return &SnapshotFXRateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `snapshotfxrate.Hooks(f(g(h())))`.
+func (c *SnapshotFXRateClient) Use(hooks ...Hook) {
+	c.hooks.SnapshotFXRate = append(c.hooks.SnapshotFXRate, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `snapshotfxrate.Intercept(f(g(h())))`.
+func (c *SnapshotFXRateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SnapshotFXRate = append(c.inters.SnapshotFXRate, interceptors...)
+}
+
+// Create returns a builder for creating a SnapshotFXRate entity.
+func (c *SnapshotFXRateClient) Create() *SnapshotFXRateCreate {
+	mutation := newSnapshotFXRateMutation(c.config, OpCreate)
+	return &SnapshotFXRateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SnapshotFXRate entities.
+func (c *SnapshotFXRateClient) CreateBulk(builders ...*SnapshotFXRateCreate) *SnapshotFXRateCreateBulk {
+	return &SnapshotFXRateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SnapshotFXRateClient) MapCreateBulk(slice any, setFunc func(*SnapshotFXRateCreate, int)) *SnapshotFXRateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SnapshotFXRateCreateBulk{err: fmt.Errorf("calling to SnapshotFXRateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SnapshotFXRateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SnapshotFXRateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SnapshotFXRate.
+func (c *SnapshotFXRateClient) Update() *SnapshotFXRateUpdate {
+	mutation := newSnapshotFXRateMutation(c.config, OpUpdate)
+	return &SnapshotFXRateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SnapshotFXRateClient) UpdateOne(_m *SnapshotFXRate) *SnapshotFXRateUpdateOne {
+	mutation := newSnapshotFXRateMutation(c.config, OpUpdateOne, withSnapshotFXRate(_m))
+	return &SnapshotFXRateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SnapshotFXRateClient) UpdateOneID(id int) *SnapshotFXRateUpdateOne {
+	mutation := newSnapshotFXRateMutation(c.config, OpUpdateOne, withSnapshotFXRateID(id))
+	return &SnapshotFXRateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SnapshotFXRate.
+func (c *SnapshotFXRateClient) Delete() *SnapshotFXRateDelete {
+	mutation := newSnapshotFXRateMutation(c.config, OpDelete)
+	return &SnapshotFXRateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SnapshotFXRateClient) DeleteOne(_m *SnapshotFXRate) *SnapshotFXRateDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SnapshotFXRateClient) DeleteOneID(id int) *SnapshotFXRateDeleteOne {
+	builder := c.Delete().Where(snapshotfxrate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SnapshotFXRateDeleteOne{builder}
+}
+
+// Query returns a query builder for SnapshotFXRate.
+func (c *SnapshotFXRateClient) Query() *SnapshotFXRateQuery {
+	return &SnapshotFXRateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSnapshotFXRate},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SnapshotFXRate entity by its id.
+func (c *SnapshotFXRateClient) Get(ctx context.Context, id int) (*SnapshotFXRate, error) {
+	return c.Query().Where(snapshotfxrate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SnapshotFXRateClient) GetX(ctx context.Context, id int) *SnapshotFXRate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QuerySnapshot queries the snapshot edge of a SnapshotFXRate.
+func (c *SnapshotFXRateClient) QuerySnapshot(_m *SnapshotFXRate) *SnapshotQuery {
+	query := (&SnapshotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(snapshotfxrate.Table, snapshotfxrate.FieldID, id),
+			sqlgraph.To(snapshot.Table, snapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, snapshotfxrate.SnapshotTable, snapshotfxrate.SnapshotColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *SnapshotFXRateClient) Hooks() []Hook {
+	return c.hooks.SnapshotFXRate
+}
+
+// Interceptors returns the client interceptors.
+func (c *SnapshotFXRateClient) Interceptors() []Interceptor {
+	return c.inters.SnapshotFXRate
+}
+
+func (c *SnapshotFXRateClient) mutate(ctx context.Context, m *SnapshotFXRateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SnapshotFXRateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SnapshotFXRateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SnapshotFXRateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SnapshotFXRateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SnapshotFXRate mutation op: %q", m.Op())
 	}
 }
 
@@ -709,6 +1451,22 @@ func (c *TransactionClient) QueryProfile(_m *Transaction) *ProfileQuery {
 			sqlgraph.From(transaction.Table, transaction.FieldID, id),
 			sqlgraph.To(profile.Table, profile.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transaction.ProfileTable, transaction.ProfileColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCategory queries the category edge of a Transaction.
+func (c *TransactionClient) QueryCategory(_m *Transaction) *CategoryQuery {
+	query := (&CategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transaction.Table, transaction.FieldID, id),
+			sqlgraph.To(category.Table, category.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transaction.CategoryTable, transaction.CategoryColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1239,9 +1997,11 @@ func (c *UserKeyClient) mutate(ctx context.Context, m *UserKeyMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, Profile, Transaction, TransactionEntry, User, UserKey []ent.Hook
+		Account, Category, Profile, Snapshot, SnapshotAccount, SnapshotFXRate,
+		Transaction, TransactionEntry, User, UserKey []ent.Hook
 	}
 	inters struct {
-		Account, Profile, Transaction, TransactionEntry, User, UserKey []ent.Interceptor
+		Account, Category, Profile, Snapshot, SnapshotAccount, SnapshotFXRate,
+		Transaction, TransactionEntry, User, UserKey []ent.Interceptor
 	}
 )

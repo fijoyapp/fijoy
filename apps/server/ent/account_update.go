@@ -8,6 +8,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshotaccount"
 	"fijoy/ent/transactionentry"
 	"fmt"
 	"time"
@@ -121,27 +122,6 @@ func (_u *AccountUpdate) AddValue(v decimal.Decimal) *AccountUpdate {
 	return _u
 }
 
-// SetFxRate sets the "fx_rate" field.
-func (_u *AccountUpdate) SetFxRate(v decimal.Decimal) *AccountUpdate {
-	_u.mutation.ResetFxRate()
-	_u.mutation.SetFxRate(v)
-	return _u
-}
-
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (_u *AccountUpdate) SetNillableFxRate(v *decimal.Decimal) *AccountUpdate {
-	if v != nil {
-		_u.SetFxRate(*v)
-	}
-	return _u
-}
-
-// AddFxRate adds value to the "fx_rate" field.
-func (_u *AccountUpdate) AddFxRate(v decimal.Decimal) *AccountUpdate {
-	_u.mutation.AddFxRate(v)
-	return _u
-}
-
 // SetBalance sets the "balance" field.
 func (_u *AccountUpdate) SetBalance(v decimal.Decimal) *AccountUpdate {
 	_u.mutation.ResetBalance()
@@ -203,6 +183,21 @@ func (_u *AccountUpdate) AddTransactionEntries(v ...*TransactionEntry) *AccountU
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddSnapshotAccountIDs adds the "snapshot_accounts" edge to the SnapshotAccount entity by IDs.
+func (_u *AccountUpdate) AddSnapshotAccountIDs(ids ...int) *AccountUpdate {
+	_u.mutation.AddSnapshotAccountIDs(ids...)
+	return _u
+}
+
+// AddSnapshotAccounts adds the "snapshot_accounts" edges to the SnapshotAccount entity.
+func (_u *AccountUpdate) AddSnapshotAccounts(v ...*SnapshotAccount) *AccountUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddSnapshotAccountIDs(ids...)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdate) Mutation() *AccountMutation {
 	return _u.mutation
@@ -233,6 +228,27 @@ func (_u *AccountUpdate) RemoveTransactionEntries(v ...*TransactionEntry) *Accou
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearSnapshotAccounts clears all "snapshot_accounts" edges to the SnapshotAccount entity.
+func (_u *AccountUpdate) ClearSnapshotAccounts() *AccountUpdate {
+	_u.mutation.ClearSnapshotAccounts()
+	return _u
+}
+
+// RemoveSnapshotAccountIDs removes the "snapshot_accounts" edge to SnapshotAccount entities by IDs.
+func (_u *AccountUpdate) RemoveSnapshotAccountIDs(ids ...int) *AccountUpdate {
+	_u.mutation.RemoveSnapshotAccountIDs(ids...)
+	return _u
+}
+
+// RemoveSnapshotAccounts removes "snapshot_accounts" edges to SnapshotAccount entities.
+func (_u *AccountUpdate) RemoveSnapshotAccounts(v ...*SnapshotAccount) *AccountUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveSnapshotAccountIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -330,12 +346,6 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(account.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := _u.mutation.FxRate(); ok {
-		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedFxRate(); ok {
-		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
-	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 	}
@@ -412,6 +422,51 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.SnapshotAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.SnapshotAccountsTable,
+			Columns: []string{account.SnapshotAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshotaccount.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedSnapshotAccountsIDs(); len(nodes) > 0 && !_u.mutation.SnapshotAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.SnapshotAccountsTable,
+			Columns: []string{account.SnapshotAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshotaccount.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.SnapshotAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.SnapshotAccountsTable,
+			Columns: []string{account.SnapshotAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshotaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -529,27 +584,6 @@ func (_u *AccountUpdateOne) AddValue(v decimal.Decimal) *AccountUpdateOne {
 	return _u
 }
 
-// SetFxRate sets the "fx_rate" field.
-func (_u *AccountUpdateOne) SetFxRate(v decimal.Decimal) *AccountUpdateOne {
-	_u.mutation.ResetFxRate()
-	_u.mutation.SetFxRate(v)
-	return _u
-}
-
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (_u *AccountUpdateOne) SetNillableFxRate(v *decimal.Decimal) *AccountUpdateOne {
-	if v != nil {
-		_u.SetFxRate(*v)
-	}
-	return _u
-}
-
-// AddFxRate adds value to the "fx_rate" field.
-func (_u *AccountUpdateOne) AddFxRate(v decimal.Decimal) *AccountUpdateOne {
-	_u.mutation.AddFxRate(v)
-	return _u
-}
-
 // SetBalance sets the "balance" field.
 func (_u *AccountUpdateOne) SetBalance(v decimal.Decimal) *AccountUpdateOne {
 	_u.mutation.ResetBalance()
@@ -611,6 +645,21 @@ func (_u *AccountUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *Accou
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddSnapshotAccountIDs adds the "snapshot_accounts" edge to the SnapshotAccount entity by IDs.
+func (_u *AccountUpdateOne) AddSnapshotAccountIDs(ids ...int) *AccountUpdateOne {
+	_u.mutation.AddSnapshotAccountIDs(ids...)
+	return _u
+}
+
+// AddSnapshotAccounts adds the "snapshot_accounts" edges to the SnapshotAccount entity.
+func (_u *AccountUpdateOne) AddSnapshotAccounts(v ...*SnapshotAccount) *AccountUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddSnapshotAccountIDs(ids...)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdateOne) Mutation() *AccountMutation {
 	return _u.mutation
@@ -641,6 +690,27 @@ func (_u *AccountUpdateOne) RemoveTransactionEntries(v ...*TransactionEntry) *Ac
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearSnapshotAccounts clears all "snapshot_accounts" edges to the SnapshotAccount entity.
+func (_u *AccountUpdateOne) ClearSnapshotAccounts() *AccountUpdateOne {
+	_u.mutation.ClearSnapshotAccounts()
+	return _u
+}
+
+// RemoveSnapshotAccountIDs removes the "snapshot_accounts" edge to SnapshotAccount entities by IDs.
+func (_u *AccountUpdateOne) RemoveSnapshotAccountIDs(ids ...int) *AccountUpdateOne {
+	_u.mutation.RemoveSnapshotAccountIDs(ids...)
+	return _u
+}
+
+// RemoveSnapshotAccounts removes "snapshot_accounts" edges to SnapshotAccount entities.
+func (_u *AccountUpdateOne) RemoveSnapshotAccounts(v ...*SnapshotAccount) *AccountUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveSnapshotAccountIDs(ids...)
 }
 
 // Where appends a list predicates to the AccountUpdate builder.
@@ -768,12 +838,6 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(account.FieldValue, field.TypeFloat64, value)
 	}
-	if value, ok := _u.mutation.FxRate(); ok {
-		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedFxRate(); ok {
-		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
-	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 	}
@@ -850,6 +914,51 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.SnapshotAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.SnapshotAccountsTable,
+			Columns: []string{account.SnapshotAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshotaccount.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedSnapshotAccountsIDs(); len(nodes) > 0 && !_u.mutation.SnapshotAccountsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.SnapshotAccountsTable,
+			Columns: []string{account.SnapshotAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshotaccount.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.SnapshotAccountsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.SnapshotAccountsTable,
+			Columns: []string{account.SnapshotAccountsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshotaccount.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

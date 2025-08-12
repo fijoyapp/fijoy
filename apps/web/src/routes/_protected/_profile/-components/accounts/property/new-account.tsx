@@ -44,16 +44,15 @@ const NewAccountPropertyMutation = graphql`
           balance
           institution
           value
-          currencySymbol
+          currencyCode
           amount
         }
       }
       transactionEdge @appendEdge(connections: $transactionConnections) {
         node {
           id
-          datetime
+          createTime
           note
-          balance
         }
       }
     }
@@ -96,7 +95,7 @@ export function NewProperty() {
           investmentType: "taxable", // TODO: customize
           ticker: values.symbol,
           tickerType: "currency",
-          currencySymbol: values.symbol,
+          currencyCode: values.symbol,
         },
       },
       onCompleted(_, errors) {

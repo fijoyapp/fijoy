@@ -18,12 +18,11 @@ var (
 		{Name: "institution", Type: field.TypeString},
 		{Name: "account_type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
 		{Name: "investment_type", Type: field.TypeEnum, Enums: []string{"non_investment", "taxable", "rrsp", "tfsa", "fhsa"}},
-		{Name: "currency_symbol", Type: field.TypeString},
+		{Name: "currency_code", Type: field.TypeString},
 		{Name: "ticker", Type: field.TypeString},
 		{Name: "ticker_type", Type: field.TypeEnum, Enums: []string{"currency", "stock", "crypto"}},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
-		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "archived", Type: field.TypeBool, Default: false},
 		{Name: "profile_accounts", Type: field.TypeInt},
@@ -36,7 +35,30 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "accounts_profiles_accounts",
-				Columns:    []*schema.Column{AccountsColumns[15]},
+				Columns:    []*schema.Column{AccountsColumns[14]},
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// CategoriesColumns holds the columns for the "categories" table.
+	CategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "category_type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer", "sync", "init"}},
+		{Name: "profile_categories", Type: field.TypeInt},
+	}
+	// CategoriesTable holds the schema information for the "categories" table.
+	CategoriesTable = &schema.Table{
+		Name:       "categories",
+		Columns:    CategoriesColumns,
+		PrimaryKey: []*schema.Column{CategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "categories_profiles_categories",
+				Columns:    []*schema.Column{CategoriesColumns[5]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -67,14 +89,90 @@ var (
 			},
 		},
 	}
+	// SnapshotsColumns holds the columns for the "snapshots" table.
+	SnapshotsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "profile_snapshots", Type: field.TypeInt},
+	}
+	// SnapshotsTable holds the schema information for the "snapshots" table.
+	SnapshotsTable = &schema.Table{
+		Name:       "snapshots",
+		Columns:    SnapshotsColumns,
+		PrimaryKey: []*schema.Column{SnapshotsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "snapshots_profiles_snapshots",
+				Columns:    []*schema.Column{SnapshotsColumns[4]},
+				RefColumns: []*schema.Column{ProfilesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// SnapshotAccountsColumns holds the columns for the "snapshot_accounts" table.
+	SnapshotAccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
+		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
+		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
+		{Name: "account_snapshot_accounts", Type: field.TypeInt},
+		{Name: "snapshot_snapshot_accounts", Type: field.TypeInt},
+	}
+	// SnapshotAccountsTable holds the schema information for the "snapshot_accounts" table.
+	SnapshotAccountsTable = &schema.Table{
+		Name:       "snapshot_accounts",
+		Columns:    SnapshotAccountsColumns,
+		PrimaryKey: []*schema.Column{SnapshotAccountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "snapshot_accounts_accounts_snapshot_accounts",
+				Columns:    []*schema.Column{SnapshotAccountsColumns[6]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "snapshot_accounts_snapshots_snapshot_accounts",
+				Columns:    []*schema.Column{SnapshotAccountsColumns[7]},
+				RefColumns: []*schema.Column{SnapshotsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// SnapshotFxRatesColumns holds the columns for the "snapshot_fx_rates" table.
+	SnapshotFxRatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "from_currency", Type: field.TypeString, Size: 2147483647},
+		{Name: "to_currency", Type: field.TypeString, Size: 2147483647},
+		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
+		{Name: "snapshot_snapshot_fx_rates", Type: field.TypeInt},
+	}
+	// SnapshotFxRatesTable holds the schema information for the "snapshot_fx_rates" table.
+	SnapshotFxRatesTable = &schema.Table{
+		Name:       "snapshot_fx_rates",
+		Columns:    SnapshotFxRatesColumns,
+		PrimaryKey: []*schema.Column{SnapshotFxRatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "snapshot_fx_rates_snapshots_snapshot_fx_rates",
+				Columns:    []*schema.Column{SnapshotFxRatesColumns[6]},
+				RefColumns: []*schema.Column{SnapshotsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// TransactionsColumns holds the columns for the "transactions" table.
 	TransactionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "datetime", Type: field.TypeTime, Default: "CURRENT_TIMESTAMP"},
+		{Name: "category_transactions", Type: field.TypeInt},
 		{Name: "profile_transactions", Type: field.TypeInt},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
@@ -84,8 +182,14 @@ var (
 		PrimaryKey: []*schema.Column{TransactionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
+				Symbol:     "transactions_categories_transactions",
+				Columns:    []*schema.Column{TransactionsColumns[4]},
+				RefColumns: []*schema.Column{CategoriesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
 				Symbol:     "transactions_profiles_transactions",
-				Columns:    []*schema.Column{TransactionsColumns[6]},
+				Columns:    []*schema.Column{TransactionsColumns[5]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -96,9 +200,9 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
+		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
-		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(18,10)", "postgres": "numeric(18,10)"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"mysql": "decimal(36,18)", "postgres": "numeric(36,18)"}},
 		{Name: "account_transaction_entries", Type: field.TypeInt},
 		{Name: "transaction_transaction_entries", Type: field.TypeInt},
@@ -162,7 +266,11 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
+		CategoriesTable,
 		ProfilesTable,
+		SnapshotsTable,
+		SnapshotAccountsTable,
+		SnapshotFxRatesTable,
 		TransactionsTable,
 		TransactionEntriesTable,
 		UsersTable,
@@ -175,11 +283,29 @@ func init() {
 	AccountsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(0),
 	}
+	CategoriesTable.ForeignKeys[0].RefTable = ProfilesTable
+	CategoriesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(38654705664),
+	}
 	ProfilesTable.ForeignKeys[0].RefTable = UsersTable
 	ProfilesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(4294967296),
 	}
-	TransactionsTable.ForeignKeys[0].RefTable = ProfilesTable
+	SnapshotsTable.ForeignKeys[0].RefTable = ProfilesTable
+	SnapshotsTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(25769803776),
+	}
+	SnapshotAccountsTable.ForeignKeys[0].RefTable = AccountsTable
+	SnapshotAccountsTable.ForeignKeys[1].RefTable = SnapshotsTable
+	SnapshotAccountsTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(30064771072),
+	}
+	SnapshotFxRatesTable.ForeignKeys[0].RefTable = SnapshotsTable
+	SnapshotFxRatesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(34359738368),
+	}
+	TransactionsTable.ForeignKeys[0].RefTable = CategoriesTable
+	TransactionsTable.ForeignKeys[1].RefTable = ProfilesTable
 	TransactionsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(8589934592),
 	}

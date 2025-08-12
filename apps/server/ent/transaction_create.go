@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"errors"
+	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
@@ -13,7 +14,6 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shopspring/decimal"
 )
 
 // TransactionCreate is the builder for creating a Transaction entity.
@@ -51,12 +51,6 @@ func (_c *TransactionCreate) SetNillableUpdateTime(v *time.Time) *TransactionCre
 	return _c
 }
 
-// SetBalance sets the "balance" field.
-func (_c *TransactionCreate) SetBalance(v decimal.Decimal) *TransactionCreate {
-	_c.mutation.SetBalance(v)
-	return _c
-}
-
 // SetNote sets the "note" field.
 func (_c *TransactionCreate) SetNote(v string) *TransactionCreate {
 	_c.mutation.SetNote(v)
@@ -71,20 +65,6 @@ func (_c *TransactionCreate) SetNillableNote(v *string) *TransactionCreate {
 	return _c
 }
 
-// SetDatetime sets the "datetime" field.
-func (_c *TransactionCreate) SetDatetime(v time.Time) *TransactionCreate {
-	_c.mutation.SetDatetime(v)
-	return _c
-}
-
-// SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (_c *TransactionCreate) SetNillableDatetime(v *time.Time) *TransactionCreate {
-	if v != nil {
-		_c.SetDatetime(*v)
-	}
-	return _c
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
 func (_c *TransactionCreate) SetProfileID(id int) *TransactionCreate {
 	_c.mutation.SetProfileID(id)
@@ -94,6 +74,17 @@ func (_c *TransactionCreate) SetProfileID(id int) *TransactionCreate {
 // SetProfile sets the "profile" edge to the Profile entity.
 func (_c *TransactionCreate) SetProfile(v *Profile) *TransactionCreate {
 	return _c.SetProfileID(v.ID)
+}
+
+// SetCategoryID sets the "category" edge to the Category entity by ID.
+func (_c *TransactionCreate) SetCategoryID(id int) *TransactionCreate {
+	_c.mutation.SetCategoryID(id)
+	return _c
+}
+
+// SetCategory sets the "category" edge to the Category entity.
+func (_c *TransactionCreate) SetCategory(v *Category) *TransactionCreate {
+	return _c.SetCategoryID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
@@ -154,10 +145,6 @@ func (_c *TransactionCreate) defaults() {
 		v := transaction.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
-	if _, ok := _c.mutation.Datetime(); !ok {
-		v := transaction.DefaultDatetime()
-		_c.mutation.SetDatetime(v)
-	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -168,14 +155,11 @@ func (_c *TransactionCreate) check() error {
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Transaction.update_time"`)}
 	}
-	if _, ok := _c.mutation.Balance(); !ok {
-		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Transaction.balance"`)}
-	}
-	if _, ok := _c.mutation.Datetime(); !ok {
-		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
-	}
 	if len(_c.mutation.ProfileIDs()) == 0 {
 		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "Transaction.profile"`)}
+	}
+	if len(_c.mutation.CategoryIDs()) == 0 {
+		return &ValidationError{Name: "category", err: errors.New(`ent: missing required edge "Transaction.category"`)}
 	}
 	return nil
 }
@@ -211,17 +195,9 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
-	if value, ok := _c.mutation.Balance(); ok {
-		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
-		_node.Balance = value
-	}
 	if value, ok := _c.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 		_node.Note = value
-	}
-	if value, ok := _c.mutation.Datetime(); ok {
-		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
-		_node.Datetime = value
 	}
 	if nodes := _c.mutation.ProfileIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -238,6 +214,23 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.profile_transactions = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.CategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.category_transactions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {

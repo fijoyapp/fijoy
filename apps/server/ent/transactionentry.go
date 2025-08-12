@@ -24,13 +24,13 @@ type TransactionEntry struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// Note holds the value of the "note" field.
+	Note string `json:"note,omitempty"`
 	// The unit amount of share or money in this transaction entry
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// The value of 1 share in the native currency. If this is just a currency account, then this field will be 1
 	Value decimal.Decimal `json:"value,omitempty"`
-	// The exchange rate from the native currency to user's default display currency
-	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
-	// The total balance of this transaction entry in user's display currency
+	// The total balance of this transaction entry in this account's currency
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionEntryQuery when eager-loading is set.
@@ -80,10 +80,12 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transactionentry.FieldAmount, transactionentry.FieldValue, transactionentry.FieldFxRate, transactionentry.FieldBalance:
+		case transactionentry.FieldAmount, transactionentry.FieldValue, transactionentry.FieldBalance:
 			values[i] = new(decimal.Decimal)
 		case transactionentry.FieldID:
 			values[i] = new(sql.NullInt64)
+		case transactionentry.FieldNote:
+			values[i] = new(sql.NullString)
 		case transactionentry.FieldCreateTime, transactionentry.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
 		case transactionentry.ForeignKeys[0]: // account_transaction_entries
@@ -123,6 +125,12 @@ func (_m *TransactionEntry) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
 			}
+		case transactionentry.FieldNote:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field note", values[i])
+			} else if value.Valid {
+				_m.Note = value.String
+			}
 		case transactionentry.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
@@ -134,12 +142,6 @@ func (_m *TransactionEntry) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value != nil {
 				_m.Value = *value
-			}
-		case transactionentry.FieldFxRate:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
-			} else if value != nil {
-				_m.FxRate = *value
 			}
 		case transactionentry.FieldBalance:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -213,14 +215,14 @@ func (_m *TransactionEntry) String() string {
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("note=")
+	builder.WriteString(_m.Note)
+	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Amount))
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Value))
-	builder.WriteString(", ")
-	builder.WriteString("fx_rate=")
-	builder.WriteString(fmt.Sprintf("%v", _m.FxRate))
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Balance))

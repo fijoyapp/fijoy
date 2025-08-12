@@ -5,7 +5,11 @@ package ent
 import (
 	"context"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
+	"fijoy/ent/snapshotaccount"
+	"fijoy/ent/snapshotfxrate"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
@@ -59,6 +63,19 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
 				*wq = *query
 			})
+
+		case "snapshotAccounts":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SnapshotAccountClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, snapshotaccountImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedSnapshotAccounts(alias, func(wq *SnapshotAccountQuery) {
+				*wq = *query
+			})
 		case "createTime":
 			if _, ok := fieldSeen[account.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, account.FieldCreateTime)
@@ -89,10 +106,10 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, account.FieldInvestmentType)
 				fieldSeen[account.FieldInvestmentType] = struct{}{}
 			}
-		case "currencySymbol":
-			if _, ok := fieldSeen[account.FieldCurrencySymbol]; !ok {
-				selectedFields = append(selectedFields, account.FieldCurrencySymbol)
-				fieldSeen[account.FieldCurrencySymbol] = struct{}{}
+		case "currencyCode":
+			if _, ok := fieldSeen[account.FieldCurrencyCode]; !ok {
+				selectedFields = append(selectedFields, account.FieldCurrencyCode)
+				fieldSeen[account.FieldCurrencyCode] = struct{}{}
 			}
 		case "ticker":
 			if _, ok := fieldSeen[account.FieldTicker]; !ok {
@@ -113,11 +130,6 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[account.FieldValue]; !ok {
 				selectedFields = append(selectedFields, account.FieldValue)
 				fieldSeen[account.FieldValue] = struct{}{}
-			}
-		case "fxRate":
-			if _, ok := fieldSeen[account.FieldFxRate]; !ok {
-				selectedFields = append(selectedFields, account.FieldFxRate)
-				fieldSeen[account.FieldFxRate] = struct{}{}
 			}
 		case "balance":
 			if _, ok := fieldSeen[account.FieldBalance]; !ok {
@@ -149,6 +161,109 @@ type accountPaginateArgs struct {
 
 func newAccountPaginateArgs(rv map[string]any) *accountPaginateArgs {
 	args := &accountPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *CategoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*CategoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *CategoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(category.Columns))
+		selectedFields = []string{category.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "profile":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&ProfileClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, profileImplementors)...); err != nil {
+				return err
+			}
+			_q.withProfile = query
+
+		case "transactions":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedTransactions(alias, func(wq *TransactionQuery) {
+				*wq = *query
+			})
+		case "createTime":
+			if _, ok := fieldSeen[category.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, category.FieldCreateTime)
+				fieldSeen[category.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[category.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, category.FieldUpdateTime)
+				fieldSeen[category.FieldUpdateTime] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[category.FieldName]; !ok {
+				selectedFields = append(selectedFields, category.FieldName)
+				fieldSeen[category.FieldName] = struct{}{}
+			}
+		case "categoryType":
+			if _, ok := fieldSeen[category.FieldCategoryType]; !ok {
+				selectedFields = append(selectedFields, category.FieldCategoryType)
+				fieldSeen[category.FieldCategoryType] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type categoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []CategoryPaginateOption
+}
+
+func newCategoryPaginateArgs(rv map[string]any) *categoryPaginateArgs {
+	args := &categoryPaginateArgs{}
 	if rv == nil {
 		return args
 	}
@@ -225,6 +340,32 @@ func (_q *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			_q.WithNamedTransactions(alias, func(wq *TransactionQuery) {
 				*wq = *query
 			})
+
+		case "snapshots":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SnapshotClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, snapshotImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedSnapshots(alias, func(wq *SnapshotQuery) {
+				*wq = *query
+			})
+
+		case "categories":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&CategoryClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, categoryImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedCategories(alias, func(wq *CategoryQuery) {
+				*wq = *query
+			})
 		case "createTime":
 			if _, ok := fieldSeen[profile.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, profile.FieldCreateTime)
@@ -294,6 +435,318 @@ func newProfilePaginateArgs(rv map[string]any) *profilePaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *SnapshotQuery) CollectFields(ctx context.Context, satisfies ...string) (*SnapshotQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *SnapshotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(snapshot.Columns))
+		selectedFields = []string{snapshot.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "profile":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&ProfileClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, profileImplementors)...); err != nil {
+				return err
+			}
+			_q.withProfile = query
+
+		case "snapshotAccounts":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SnapshotAccountClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, snapshotaccountImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedSnapshotAccounts(alias, func(wq *SnapshotAccountQuery) {
+				*wq = *query
+			})
+
+		case "snapshotFxRates":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SnapshotFXRateClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, snapshotfxrateImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedSnapshotFxRates(alias, func(wq *SnapshotFXRateQuery) {
+				*wq = *query
+			})
+		case "createTime":
+			if _, ok := fieldSeen[snapshot.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, snapshot.FieldCreateTime)
+				fieldSeen[snapshot.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[snapshot.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, snapshot.FieldUpdateTime)
+				fieldSeen[snapshot.FieldUpdateTime] = struct{}{}
+			}
+		case "note":
+			if _, ok := fieldSeen[snapshot.FieldNote]; !ok {
+				selectedFields = append(selectedFields, snapshot.FieldNote)
+				fieldSeen[snapshot.FieldNote] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type snapshotPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []SnapshotPaginateOption
+}
+
+func newSnapshotPaginateArgs(rv map[string]any) *snapshotPaginateArgs {
+	args := &snapshotPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *SnapshotAccountQuery) CollectFields(ctx context.Context, satisfies ...string) (*SnapshotAccountQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *SnapshotAccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(snapshotaccount.Columns))
+		selectedFields = []string{snapshotaccount.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "account":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&AccountClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
+				return err
+			}
+			_q.withAccount = query
+
+		case "snapshot":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SnapshotClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, snapshotImplementors)...); err != nil {
+				return err
+			}
+			_q.withSnapshot = query
+		case "createTime":
+			if _, ok := fieldSeen[snapshotaccount.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, snapshotaccount.FieldCreateTime)
+				fieldSeen[snapshotaccount.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[snapshotaccount.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, snapshotaccount.FieldUpdateTime)
+				fieldSeen[snapshotaccount.FieldUpdateTime] = struct{}{}
+			}
+		case "amount":
+			if _, ok := fieldSeen[snapshotaccount.FieldAmount]; !ok {
+				selectedFields = append(selectedFields, snapshotaccount.FieldAmount)
+				fieldSeen[snapshotaccount.FieldAmount] = struct{}{}
+			}
+		case "value":
+			if _, ok := fieldSeen[snapshotaccount.FieldValue]; !ok {
+				selectedFields = append(selectedFields, snapshotaccount.FieldValue)
+				fieldSeen[snapshotaccount.FieldValue] = struct{}{}
+			}
+		case "balance":
+			if _, ok := fieldSeen[snapshotaccount.FieldBalance]; !ok {
+				selectedFields = append(selectedFields, snapshotaccount.FieldBalance)
+				fieldSeen[snapshotaccount.FieldBalance] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type snapshotaccountPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []SnapshotAccountPaginateOption
+}
+
+func newSnapshotAccountPaginateArgs(rv map[string]any) *snapshotaccountPaginateArgs {
+	args := &snapshotaccountPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *SnapshotFXRateQuery) CollectFields(ctx context.Context, satisfies ...string) (*SnapshotFXRateQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *SnapshotFXRateQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(snapshotfxrate.Columns))
+		selectedFields = []string{snapshotfxrate.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "snapshot":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SnapshotClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, snapshotImplementors)...); err != nil {
+				return err
+			}
+			_q.withSnapshot = query
+		case "createTime":
+			if _, ok := fieldSeen[snapshotfxrate.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, snapshotfxrate.FieldCreateTime)
+				fieldSeen[snapshotfxrate.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[snapshotfxrate.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, snapshotfxrate.FieldUpdateTime)
+				fieldSeen[snapshotfxrate.FieldUpdateTime] = struct{}{}
+			}
+		case "fromCurrency":
+			if _, ok := fieldSeen[snapshotfxrate.FieldFromCurrency]; !ok {
+				selectedFields = append(selectedFields, snapshotfxrate.FieldFromCurrency)
+				fieldSeen[snapshotfxrate.FieldFromCurrency] = struct{}{}
+			}
+		case "toCurrency":
+			if _, ok := fieldSeen[snapshotfxrate.FieldToCurrency]; !ok {
+				selectedFields = append(selectedFields, snapshotfxrate.FieldToCurrency)
+				fieldSeen[snapshotfxrate.FieldToCurrency] = struct{}{}
+			}
+		case "fxRate":
+			if _, ok := fieldSeen[snapshotfxrate.FieldFxRate]; !ok {
+				selectedFields = append(selectedFields, snapshotfxrate.FieldFxRate)
+				fieldSeen[snapshotfxrate.FieldFxRate] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type snapshotfxratePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []SnapshotFXRatePaginateOption
+}
+
+func newSnapshotFXRatePaginateArgs(rv map[string]any) *snapshotfxratePaginateArgs {
+	args := &snapshotfxratePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (_q *TransactionQuery) CollectFields(ctx context.Context, satisfies ...string) (*TransactionQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -326,6 +779,17 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			}
 			_q.withProfile = query
 
+		case "category":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&CategoryClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, categoryImplementors)...); err != nil {
+				return err
+			}
+			_q.withCategory = query
+
 		case "transactionEntries":
 			var (
 				alias = field.Alias
@@ -348,20 +812,10 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				selectedFields = append(selectedFields, transaction.FieldUpdateTime)
 				fieldSeen[transaction.FieldUpdateTime] = struct{}{}
 			}
-		case "balance":
-			if _, ok := fieldSeen[transaction.FieldBalance]; !ok {
-				selectedFields = append(selectedFields, transaction.FieldBalance)
-				fieldSeen[transaction.FieldBalance] = struct{}{}
-			}
 		case "note":
 			if _, ok := fieldSeen[transaction.FieldNote]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldNote)
 				fieldSeen[transaction.FieldNote] = struct{}{}
-			}
-		case "datetime":
-			if _, ok := fieldSeen[transaction.FieldDatetime]; !ok {
-				selectedFields = append(selectedFields, transaction.FieldDatetime)
-				fieldSeen[transaction.FieldDatetime] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -454,6 +908,11 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 				selectedFields = append(selectedFields, transactionentry.FieldUpdateTime)
 				fieldSeen[transactionentry.FieldUpdateTime] = struct{}{}
 			}
+		case "note":
+			if _, ok := fieldSeen[transactionentry.FieldNote]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldNote)
+				fieldSeen[transactionentry.FieldNote] = struct{}{}
+			}
 		case "amount":
 			if _, ok := fieldSeen[transactionentry.FieldAmount]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldAmount)
@@ -463,11 +922,6 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 			if _, ok := fieldSeen[transactionentry.FieldValue]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldValue)
 				fieldSeen[transactionentry.FieldValue] = struct{}{}
-			}
-		case "fxRate":
-			if _, ok := fieldSeen[transactionentry.FieldFxRate]; !ok {
-				selectedFields = append(selectedFields, transactionentry.FieldFxRate)
-				fieldSeen[transactionentry.FieldFxRate] = struct{}{}
 			}
 		case "balance":
 			if _, ok := fieldSeen[transactionentry.FieldBalance]; !ok {

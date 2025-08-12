@@ -44,7 +44,7 @@ const AccountsDataTableFragment = graphql`
           balance
           institution @required(action: THROW)
           value @required(action: THROW)
-          currencySymbol
+          currencyCode
           amount
         }
       }
@@ -128,7 +128,7 @@ export default function AccountDataTable({
           invariant(row.original, "Row original should not be null");
           const money = row.original.amount;
           const value = row.original.value;
-          const currencySymbol = row.original.currencySymbol;
+          const currencyCode = row.original.currencyCode;
           const accountType = row.original.accountType;
 
           return (
@@ -136,12 +136,12 @@ export default function AccountDataTable({
               {match(accountType)
                 .with("investment", () => (
                   <div className="font-mono">
-                    {money} x {getCurrencyDisplay(value, currencySymbol)}
+                    {money} x {getCurrencyDisplay(value, currencyCode)}
                   </div>
                 ))
                 .otherwise(() => (
                   <div className="font-mono">
-                    {getCurrencyDisplay(money, currencySymbol)}
+                    {getCurrencyDisplay(money, currencyCode)}
                   </div>
                 ))}
             </div>

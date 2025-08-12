@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -17,12 +18,13 @@ type CreateAccountInput struct {
 	Institution         string
 	AccountType         account.AccountType
 	InvestmentType      account.InvestmentType
-	CurrencySymbol      string
+	CurrencyCode        string
 	Ticker              string
 	TickerType          account.TickerType
 	Amount              decimal.Decimal
 	Archived            *bool
 	TransactionEntryIDs []int
+	SnapshotAccountIDs  []int
 }
 
 // Mutate applies the CreateAccountInput on the AccountMutation builder.
@@ -37,7 +39,7 @@ func (i *CreateAccountInput) Mutate(m *AccountMutation) {
 	m.SetInstitution(i.Institution)
 	m.SetAccountType(i.AccountType)
 	m.SetInvestmentType(i.InvestmentType)
-	m.SetCurrencySymbol(i.CurrencySymbol)
+	m.SetCurrencyCode(i.CurrencyCode)
 	m.SetTicker(i.Ticker)
 	m.SetTickerType(i.TickerType)
 	m.SetAmount(i.Amount)
@@ -46,6 +48,9 @@ func (i *CreateAccountInput) Mutate(m *AccountMutation) {
 	}
 	if v := i.TransactionEntryIDs; len(v) > 0 {
 		m.AddTransactionEntryIDs(v...)
+	}
+	if v := i.SnapshotAccountIDs; len(v) > 0 {
+		m.AddSnapshotAccountIDs(v...)
 	}
 }
 
@@ -66,6 +71,9 @@ type UpdateAccountInput struct {
 	ClearTransactionEntries   bool
 	AddTransactionEntryIDs    []int
 	RemoveTransactionEntryIDs []int
+	ClearSnapshotAccounts     bool
+	AddSnapshotAccountIDs     []int
+	RemoveSnapshotAccountIDs  []int
 }
 
 // Mutate applies the UpdateAccountInput on the AccountMutation builder.
@@ -97,6 +105,15 @@ func (i *UpdateAccountInput) Mutate(m *AccountMutation) {
 	if v := i.RemoveTransactionEntryIDs; len(v) > 0 {
 		m.RemoveTransactionEntryIDs(v...)
 	}
+	if i.ClearSnapshotAccounts {
+		m.ClearSnapshotAccounts()
+	}
+	if v := i.AddSnapshotAccountIDs; len(v) > 0 {
+		m.AddSnapshotAccountIDs(v...)
+	}
+	if v := i.RemoveSnapshotAccountIDs; len(v) > 0 {
+		m.RemoveSnapshotAccountIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the UpdateAccountInput on the AccountUpdate builder.
@@ -111,6 +128,76 @@ func (c *AccountUpdateOne) SetInput(i UpdateAccountInput) *AccountUpdateOne {
 	return c
 }
 
+// CreateCategoryInput represents a mutation input for creating categories.
+type CreateCategoryInput struct {
+	CreateTime     *time.Time
+	UpdateTime     *time.Time
+	Name           string
+	CategoryType   category.CategoryType
+	TransactionIDs []int
+}
+
+// Mutate applies the CreateCategoryInput on the CategoryMutation builder.
+func (i *CreateCategoryInput) Mutate(m *CategoryMutation) {
+	if v := i.CreateTime; v != nil {
+		m.SetCreateTime(*v)
+	}
+	if v := i.UpdateTime; v != nil {
+		m.SetUpdateTime(*v)
+	}
+	m.SetName(i.Name)
+	m.SetCategoryType(i.CategoryType)
+	if v := i.TransactionIDs; len(v) > 0 {
+		m.AddTransactionIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateCategoryInput on the CategoryCreate builder.
+func (c *CategoryCreate) SetInput(i CreateCategoryInput) *CategoryCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateCategoryInput represents a mutation input for updating categories.
+type UpdateCategoryInput struct {
+	UpdateTime           *time.Time
+	Name                 *string
+	ClearTransactions    bool
+	AddTransactionIDs    []int
+	RemoveTransactionIDs []int
+}
+
+// Mutate applies the UpdateCategoryInput on the CategoryMutation builder.
+func (i *UpdateCategoryInput) Mutate(m *CategoryMutation) {
+	if v := i.UpdateTime; v != nil {
+		m.SetUpdateTime(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearTransactions {
+		m.ClearTransactions()
+	}
+	if v := i.AddTransactionIDs; len(v) > 0 {
+		m.AddTransactionIDs(v...)
+	}
+	if v := i.RemoveTransactionIDs; len(v) > 0 {
+		m.RemoveTransactionIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateCategoryInput on the CategoryUpdate builder.
+func (c *CategoryUpdate) SetInput(i UpdateCategoryInput) *CategoryUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateCategoryInput on the CategoryUpdateOne builder.
+func (c *CategoryUpdateOne) SetInput(i UpdateCategoryInput) *CategoryUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateProfileInput represents a mutation input for creating profiles.
 type CreateProfileInput struct {
 	CreateTime     *time.Time
@@ -120,6 +207,8 @@ type CreateProfileInput struct {
 	NetWorthGoal   decimal.Decimal
 	AccountIDs     []int
 	TransactionIDs []int
+	SnapshotIDs    []int
+	CategoryIDs    []int
 }
 
 // Mutate applies the CreateProfileInput on the ProfileMutation builder.
@@ -140,6 +229,12 @@ func (i *CreateProfileInput) Mutate(m *ProfileMutation) {
 	}
 	if v := i.TransactionIDs; len(v) > 0 {
 		m.AddTransactionIDs(v...)
+	}
+	if v := i.SnapshotIDs; len(v) > 0 {
+		m.AddSnapshotIDs(v...)
+	}
+	if v := i.CategoryIDs; len(v) > 0 {
+		m.AddCategoryIDs(v...)
 	}
 }
 
@@ -162,6 +257,12 @@ type UpdateProfileInput struct {
 	ClearTransactions    bool
 	AddTransactionIDs    []int
 	RemoveTransactionIDs []int
+	ClearSnapshots       bool
+	AddSnapshotIDs       []int
+	RemoveSnapshotIDs    []int
+	ClearCategories      bool
+	AddCategoryIDs       []int
+	RemoveCategoryIDs    []int
 }
 
 // Mutate applies the UpdateProfileInput on the ProfileMutation builder.
@@ -199,6 +300,24 @@ func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
 	if v := i.RemoveTransactionIDs; len(v) > 0 {
 		m.RemoveTransactionIDs(v...)
 	}
+	if i.ClearSnapshots {
+		m.ClearSnapshots()
+	}
+	if v := i.AddSnapshotIDs; len(v) > 0 {
+		m.AddSnapshotIDs(v...)
+	}
+	if v := i.RemoveSnapshotIDs; len(v) > 0 {
+		m.RemoveSnapshotIDs(v...)
+	}
+	if i.ClearCategories {
+		m.ClearCategories()
+	}
+	if v := i.AddCategoryIDs; len(v) > 0 {
+		m.AddCategoryIDs(v...)
+	}
+	if v := i.RemoveCategoryIDs; len(v) > 0 {
+		m.RemoveCategoryIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the UpdateProfileInput on the ProfileUpdate builder.
@@ -218,7 +337,6 @@ type CreateTransactionInput struct {
 	CreateTime          *time.Time
 	UpdateTime          *time.Time
 	Note                *string
-	Datetime            *time.Time
 	TransactionEntryIDs []int
 }
 
@@ -232,9 +350,6 @@ func (i *CreateTransactionInput) Mutate(m *TransactionMutation) {
 	}
 	if v := i.Note; v != nil {
 		m.SetNote(*v)
-	}
-	if v := i.Datetime; v != nil {
-		m.SetDatetime(*v)
 	}
 	if v := i.TransactionEntryIDs; len(v) > 0 {
 		m.AddTransactionEntryIDs(v...)
@@ -252,7 +367,6 @@ type UpdateTransactionInput struct {
 	UpdateTime                *time.Time
 	ClearNote                 bool
 	Note                      *string
-	Datetime                  *time.Time
 	ClearTransactionEntries   bool
 	AddTransactionEntryIDs    []int
 	RemoveTransactionEntryIDs []int
@@ -268,9 +382,6 @@ func (i *UpdateTransactionInput) Mutate(m *TransactionMutation) {
 	}
 	if v := i.Note; v != nil {
 		m.SetNote(*v)
-	}
-	if v := i.Datetime; v != nil {
-		m.SetDatetime(*v)
 	}
 	if i.ClearTransactionEntries {
 		m.ClearTransactionEntries()
@@ -299,6 +410,7 @@ func (c *TransactionUpdateOne) SetInput(i UpdateTransactionInput) *TransactionUp
 type CreateTransactionEntryInput struct {
 	CreateTime    *time.Time
 	UpdateTime    *time.Time
+	Note          *string
 	Amount        decimal.Decimal
 	AccountID     int
 	TransactionID int
@@ -311,6 +423,9 @@ func (i *CreateTransactionEntryInput) Mutate(m *TransactionEntryMutation) {
 	}
 	if v := i.UpdateTime; v != nil {
 		m.SetUpdateTime(*v)
+	}
+	if v := i.Note; v != nil {
+		m.SetNote(*v)
 	}
 	m.SetAmount(i.Amount)
 	m.SetAccountID(i.AccountID)
@@ -326,6 +441,8 @@ func (c *TransactionEntryCreate) SetInput(i CreateTransactionEntryInput) *Transa
 // UpdateTransactionEntryInput represents a mutation input for updating transactionentries.
 type UpdateTransactionEntryInput struct {
 	UpdateTime    *time.Time
+	ClearNote     bool
+	Note          *string
 	Amount        *decimal.Decimal
 	AccountID     *int
 	TransactionID *int
@@ -335,6 +452,12 @@ type UpdateTransactionEntryInput struct {
 func (i *UpdateTransactionEntryInput) Mutate(m *TransactionEntryMutation) {
 	if v := i.UpdateTime; v != nil {
 		m.SetUpdateTime(*v)
+	}
+	if i.ClearNote {
+		m.ClearNote()
+	}
+	if v := i.Note; v != nil {
+		m.SetNote(*v)
 	}
 	if v := i.Amount; v != nil {
 		m.SetAmount(*v)

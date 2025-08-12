@@ -6,8 +6,10 @@ import (
 	"context"
 	"database/sql/driver"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"fmt"
@@ -29,11 +31,15 @@ type ProfileQuery struct {
 	withUser              *UserQuery
 	withAccounts          *AccountQuery
 	withTransactions      *TransactionQuery
+	withSnapshots         *SnapshotQuery
+	withCategories        *CategoryQuery
 	withFKs               bool
 	modifiers             []func(*sql.Selector)
 	loadTotal             []func(context.Context, []*Profile) error
 	withNamedAccounts     map[string]*AccountQuery
 	withNamedTransactions map[string]*TransactionQuery
+	withNamedSnapshots    map[string]*SnapshotQuery
+	withNamedCategories   map[string]*CategoryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -129,6 +135,50 @@ func (_q *ProfileQuery) QueryTransactions() *TransactionQuery {
 			sqlgraph.From(profile.Table, profile.FieldID, selector),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, profile.TransactionsTable, profile.TransactionsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySnapshots chains the current query on the "snapshots" edge.
+func (_q *ProfileQuery) QuerySnapshots() *SnapshotQuery {
+	query := (&SnapshotClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, selector),
+			sqlgraph.To(snapshot.Table, snapshot.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.SnapshotsTable, profile.SnapshotsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCategories chains the current query on the "categories" edge.
+func (_q *ProfileQuery) QueryCategories() *CategoryQuery {
+	query := (&CategoryClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(profile.Table, profile.FieldID, selector),
+			sqlgraph.To(category.Table, category.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, profile.CategoriesTable, profile.CategoriesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -331,6 +381,8 @@ func (_q *ProfileQuery) Clone() *ProfileQuery {
 		withUser:         _q.withUser.Clone(),
 		withAccounts:     _q.withAccounts.Clone(),
 		withTransactions: _q.withTransactions.Clone(),
+		withSnapshots:    _q.withSnapshots.Clone(),
+		withCategories:   _q.withCategories.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -367,6 +419,28 @@ func (_q *ProfileQuery) WithTransactions(opts ...func(*TransactionQuery)) *Profi
 		opt(query)
 	}
 	_q.withTransactions = query
+	return _q
+}
+
+// WithSnapshots tells the query-builder to eager-load the nodes that are connected to
+// the "snapshots" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithSnapshots(opts ...func(*SnapshotQuery)) *ProfileQuery {
+	query := (&SnapshotClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withSnapshots = query
+	return _q
+}
+
+// WithCategories tells the query-builder to eager-load the nodes that are connected to
+// the "categories" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithCategories(opts ...func(*CategoryQuery)) *ProfileQuery {
+	query := (&CategoryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withCategories = query
 	return _q
 }
 
@@ -449,10 +523,12 @@ func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 		nodes       = []*Profile{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [5]bool{
 			_q.withUser != nil,
 			_q.withAccounts != nil,
 			_q.withTransactions != nil,
+			_q.withSnapshots != nil,
+			_q.withCategories != nil,
 		}
 	)
 	if _q.withUser != nil {
@@ -502,6 +578,20 @@ func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 			return nil, err
 		}
 	}
+	if query := _q.withSnapshots; query != nil {
+		if err := _q.loadSnapshots(ctx, query, nodes,
+			func(n *Profile) { n.Edges.Snapshots = []*Snapshot{} },
+			func(n *Profile, e *Snapshot) { n.Edges.Snapshots = append(n.Edges.Snapshots, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withCategories; query != nil {
+		if err := _q.loadCategories(ctx, query, nodes,
+			func(n *Profile) { n.Edges.Categories = []*Category{} },
+			func(n *Profile, e *Category) { n.Edges.Categories = append(n.Edges.Categories, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range _q.withNamedAccounts {
 		if err := _q.loadAccounts(ctx, query, nodes,
 			func(n *Profile) { n.appendNamedAccounts(name) },
@@ -513,6 +603,20 @@ func (_q *ProfileQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Prof
 		if err := _q.loadTransactions(ctx, query, nodes,
 			func(n *Profile) { n.appendNamedTransactions(name) },
 			func(n *Profile, e *Transaction) { n.appendNamedTransactions(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedSnapshots {
+		if err := _q.loadSnapshots(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedSnapshots(name) },
+			func(n *Profile, e *Snapshot) { n.appendNamedSnapshots(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedCategories {
+		if err := _q.loadCategories(ctx, query, nodes,
+			func(n *Profile) { n.appendNamedCategories(name) },
+			func(n *Profile, e *Category) { n.appendNamedCategories(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -613,6 +717,68 @@ func (_q *ProfileQuery) loadTransactions(ctx context.Context, query *Transaction
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "profile_transactions" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *ProfileQuery) loadSnapshots(ctx context.Context, query *SnapshotQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Snapshot)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Profile)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Snapshot(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(profile.SnapshotsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.profile_snapshots
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "profile_snapshots" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_snapshots" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *ProfileQuery) loadCategories(ctx context.Context, query *CategoryQuery, nodes []*Profile, init func(*Profile), assign func(*Profile, *Category)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Profile)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Category(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(profile.CategoriesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.profile_categories
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "profile_categories" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "profile_categories" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -728,6 +894,34 @@ func (_q *ProfileQuery) WithNamedTransactions(name string, opts ...func(*Transac
 		_q.withNamedTransactions = make(map[string]*TransactionQuery)
 	}
 	_q.withNamedTransactions[name] = query
+	return _q
+}
+
+// WithNamedSnapshots tells the query-builder to eager-load the nodes that are connected to the "snapshots"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithNamedSnapshots(name string, opts ...func(*SnapshotQuery)) *ProfileQuery {
+	query := (&SnapshotClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedSnapshots == nil {
+		_q.withNamedSnapshots = make(map[string]*SnapshotQuery)
+	}
+	_q.withNamedSnapshots[name] = query
+	return _q
+}
+
+// WithNamedCategories tells the query-builder to eager-load the nodes that are connected to the "categories"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *ProfileQuery) WithNamedCategories(name string, opts ...func(*CategoryQuery)) *ProfileQuery {
+	query := (&CategoryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedCategories == nil {
+		_q.withNamedCategories = make(map[string]*CategoryQuery)
+	}
+	_q.withNamedCategories[name] = query
 	return _q
 }
 

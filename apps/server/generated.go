@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fijoy/ent"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fmt"
 	"strconv"
 	"sync"
@@ -46,7 +47,8 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	Profile() ProfileResolver
 	Query() QueryResolver
-	Transaction() TransactionResolver
+	SnapshotAccount() SnapshotAccountResolver
+	SnapshotFXRate() SnapshotFXRateResolver
 	TransactionEntry() TransactionEntryResolver
 	CreateAccountInput() CreateAccountInputResolver
 	CreateProfileInput() CreateProfileInputResolver
@@ -66,13 +68,13 @@ type ComplexityRoot struct {
 		Archived           func(childComplexity int) int
 		Balance            func(childComplexity int) int
 		CreateTime         func(childComplexity int) int
-		CurrencySymbol     func(childComplexity int) int
-		FxRate             func(childComplexity int) int
+		CurrencyCode       func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		Institution        func(childComplexity int) int
 		InvestmentType     func(childComplexity int) int
 		Name               func(childComplexity int) int
 		Profile            func(childComplexity int) int
+		SnapshotAccounts   func(childComplexity int) int
 		Ticker             func(childComplexity int) int
 		TickerType         func(childComplexity int) int
 		TransactionEntries func(childComplexity int) int
@@ -97,6 +99,16 @@ type ComplexityRoot struct {
 		Exchange     func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Symbol       func(childComplexity int) int
+	}
+
+	Category struct {
+		CategoryType func(childComplexity int) int
+		CreateTime   func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Profile      func(childComplexity int) int
+		Transactions func(childComplexity int) int
+		UpdateTime   func(childComplexity int) int
 	}
 
 	CreateAccountResponse struct {
@@ -131,28 +143,34 @@ type ComplexityRoot struct {
 
 	Profile struct {
 		Accounts     func(childComplexity int) int
+		Categories   func(childComplexity int) int
 		CreateTime   func(childComplexity int) int
 		Currencies   func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Locale       func(childComplexity int) int
 		Name         func(childComplexity int) int
 		NetWorthGoal func(childComplexity int) int
+		Snapshots    func(childComplexity int) int
 		Transactions func(childComplexity int) int
 		UpdateTime   func(childComplexity int) int
 		User         func(childComplexity int) int
 	}
 
 	Query struct {
-		Accounts     func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
-		AssetInfo    func(childComplexity int, symbol string) int
-		Currencies   func(childComplexity int) int
-		FxRate       func(childComplexity int, fromCurrency string, toCurrency string) int
-		Node         func(childComplexity int, id int) int
-		Nodes        func(childComplexity int, ids []int) int
-		Profile      func(childComplexity int) int
-		Profiles     func(childComplexity int) int
-		Transactions func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
-		User         func(childComplexity int) int
+		Accounts         func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
+		AssetInfo        func(childComplexity int, symbol string) int
+		Categories       func(childComplexity int) int
+		Currencies       func(childComplexity int) int
+		FxRate           func(childComplexity int, fromCurrency string, toCurrency string) int
+		Node             func(childComplexity int, id int) int
+		Nodes            func(childComplexity int, ids []int) int
+		Profile          func(childComplexity int) int
+		Profiles         func(childComplexity int) int
+		SnapshotAccounts func(childComplexity int) int
+		SnapshotFxRates  func(childComplexity int) int
+		Snapshots        func(childComplexity int) int
+		Transactions     func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) int
+		User             func(childComplexity int) int
 	}
 
 	RefreshAccountsResponse struct {
@@ -160,10 +178,40 @@ type ComplexityRoot struct {
 		Transactions func(childComplexity int) int
 	}
 
+	Snapshot struct {
+		CreateTime       func(childComplexity int) int
+		ID               func(childComplexity int) int
+		Note             func(childComplexity int) int
+		Profile          func(childComplexity int) int
+		SnapshotAccounts func(childComplexity int) int
+		SnapshotFxRates  func(childComplexity int) int
+		UpdateTime       func(childComplexity int) int
+	}
+
+	SnapshotAccount struct {
+		Account    func(childComplexity int) int
+		Amount     func(childComplexity int) int
+		Balance    func(childComplexity int) int
+		CreateTime func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Snapshot   func(childComplexity int) int
+		UpdateTime func(childComplexity int) int
+		Value      func(childComplexity int) int
+	}
+
+	SnapshotFXRate struct {
+		CreateTime   func(childComplexity int) int
+		FromCurrency func(childComplexity int) int
+		FxRate       func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Snapshot     func(childComplexity int) int
+		ToCurrency   func(childComplexity int) int
+		UpdateTime   func(childComplexity int) int
+	}
+
 	Transaction struct {
-		Balance            func(childComplexity int) int
+		Category           func(childComplexity int) int
 		CreateTime         func(childComplexity int) int
-		Datetime           func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		Note               func(childComplexity int) int
 		Profile            func(childComplexity int) int
@@ -187,8 +235,8 @@ type ComplexityRoot struct {
 		Amount      func(childComplexity int) int
 		Balance     func(childComplexity int) int
 		CreateTime  func(childComplexity int) int
-		FxRate      func(childComplexity int) int
 		ID          func(childComplexity int) int
+		Note        func(childComplexity int) int
 		Transaction func(childComplexity int) int
 		UpdateTime  func(childComplexity int) int
 		Value       func(childComplexity int) int
@@ -216,7 +264,6 @@ type ComplexityRoot struct {
 type AccountResolver interface {
 	Amount(ctx context.Context, obj *ent.Account) (string, error)
 	Value(ctx context.Context, obj *ent.Account) (string, error)
-	FxRate(ctx context.Context, obj *ent.Account) (string, error)
 	Balance(ctx context.Context, obj *ent.Account) (string, error)
 }
 type MutationResolver interface {
@@ -234,7 +281,11 @@ type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
 	Nodes(ctx context.Context, ids []int) ([]ent.Noder, error)
 	Accounts(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.AccountConnection, error)
+	Categories(ctx context.Context) ([]*ent.Category, error)
 	Profiles(ctx context.Context) ([]*ent.Profile, error)
+	Snapshots(ctx context.Context) ([]*ent.Snapshot, error)
+	SnapshotAccounts(ctx context.Context) ([]*ent.SnapshotAccount, error)
+	SnapshotFxRates(ctx context.Context) ([]*ent.SnapshotFXRate, error)
 	Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int) (*ent.TransactionConnection, error)
 	Profile(ctx context.Context) (*ent.Profile, error)
 	User(ctx context.Context) (*ent.User, error)
@@ -242,13 +293,17 @@ type QueryResolver interface {
 	AssetInfo(ctx context.Context, symbol string) (*AssetInfo, error)
 	FxRate(ctx context.Context, fromCurrency string, toCurrency string) (*FXRate, error)
 }
-type TransactionResolver interface {
-	Balance(ctx context.Context, obj *ent.Transaction) (string, error)
+type SnapshotAccountResolver interface {
+	Amount(ctx context.Context, obj *ent.SnapshotAccount) (string, error)
+	Value(ctx context.Context, obj *ent.SnapshotAccount) (string, error)
+	Balance(ctx context.Context, obj *ent.SnapshotAccount) (string, error)
+}
+type SnapshotFXRateResolver interface {
+	FxRate(ctx context.Context, obj *ent.SnapshotFXRate) (string, error)
 }
 type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 	Value(ctx context.Context, obj *ent.TransactionEntry) (string, error)
-	FxRate(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 	Balance(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 }
 
@@ -325,19 +380,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Account.CreateTime(childComplexity), true
 
-	case "Account.currencySymbol":
-		if e.complexity.Account.CurrencySymbol == nil {
+	case "Account.currencyCode":
+		if e.complexity.Account.CurrencyCode == nil {
 			break
 		}
 
-		return e.complexity.Account.CurrencySymbol(childComplexity), true
-
-	case "Account.fxRate":
-		if e.complexity.Account.FxRate == nil {
-			break
-		}
-
-		return e.complexity.Account.FxRate(childComplexity), true
+		return e.complexity.Account.CurrencyCode(childComplexity), true
 
 	case "Account.id":
 		if e.complexity.Account.ID == nil {
@@ -373,6 +421,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Account.Profile(childComplexity), true
+
+	case "Account.snapshotAccounts":
+		if e.complexity.Account.SnapshotAccounts == nil {
+			break
+		}
+
+		return e.complexity.Account.SnapshotAccounts(childComplexity), true
 
 	case "Account.ticker":
 		if e.complexity.Account.Ticker == nil {
@@ -478,6 +533,55 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.AssetInfo.Symbol(childComplexity), true
+
+	case "Category.categoryType":
+		if e.complexity.Category.CategoryType == nil {
+			break
+		}
+
+		return e.complexity.Category.CategoryType(childComplexity), true
+
+	case "Category.createTime":
+		if e.complexity.Category.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.Category.CreateTime(childComplexity), true
+
+	case "Category.id":
+		if e.complexity.Category.ID == nil {
+			break
+		}
+
+		return e.complexity.Category.ID(childComplexity), true
+
+	case "Category.name":
+		if e.complexity.Category.Name == nil {
+			break
+		}
+
+		return e.complexity.Category.Name(childComplexity), true
+
+	case "Category.profile":
+		if e.complexity.Category.Profile == nil {
+			break
+		}
+
+		return e.complexity.Category.Profile(childComplexity), true
+
+	case "Category.transactions":
+		if e.complexity.Category.Transactions == nil {
+			break
+		}
+
+		return e.complexity.Category.Transactions(childComplexity), true
+
+	case "Category.updateTime":
+		if e.complexity.Category.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.Category.UpdateTime(childComplexity), true
 
 	case "CreateAccountResponse.accountEdge":
 		if e.complexity.CreateAccountResponse.AccountEdge == nil {
@@ -616,6 +720,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Profile.Accounts(childComplexity), true
 
+	case "Profile.categories":
+		if e.complexity.Profile.Categories == nil {
+			break
+		}
+
+		return e.complexity.Profile.Categories(childComplexity), true
+
 	case "Profile.createTime":
 		if e.complexity.Profile.CreateTime == nil {
 			break
@@ -657,6 +768,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Profile.NetWorthGoal(childComplexity), true
+
+	case "Profile.snapshots":
+		if e.complexity.Profile.Snapshots == nil {
+			break
+		}
+
+		return e.complexity.Profile.Snapshots(childComplexity), true
 
 	case "Profile.transactions":
 		if e.complexity.Profile.Transactions == nil {
@@ -702,6 +820,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.AssetInfo(childComplexity, args["symbol"].(string)), true
+
+	case "Query.categories":
+		if e.complexity.Query.Categories == nil {
+			break
+		}
+
+		return e.complexity.Query.Categories(childComplexity), true
 
 	case "Query.currencies":
 		if e.complexity.Query.Currencies == nil {
@@ -760,6 +885,27 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Profiles(childComplexity), true
 
+	case "Query.snapshotAccounts":
+		if e.complexity.Query.SnapshotAccounts == nil {
+			break
+		}
+
+		return e.complexity.Query.SnapshotAccounts(childComplexity), true
+
+	case "Query.snapshotFxRates":
+		if e.complexity.Query.SnapshotFxRates == nil {
+			break
+		}
+
+		return e.complexity.Query.SnapshotFxRates(childComplexity), true
+
+	case "Query.snapshots":
+		if e.complexity.Query.Snapshots == nil {
+			break
+		}
+
+		return e.complexity.Query.Snapshots(childComplexity), true
+
 	case "Query.transactions":
 		if e.complexity.Query.Transactions == nil {
 			break
@@ -793,12 +939,166 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.RefreshAccountsResponse.Transactions(childComplexity), true
 
-	case "Transaction.balance":
-		if e.complexity.Transaction.Balance == nil {
+	case "Snapshot.createTime":
+		if e.complexity.Snapshot.CreateTime == nil {
 			break
 		}
 
-		return e.complexity.Transaction.Balance(childComplexity), true
+		return e.complexity.Snapshot.CreateTime(childComplexity), true
+
+	case "Snapshot.id":
+		if e.complexity.Snapshot.ID == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.ID(childComplexity), true
+
+	case "Snapshot.note":
+		if e.complexity.Snapshot.Note == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.Note(childComplexity), true
+
+	case "Snapshot.profile":
+		if e.complexity.Snapshot.Profile == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.Profile(childComplexity), true
+
+	case "Snapshot.snapshotAccounts":
+		if e.complexity.Snapshot.SnapshotAccounts == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.SnapshotAccounts(childComplexity), true
+
+	case "Snapshot.snapshotFxRates":
+		if e.complexity.Snapshot.SnapshotFxRates == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.SnapshotFxRates(childComplexity), true
+
+	case "Snapshot.updateTime":
+		if e.complexity.Snapshot.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.Snapshot.UpdateTime(childComplexity), true
+
+	case "SnapshotAccount.account":
+		if e.complexity.SnapshotAccount.Account == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.Account(childComplexity), true
+
+	case "SnapshotAccount.amount":
+		if e.complexity.SnapshotAccount.Amount == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.Amount(childComplexity), true
+
+	case "SnapshotAccount.balance":
+		if e.complexity.SnapshotAccount.Balance == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.Balance(childComplexity), true
+
+	case "SnapshotAccount.createTime":
+		if e.complexity.SnapshotAccount.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.CreateTime(childComplexity), true
+
+	case "SnapshotAccount.id":
+		if e.complexity.SnapshotAccount.ID == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.ID(childComplexity), true
+
+	case "SnapshotAccount.snapshot":
+		if e.complexity.SnapshotAccount.Snapshot == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.Snapshot(childComplexity), true
+
+	case "SnapshotAccount.updateTime":
+		if e.complexity.SnapshotAccount.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.UpdateTime(childComplexity), true
+
+	case "SnapshotAccount.value":
+		if e.complexity.SnapshotAccount.Value == nil {
+			break
+		}
+
+		return e.complexity.SnapshotAccount.Value(childComplexity), true
+
+	case "SnapshotFXRate.createTime":
+		if e.complexity.SnapshotFXRate.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.SnapshotFXRate.CreateTime(childComplexity), true
+
+	case "SnapshotFXRate.fromCurrency":
+		if e.complexity.SnapshotFXRate.FromCurrency == nil {
+			break
+		}
+
+		return e.complexity.SnapshotFXRate.FromCurrency(childComplexity), true
+
+	case "SnapshotFXRate.fxRate":
+		if e.complexity.SnapshotFXRate.FxRate == nil {
+			break
+		}
+
+		return e.complexity.SnapshotFXRate.FxRate(childComplexity), true
+
+	case "SnapshotFXRate.id":
+		if e.complexity.SnapshotFXRate.ID == nil {
+			break
+		}
+
+		return e.complexity.SnapshotFXRate.ID(childComplexity), true
+
+	case "SnapshotFXRate.snapshot":
+		if e.complexity.SnapshotFXRate.Snapshot == nil {
+			break
+		}
+
+		return e.complexity.SnapshotFXRate.Snapshot(childComplexity), true
+
+	case "SnapshotFXRate.toCurrency":
+		if e.complexity.SnapshotFXRate.ToCurrency == nil {
+			break
+		}
+
+		return e.complexity.SnapshotFXRate.ToCurrency(childComplexity), true
+
+	case "SnapshotFXRate.updateTime":
+		if e.complexity.SnapshotFXRate.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.SnapshotFXRate.UpdateTime(childComplexity), true
+
+	case "Transaction.category":
+		if e.complexity.Transaction.Category == nil {
+			break
+		}
+
+		return e.complexity.Transaction.Category(childComplexity), true
 
 	case "Transaction.createTime":
 		if e.complexity.Transaction.CreateTime == nil {
@@ -806,13 +1106,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Transaction.CreateTime(childComplexity), true
-
-	case "Transaction.datetime":
-		if e.complexity.Transaction.Datetime == nil {
-			break
-		}
-
-		return e.complexity.Transaction.Datetime(childComplexity), true
 
 	case "Transaction.id":
 		if e.complexity.Transaction.ID == nil {
@@ -912,19 +1205,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.TransactionEntry.CreateTime(childComplexity), true
 
-	case "TransactionEntry.fxRate":
-		if e.complexity.TransactionEntry.FxRate == nil {
-			break
-		}
-
-		return e.complexity.TransactionEntry.FxRate(childComplexity), true
-
 	case "TransactionEntry.id":
 		if e.complexity.TransactionEntry.ID == nil {
 			break
 		}
 
 		return e.complexity.TransactionEntry.ID(childComplexity), true
+
+	case "TransactionEntry.note":
+		if e.complexity.TransactionEntry.Note == nil {
+			break
+		}
+
+		return e.complexity.TransactionEntry.Note(childComplexity), true
 
 	case "TransactionEntry.transaction":
 		if e.complexity.TransactionEntry.Transaction == nil {
@@ -1040,6 +1333,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateAccountInput,
+		ec.unmarshalInputCreateCategoryInput,
 		ec.unmarshalInputCreateProfileInput,
 		ec.unmarshalInputCreateTransactionEntryInput,
 		ec.unmarshalInputCreateTransactionInput,
@@ -1047,6 +1341,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateUserKeyInput,
 		ec.unmarshalInputUpdateAccountInput,
+		ec.unmarshalInputUpdateCategoryInput,
 		ec.unmarshalInputUpdateProfileInput,
 		ec.unmarshalInputUpdateTransactionEntryInput,
 		ec.unmarshalInputUpdateTransactionInput,
@@ -1699,8 +1994,8 @@ func (ec *executionContext) fieldContext_Account_investmentType(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Account_currencySymbol(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Account_currencySymbol(ctx, field)
+func (ec *executionContext) _Account_currencyCode(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_currencyCode(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1713,7 +2008,7 @@ func (ec *executionContext) _Account_currencySymbol(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CurrencySymbol, nil
+		return obj.CurrencyCode, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1730,7 +2025,7 @@ func (ec *executionContext) _Account_currencySymbol(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Account_currencySymbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Account_currencyCode(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Account",
 		Field:      field,
@@ -1919,50 +2214,6 @@ func (ec *executionContext) fieldContext_Account_value(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Account_fxRate(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Account_fxRate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Account().FxRate(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Account_fxRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Account",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Account_balance(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Account_balance(ctx, field)
 	if err != nil {
@@ -2110,6 +2361,10 @@ func (ec *executionContext) fieldContext_Account_profile(_ context.Context, fiel
 				return ec.fieldContext_Profile_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -2159,12 +2414,12 @@ func (ec *executionContext) fieldContext_Account_transactionEntries(_ context.Co
 				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_TransactionEntry_note(ctx, field)
 			case "amount":
 				return ec.fieldContext_TransactionEntry_amount(ctx, field)
 			case "value":
 				return ec.fieldContext_TransactionEntry_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_TransactionEntry_fxRate(ctx, field)
 			case "balance":
 				return ec.fieldContext_TransactionEntry_balance(ctx, field)
 			case "account":
@@ -2173,6 +2428,65 @@ func (ec *executionContext) fieldContext_Account_transactionEntries(_ context.Co
 				return ec.fieldContext_TransactionEntry_transaction(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TransactionEntry", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Account_snapshotAccounts(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_snapshotAccounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SnapshotAccounts(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.SnapshotAccount)
+	fc.Result = res
+	return ec.marshalOSnapshotAccount2ᚕᚖfijoyᚋentᚐSnapshotAccountᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Account_snapshotAccounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SnapshotAccount_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_SnapshotAccount_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_SnapshotAccount_updateTime(ctx, field)
+			case "amount":
+				return ec.fieldContext_SnapshotAccount_amount(ctx, field)
+			case "value":
+				return ec.fieldContext_SnapshotAccount_value(ctx, field)
+			case "balance":
+				return ec.fieldContext_SnapshotAccount_balance(ctx, field)
+			case "account":
+				return ec.fieldContext_SnapshotAccount_account(ctx, field)
+			case "snapshot":
+				return ec.fieldContext_SnapshotAccount_snapshot(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SnapshotAccount", field.Name)
 		},
 	}
 	return fc, nil
@@ -2373,8 +2687,8 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
 				return ec.fieldContext_Account_investmentType(ctx, field)
-			case "currencySymbol":
-				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "currencyCode":
+				return ec.fieldContext_Account_currencyCode(ctx, field)
 			case "ticker":
 				return ec.fieldContext_Account_ticker(ctx, field)
 			case "tickerType":
@@ -2383,8 +2697,6 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_Account_fxRate(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
 			case "archived":
@@ -2393,6 +2705,8 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_profile(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -2659,6 +2973,353 @@ func (ec *executionContext) fieldContext_AssetInfo_currentPrice(_ context.Contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *ent.Category) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Category_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Category_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Category",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Category_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.Category) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Category_createTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Category_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Category",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Category_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.Category) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Category_updateTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Category_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Category",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Category_name(ctx context.Context, field graphql.CollectedField, obj *ent.Category) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Category_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Category_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Category",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Category_categoryType(ctx context.Context, field graphql.CollectedField, obj *ent.Category) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Category_categoryType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CategoryType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(category.CategoryType)
+	fc.Result = res
+	return ec.marshalNCategoryCategoryType2fijoyᚋentᚋcategoryᚐCategoryType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Category_categoryType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Category",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type CategoryCategoryType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Category_profile(ctx context.Context, field graphql.CollectedField, obj *ent.Category) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Category_profile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Profile(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Profile)
+	fc.Result = res
+	return ec.marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Category_profile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Category",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Profile_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Profile_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Profile_locale(ctx, field)
+			case "currencies":
+				return ec.fieldContext_Profile_currencies(ctx, field)
+			case "netWorthGoal":
+				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
+			case "user":
+				return ec.fieldContext_Profile_user(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Category_transactions(ctx context.Context, field graphql.CollectedField, obj *ent.Category) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Category_transactions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Transactions(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Transaction)
+	fc.Result = res
+	return ec.marshalOTransaction2ᚕᚖfijoyᚋentᚐTransactionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Category_transactions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Category",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Transaction_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Transaction_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_Transaction_note(ctx, field)
+			case "profile":
+				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
 		},
 	}
 	return fc, nil
@@ -2955,6 +3616,10 @@ func (ec *executionContext) fieldContext_Mutation_createProfile(ctx context.Cont
 				return ec.fieldContext_Profile_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -3032,6 +3697,10 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 				return ec.fieldContext_Profile_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -3156,14 +3825,12 @@ func (ec *executionContext) fieldContext_Mutation_createTransactionWithTransacti
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
 			case "profile":
 				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
@@ -3229,12 +3896,12 @@ func (ec *executionContext) fieldContext_Mutation_createTransactionEntry(ctx con
 				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_TransactionEntry_note(ctx, field)
 			case "amount":
 				return ec.fieldContext_TransactionEntry_amount(ctx, field)
 			case "value":
 				return ec.fieldContext_TransactionEntry_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_TransactionEntry_fxRate(ctx, field)
 			case "balance":
 				return ec.fieldContext_TransactionEntry_balance(ctx, field)
 			case "account":
@@ -3895,8 +4562,8 @@ func (ec *executionContext) fieldContext_Profile_accounts(_ context.Context, fie
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
 				return ec.fieldContext_Account_investmentType(ctx, field)
-			case "currencySymbol":
-				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "currencyCode":
+				return ec.fieldContext_Account_currencyCode(ctx, field)
 			case "ticker":
 				return ec.fieldContext_Account_ticker(ctx, field)
 			case "tickerType":
@@ -3905,8 +4572,6 @@ func (ec *executionContext) fieldContext_Profile_accounts(_ context.Context, fie
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_Account_fxRate(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
 			case "archived":
@@ -3915,6 +4580,8 @@ func (ec *executionContext) fieldContext_Profile_accounts(_ context.Context, fie
 				return ec.fieldContext_Account_profile(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -3964,18 +4631,130 @@ func (ec *executionContext) fieldContext_Profile_transactions(_ context.Context,
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
 			case "profile":
 				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Profile_snapshots(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_snapshots(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Snapshots(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Snapshot)
+	fc.Result = res
+	return ec.marshalOSnapshot2ᚕᚖfijoyᚋentᚐSnapshotᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_snapshots(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Snapshot_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Snapshot_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Snapshot_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_Snapshot_note(ctx, field)
+			case "profile":
+				return ec.fieldContext_Snapshot_profile(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Snapshot_snapshotAccounts(ctx, field)
+			case "snapshotFxRates":
+				return ec.fieldContext_Snapshot_snapshotFxRates(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Snapshot", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Profile_categories(ctx context.Context, field graphql.CollectedField, obj *ent.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_categories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Categories(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Category)
+	fc.Result = res
+	return ec.marshalOCategory2ᚕᚖfijoyᚋentᚐCategoryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_categories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Category_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Category_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Category_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Category_name(ctx, field)
+			case "categoryType":
+				return ec.fieldContext_Category_categoryType(ctx, field)
+			case "profile":
+				return ec.fieldContext_Category_profile(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Category_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Category", field.Name)
 		},
 	}
 	return fc, nil
@@ -4151,6 +4930,66 @@ func (ec *executionContext) fieldContext_Query_accounts(ctx context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_categories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_categories(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Categories(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Category)
+	fc.Result = res
+	return ec.marshalNCategory2ᚕᚖfijoyᚋentᚐCategoryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_categories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Category_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Category_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Category_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Category_name(ctx, field)
+			case "categoryType":
+				return ec.fieldContext_Category_categoryType(ctx, field)
+			case "profile":
+				return ec.fieldContext_Category_profile(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Category_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Category", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_profiles(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_profiles(ctx, field)
 	if err != nil {
@@ -4210,8 +5049,194 @@ func (ec *executionContext) fieldContext_Query_profiles(_ context.Context, field
 				return ec.fieldContext_Profile_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_snapshots(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_snapshots(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Snapshots(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Snapshot)
+	fc.Result = res
+	return ec.marshalNSnapshot2ᚕᚖfijoyᚋentᚐSnapshotᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_snapshots(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Snapshot_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Snapshot_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Snapshot_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_Snapshot_note(ctx, field)
+			case "profile":
+				return ec.fieldContext_Snapshot_profile(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Snapshot_snapshotAccounts(ctx, field)
+			case "snapshotFxRates":
+				return ec.fieldContext_Snapshot_snapshotFxRates(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Snapshot", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_snapshotAccounts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_snapshotAccounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SnapshotAccounts(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.SnapshotAccount)
+	fc.Result = res
+	return ec.marshalNSnapshotAccount2ᚕᚖfijoyᚋentᚐSnapshotAccountᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_snapshotAccounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SnapshotAccount_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_SnapshotAccount_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_SnapshotAccount_updateTime(ctx, field)
+			case "amount":
+				return ec.fieldContext_SnapshotAccount_amount(ctx, field)
+			case "value":
+				return ec.fieldContext_SnapshotAccount_value(ctx, field)
+			case "balance":
+				return ec.fieldContext_SnapshotAccount_balance(ctx, field)
+			case "account":
+				return ec.fieldContext_SnapshotAccount_account(ctx, field)
+			case "snapshot":
+				return ec.fieldContext_SnapshotAccount_snapshot(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SnapshotAccount", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_snapshotFxRates(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_snapshotFxRates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SnapshotFxRates(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.SnapshotFXRate)
+	fc.Result = res
+	return ec.marshalNSnapshotFXRate2ᚕᚖfijoyᚋentᚐSnapshotFXRateᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_snapshotFxRates(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SnapshotFXRate_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_SnapshotFXRate_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_SnapshotFXRate_updateTime(ctx, field)
+			case "fromCurrency":
+				return ec.fieldContext_SnapshotFXRate_fromCurrency(ctx, field)
+			case "toCurrency":
+				return ec.fieldContext_SnapshotFXRate_toCurrency(ctx, field)
+			case "fxRate":
+				return ec.fieldContext_SnapshotFXRate_fxRate(ctx, field)
+			case "snapshot":
+				return ec.fieldContext_SnapshotFXRate_snapshot(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SnapshotFXRate", field.Name)
 		},
 	}
 	return fc, nil
@@ -4339,6 +5364,10 @@ func (ec *executionContext) fieldContext_Query_profile(_ context.Context, field 
 				return ec.fieldContext_Profile_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -4758,8 +5787,8 @@ func (ec *executionContext) fieldContext_RefreshAccountsResponse_accounts(_ cont
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
 				return ec.fieldContext_Account_investmentType(ctx, field)
-			case "currencySymbol":
-				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "currencyCode":
+				return ec.fieldContext_Account_currencyCode(ctx, field)
 			case "ticker":
 				return ec.fieldContext_Account_ticker(ctx, field)
 			case "tickerType":
@@ -4768,8 +5797,6 @@ func (ec *executionContext) fieldContext_RefreshAccountsResponse_accounts(_ cont
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_Account_fxRate(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
 			case "archived":
@@ -4778,6 +5805,8 @@ func (ec *executionContext) fieldContext_RefreshAccountsResponse_accounts(_ cont
 				return ec.fieldContext_Account_profile(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -4830,18 +5859,1103 @@ func (ec *executionContext) fieldContext_RefreshAccountsResponse_transactions(_ 
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
 			case "profile":
 				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Snapshot_id(ctx context.Context, field graphql.CollectedField, obj *ent.Snapshot) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Snapshot_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Snapshot_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Snapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Snapshot_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.Snapshot) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Snapshot_createTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Snapshot_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Snapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Snapshot_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.Snapshot) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Snapshot_updateTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Snapshot_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Snapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Snapshot_note(ctx context.Context, field graphql.CollectedField, obj *ent.Snapshot) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Snapshot_note(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Note, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Snapshot_note(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Snapshot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Snapshot_profile(ctx context.Context, field graphql.CollectedField, obj *ent.Snapshot) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Snapshot_profile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Profile(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Profile)
+	fc.Result = res
+	return ec.marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Snapshot_profile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Snapshot",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Profile_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Profile_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Profile_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Profile_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Profile_locale(ctx, field)
+			case "currencies":
+				return ec.fieldContext_Profile_currencies(ctx, field)
+			case "netWorthGoal":
+				return ec.fieldContext_Profile_netWorthGoal(ctx, field)
+			case "user":
+				return ec.fieldContext_Profile_user(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Profile_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Snapshot_snapshotAccounts(ctx context.Context, field graphql.CollectedField, obj *ent.Snapshot) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Snapshot_snapshotAccounts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SnapshotAccounts(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.SnapshotAccount)
+	fc.Result = res
+	return ec.marshalOSnapshotAccount2ᚕᚖfijoyᚋentᚐSnapshotAccountᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Snapshot_snapshotAccounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Snapshot",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SnapshotAccount_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_SnapshotAccount_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_SnapshotAccount_updateTime(ctx, field)
+			case "amount":
+				return ec.fieldContext_SnapshotAccount_amount(ctx, field)
+			case "value":
+				return ec.fieldContext_SnapshotAccount_value(ctx, field)
+			case "balance":
+				return ec.fieldContext_SnapshotAccount_balance(ctx, field)
+			case "account":
+				return ec.fieldContext_SnapshotAccount_account(ctx, field)
+			case "snapshot":
+				return ec.fieldContext_SnapshotAccount_snapshot(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SnapshotAccount", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Snapshot_snapshotFxRates(ctx context.Context, field graphql.CollectedField, obj *ent.Snapshot) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Snapshot_snapshotFxRates(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SnapshotFxRates(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.SnapshotFXRate)
+	fc.Result = res
+	return ec.marshalOSnapshotFXRate2ᚕᚖfijoyᚋentᚐSnapshotFXRateᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Snapshot_snapshotFxRates(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Snapshot",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SnapshotFXRate_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_SnapshotFXRate_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_SnapshotFXRate_updateTime(ctx, field)
+			case "fromCurrency":
+				return ec.fieldContext_SnapshotFXRate_fromCurrency(ctx, field)
+			case "toCurrency":
+				return ec.fieldContext_SnapshotFXRate_toCurrency(ctx, field)
+			case "fxRate":
+				return ec.fieldContext_SnapshotFXRate_fxRate(ctx, field)
+			case "snapshot":
+				return ec.fieldContext_SnapshotFXRate_snapshot(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SnapshotFXRate", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_id(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_createTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_updateTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_amount(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_amount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.SnapshotAccount().Amount(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_amount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_value(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_value(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.SnapshotAccount().Value(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_balance(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_balance(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.SnapshotAccount().Balance(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_account(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_account(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Account(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Account)
+	fc.Result = res
+	return ec.marshalNAccount2ᚖfijoyᚋentᚐAccount(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_account(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Account_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Account_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Account_name(ctx, field)
+			case "institution":
+				return ec.fieldContext_Account_institution(ctx, field)
+			case "accountType":
+				return ec.fieldContext_Account_accountType(ctx, field)
+			case "investmentType":
+				return ec.fieldContext_Account_investmentType(ctx, field)
+			case "currencyCode":
+				return ec.fieldContext_Account_currencyCode(ctx, field)
+			case "ticker":
+				return ec.fieldContext_Account_ticker(ctx, field)
+			case "tickerType":
+				return ec.fieldContext_Account_tickerType(ctx, field)
+			case "amount":
+				return ec.fieldContext_Account_amount(ctx, field)
+			case "value":
+				return ec.fieldContext_Account_value(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
+			case "archived":
+				return ec.fieldContext_Account_archived(ctx, field)
+			case "profile":
+				return ec.fieldContext_Account_profile(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotAccount_snapshot(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotAccount) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotAccount_snapshot(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Snapshot(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Snapshot)
+	fc.Result = res
+	return ec.marshalNSnapshot2ᚖfijoyᚋentᚐSnapshot(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotAccount_snapshot(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotAccount",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Snapshot_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Snapshot_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Snapshot_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_Snapshot_note(ctx, field)
+			case "profile":
+				return ec.fieldContext_Snapshot_profile(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Snapshot_snapshotAccounts(ctx, field)
+			case "snapshotFxRates":
+				return ec.fieldContext_Snapshot_snapshotFxRates(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Snapshot", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotFXRate_id(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotFXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotFXRate_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNID2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotFXRate_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotFXRate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotFXRate_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotFXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotFXRate_createTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotFXRate_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotFXRate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotFXRate_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotFXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotFXRate_updateTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdateTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotFXRate_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotFXRate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotFXRate_fromCurrency(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotFXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotFXRate_fromCurrency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FromCurrency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotFXRate_fromCurrency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotFXRate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotFXRate_toCurrency(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotFXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotFXRate_toCurrency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ToCurrency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotFXRate_toCurrency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotFXRate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotFXRate_fxRate(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotFXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotFXRate_fxRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.SnapshotFXRate().FxRate(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotFXRate_fxRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotFXRate",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SnapshotFXRate_snapshot(ctx context.Context, field graphql.CollectedField, obj *ent.SnapshotFXRate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SnapshotFXRate_snapshot(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Snapshot(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Snapshot)
+	fc.Result = res
+	return ec.marshalNSnapshot2ᚖfijoyᚋentᚐSnapshot(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SnapshotFXRate_snapshot(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SnapshotFXRate",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Snapshot_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Snapshot_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Snapshot_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_Snapshot_note(ctx, field)
+			case "profile":
+				return ec.fieldContext_Snapshot_profile(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Snapshot_snapshotAccounts(ctx, field)
+			case "snapshotFxRates":
+				return ec.fieldContext_Snapshot_snapshotFxRates(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Snapshot", field.Name)
 		},
 	}
 	return fc, nil
@@ -4979,50 +7093,6 @@ func (ec *executionContext) fieldContext_Transaction_updateTime(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Transaction_balance(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Transaction_balance(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Transaction().Balance(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Transaction_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Transaction",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Transaction_note(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Transaction_note(ctx, field)
 	if err != nil {
@@ -5059,50 +7129,6 @@ func (ec *executionContext) fieldContext_Transaction_note(_ context.Context, fie
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Transaction_datetime(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Transaction_datetime(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Datetime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Transaction_datetime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Transaction",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5167,8 +7193,72 @@ func (ec *executionContext) fieldContext_Transaction_profile(_ context.Context, 
 				return ec.fieldContext_Profile_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Transaction_category(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Transaction_category(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Category(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Category)
+	fc.Result = res
+	return ec.marshalNCategory2ᚖfijoyᚋentᚐCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Transaction_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Transaction",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Category_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Category_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Category_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Category_name(ctx, field)
+			case "categoryType":
+				return ec.fieldContext_Category_categoryType(ctx, field)
+			case "profile":
+				return ec.fieldContext_Category_profile(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Category_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Category", field.Name)
 		},
 	}
 	return fc, nil
@@ -5216,12 +7306,12 @@ func (ec *executionContext) fieldContext_Transaction_transactionEntries(_ contex
 				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "note":
+				return ec.fieldContext_TransactionEntry_note(ctx, field)
 			case "amount":
 				return ec.fieldContext_TransactionEntry_amount(ctx, field)
 			case "value":
 				return ec.fieldContext_TransactionEntry_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_TransactionEntry_fxRate(ctx, field)
 			case "balance":
 				return ec.fieldContext_TransactionEntry_balance(ctx, field)
 			case "account":
@@ -5422,14 +7512,12 @@ func (ec *executionContext) fieldContext_TransactionEdge_node(_ context.Context,
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
 			case "profile":
 				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
@@ -5615,6 +7703,47 @@ func (ec *executionContext) fieldContext_TransactionEntry_updateTime(_ context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _TransactionEntry_note(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_TransactionEntry_note(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Note, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_TransactionEntry_note(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TransactionEntry_amount(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionEntry) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_TransactionEntry_amount(ctx, field)
 	if err != nil {
@@ -5691,50 +7820,6 @@ func (ec *executionContext) _TransactionEntry_value(ctx context.Context, field g
 }
 
 func (ec *executionContext) fieldContext_TransactionEntry_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TransactionEntry",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TransactionEntry_fxRate(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionEntry) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TransactionEntry_fxRate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.TransactionEntry().FxRate(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TransactionEntry_fxRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "TransactionEntry",
 		Field:      field,
@@ -5844,8 +7929,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_accountType(ctx, field)
 			case "investmentType":
 				return ec.fieldContext_Account_investmentType(ctx, field)
-			case "currencySymbol":
-				return ec.fieldContext_Account_currencySymbol(ctx, field)
+			case "currencyCode":
+				return ec.fieldContext_Account_currencyCode(ctx, field)
 			case "ticker":
 				return ec.fieldContext_Account_ticker(ctx, field)
 			case "tickerType":
@@ -5854,8 +7939,6 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_amount(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_Account_fxRate(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
 			case "archived":
@@ -5864,6 +7947,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_profile(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			case "snapshotAccounts":
+				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -5916,14 +8001,12 @@ func (ec *executionContext) fieldContext_TransactionEntry_transaction(_ context.
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
-			case "balance":
-				return ec.fieldContext_Transaction_balance(ctx, field)
 			case "note":
 				return ec.fieldContext_Transaction_note(ctx, field)
-			case "datetime":
-				return ec.fieldContext_Transaction_datetime(ctx, field)
 			case "profile":
 				return ec.fieldContext_Transaction_profile(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
@@ -6220,6 +8303,10 @@ func (ec *executionContext) fieldContext_User_profiles(_ context.Context, field 
 				return ec.fieldContext_Profile_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_Profile_transactions(ctx, field)
+			case "snapshots":
+				return ec.fieldContext_Profile_snapshots(ctx, field)
+			case "categories":
+				return ec.fieldContext_Profile_categories(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
@@ -8460,7 +10547,7 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "institution", "accountType", "investmentType", "currencySymbol", "ticker", "tickerType", "amount", "archived", "transactionEntryIDs"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "institution", "accountType", "investmentType", "currencyCode", "ticker", "tickerType", "amount", "archived", "transactionEntryIDs", "snapshotAccountIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8509,13 +10596,13 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.InvestmentType = data
-		case "currencySymbol":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencySymbol"))
+		case "currencyCode":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyCode"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.CurrencySymbol = data
+			it.CurrencyCode = data
 		case "ticker":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ticker"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -8553,6 +10640,68 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.TransactionEntryIDs = data
+		case "snapshotAccountIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("snapshotAccountIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SnapshotAccountIDs = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateCategoryInput(ctx context.Context, obj any) (ent.CreateCategoryInput, error) {
+	var it ent.CreateCategoryInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "categoryType", "transactionIDs"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "createTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTime = data
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTime = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "categoryType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryType"))
+			data, err := ec.unmarshalNCategoryCategoryType2fijoyᚋentᚋcategoryᚐCategoryType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CategoryType = data
+		case "transactionIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TransactionIDs = data
 		}
 	}
 
@@ -8566,7 +10715,7 @@ func (ec *executionContext) unmarshalInputCreateProfileInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "currencies", "netWorthGoal", "accountIDs", "transactionIDs"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "name", "currencies", "netWorthGoal", "accountIDs", "transactionIDs", "snapshotIDs", "categoryIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8624,6 +10773,20 @@ func (ec *executionContext) unmarshalInputCreateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.TransactionIDs = data
+		case "snapshotIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("snapshotIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SnapshotIDs = data
+		case "categoryIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CategoryIDs = data
 		}
 	}
 
@@ -8637,7 +10800,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionEntryInput(ctx contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "amount", "accountID", "transactionID"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "note", "amount", "accountID", "transactionID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8658,6 +10821,13 @@ func (ec *executionContext) unmarshalInputCreateTransactionEntryInput(ctx contex
 				return it, err
 			}
 			it.UpdateTime = data
+		case "note":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("note"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Note = data
 		case "amount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -8694,7 +10864,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createTime", "updateTime", "note", "datetime", "transactionEntryIDs"}
+	fieldsInOrder := [...]string{"createTime", "updateTime", "note", "transactionEntryIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8722,13 +10892,6 @@ func (ec *executionContext) unmarshalInputCreateTransactionInput(ctx context.Con
 				return it, err
 			}
 			it.Note = data
-		case "datetime":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datetime"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Datetime = data
 		case "transactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transactionEntryIDs"))
 			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
@@ -8900,7 +11063,7 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "name", "institution", "investmentType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
+	fieldsInOrder := [...]string{"updateTime", "name", "institution", "investmentType", "amount", "archived", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries", "addSnapshotAccountIDs", "removeSnapshotAccountIDs", "clearSnapshotAccounts"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8972,6 +11135,82 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.ClearTransactionEntries = data
+		case "addSnapshotAccountIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addSnapshotAccountIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddSnapshotAccountIDs = data
+		case "removeSnapshotAccountIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeSnapshotAccountIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveSnapshotAccountIDs = data
+		case "clearSnapshotAccounts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSnapshotAccounts"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSnapshotAccounts = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateCategoryInput(ctx context.Context, obj any) (ent.UpdateCategoryInput, error) {
+	var it ent.UpdateCategoryInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"updateTime", "name", "addTransactionIDs", "removeTransactionIDs", "clearTransactions"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTime = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "addTransactionIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTransactionIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddTransactionIDs = data
+		case "removeTransactionIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeTransactionIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveTransactionIDs = data
+		case "clearTransactions":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTransactions"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearTransactions = data
 		}
 	}
 
@@ -8985,7 +11224,7 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "name", "currencies", "appendCurrencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccounts", "addTransactionIDs", "removeTransactionIDs", "clearTransactions"}
+	fieldsInOrder := [...]string{"updateTime", "name", "currencies", "appendCurrencies", "netWorthGoal", "addAccountIDs", "removeAccountIDs", "clearAccounts", "addTransactionIDs", "removeTransactionIDs", "clearTransactions", "addSnapshotIDs", "removeSnapshotIDs", "clearSnapshots", "addCategoryIDs", "removeCategoryIDs", "clearCategories"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -9071,6 +11310,48 @@ func (ec *executionContext) unmarshalInputUpdateProfileInput(ctx context.Context
 				return it, err
 			}
 			it.ClearTransactions = data
+		case "addSnapshotIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addSnapshotIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddSnapshotIDs = data
+		case "removeSnapshotIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeSnapshotIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveSnapshotIDs = data
+		case "clearSnapshots":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSnapshots"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSnapshots = data
+		case "addCategoryIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addCategoryIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddCategoryIDs = data
+		case "removeCategoryIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeCategoryIDs"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveCategoryIDs = data
+		case "clearCategories":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearCategories"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearCategories = data
 		}
 	}
 
@@ -9084,7 +11365,7 @@ func (ec *executionContext) unmarshalInputUpdateTransactionEntryInput(ctx contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "amount", "accountID", "transactionID"}
+	fieldsInOrder := [...]string{"updateTime", "note", "clearNote", "amount", "accountID", "transactionID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -9098,6 +11379,20 @@ func (ec *executionContext) unmarshalInputUpdateTransactionEntryInput(ctx contex
 				return it, err
 			}
 			it.UpdateTime = data
+		case "note":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("note"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Note = data
+		case "clearNote":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearNote"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearNote = data
 		case "amount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -9134,7 +11429,7 @@ func (ec *executionContext) unmarshalInputUpdateTransactionInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updateTime", "note", "clearNote", "datetime", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
+	fieldsInOrder := [...]string{"updateTime", "note", "clearNote", "addTransactionEntryIDs", "removeTransactionEntryIDs", "clearTransactionEntries"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -9162,13 +11457,6 @@ func (ec *executionContext) unmarshalInputUpdateTransactionInput(ctx context.Con
 				return it, err
 			}
 			it.ClearNote = data
-		case "datetime":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datetime"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Datetime = data
 		case "addTransactionEntryIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addTransactionEntryIDs"))
 			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
@@ -9224,11 +11512,31 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Transaction(ctx, sel, obj)
+	case *ent.SnapshotFXRate:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._SnapshotFXRate(ctx, sel, obj)
+	case *ent.SnapshotAccount:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._SnapshotAccount(ctx, sel, obj)
+	case *ent.Snapshot:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Snapshot(ctx, sel, obj)
 	case *ent.Profile:
 		if obj == nil {
 			return graphql.Null
 		}
 		return ec._Profile(ctx, sel, obj)
+	case *ent.Category:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Category(ctx, sel, obj)
 	case *ent.Account:
 		if obj == nil {
 			return graphql.Null
@@ -9289,8 +11597,8 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "currencySymbol":
-			out.Values[i] = ec._Account_currencySymbol(ctx, field, obj)
+		case "currencyCode":
+			out.Values[i] = ec._Account_currencyCode(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -9350,42 +11658,6 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 					}
 				}()
 				res = ec._Account_value(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "fxRate":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Account_fxRate(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -9499,6 +11771,39 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 					}
 				}()
 				res = ec._Account_transactionEntries(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "snapshotAccounts":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Account_snapshotAccounts(ctx, field, obj)
 				return res
 			}
 
@@ -9668,6 +11973,134 @@ func (ec *executionContext) _AssetInfo(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var categoryImplementors = []string{"Category", "Node"}
+
+func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *ent.Category) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, categoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Category")
+		case "id":
+			out.Values[i] = ec._Category_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._Category_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._Category_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._Category_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "categoryType":
+			out.Values[i] = ec._Category_categoryType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "profile":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Category_profile(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "transactions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Category_transactions(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10129,6 +12562,72 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "snapshots":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Profile_snapshots(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "categories":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Profile_categories(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10234,6 +12733,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "categories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_categories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "profiles":
 			field := field
 
@@ -10244,6 +12765,72 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_profiles(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "snapshots":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_snapshots(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "snapshotAccounts":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_snapshotAccounts(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "snapshotFxRates":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_snapshotFxRates(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -10457,33 +13044,35 @@ func (ec *executionContext) _RefreshAccountsResponse(ctx context.Context, sel as
 	return out
 }
 
-var transactionImplementors = []string{"Transaction", "Node"}
+var snapshotImplementors = []string{"Snapshot", "Node"}
 
-func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionSet, obj *ent.Transaction) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, transactionImplementors)
+func (ec *executionContext) _Snapshot(ctx context.Context, sel ast.SelectionSet, obj *ent.Snapshot) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, snapshotImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Transaction")
+			out.Values[i] = graphql.MarshalString("Snapshot")
 		case "id":
-			out.Values[i] = ec._Transaction_id(ctx, field, obj)
+			out.Values[i] = ec._Snapshot_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createTime":
-			out.Values[i] = ec._Transaction_createTime(ctx, field, obj)
+			out.Values[i] = ec._Snapshot_createTime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updateTime":
-			out.Values[i] = ec._Transaction_updateTime(ctx, field, obj)
+			out.Values[i] = ec._Snapshot_updateTime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "balance":
+		case "note":
+			out.Values[i] = ec._Snapshot_note(ctx, field, obj)
+		case "profile":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -10492,7 +13081,7 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Transaction_balance(ctx, field, obj)
+				res = ec._Snapshot_profile(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -10519,13 +13108,483 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "note":
-			out.Values[i] = ec._Transaction_note(ctx, field, obj)
-		case "datetime":
-			out.Values[i] = ec._Transaction_datetime(ctx, field, obj)
+		case "snapshotAccounts":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Snapshot_snapshotAccounts(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "snapshotFxRates":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Snapshot_snapshotFxRates(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var snapshotAccountImplementors = []string{"SnapshotAccount", "Node"}
+
+func (ec *executionContext) _SnapshotAccount(ctx context.Context, sel ast.SelectionSet, obj *ent.SnapshotAccount) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, snapshotAccountImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SnapshotAccount")
+		case "id":
+			out.Values[i] = ec._SnapshotAccount_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "createTime":
+			out.Values[i] = ec._SnapshotAccount_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._SnapshotAccount_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "amount":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._SnapshotAccount_amount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "value":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._SnapshotAccount_value(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "balance":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._SnapshotAccount_balance(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "account":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._SnapshotAccount_account(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "snapshot":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._SnapshotAccount_snapshot(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var snapshotFXRateImplementors = []string{"SnapshotFXRate", "Node"}
+
+func (ec *executionContext) _SnapshotFXRate(ctx context.Context, sel ast.SelectionSet, obj *ent.SnapshotFXRate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, snapshotFXRateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SnapshotFXRate")
+		case "id":
+			out.Values[i] = ec._SnapshotFXRate_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._SnapshotFXRate_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._SnapshotFXRate_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "fromCurrency":
+			out.Values[i] = ec._SnapshotFXRate_fromCurrency(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "toCurrency":
+			out.Values[i] = ec._SnapshotFXRate_toCurrency(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "fxRate":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._SnapshotFXRate_fxRate(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "snapshot":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._SnapshotFXRate_snapshot(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var transactionImplementors = []string{"Transaction", "Node"}
+
+func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionSet, obj *ent.Transaction) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, transactionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Transaction")
+		case "id":
+			out.Values[i] = ec._Transaction_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._Transaction_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._Transaction_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "note":
+			out.Values[i] = ec._Transaction_note(ctx, field, obj)
 		case "profile":
 			field := field
 
@@ -10536,6 +13595,42 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 					}
 				}()
 				res = ec._Transaction_profile(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "category":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Transaction_category(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -10731,6 +13826,8 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "note":
+			out.Values[i] = ec._TransactionEntry_note(ctx, field, obj)
 		case "amount":
 			field := field
 
@@ -10777,42 +13874,6 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 					}
 				}()
 				res = ec._TransactionEntry_value(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "fxRate":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._TransactionEntry_fxRate(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -11641,6 +14702,70 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNCategory2ᚕᚖfijoyᚋentᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Category) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCategory2ᚖfijoyᚋentᚐCategory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCategory2ᚖfijoyᚋentᚐCategory(ctx context.Context, sel ast.SelectionSet, v *ent.Category) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Category(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNCategoryCategoryType2fijoyᚋentᚋcategoryᚐCategoryType(ctx context.Context, v any) (category.CategoryType, error) {
+	var res category.CategoryType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNCategoryCategoryType2fijoyᚋentᚋcategoryᚐCategoryType(ctx context.Context, sel ast.SelectionSet, v category.CategoryType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNCreateAccountInput2fijoyᚋentᚐCreateAccountInput(ctx context.Context, v any) (ent.CreateAccountInput, error) {
 	res, err := ec.unmarshalInputCreateAccountInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11933,6 +15058,168 @@ func (ec *executionContext) marshalNRefreshAccountsResponse2ᚖfijoyᚐRefreshAc
 		return graphql.Null
 	}
 	return ec._RefreshAccountsResponse(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSnapshot2ᚕᚖfijoyᚋentᚐSnapshotᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Snapshot) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSnapshot2ᚖfijoyᚋentᚐSnapshot(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSnapshot2ᚖfijoyᚋentᚐSnapshot(ctx context.Context, sel ast.SelectionSet, v *ent.Snapshot) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Snapshot(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSnapshotAccount2ᚕᚖfijoyᚋentᚐSnapshotAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.SnapshotAccount) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSnapshotAccount2ᚖfijoyᚋentᚐSnapshotAccount(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSnapshotAccount2ᚖfijoyᚋentᚐSnapshotAccount(ctx context.Context, sel ast.SelectionSet, v *ent.SnapshotAccount) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SnapshotAccount(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSnapshotFXRate2ᚕᚖfijoyᚋentᚐSnapshotFXRateᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.SnapshotFXRate) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSnapshotFXRate2ᚖfijoyᚋentᚐSnapshotFXRate(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSnapshotFXRate2ᚖfijoyᚋentᚐSnapshotFXRate(ctx context.Context, sel ast.SelectionSet, v *ent.SnapshotFXRate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SnapshotFXRate(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) (string, error) {
@@ -12530,6 +15817,53 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) marshalOCategory2ᚕᚖfijoyᚋentᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Category) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCategory2ᚖfijoyᚋentᚐCategory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v any) (*entgql.Cursor[int], error) {
 	if v == nil {
 		return nil, nil
@@ -12660,6 +15994,147 @@ func (ec *executionContext) marshalOProfile2ᚕᚖfijoyᚋentᚐProfileᚄ(ctx c
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalNProfile2ᚖfijoyᚋentᚐProfile(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOSnapshot2ᚕᚖfijoyᚋentᚐSnapshotᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Snapshot) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSnapshot2ᚖfijoyᚋentᚐSnapshot(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOSnapshotAccount2ᚕᚖfijoyᚋentᚐSnapshotAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.SnapshotAccount) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSnapshotAccount2ᚖfijoyᚋentᚐSnapshotAccount(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOSnapshotFXRate2ᚕᚖfijoyᚋentᚐSnapshotFXRateᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.SnapshotFXRate) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSnapshotFXRate2ᚖfijoyᚋentᚐSnapshotFXRate(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

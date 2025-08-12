@@ -18,12 +18,12 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldNote holds the string denoting the note field in the database.
+	FieldNote = "note"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
-	// FieldFxRate holds the string denoting the fx_rate field in the database.
-	FieldFxRate = "fx_rate"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
 	// EdgeAccount holds the string denoting the account edge name in mutations.
@@ -53,9 +53,9 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldNote,
 	FieldAmount,
 	FieldValue,
-	FieldFxRate,
 	FieldBalance,
 }
 
@@ -108,6 +108,11 @@ func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
 }
 
+// ByNote orders the results by the note field.
+func ByNote(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNote, opts...).ToFunc()
+}
+
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
@@ -116,11 +121,6 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByValue orders the results by the value field.
 func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
-}
-
-// ByFxRate orders the results by the fx_rate field.
-func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldFxRate, opts...).ToFunc()
 }
 
 // ByBalance orders the results by the balance field.

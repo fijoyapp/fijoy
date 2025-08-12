@@ -31,6 +31,8 @@ func (TransactionEntry) Mixin() []ent.Mixin {
 // Fields of the TransactionEntry.
 func (TransactionEntry) Fields() []ent.Field {
 	return []ent.Field{
+		field.Text("note").Optional(),
+
 		field.Float("amount").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -53,19 +55,6 @@ func (TransactionEntry) Fields() []ent.Field {
 			).
 			Comment("The value of 1 share in the native currency. If this is just a currency account, then this field will be 1"),
 
-		field.Float("fx_rate").
-			GoType(decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL:    "decimal(18,10)",
-				dialect.Postgres: "numeric(18,10)",
-			}).
-			Annotations(
-				entgql.Type("String"),
-				entgql.Skip(entgql.SkipMutationCreateInput),
-				entgql.Skip(entgql.SkipMutationUpdateInput),
-			).
-			Comment("The exchange rate from the native currency to user's default display currency"),
-
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -77,7 +66,7 @@ func (TransactionEntry) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
-			Comment("The total balance of this transaction entry in user's display currency"),
+			Comment("The total balance of this transaction entry in this account's currency"),
 	}
 }
 

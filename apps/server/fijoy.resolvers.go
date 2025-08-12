@@ -86,19 +86,8 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		return nil, err
 	}
 
-	profile, err := client.Profile.Query().Where(profile.ID(userData.ProfileID)).Only(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("profile not found: %w", err)
-	}
-
-	primaryCurrency, ok := currency.Currencies[profile.Currencies[0]]
-	if !ok {
-		return nil, fmt.Errorf("primary currency not found: %s", profile.Currencies[0])
-	}
-
 	var value decimal.Decimal
-	var fxRate decimal.Decimal
-	var currencySymbol string
+	var currencyCode string
 
 	switch input.AccountType {
 	case account.AccountTypeInvestment:
@@ -107,41 +96,26 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 			return nil, fmt.Errorf("failed to get asset info: %w", err)
 		}
 		// currencySymbol
-		currencySymbol = assetInfo.Currency
+		currencyCode = assetInfo.Currency
 		// value
 		value = assetInfo.CurrentPrice
 		// fxRate
-		marketFxRate, err := r.marketDataClient.GetFxRate(ctx, assetInfo.Currency, primaryCurrency.Code)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get fx rate: %w", err)
-		}
-		fxRate = marketFxRate.Rate
 	case account.AccountTypeLiquidity, account.AccountTypeLiability, account.AccountTypeProperty, account.AccountTypeReceivable:
 		// currencySymbol
-		currencySymbol = input.CurrencySymbol
+		currencyCode = input.CurrencyCode
 		// value
 		value = decimal.NewFromInt(1)
 		// fxRate
-		if primaryCurrency.Code == input.CurrencySymbol {
-			fxRate = decimal.NewFromInt(1)
-		} else {
-			marketFxRate, err := r.marketDataClient.GetFxRate(ctx, input.CurrencySymbol, primaryCurrency.Code)
-			if err != nil {
-				return nil, fmt.Errorf("failed to get fx rate: %w", err)
-			}
-			fxRate = marketFxRate.Rate
-		}
 	default:
 		return nil, errors.New("invalid account type")
 	}
 
 	account, err := client.Account.Create().
 		SetInput(input).
-		SetCurrencySymbol(currencySymbol).
+		SetCurrencyCode(currencyCode).
 		SetAmount(decimal.NewFromInt(0)).
 		SetProfileID(userData.ProfileID).
 		SetValue(value).
-		SetFxRate(fxRate).
 		SetBalance(decimal.NewFromInt(0)).
 		Save(ctx)
 	if err != nil {
@@ -183,8 +157,7 @@ func (r *mutationResolver) CreateTransactionWithTransactionEntries(ctx context.C
 	balance := decimal.NewFromInt(0)
 
 	transactionBuilder := client.Transaction.Create().
-		SetProfileID(userData.ProfileID).
-		SetBalance(balance)
+		SetProfileID(userData.ProfileID)
 
 	if input.Note != nil {
 		transactionBuilder = transactionBuilder.SetNote(*input.Note)
@@ -209,7 +182,7 @@ func (r *mutationResolver) CreateTransactionWithTransactionEntries(ctx context.C
 		balance = balance.Add(transactionEntry.Balance)
 	}
 
-	transaction, err = transaction.Update().SetBalance(balance).Save(ctx)
+	transaction, err = transaction.Update().Save(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update transaction balance: %w", err)
 	}
@@ -230,12 +203,11 @@ func (r *mutationResolver) CreateTransactionEntry(ctx context.Context, input ent
 		return nil, fmt.Errorf("account not found: %w", err)
 	}
 
-	balance := account.FxRate.Mul(account.Value).Mul(input.Amount)
+	balance := (account.Value).Mul(input.Amount)
 
 	transactionEntry, err := client.TransactionEntry.Create().
 		SetInput(input).
 		SetValue(account.Value).
-		SetFxRate(account.FxRate).
 		SetBalance(balance).
 		Save(ctx)
 	if err != nil {

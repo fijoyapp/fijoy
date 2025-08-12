@@ -56,16 +56,15 @@ const NewAccountInvestmentMutation = graphql`
           balance
           institution
           value
-          currencySymbol
+          currencyCode
           amount
         }
       }
       transactionEdge @appendEdge(connections: $transactionConnections) {
         node {
           id
-          datetime
+          createTime
           note
-          balance
         }
       }
     }
@@ -138,7 +137,7 @@ export function NewInvestment({ fragmentRef }: Props) {
           institution: values.institution,
           ticker: values.symbol,
           tickerType: values.type,
-          currencySymbol: values.symbol,
+          currencyCode: values.symbol,
         },
       },
       onCompleted(_, errors) {
