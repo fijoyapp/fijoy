@@ -16,13 +16,25 @@ import { NewInvestment } from "./investment/new-account";
 import { NewProperty } from "./property/new-account";
 import { NewReceivable } from "./receivable/new-account";
 import { NewLiability } from "./liability/new-account";
+import { graphql } from "relay-runtime";
+import type { addAccountFragment$key } from "./__generated__/addAccountFragment.graphql";
+import { useFragment } from "react-relay";
 
 type AddAccountProps = {
   type: AccountType;
+  fragmentRef: addAccountFragment$key;
 };
 
-export function AddAccount({ type }: AddAccountProps) {
+const fragment = graphql`
+  fragment addAccountFragment on Query {
+    ...newAccountInvestmentFragment
+  }
+`;
+
+export function AddAccount({ type, fragmentRef }: AddAccountProps) {
   const accountTypeDetail = getAccountTypeDetail(type);
+
+  const data = useFragment(fragment, fragmentRef);
   return (
     <div className="max-w-(--breakpoint-sm) p-4 lg:p-6">
       <Breadcrumb>
@@ -48,7 +60,7 @@ export function AddAccount({ type }: AddAccountProps) {
 
       {match(type)
         .with("liquidity", () => <NewLiquidity />)
-        .with("investment", () => <NewInvestment />)
+        .with("investment", () => <NewInvestment fragmentRef={data} />)
         .with("property", () => <NewProperty />)
         .with("receivable", () => <NewReceivable />)
         .with("liability", () => <NewLiability />)

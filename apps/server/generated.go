@@ -4397,14 +4397,11 @@ func (ec *executionContext) _Query_assetInfo(ctx context.Context, field graphql.
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*AssetInfo)
 	fc.Result = res
-	return ec.marshalNAssetInfo2ᚖfijoyᚐAssetInfo(ctx, field.Selections, res)
+	return ec.marshalOAssetInfo2ᚖfijoyᚐAssetInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_assetInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4464,14 +4461,11 @@ func (ec *executionContext) _Query_fxRate(ctx context.Context, field graphql.Col
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*FXRate)
 	fc.Result = res
-	return ec.marshalNFXRate2ᚖfijoyᚐFXRate(ctx, field.Selections, res)
+	return ec.marshalOFXRate2ᚖfijoyᚐFXRate(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_fxRate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10126,16 +10120,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "assetInfo":
 			field := field
 
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Query_assetInfo(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
 				return res
 			}
 
@@ -10148,16 +10139,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "fxRate":
 			field := field
 
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Query_fxRate(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
 				return res
 			}
 
@@ -11322,20 +11310,6 @@ func (ec *executionContext) marshalNAccountTickerType2fijoyᚋentᚋaccountᚐTi
 	return v
 }
 
-func (ec *executionContext) marshalNAssetInfo2fijoyᚐAssetInfo(ctx context.Context, sel ast.SelectionSet, v AssetInfo) graphql.Marshaler {
-	return ec._AssetInfo(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNAssetInfo2ᚖfijoyᚐAssetInfo(ctx context.Context, sel ast.SelectionSet, v *AssetInfo) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._AssetInfo(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11468,20 +11442,6 @@ func (ec *executionContext) unmarshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCur
 
 func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, sel ast.SelectionSet, v entgql.Cursor[int]) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNFXRate2fijoyᚐFXRate(ctx context.Context, sel ast.SelectionSet, v FXRate) graphql.Marshaler {
-	return ec._FXRate(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNFXRate2ᚖfijoyᚐFXRate(ctx context.Context, sel ast.SelectionSet, v *FXRate) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._FXRate(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2int(ctx context.Context, v any) (int, error) {
@@ -12160,6 +12120,13 @@ func (ec *executionContext) marshalOAccountInvestmentType2ᚖfijoyᚋentᚋaccou
 	return v
 }
 
+func (ec *executionContext) marshalOAssetInfo2ᚖfijoyᚐAssetInfo(ctx context.Context, sel ast.SelectionSet, v *AssetInfo) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._AssetInfo(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -12204,6 +12171,13 @@ func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCu
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOFXRate2ᚖfijoyᚐFXRate(ctx context.Context, sel ast.SelectionSet, v *FXRate) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._FXRate(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOID2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {

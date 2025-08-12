@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/internal/middleware"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -21,7 +20,6 @@ func GetAuthDataFromContext(ctx context.Context) (*AuthData, error) {
 	if claims == nil {
 		return &AuthData{}, errors.New("no claims found")
 	}
-	fmt.Println(claims)
 
 	if _, ok := claims["user_id"]; !ok {
 		return &AuthData{}, errors.New("no user_id found in claims")

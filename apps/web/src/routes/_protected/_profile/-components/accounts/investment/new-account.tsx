@@ -2,7 +2,10 @@ import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   Card,
+  CardAction,
   CardContent,
+  CardDescription,
+  CardFooter,
   // CardDescription,
   CardHeader,
   CardTitle,
@@ -24,9 +27,12 @@ import { toast } from "sonner";
 import { AmountField } from "../form/amount";
 import { match } from "ts-pattern";
 import { ConnectionHandler, graphql } from "relay-runtime";
-import { useProfile } from "@/hooks/use-profile";
-import { useMutation } from "react-relay";
+import { useMutation, useRefetchableFragment } from "react-relay";
 import type { newAccountInvestmentMutation } from "./__generated__/newAccountInvestmentMutation.graphql";
+import type { newAccountInvestmentFragment$key } from "./__generated__/newAccountInvestmentFragment.graphql";
+import type { NewAccountInvestmentRefetchQuery } from "./__generated__/NewAccountInvestmentRefetchQuery.graphql";
+import { useEffect, useTransition } from "react";
+import { useFormat } from "@/hooks/use-format";
 
 const formSchema = z.object({
   symbol: z.string(),
@@ -66,19 +72,47 @@ const NewAccountInvestmentMutation = graphql`
   }
 `;
 
-export function NewInvestment() {
-  const { defaultCurrency } = useProfile();
+const fragment = graphql`
+  fragment newAccountInvestmentFragment on Query
+  @refetchable(queryName: "NewAccountInvestmentRefetchQuery")
+  @argumentDefinitions(symbol: { type: "String", defaultValue: "" }) {
+    assetInfo(symbol: $symbol) {
+      name
+      currency
+      exchange
+      currentPrice
+    }
+  }
+`;
 
+type Props = {
+  fragmentRef: newAccountInvestmentFragment$key;
+};
+
+export function NewInvestment({ fragmentRef }: Props) {
+  const { getCurrencyDisplay } = useFormat();
+  const [_, startTransition] = useTransition();
   const router = useRouter();
   const [commitMutation, isMutationInFlight] =
     useMutation<newAccountInvestmentMutation>(NewAccountInvestmentMutation);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      symbol: defaultCurrency,
-    },
+    defaultValues: {},
   });
+
+  const [data, refetch] = useRefetchableFragment<
+    NewAccountInvestmentRefetchQuery,
+    newAccountInvestmentFragment$key
+  >(fragment, fragmentRef);
+
+  const symbol = form.watch("symbol");
+
+  useEffect(() => {
+    startTransition(() => {
+      refetch({ symbol });
+    });
+  }, [symbol, refetch]);
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -127,58 +161,69 @@ export function NewInvestment() {
               <CardTitle>New Investment Account</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-2">
-                <div className="grow">
-                  <NameField
-                    control={form.control}
-                    name="symbol"
-                    label="Symbol"
-                    placeholder="What is the symbol? e.g. AAPL"
-                  />
-                </div>
+              <NameField
+                control={form.control}
+                name="symbol"
+                label="Symbol"
+                placeholder="What is the symbol? e.g. AAPL"
+              />
 
-                <FormField
-                  control={form.control}
-                  name={"type"}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Type</FormLabel>
-                      <FormControl>
-                        <ToggleGroup
-                          type="single"
-                          value={field.value}
-                          onValueChange={(value) => {
-                            match(value)
-                              .with("stock", () => {
-                                form.setValue("type", "stock");
-                              })
-                              .with("crypto", () => {
-                                form.setValue("type", "crypto");
-                              })
-                              .otherwise(() => {
-                                alert("Invalid type value");
-                              });
-                          }}
+              {symbol && data.assetInfo && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{data.assetInfo.name}</CardTitle>
+                    <CardDescription>
+                      {getCurrencyDisplay(
+                        data.assetInfo?.currentPrice,
+                        data.assetInfo?.currency,
+                      )}
+                    </CardDescription>
+                    <CardAction>{data.assetInfo.exchange}</CardAction>
+                  </CardHeader>
+                </Card>
+              )}
+
+              <FormField
+                control={form.control}
+                name={"type"}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Type</FormLabel>
+                    <FormControl>
+                      <ToggleGroup
+                        type="single"
+                        value={field.value}
+                        onValueChange={(value) => {
+                          match(value)
+                            .with("stock", () => {
+                              form.setValue("type", "stock");
+                            })
+                            .with("crypto", () => {
+                              form.setValue("type", "crypto");
+                            })
+                            .otherwise(() => {
+                              alert("Invalid type value");
+                            });
+                        }}
+                      >
+                        <ToggleGroupItem
+                          value="stock"
+                          aria-label="Toggle Stock"
                         >
-                          <ToggleGroupItem
-                            value="stock"
-                            aria-label="Toggle Stock"
-                          >
-                            Stock
-                          </ToggleGroupItem>
-                          <ToggleGroupItem
-                            value="crypto"
-                            aria-label="Toggle Crypto"
-                          >
-                            Crypto
-                          </ToggleGroupItem>
-                        </ToggleGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                          Stock
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                          value="crypto"
+                          aria-label="Toggle Crypto"
+                        >
+                          Crypto
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <NameField
                 control={form.control}
@@ -195,11 +240,12 @@ export function NewInvestment() {
                 description="Enter how many shares do you have"
               />
             </CardContent>
+            <CardFooter>
+              <Button className="ml-auto" disabled={isMutationInFlight}>
+                Create
+              </Button>
+            </CardFooter>
           </Card>
-
-          <Button className="ml-auto" disabled={isMutationInFlight}>
-            Create
-          </Button>
         </form>
       </Form>
     </div>

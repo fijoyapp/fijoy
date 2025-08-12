@@ -318,8 +318,8 @@ type Query {
   profile: Profile!
   user: User!
   currencies: [Currency!]!
-  assetInfo(symbol: String!): AssetInfo!
-  fxRate(fromCurrency: String!, toCurrency: String!): FXRate!
+  assetInfo(symbol: String!): AssetInfo
+  fxRate(fromCurrency: String!, toCurrency: String!): FXRate
 }
 
 """

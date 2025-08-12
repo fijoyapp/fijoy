@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eeeb2fac983d201598afa49268fb804d>>
+ * @generated SignedSource<<07ed6e78fe6026347814628754dc2532>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,7 +26,14 @@ var v0 = [
     "name": "first",
     "value": 1000
   }
-];
+],
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -94,13 +101,7 @@ return {
                     "name": "balance",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  },
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -185,20 +186,59 @@ return {
         "key": "AccountsDataTable_accounts",
         "kind": "LinkedHandle",
         "name": "accounts"
+      },
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "symbol",
+            "value": ""
+          }
+        ],
+        "concreteType": "AssetInfo",
+        "kind": "LinkedField",
+        "name": "assetInfo",
+        "plural": false,
+        "selections": [
+          (v1/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "currency",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "exchange",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "currentPrice",
+            "storageKey": null
+          }
+        ],
+        "storageKey": "assetInfo(symbol:\"\")"
       }
     ]
   },
   "params": {
-    "cacheID": "0142c17c04ca2bace898d8c1c066d0f5",
+    "cacheID": "6e20a213978712e815c16ab1c76a1adf",
     "id": null,
     "metadata": {},
     "name": "AccountsPageRefetch",
     "operationKind": "query",
-    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountsDataTableFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencySymbol\n        amount\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountsDataTableFragment\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AccountsPageRefetch {\n  ...accountsPageFragment\n}\n\nfragment accountsDataTableFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencySymbol\n        amount\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n  ...addAccountFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountsDataTableFragment\n}\n\nfragment addAccountFragment on Query {\n  ...newAccountInvestmentFragment\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment newAccountInvestmentFragment on Query {\n  assetInfo(symbol: \"\") {\n    name\n    currency\n    exchange\n    currentPrice\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b4e3f48bb02738a2e62eb47cbf1858b1";
+(node as any).hash = "c25e80970cb989b4b860e0939fa18aea";
 
 export default node;

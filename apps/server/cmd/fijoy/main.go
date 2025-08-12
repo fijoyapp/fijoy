@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fijoy"
 	"fijoy/config"
-	"fijoy/constants"
 	"fijoy/ent"
 	"fijoy/ent/migrate"
 
@@ -104,14 +103,16 @@ func main() {
 
 	analyticsService := analytics_usecase.New(cfg.Analytics)
 
-	var marketDataClient market.MarketDataClient
-	if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
-		log.Println("Using mock market data client")
-		marketDataClient = market.NewMockMarketDataClient()
-	} else {
-		log.Println("Using Twelve Data market data client")
-		marketDataClient = market.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
-	}
+	// var marketDataClient market.MarketDataClient
+	// if cfg.Market.TWELVE_DATA_SECRET_KEY == "" {
+	// 	log.Println("Using mock market data client")
+	// 	marketDataClient = market.NewMockMarketDataClient()
+	// } else {
+	// 	log.Println("Using Twelve Data market data client")
+	// 	marketDataClient = market.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
+	// }
+
+	marketDataClient := market.NewYahooDataClient()
 
 	userRepo := user_repository.NewUserRepository()
 	userKeyRepo := user_repository.NewUserKeyRepository()

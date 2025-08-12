@@ -20,6 +20,7 @@ const AccountsPageFragment = graphql`
   fragment accountsPageFragment on Query
   @refetchable(queryName: "AccountsPageRefetch") {
     ...accountsViewFragment
+    ...addAccountFragment
   }
 `;
 
@@ -45,7 +46,7 @@ function Page() {
   return (
     <>
       {add ? (
-        <AddAccount type={add} />
+        <AddAccount type={add} fragmentRef={fragmentData} />
       ) : (
         <AccountsView accountsViewFragment={fragmentData} />
       )}

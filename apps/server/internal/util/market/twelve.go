@@ -61,6 +61,10 @@ func (r *AssetInfoResponse) ToAssetInfo() *AssetInfo {
 }
 
 func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol string) (*AssetInfo, error) {
+	if symbol == "" {
+		return nil, nil
+	}
+
 	logger := middleware.GetLogger(context)
 
 	u, err := url.Parse(c.baseURL + "quote")
@@ -114,6 +118,10 @@ func (c *TwelveMarketDataClient) GetAssetInfo(context context.Context, symbol st
 }
 
 func (c *TwelveMarketDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*FXRate, error) {
+	if fromCurrency == "" || toCurrency == "" {
+		return nil, nil
+	}
+
 	logger := middleware.GetLogger(context)
 
 	u, err := url.Parse(c.baseURL + "exchange_rate")

@@ -289,6 +289,10 @@ func (r *queryResolver) AssetInfo(ctx context.Context, symbol string) (*AssetInf
 		return nil, fmt.Errorf("failed to get asset info: %w", err)
 	}
 
+	if assetInfo == nil {
+		return nil, nil
+	}
+
 	return &AssetInfo{
 		Symbol:       assetInfo.Symbol,
 		Name:         assetInfo.Name,
@@ -303,6 +307,10 @@ func (r *queryResolver) FxRate(ctx context.Context, fromCurrency string, toCurre
 	fxRate, err := r.marketDataClient.GetFxRate(ctx, fromCurrency, toCurrency)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get fx rate: %w", err)
+	}
+
+	if fxRate == nil {
+		return nil, nil
 	}
 
 	return &FXRate{
