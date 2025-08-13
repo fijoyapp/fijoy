@@ -33,10 +33,7 @@ func (Profile) Mixin() []ent.Mixin {
 // Fields of the Profile.
 func (Profile) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("id"),
-
 		field.String("name"),
-
 		field.String("locale").
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput),
@@ -59,7 +56,6 @@ func (Profile) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("users", User.Type).Ref("profiles").
 			Through("user_profiles", UserProfile.Type).
-		Required().
 			Annotations(
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),

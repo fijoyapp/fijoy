@@ -78,12 +78,6 @@ func (_c *ProfileCreate) SetNetWorthGoal(v decimal.Decimal) *ProfileCreate {
 	return _c
 }
 
-// SetID sets the "id" field.
-func (_c *ProfileCreate) SetID(v int) *ProfileCreate {
-	_c.mutation.SetID(v)
-	return _c
-}
-
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (_c *ProfileCreate) AddUserIDs(ids ...int) *ProfileCreate {
 	_c.mutation.AddUserIDs(ids...)
@@ -224,9 +218,6 @@ func (_c *ProfileCreate) check() error {
 	if _, ok := _c.mutation.NetWorthGoal(); !ok {
 		return &ValidationError{Name: "net_worth_goal", err: errors.New(`ent: missing required field "Profile.net_worth_goal"`)}
 	}
-	if len(_c.mutation.UsersIDs()) == 0 {
-		return &ValidationError{Name: "users", err: errors.New(`ent: missing required edge "Profile.users"`)}
-	}
 	return nil
 }
 
@@ -241,10 +232,8 @@ func (_c *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -255,10 +244,6 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_node = &Profile{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	)
-	if id, ok := _c.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(profile.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -411,7 +396,7 @@ func (_c *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

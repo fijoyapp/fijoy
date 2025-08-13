@@ -11,6 +11,7 @@ import (
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
 	"fijoy/ent/user"
+	"fijoy/ent/userprofile"
 	"fijoy/internal/util/auth"
 	"fijoy/internal/util/currency"
 	"fijoy/internal/util/pointer"
@@ -44,8 +45,17 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 	profile, err := client.Profile.Create().
 		SetInput(input).
 		SetLocale(defaultCurrency.Locale).
-		AddUserIDs(userData.UserID).
 		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create profile: %w", err)
+	}
+
+	_, err = client.UserProfile.Create().
+		SetPermission(userprofile.PermissionOwner).
+		SetUserID(userData.UserID).SetProfile(profile).Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user profile: %w", err)
+	}
 
 	_, tokenString, _ := r.authConfig.JWT_AUTH.Encode(
 		map[string]any{
