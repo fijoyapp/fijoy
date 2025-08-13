@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4112c24d3ef9cbab5bc6083d46705609>>
+ * @generated SignedSource<<d26ccd839aca9e1ac2f760954461a9cc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,8 +14,7 @@ export type transactionDataTableFragment$data = {
   readonly transactions: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly balance: string;
-        readonly datetime: any;
+        readonly createTime: any;
         readonly id: string;
         readonly note: string | null | undefined;
       } | null | undefined;
@@ -92,18 +91,7 @@ const node: ReaderFragment = {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "datetime",
-                    "storageKey": null
-                  },
-                  "action": "THROW"
-                },
-                {
-                  "kind": "RequiredField",
-                  "field": {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "balance",
+                    "name": "createTime",
                     "storageKey": null
                   },
                   "action": "THROW"
@@ -161,6 +149,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "741978c5b5996e21866f1f4745d5e138";
+(node as any).hash = "b1534c144d4c8768f3f4b575912c6bab";
 
 export default node;

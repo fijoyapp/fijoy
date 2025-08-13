@@ -4,8 +4,12 @@ package ent
 
 import (
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/schema"
+	"fijoy/ent/snapshot"
+	"fijoy/ent/snapshotaccount"
+	"fijoy/ent/snapshotfxrate"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
@@ -40,18 +44,37 @@ func init() {
 	accountDescInstitution := accountFields[1].Descriptor()
 	// account.InstitutionValidator is a validator for the "institution" field. It is called by the builders before save.
 	account.InstitutionValidator = accountDescInstitution.Validators[0].(func(string) error)
-	// accountDescCurrencySymbol is the schema descriptor for currency_symbol field.
-	accountDescCurrencySymbol := accountFields[4].Descriptor()
-	// account.CurrencySymbolValidator is a validator for the "currency_symbol" field. It is called by the builders before save.
-	account.CurrencySymbolValidator = accountDescCurrencySymbol.Validators[0].(func(string) error)
+	// accountDescCurrencyCode is the schema descriptor for currency_code field.
+	accountDescCurrencyCode := accountFields[4].Descriptor()
+	// account.CurrencyCodeValidator is a validator for the "currency_code" field. It is called by the builders before save.
+	account.CurrencyCodeValidator = accountDescCurrencyCode.Validators[0].(func(string) error)
 	// accountDescTicker is the schema descriptor for ticker field.
 	accountDescTicker := accountFields[5].Descriptor()
 	// account.TickerValidator is a validator for the "ticker" field. It is called by the builders before save.
 	account.TickerValidator = accountDescTicker.Validators[0].(func(string) error)
 	// accountDescArchived is the schema descriptor for archived field.
-	accountDescArchived := accountFields[11].Descriptor()
+	accountDescArchived := accountFields[10].Descriptor()
 	// account.DefaultArchived holds the default value on creation for the archived field.
 	account.DefaultArchived = accountDescArchived.Default.(bool)
+	categoryMixin := schema.Category{}.Mixin()
+	categoryMixinFields0 := categoryMixin[0].Fields()
+	_ = categoryMixinFields0
+	categoryFields := schema.Category{}.Fields()
+	_ = categoryFields
+	// categoryDescCreateTime is the schema descriptor for create_time field.
+	categoryDescCreateTime := categoryMixinFields0[0].Descriptor()
+	// category.DefaultCreateTime holds the default value on creation for the create_time field.
+	category.DefaultCreateTime = categoryDescCreateTime.Default.(func() time.Time)
+	// categoryDescUpdateTime is the schema descriptor for update_time field.
+	categoryDescUpdateTime := categoryMixinFields0[1].Descriptor()
+	// category.DefaultUpdateTime holds the default value on creation for the update_time field.
+	category.DefaultUpdateTime = categoryDescUpdateTime.Default.(func() time.Time)
+	// category.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	category.UpdateDefaultUpdateTime = categoryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// categoryDescName is the schema descriptor for name field.
+	categoryDescName := categoryFields[0].Descriptor()
+	// category.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	category.NameValidator = categoryDescName.Validators[0].(func(string) error)
 	profileMixin := schema.Profile{}.Mixin()
 	profileMixinFields0 := profileMixin[0].Fields()
 	_ = profileMixinFields0
@@ -67,6 +90,51 @@ func init() {
 	profile.DefaultUpdateTime = profileDescUpdateTime.Default.(func() time.Time)
 	// profile.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	profile.UpdateDefaultUpdateTime = profileDescUpdateTime.UpdateDefault.(func() time.Time)
+	snapshotMixin := schema.Snapshot{}.Mixin()
+	snapshotMixinFields0 := snapshotMixin[0].Fields()
+	_ = snapshotMixinFields0
+	snapshotFields := schema.Snapshot{}.Fields()
+	_ = snapshotFields
+	// snapshotDescCreateTime is the schema descriptor for create_time field.
+	snapshotDescCreateTime := snapshotMixinFields0[0].Descriptor()
+	// snapshot.DefaultCreateTime holds the default value on creation for the create_time field.
+	snapshot.DefaultCreateTime = snapshotDescCreateTime.Default.(func() time.Time)
+	// snapshotDescUpdateTime is the schema descriptor for update_time field.
+	snapshotDescUpdateTime := snapshotMixinFields0[1].Descriptor()
+	// snapshot.DefaultUpdateTime holds the default value on creation for the update_time field.
+	snapshot.DefaultUpdateTime = snapshotDescUpdateTime.Default.(func() time.Time)
+	// snapshot.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	snapshot.UpdateDefaultUpdateTime = snapshotDescUpdateTime.UpdateDefault.(func() time.Time)
+	snapshotaccountMixin := schema.SnapshotAccount{}.Mixin()
+	snapshotaccountMixinFields0 := snapshotaccountMixin[0].Fields()
+	_ = snapshotaccountMixinFields0
+	snapshotaccountFields := schema.SnapshotAccount{}.Fields()
+	_ = snapshotaccountFields
+	// snapshotaccountDescCreateTime is the schema descriptor for create_time field.
+	snapshotaccountDescCreateTime := snapshotaccountMixinFields0[0].Descriptor()
+	// snapshotaccount.DefaultCreateTime holds the default value on creation for the create_time field.
+	snapshotaccount.DefaultCreateTime = snapshotaccountDescCreateTime.Default.(func() time.Time)
+	// snapshotaccountDescUpdateTime is the schema descriptor for update_time field.
+	snapshotaccountDescUpdateTime := snapshotaccountMixinFields0[1].Descriptor()
+	// snapshotaccount.DefaultUpdateTime holds the default value on creation for the update_time field.
+	snapshotaccount.DefaultUpdateTime = snapshotaccountDescUpdateTime.Default.(func() time.Time)
+	// snapshotaccount.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	snapshotaccount.UpdateDefaultUpdateTime = snapshotaccountDescUpdateTime.UpdateDefault.(func() time.Time)
+	snapshotfxrateMixin := schema.SnapshotFXRate{}.Mixin()
+	snapshotfxrateMixinFields0 := snapshotfxrateMixin[0].Fields()
+	_ = snapshotfxrateMixinFields0
+	snapshotfxrateFields := schema.SnapshotFXRate{}.Fields()
+	_ = snapshotfxrateFields
+	// snapshotfxrateDescCreateTime is the schema descriptor for create_time field.
+	snapshotfxrateDescCreateTime := snapshotfxrateMixinFields0[0].Descriptor()
+	// snapshotfxrate.DefaultCreateTime holds the default value on creation for the create_time field.
+	snapshotfxrate.DefaultCreateTime = snapshotfxrateDescCreateTime.Default.(func() time.Time)
+	// snapshotfxrateDescUpdateTime is the schema descriptor for update_time field.
+	snapshotfxrateDescUpdateTime := snapshotfxrateMixinFields0[1].Descriptor()
+	// snapshotfxrate.DefaultUpdateTime holds the default value on creation for the update_time field.
+	snapshotfxrate.DefaultUpdateTime = snapshotfxrateDescUpdateTime.Default.(func() time.Time)
+	// snapshotfxrate.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	snapshotfxrate.UpdateDefaultUpdateTime = snapshotfxrateDescUpdateTime.UpdateDefault.(func() time.Time)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transactionMixinFields0 := transactionMixin[0].Fields()
 	_ = transactionMixinFields0
@@ -82,10 +150,6 @@ func init() {
 	transaction.DefaultUpdateTime = transactionDescUpdateTime.Default.(func() time.Time)
 	// transaction.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	transaction.UpdateDefaultUpdateTime = transactionDescUpdateTime.UpdateDefault.(func() time.Time)
-	// transactionDescDatetime is the schema descriptor for datetime field.
-	transactionDescDatetime := transactionFields[2].Descriptor()
-	// transaction.DefaultDatetime holds the default value on creation for the datetime field.
-	transaction.DefaultDatetime = transactionDescDatetime.Default.(func() time.Time)
 	transactionentryMixin := schema.TransactionEntry{}.Mixin()
 	transactionentryMixinFields0 := transactionentryMixin[0].Fields()
 	_ = transactionentryMixinFields0

@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"errors"
+	"fijoy/ent/category"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
@@ -15,7 +16,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shopspring/decimal"
 )
 
 // TransactionUpdate is the builder for updating Transaction entities.
@@ -34,27 +34,6 @@ func (_u *TransactionUpdate) Where(ps ...predicate.Transaction) *TransactionUpda
 // SetUpdateTime sets the "update_time" field.
 func (_u *TransactionUpdate) SetUpdateTime(v time.Time) *TransactionUpdate {
 	_u.mutation.SetUpdateTime(v)
-	return _u
-}
-
-// SetBalance sets the "balance" field.
-func (_u *TransactionUpdate) SetBalance(v decimal.Decimal) *TransactionUpdate {
-	_u.mutation.ResetBalance()
-	_u.mutation.SetBalance(v)
-	return _u
-}
-
-// SetNillableBalance sets the "balance" field if the given value is not nil.
-func (_u *TransactionUpdate) SetNillableBalance(v *decimal.Decimal) *TransactionUpdate {
-	if v != nil {
-		_u.SetBalance(*v)
-	}
-	return _u
-}
-
-// AddBalance adds value to the "balance" field.
-func (_u *TransactionUpdate) AddBalance(v decimal.Decimal) *TransactionUpdate {
-	_u.mutation.AddBalance(v)
 	return _u
 }
 
@@ -78,20 +57,6 @@ func (_u *TransactionUpdate) ClearNote() *TransactionUpdate {
 	return _u
 }
 
-// SetDatetime sets the "datetime" field.
-func (_u *TransactionUpdate) SetDatetime(v time.Time) *TransactionUpdate {
-	_u.mutation.SetDatetime(v)
-	return _u
-}
-
-// SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (_u *TransactionUpdate) SetNillableDatetime(v *time.Time) *TransactionUpdate {
-	if v != nil {
-		_u.SetDatetime(*v)
-	}
-	return _u
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
 func (_u *TransactionUpdate) SetProfileID(id int) *TransactionUpdate {
 	_u.mutation.SetProfileID(id)
@@ -101,6 +66,17 @@ func (_u *TransactionUpdate) SetProfileID(id int) *TransactionUpdate {
 // SetProfile sets the "profile" edge to the Profile entity.
 func (_u *TransactionUpdate) SetProfile(v *Profile) *TransactionUpdate {
 	return _u.SetProfileID(v.ID)
+}
+
+// SetCategoryID sets the "category" edge to the Category entity by ID.
+func (_u *TransactionUpdate) SetCategoryID(id int) *TransactionUpdate {
+	_u.mutation.SetCategoryID(id)
+	return _u
+}
+
+// SetCategory sets the "category" edge to the Category entity.
+func (_u *TransactionUpdate) SetCategory(v *Category) *TransactionUpdate {
+	return _u.SetCategoryID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
@@ -126,6 +102,12 @@ func (_u *TransactionUpdate) Mutation() *TransactionMutation {
 // ClearProfile clears the "profile" edge to the Profile entity.
 func (_u *TransactionUpdate) ClearProfile() *TransactionUpdate {
 	_u.mutation.ClearProfile()
+	return _u
+}
+
+// ClearCategory clears the "category" edge to the Category entity.
+func (_u *TransactionUpdate) ClearCategory() *TransactionUpdate {
+	_u.mutation.ClearCategory()
 	return _u
 }
 
@@ -191,6 +173,9 @@ func (_u *TransactionUpdate) check() error {
 	if _u.mutation.ProfileCleared() && len(_u.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.profile"`)
 	}
+	if _u.mutation.CategoryCleared() && len(_u.mutation.CategoryIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.category"`)
+	}
 	return nil
 }
 
@@ -209,20 +194,11 @@ func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.Balance(); ok {
-		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedBalance(); ok {
-		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
 	if value, ok := _u.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 	}
 	if _u.mutation.NoteCleared() {
 		_spec.ClearField(transaction.FieldNote, field.TypeString)
-	}
-	if value, ok := _u.mutation.Datetime(); ok {
-		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 	}
 	if _u.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -246,6 +222,35 @@ func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -324,27 +329,6 @@ func (_u *TransactionUpdateOne) SetUpdateTime(v time.Time) *TransactionUpdateOne
 	return _u
 }
 
-// SetBalance sets the "balance" field.
-func (_u *TransactionUpdateOne) SetBalance(v decimal.Decimal) *TransactionUpdateOne {
-	_u.mutation.ResetBalance()
-	_u.mutation.SetBalance(v)
-	return _u
-}
-
-// SetNillableBalance sets the "balance" field if the given value is not nil.
-func (_u *TransactionUpdateOne) SetNillableBalance(v *decimal.Decimal) *TransactionUpdateOne {
-	if v != nil {
-		_u.SetBalance(*v)
-	}
-	return _u
-}
-
-// AddBalance adds value to the "balance" field.
-func (_u *TransactionUpdateOne) AddBalance(v decimal.Decimal) *TransactionUpdateOne {
-	_u.mutation.AddBalance(v)
-	return _u
-}
-
 // SetNote sets the "note" field.
 func (_u *TransactionUpdateOne) SetNote(v string) *TransactionUpdateOne {
 	_u.mutation.SetNote(v)
@@ -365,20 +349,6 @@ func (_u *TransactionUpdateOne) ClearNote() *TransactionUpdateOne {
 	return _u
 }
 
-// SetDatetime sets the "datetime" field.
-func (_u *TransactionUpdateOne) SetDatetime(v time.Time) *TransactionUpdateOne {
-	_u.mutation.SetDatetime(v)
-	return _u
-}
-
-// SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (_u *TransactionUpdateOne) SetNillableDatetime(v *time.Time) *TransactionUpdateOne {
-	if v != nil {
-		_u.SetDatetime(*v)
-	}
-	return _u
-}
-
 // SetProfileID sets the "profile" edge to the Profile entity by ID.
 func (_u *TransactionUpdateOne) SetProfileID(id int) *TransactionUpdateOne {
 	_u.mutation.SetProfileID(id)
@@ -388,6 +358,17 @@ func (_u *TransactionUpdateOne) SetProfileID(id int) *TransactionUpdateOne {
 // SetProfile sets the "profile" edge to the Profile entity.
 func (_u *TransactionUpdateOne) SetProfile(v *Profile) *TransactionUpdateOne {
 	return _u.SetProfileID(v.ID)
+}
+
+// SetCategoryID sets the "category" edge to the Category entity by ID.
+func (_u *TransactionUpdateOne) SetCategoryID(id int) *TransactionUpdateOne {
+	_u.mutation.SetCategoryID(id)
+	return _u
+}
+
+// SetCategory sets the "category" edge to the Category entity.
+func (_u *TransactionUpdateOne) SetCategory(v *Category) *TransactionUpdateOne {
+	return _u.SetCategoryID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
@@ -413,6 +394,12 @@ func (_u *TransactionUpdateOne) Mutation() *TransactionMutation {
 // ClearProfile clears the "profile" edge to the Profile entity.
 func (_u *TransactionUpdateOne) ClearProfile() *TransactionUpdateOne {
 	_u.mutation.ClearProfile()
+	return _u
+}
+
+// ClearCategory clears the "category" edge to the Category entity.
+func (_u *TransactionUpdateOne) ClearCategory() *TransactionUpdateOne {
+	_u.mutation.ClearCategory()
 	return _u
 }
 
@@ -491,6 +478,9 @@ func (_u *TransactionUpdateOne) check() error {
 	if _u.mutation.ProfileCleared() && len(_u.mutation.ProfileIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.profile"`)
 	}
+	if _u.mutation.CategoryCleared() && len(_u.mutation.CategoryIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.category"`)
+	}
 	return nil
 }
 
@@ -526,20 +516,11 @@ func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transaction.FieldUpdateTime, field.TypeTime, value)
 	}
-	if value, ok := _u.mutation.Balance(); ok {
-		_spec.SetField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedBalance(); ok {
-		_spec.AddField(transaction.FieldBalance, field.TypeFloat64, value)
-	}
 	if value, ok := _u.mutation.Note(); ok {
 		_spec.SetField(transaction.FieldNote, field.TypeString, value)
 	}
 	if _u.mutation.NoteCleared() {
 		_spec.ClearField(transaction.FieldNote, field.TypeString)
-	}
-	if value, ok := _u.mutation.Datetime(); ok {
-		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 	}
 	if _u.mutation.ProfileCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -563,6 +544,35 @@ func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

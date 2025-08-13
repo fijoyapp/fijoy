@@ -37,7 +37,7 @@ const fragment = graphql`
           id @required(action: THROW)
           name
           amount
-          currencySymbol
+          currencyCode
           tickerType
         }
       }
@@ -86,7 +86,7 @@ export function SelectAccount<T extends FieldValues>({
                       {account.node.name} (
                       {getCurrencyDisplay(
                         account.node.amount.toString(),
-                        account.node.currencySymbol,
+                        account.node.currencyCode,
                       )}
                       )
                     </SelectItem>

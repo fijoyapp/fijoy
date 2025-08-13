@@ -33,6 +33,10 @@ const profileCreateMutation = graphql`
       }
     ) {
       id
+      name
+      netWorthGoal
+      locale
+      currencies
     }
   }
 `;
@@ -97,6 +101,7 @@ const FinalStep = ({}: Props) => {
           reset();
           router.navigate({
             to: "/home",
+            reloadDocument: true, // NOTE: temporary fix, should patch store instead
           });
 
           return "Profile created";

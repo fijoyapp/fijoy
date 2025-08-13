@@ -6,7 +6,9 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"fmt"
@@ -76,21 +78,19 @@ func (_c *ProfileCreate) SetNetWorthGoal(v decimal.Decimal) *ProfileCreate {
 	return _c
 }
 
-// SetID sets the "id" field.
-func (_c *ProfileCreate) SetID(v int) *ProfileCreate {
-	_c.mutation.SetID(v)
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (_c *ProfileCreate) AddUserIDs(ids ...int) *ProfileCreate {
+	_c.mutation.AddUserIDs(ids...)
 	return _c
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_c *ProfileCreate) SetUserID(id int) *ProfileCreate {
-	_c.mutation.SetUserID(id)
-	return _c
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (_c *ProfileCreate) SetUser(v *User) *ProfileCreate {
-	return _c.SetUserID(v.ID)
+// AddUsers adds the "users" edges to the User entity.
+func (_c *ProfileCreate) AddUsers(v ...*User) *ProfileCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddUserIDs(ids...)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
@@ -121,6 +121,36 @@ func (_c *ProfileCreate) AddTransactions(v ...*Transaction) *ProfileCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddTransactionIDs(ids...)
+}
+
+// AddSnapshotIDs adds the "snapshots" edge to the Snapshot entity by IDs.
+func (_c *ProfileCreate) AddSnapshotIDs(ids ...int) *ProfileCreate {
+	_c.mutation.AddSnapshotIDs(ids...)
+	return _c
+}
+
+// AddSnapshots adds the "snapshots" edges to the Snapshot entity.
+func (_c *ProfileCreate) AddSnapshots(v ...*Snapshot) *ProfileCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddSnapshotIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Category entity by IDs.
+func (_c *ProfileCreate) AddCategoryIDs(ids ...int) *ProfileCreate {
+	_c.mutation.AddCategoryIDs(ids...)
+	return _c
+}
+
+// AddCategories adds the "categories" edges to the Category entity.
+func (_c *ProfileCreate) AddCategories(v ...*Category) *ProfileCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddCategoryIDs(ids...)
 }
 
 // Mutation returns the ProfileMutation object of the builder.
@@ -188,9 +218,6 @@ func (_c *ProfileCreate) check() error {
 	if _, ok := _c.mutation.NetWorthGoal(); !ok {
 		return &ValidationError{Name: "net_worth_goal", err: errors.New(`ent: missing required field "Profile.net_worth_goal"`)}
 	}
-	if len(_c.mutation.UserIDs()) == 0 {
-		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Profile.user"`)}
-	}
 	return nil
 }
 
@@ -205,10 +232,8 @@ func (_c *ProfileCreate) sqlSave(ctx context.Context) (*Profile, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
 	return _node, nil
@@ -219,10 +244,6 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_node = &Profile{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(profile.Table, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	)
-	if id, ok := _c.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(profile.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -247,12 +268,12 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		_spec.SetField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 		_node.NetWorthGoal = value
 	}
-	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   profile.UserTable,
-			Columns: []string{profile.UserColumn},
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -261,7 +282,6 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_profiles = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.AccountsIDs(); len(nodes) > 0 {
@@ -289,6 +309,38 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.SnapshotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -344,7 +396,7 @@ func (_c *ProfileCreateBulk) Save(ctx context.Context) ([]*Profile, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

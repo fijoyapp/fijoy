@@ -26,7 +26,7 @@ import type {
   transactionDataTableFragment$key,
 } from "./__generated__/transactionDataTableFragment.graphql";
 import { useFormat } from "@/hooks/use-format";
-import invariant from "tiny-invariant";
+// import invariant from "tiny-invariant";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const TransactionDataTableFragment = graphql`
@@ -37,8 +37,8 @@ const TransactionDataTableFragment = graphql`
         node {
           id
           note
-          datetime @required(action: THROW)
-          balance @required(action: THROW)
+          createTime @required(action: THROW)
+          # updateTime @required(action: THROW)
           # transactionEntries {
           #   id
           #   amount
@@ -47,7 +47,7 @@ const TransactionDataTableFragment = graphql`
           #   balance
           #   account {
           #     name
-          #     currencySymbol
+          #     currencyCode
           #   }
           # }
         }
@@ -94,29 +94,29 @@ export default function TransactionDataTable({
         accessorKey: "datetime",
         header: "Datetime",
         cell: ({ row }) => {
-          return <div>{row.original?.datetime}</div>;
+          return <div>{row.original?.createTime}</div>;
         },
       },
-      {
-        id: "balance",
-        accessorKey: "balance",
-        header: "",
-        cell: ({ row }) => {
-          invariant(row.original, "Row original should not be null");
-          return (
-            <div>
-              {getCurrencyDisplay(row.original.balance, defaultCurrency)}
-            </div>
-          );
-        },
-      },
+      // {
+      //   id: "balance",
+      //   accessorKey: "balance",
+      //   header: "",
+      //   cell: ({ row }) => {
+      //     invariant(row.original, "Row original should not be null");
+      //     return (
+      //       <div>
+      //         {getCurrencyDisplay(row.original.balance, defaultCurrency)}
+      //       </div>
+      //     );
+      //   },
+      // },
       // {
       //   accessorKey: "amount",
       //   header: "Amount",
       //   cell: ({ row }) => {
       //     invariant(row.original, "Row original should not be null");
       //     const money = row.original.amount;
-      //     const currencySymbol = row.original.account.currencySymbol;
+      //     const currencyCode = row.original.account.currencyCode;
       //     const accountType = row.original.account.accountType;
       //
       //     return (
@@ -125,7 +125,7 @@ export default function TransactionDataTable({
       //           .with("investment", () => <div>{money} share(s)</div>)
       //           .otherwise(() => (
       //             <div className="font-mono">
-      //               {getCurrencyDisplay(money, currencySymbol, profile.locale, {
+      //               {getCurrencyDisplay(money, currencyCode, profile.locale, {
       //                 compact: false,
       //               })}
       //             </div>

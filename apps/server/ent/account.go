@@ -25,14 +25,14 @@ type Account struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// Institution holds the value of the "institution" field.
+	// The financial institution that holds this account
 	Institution string `json:"institution,omitempty"`
 	// AccountType holds the value of the "account_type" field.
 	AccountType account.AccountType `json:"account_type,omitempty"`
 	// InvestmentType holds the value of the "investment_type" field.
 	InvestmentType account.InvestmentType `json:"investment_type,omitempty"`
-	// CurrencySymbol holds the value of the "currency_symbol" field.
-	CurrencySymbol string `json:"currency_symbol,omitempty"`
+	// CurrencyCode holds the value of the "currency_code" field.
+	CurrencyCode string `json:"currency_code,omitempty"`
 	// Ticker holds the value of the "ticker" field.
 	Ticker string `json:"ticker,omitempty"`
 	// TickerType holds the value of the "ticker_type" field.
@@ -41,9 +41,7 @@ type Account struct {
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// The value of 1 share in the native currency. If this is just a currency account, then this field will be 1
 	Value decimal.Decimal `json:"value,omitempty"`
-	// The exchange rate from the native currency to user's default display currency
-	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
-	// The total balance of this account in user's display currency
+	// The total balance of this account in its currency
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Archived holds the value of the "archived" field.
 	Archived bool `json:"archived,omitempty"`
@@ -60,13 +58,16 @@ type AccountEdges struct {
 	Profile *Profile `json:"profile,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
+	// SnapshotAccounts holds the value of the snapshot_accounts edge.
+	SnapshotAccounts []*SnapshotAccount `json:"snapshot_accounts,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
 
 	namedTransactionEntries map[string][]*TransactionEntry
+	namedSnapshotAccounts   map[string][]*SnapshotAccount
 }
 
 // ProfileOrErr returns the Profile value or an error if the edge
@@ -89,18 +90,27 @@ func (e AccountEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
 	return nil, &NotLoadedError{edge: "transaction_entries"}
 }
 
+// SnapshotAccountsOrErr returns the SnapshotAccounts value or an error if the edge
+// was not loaded in eager-loading.
+func (e AccountEdges) SnapshotAccountsOrErr() ([]*SnapshotAccount, error) {
+	if e.loadedTypes[2] {
+		return e.SnapshotAccounts, nil
+	}
+	return nil, &NotLoadedError{edge: "snapshot_accounts"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Account) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case account.FieldAmount, account.FieldValue, account.FieldFxRate, account.FieldBalance:
+		case account.FieldAmount, account.FieldValue, account.FieldBalance:
 			values[i] = new(decimal.Decimal)
 		case account.FieldArchived:
 			values[i] = new(sql.NullBool)
 		case account.FieldID:
 			values[i] = new(sql.NullInt64)
-		case account.FieldName, account.FieldInstitution, account.FieldAccountType, account.FieldInvestmentType, account.FieldCurrencySymbol, account.FieldTicker, account.FieldTickerType:
+		case account.FieldName, account.FieldInstitution, account.FieldAccountType, account.FieldInvestmentType, account.FieldCurrencyCode, account.FieldTicker, account.FieldTickerType:
 			values[i] = new(sql.NullString)
 		case account.FieldCreateTime, account.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -163,11 +173,11 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.InvestmentType = account.InvestmentType(value.String)
 			}
-		case account.FieldCurrencySymbol:
+		case account.FieldCurrencyCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field currency_symbol", values[i])
+				return fmt.Errorf("unexpected type %T for field currency_code", values[i])
 			} else if value.Valid {
-				_m.CurrencySymbol = value.String
+				_m.CurrencyCode = value.String
 			}
 		case account.FieldTicker:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -192,12 +202,6 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field value", values[i])
 			} else if value != nil {
 				_m.Value = *value
-			}
-		case account.FieldFxRate:
-			if value, ok := values[i].(*decimal.Decimal); !ok {
-				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
-			} else if value != nil {
-				_m.FxRate = *value
 			}
 		case account.FieldBalance:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -241,6 +245,11 @@ func (_m *Account) QueryTransactionEntries() *TransactionEntryQuery {
 	return NewAccountClient(_m.config).QueryTransactionEntries(_m)
 }
 
+// QuerySnapshotAccounts queries the "snapshot_accounts" edge of the Account entity.
+func (_m *Account) QuerySnapshotAccounts() *SnapshotAccountQuery {
+	return NewAccountClient(_m.config).QuerySnapshotAccounts(_m)
+}
+
 // Update returns a builder for updating this Account.
 // Note that you need to call Account.Unwrap() before calling this method if this Account
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -282,8 +291,8 @@ func (_m *Account) String() string {
 	builder.WriteString("investment_type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.InvestmentType))
 	builder.WriteString(", ")
-	builder.WriteString("currency_symbol=")
-	builder.WriteString(_m.CurrencySymbol)
+	builder.WriteString("currency_code=")
+	builder.WriteString(_m.CurrencyCode)
 	builder.WriteString(", ")
 	builder.WriteString("ticker=")
 	builder.WriteString(_m.Ticker)
@@ -296,9 +305,6 @@ func (_m *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Value))
-	builder.WriteString(", ")
-	builder.WriteString("fx_rate=")
-	builder.WriteString(fmt.Sprintf("%v", _m.FxRate))
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
@@ -330,6 +336,30 @@ func (_m *Account) appendNamedTransactionEntries(name string, edges ...*Transact
 		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
 	} else {
 		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
+	}
+}
+
+// NamedSnapshotAccounts returns the SnapshotAccounts named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Account) NamedSnapshotAccounts(name string) ([]*SnapshotAccount, error) {
+	if _m.Edges.namedSnapshotAccounts == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedSnapshotAccounts[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Account) appendNamedSnapshotAccounts(name string, edges ...*SnapshotAccount) {
+	if _m.Edges.namedSnapshotAccounts == nil {
+		_m.Edges.namedSnapshotAccounts = make(map[string][]*SnapshotAccount)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedSnapshotAccounts[name] = []*SnapshotAccount{}
+	} else {
+		_m.Edges.namedSnapshotAccounts[name] = append(_m.Edges.namedSnapshotAccounts[name], edges...)
 	}
 }
 

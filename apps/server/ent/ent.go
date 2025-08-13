@@ -6,11 +6,16 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
+	"fijoy/ent/snapshotaccount"
+	"fijoy/ent/snapshotfxrate"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
 	"fijoy/ent/userkey"
+	"fijoy/ent/userprofile"
 	"fmt"
 	"reflect"
 	"sync"
@@ -79,11 +84,16 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			account.Table:          account.ValidColumn,
+			category.Table:         category.ValidColumn,
 			profile.Table:          profile.ValidColumn,
+			snapshot.Table:         snapshot.ValidColumn,
+			snapshotaccount.Table:  snapshotaccount.ValidColumn,
+			snapshotfxrate.Table:   snapshotfxrate.ValidColumn,
 			transaction.Table:      transaction.ValidColumn,
 			transactionentry.Table: transactionentry.ValidColumn,
 			user.Table:             user.ValidColumn,
 			userkey.Table:          userkey.ValidColumn,
+			userprofile.Table:      userprofile.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

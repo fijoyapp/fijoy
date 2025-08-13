@@ -44,16 +44,15 @@ const NewAccountReceivableMutation = graphql`
           balance
           institution
           value
-          currencySymbol
+          currencyCode
           amount
         }
       }
       transactionEdge @prependEdge(connections: $transactionConnections) {
         node {
           id
-          datetime
+          createTime
           note
-          balance
         }
       }
     }
@@ -96,7 +95,7 @@ export function NewReceivable() {
           name: values.name,
           institution: values.institution,
           ticker: values.symbol,
-          currencySymbol: values.symbol,
+          currencyCode: values.symbol,
           tickerType: "currency",
         },
       },

@@ -37,7 +37,8 @@ func (Account) Fields() []ent.Field {
 			NotEmpty(),
 
 		field.String("institution").
-			NotEmpty(),
+			NotEmpty().
+			Comment("The financial institution that holds this account"),
 
 		field.Enum("account_type").
 			Values("liquidity", "investment", "property", "receivable", "liability").
@@ -46,7 +47,7 @@ func (Account) Fields() []ent.Field {
 		field.Enum("investment_type").
 			Values("non_investment", "taxable", "rrsp", "tfsa", "fhsa"),
 
-		field.String("currency_symbol").
+		field.String("currency_code").
 			NotEmpty().
 			Immutable(),
 
@@ -80,19 +81,6 @@ func (Account) Fields() []ent.Field {
 			).
 			Comment("The value of 1 share in the native currency. If this is just a currency account, then this field will be 1"),
 
-		field.Float("fx_rate").
-			GoType(decimal.Decimal{}).
-			SchemaType(map[string]string{
-				dialect.MySQL:    "decimal(18,10)",
-				dialect.Postgres: "numeric(18,10)",
-			}).
-			Annotations(
-				entgql.Type("String"),
-				entgql.Skip(entgql.SkipMutationCreateInput),
-				entgql.Skip(entgql.SkipMutationUpdateInput),
-			).
-			Comment("The exchange rate from the native currency to user's default display currency"),
-
 		field.Float("balance").
 			GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -104,7 +92,7 @@ func (Account) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationCreateInput),
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			).
-			Comment("The total balance of this account in user's display currency"),
+			Comment("The total balance of this account in its currency"),
 
 		field.Bool("archived").
 			Default(false),
@@ -123,5 +111,6 @@ func (Account) Edges() []ent.Edge {
 			),
 
 		edge.To("transaction_entries", TransactionEntry.Type),
+		edge.To("snapshot_accounts", SnapshotAccount.Type),
 	}
 }

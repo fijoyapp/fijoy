@@ -6,8 +6,12 @@ import (
 	"context"
 	"encoding/json"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/internal"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
+	"fijoy/ent/snapshotaccount"
+	"fijoy/ent/snapshotfxrate"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
 	"fijoy/ent/user"
@@ -29,10 +33,30 @@ var accountImplementors = []string{"Account", "Node"}
 // IsNode implements the Node interface check for GQLGen.
 func (*Account) IsNode() {}
 
+var categoryImplementors = []string{"Category", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Category) IsNode() {}
+
 var profileImplementors = []string{"Profile", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Profile) IsNode() {}
+
+var snapshotImplementors = []string{"Snapshot", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Snapshot) IsNode() {}
+
+var snapshotaccountImplementors = []string{"SnapshotAccount", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*SnapshotAccount) IsNode() {}
+
+var snapshotfxrateImplementors = []string{"SnapshotFXRate", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*SnapshotFXRate) IsNode() {}
 
 var transactionImplementors = []string{"Transaction", "Node"}
 
@@ -140,11 +164,47 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			}
 		}
 		return query.Only(ctx)
+	case category.Table:
+		query := c.Category.Query().
+			Where(category.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, categoryImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
 	case profile.Table:
 		query := c.Profile.Query().
 			Where(profile.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, profileImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case snapshot.Table:
+		query := c.Snapshot.Query().
+			Where(snapshot.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, snapshotImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case snapshotaccount.Table:
+		query := c.SnapshotAccount.Query().
+			Where(snapshotaccount.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, snapshotaccountImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case snapshotfxrate.Table:
+		query := c.SnapshotFXRate.Query().
+			Where(snapshotfxrate.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, snapshotfxrateImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -274,10 +334,74 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 				*noder = node
 			}
 		}
+	case category.Table:
+		query := c.Category.Query().
+			Where(category.IDIn(ids...))
+		query, err := query.CollectFields(ctx, categoryImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case profile.Table:
 		query := c.Profile.Query().
 			Where(profile.IDIn(ids...))
 		query, err := query.CollectFields(ctx, profileImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case snapshot.Table:
+		query := c.Snapshot.Query().
+			Where(snapshot.IDIn(ids...))
+		query, err := query.CollectFields(ctx, snapshotImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case snapshotaccount.Table:
+		query := c.SnapshotAccount.Query().
+			Where(snapshotaccount.IDIn(ids...))
+		query, err := query.CollectFields(ctx, snapshotaccountImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case snapshotfxrate.Table:
+		query := c.SnapshotFXRate.Query().
+			Where(snapshotfxrate.IDIn(ids...))
+		query, err := query.CollectFields(ctx, snapshotfxrateImplementors...)
 		if err != nil {
 			return nil, err
 		}

@@ -28,7 +28,7 @@ func New(userRepo repository.UserRepository, userKeyRepo repository.UserKeyRepos
 }
 
 func (u *authUseCase) GetUserProfiles(ctx context.Context, userID int) ([]*ent.Profile, error) {
-	profiles, err := u.client.Profile.Query().Where(profile.HasUserWith(user.ID(userID))).All(ctx)
+	profiles, err := u.client.Profile.Query().Where(profile.HasUsersWith(user.ID(userID))).All(ctx)
 	if err != nil {
 		return []*ent.Profile{}, err
 	}

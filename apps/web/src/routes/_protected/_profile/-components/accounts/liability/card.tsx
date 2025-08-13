@@ -29,14 +29,14 @@
 //       <div>
 //         <div>{data.name}</div>
 //         <div className="text-muted-foreground text-xs">
-//           {data.currencySymbol}
+//           {data.currencyCode}
 //         </div>
 //       </div>
 //
 //       <div className="grow"></div>
 //
 //       <div className="flex flex-col items-end">
-//         <div>{getCurrencyDisplay(data.amount, data.currencySymbol)}</div>
+//         <div>{getCurrencyDisplay(data.amount, data.currencyCode)}</div>
 //         <div className="text-muted-foreground text-xs">
 //           {getPrettyTime(new Date(data.updateTime))}
 //         </div>

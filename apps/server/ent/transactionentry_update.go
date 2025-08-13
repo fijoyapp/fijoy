@@ -37,6 +37,26 @@ func (_u *TransactionEntryUpdate) SetUpdateTime(v time.Time) *TransactionEntryUp
 	return _u
 }
 
+// SetNote sets the "note" field.
+func (_u *TransactionEntryUpdate) SetNote(v string) *TransactionEntryUpdate {
+	_u.mutation.SetNote(v)
+	return _u
+}
+
+// SetNillableNote sets the "note" field if the given value is not nil.
+func (_u *TransactionEntryUpdate) SetNillableNote(v *string) *TransactionEntryUpdate {
+	if v != nil {
+		_u.SetNote(*v)
+	}
+	return _u
+}
+
+// ClearNote clears the value of the "note" field.
+func (_u *TransactionEntryUpdate) ClearNote() *TransactionEntryUpdate {
+	_u.mutation.ClearNote()
+	return _u
+}
+
 // SetAmount sets the "amount" field.
 func (_u *TransactionEntryUpdate) SetAmount(v decimal.Decimal) *TransactionEntryUpdate {
 	_u.mutation.ResetAmount()
@@ -76,27 +96,6 @@ func (_u *TransactionEntryUpdate) SetNillableValue(v *decimal.Decimal) *Transact
 // AddValue adds value to the "value" field.
 func (_u *TransactionEntryUpdate) AddValue(v decimal.Decimal) *TransactionEntryUpdate {
 	_u.mutation.AddValue(v)
-	return _u
-}
-
-// SetFxRate sets the "fx_rate" field.
-func (_u *TransactionEntryUpdate) SetFxRate(v decimal.Decimal) *TransactionEntryUpdate {
-	_u.mutation.ResetFxRate()
-	_u.mutation.SetFxRate(v)
-	return _u
-}
-
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (_u *TransactionEntryUpdate) SetNillableFxRate(v *decimal.Decimal) *TransactionEntryUpdate {
-	if v != nil {
-		_u.SetFxRate(*v)
-	}
-	return _u
-}
-
-// AddFxRate adds value to the "fx_rate" field.
-func (_u *TransactionEntryUpdate) AddFxRate(v decimal.Decimal) *TransactionEntryUpdate {
-	_u.mutation.AddFxRate(v)
 	return _u
 }
 
@@ -222,6 +221,12 @@ func (_u *TransactionEntryUpdate) sqlSave(ctx context.Context) (_node int, err e
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.Note(); ok {
+		_spec.SetField(transactionentry.FieldNote, field.TypeString, value)
+	}
+	if _u.mutation.NoteCleared() {
+		_spec.ClearField(transactionentry.FieldNote, field.TypeString)
+	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
 	}
@@ -233,12 +238,6 @@ func (_u *TransactionEntryUpdate) sqlSave(ctx context.Context) (_node int, err e
 	}
 	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(transactionentry.FieldValue, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.FxRate(); ok {
-		_spec.SetField(transactionentry.FieldFxRate, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedFxRate(); ok {
-		_spec.AddField(transactionentry.FieldFxRate, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)
@@ -330,6 +329,26 @@ func (_u *TransactionEntryUpdateOne) SetUpdateTime(v time.Time) *TransactionEntr
 	return _u
 }
 
+// SetNote sets the "note" field.
+func (_u *TransactionEntryUpdateOne) SetNote(v string) *TransactionEntryUpdateOne {
+	_u.mutation.SetNote(v)
+	return _u
+}
+
+// SetNillableNote sets the "note" field if the given value is not nil.
+func (_u *TransactionEntryUpdateOne) SetNillableNote(v *string) *TransactionEntryUpdateOne {
+	if v != nil {
+		_u.SetNote(*v)
+	}
+	return _u
+}
+
+// ClearNote clears the value of the "note" field.
+func (_u *TransactionEntryUpdateOne) ClearNote() *TransactionEntryUpdateOne {
+	_u.mutation.ClearNote()
+	return _u
+}
+
 // SetAmount sets the "amount" field.
 func (_u *TransactionEntryUpdateOne) SetAmount(v decimal.Decimal) *TransactionEntryUpdateOne {
 	_u.mutation.ResetAmount()
@@ -369,27 +388,6 @@ func (_u *TransactionEntryUpdateOne) SetNillableValue(v *decimal.Decimal) *Trans
 // AddValue adds value to the "value" field.
 func (_u *TransactionEntryUpdateOne) AddValue(v decimal.Decimal) *TransactionEntryUpdateOne {
 	_u.mutation.AddValue(v)
-	return _u
-}
-
-// SetFxRate sets the "fx_rate" field.
-func (_u *TransactionEntryUpdateOne) SetFxRate(v decimal.Decimal) *TransactionEntryUpdateOne {
-	_u.mutation.ResetFxRate()
-	_u.mutation.SetFxRate(v)
-	return _u
-}
-
-// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
-func (_u *TransactionEntryUpdateOne) SetNillableFxRate(v *decimal.Decimal) *TransactionEntryUpdateOne {
-	if v != nil {
-		_u.SetFxRate(*v)
-	}
-	return _u
-}
-
-// AddFxRate adds value to the "fx_rate" field.
-func (_u *TransactionEntryUpdateOne) AddFxRate(v decimal.Decimal) *TransactionEntryUpdateOne {
-	_u.mutation.AddFxRate(v)
 	return _u
 }
 
@@ -545,6 +543,12 @@ func (_u *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Transa
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(transactionentry.FieldUpdateTime, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.Note(); ok {
+		_spec.SetField(transactionentry.FieldNote, field.TypeString, value)
+	}
+	if _u.mutation.NoteCleared() {
+		_spec.ClearField(transactionentry.FieldNote, field.TypeString)
+	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
 	}
@@ -556,12 +560,6 @@ func (_u *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Transa
 	}
 	if value, ok := _u.mutation.AddedValue(); ok {
 		_spec.AddField(transactionentry.FieldValue, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.FxRate(); ok {
-		_spec.SetField(transactionentry.FieldFxRate, field.TypeFloat64, value)
-	}
-	if value, ok := _u.mutation.AddedFxRate(); ok {
-		_spec.AddField(transactionentry.FieldFxRate, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.Balance(); ok {
 		_spec.SetField(transactionentry.FieldBalance, field.TypeFloat64, value)

@@ -148,7 +148,7 @@ func main() {
 
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(cfg.Auth.JWT_AUTH))
-		// r.Use(jwtauth.Authenticator(cfg.Auth.JWT_AUTH))
+		r.Use(jwtauth.Authenticator(cfg.Auth.JWT_AUTH))
 
 		r.Handle("/graphql",
 			playground.Handler("Fijoy", "/query"),

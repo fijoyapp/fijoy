@@ -10,7 +10,7 @@
 //     accountType
 //     ticker
 //     tickerType
-//     currencySymbol
+//     currencyCode
 //     updateTime
 //   }
 // `;

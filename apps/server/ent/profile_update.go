@@ -6,8 +6,10 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
+	"fijoy/ent/category"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
+	"fijoy/ent/snapshot"
 	"fijoy/ent/transaction"
 	"fijoy/ent/user"
 	"fmt"
@@ -100,15 +102,19 @@ func (_u *ProfileUpdate) AddNetWorthGoal(v decimal.Decimal) *ProfileUpdate {
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *ProfileUpdate) SetUserID(id int) *ProfileUpdate {
-	_u.mutation.SetUserID(id)
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (_u *ProfileUpdate) AddUserIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.AddUserIDs(ids...)
 	return _u
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (_u *ProfileUpdate) SetUser(v *User) *ProfileUpdate {
-	return _u.SetUserID(v.ID)
+// AddUsers adds the "users" edges to the User entity.
+func (_u *ProfileUpdate) AddUsers(v ...*User) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddUserIDs(ids...)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
@@ -141,15 +147,60 @@ func (_u *ProfileUpdate) AddTransactions(v ...*Transaction) *ProfileUpdate {
 	return _u.AddTransactionIDs(ids...)
 }
 
+// AddSnapshotIDs adds the "snapshots" edge to the Snapshot entity by IDs.
+func (_u *ProfileUpdate) AddSnapshotIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.AddSnapshotIDs(ids...)
+	return _u
+}
+
+// AddSnapshots adds the "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdate) AddSnapshots(v ...*Snapshot) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddSnapshotIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Category entity by IDs.
+func (_u *ProfileUpdate) AddCategoryIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.AddCategoryIDs(ids...)
+	return _u
+}
+
+// AddCategories adds the "categories" edges to the Category entity.
+func (_u *ProfileUpdate) AddCategories(v ...*Category) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCategoryIDs(ids...)
+}
+
 // Mutation returns the ProfileMutation object of the builder.
 func (_u *ProfileUpdate) Mutation() *ProfileMutation {
 	return _u.mutation
 }
 
-// ClearUser clears the "user" edge to the User entity.
-func (_u *ProfileUpdate) ClearUser() *ProfileUpdate {
-	_u.mutation.ClearUser()
+// ClearUsers clears all "users" edges to the User entity.
+func (_u *ProfileUpdate) ClearUsers() *ProfileUpdate {
+	_u.mutation.ClearUsers()
 	return _u
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (_u *ProfileUpdate) RemoveUserIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.RemoveUserIDs(ids...)
+	return _u
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (_u *ProfileUpdate) RemoveUsers(v ...*User) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveUserIDs(ids...)
 }
 
 // ClearAccounts clears all "accounts" edges to the Account entity.
@@ -194,6 +245,48 @@ func (_u *ProfileUpdate) RemoveTransactions(v ...*Transaction) *ProfileUpdate {
 	return _u.RemoveTransactionIDs(ids...)
 }
 
+// ClearSnapshots clears all "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdate) ClearSnapshots() *ProfileUpdate {
+	_u.mutation.ClearSnapshots()
+	return _u
+}
+
+// RemoveSnapshotIDs removes the "snapshots" edge to Snapshot entities by IDs.
+func (_u *ProfileUpdate) RemoveSnapshotIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.RemoveSnapshotIDs(ids...)
+	return _u
+}
+
+// RemoveSnapshots removes "snapshots" edges to Snapshot entities.
+func (_u *ProfileUpdate) RemoveSnapshots(v ...*Snapshot) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveSnapshotIDs(ids...)
+}
+
+// ClearCategories clears all "categories" edges to the Category entity.
+func (_u *ProfileUpdate) ClearCategories() *ProfileUpdate {
+	_u.mutation.ClearCategories()
+	return _u
+}
+
+// RemoveCategoryIDs removes the "categories" edge to Category entities by IDs.
+func (_u *ProfileUpdate) RemoveCategoryIDs(ids ...int) *ProfileUpdate {
+	_u.mutation.RemoveCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveCategories removes "categories" edges to Category entities.
+func (_u *ProfileUpdate) RemoveCategories(v ...*Category) *ProfileUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCategoryIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *ProfileUpdate) Save(ctx context.Context) (int, error) {
 	_u.defaults()
@@ -230,18 +323,7 @@ func (_u *ProfileUpdate) defaults() {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (_u *ProfileUpdate) check() error {
-	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Profile.user"`)
-	}
-	return nil
-}
-
 func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	if err := _u.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -273,12 +355,12 @@ func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedNetWorthGoal(); ok {
 		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 	}
-	if _u.mutation.UserCleared() {
+	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   profile.UserTable,
-			Columns: []string{profile.UserColumn},
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -286,12 +368,28 @@ func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.RemovedUsersIDs(); len(nodes) > 0 && !_u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   profile.UserTable,
-			Columns: []string{profile.UserColumn},
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -385,6 +483,96 @@ func (_u *ProfileUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedSnapshotsIDs(); len(nodes) > 0 && !_u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.SnapshotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCategoriesIDs(); len(nodes) > 0 && !_u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -479,15 +667,19 @@ func (_u *ProfileUpdateOne) AddNetWorthGoal(v decimal.Decimal) *ProfileUpdateOne
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *ProfileUpdateOne) SetUserID(id int) *ProfileUpdateOne {
-	_u.mutation.SetUserID(id)
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (_u *ProfileUpdateOne) AddUserIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.AddUserIDs(ids...)
 	return _u
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (_u *ProfileUpdateOne) SetUser(v *User) *ProfileUpdateOne {
-	return _u.SetUserID(v.ID)
+// AddUsers adds the "users" edges to the User entity.
+func (_u *ProfileUpdateOne) AddUsers(v ...*User) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddUserIDs(ids...)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
@@ -520,15 +712,60 @@ func (_u *ProfileUpdateOne) AddTransactions(v ...*Transaction) *ProfileUpdateOne
 	return _u.AddTransactionIDs(ids...)
 }
 
+// AddSnapshotIDs adds the "snapshots" edge to the Snapshot entity by IDs.
+func (_u *ProfileUpdateOne) AddSnapshotIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.AddSnapshotIDs(ids...)
+	return _u
+}
+
+// AddSnapshots adds the "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdateOne) AddSnapshots(v ...*Snapshot) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddSnapshotIDs(ids...)
+}
+
+// AddCategoryIDs adds the "categories" edge to the Category entity by IDs.
+func (_u *ProfileUpdateOne) AddCategoryIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.AddCategoryIDs(ids...)
+	return _u
+}
+
+// AddCategories adds the "categories" edges to the Category entity.
+func (_u *ProfileUpdateOne) AddCategories(v ...*Category) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddCategoryIDs(ids...)
+}
+
 // Mutation returns the ProfileMutation object of the builder.
 func (_u *ProfileUpdateOne) Mutation() *ProfileMutation {
 	return _u.mutation
 }
 
-// ClearUser clears the "user" edge to the User entity.
-func (_u *ProfileUpdateOne) ClearUser() *ProfileUpdateOne {
-	_u.mutation.ClearUser()
+// ClearUsers clears all "users" edges to the User entity.
+func (_u *ProfileUpdateOne) ClearUsers() *ProfileUpdateOne {
+	_u.mutation.ClearUsers()
 	return _u
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (_u *ProfileUpdateOne) RemoveUserIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.RemoveUserIDs(ids...)
+	return _u
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (_u *ProfileUpdateOne) RemoveUsers(v ...*User) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveUserIDs(ids...)
 }
 
 // ClearAccounts clears all "accounts" edges to the Account entity.
@@ -571,6 +808,48 @@ func (_u *ProfileUpdateOne) RemoveTransactions(v ...*Transaction) *ProfileUpdate
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionIDs(ids...)
+}
+
+// ClearSnapshots clears all "snapshots" edges to the Snapshot entity.
+func (_u *ProfileUpdateOne) ClearSnapshots() *ProfileUpdateOne {
+	_u.mutation.ClearSnapshots()
+	return _u
+}
+
+// RemoveSnapshotIDs removes the "snapshots" edge to Snapshot entities by IDs.
+func (_u *ProfileUpdateOne) RemoveSnapshotIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.RemoveSnapshotIDs(ids...)
+	return _u
+}
+
+// RemoveSnapshots removes "snapshots" edges to Snapshot entities.
+func (_u *ProfileUpdateOne) RemoveSnapshots(v ...*Snapshot) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveSnapshotIDs(ids...)
+}
+
+// ClearCategories clears all "categories" edges to the Category entity.
+func (_u *ProfileUpdateOne) ClearCategories() *ProfileUpdateOne {
+	_u.mutation.ClearCategories()
+	return _u
+}
+
+// RemoveCategoryIDs removes the "categories" edge to Category entities by IDs.
+func (_u *ProfileUpdateOne) RemoveCategoryIDs(ids ...int) *ProfileUpdateOne {
+	_u.mutation.RemoveCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveCategories removes "categories" edges to Category entities.
+func (_u *ProfileUpdateOne) RemoveCategories(v ...*Category) *ProfileUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveCategoryIDs(ids...)
 }
 
 // Where appends a list predicates to the ProfileUpdate builder.
@@ -622,18 +901,7 @@ func (_u *ProfileUpdateOne) defaults() {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (_u *ProfileUpdateOne) check() error {
-	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Profile.user"`)
-	}
-	return nil
-}
-
 func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err error) {
-	if err := _u.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(profile.Table, profile.Columns, sqlgraph.NewFieldSpec(profile.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -682,12 +950,12 @@ func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err er
 	if value, ok := _u.mutation.AddedNetWorthGoal(); ok {
 		_spec.AddField(profile.FieldNetWorthGoal, field.TypeFloat64, value)
 	}
-	if _u.mutation.UserCleared() {
+	if _u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   profile.UserTable,
-			Columns: []string{profile.UserColumn},
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -695,12 +963,28 @@ func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err er
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.RemovedUsersIDs(); len(nodes) > 0 && !_u.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   profile.UserTable,
-			Columns: []string{profile.UserColumn},
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   profile.UsersTable,
+			Columns: profile.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
@@ -794,6 +1078,96 @@ func (_u *ProfileUpdateOne) sqlSave(ctx context.Context) (_node *Profile, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedSnapshotsIDs(); len(nodes) > 0 && !_u.mutation.SnapshotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.SnapshotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.SnapshotsTable,
+			Columns: []string{profile.SnapshotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedCategoriesIDs(); len(nodes) > 0 && !_u.mutation.CategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   profile.CategoriesTable,
+			Columns: []string{profile.CategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

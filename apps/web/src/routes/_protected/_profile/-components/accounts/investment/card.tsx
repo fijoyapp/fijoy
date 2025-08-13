@@ -30,7 +30,7 @@
 //       <div>
 //         <div>{data.name}</div>
 //         <div className="text-muted-foreground text-xs">
-//           {data.currencySymbol}
+//           {data.currencyCode}
 //         </div>
 //       </div>
 //
@@ -40,7 +40,7 @@
 //         <div>
 //           {getCurrencyDisplay(
 //             currency(data.value).multiply(currency(data.amount)).toString(),
-//             data.currencySymbol,
+//             data.currencyCode,
 //           )}
 //         </div>
 //         <div className="text-muted-foreground text-xs">
