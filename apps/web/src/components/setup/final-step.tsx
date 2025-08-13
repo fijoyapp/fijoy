@@ -33,6 +33,10 @@ const profileCreateMutation = graphql`
       }
     ) {
       id
+      name
+      netWorthGoal
+      locale
+      currencies
     }
   }
 `;

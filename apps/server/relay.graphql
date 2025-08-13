@@ -293,7 +293,7 @@ type Profile implements Node {
   locale: String!
   currencies: [String!]!
   netWorthGoal: String!
-  users: [User!]!
+  users: [User!]
   accounts: [Account!]
   transactions: [Transaction!]
   snapshots: [Snapshot!]

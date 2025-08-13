@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<551b91cfb0bda3bd30306c3ed009ffcb>>
+ * @generated SignedSource<<b24a08a67771d2720ece4eb4d55fabdf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,95 +10,91 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type RootQuery$variables = {
+export type routeProtectedQuery$variables = {
   hasProfile: boolean;
-  hasUser: boolean;
 };
-export type RootQuery$data = {
+export type routeProtectedQuery$data = {
   readonly currencies: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"currencyFragment">;
   }>;
-  readonly profiles?: ReadonlyArray<{
+  readonly profiles: ReadonlyArray<{
     readonly " $fragmentSpreads": FragmentRefs<"profilesFragment">;
   }>;
-  readonly user?: {
+  readonly user: {
     readonly " $fragmentSpreads": FragmentRefs<"userFragment">;
   };
   readonly " $fragmentSpreads": FragmentRefs<"accountsPageFragment" | "profileFragment" | "transactionsPageFragment">;
 };
-export type RootQuery = {
-  response: RootQuery$data;
-  variables: RootQuery$variables;
+export type routeProtectedQuery = {
+  response: routeProtectedQuery$data;
+  variables: routeProtectedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "hasProfile"
-},
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "hasProfile"
+  }
+],
 v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "hasUser"
-},
-v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "currencies",
   "storageKey": null
 },
-v4 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "locale",
   "storageKey": null
 },
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "netWorthGoal",
   "storageKey": null
 },
-v7 = [
+v6 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 1000
   }
 ],
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "__typename",
   "storageKey": null
 },
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "cursor",
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "PageInfo",
@@ -123,7 +119,7 @@ v10 = {
   ],
   "storageKey": null
 },
-v11 = [
+v10 = [
   {
     "kind": "Literal",
     "name": "first",
@@ -132,52 +128,46 @@ v11 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RootQuery",
+    "name": "routeProtectedQuery",
     "selections": [
       {
-        "condition": "hasUser",
-        "kind": "Condition",
-        "passingValue": true,
+        "kind": "RequiredField",
+        "field": {
+          "alias": null,
+          "args": null,
+          "concreteType": "User",
+          "kind": "LinkedField",
+          "name": "user",
+          "plural": false,
+          "selections": [
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "userFragment"
+            }
+          ],
+          "storageKey": null
+        },
+        "action": "THROW"
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Profile",
+        "kind": "LinkedField",
+        "name": "profiles",
+        "plural": true,
         "selections": [
           {
-            "alias": null,
             "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "userFragment"
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Profile",
-            "kind": "LinkedField",
-            "name": "profiles",
-            "plural": true,
-            "selections": [
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "profilesFragment"
-              }
-            ],
-            "storageKey": null
+            "kind": "FragmentSpread",
+            "name": "profilesFragment"
           }
-        ]
+        ],
+        "storageKey": null
       },
       {
         "condition": "hasProfile",
@@ -223,54 +213,44 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RootQuery",
+    "name": "routeProtectedQuery",
     "selections": [
       {
-        "condition": "hasUser",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "User",
+        "kind": "LinkedField",
+        "name": "user",
+        "plural": false,
         "selections": [
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "email",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Profile",
-            "kind": "LinkedField",
-            "name": "profiles",
-            "plural": true,
-            "selections": [
-              (v2/*: any*/),
-              (v3/*: any*/),
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v6/*: any*/)
-            ],
+            "kind": "ScalarField",
+            "name": "email",
             "storageKey": null
           }
-        ]
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "Profile",
+        "kind": "LinkedField",
+        "name": "profiles",
+        "plural": true,
+        "selections": [
+          (v1/*: any*/),
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/)
+        ],
+        "storageKey": null
       },
       {
         "condition": "hasProfile",
@@ -285,17 +265,17 @@ return {
             "name": "profile",
             "plural": false,
             "selections": [
+              (v1/*: any*/),
+              (v4/*: any*/),
               (v2/*: any*/),
               (v5/*: any*/),
-              (v3/*: any*/),
-              (v6/*: any*/),
-              (v4/*: any*/)
+              (v3/*: any*/)
             ],
             "storageKey": null
           },
           {
             "alias": null,
-            "args": (v7/*: any*/),
+            "args": (v6/*: any*/),
             "concreteType": "AccountConnection",
             "kind": "LinkedField",
             "name": "accounts",
@@ -317,7 +297,7 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/),
+                      (v1/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -332,7 +312,7 @@ return {
                         "name": "balance",
                         "storageKey": null
                       },
-                      (v5/*: any*/),
+                      (v4/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -361,7 +341,7 @@ return {
                         "name": "amount",
                         "storageKey": null
                       },
-                      (v8/*: any*/),
+                      (v7/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -372,17 +352,17 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v9/*: any*/)
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v10/*: any*/)
+              (v9/*: any*/)
             ],
             "storageKey": "accounts(first:1000)"
           },
           {
             "alias": null,
-            "args": (v7/*: any*/),
+            "args": (v6/*: any*/),
             "filters": null,
             "handle": "connection",
             "key": "AccountsDataTable_accounts",
@@ -403,7 +383,7 @@ return {
             "name": "assetInfo",
             "plural": false,
             "selections": [
-              (v5/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -430,7 +410,7 @@ return {
           },
           {
             "alias": null,
-            "args": (v11/*: any*/),
+            "args": (v10/*: any*/),
             "concreteType": "TransactionConnection",
             "kind": "LinkedField",
             "name": "transactions",
@@ -452,7 +432,7 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/),
+                      (v1/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -467,21 +447,21 @@ return {
                         "name": "createTime",
                         "storageKey": null
                       },
-                      (v8/*: any*/)
+                      (v7/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v9/*: any*/)
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               },
-              (v10/*: any*/)
+              (v9/*: any*/)
             ],
             "storageKey": "transactions(first:20)"
           },
           {
             "alias": null,
-            "args": (v11/*: any*/),
+            "args": (v10/*: any*/),
             "filters": null,
             "handle": "connection",
             "key": "TransactionsDataTable_transactions",
@@ -505,23 +485,23 @@ return {
             "name": "code",
             "storageKey": null
           },
-          (v4/*: any*/)
+          (v3/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "08b8d76355fcdfa03d2e4f5766228e5f",
+    "cacheID": "af63f0f2b052212a3046a8c44fef967e",
     "id": null,
     "metadata": {},
-    "name": "RootQuery",
+    "name": "routeProtectedQuery",
     "operationKind": "query",
-    "text": "query RootQuery(\n  $hasUser: Boolean!\n  $hasProfile: Boolean!\n) {\n  user @include(if: $hasUser) {\n    ...userFragment\n    id\n  }\n  profiles @include(if: $hasUser) {\n    ...profilesFragment\n    id\n  }\n  ...profileFragment @include(if: $hasProfile)\n  ...accountsPageFragment @include(if: $hasProfile)\n  ...transactionsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsDataTableFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencyCode\n        amount\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n  ...addAccountFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountsDataTableFragment\n}\n\nfragment addAccountFragment on Query {\n  ...newAccountInvestmentFragment\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment newAccountInvestmentFragment on Query {\n  assetInfo(symbol: \"\") {\n    name\n    currency\n    exchange\n    currentPrice\n  }\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        currencyCode\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment profileFragment on Query {\n  profile {\n    id\n    name\n    currencies\n    netWorthGoal\n    locale\n  }\n}\n\nfragment profilesFragment on Profile {\n  id\n  currencies\n  locale\n  name\n  netWorthGoal\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        amount\n        currencyCode\n        tickerType\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        createTime\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n\nfragment userFragment on User {\n  id\n  email\n}\n"
+    "text": "query routeProtectedQuery(\n  $hasProfile: Boolean!\n) {\n  user {\n    ...userFragment\n    id\n  }\n  profiles {\n    ...profilesFragment\n    id\n  }\n  ...profileFragment @include(if: $hasProfile)\n  ...accountsPageFragment @include(if: $hasProfile)\n  ...transactionsPageFragment @include(if: $hasProfile)\n  currencies {\n    ...currencyFragment\n  }\n}\n\nfragment accountsDataTableFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        accountType\n        balance\n        institution\n        value\n        currencyCode\n        amount\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment accountsPageFragment on Query {\n  ...accountsViewFragment\n  ...addAccountFragment\n}\n\nfragment accountsViewFragment on Query {\n  ...netWorthInfoFragment\n  ...accountsDataTableFragment\n}\n\nfragment addAccountFragment on Query {\n  ...newAccountInvestmentFragment\n}\n\nfragment currencyFragment on Currency {\n  code\n  locale\n}\n\nfragment netWorthInfoFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        accountType\n        balance\n      }\n    }\n    pageInfo {\n      hasNextPage\n    }\n  }\n}\n\nfragment newAccountInvestmentFragment on Query {\n  assetInfo(symbol: \"\") {\n    name\n    currency\n    exchange\n    currentPrice\n  }\n}\n\nfragment newExpenseFragment on Query {\n  ...selectAccountFragment\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        currencyCode\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment newTransferFragment on Query {\n  ...selectAccountFragment\n}\n\nfragment profileFragment on Query {\n  profile {\n    id\n    name\n    currencies\n    netWorthGoal\n    locale\n  }\n}\n\nfragment profilesFragment on Profile {\n  id\n  currencies\n  locale\n  name\n  netWorthGoal\n}\n\nfragment selectAccountFragment on Query {\n  accounts(first: 1000) {\n    edges {\n      node {\n        id\n        name\n        amount\n        currencyCode\n        tickerType\n      }\n    }\n  }\n}\n\nfragment transactionDataTableFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        note\n        createTime\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPageFragment on Query {\n  ...transactionDataTableFragment\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n\nfragment userFragment on User {\n  id\n  email\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d53286631806f13dbc6dc2b720ca4fa2";
+(node as any).hash = "268864a28380dc7cdd71408560bb8d7f";
 
 export default node;

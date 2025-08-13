@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f02a63f3b68b88051389e6b42b47e141>>
+ * @generated SignedSource<<4b704ddb269c461b2396760de41c9ec1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,11 @@ export type finalStepMutation$variables = {
 };
 export type finalStepMutation$data = {
   readonly createProfile: {
+    readonly currencies: ReadonlyArray<string>;
     readonly id: string;
+    readonly locale: string;
+    readonly name: string;
+    readonly netWorthGoal: string;
   };
 };
 export type finalStepMutation = {
@@ -77,6 +81,34 @@ v3 = [
         "kind": "ScalarField",
         "name": "id",
         "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "name",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "netWorthGoal",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "locale",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "currencies",
+        "storageKey": null
       }
     ],
     "storageKey": null
@@ -108,16 +140,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "e38e0146de7acaf06befce3fa238df59",
+    "cacheID": "4b77772bfb965ece6da0297117470f16",
     "id": null,
     "metadata": {},
     "name": "finalStepMutation",
     "operationKind": "mutation",
-    "text": "mutation finalStepMutation(\n  $currencies: [String!]!\n  $netWorthGoal: String!\n  $name: String!\n) {\n  createProfile(input: {currencies: $currencies, netWorthGoal: $netWorthGoal, name: $name}) {\n    id\n  }\n}\n"
+    "text": "mutation finalStepMutation(\n  $currencies: [String!]!\n  $netWorthGoal: String!\n  $name: String!\n) {\n  createProfile(input: {currencies: $currencies, netWorthGoal: $netWorthGoal, name: $name}) {\n    id\n    name\n    netWorthGoal\n    locale\n    currencies\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b9dae97a31abddd79eefc024495052ad";
+(node as any).hash = "d4ae079e91b1b1db37e92f3b477bf4e1";
 
 export default node;
