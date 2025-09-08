@@ -1,4 +1,4 @@
-import type { AccountAccountType } from "@/routes/_protected/_profile/-components/accounts/__generated__/cardFragment.graphql";
+import type { AccountAccountType } from "@/routes/_protected/_profile/-components/accounts/__generated__/netWorthInfoFragment.graphql";
 import currency from "currency.js";
 import _ from "lodash";
 import invariant from "tiny-invariant";
@@ -8,7 +8,7 @@ export type GroupedAccounts = ReadonlyArray<
       readonly node:
         | {
             readonly accountType: AccountAccountType;
-            readonly balance: string;
+            readonly balance_in_default_currency: string;
             readonly id: string;
           }
         | null
@@ -48,7 +48,7 @@ export function getOverallStats(accounts: GroupedAccounts) {
     invariant(account && account.node);
 
     if (POSITIVE_ACCOUNT_TYPES.includes(account.node.accountType)) {
-      return acc.add(currency(account.node.balance));
+      return acc.add(currency(account.node.balance_in_default_currency));
     }
     return acc;
   }, currency(0));
@@ -57,7 +57,7 @@ export function getOverallStats(accounts: GroupedAccounts) {
     invariant(account && account.node);
 
     if (NEGATIVE_ACCOUNT_TYPES.includes(account.node.accountType)) {
-      return acc.add(currency(account.node.balance));
+      return acc.add(currency(account.node.balance_in_default_currency));
     }
     return acc;
   }, currency(0));

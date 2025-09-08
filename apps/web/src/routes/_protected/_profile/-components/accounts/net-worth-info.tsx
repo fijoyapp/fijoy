@@ -30,7 +30,7 @@ const NetWorthInfoFragment = graphql`
         node {
           id
           accountType
-          balance
+          balance_in_default_currency
         }
       }
       pageInfo {
