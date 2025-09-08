@@ -5,7 +5,6 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
-	"fijoy/ent/category"
 	"fijoy/ent/predicate"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
@@ -27,7 +26,6 @@ type TransactionQuery struct {
 	inters                      []Interceptor
 	predicates                  []predicate.Transaction
 	withProfile                 *ProfileQuery
-	withCategory                *CategoryQuery
 	withTransactionEntries      *TransactionEntryQuery
 	withFKs                     bool
 	modifiers                   []func(*sql.Selector)
@@ -84,28 +82,6 @@ func (_q *TransactionQuery) QueryProfile() *ProfileQuery {
 			sqlgraph.From(transaction.Table, transaction.FieldID, selector),
 			sqlgraph.To(profile.Table, profile.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transaction.ProfileTable, transaction.ProfileColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryCategory chains the current query on the "category" edge.
-func (_q *TransactionQuery) QueryCategory() *CategoryQuery {
-	query := (&CategoryClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(transaction.Table, transaction.FieldID, selector),
-			sqlgraph.To(category.Table, category.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, transaction.CategoryTable, transaction.CategoryColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -328,7 +304,6 @@ func (_q *TransactionQuery) Clone() *TransactionQuery {
 		inters:                 append([]Interceptor{}, _q.inters...),
 		predicates:             append([]predicate.Transaction{}, _q.predicates...),
 		withProfile:            _q.withProfile.Clone(),
-		withCategory:           _q.withCategory.Clone(),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -344,17 +319,6 @@ func (_q *TransactionQuery) WithProfile(opts ...func(*ProfileQuery)) *Transactio
 		opt(query)
 	}
 	_q.withProfile = query
-	return _q
-}
-
-// WithCategory tells the query-builder to eager-load the nodes that are connected to
-// the "category" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *TransactionQuery) WithCategory(opts ...func(*CategoryQuery)) *TransactionQuery {
-	query := (&CategoryClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withCategory = query
 	return _q
 }
 
@@ -448,13 +412,12 @@ func (_q *TransactionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 		nodes       = []*Transaction{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [2]bool{
 			_q.withProfile != nil,
-			_q.withCategory != nil,
 			_q.withTransactionEntries != nil,
 		}
 	)
-	if _q.withProfile != nil || _q.withCategory != nil {
+	if _q.withProfile != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -484,12 +447,6 @@ func (_q *TransactionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	if query := _q.withProfile; query != nil {
 		if err := _q.loadProfile(ctx, query, nodes, nil,
 			func(n *Transaction, e *Profile) { n.Edges.Profile = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := _q.withCategory; query != nil {
-		if err := _q.loadCategory(ctx, query, nodes, nil,
-			func(n *Transaction, e *Category) { n.Edges.Category = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -542,38 +499,6 @@ func (_q *TransactionQuery) loadProfile(ctx context.Context, query *ProfileQuery
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "profile_transactions" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (_q *TransactionQuery) loadCategory(ctx context.Context, query *CategoryQuery, nodes []*Transaction, init func(*Transaction), assign func(*Transaction, *Category)) error {
-	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Transaction)
-	for i := range nodes {
-		if nodes[i].category_transactions == nil {
-			continue
-		}
-		fk := *nodes[i].category_transactions
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(category.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "category_transactions" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

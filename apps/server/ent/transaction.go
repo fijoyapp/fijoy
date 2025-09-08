@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fmt"
@@ -27,25 +26,22 @@ type Transaction struct {
 	Note string `json:"note,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
-	Edges                 TransactionEdges `json:"edges"`
-	category_transactions *int
-	profile_transactions  *int
-	selectValues          sql.SelectValues
+	Edges                TransactionEdges `json:"edges"`
+	profile_transactions *int
+	selectValues         sql.SelectValues
 }
 
 // TransactionEdges holds the relations/edges for other nodes in the graph.
 type TransactionEdges struct {
 	// Profile holds the value of the profile edge.
 	Profile *Profile `json:"profile,omitempty"`
-	// Category holds the value of the category edge.
-	Category *Category `json:"category,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [2]map[string]int
 
 	namedTransactionEntries map[string][]*TransactionEntry
 }
@@ -61,21 +57,10 @@ func (e TransactionEdges) ProfileOrErr() (*Profile, error) {
 	return nil, &NotLoadedError{edge: "profile"}
 }
 
-// CategoryOrErr returns the Category value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e TransactionEdges) CategoryOrErr() (*Category, error) {
-	if e.Category != nil {
-		return e.Category, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: category.Label}
-	}
-	return nil, &NotLoadedError{edge: "category"}
-}
-
 // TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e TransactionEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
@@ -92,9 +77,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case transaction.FieldCreateTime, transaction.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case transaction.ForeignKeys[0]: // category_transactions
-			values[i] = new(sql.NullInt64)
-		case transaction.ForeignKeys[1]: // profile_transactions
+		case transaction.ForeignKeys[0]: // profile_transactions
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -137,13 +120,6 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 			}
 		case transaction.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field category_transactions", value)
-			} else if value.Valid {
-				_m.category_transactions = new(int)
-				*_m.category_transactions = int(value.Int64)
-			}
-		case transaction.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field profile_transactions", value)
 			} else if value.Valid {
 				_m.profile_transactions = new(int)
@@ -165,11 +141,6 @@ func (_m *Transaction) Value(name string) (ent.Value, error) {
 // QueryProfile queries the "profile" edge of the Transaction entity.
 func (_m *Transaction) QueryProfile() *ProfileQuery {
 	return NewTransactionClient(_m.config).QueryProfile(_m)
-}
-
-// QueryCategory queries the "category" edge of the Transaction entity.
-func (_m *Transaction) QueryCategory() *CategoryQuery {
-	return NewTransactionClient(_m.config).QueryCategory(_m)
 }
 
 // QueryTransactionEntries queries the "transaction_entries" edge of the Transaction entity.

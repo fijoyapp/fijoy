@@ -40,26 +40,6 @@ func (_m *Account) SnapshotAccounts(ctx context.Context) (result []*SnapshotAcco
 	return result, err
 }
 
-func (_m *Category) Profile(ctx context.Context) (*Profile, error) {
-	result, err := _m.Edges.ProfileOrErr()
-	if IsNotLoaded(err) {
-		result, err = _m.QueryProfile().Only(ctx)
-	}
-	return result, err
-}
-
-func (_m *Category) Transactions(ctx context.Context) (result []*Transaction, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = _m.NamedTransactions(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = _m.Edges.TransactionsOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = _m.QueryTransactions().All(ctx)
-	}
-	return result, err
-}
-
 func (_m *Profile) Users(ctx context.Context) (result []*User, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = _m.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
@@ -104,18 +84,6 @@ func (_m *Profile) Snapshots(ctx context.Context) (result []*Snapshot, err error
 	}
 	if IsNotLoaded(err) {
 		result, err = _m.QuerySnapshots().All(ctx)
-	}
-	return result, err
-}
-
-func (_m *Profile) Categories(ctx context.Context) (result []*Category, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = _m.NamedCategories(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = _m.Edges.CategoriesOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = _m.QueryCategories().All(ctx)
 	}
 	return result, err
 }
@@ -180,14 +148,6 @@ func (_m *Transaction) Profile(ctx context.Context) (*Profile, error) {
 	result, err := _m.Edges.ProfileOrErr()
 	if IsNotLoaded(err) {
 		result, err = _m.QueryProfile().Only(ctx)
-	}
-	return result, err
-}
-
-func (_m *Transaction) Category(ctx context.Context) (*Category, error) {
-	result, err := _m.Edges.CategoryOrErr()
-	if IsNotLoaded(err) {
-		result, err = _m.QueryCategory().Only(ctx)
 	}
 	return result, err
 }

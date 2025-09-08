@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
-	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/snapshot"
 	"fijoy/ent/snapshotaccount"
@@ -84,7 +83,6 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			account.Table:          account.ValidColumn,
-			category.Table:         category.ValidColumn,
 			profile.Table:          profile.ValidColumn,
 			snapshot.Table:         snapshot.ValidColumn,
 			snapshotaccount.Table:  snapshotaccount.ValidColumn,

@@ -73,9 +73,9 @@ func (Profile) Edges() []ent.Edge {
 			Annotations(
 				entsql.OnDelete(entsql.Cascade),
 			),
-		edge.To("categories", Category.Type).
-			Annotations(
-				entsql.OnDelete(entsql.Cascade),
-			),
+		// edge.To("categories", Category.Type).
+		// 	Annotations(
+		// 		entsql.OnDelete(entsql.Cascade),
+		// 	),
 	}
 }

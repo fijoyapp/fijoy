@@ -5,7 +5,6 @@ package ent
 import (
 	"context"
 	"fijoy/ent/account"
-	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/snapshot"
 	"fijoy/ent/snapshotaccount"
@@ -180,109 +179,6 @@ func newAccountPaginateArgs(rv map[string]any) *accountPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (_q *CategoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*CategoryQuery, error) {
-	fc := graphql.GetFieldContext(ctx)
-	if fc == nil {
-		return _q, nil
-	}
-	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
-		return nil, err
-	}
-	return _q, nil
-}
-
-func (_q *CategoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
-	path = append([]string(nil), path...)
-	var (
-		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(category.Columns))
-		selectedFields = []string{category.FieldID}
-	)
-	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
-		switch field.Name {
-
-		case "profile":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&ProfileClient{config: _q.config}).Query()
-			)
-			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, profileImplementors)...); err != nil {
-				return err
-			}
-			_q.withProfile = query
-
-		case "transactions":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&TransactionClient{config: _q.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
-				return err
-			}
-			_q.WithNamedTransactions(alias, func(wq *TransactionQuery) {
-				*wq = *query
-			})
-		case "createTime":
-			if _, ok := fieldSeen[category.FieldCreateTime]; !ok {
-				selectedFields = append(selectedFields, category.FieldCreateTime)
-				fieldSeen[category.FieldCreateTime] = struct{}{}
-			}
-		case "updateTime":
-			if _, ok := fieldSeen[category.FieldUpdateTime]; !ok {
-				selectedFields = append(selectedFields, category.FieldUpdateTime)
-				fieldSeen[category.FieldUpdateTime] = struct{}{}
-			}
-		case "name":
-			if _, ok := fieldSeen[category.FieldName]; !ok {
-				selectedFields = append(selectedFields, category.FieldName)
-				fieldSeen[category.FieldName] = struct{}{}
-			}
-		case "categoryType":
-			if _, ok := fieldSeen[category.FieldCategoryType]; !ok {
-				selectedFields = append(selectedFields, category.FieldCategoryType)
-				fieldSeen[category.FieldCategoryType] = struct{}{}
-			}
-		case "id":
-		case "__typename":
-		default:
-			unknownSeen = true
-		}
-	}
-	if !unknownSeen {
-		_q.Select(selectedFields...)
-	}
-	return nil
-}
-
-type categoryPaginateArgs struct {
-	first, last   *int
-	after, before *Cursor
-	opts          []CategoryPaginateOption
-}
-
-func newCategoryPaginateArgs(rv map[string]any) *categoryPaginateArgs {
-	args := &categoryPaginateArgs{}
-	if rv == nil {
-		return args
-	}
-	if v := rv[firstField]; v != nil {
-		args.first = v.(*int)
-	}
-	if v := rv[lastField]; v != nil {
-		args.last = v.(*int)
-	}
-	if v := rv[afterField]; v != nil {
-		args.after = v.(*Cursor)
-	}
-	if v := rv[beforeField]; v != nil {
-		args.before = v.(*Cursor)
-	}
-	return args
-}
-
-// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (_q *ProfileQuery) CollectFields(ctx context.Context, satisfies ...string) (*ProfileQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -353,19 +249,6 @@ func (_q *ProfileQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				return err
 			}
 			_q.WithNamedSnapshots(alias, func(wq *SnapshotQuery) {
-				*wq = *query
-			})
-
-		case "categories":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&CategoryClient{config: _q.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, categoryImplementors)...); err != nil {
-				return err
-			}
-			_q.WithNamedCategories(alias, func(wq *CategoryQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -780,17 +663,6 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			_q.withProfile = query
-
-		case "category":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&CategoryClient{config: _q.config}).Query()
-			)
-			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, categoryImplementors)...); err != nil {
-				return err
-			}
-			_q.withCategory = query
 
 		case "transactionEntries":
 			var (

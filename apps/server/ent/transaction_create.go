@@ -5,7 +5,6 @@ package ent
 import (
 	"context"
 	"errors"
-	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/transaction"
 	"fijoy/ent/transactionentry"
@@ -74,17 +73,6 @@ func (_c *TransactionCreate) SetProfileID(id int) *TransactionCreate {
 // SetProfile sets the "profile" edge to the Profile entity.
 func (_c *TransactionCreate) SetProfile(v *Profile) *TransactionCreate {
 	return _c.SetProfileID(v.ID)
-}
-
-// SetCategoryID sets the "category" edge to the Category entity by ID.
-func (_c *TransactionCreate) SetCategoryID(id int) *TransactionCreate {
-	_c.mutation.SetCategoryID(id)
-	return _c
-}
-
-// SetCategory sets the "category" edge to the Category entity.
-func (_c *TransactionCreate) SetCategory(v *Category) *TransactionCreate {
-	return _c.SetCategoryID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
@@ -158,9 +146,6 @@ func (_c *TransactionCreate) check() error {
 	if len(_c.mutation.ProfileIDs()) == 0 {
 		return &ValidationError{Name: "profile", err: errors.New(`ent: missing required edge "Transaction.profile"`)}
 	}
-	if len(_c.mutation.CategoryIDs()) == 0 {
-		return &ValidationError{Name: "category", err: errors.New(`ent: missing required edge "Transaction.category"`)}
-	}
 	return nil
 }
 
@@ -214,23 +199,6 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.profile_transactions = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.CategoryIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transaction.CategoryTable,
-			Columns: []string{transaction.CategoryColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.category_transactions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
