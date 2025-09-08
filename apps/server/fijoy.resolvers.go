@@ -110,13 +110,11 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		currencyCode = assetInfo.Currency
 		// value
 		value = assetInfo.CurrentPrice
-		// fxRate
 	case account.AccountTypeLiquidity, account.AccountTypeLiability, account.AccountTypeProperty, account.AccountTypeReceivable:
 		// currencySymbol
 		currencyCode = input.CurrencyCode
 		// value
 		value = decimal.NewFromInt(1)
-		// fxRate
 	default:
 		return nil, errors.New("invalid account type")
 	}
