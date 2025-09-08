@@ -7,6 +7,9 @@ package fijoy
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
+
 	"fijoy/ent"
 	"fijoy/ent/account"
 	"fijoy/ent/profile"
@@ -15,8 +18,6 @@ import (
 	"fijoy/internal/util/auth"
 	"fijoy/internal/util/currency"
 	"fijoy/internal/util/pointer"
-	"fmt"
-	"time"
 
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -77,7 +78,7 @@ func (r *mutationResolver) UpdateProfile(ctx context.Context, id int, input ent.
 		return nil, err
 	}
 
-	if userData.ProfileID != 0 {
+	if userData.ProfileID != id {
 		return nil, errors.New("unauthorized to update this profile")
 	}
 
