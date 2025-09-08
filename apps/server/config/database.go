@@ -7,7 +7,8 @@ import (
 )
 
 type DatabaseConfig struct {
-	DB_URL string `env:"DB_URL,required"`
+	DB_URL    string `env:"DB_URL,required"`
+	REDIS_URL string `env:"REDIS_URL,required"`
 }
 
 func LoadDatabaseConfig() (*DatabaseConfig, error) {
