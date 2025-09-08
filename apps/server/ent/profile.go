@@ -47,21 +47,18 @@ type ProfileEdges struct {
 	Transactions []*Transaction `json:"transactions,omitempty"`
 	// Snapshots holds the value of the snapshots edge.
 	Snapshots []*Snapshot `json:"snapshots,omitempty"`
-	// Categories holds the value of the categories edge.
-	Categories []*Category `json:"categories,omitempty"`
 	// UserProfiles holds the value of the user_profiles edge.
 	UserProfiles []*UserProfile `json:"user_profiles,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [4]map[string]int
 
 	namedUsers        map[string][]*User
 	namedAccounts     map[string][]*Account
 	namedTransactions map[string][]*Transaction
 	namedSnapshots    map[string][]*Snapshot
-	namedCategories   map[string][]*Category
 	namedUserProfiles map[string][]*UserProfile
 }
 
@@ -101,19 +98,10 @@ func (e ProfileEdges) SnapshotsOrErr() ([]*Snapshot, error) {
 	return nil, &NotLoadedError{edge: "snapshots"}
 }
 
-// CategoriesOrErr returns the Categories value or an error if the edge
-// was not loaded in eager-loading.
-func (e ProfileEdges) CategoriesOrErr() ([]*Category, error) {
-	if e.loadedTypes[4] {
-		return e.Categories, nil
-	}
-	return nil, &NotLoadedError{edge: "categories"}
-}
-
 // UserProfilesOrErr returns the UserProfiles value or an error if the edge
 // was not loaded in eager-loading.
 func (e ProfileEdges) UserProfilesOrErr() ([]*UserProfile, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.UserProfiles, nil
 	}
 	return nil, &NotLoadedError{edge: "user_profiles"}
@@ -224,11 +212,6 @@ func (_m *Profile) QueryTransactions() *TransactionQuery {
 // QuerySnapshots queries the "snapshots" edge of the Profile entity.
 func (_m *Profile) QuerySnapshots() *SnapshotQuery {
 	return NewProfileClient(_m.config).QuerySnapshots(_m)
-}
-
-// QueryCategories queries the "categories" edge of the Profile entity.
-func (_m *Profile) QueryCategories() *CategoryQuery {
-	return NewProfileClient(_m.config).QueryCategories(_m)
 }
 
 // QueryUserProfiles queries the "user_profiles" edge of the Profile entity.
@@ -373,30 +356,6 @@ func (_m *Profile) appendNamedSnapshots(name string, edges ...*Snapshot) {
 		_m.Edges.namedSnapshots[name] = []*Snapshot{}
 	} else {
 		_m.Edges.namedSnapshots[name] = append(_m.Edges.namedSnapshots[name], edges...)
-	}
-}
-
-// NamedCategories returns the Categories named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (_m *Profile) NamedCategories(name string) ([]*Category, error) {
-	if _m.Edges.namedCategories == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := _m.Edges.namedCategories[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (_m *Profile) appendNamedCategories(name string, edges ...*Category) {
-	if _m.Edges.namedCategories == nil {
-		_m.Edges.namedCategories = make(map[string][]*Category)
-	}
-	if len(edges) == 0 {
-		_m.Edges.namedCategories[name] = []*Category{}
-	} else {
-		_m.Edges.namedCategories[name] = append(_m.Edges.namedCategories[name], edges...)
 	}
 }
 

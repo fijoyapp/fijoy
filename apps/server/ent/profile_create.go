@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fijoy/ent/account"
-	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/snapshot"
 	"fijoy/ent/transaction"
@@ -136,21 +135,6 @@ func (_c *ProfileCreate) AddSnapshots(v ...*Snapshot) *ProfileCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddSnapshotIDs(ids...)
-}
-
-// AddCategoryIDs adds the "categories" edge to the Category entity by IDs.
-func (_c *ProfileCreate) AddCategoryIDs(ids ...int) *ProfileCreate {
-	_c.mutation.AddCategoryIDs(ids...)
-	return _c
-}
-
-// AddCategories adds the "categories" edges to the Category entity.
-func (_c *ProfileCreate) AddCategories(v ...*Category) *ProfileCreate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddCategoryIDs(ids...)
 }
 
 // Mutation returns the ProfileMutation object of the builder.
@@ -325,22 +309,6 @@ func (_c *ProfileCreate) createSpec() (*Profile, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(snapshot.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.CategoriesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   profile.CategoriesTable,
-			Columns: []string{profile.CategoriesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

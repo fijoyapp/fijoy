@@ -41,29 +41,6 @@ var (
 			},
 		},
 	}
-	// CategoriesColumns holds the columns for the "categories" table.
-	CategoriesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "create_time", Type: field.TypeTime},
-		{Name: "update_time", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString},
-		{Name: "category_type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer", "sync", "init"}},
-		{Name: "profile_categories", Type: field.TypeInt},
-	}
-	// CategoriesTable holds the schema information for the "categories" table.
-	CategoriesTable = &schema.Table{
-		Name:       "categories",
-		Columns:    CategoriesColumns,
-		PrimaryKey: []*schema.Column{CategoriesColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "categories_profiles_categories",
-				Columns:    []*schema.Column{CategoriesColumns[5]},
-				RefColumns: []*schema.Column{ProfilesColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// ProfilesColumns holds the columns for the "profiles" table.
 	ProfilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -163,7 +140,6 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "note", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "category_transactions", Type: field.TypeInt},
 		{Name: "profile_transactions", Type: field.TypeInt},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
@@ -173,14 +149,8 @@ var (
 		PrimaryKey: []*schema.Column{TransactionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "transactions_categories_transactions",
-				Columns:    []*schema.Column{TransactionsColumns[4]},
-				RefColumns: []*schema.Column{CategoriesColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
 				Symbol:     "transactions_profiles_transactions",
-				Columns:    []*schema.Column{TransactionsColumns[5]},
+				Columns:    []*schema.Column{TransactionsColumns[4]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -283,7 +253,6 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
-		CategoriesTable,
 		ProfilesTable,
 		SnapshotsTable,
 		SnapshotAccountsTable,
@@ -301,10 +270,6 @@ func init() {
 	AccountsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(0),
 	}
-	CategoriesTable.ForeignKeys[0].RefTable = ProfilesTable
-	CategoriesTable.Annotation = &entsql.Annotation{
-		IncrementStart: func(i int) *int { return &i }(38654705664),
-	}
 	ProfilesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(4294967296),
 	}
@@ -321,8 +286,7 @@ func init() {
 	SnapshotFxRatesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(34359738368),
 	}
-	TransactionsTable.ForeignKeys[0].RefTable = CategoriesTable
-	TransactionsTable.ForeignKeys[1].RefTable = ProfilesTable
+	TransactionsTable.ForeignKeys[0].RefTable = ProfilesTable
 	TransactionsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(8589934592),
 	}

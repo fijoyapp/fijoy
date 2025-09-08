@@ -34,8 +34,6 @@ const (
 	EdgeTransactions = "transactions"
 	// EdgeSnapshots holds the string denoting the snapshots edge name in mutations.
 	EdgeSnapshots = "snapshots"
-	// EdgeCategories holds the string denoting the categories edge name in mutations.
-	EdgeCategories = "categories"
 	// EdgeUserProfiles holds the string denoting the user_profiles edge name in mutations.
 	EdgeUserProfiles = "user_profiles"
 	// Table holds the table name of the profile in the database.
@@ -66,13 +64,6 @@ const (
 	SnapshotsInverseTable = "snapshots"
 	// SnapshotsColumn is the table column denoting the snapshots relation/edge.
 	SnapshotsColumn = "profile_snapshots"
-	// CategoriesTable is the table that holds the categories relation/edge.
-	CategoriesTable = "categories"
-	// CategoriesInverseTable is the table name for the Category entity.
-	// It exists in this package in order to avoid circular dependency with the "category" package.
-	CategoriesInverseTable = "categories"
-	// CategoriesColumn is the table column denoting the categories relation/edge.
-	CategoriesColumn = "profile_categories"
 	// UserProfilesTable is the table that holds the user_profiles relation/edge.
 	UserProfilesTable = "user_profiles"
 	// UserProfilesInverseTable is the table name for the UserProfile entity.
@@ -207,20 +198,6 @@ func BySnapshots(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByCategoriesCount orders the results by categories count.
-func ByCategoriesCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newCategoriesStep(), opts...)
-	}
-}
-
-// ByCategories orders the results by categories terms.
-func ByCategories(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newCategoriesStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByUserProfilesCount orders the results by user_profiles count.
 func ByUserProfilesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -260,13 +237,6 @@ func newSnapshotsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SnapshotsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, SnapshotsTable, SnapshotsColumn),
-	)
-}
-func newCategoriesStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(CategoriesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, CategoriesTable, CategoriesColumn),
 	)
 }
 func newUserProfilesStep() *sqlgraph.Step {

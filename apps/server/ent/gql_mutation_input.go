@@ -4,7 +4,6 @@ package ent
 
 import (
 	"fijoy/ent/account"
-	"fijoy/ent/category"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -128,76 +127,6 @@ func (c *AccountUpdateOne) SetInput(i UpdateAccountInput) *AccountUpdateOne {
 	return c
 }
 
-// CreateCategoryInput represents a mutation input for creating categories.
-type CreateCategoryInput struct {
-	CreateTime     *time.Time
-	UpdateTime     *time.Time
-	Name           string
-	CategoryType   category.CategoryType
-	TransactionIDs []int
-}
-
-// Mutate applies the CreateCategoryInput on the CategoryMutation builder.
-func (i *CreateCategoryInput) Mutate(m *CategoryMutation) {
-	if v := i.CreateTime; v != nil {
-		m.SetCreateTime(*v)
-	}
-	if v := i.UpdateTime; v != nil {
-		m.SetUpdateTime(*v)
-	}
-	m.SetName(i.Name)
-	m.SetCategoryType(i.CategoryType)
-	if v := i.TransactionIDs; len(v) > 0 {
-		m.AddTransactionIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the CreateCategoryInput on the CategoryCreate builder.
-func (c *CategoryCreate) SetInput(i CreateCategoryInput) *CategoryCreate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// UpdateCategoryInput represents a mutation input for updating categories.
-type UpdateCategoryInput struct {
-	UpdateTime           *time.Time
-	Name                 *string
-	ClearTransactions    bool
-	AddTransactionIDs    []int
-	RemoveTransactionIDs []int
-}
-
-// Mutate applies the UpdateCategoryInput on the CategoryMutation builder.
-func (i *UpdateCategoryInput) Mutate(m *CategoryMutation) {
-	if v := i.UpdateTime; v != nil {
-		m.SetUpdateTime(*v)
-	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
-	if i.ClearTransactions {
-		m.ClearTransactions()
-	}
-	if v := i.AddTransactionIDs; len(v) > 0 {
-		m.AddTransactionIDs(v...)
-	}
-	if v := i.RemoveTransactionIDs; len(v) > 0 {
-		m.RemoveTransactionIDs(v...)
-	}
-}
-
-// SetInput applies the change-set in the UpdateCategoryInput on the CategoryUpdate builder.
-func (c *CategoryUpdate) SetInput(i UpdateCategoryInput) *CategoryUpdate {
-	i.Mutate(c.Mutation())
-	return c
-}
-
-// SetInput applies the change-set in the UpdateCategoryInput on the CategoryUpdateOne builder.
-func (c *CategoryUpdateOne) SetInput(i UpdateCategoryInput) *CategoryUpdateOne {
-	i.Mutate(c.Mutation())
-	return c
-}
-
 // CreateProfileInput represents a mutation input for creating profiles.
 type CreateProfileInput struct {
 	CreateTime     *time.Time
@@ -208,7 +137,6 @@ type CreateProfileInput struct {
 	AccountIDs     []int
 	TransactionIDs []int
 	SnapshotIDs    []int
-	CategoryIDs    []int
 }
 
 // Mutate applies the CreateProfileInput on the ProfileMutation builder.
@@ -232,9 +160,6 @@ func (i *CreateProfileInput) Mutate(m *ProfileMutation) {
 	}
 	if v := i.SnapshotIDs; len(v) > 0 {
 		m.AddSnapshotIDs(v...)
-	}
-	if v := i.CategoryIDs; len(v) > 0 {
-		m.AddCategoryIDs(v...)
 	}
 }
 
@@ -260,9 +185,6 @@ type UpdateProfileInput struct {
 	ClearSnapshots       bool
 	AddSnapshotIDs       []int
 	RemoveSnapshotIDs    []int
-	ClearCategories      bool
-	AddCategoryIDs       []int
-	RemoveCategoryIDs    []int
 }
 
 // Mutate applies the UpdateProfileInput on the ProfileMutation builder.
@@ -308,15 +230,6 @@ func (i *UpdateProfileInput) Mutate(m *ProfileMutation) {
 	}
 	if v := i.RemoveSnapshotIDs; len(v) > 0 {
 		m.RemoveSnapshotIDs(v...)
-	}
-	if i.ClearCategories {
-		m.ClearCategories()
-	}
-	if v := i.AddCategoryIDs; len(v) > 0 {
-		m.AddCategoryIDs(v...)
-	}
-	if v := i.RemoveCategoryIDs; len(v) > 0 {
-		m.RemoveCategoryIDs(v...)
 	}
 }
 

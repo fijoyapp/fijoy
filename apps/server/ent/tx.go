@@ -14,8 +14,6 @@ type Tx struct {
 	config
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
-	// Category is the client for interacting with the Category builders.
-	Category *CategoryClient
 	// Profile is the client for interacting with the Profile builders.
 	Profile *ProfileClient
 	// Snapshot is the client for interacting with the Snapshot builders.
@@ -166,7 +164,6 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
-	tx.Category = NewCategoryClient(tx.config)
 	tx.Profile = NewProfileClient(tx.config)
 	tx.Snapshot = NewSnapshotClient(tx.config)
 	tx.SnapshotAccount = NewSnapshotAccountClient(tx.config)

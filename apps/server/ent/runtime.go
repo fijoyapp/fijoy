@@ -4,7 +4,6 @@ package ent
 
 import (
 	"fijoy/ent/account"
-	"fijoy/ent/category"
 	"fijoy/ent/profile"
 	"fijoy/ent/schema"
 	"fijoy/ent/snapshot"
@@ -56,25 +55,6 @@ func init() {
 	accountDescArchived := accountFields[10].Descriptor()
 	// account.DefaultArchived holds the default value on creation for the archived field.
 	account.DefaultArchived = accountDescArchived.Default.(bool)
-	categoryMixin := schema.Category{}.Mixin()
-	categoryMixinFields0 := categoryMixin[0].Fields()
-	_ = categoryMixinFields0
-	categoryFields := schema.Category{}.Fields()
-	_ = categoryFields
-	// categoryDescCreateTime is the schema descriptor for create_time field.
-	categoryDescCreateTime := categoryMixinFields0[0].Descriptor()
-	// category.DefaultCreateTime holds the default value on creation for the create_time field.
-	category.DefaultCreateTime = categoryDescCreateTime.Default.(func() time.Time)
-	// categoryDescUpdateTime is the schema descriptor for update_time field.
-	categoryDescUpdateTime := categoryMixinFields0[1].Descriptor()
-	// category.DefaultUpdateTime holds the default value on creation for the update_time field.
-	category.DefaultUpdateTime = categoryDescUpdateTime.Default.(func() time.Time)
-	// category.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	category.UpdateDefaultUpdateTime = categoryDescUpdateTime.UpdateDefault.(func() time.Time)
-	// categoryDescName is the schema descriptor for name field.
-	categoryDescName := categoryFields[0].Descriptor()
-	// category.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	category.NameValidator = categoryDescName.Validators[0].(func(string) error)
 	profileMixin := schema.Profile{}.Mixin()
 	profileMixinFields0 := profileMixin[0].Fields()
 	_ = profileMixinFields0

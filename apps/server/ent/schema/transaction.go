@@ -46,13 +46,13 @@ func (Transaction) Edges() []ent.Edge {
 				entgql.Skip(entgql.SkipMutationUpdateInput),
 			),
 
-		edge.From("category", Category.Type).Ref("transactions").
-			Unique().
-			Required().
-			Annotations(
-				entgql.Skip(entgql.SkipMutationCreateInput),
-				entgql.Skip(entgql.SkipMutationUpdateInput),
-			),
+		// edge.From("category", Category.Type).Ref("transactions").
+		// 	Unique().
+		// 	Required().
+		// 	Annotations(
+		// 		entgql.Skip(entgql.SkipMutationCreateInput),
+		// 		entgql.Skip(entgql.SkipMutationUpdateInput),
+		// 	),
 
 		edge.To("transaction_entries", TransactionEntry.Type),
 	}
