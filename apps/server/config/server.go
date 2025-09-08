@@ -7,8 +7,8 @@ import (
 )
 
 type ServerConfig struct {
-	WEB_URL string `env:"WEB_URL,required"`
-	PORT    string `env:"PORT"`
+	WebURL string `env:"WEB_URL,required"`
+	Port   string `env:"PORT"`
 }
 
 func LoadServerConfig() (*ServerConfig, error) {
@@ -18,7 +18,7 @@ func LoadServerConfig() (*ServerConfig, error) {
 	}
 
 	if !IsProd() {
-		cfg.PORT = "3000"
+		cfg.Port = "3000"
 	}
 
 	return &cfg, nil

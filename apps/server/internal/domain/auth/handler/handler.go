@@ -54,7 +54,7 @@ func (h *authHandler) logout(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &cookie)
 
 	// Redirect to the home page.
-	http.Redirect(w, r, h.serverConfig.WEB_URL, http.StatusFound)
+	http.Redirect(w, r, h.serverConfig.WebURL, http.StatusFound)
 }
 
 func (h *authHandler) setProfile(w http.ResponseWriter, r *http.Request) {
@@ -77,10 +77,10 @@ func (h *authHandler) setProfile(w http.ResponseWriter, r *http.Request) {
 				"profile_id": profile.ID,
 			}
 
-			_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)
+			_, tokenString, _ := h.authConfig.JWTAuth.Encode(claims)
 
 			auth.SetJwtCookie(r.Context(), tokenString)
-			http.Redirect(w, r, h.serverConfig.WEB_URL+"/home", http.StatusFound)
+			http.Redirect(w, r, h.serverConfig.WebURL+"/home", http.StatusFound)
 		}
 	}
 
@@ -99,16 +99,16 @@ func (h *authHandler) localLogin(w http.ResponseWriter, r *http.Request) {
 		"user_id": user.ID,
 	}
 
-	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)
+	_, tokenString, _ := h.authConfig.JWTAuth.Encode(claims)
 
 	auth.SetJwtCookie(ctx, tokenString)
 
-	http.Redirect(w, r, h.serverConfig.WEB_URL+"/setup", http.StatusFound)
+	http.Redirect(w, r, h.serverConfig.WebURL+"/setup", http.StatusFound)
 }
 
 func (h *authHandler) googleLogin(w http.ResponseWriter, r *http.Request) {
 	googleOAuthState := generateStateOAuthCookie(w)
-	url := h.authConfig.GOOGLE.AuthCodeURL(googleOAuthState)
+	url := h.authConfig.Google.AuthCodeURL(googleOAuthState)
 
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
@@ -123,7 +123,7 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Use code to get token and get user info from Google.
-	token, err := h.authConfig.GOOGLE.Exchange(ctx, r.FormValue("code"))
+	token, err := h.authConfig.Google.Exchange(ctx, r.FormValue("code"))
 	if err != nil {
 		http.Error(w, "google code exchange wrong: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -160,11 +160,11 @@ func (h *authHandler) googleCallback(w http.ResponseWriter, r *http.Request) {
 		"user_id": user.ID,
 	}
 
-	_, tokenString, _ := h.authConfig.JWT_AUTH.Encode(claims)
+	_, tokenString, _ := h.authConfig.JWTAuth.Encode(claims)
 
 	auth.SetJwtCookie(ctx, tokenString)
 
-	http.Redirect(w, r, h.serverConfig.WEB_URL+"/setup", http.StatusFound)
+	http.Redirect(w, r, h.serverConfig.WebURL+"/setup", http.StatusFound)
 }
 
 func generateStateOAuthCookie(w http.ResponseWriter) string {

@@ -10,13 +10,13 @@ import (
 )
 
 type AuthConfig struct {
-	JWT_SECRET           string `env:"JWT_SECRET,required"`
-	GOOGLE_REDIRECT_URL  string `env:"GOOGLE_REDIRECT_URL"`
-	GOOGLE_CLIENT_ID     string `env:"GOOGLE_CLIENT_ID"`
-	GOOGLE_CLIENT_SECRET string `env:"GOOGLE_CLIENT_SECRET"`
+	JWTSecret          string `env:"JWT_SECRET,required"`
+	GoogleRedirectURL  string `env:"GOOGLE_REDIRECT_URL"`
+	GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
+	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
 
-	GOOGLE   *oauth2.Config
-	JWT_AUTH *jwtauth.JWTAuth
+	Google  *oauth2.Config
+	JWTAuth *jwtauth.JWTAuth
 }
 
 func LoadAuthConfig() (*AuthConfig, error) {
@@ -25,12 +25,12 @@ func LoadAuthConfig() (*AuthConfig, error) {
 		return &AuthConfig{}, fmt.Errorf("%+v", err)
 	}
 
-	cfg.JWT_AUTH = jwtauth.New("HS256", []byte(cfg.JWT_SECRET), nil)
+	cfg.JWTAuth = jwtauth.New("HS256", []byte(cfg.JWTSecret), nil)
 
-	cfg.GOOGLE = &oauth2.Config{
-		RedirectURL:  cfg.GOOGLE_REDIRECT_URL,
-		ClientID:     cfg.GOOGLE_CLIENT_ID,
-		ClientSecret: cfg.GOOGLE_CLIENT_SECRET,
+	cfg.Google = &oauth2.Config{
+		RedirectURL:  cfg.GoogleRedirectURL,
+		ClientID:     cfg.GoogleClientID,
+		ClientSecret: cfg.GoogleClientSecret,
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email"},
 		Endpoint:     google.Endpoint,
 	}

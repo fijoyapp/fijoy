@@ -30,8 +30,8 @@ func RegisterHTTPEndpoints(
 		r.Get("/logout", handler.logout)
 
 		r.Group(func(r chi.Router) {
-			r.Use(jwtauth.Verifier(authConfig.JWT_AUTH))
-			r.Use(jwtauth.Authenticator(authConfig.JWT_AUTH))
+			r.Use(jwtauth.Verifier(authConfig.JWTAuth))
+			r.Use(jwtauth.Authenticator(authConfig.JWTAuth))
 
 			r.Post("/set-profile", handler.setProfile)
 		})
