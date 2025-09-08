@@ -1,10 +1,11 @@
 package usecase
 
 import (
-	"fijoy/config"
 	"fmt"
 	"net/http"
 	"strings"
+
+	"fijoy/config"
 )
 
 type AnalyticsUseCase interface {
@@ -22,7 +23,7 @@ func New(analyticsConfig *config.AnalyticsConfig) AnalyticsUseCase {
 func (s *analyticsUseCase) SendToDiscord(msg string) error {
 	// Send message to Discord
 	resp, err := http.Post(
-		s.analyticsConfig.DISCORD_WEBHOOK,
+		s.analyticsConfig.DiscordWebhook,
 		"application/json",
 		strings.NewReader(
 			fmt.Sprint(msg),

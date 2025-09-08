@@ -76,7 +76,7 @@ func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreatePr
 		return nil, fmt.Errorf("failed to create user profile: %w", err)
 	}
 
-	_, tokenString, _ := r.authConfig.JWT_AUTH.Encode(
+	_, tokenString, _ := r.authConfig.JWTAuth.Encode(
 		map[string]any{
 			"user_id":    userData.UserID,
 			"profile_id": profile.ID,

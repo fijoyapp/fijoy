@@ -7,7 +7,7 @@ import (
 )
 
 type SentryConfig struct {
-	SENTRY_DSN_SERVER string `env:"SENTRY_DSN_SERVER"`
+	SentryDSNServer string `env:"SENTRY_DSN_SERVER"`
 }
 
 func LoadSentryConfig() (*SentryConfig, error) {

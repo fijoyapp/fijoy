@@ -7,7 +7,7 @@ import (
 )
 
 type AnalyticsConfig struct {
-	DISCORD_WEBHOOK string `env:"DISCORD_WEBHOOK"`
+	DiscordWebhook string `env:"DISCORD_WEBHOOK"`
 }
 
 func LoadAnalyticsConfig() (*AnalyticsConfig, error) {

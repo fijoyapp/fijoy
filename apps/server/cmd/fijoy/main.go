@@ -3,6 +3,11 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fijoy"
+	"fijoy/config"
+	"fijoy/ent"
+	"fijoy/ent/migrate"
+	"fijoy/internal/util/market"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,12 +15,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"fijoy"
-	"fijoy/config"
-	"fijoy/ent"
-	"fijoy/ent/migrate"
-	"fijoy/internal/util/market"
 
 	// "fijoy/internal/util/market"
 	// market_client "fijoy/internal/util/market/client"
@@ -61,7 +60,7 @@ func main() {
 
 	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
 	if err := sentry.Init(sentry.ClientOptions{
-		Dsn: cfg.Sentry.SENTRY_DSN_SERVER,
+		Dsn: cfg.Sentry.SentryDSNServer,
 
 		SendDefaultPII: true,
 		EnableTracing:  true,
@@ -88,7 +87,7 @@ func main() {
 		}
 	}()
 
-	entClient, err := ent.Open("postgres", cfg.Database.DB_URL)
+	entClient, err := ent.Open("postgres", cfg.Database.PostgresURL)
 	if err != nil {
 		panic(err)
 	}
@@ -103,7 +102,7 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	redisURL := cfg.Database.REDIS_URL
+	redisURL := cfg.Database.RedisURL
 
 	redisOpts, err := redis.ParseURL(redisURL)
 	if err != nil {
@@ -146,7 +145,7 @@ func main() {
 
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{cfg.Server.WEB_URL}, // Use this to allow specific origin hosts
+		AllowedOrigins:   []string{cfg.Server.WebURL}, // Use this to allow specific origin hosts
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "sentry-trace", "baggage"},
 		AllowCredentials: true,
@@ -166,8 +165,8 @@ func main() {
 	srv.Use(entgql.Transactioner{TxOpener: entClient})
 
 	r.Group(func(r chi.Router) {
-		r.Use(jwtauth.Verifier(cfg.Auth.JWT_AUTH))
-		r.Use(jwtauth.Authenticator(cfg.Auth.JWT_AUTH))
+		r.Use(jwtauth.Verifier(cfg.Auth.JWTAuth))
+		r.Use(jwtauth.Authenticator(cfg.Auth.JWTAuth))
 
 		r.Handle("/graphql",
 			playground.Handler("Fijoy", "/query"),
@@ -179,7 +178,7 @@ func main() {
 	health_handler.RegisterHTTPEndpoints(r)
 
 	// Start our server
-	server := newServer(":"+cfg.Server.PORT, r)
+	server := newServer(":"+cfg.Server.Port, r)
 
 	// Listen for syscall signals for process to interrupt/quit
 	serverCtx, serverStopCtx := signal.NotifyContext(

@@ -7,7 +7,7 @@ import (
 )
 
 type MarketConfig struct {
-	TWELVE_DATA_SECRET_KEY string `env:"TWELVE_DATA_SECRET_KEY"`
+	TwelveDataSecretKey string `env:"TWELVE_DATA_SECRET_KEY"`
 }
 
 func LoadMarketConfig() (*MarketConfig, error) {
