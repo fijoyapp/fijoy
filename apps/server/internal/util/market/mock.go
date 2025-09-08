@@ -8,7 +8,7 @@ import (
 
 type MockMarketDataClient struct{}
 
-func NewMockMarketDataClient() *MockMarketDataClient {
+func NewMockMarketDataClient() MarketDataService {
 	return &MockMarketDataClient{}
 }
 

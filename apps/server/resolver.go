@@ -14,17 +14,17 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	client           *ent.Client
-	authConfig       *config.AuthConfig
-	marketDataClient market.MarketDataClient
+	client            *ent.Client
+	authConfig        *config.AuthConfig
+	marketDataService market.MarketDataService
 }
 
-func NewSchema(client *ent.Client, authConfig *config.AuthConfig, marketDataClient market.MarketDataClient) graphql.ExecutableSchema {
+func NewSchema(client *ent.Client, authConfig *config.AuthConfig, marketDataService market.MarketDataService) graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{
 		Resolvers: &Resolver{
 			client,
 			authConfig,
-			marketDataClient,
+			marketDataService,
 		},
 	})
 }

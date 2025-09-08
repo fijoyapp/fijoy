@@ -3,14 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fijoy"
-	"fijoy/config"
-	"fijoy/ent"
-	"fijoy/ent/migrate"
-
-	// "fijoy/internal/util/market"
-	// market_client "fijoy/internal/util/market/client"
-	"fijoy/internal/util/market"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,6 +10,15 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"fijoy"
+	"fijoy/config"
+	"fijoy/ent"
+	"fijoy/ent/migrate"
+	"fijoy/internal/util/market"
+
+	// "fijoy/internal/util/market"
+	// market_client "fijoy/internal/util/market/client"
 
 	auth_handler "fijoy/internal/domain/auth/handler"
 	auth_usecase "fijoy/internal/domain/auth/usecase"
@@ -33,6 +34,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	_ "github.com/lib/pq"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 
 	"github.com/go-chi/chi/v5"
@@ -101,6 +103,20 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
+	// Initialize Redis client
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379", // Redis server address (e.g., "localhost:6379")
+		Password: "",               // No password by default, or provide your password
+		DB:       0,                // Use default DB (0)
+	})
+
+	// Ping the Redis server to check the connection
+	pong, err := rdb.Ping(ctx).Result()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Connected to Redis:", pong)
+
 	sentryMiddleware := sentryhttp.New(sentryhttp.Options{
 		Repanic:         true,
 		WaitForDelivery: false,
@@ -118,7 +134,7 @@ func main() {
 	// 	marketDataClient = market.NewTwelveMarketDataClient(constants.TwelveDataBaseUrl, cfg.Market.TWELVE_DATA_SECRET_KEY)
 	// }
 
-	marketDataClient := market.NewYahooDataClient()
+	marketDataClient := market.NewYahooDataClient(rdb)
 
 	userRepo := user_repository.NewUserRepository()
 	userKeyRepo := user_repository.NewUserKeyRepository()
