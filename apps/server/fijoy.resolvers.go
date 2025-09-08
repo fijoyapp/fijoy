@@ -26,7 +26,6 @@ import (
 // BalanceInDefaultCurrency is the resolver for the balance_in_default_currency field.
 func (r *accountResolver) BalanceInDefaultCurrency(ctx context.Context, obj *ent.Account) (string, error) {
 	profile, err := r.Query().Profile(ctx)
-	fmt.Println("Obj:", obj)
 	if err != nil {
 		return "", fmt.Errorf("failed to get profile: %w", err)
 	}
@@ -35,8 +34,7 @@ func (r *accountResolver) BalanceInDefaultCurrency(ctx context.Context, obj *ent
 		return obj.Balance.String(), nil
 	}
 
-	fxRate, err := r.marketDataClient.GetFxRate(ctx, obj.CurrencyCode, defaultCurrency)
-	fmt.Println("FX Rate:", fxRate)
+	fxRate, err := r.marketDataService.GetFxRate(ctx, obj.CurrencyCode, defaultCurrency)
 	if err != nil {
 		return "", fmt.Errorf("failed to get fx rate: %w", err)
 	}
@@ -123,7 +121,7 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 
 	switch input.AccountType {
 	case account.AccountTypeInvestment:
-		assetInfo, err := r.marketDataClient.GetAssetInfo(ctx, input.Ticker)
+		assetInfo, err := r.marketDataService.GetAssetInfo(ctx, input.Ticker)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get asset info: %w", err)
 		}
@@ -291,7 +289,7 @@ func (r *queryResolver) Currencies(ctx context.Context) ([]*Currency, error) {
 
 // AssetInfo is the resolver for the assetInfo field.
 func (r *queryResolver) AssetInfo(ctx context.Context, symbol string) (*AssetInfo, error) {
-	assetInfo, err := r.marketDataClient.GetAssetInfo(ctx, symbol)
+	assetInfo, err := r.marketDataService.GetAssetInfo(ctx, symbol)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get asset info: %w", err)
 	}
@@ -311,7 +309,7 @@ func (r *queryResolver) AssetInfo(ctx context.Context, symbol string) (*AssetInf
 
 // FxRate is the resolver for the fxRate field.
 func (r *queryResolver) FxRate(ctx context.Context, fromCurrency string, toCurrency string) (*FXRate, error) {
-	fxRate, err := r.marketDataClient.GetFxRate(ctx, fromCurrency, toCurrency)
+	fxRate, err := r.marketDataService.GetFxRate(ctx, fromCurrency, toCurrency)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get fx rate: %w", err)
 	}

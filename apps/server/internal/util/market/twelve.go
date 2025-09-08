@@ -3,12 +3,13 @@ package market
 import (
 	"context"
 	"encoding/json"
-	"fijoy/internal/middleware"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"time"
+
+	"fijoy/internal/middleware"
 
 	"github.com/shopspring/decimal"
 )
@@ -19,7 +20,7 @@ type TwelveMarketDataClient struct {
 	httpClient *http.Client
 }
 
-func NewTwelveMarketDataClient(baseURL, apiKey string) *TwelveMarketDataClient {
+func NewTwelveMarketDataClient(baseURL, apiKey string) MarketDataService {
 	return &TwelveMarketDataClient{
 		baseURL: baseURL,
 		apiKey:  apiKey,
