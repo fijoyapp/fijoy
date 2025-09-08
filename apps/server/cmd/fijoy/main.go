@@ -103,12 +103,15 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
+	redisURL := cfg.Database.REDIS_URL
+
+	redisOpts, err := redis.ParseURL(redisURL)
+	if err != nil {
+		panic(err)
+	}
+
 	// Initialize Redis client
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Redis server address (e.g., "localhost:6379")
-		Password: "",               // No password by default, or provide your password
-		DB:       0,                // Use default DB (0)
-	})
+	rdb := redis.NewClient(redisOpts)
 
 	// Ping the Redis server to check the connection
 	pong, err := rdb.Ping(ctx).Result()
