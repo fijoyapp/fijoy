@@ -62,23 +62,24 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Account struct {
-		AccountType        func(childComplexity int) int
-		Amount             func(childComplexity int) int
-		Archived           func(childComplexity int) int
-		Balance            func(childComplexity int) int
-		CreateTime         func(childComplexity int) int
-		CurrencyCode       func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Institution        func(childComplexity int) int
-		InvestmentType     func(childComplexity int) int
-		Name               func(childComplexity int) int
-		Profile            func(childComplexity int) int
-		SnapshotAccounts   func(childComplexity int) int
-		Ticker             func(childComplexity int) int
-		TickerType         func(childComplexity int) int
-		TransactionEntries func(childComplexity int) int
-		UpdateTime         func(childComplexity int) int
-		Value              func(childComplexity int) int
+		AccountType              func(childComplexity int) int
+		Amount                   func(childComplexity int) int
+		Archived                 func(childComplexity int) int
+		Balance                  func(childComplexity int) int
+		BalanceInDefaultCurrency func(childComplexity int) int
+		CreateTime               func(childComplexity int) int
+		CurrencyCode             func(childComplexity int) int
+		ID                       func(childComplexity int) int
+		Institution              func(childComplexity int) int
+		InvestmentType           func(childComplexity int) int
+		Name                     func(childComplexity int) int
+		Profile                  func(childComplexity int) int
+		SnapshotAccounts         func(childComplexity int) int
+		Ticker                   func(childComplexity int) int
+		TickerType               func(childComplexity int) int
+		TransactionEntries       func(childComplexity int) int
+		UpdateTime               func(childComplexity int) int
+		Value                    func(childComplexity int) int
 	}
 
 	AccountConnection struct {
@@ -251,6 +252,8 @@ type AccountResolver interface {
 	Amount(ctx context.Context, obj *ent.Account) (string, error)
 	Value(ctx context.Context, obj *ent.Account) (string, error)
 	Balance(ctx context.Context, obj *ent.Account) (string, error)
+
+	BalanceInDefaultCurrency(ctx context.Context, obj *ent.Account) (string, error)
 }
 type MutationResolver interface {
 	CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error)
@@ -357,6 +360,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Account.Balance(childComplexity), true
+
+	case "Account.balance_in_default_currency":
+		if e.complexity.Account.BalanceInDefaultCurrency == nil {
+			break
+		}
+
+		return e.complexity.Account.BalanceInDefaultCurrency(childComplexity), true
 
 	case "Account.createTime":
 		if e.complexity.Account.CreateTime == nil {
@@ -2403,6 +2413,50 @@ func (ec *executionContext) fieldContext_Account_snapshotAccounts(_ context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Account_balance_in_default_currency(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_balance_in_default_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Account().BalanceInDefaultCurrency(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Account_balance_in_default_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _AccountConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.AccountConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AccountConnection_edges(ctx, field)
 	if err != nil {
@@ -2618,6 +2672,8 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "snapshotAccounts":
 				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
+			case "balance_in_default_currency":
+				return ec.fieldContext_Account_balance_in_default_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -4137,6 +4193,8 @@ func (ec *executionContext) fieldContext_Profile_accounts(_ context.Context, fie
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "snapshotAccounts":
 				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
+			case "balance_in_default_currency":
+				return ec.fieldContext_Account_balance_in_default_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -5239,6 +5297,8 @@ func (ec *executionContext) fieldContext_RefreshAccountsResponse_accounts(_ cont
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "snapshotAccounts":
 				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
+			case "balance_in_default_currency":
+				return ec.fieldContext_Account_balance_in_default_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -5998,6 +6058,8 @@ func (ec *executionContext) fieldContext_SnapshotAccount_account(_ context.Conte
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "snapshotAccounts":
 				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
+			case "balance_in_default_currency":
+				return ec.fieldContext_Account_balance_in_default_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -7313,6 +7375,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "snapshotAccounts":
 				return ec.fieldContext_Account_snapshotAccounts(ctx, field)
+			case "balance_in_default_currency":
+				return ec.fieldContext_Account_balance_in_default_currency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -11021,6 +11085,42 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 					}
 				}()
 				res = ec._Account_snapshotAccounts(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "balance_in_default_currency":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Account_balance_in_default_currency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 

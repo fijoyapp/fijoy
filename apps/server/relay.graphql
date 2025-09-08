@@ -40,6 +40,7 @@ type Account implements Node {
   profile: Profile!
   transactionEntries: [TransactionEntry!]
   snapshotAccounts: [SnapshotAccount!]
+  balance_in_default_currency: String!
 }
 
 """
