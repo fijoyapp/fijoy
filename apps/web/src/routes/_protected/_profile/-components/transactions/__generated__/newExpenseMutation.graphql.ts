@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fb118ca7bdb6b000cb3a0049642192e6>>
+ * @generated SignedSource<<4ae2a2af10a9fbd234c6ab302254d2ee>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -36,6 +36,7 @@ export type newExpenseMutation$data = {
         readonly balance: string;
         readonly id: string;
       };
+      readonly id: string;
       readonly note: string | null | undefined;
     }> | null | undefined;
   };
@@ -53,88 +54,77 @@ var v0 = [
     "name": "input"
   }
 ],
-v1 = [
-  {
-    "kind": "Variable",
-    "name": "input",
-    "variableName": "input"
-  }
-],
-v2 = {
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "createTime",
-  "storageKey": null
-},
-v4 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "note",
   "storageKey": null
 },
-v5 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Account",
-  "kind": "LinkedField",
-  "name": "account",
-  "plural": false,
-  "selections": [
-    (v2/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "balance",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "amount",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "newExpenseMutation",
+v3 = [
+  {
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "input",
+        "variableName": "input"
+      }
+    ],
+    "concreteType": "Transaction",
+    "kind": "LinkedField",
+    "name": "createTransactionWithTransactionEntries",
+    "plural": false,
     "selections": [
+      (v1/*: any*/),
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "Transaction",
+        "args": null,
+        "kind": "ScalarField",
+        "name": "createTime",
+        "storageKey": null
+      },
+      (v2/*: any*/),
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "TransactionEntry",
         "kind": "LinkedField",
-        "name": "createTransactionWithTransactionEntries",
-        "plural": false,
+        "name": "transactionEntries",
+        "plural": true,
         "selections": [
+          (v1/*: any*/),
           (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "TransactionEntry",
+            "concreteType": "Account",
             "kind": "LinkedField",
-            "name": "transactionEntries",
-            "plural": true,
+            "name": "account",
+            "plural": false,
             "selections": [
-              (v4/*: any*/),
-              (v5/*: any*/)
+              (v1/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "balance",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "amount",
+                "storageKey": null
+              }
             ],
             "storageKey": null
           }
@@ -142,6 +132,16 @@ return {
         "storageKey": null
       }
     ],
+    "storageKey": null
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "newExpenseMutation",
+    "selections": (v3/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -150,48 +150,19 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "newExpenseMutation",
-    "selections": [
-      {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "Transaction",
-        "kind": "LinkedField",
-        "name": "createTransactionWithTransactionEntries",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "TransactionEntry",
-            "kind": "LinkedField",
-            "name": "transactionEntries",
-            "plural": true,
-            "selections": [
-              (v4/*: any*/),
-              (v5/*: any*/),
-              (v2/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "cc1fd4e1ce5b5ac491062f4c0c858fd4",
+    "cacheID": "f160e345ad12f0d4558eceae719051bd",
     "id": null,
     "metadata": {},
     "name": "newExpenseMutation",
     "operationKind": "mutation",
-    "text": "mutation newExpenseMutation(\n  $input: CreateTransactionWithTransactionEntriesInput!\n) {\n  createTransactionWithTransactionEntries(input: $input) {\n    id\n    createTime\n    note\n    transactionEntries {\n      note\n      account {\n        id\n        balance\n        amount\n      }\n      id\n    }\n  }\n}\n"
+    "text": "mutation newExpenseMutation(\n  $input: CreateTransactionWithTransactionEntriesInput!\n) {\n  createTransactionWithTransactionEntries(input: $input) {\n    id\n    createTime\n    note\n    transactionEntries {\n      id\n      note\n      account {\n        id\n        balance\n        amount\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b3e011d6b257472dc29151035f218dff";
+(node as any).hash = "0a43ccd51d3009b0208bcfcbe35c7f22";
 
 export default node;

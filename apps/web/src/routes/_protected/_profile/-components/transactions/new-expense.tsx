@@ -57,6 +57,7 @@ const mutation = graphql`
       createTime
       note
       transactionEntries {
+        id
         note
         account {
           id
