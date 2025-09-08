@@ -2,8 +2,11 @@ package market
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/fijoyapp/finance-go/equity"
+	"github.com/fijoyapp/finance-go/forex"
 	"github.com/shopspring/decimal"
 )
 
@@ -15,7 +18,7 @@ func NewYahooDataClient() *YahooDataClient {
 
 func (c *YahooDataClient) GetAssetInfo(context context.Context, symbol string) (*AssetInfo, error) {
 	if symbol == "" {
-		return nil, nil
+		return nil, errors.New("symbol is empty")
 	}
 
 	e, err := equity.Get(symbol)
@@ -24,7 +27,7 @@ func (c *YahooDataClient) GetAssetInfo(context context.Context, symbol string) (
 	}
 
 	if e == nil || e.CurrencyID == "" {
-		return nil, nil
+		return nil, errors.New("asset not found")
 	}
 
 	return &AssetInfo{
@@ -38,8 +41,15 @@ func (c *YahooDataClient) GetAssetInfo(context context.Context, symbol string) (
 
 func (c *YahooDataClient) GetFxRate(context context.Context, fromCurrency, toCurrency string) (*FXRate, error) {
 	if fromCurrency == "" || toCurrency == "" {
-		return nil, nil
+		return nil, errors.New("fromCurrency or toCurrency is empty")
 	}
 
-	return nil, nil
+	fx, err := forex.Get(fmt.Sprintf("%s%s=X", fromCurrency, toCurrency))
+	if err != nil {
+		return nil, err
+	}
+
+	return &FXRate{
+		Rate: decimal.NewFromFloat(fx.RegularMarketPrice),
+	}, nil
 }

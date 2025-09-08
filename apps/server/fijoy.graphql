@@ -7,6 +7,10 @@ extend type Query {
   fxRate(fromCurrency: String!, toCurrency: String!): FXRate
 }
 
+extend type Account {
+  balance_in_default_currency: String!
+}
+
 type AssetInfo {
   symbol: String!
   name: String!

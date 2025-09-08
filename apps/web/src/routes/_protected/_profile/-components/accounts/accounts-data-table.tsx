@@ -42,6 +42,7 @@ const AccountsDataTableFragment = graphql`
           name @required(action: THROW)
           accountType
           balance
+          balance_in_default_currency
           institution @required(action: THROW)
           value @required(action: THROW)
           currencyCode
@@ -178,7 +179,7 @@ export default function AccountDataTable({
           }
 
           invariant(row.original, "Row original should not be null");
-          const money = row.original.balance;
+          const money = row.original.balance_in_default_currency;
           return (
             <div className="text-right font-mono">
               {getCurrencyDisplay(money, defaultCurrency)}

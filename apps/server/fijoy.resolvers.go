@@ -23,6 +23,27 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+// BalanceInDefaultCurrency is the resolver for the balance_in_default_currency field.
+func (r *accountResolver) BalanceInDefaultCurrency(ctx context.Context, obj *ent.Account) (string, error) {
+	profile, err := r.Query().Profile(ctx)
+	fmt.Println("Obj:", obj)
+	if err != nil {
+		return "", fmt.Errorf("failed to get profile: %w", err)
+	}
+	defaultCurrency := profile.Currencies[0]
+	if obj.CurrencyCode == defaultCurrency {
+		return obj.Balance.String(), nil
+	}
+
+	fxRate, err := r.marketDataClient.GetFxRate(ctx, obj.CurrencyCode, defaultCurrency)
+	fmt.Println("FX Rate:", fxRate)
+	if err != nil {
+		return "", fmt.Errorf("failed to get fx rate: %w", err)
+	}
+
+	return obj.Balance.Mul(fxRate.Rate).String(), nil
+}
+
 // CreateProfile is the resolver for the createProfile field.
 func (r *mutationResolver) CreateProfile(ctx context.Context, input ent.CreateProfileInput) (*ent.Profile, error) {
 	client := ent.FromContext(ctx)

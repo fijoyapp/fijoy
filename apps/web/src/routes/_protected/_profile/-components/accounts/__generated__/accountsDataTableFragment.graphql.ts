@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cc23cd8747b4d893f1e18d5cd451869c>>
+ * @generated SignedSource<<ed83ac53a8ec009e144bb50d478653a1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type accountsDataTableFragment$data = {
         readonly accountType: AccountAccountType;
         readonly amount: string;
         readonly balance: string;
+        readonly balance_in_default_currency: string;
         readonly currencyCode: string;
         readonly id: string;
         readonly institution: string;
@@ -114,6 +115,13 @@ const node: ReaderFragment = {
                   "storageKey": null
                 },
                 {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "balance_in_default_currency",
+                  "storageKey": null
+                },
+                {
                   "kind": "RequiredField",
                   "field": {
                     "alias": null,
@@ -202,6 +210,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "32f1d6b4171d15cf752593de9c956e0e";
+(node as any).hash = "b359bac9871212c1647dc4cce90b6617";
 
 export default node;
