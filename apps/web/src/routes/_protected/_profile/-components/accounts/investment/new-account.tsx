@@ -158,7 +158,7 @@ export function NewInvestment({ fragmentRef }: Props) {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <Card>
             <CardHeader>
-              <CardTitle>New Investment Account</CardTitle>
+              <CardTitle>New Investment Asset</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <NameField
