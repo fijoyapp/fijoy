@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
+	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
 )
@@ -93,6 +94,25 @@ func (_c *TransactionEntryCreate) SetNillableCurrencyID(id *int) *TransactionEnt
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_c *TransactionEntryCreate) SetCurrency(v *Currency) *TransactionEntryCreate {
 	return _c.SetCurrencyID(v.ID)
+}
+
+// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
+func (_c *TransactionEntryCreate) SetTransactionID(id int) *TransactionEntryCreate {
+	_c.mutation.SetTransactionID(id)
+	return _c
+}
+
+// SetNillableTransactionID sets the "transaction" edge to the Transaction entity by ID if the given value is not nil.
+func (_c *TransactionEntryCreate) SetNillableTransactionID(id *int) *TransactionEntryCreate {
+	if id != nil {
+		_c = _c.SetTransactionID(*id)
+	}
+	return _c
+}
+
+// SetTransaction sets the "transaction" edge to the Transaction entity.
+func (_c *TransactionEntryCreate) SetTransaction(v *Transaction) *TransactionEntryCreate {
+	return _c.SetTransactionID(v.ID)
 }
 
 // Mutation returns the TransactionEntryMutation object of the builder.
@@ -221,6 +241,23 @@ func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cre
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.currency_transaction_entries = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TransactionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transactionentry.TransactionTable,
+			Columns: []string{transactionentry.TransactionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.transaction_transaction_entries = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

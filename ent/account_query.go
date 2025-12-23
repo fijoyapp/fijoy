@@ -16,7 +16,6 @@ import (
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 )
 
@@ -29,12 +28,10 @@ type AccountQuery struct {
 	predicates                  []predicate.Account
 	withHousehold               *HouseholdQuery
 	withCurrency                *CurrencyQuery
-	withTransactions            *TransactionQuery
 	withTransactionEntries      *TransactionEntryQuery
 	withFKs                     bool
 	modifiers                   []func(*sql.Selector)
 	loadTotal                   []func(context.Context, []*Account) error
-	withNamedTransactions       map[string]*TransactionQuery
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -109,28 +106,6 @@ func (_q *AccountQuery) QueryCurrency() *CurrencyQuery {
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, account.CurrencyTable, account.CurrencyColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryTransactions chains the current query on the "transactions" edge.
-func (_q *AccountQuery) QueryTransactions() *TransactionQuery {
-	query := (&TransactionClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(account.Table, account.FieldID, selector),
-			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionsTable, account.TransactionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -354,7 +329,6 @@ func (_q *AccountQuery) Clone() *AccountQuery {
 		predicates:             append([]predicate.Account{}, _q.predicates...),
 		withHousehold:          _q.withHousehold.Clone(),
 		withCurrency:           _q.withCurrency.Clone(),
-		withTransactions:       _q.withTransactions.Clone(),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
@@ -381,17 +355,6 @@ func (_q *AccountQuery) WithCurrency(opts ...func(*CurrencyQuery)) *AccountQuery
 		opt(query)
 	}
 	_q.withCurrency = query
-	return _q
-}
-
-// WithTransactions tells the query-builder to eager-load the nodes that are connected to
-// the "transactions" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *AccountQuery) WithTransactions(opts ...func(*TransactionQuery)) *AccountQuery {
-	query := (&TransactionClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withTransactions = query
 	return _q
 }
 
@@ -485,10 +448,9 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		nodes       = []*Account{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [3]bool{
 			_q.withHousehold != nil,
 			_q.withCurrency != nil,
-			_q.withTransactions != nil,
 			_q.withTransactionEntries != nil,
 		}
 	)
@@ -531,26 +493,12 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			return nil, err
 		}
 	}
-	if query := _q.withTransactions; query != nil {
-		if err := _q.loadTransactions(ctx, query, nodes,
-			func(n *Account) { n.Edges.Transactions = []*Transaction{} },
-			func(n *Account, e *Transaction) { n.Edges.Transactions = append(n.Edges.Transactions, e) }); err != nil {
-			return nil, err
-		}
-	}
 	if query := _q.withTransactionEntries; query != nil {
 		if err := _q.loadTransactionEntries(ctx, query, nodes,
 			func(n *Account) { n.Edges.TransactionEntries = []*TransactionEntry{} },
 			func(n *Account, e *TransactionEntry) {
 				n.Edges.TransactionEntries = append(n.Edges.TransactionEntries, e)
 			}); err != nil {
-			return nil, err
-		}
-	}
-	for name, query := range _q.withNamedTransactions {
-		if err := _q.loadTransactions(ctx, query, nodes,
-			func(n *Account) { n.appendNamedTransactions(name) },
-			func(n *Account, e *Transaction) { n.appendNamedTransactions(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -630,37 +578,6 @@ func (_q *AccountQuery) loadCurrency(ctx context.Context, query *CurrencyQuery, 
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
-	}
-	return nil
-}
-func (_q *AccountQuery) loadTransactions(ctx context.Context, query *TransactionQuery, nodes []*Account, init func(*Account), assign func(*Account, *Transaction)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[int]*Account)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.Transaction(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(account.TransactionsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.account_transactions
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "account_transactions" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "account_transactions" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }
@@ -778,20 +695,6 @@ func (_q *AccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
-}
-
-// WithNamedTransactions tells the query-builder to eager-load the nodes that are connected to the "transactions"
-// edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (_q *AccountQuery) WithNamedTransactions(name string, opts ...func(*TransactionQuery)) *AccountQuery {
-	query := (&TransactionClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	if _q.withNamedTransactions == nil {
-		_q.withNamedTransactions = make(map[string]*TransactionQuery)
-	}
-	_q.withNamedTransactions[name] = query
-	return _q
 }
 
 // WithNamedTransactionEntries tells the query-builder to eager-load the nodes that are connected to the "transaction_entries"

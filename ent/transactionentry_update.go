@@ -14,6 +14,7 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/predicate"
+	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
 )
@@ -96,6 +97,25 @@ func (_u *TransactionEntryUpdate) SetCurrency(v *Currency) *TransactionEntryUpda
 	return _u.SetCurrencyID(v.ID)
 }
 
+// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
+func (_u *TransactionEntryUpdate) SetTransactionID(id int) *TransactionEntryUpdate {
+	_u.mutation.SetTransactionID(id)
+	return _u
+}
+
+// SetNillableTransactionID sets the "transaction" edge to the Transaction entity by ID if the given value is not nil.
+func (_u *TransactionEntryUpdate) SetNillableTransactionID(id *int) *TransactionEntryUpdate {
+	if id != nil {
+		_u = _u.SetTransactionID(*id)
+	}
+	return _u
+}
+
+// SetTransaction sets the "transaction" edge to the Transaction entity.
+func (_u *TransactionEntryUpdate) SetTransaction(v *Transaction) *TransactionEntryUpdate {
+	return _u.SetTransactionID(v.ID)
+}
+
 // Mutation returns the TransactionEntryMutation object of the builder.
 func (_u *TransactionEntryUpdate) Mutation() *TransactionEntryMutation {
 	return _u.mutation
@@ -110,6 +130,12 @@ func (_u *TransactionEntryUpdate) ClearAccount() *TransactionEntryUpdate {
 // ClearCurrency clears the "currency" edge to the Currency entity.
 func (_u *TransactionEntryUpdate) ClearCurrency() *TransactionEntryUpdate {
 	_u.mutation.ClearCurrency()
+	return _u
+}
+
+// ClearTransaction clears the "transaction" edge to the Transaction entity.
+func (_u *TransactionEntryUpdate) ClearTransaction() *TransactionEntryUpdate {
+	_u.mutation.ClearTransaction()
 	return _u
 }
 
@@ -225,6 +251,35 @@ func (_u *TransactionEntryUpdate) sqlSave(ctx context.Context) (_node int, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.TransactionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transactionentry.TransactionTable,
+			Columns: []string{transactionentry.TransactionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TransactionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transactionentry.TransactionTable,
+			Columns: []string{transactionentry.TransactionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transactionentry.Label}
@@ -310,6 +365,25 @@ func (_u *TransactionEntryUpdateOne) SetCurrency(v *Currency) *TransactionEntryU
 	return _u.SetCurrencyID(v.ID)
 }
 
+// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
+func (_u *TransactionEntryUpdateOne) SetTransactionID(id int) *TransactionEntryUpdateOne {
+	_u.mutation.SetTransactionID(id)
+	return _u
+}
+
+// SetNillableTransactionID sets the "transaction" edge to the Transaction entity by ID if the given value is not nil.
+func (_u *TransactionEntryUpdateOne) SetNillableTransactionID(id *int) *TransactionEntryUpdateOne {
+	if id != nil {
+		_u = _u.SetTransactionID(*id)
+	}
+	return _u
+}
+
+// SetTransaction sets the "transaction" edge to the Transaction entity.
+func (_u *TransactionEntryUpdateOne) SetTransaction(v *Transaction) *TransactionEntryUpdateOne {
+	return _u.SetTransactionID(v.ID)
+}
+
 // Mutation returns the TransactionEntryMutation object of the builder.
 func (_u *TransactionEntryUpdateOne) Mutation() *TransactionEntryMutation {
 	return _u.mutation
@@ -324,6 +398,12 @@ func (_u *TransactionEntryUpdateOne) ClearAccount() *TransactionEntryUpdateOne {
 // ClearCurrency clears the "currency" edge to the Currency entity.
 func (_u *TransactionEntryUpdateOne) ClearCurrency() *TransactionEntryUpdateOne {
 	_u.mutation.ClearCurrency()
+	return _u
+}
+
+// ClearTransaction clears the "transaction" edge to the Transaction entity.
+func (_u *TransactionEntryUpdateOne) ClearTransaction() *TransactionEntryUpdateOne {
+	_u.mutation.ClearTransaction()
 	return _u
 }
 
@@ -462,6 +542,35 @@ func (_u *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Transa
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(currency.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TransactionCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transactionentry.TransactionTable,
+			Columns: []string{transactionentry.TransactionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TransactionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transactionentry.TransactionTable,
+			Columns: []string{transactionentry.TransactionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

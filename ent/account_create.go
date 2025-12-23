@@ -13,7 +13,6 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
-	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 )
 
@@ -100,21 +99,6 @@ func (_c *AccountCreate) SetNillableCurrencyID(id *int) *AccountCreate {
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_c *AccountCreate) SetCurrency(v *Currency) *AccountCreate {
 	return _c.SetCurrencyID(v.ID)
-}
-
-// AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
-func (_c *AccountCreate) AddTransactionIDs(ids ...int) *AccountCreate {
-	_c.mutation.AddTransactionIDs(ids...)
-	return _c
-}
-
-// AddTransactions adds the "transactions" edges to the Transaction entity.
-func (_c *AccountCreate) AddTransactions(v ...*Transaction) *AccountCreate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddTransactionIDs(ids...)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
@@ -275,22 +259,6 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.currency_accounts = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.TransactionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   account.TransactionsTable,
-			Columns: []string{account.TransactionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {

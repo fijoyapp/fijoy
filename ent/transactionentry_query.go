@@ -14,21 +14,23 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/predicate"
+	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 )
 
 // TransactionEntryQuery is the builder for querying TransactionEntry entities.
 type TransactionEntryQuery struct {
 	config
-	ctx          *QueryContext
-	order        []transactionentry.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.TransactionEntry
-	withAccount  *AccountQuery
-	withCurrency *CurrencyQuery
-	withFKs      bool
-	modifiers    []func(*sql.Selector)
-	loadTotal    []func(context.Context, []*TransactionEntry) error
+	ctx             *QueryContext
+	order           []transactionentry.OrderOption
+	inters          []Interceptor
+	predicates      []predicate.TransactionEntry
+	withAccount     *AccountQuery
+	withCurrency    *CurrencyQuery
+	withTransaction *TransactionQuery
+	withFKs         bool
+	modifiers       []func(*sql.Selector)
+	loadTotal       []func(context.Context, []*TransactionEntry) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -102,6 +104,28 @@ func (_q *TransactionEntryQuery) QueryCurrency() *CurrencyQuery {
 			sqlgraph.From(transactionentry.Table, transactionentry.FieldID, selector),
 			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.CurrencyTable, transactionentry.CurrencyColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTransaction chains the current query on the "transaction" edge.
+func (_q *TransactionEntryQuery) QueryTransaction() *TransactionQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transactionentry.Table, transactionentry.FieldID, selector),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.TransactionTable, transactionentry.TransactionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -296,13 +320,14 @@ func (_q *TransactionEntryQuery) Clone() *TransactionEntryQuery {
 		return nil
 	}
 	return &TransactionEntryQuery{
-		config:       _q.config,
-		ctx:          _q.ctx.Clone(),
-		order:        append([]transactionentry.OrderOption{}, _q.order...),
-		inters:       append([]Interceptor{}, _q.inters...),
-		predicates:   append([]predicate.TransactionEntry{}, _q.predicates...),
-		withAccount:  _q.withAccount.Clone(),
-		withCurrency: _q.withCurrency.Clone(),
+		config:          _q.config,
+		ctx:             _q.ctx.Clone(),
+		order:           append([]transactionentry.OrderOption{}, _q.order...),
+		inters:          append([]Interceptor{}, _q.inters...),
+		predicates:      append([]predicate.TransactionEntry{}, _q.predicates...),
+		withAccount:     _q.withAccount.Clone(),
+		withCurrency:    _q.withCurrency.Clone(),
+		withTransaction: _q.withTransaction.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -328,6 +353,17 @@ func (_q *TransactionEntryQuery) WithCurrency(opts ...func(*CurrencyQuery)) *Tra
 		opt(query)
 	}
 	_q.withCurrency = query
+	return _q
+}
+
+// WithTransaction tells the query-builder to eager-load the nodes that are connected to
+// the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TransactionEntryQuery) WithTransaction(opts ...func(*TransactionQuery)) *TransactionEntryQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withTransaction = query
 	return _q
 }
 
@@ -410,12 +446,13 @@ func (_q *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 		nodes       = []*TransactionEntry{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withAccount != nil,
 			_q.withCurrency != nil,
+			_q.withTransaction != nil,
 		}
 	)
-	if _q.withAccount != nil || _q.withCurrency != nil {
+	if _q.withAccount != nil || _q.withCurrency != nil || _q.withTransaction != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -451,6 +488,12 @@ func (_q *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if query := _q.withCurrency; query != nil {
 		if err := _q.loadCurrency(ctx, query, nodes, nil,
 			func(n *TransactionEntry, e *Currency) { n.Edges.Currency = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withTransaction; query != nil {
+		if err := _q.loadTransaction(ctx, query, nodes, nil,
+			func(n *TransactionEntry, e *Transaction) { n.Edges.Transaction = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -519,6 +562,38 @@ func (_q *TransactionEntryQuery) loadCurrency(ctx context.Context, query *Curren
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "currency_transaction_entries" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *TransactionEntryQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*TransactionEntry, init func(*TransactionEntry), assign func(*TransactionEntry, *Transaction)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*TransactionEntry)
+	for i := range nodes {
+		if nodes[i].transaction_transaction_entries == nil {
+			continue
+		}
+		fk := *nodes[i].transaction_transaction_entries
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(transaction.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "transaction_transaction_entries" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

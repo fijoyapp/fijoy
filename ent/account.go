@@ -41,17 +41,14 @@ type AccountEdges struct {
 	Household *Household `json:"household,omitempty"`
 	// Currency holds the value of the currency edge.
 	Currency *Currency `json:"currency,omitempty"`
-	// Transactions holds the value of the transactions edge.
-	Transactions []*Transaction `json:"transactions,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [3]map[string]int
 
-	namedTransactions       map[string][]*Transaction
 	namedTransactionEntries map[string][]*TransactionEntry
 }
 
@@ -77,19 +74,10 @@ func (e AccountEdges) CurrencyOrErr() (*Currency, error) {
 	return nil, &NotLoadedError{edge: "currency"}
 }
 
-// TransactionsOrErr returns the Transactions value or an error if the edge
-// was not loaded in eager-loading.
-func (e AccountEdges) TransactionsOrErr() ([]*Transaction, error) {
-	if e.loadedTypes[2] {
-		return e.Transactions, nil
-	}
-	return nil, &NotLoadedError{edge: "transactions"}
-}
-
 // TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e AccountEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
@@ -192,11 +180,6 @@ func (_m *Account) QueryCurrency() *CurrencyQuery {
 	return NewAccountClient(_m.config).QueryCurrency(_m)
 }
 
-// QueryTransactions queries the "transactions" edge of the Account entity.
-func (_m *Account) QueryTransactions() *TransactionQuery {
-	return NewAccountClient(_m.config).QueryTransactions(_m)
-}
-
 // QueryTransactionEntries queries the "transaction_entries" edge of the Account entity.
 func (_m *Account) QueryTransactionEntries() *TransactionEntryQuery {
 	return NewAccountClient(_m.config).QueryTransactionEntries(_m)
@@ -238,30 +221,6 @@ func (_m *Account) String() string {
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteByte(')')
 	return builder.String()
-}
-
-// NamedTransactions returns the Transactions named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (_m *Account) NamedTransactions(name string) ([]*Transaction, error) {
-	if _m.Edges.namedTransactions == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := _m.Edges.namedTransactions[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (_m *Account) appendNamedTransactions(name string, edges ...*Transaction) {
-	if _m.Edges.namedTransactions == nil {
-		_m.Edges.namedTransactions = make(map[string][]*Transaction)
-	}
-	if len(edges) == 0 {
-		_m.Edges.namedTransactions[name] = []*Transaction{}
-	} else {
-		_m.Edges.namedTransactions[name] = append(_m.Edges.namedTransactions[name], edges...)
-	}
 }
 
 // NamedTransactionEntries returns the TransactionEntries named value or an error if the edge was not

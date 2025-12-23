@@ -34,7 +34,6 @@ func (Account) Edges() []ent.Edge {
 			Ref("accounts").
 			Unique().Immutable(),
 
-		edge.To("transactions", Transaction.Type),
 		edge.To("transaction_entries", TransactionEntry.Type),
 	}
 }

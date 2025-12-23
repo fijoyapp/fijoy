@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
+	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
 )
@@ -28,10 +29,11 @@ type TransactionEntry struct {
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionEntryQuery when eager-loading is set.
-	Edges                        TransactionEntryEdges `json:"edges"`
-	account_transaction_entries  *int
-	currency_transaction_entries *int
-	selectValues                 sql.SelectValues
+	Edges                           TransactionEntryEdges `json:"edges"`
+	account_transaction_entries     *int
+	currency_transaction_entries    *int
+	transaction_transaction_entries *int
+	selectValues                    sql.SelectValues
 }
 
 // TransactionEntryEdges holds the relations/edges for other nodes in the graph.
@@ -40,11 +42,13 @@ type TransactionEntryEdges struct {
 	Account *Account `json:"account,omitempty"`
 	// Currency holds the value of the currency edge.
 	Currency *Currency `json:"currency,omitempty"`
+	// Transaction holds the value of the transaction edge.
+	Transaction *Transaction `json:"transaction,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
 }
 
 // AccountOrErr returns the Account value or an error if the edge
@@ -69,6 +73,17 @@ func (e TransactionEntryEdges) CurrencyOrErr() (*Currency, error) {
 	return nil, &NotLoadedError{edge: "currency"}
 }
 
+// TransactionOrErr returns the Transaction value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransactionEntryEdges) TransactionOrErr() (*Transaction, error) {
+	if e.Transaction != nil {
+		return e.Transaction, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: transaction.Label}
+	}
+	return nil, &NotLoadedError{edge: "transaction"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -83,6 +98,8 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 		case transactionentry.ForeignKeys[0]: // account_transaction_entries
 			values[i] = new(sql.NullInt64)
 		case transactionentry.ForeignKeys[1]: // currency_transaction_entries
+			values[i] = new(sql.NullInt64)
+		case transactionentry.ForeignKeys[2]: // transaction_transaction_entries
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -137,6 +154,13 @@ func (_m *TransactionEntry) assignValues(columns []string, values []any) error {
 				_m.currency_transaction_entries = new(int)
 				*_m.currency_transaction_entries = int(value.Int64)
 			}
+		case transactionentry.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field transaction_transaction_entries", value)
+			} else if value.Valid {
+				_m.transaction_transaction_entries = new(int)
+				*_m.transaction_transaction_entries = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -158,6 +182,11 @@ func (_m *TransactionEntry) QueryAccount() *AccountQuery {
 // QueryCurrency queries the "currency" edge of the TransactionEntry entity.
 func (_m *TransactionEntry) QueryCurrency() *CurrencyQuery {
 	return NewTransactionEntryClient(_m.config).QueryCurrency(_m)
+}
+
+// QueryTransaction queries the "transaction" edge of the TransactionEntry entity.
+func (_m *TransactionEntry) QueryTransaction() *TransactionQuery {
+	return NewTransactionEntryClient(_m.config).QueryTransaction(_m)
 }
 
 // Update returns a builder for updating this TransactionEntry.

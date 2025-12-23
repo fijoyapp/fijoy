@@ -397,22 +397,6 @@ func (c *AccountClient) QueryCurrency(_m *Account) *CurrencyQuery {
 	return query
 }
 
-// QueryTransactions queries the transactions edge of a Account.
-func (c *AccountClient) QueryTransactions(_m *Account) *TransactionQuery {
-	query := (&TransactionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(account.Table, account.FieldID, id),
-			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionsTable, account.TransactionsColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryTransactionEntries queries the transaction_entries edge of a Account.
 func (c *AccountClient) QueryTransactionEntries(_m *Account) *TransactionEntryQuery {
 	query := (&TransactionEntryClient{config: c.config}).Query()
@@ -956,15 +940,15 @@ func (c *TransactionClient) GetX(ctx context.Context, id int) *Transaction {
 	return obj
 }
 
-// QueryAccount queries the account edge of a Transaction.
-func (c *TransactionClient) QueryAccount(_m *Transaction) *AccountQuery {
-	query := (&AccountClient{config: c.config}).Query()
+// QueryTransactionEntries queries the transaction_entries edge of a Transaction.
+func (c *TransactionClient) QueryTransactionEntries(_m *Transaction) *TransactionEntryQuery {
+	query := (&TransactionEntryClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(transaction.Table, transaction.FieldID, id),
-			sqlgraph.To(account.Table, account.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, transaction.AccountTable, transaction.AccountColumn),
+			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, transaction.TransactionEntriesTable, transaction.TransactionEntriesColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1130,6 +1114,22 @@ func (c *TransactionEntryClient) QueryCurrency(_m *TransactionEntry) *CurrencyQu
 			sqlgraph.From(transactionentry.Table, transactionentry.FieldID, id),
 			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.CurrencyTable, transactionentry.CurrencyColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransaction queries the transaction edge of a TransactionEntry.
+func (c *TransactionEntryClient) QueryTransaction(_m *TransactionEntry) *TransactionQuery {
+	query := (&TransactionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transactionentry.Table, transactionentry.FieldID, id),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.TransactionTable, transactionentry.TransactionColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

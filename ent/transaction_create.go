@@ -10,8 +10,8 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/account"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactionentry"
 )
 
 // TransactionCreate is the builder for creating a Transaction entity.
@@ -55,29 +55,33 @@ func (_c *TransactionCreate) SetDescription(v string) *TransactionCreate {
 	return _c
 }
 
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (_c *TransactionCreate) SetNillableDescription(v *string) *TransactionCreate {
+	if v != nil {
+		_c.SetDescription(*v)
+	}
+	return _c
+}
+
 // SetDatetime sets the "datetime" field.
 func (_c *TransactionCreate) SetDatetime(v time.Time) *TransactionCreate {
 	_c.mutation.SetDatetime(v)
 	return _c
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_c *TransactionCreate) SetAccountID(id int) *TransactionCreate {
-	_c.mutation.SetAccountID(id)
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
+func (_c *TransactionCreate) AddTransactionEntryIDs(ids ...int) *TransactionCreate {
+	_c.mutation.AddTransactionEntryIDs(ids...)
 	return _c
 }
 
-// SetNillableAccountID sets the "account" edge to the Account entity by ID if the given value is not nil.
-func (_c *TransactionCreate) SetNillableAccountID(id *int) *TransactionCreate {
-	if id != nil {
-		_c = _c.SetAccountID(*id)
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (_c *TransactionCreate) AddTransactionEntries(v ...*TransactionEntry) *TransactionCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return _c
-}
-
-// SetAccount sets the "account" edge to the Account entity.
-func (_c *TransactionCreate) SetAccount(v *Account) *TransactionCreate {
-	return _c.SetAccountID(v.ID)
+	return _c.AddTransactionEntryIDs(ids...)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
@@ -133,9 +137,6 @@ func (_c *TransactionCreate) check() error {
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Transaction.update_time"`)}
 	}
-	if _, ok := _c.mutation.Description(); !ok {
-		return &ValidationError{Name: "description", err: errors.New(`ent: missing required field "Transaction.description"`)}
-	}
 	if _, ok := _c.mutation.Datetime(); !ok {
 		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
 	}
@@ -181,21 +182,20 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 		_node.Datetime = value
 	}
-	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transaction.AccountTable,
-			Columns: []string{transaction.AccountColumn},
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.TransactionEntriesTable,
+			Columns: []string{transaction.TransactionEntriesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.account_transactions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

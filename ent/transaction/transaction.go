@@ -22,17 +22,17 @@ const (
 	FieldDescription = "description"
 	// FieldDatetime holds the string denoting the datetime field in the database.
 	FieldDatetime = "datetime"
-	// EdgeAccount holds the string denoting the account edge name in mutations.
-	EdgeAccount = "account"
+	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
+	EdgeTransactionEntries = "transaction_entries"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
-	// AccountTable is the table that holds the account relation/edge.
-	AccountTable = "transactions"
-	// AccountInverseTable is the table name for the Account entity.
-	// It exists in this package in order to avoid circular dependency with the "account" package.
-	AccountInverseTable = "accounts"
-	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "account_transactions"
+	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
+	TransactionEntriesTable = "transaction_entries"
+	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
+	TransactionEntriesInverseTable = "transaction_entries"
+	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
+	TransactionEntriesColumn = "transaction_transaction_entries"
 )
 
 // Columns holds all SQL columns for transaction fields.
@@ -47,7 +47,6 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "transactions"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"account_transactions",
 	"household_transactions",
 }
 
@@ -103,16 +102,23 @@ func ByDatetime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDatetime, opts...).ToFunc()
 }
 
-// ByAccountField orders the results by account field.
-func ByAccountField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByTransactionEntriesCount orders the results by transaction_entries count.
+func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccountStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newTransactionEntriesStep(), opts...)
 	}
 }
-func newAccountStep() *sqlgraph.Step {
+
+// ByTransactionEntries orders the results by transaction_entries terms.
+func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newTransactionEntriesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AccountInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
+		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
 	)
 }

@@ -8,7 +8,6 @@ type Account implements Node {
   type: AccountType!
   household: Household
   currency: Currency
-  transactions: [Transaction!]
   transactionEntries: [TransactionEntry!]
 }
 """
@@ -124,9 +123,9 @@ type Transaction implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
-  description: String!
+  description: String
   datetime: Time!
-  account: Account
+  transactionEntries: [TransactionEntry!]
 }
 type TransactionEntry implements Node {
   id: ID!
@@ -135,6 +134,7 @@ type TransactionEntry implements Node {
   amount: String!
   account: Account
   currency: Currency
+  transaction: Transaction
 }
 type User implements Node {
   id: ID!

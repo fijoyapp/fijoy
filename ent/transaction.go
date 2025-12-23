@@ -9,7 +9,6 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent/account"
 	"fijoy.app/ent/transaction"
 )
 
@@ -29,31 +28,30 @@ type Transaction struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
 	Edges                  TransactionEdges `json:"edges"`
-	account_transactions   *int
 	household_transactions *int
 	selectValues           sql.SelectValues
 }
 
 // TransactionEdges holds the relations/edges for other nodes in the graph.
 type TransactionEdges struct {
-	// Account holds the value of the account edge.
-	Account *Account `json:"account,omitempty"`
+	// TransactionEntries holds the value of the transaction_entries edge.
+	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 	// totalCount holds the count of the edges above.
 	totalCount [1]map[string]int
+
+	namedTransactionEntries map[string][]*TransactionEntry
 }
 
-// AccountOrErr returns the Account value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e TransactionEdges) AccountOrErr() (*Account, error) {
-	if e.Account != nil {
-		return e.Account, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: account.Label}
+// TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
+// was not loaded in eager-loading.
+func (e TransactionEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
+	if e.loadedTypes[0] {
+		return e.TransactionEntries, nil
 	}
-	return nil, &NotLoadedError{edge: "account"}
+	return nil, &NotLoadedError{edge: "transaction_entries"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -67,9 +65,7 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case transaction.FieldCreateTime, transaction.FieldUpdateTime, transaction.FieldDatetime:
 			values[i] = new(sql.NullTime)
-		case transaction.ForeignKeys[0]: // account_transactions
-			values[i] = new(sql.NullInt64)
-		case transaction.ForeignKeys[1]: // household_transactions
+		case transaction.ForeignKeys[0]: // household_transactions
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -118,13 +114,6 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 			}
 		case transaction.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field account_transactions", value)
-			} else if value.Valid {
-				_m.account_transactions = new(int)
-				*_m.account_transactions = int(value.Int64)
-			}
-		case transaction.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field household_transactions", value)
 			} else if value.Valid {
 				_m.household_transactions = new(int)
@@ -143,9 +132,9 @@ func (_m *Transaction) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryAccount queries the "account" edge of the Transaction entity.
-func (_m *Transaction) QueryAccount() *AccountQuery {
-	return NewTransactionClient(_m.config).QueryAccount(_m)
+// QueryTransactionEntries queries the "transaction_entries" edge of the Transaction entity.
+func (_m *Transaction) QueryTransactionEntries() *TransactionEntryQuery {
+	return NewTransactionClient(_m.config).QueryTransactionEntries(_m)
 }
 
 // Update returns a builder for updating this Transaction.
@@ -184,6 +173,30 @@ func (_m *Transaction) String() string {
 	builder.WriteString(_m.Datetime.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedTransactionEntries returns the TransactionEntries named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Transaction) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
+	if _m.Edges.namedTransactionEntries == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedTransactionEntries[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Transaction) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
+	if _m.Edges.namedTransactionEntries == nil {
+		_m.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
+	} else {
+		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
+	}
 }
 
 // Transactions is a parsable slice of Transaction.

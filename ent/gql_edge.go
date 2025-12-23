@@ -24,18 +24,6 @@ func (_m *Account) Currency(ctx context.Context) (*Currency, error) {
 	return result, MaskNotFound(err)
 }
 
-func (_m *Account) Transactions(ctx context.Context) (result []*Transaction, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = _m.NamedTransactions(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = _m.Edges.TransactionsOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = _m.QueryTransactions().All(ctx)
-	}
-	return result, err
-}
-
 func (_m *Account) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = _m.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
@@ -140,12 +128,16 @@ func (_m *Household) UserHouseholds(ctx context.Context) (result []*UserHousehol
 	return result, err
 }
 
-func (_m *Transaction) Account(ctx context.Context) (*Account, error) {
-	result, err := _m.Edges.AccountOrErr()
-	if IsNotLoaded(err) {
-		result, err = _m.QueryAccount().Only(ctx)
+func (_m *Transaction) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.TransactionEntriesOrErr()
 	}
-	return result, MaskNotFound(err)
+	if IsNotLoaded(err) {
+		result, err = _m.QueryTransactionEntries().All(ctx)
+	}
+	return result, err
 }
 
 func (_m *TransactionEntry) Account(ctx context.Context) (*Account, error) {
@@ -160,6 +152,14 @@ func (_m *TransactionEntry) Currency(ctx context.Context) (*Currency, error) {
 	result, err := _m.Edges.CurrencyOrErr()
 	if IsNotLoaded(err) {
 		result, err = _m.QueryCurrency().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (_m *TransactionEntry) Transaction(ctx context.Context) (*Transaction, error) {
+	result, err := _m.Edges.TransactionOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryTransaction().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }

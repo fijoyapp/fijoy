@@ -76,9 +76,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "description", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "datetime", Type: field.TypeTime},
-		{Name: "account_transactions", Type: field.TypeInt, Nullable: true},
 		{Name: "household_transactions", Type: field.TypeInt, Nullable: true},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
@@ -88,14 +87,8 @@ var (
 		PrimaryKey: []*schema.Column{TransactionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "transactions_accounts_transactions",
-				Columns:    []*schema.Column{TransactionsColumns[5]},
-				RefColumns: []*schema.Column{AccountsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
 				Symbol:     "transactions_households_transactions",
-				Columns:    []*schema.Column{TransactionsColumns[6]},
+				Columns:    []*schema.Column{TransactionsColumns[5]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -109,6 +102,7 @@ var (
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "account_transaction_entries", Type: field.TypeInt, Nullable: true},
 		{Name: "currency_transaction_entries", Type: field.TypeInt, Nullable: true},
+		{Name: "transaction_transaction_entries", Type: field.TypeInt, Nullable: true},
 	}
 	// TransactionEntriesTable holds the schema information for the "transaction_entries" table.
 	TransactionEntriesTable = &schema.Table{
@@ -126,6 +120,12 @@ var (
 				Symbol:     "transaction_entries_currencies_transaction_entries",
 				Columns:    []*schema.Column{TransactionEntriesColumns[5]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "transaction_entries_transactions_transaction_entries",
+				Columns:    []*schema.Column{TransactionEntriesColumns[6]},
+				RefColumns: []*schema.Column{TransactionsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -195,10 +195,10 @@ func init() {
 	AccountsTable.ForeignKeys[0].RefTable = CurrenciesTable
 	AccountsTable.ForeignKeys[1].RefTable = HouseholdsTable
 	HouseholdsTable.ForeignKeys[0].RefTable = CurrenciesTable
-	TransactionsTable.ForeignKeys[0].RefTable = AccountsTable
-	TransactionsTable.ForeignKeys[1].RefTable = HouseholdsTable
+	TransactionsTable.ForeignKeys[0].RefTable = HouseholdsTable
 	TransactionEntriesTable.ForeignKeys[0].RefTable = AccountsTable
 	TransactionEntriesTable.ForeignKeys[1].RefTable = CurrenciesTable
+	TransactionEntriesTable.ForeignKeys[2].RefTable = TransactionsTable
 	UserHouseholdsTable.ForeignKeys[0].RefTable = UsersTable
 	UserHouseholdsTable.ForeignKeys[1].RefTable = HouseholdsTable
 }

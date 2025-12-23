@@ -7,59 +7,58 @@ package fijoy
 
 import (
 	"context"
-	"fmt"
 
 	"fijoy.app/ent"
 )
 
 // Node is the resolver for the node field.
 func (r *queryResolver) Node(ctx context.Context, id int) (ent.Noder, error) {
-	panic(fmt.Errorf("not implemented: Node - node"))
+	return r.entClient.Noder(ctx, id)
 }
 
 // Nodes is the resolver for the nodes field.
 func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, error) {
-	panic(fmt.Errorf("not implemented: Nodes - nodes"))
+	return r.entClient.Noders(ctx, ids)
 }
 
 // Accounts is the resolver for the accounts field.
 func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
-	panic(fmt.Errorf("not implemented: Accounts - accounts"))
+	return r.entClient.Account.Query().All(ctx)
 }
 
 // Currencies is the resolver for the currencies field.
 func (r *queryResolver) Currencies(ctx context.Context) ([]*ent.Currency, error) {
-	panic(fmt.Errorf("not implemented: Currencies - currencies"))
+	return r.entClient.Currency.Query().All(ctx)
 }
 
 // Households is the resolver for the households field.
 func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error) {
-	panic(fmt.Errorf("not implemented: Households - households"))
+	return r.entClient.Household.Query().All(ctx)
 }
 
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
-	panic(fmt.Errorf("not implemented: Transactions - transactions"))
+	return r.entClient.Transaction.Query().All(ctx)
 }
 
 // TransactionEntries is the resolver for the transactionEntries field.
 func (r *queryResolver) TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error) {
-	panic(fmt.Errorf("not implemented: TransactionEntries - transactionEntries"))
+	return r.entClient.TransactionEntry.Query().All(ctx)
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*ent.User, error) {
-	panic(fmt.Errorf("not implemented: Users - users"))
+	return r.entClient.User.Query().All(ctx)
 }
 
 // UserHouseholds is the resolver for the userHouseholds field.
 func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error) {
-	panic(fmt.Errorf("not implemented: UserHouseholds - userHouseholds"))
+	return r.entClient.UserHousehold.Query().All(ctx)
 }
 
 // Amount is the resolver for the amount field.
 func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	return obj.Amount.String(), nil
 }
 
 // Query returns QueryResolver implementation.

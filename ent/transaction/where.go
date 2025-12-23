@@ -210,6 +210,16 @@ func DescriptionHasSuffix(v string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldHasSuffix(FieldDescription, v))
 }
 
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.Transaction {
+	return predicate.Transaction(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotNull(FieldDescription))
+}
+
 // DescriptionEqualFold applies the EqualFold predicate on the "description" field.
 func DescriptionEqualFold(v string) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEqualFold(FieldDescription, v))
@@ -260,21 +270,21 @@ func DatetimeLTE(v time.Time) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldDatetime, v))
 }
 
-// HasAccount applies the HasEdge predicate on the "account" edge.
-func HasAccount() predicate.Transaction {
+// HasTransactionEntries applies the HasEdge predicate on the "transaction_entries" edge.
+func HasTransactionEntries() predicate.Transaction {
 	return predicate.Transaction(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, AccountTable, AccountColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasAccountWith applies the HasEdge predicate on the "account" edge with a given conditions (other predicates).
-func HasAccountWith(preds ...predicate.Account) predicate.Transaction {
+// HasTransactionEntriesWith applies the HasEdge predicate on the "transaction_entries" edge with a given conditions (other predicates).
+func HasTransactionEntriesWith(preds ...predicate.TransactionEntry) predicate.Transaction {
 	return predicate.Transaction(func(s *sql.Selector) {
-		step := newAccountStep()
+		step := newTransactionEntriesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

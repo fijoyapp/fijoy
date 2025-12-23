@@ -29,8 +29,6 @@ const (
 	EdgeHousehold = "household"
 	// EdgeCurrency holds the string denoting the currency edge name in mutations.
 	EdgeCurrency = "currency"
-	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
-	EdgeTransactions = "transactions"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
 	// Table holds the table name of the account in the database.
@@ -49,13 +47,6 @@ const (
 	CurrencyInverseTable = "currencies"
 	// CurrencyColumn is the table column denoting the currency relation/edge.
 	CurrencyColumn = "currency_accounts"
-	// TransactionsTable is the table that holds the transactions relation/edge.
-	TransactionsTable = "transactions"
-	// TransactionsInverseTable is the table name for the Transaction entity.
-	// It exists in this package in order to avoid circular dependency with the "transaction" package.
-	TransactionsInverseTable = "transactions"
-	// TransactionsColumn is the table column denoting the transactions relation/edge.
-	TransactionsColumn = "account_transactions"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
@@ -175,20 +166,6 @@ func ByCurrencyField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByTransactionsCount orders the results by transactions count.
-func ByTransactionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newTransactionsStep(), opts...)
-	}
-}
-
-// ByTransactions orders the results by transactions terms.
-func ByTransactions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTransactionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByTransactionEntriesCount orders the results by transaction_entries count.
 func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -214,13 +191,6 @@ func newCurrencyStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(CurrencyInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, CurrencyTable, CurrencyColumn),
-	)
-}
-func newTransactionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TransactionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, TransactionsTable, TransactionsColumn),
 	)
 }
 func newTransactionEntriesStep() *sqlgraph.Step {

@@ -59,19 +59,6 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			}
 			_q.withCurrency = query
 
-		case "transactions":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&TransactionClient{config: _q.config}).Query()
-			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
-				return err
-			}
-			_q.WithNamedTransactions(alias, func(wq *TransactionQuery) {
-				*wq = *query
-			})
-
 		case "transactionEntries":
 			var (
 				alias = field.Alias
@@ -404,16 +391,18 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
-		case "account":
+		case "transactionEntries":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&AccountClient{config: _q.config}).Query()
+				query = (&TransactionEntryClient{config: _q.config}).Query()
 			)
-			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionentryImplementors)...); err != nil {
 				return err
 			}
-			_q.withAccount = query
+			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+				*wq = *query
+			})
 		case "createTime":
 			if _, ok := fieldSeen[transaction.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldCreateTime)
@@ -515,6 +504,17 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 				return err
 			}
 			_q.withCurrency = query
+
+		case "transaction":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
+				return err
+			}
+			_q.withTransaction = query
 		case "createTime":
 			if _, ok := fieldSeen[transactionentry.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldCreateTime)

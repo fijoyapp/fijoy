@@ -19,7 +19,7 @@ type Transaction struct {
 // Fields of the Transaction.
 func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("description"),
+		field.String("description").Optional(),
 		field.Time("datetime"),
 	}
 }
@@ -27,9 +27,7 @@ func (Transaction) Fields() []ent.Field {
 // Edges of the Transaction.
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("account", Account.Type).
-			Ref("transactions").
-			Unique(),
+		edge.To("transaction_entries", TransactionEntry.Type),
 	}
 }
 
@@ -67,6 +65,8 @@ func (TransactionEntry) Edges() []ent.Edge {
 		edge.From("account", Account.Type).
 			Ref("transaction_entries").Unique(),
 		edge.From("currency", Currency.Type).
+			Ref("transaction_entries").Unique(),
+		edge.From("transaction", Transaction.Type).
 			Ref("transaction_entries").Unique(),
 	}
 }
