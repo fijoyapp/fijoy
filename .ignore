@@ -1,0 +1,9 @@
+generated.go
+
+ent/*
+!ent/schema/
+
+web/src/routeTree.gen.ts
+web/pnpm-lock.yaml
+
+go.sum
