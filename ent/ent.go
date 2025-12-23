@@ -12,7 +12,13 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"fijoy.app/ent/account"
+	"fijoy.app/ent/currency"
+	"fijoy.app/ent/household"
+	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
+	"fijoy.app/ent/userhousehold"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -73,7 +79,13 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			user.Table: user.ValidColumn,
+			account.Table:          account.ValidColumn,
+			currency.Table:         currency.ValidColumn,
+			household.Table:        household.ValidColumn,
+			transaction.Table:      transaction.ValidColumn,
+			transactionentry.Table: transactionentry.ValidColumn,
+			user.Table:             user.ValidColumn,
+			userhousehold.Table:    userhousehold.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

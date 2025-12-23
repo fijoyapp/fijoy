@@ -8,9 +8,134 @@ import (
 )
 
 var (
+	// AccountsColumns holds the columns for the "accounts" table.
+	AccountsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
+		{Name: "currency_accounts", Type: field.TypeInt, Nullable: true},
+		{Name: "household_accounts", Type: field.TypeInt, Nullable: true},
+	}
+	// AccountsTable holds the schema information for the "accounts" table.
+	AccountsTable = &schema.Table{
+		Name:       "accounts",
+		Columns:    AccountsColumns,
+		PrimaryKey: []*schema.Column{AccountsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "accounts_currencies_accounts",
+				Columns:    []*schema.Column{AccountsColumns[5]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "accounts_households_accounts",
+				Columns:    []*schema.Column{AccountsColumns[6]},
+				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// CurrenciesColumns holds the columns for the "currencies" table.
+	CurrenciesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "code", Type: field.TypeString, Unique: true},
+	}
+	// CurrenciesTable holds the schema information for the "currencies" table.
+	CurrenciesTable = &schema.Table{
+		Name:       "currencies",
+		Columns:    CurrenciesColumns,
+		PrimaryKey: []*schema.Column{CurrenciesColumns[0]},
+	}
+	// HouseholdsColumns holds the columns for the "households" table.
+	HouseholdsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "currency_households", Type: field.TypeInt, Nullable: true},
+	}
+	// HouseholdsTable holds the schema information for the "households" table.
+	HouseholdsTable = &schema.Table{
+		Name:       "households",
+		Columns:    HouseholdsColumns,
+		PrimaryKey: []*schema.Column{HouseholdsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "households_currencies_households",
+				Columns:    []*schema.Column{HouseholdsColumns[4]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TransactionsColumns holds the columns for the "transactions" table.
+	TransactionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "description", Type: field.TypeString},
+		{Name: "datetime", Type: field.TypeTime},
+		{Name: "account_transactions", Type: field.TypeInt, Nullable: true},
+		{Name: "household_transactions", Type: field.TypeInt, Nullable: true},
+	}
+	// TransactionsTable holds the schema information for the "transactions" table.
+	TransactionsTable = &schema.Table{
+		Name:       "transactions",
+		Columns:    TransactionsColumns,
+		PrimaryKey: []*schema.Column{TransactionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "transactions_accounts_transactions",
+				Columns:    []*schema.Column{TransactionsColumns[5]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "transactions_households_transactions",
+				Columns:    []*schema.Column{TransactionsColumns[6]},
+				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TransactionEntriesColumns holds the columns for the "transaction_entries" table.
+	TransactionEntriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "account_transaction_entries", Type: field.TypeInt, Nullable: true},
+		{Name: "currency_transaction_entries", Type: field.TypeInt, Nullable: true},
+	}
+	// TransactionEntriesTable holds the schema information for the "transaction_entries" table.
+	TransactionEntriesTable = &schema.Table{
+		Name:       "transaction_entries",
+		Columns:    TransactionEntriesColumns,
+		PrimaryKey: []*schema.Column{TransactionEntriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "transaction_entries_accounts_transaction_entries",
+				Columns:    []*schema.Column{TransactionEntriesColumns[4]},
+				RefColumns: []*schema.Column{AccountsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "transaction_entries_currencies_transaction_entries",
+				Columns:    []*schema.Column{TransactionEntriesColumns[5]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "email", Type: field.TypeString},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -18,11 +143,62 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// UserHouseholdsColumns holds the columns for the "user_households" table.
+	UserHouseholdsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"admin", "member"}},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "household_id", Type: field.TypeInt},
+	}
+	// UserHouseholdsTable holds the schema information for the "user_households" table.
+	UserHouseholdsTable = &schema.Table{
+		Name:       "user_households",
+		Columns:    UserHouseholdsColumns,
+		PrimaryKey: []*schema.Column{UserHouseholdsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_households_users_user",
+				Columns:    []*schema.Column{UserHouseholdsColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "user_households_households_household",
+				Columns:    []*schema.Column{UserHouseholdsColumns[5]},
+				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "userhousehold_user_id_household_id",
+				Unique:  true,
+				Columns: []*schema.Column{UserHouseholdsColumns[4], UserHouseholdsColumns[5]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AccountsTable,
+		CurrenciesTable,
+		HouseholdsTable,
+		TransactionsTable,
+		TransactionEntriesTable,
 		UsersTable,
+		UserHouseholdsTable,
 	}
 )
 
 func init() {
+	AccountsTable.ForeignKeys[0].RefTable = CurrenciesTable
+	AccountsTable.ForeignKeys[1].RefTable = HouseholdsTable
+	HouseholdsTable.ForeignKeys[0].RefTable = CurrenciesTable
+	TransactionsTable.ForeignKeys[0].RefTable = AccountsTable
+	TransactionsTable.ForeignKeys[1].RefTable = HouseholdsTable
+	TransactionEntriesTable.ForeignKeys[0].RefTable = AccountsTable
+	TransactionEntriesTable.ForeignKeys[1].RefTable = CurrenciesTable
+	UserHouseholdsTable.ForeignKeys[0].RefTable = UsersTable
+	UserHouseholdsTable.ForeignKeys[1].RefTable = HouseholdsTable
 }

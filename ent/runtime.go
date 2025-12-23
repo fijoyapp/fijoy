@@ -2,8 +2,129 @@
 
 package ent
 
+import (
+	"time"
+
+	"fijoy.app/ent/account"
+	"fijoy.app/ent/currency"
+	"fijoy.app/ent/household"
+	"fijoy.app/ent/schema"
+	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactionentry"
+	"fijoy.app/ent/user"
+	"fijoy.app/ent/userhousehold"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accountMixin := schema.Account{}.Mixin()
+	accountMixinFields0 := accountMixin[0].Fields()
+	_ = accountMixinFields0
+	accountFields := schema.Account{}.Fields()
+	_ = accountFields
+	// accountDescCreateTime is the schema descriptor for create_time field.
+	accountDescCreateTime := accountMixinFields0[0].Descriptor()
+	// account.DefaultCreateTime holds the default value on creation for the create_time field.
+	account.DefaultCreateTime = accountDescCreateTime.Default.(func() time.Time)
+	// accountDescUpdateTime is the schema descriptor for update_time field.
+	accountDescUpdateTime := accountMixinFields0[1].Descriptor()
+	// account.DefaultUpdateTime holds the default value on creation for the update_time field.
+	account.DefaultUpdateTime = accountDescUpdateTime.Default.(func() time.Time)
+	// account.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	account.UpdateDefaultUpdateTime = accountDescUpdateTime.UpdateDefault.(func() time.Time)
+	// accountDescName is the schema descriptor for name field.
+	accountDescName := accountFields[0].Descriptor()
+	// account.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	account.NameValidator = accountDescName.Validators[0].(func(string) error)
+	currencyFields := schema.Currency{}.Fields()
+	_ = currencyFields
+	// currencyDescCode is the schema descriptor for code field.
+	currencyDescCode := currencyFields[0].Descriptor()
+	// currency.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	currency.CodeValidator = currencyDescCode.Validators[0].(func(string) error)
+	householdMixin := schema.Household{}.Mixin()
+	householdMixinFields0 := householdMixin[0].Fields()
+	_ = householdMixinFields0
+	householdFields := schema.Household{}.Fields()
+	_ = householdFields
+	// householdDescCreateTime is the schema descriptor for create_time field.
+	householdDescCreateTime := householdMixinFields0[0].Descriptor()
+	// household.DefaultCreateTime holds the default value on creation for the create_time field.
+	household.DefaultCreateTime = householdDescCreateTime.Default.(func() time.Time)
+	// householdDescUpdateTime is the schema descriptor for update_time field.
+	householdDescUpdateTime := householdMixinFields0[1].Descriptor()
+	// household.DefaultUpdateTime holds the default value on creation for the update_time field.
+	household.DefaultUpdateTime = householdDescUpdateTime.Default.(func() time.Time)
+	// household.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	household.UpdateDefaultUpdateTime = householdDescUpdateTime.UpdateDefault.(func() time.Time)
+	// householdDescName is the schema descriptor for name field.
+	householdDescName := householdFields[0].Descriptor()
+	// household.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	household.NameValidator = householdDescName.Validators[0].(func(string) error)
+	transactionMixin := schema.Transaction{}.Mixin()
+	transactionMixinFields0 := transactionMixin[0].Fields()
+	_ = transactionMixinFields0
+	transactionFields := schema.Transaction{}.Fields()
+	_ = transactionFields
+	// transactionDescCreateTime is the schema descriptor for create_time field.
+	transactionDescCreateTime := transactionMixinFields0[0].Descriptor()
+	// transaction.DefaultCreateTime holds the default value on creation for the create_time field.
+	transaction.DefaultCreateTime = transactionDescCreateTime.Default.(func() time.Time)
+	// transactionDescUpdateTime is the schema descriptor for update_time field.
+	transactionDescUpdateTime := transactionMixinFields0[1].Descriptor()
+	// transaction.DefaultUpdateTime holds the default value on creation for the update_time field.
+	transaction.DefaultUpdateTime = transactionDescUpdateTime.Default.(func() time.Time)
+	// transaction.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	transaction.UpdateDefaultUpdateTime = transactionDescUpdateTime.UpdateDefault.(func() time.Time)
+	transactionentryMixin := schema.TransactionEntry{}.Mixin()
+	transactionentryMixinFields0 := transactionentryMixin[0].Fields()
+	_ = transactionentryMixinFields0
+	transactionentryFields := schema.TransactionEntry{}.Fields()
+	_ = transactionentryFields
+	// transactionentryDescCreateTime is the schema descriptor for create_time field.
+	transactionentryDescCreateTime := transactionentryMixinFields0[0].Descriptor()
+	// transactionentry.DefaultCreateTime holds the default value on creation for the create_time field.
+	transactionentry.DefaultCreateTime = transactionentryDescCreateTime.Default.(func() time.Time)
+	// transactionentryDescUpdateTime is the schema descriptor for update_time field.
+	transactionentryDescUpdateTime := transactionentryMixinFields0[1].Descriptor()
+	// transactionentry.DefaultUpdateTime holds the default value on creation for the update_time field.
+	transactionentry.DefaultUpdateTime = transactionentryDescUpdateTime.Default.(func() time.Time)
+	// transactionentry.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	transactionentry.UpdateDefaultUpdateTime = transactionentryDescUpdateTime.UpdateDefault.(func() time.Time)
+	userMixin := schema.User{}.Mixin()
+	userMixinFields0 := userMixin[0].Fields()
+	_ = userMixinFields0
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescCreateTime is the schema descriptor for create_time field.
+	userDescCreateTime := userMixinFields0[0].Descriptor()
+	// user.DefaultCreateTime holds the default value on creation for the create_time field.
+	user.DefaultCreateTime = userDescCreateTime.Default.(func() time.Time)
+	// userDescUpdateTime is the schema descriptor for update_time field.
+	userDescUpdateTime := userMixinFields0[1].Descriptor()
+	// user.DefaultUpdateTime holds the default value on creation for the update_time field.
+	user.DefaultUpdateTime = userDescUpdateTime.Default.(func() time.Time)
+	// user.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	user.UpdateDefaultUpdateTime = userDescUpdateTime.UpdateDefault.(func() time.Time)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[0].Descriptor()
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	userhouseholdMixin := schema.UserHousehold{}.Mixin()
+	userhouseholdMixinFields0 := userhouseholdMixin[0].Fields()
+	_ = userhouseholdMixinFields0
+	userhouseholdFields := schema.UserHousehold{}.Fields()
+	_ = userhouseholdFields
+	// userhouseholdDescCreateTime is the schema descriptor for create_time field.
+	userhouseholdDescCreateTime := userhouseholdMixinFields0[0].Descriptor()
+	// userhousehold.DefaultCreateTime holds the default value on creation for the create_time field.
+	userhousehold.DefaultCreateTime = userhouseholdDescCreateTime.Default.(func() time.Time)
+	// userhouseholdDescUpdateTime is the schema descriptor for update_time field.
+	userhouseholdDescUpdateTime := userhouseholdMixinFields0[1].Descriptor()
+	// userhousehold.DefaultUpdateTime holds the default value on creation for the update_time field.
+	userhousehold.DefaultUpdateTime = userhouseholdDescUpdateTime.Default.(func() time.Time)
+	// userhousehold.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	userhousehold.UpdateDefaultUpdateTime = userhouseholdDescUpdateTime.UpdateDefault.(func() time.Time)
 }

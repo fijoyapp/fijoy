@@ -9,6 +9,66 @@ import (
 	"fijoy.app/ent"
 )
 
+// The AccountFunc type is an adapter to allow the use of ordinary
+// function as Account mutator.
+type AccountFunc func(context.Context, *ent.AccountMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AccountMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountMutation", m)
+}
+
+// The CurrencyFunc type is an adapter to allow the use of ordinary
+// function as Currency mutator.
+type CurrencyFunc func(context.Context, *ent.CurrencyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CurrencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CurrencyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CurrencyMutation", m)
+}
+
+// The HouseholdFunc type is an adapter to allow the use of ordinary
+// function as Household mutator.
+type HouseholdFunc func(context.Context, *ent.HouseholdMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f HouseholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.HouseholdMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.HouseholdMutation", m)
+}
+
+// The TransactionFunc type is an adapter to allow the use of ordinary
+// function as Transaction mutator.
+type TransactionFunc func(context.Context, *ent.TransactionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TransactionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TransactionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TransactionMutation", m)
+}
+
+// The TransactionEntryFunc type is an adapter to allow the use of ordinary
+// function as TransactionEntry mutator.
+type TransactionEntryFunc func(context.Context, *ent.TransactionEntryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TransactionEntryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TransactionEntryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TransactionEntryMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)
@@ -19,6 +79,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+}
+
+// The UserHouseholdFunc type is an adapter to allow the use of ordinary
+// function as UserHousehold mutator.
+type UserHouseholdFunc func(context.Context, *ent.UserHouseholdMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserHouseholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserHouseholdMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserHouseholdMutation", m)
 }
 
 // Condition is a hook condition function.

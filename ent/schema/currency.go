@@ -1,0 +1,28 @@
+package schema
+
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/field"
+)
+
+// Currency holds the schema definition for the Currency entity.
+type Currency struct {
+	ent.Schema
+}
+
+// Fields of the Currency.
+func (Currency) Fields() []ent.Field {
+	return []ent.Field{
+		field.String("code").NotEmpty().Unique(),
+	}
+}
+
+// Edges of the Currency.
+func (Currency) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("accounts", Account.Type),
+		edge.To("transaction_entries", TransactionEntry.Type),
+		edge.To("households", Household.Type),
+	}
+}

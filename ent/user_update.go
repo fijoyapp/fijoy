@@ -6,12 +6,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/user"
+	"fijoy.app/ent/userhousehold"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -27,13 +30,106 @@ func (_u *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return _u
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (_u *UserUpdate) SetUpdateTime(v time.Time) *UserUpdate {
+	_u.mutation.SetUpdateTime(v)
+	return _u
+}
+
+// SetEmail sets the "email" field.
+func (_u *UserUpdate) SetEmail(v string) *UserUpdate {
+	_u.mutation.SetEmail(v)
+	return _u
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableEmail(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetEmail(*v)
+	}
+	return _u
+}
+
+// AddHouseholdIDs adds the "households" edge to the Household entity by IDs.
+func (_u *UserUpdate) AddHouseholdIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddHouseholdIDs(ids...)
+	return _u
+}
+
+// AddHouseholds adds the "households" edges to the Household entity.
+func (_u *UserUpdate) AddHouseholds(v ...*Household) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddHouseholdIDs(ids...)
+}
+
+// AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
+func (_u *UserUpdate) AddUserHouseholdIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddUserHouseholdIDs(ids...)
+	return _u
+}
+
+// AddUserHouseholds adds the "user_households" edges to the UserHousehold entity.
+func (_u *UserUpdate) AddUserHouseholds(v ...*UserHousehold) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddUserHouseholdIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
 }
 
+// ClearHouseholds clears all "households" edges to the Household entity.
+func (_u *UserUpdate) ClearHouseholds() *UserUpdate {
+	_u.mutation.ClearHouseholds()
+	return _u
+}
+
+// RemoveHouseholdIDs removes the "households" edge to Household entities by IDs.
+func (_u *UserUpdate) RemoveHouseholdIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveHouseholdIDs(ids...)
+	return _u
+}
+
+// RemoveHouseholds removes "households" edges to Household entities.
+func (_u *UserUpdate) RemoveHouseholds(v ...*Household) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveHouseholdIDs(ids...)
+}
+
+// ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
+func (_u *UserUpdate) ClearUserHouseholds() *UserUpdate {
+	_u.mutation.ClearUserHouseholds()
+	return _u
+}
+
+// RemoveUserHouseholdIDs removes the "user_households" edge to UserHousehold entities by IDs.
+func (_u *UserUpdate) RemoveUserHouseholdIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveUserHouseholdIDs(ids...)
+	return _u
+}
+
+// RemoveUserHouseholds removes "user_households" edges to UserHousehold entities.
+func (_u *UserUpdate) RemoveUserHouseholds(v ...*UserHousehold) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveUserHouseholdIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *UserUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -59,7 +155,28 @@ func (_u *UserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *UserUpdate) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
+		v := user.UpdateDefaultUpdateTime()
+		_u.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *UserUpdate) check() error {
+	if v, ok := _u.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -67,6 +184,114 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if _u.mutation.HouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.HouseholdsTable,
+			Columns: user.HouseholdsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedHouseholdsIDs(); len(nodes) > 0 && !_u.mutation.HouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.HouseholdsTable,
+			Columns: user.HouseholdsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.HouseholdsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.HouseholdsTable,
+			Columns: user.HouseholdsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.UserHouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserHouseholdsTable,
+			Columns: []string{user.UserHouseholdsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userhousehold.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedUserHouseholdsIDs(); len(nodes) > 0 && !_u.mutation.UserHouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserHouseholdsTable,
+			Columns: []string{user.UserHouseholdsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userhousehold.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserHouseholdsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserHouseholdsTable,
+			Columns: []string{user.UserHouseholdsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userhousehold.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -88,9 +313,101 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
+// SetUpdateTime sets the "update_time" field.
+func (_u *UserUpdateOne) SetUpdateTime(v time.Time) *UserUpdateOne {
+	_u.mutation.SetUpdateTime(v)
+	return _u
+}
+
+// SetEmail sets the "email" field.
+func (_u *UserUpdateOne) SetEmail(v string) *UserUpdateOne {
+	_u.mutation.SetEmail(v)
+	return _u
+}
+
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableEmail(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetEmail(*v)
+	}
+	return _u
+}
+
+// AddHouseholdIDs adds the "households" edge to the Household entity by IDs.
+func (_u *UserUpdateOne) AddHouseholdIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddHouseholdIDs(ids...)
+	return _u
+}
+
+// AddHouseholds adds the "households" edges to the Household entity.
+func (_u *UserUpdateOne) AddHouseholds(v ...*Household) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddHouseholdIDs(ids...)
+}
+
+// AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
+func (_u *UserUpdateOne) AddUserHouseholdIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddUserHouseholdIDs(ids...)
+	return _u
+}
+
+// AddUserHouseholds adds the "user_households" edges to the UserHousehold entity.
+func (_u *UserUpdateOne) AddUserHouseholds(v ...*UserHousehold) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddUserHouseholdIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
+}
+
+// ClearHouseholds clears all "households" edges to the Household entity.
+func (_u *UserUpdateOne) ClearHouseholds() *UserUpdateOne {
+	_u.mutation.ClearHouseholds()
+	return _u
+}
+
+// RemoveHouseholdIDs removes the "households" edge to Household entities by IDs.
+func (_u *UserUpdateOne) RemoveHouseholdIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveHouseholdIDs(ids...)
+	return _u
+}
+
+// RemoveHouseholds removes "households" edges to Household entities.
+func (_u *UserUpdateOne) RemoveHouseholds(v ...*Household) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveHouseholdIDs(ids...)
+}
+
+// ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
+func (_u *UserUpdateOne) ClearUserHouseholds() *UserUpdateOne {
+	_u.mutation.ClearUserHouseholds()
+	return _u
+}
+
+// RemoveUserHouseholdIDs removes the "user_households" edge to UserHousehold entities by IDs.
+func (_u *UserUpdateOne) RemoveUserHouseholdIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveUserHouseholdIDs(ids...)
+	return _u
+}
+
+// RemoveUserHouseholds removes "user_households" edges to UserHousehold entities.
+func (_u *UserUpdateOne) RemoveUserHouseholds(v ...*UserHousehold) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveUserHouseholdIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -108,6 +425,7 @@ func (_u *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne {
 
 // Save executes the query and returns the updated User entity.
 func (_u *UserUpdateOne) Save(ctx context.Context) (*User, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -133,7 +451,28 @@ func (_u *UserUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *UserUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdateTime(); !ok {
+		v := user.UpdateDefaultUpdateTime()
+		_u.mutation.SetUpdateTime(v)
+	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (_u *UserUpdateOne) check() error {
+	if v, ok := _u.mutation.Email(); ok {
+		if err := user.EmailValidator(v); err != nil {
+			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(user.Table, user.Columns, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -158,6 +497,114 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.UpdateTime(); ok {
+		_spec.SetField(user.FieldUpdateTime, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Email(); ok {
+		_spec.SetField(user.FieldEmail, field.TypeString, value)
+	}
+	if _u.mutation.HouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.HouseholdsTable,
+			Columns: user.HouseholdsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedHouseholdsIDs(); len(nodes) > 0 && !_u.mutation.HouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.HouseholdsTable,
+			Columns: user.HouseholdsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.HouseholdsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.HouseholdsTable,
+			Columns: user.HouseholdsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.UserHouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserHouseholdsTable,
+			Columns: []string{user.UserHouseholdsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userhousehold.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedUserHouseholdsIDs(); len(nodes) > 0 && !_u.mutation.UserHouseholdsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserHouseholdsTable,
+			Columns: []string{user.UserHouseholdsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userhousehold.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserHouseholdsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserHouseholdsTable,
+			Columns: []string{user.UserHouseholdsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userhousehold.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: _u.config}
 	_spec.Assign = _node.assignValues

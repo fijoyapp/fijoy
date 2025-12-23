@@ -3,7 +3,10 @@
 package user
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,14 +14,45 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreateTime holds the string denoting the create_time field in the database.
+	FieldCreateTime = "create_time"
+	// FieldUpdateTime holds the string denoting the update_time field in the database.
+	FieldUpdateTime = "update_time"
+	// FieldEmail holds the string denoting the email field in the database.
+	FieldEmail = "email"
+	// EdgeHouseholds holds the string denoting the households edge name in mutations.
+	EdgeHouseholds = "households"
+	// EdgeUserHouseholds holds the string denoting the user_households edge name in mutations.
+	EdgeUserHouseholds = "user_households"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// HouseholdsTable is the table that holds the households relation/edge. The primary key declared below.
+	HouseholdsTable = "user_households"
+	// HouseholdsInverseTable is the table name for the Household entity.
+	// It exists in this package in order to avoid circular dependency with the "household" package.
+	HouseholdsInverseTable = "households"
+	// UserHouseholdsTable is the table that holds the user_households relation/edge.
+	UserHouseholdsTable = "user_households"
+	// UserHouseholdsInverseTable is the table name for the UserHousehold entity.
+	// It exists in this package in order to avoid circular dependency with the "userhousehold" package.
+	UserHouseholdsInverseTable = "user_households"
+	// UserHouseholdsColumn is the table column denoting the user_households relation/edge.
+	UserHouseholdsColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
+	FieldCreateTime,
+	FieldUpdateTime,
+	FieldEmail,
 }
+
+var (
+	// HouseholdsPrimaryKey and HouseholdsColumn2 are the table columns denoting the
+	// primary key for the households relation (M2M).
+	HouseholdsPrimaryKey = []string{"user_id", "household_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -30,10 +64,78 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// DefaultCreateTime holds the default value on creation for the "create_time" field.
+	DefaultCreateTime func() time.Time
+	// DefaultUpdateTime holds the default value on creation for the "update_time" field.
+	DefaultUpdateTime func() time.Time
+	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
+	UpdateDefaultUpdateTime func() time.Time
+	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	EmailValidator func(string) error
+)
+
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByCreateTime orders the results by the create_time field.
+func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreateTime, opts...).ToFunc()
+}
+
+// ByUpdateTime orders the results by the update_time field.
+func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+}
+
+// ByEmail orders the results by the email field.
+func ByEmail(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEmail, opts...).ToFunc()
+}
+
+// ByHouseholdsCount orders the results by households count.
+func ByHouseholdsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newHouseholdsStep(), opts...)
+	}
+}
+
+// ByHouseholds orders the results by households terms.
+func ByHouseholds(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newHouseholdsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByUserHouseholdsCount orders the results by user_households count.
+func ByUserHouseholdsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserHouseholdsStep(), opts...)
+	}
+}
+
+// ByUserHouseholds orders the results by user_households terms.
+func ByUserHouseholds(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserHouseholdsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newHouseholdsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(HouseholdsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, HouseholdsTable, HouseholdsPrimaryKey...),
+	)
+}
+func newUserHouseholdsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserHouseholdsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserHouseholdsTable, UserHouseholdsColumn),
+	)
 }

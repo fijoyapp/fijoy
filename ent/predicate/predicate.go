@@ -6,5 +6,23 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Account is the predicate function for account builders.
+type Account func(*sql.Selector)
+
+// Currency is the predicate function for currency builders.
+type Currency func(*sql.Selector)
+
+// Household is the predicate function for household builders.
+type Household func(*sql.Selector)
+
+// Transaction is the predicate function for transaction builders.
+type Transaction func(*sql.Selector)
+
+// TransactionEntry is the predicate function for transactionentry builders.
+type TransactionEntry func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// UserHousehold is the predicate function for userhousehold builders.
+type UserHousehold func(*sql.Selector)
