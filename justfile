@@ -5,5 +5,5 @@ web:
   cd web && pnpm dev
 
 server:
-  go run ./cmd/server
+  go run ./cmd/server.go
 
