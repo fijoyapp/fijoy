@@ -13,10 +13,10 @@ import (
 func main() {
 	ex, err := entgql.NewExtension(
 		// Tell Ent to generate a GraphQL schema for
-		// the Ent schema in a file named fijoy.graphql.
+		// the Ent schema in a file named ent.graphql.
 		entgql.WithSchemaGenerator(),
 		entgql.WithSchemaPath(
-			"fijoy.graphql",
+			"ent.graphql",
 		),
 		entgql.WithConfigPath("gqlgen.yml"),
 	)
