@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { Link, ValidateLinkOptions } from '@tanstack/react-router'
 
 import {
   Collapsible,
@@ -22,12 +23,12 @@ export function NavMain({
 }: {
   items: Array<{
     title: string
-    url: string
+    link: ValidateLinkOptions
     icon?: LucideIcon
     isActive?: boolean
     items?: Array<{
       title: string
-      url: string
+      link: ValidateLinkOptions
     }>
   }>
 }) {
@@ -57,9 +58,13 @@ export function NavMain({
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton
                           render={
-                            <a href={subItem.url}>
+                            <Link
+                              {...subItem.link}
+                              className="w-full"
+                              activeProps={{ className: 'font-bold' }}
+                            >
                               <span>{subItem.title}</span>
-                            </a>
+                            </Link>
                           }
                         ></SidebarMenuSubButton>
                       </SidebarMenuSubItem>
