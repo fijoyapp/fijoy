@@ -61,11 +61,15 @@ func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.Transact
 	return obj.Amount.String(), nil
 }
 
+// Account returns AccountResolver implementation.
+func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
 
+type accountResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
