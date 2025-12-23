@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
@@ -24,6 +26,12 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("households", Household.Type).
 			Through("user_households", UserHousehold.Type),
+	}
+}
+
+func (User) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
 	}
 }
 
@@ -60,6 +68,12 @@ func (UserHousehold) Edges() []ent.Edge {
 			Unique().
 			Required().
 			Field("household_id").Immutable(),
+	}
+}
+
+func (UserHousehold) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
 	}
 }
 

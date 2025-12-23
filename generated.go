@@ -91,8 +91,15 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Node  func(childComplexity int, id int) int
-		Nodes func(childComplexity int, ids []int) int
+		Accounts           func(childComplexity int) int
+		Currencies         func(childComplexity int) int
+		Households         func(childComplexity int) int
+		Node               func(childComplexity int, id int) int
+		Nodes              func(childComplexity int, ids []int) int
+		TransactionEntries func(childComplexity int) int
+		Transactions       func(childComplexity int) int
+		UserHouseholds     func(childComplexity int) int
+		Users              func(childComplexity int) int
 	}
 
 	Transaction struct {
@@ -137,6 +144,13 @@ type ComplexityRoot struct {
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
 	Nodes(ctx context.Context, ids []int) ([]ent.Noder, error)
+	Accounts(ctx context.Context) ([]*ent.Account, error)
+	Currencies(ctx context.Context) ([]*ent.Currency, error)
+	Households(ctx context.Context) ([]*ent.Household, error)
+	Transactions(ctx context.Context) ([]*ent.Transaction, error)
+	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
+	Users(ctx context.Context) ([]*ent.User, error)
+	UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error)
 }
 type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
@@ -327,6 +341,24 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
+	case "Query.accounts":
+		if e.complexity.Query.Accounts == nil {
+			break
+		}
+
+		return e.complexity.Query.Accounts(childComplexity), true
+	case "Query.currencies":
+		if e.complexity.Query.Currencies == nil {
+			break
+		}
+
+		return e.complexity.Query.Currencies(childComplexity), true
+	case "Query.households":
+		if e.complexity.Query.Households == nil {
+			break
+		}
+
+		return e.complexity.Query.Households(childComplexity), true
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
 			break
@@ -349,6 +381,30 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]int)), true
+	case "Query.transactionEntries":
+		if e.complexity.Query.TransactionEntries == nil {
+			break
+		}
+
+		return e.complexity.Query.TransactionEntries(childComplexity), true
+	case "Query.transactions":
+		if e.complexity.Query.Transactions == nil {
+			break
+		}
+
+		return e.complexity.Query.Transactions(childComplexity), true
+	case "Query.userHouseholds":
+		if e.complexity.Query.UserHouseholds == nil {
+			break
+		}
+
+		return e.complexity.Query.UserHouseholds(childComplexity), true
+	case "Query.users":
+		if e.complexity.Query.Users == nil {
+			break
+		}
+
+		return e.complexity.Query.Users(childComplexity), true
 
 	case "Transaction.account":
 		if e.complexity.Transaction.Account == nil {
@@ -1756,6 +1812,321 @@ func (ec *executionContext) fieldContext_Query_nodes(ctx context.Context, field 
 	if fc.Args, err = ec.field_Query_nodes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_accounts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_accounts,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().Accounts(ctx)
+		},
+		nil,
+		ec.marshalNAccount2ᚕᚖfijoyᚗappᚋentᚐAccountᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_accounts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Account_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Account_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Account_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Account_type(ctx, field)
+			case "household":
+				return ec.fieldContext_Account_household(ctx, field)
+			case "currency":
+				return ec.fieldContext_Account_currency(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Account_transactions(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_currencies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_currencies,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().Currencies(ctx)
+		},
+		nil,
+		ec.marshalNCurrency2ᚕᚖfijoyᚗappᚋentᚐCurrencyᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_currencies(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Currency_id(ctx, field)
+			case "code":
+				return ec.fieldContext_Currency_code(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Currency_accounts(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Currency_transactionEntries(ctx, field)
+			case "households":
+				return ec.fieldContext_Currency_households(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_households(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_households,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().Households(ctx)
+		},
+		nil,
+		ec.marshalNHousehold2ᚕᚖfijoyᚗappᚋentᚐHouseholdᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_households(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Household_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Household_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Household_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Household_name(ctx, field)
+			case "currency":
+				return ec.fieldContext_Household_currency(ctx, field)
+			case "users":
+				return ec.fieldContext_Household_users(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Household_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Household_transactions(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_Household_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_transactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_transactions,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().Transactions(ctx)
+		},
+		nil,
+		ec.marshalNTransaction2ᚕᚖfijoyᚗappᚋentᚐTransactionᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_transactions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Transaction_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Transaction_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "description":
+				return ec.fieldContext_Transaction_description(ctx, field)
+			case "datetime":
+				return ec.fieldContext_Transaction_datetime(ctx, field)
+			case "account":
+				return ec.fieldContext_Transaction_account(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_transactionEntries(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_transactionEntries,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().TransactionEntries(ctx)
+		},
+		nil,
+		ec.marshalNTransactionEntry2ᚕᚖfijoyᚗappᚋentᚐTransactionEntryᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_transactionEntries(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TransactionEntry_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "amount":
+				return ec.fieldContext_TransactionEntry_amount(ctx, field)
+			case "account":
+				return ec.fieldContext_TransactionEntry_account(ctx, field)
+			case "currency":
+				return ec.fieldContext_TransactionEntry_currency(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionEntry", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_users,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().Users(ctx)
+		},
+		nil,
+		ec.marshalNUser2ᚕᚖfijoyᚗappᚋentᚐUserᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_users(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_User_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_User_updateTime(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "households":
+				return ec.fieldContext_User_households(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_User_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_userHouseholds(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_userHouseholds,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().UserHouseholds(ctx)
+		},
+		nil,
+		ec.marshalNUserHousehold2ᚕᚖfijoyᚗappᚋentᚐUserHouseholdᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_userHouseholds(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserHousehold_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_UserHousehold_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_UserHousehold_updateTime(ctx, field)
+			case "userID":
+				return ec.fieldContext_UserHousehold_userID(ctx, field)
+			case "householdID":
+				return ec.fieldContext_UserHousehold_householdID(ctx, field)
+			case "role":
+				return ec.fieldContext_UserHousehold_role(ctx, field)
+			case "user":
+				return ec.fieldContext_UserHousehold_user(ctx, field)
+			case "household":
+				return ec.fieldContext_UserHousehold_household(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserHousehold", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -4909,6 +5280,160 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "accounts":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_accounts(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "currencies":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_currencies(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "households":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_households(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "transactions":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_transactions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "transactionEntries":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_transactionEntries(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "users":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_users(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "userHouseholds":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userHouseholds(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -5774,6 +6299,50 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAccount2ᚕᚖfijoyᚗappᚋentᚐAccountᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Account) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAccount2ᚖfijoyᚗappᚋentᚐAccount(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNAccount2ᚖfijoyᚗappᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v *ent.Account) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -5808,6 +6377,104 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNCurrency2ᚕᚖfijoyᚗappᚋentᚐCurrencyᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Currency) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCurrency2ᚖfijoyᚗappᚋentᚐCurrency(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCurrency2ᚖfijoyᚗappᚋentᚐCurrency(ctx context.Context, sel ast.SelectionSet, v *ent.Currency) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Currency(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNHousehold2ᚕᚖfijoyᚗappᚋentᚐHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Household) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNHousehold2ᚖfijoyᚗappᚋentᚐHousehold(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNHousehold2ᚖfijoyᚗappᚋentᚐHousehold(ctx context.Context, sel ast.SelectionSet, v *ent.Household) graphql.Marshaler {
@@ -5936,6 +6603,50 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
+func (ec *executionContext) marshalNTransaction2ᚕᚖfijoyᚗappᚋentᚐTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Transaction) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTransaction2ᚖfijoyᚗappᚋentᚐTransaction(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNTransaction2ᚖfijoyᚗappᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -5944,6 +6655,50 @@ func (ec *executionContext) marshalNTransaction2ᚖfijoyᚗappᚋentᚐTransacti
 		return graphql.Null
 	}
 	return ec._Transaction(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTransactionEntry2ᚕᚖfijoyᚗappᚋentᚐTransactionEntryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.TransactionEntry) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTransactionEntry2ᚖfijoyᚗappᚋentᚐTransactionEntry(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNTransactionEntry2ᚖfijoyᚗappᚋentᚐTransactionEntry(ctx context.Context, sel ast.SelectionSet, v *ent.TransactionEntry) graphql.Marshaler {
@@ -5956,6 +6711,50 @@ func (ec *executionContext) marshalNTransactionEntry2ᚖfijoyᚗappᚋentᚐTran
 	return ec._TransactionEntry(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNUser2ᚕᚖfijoyᚗappᚋentᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.User) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUser2ᚖfijoyᚗappᚋentᚐUser(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNUser2ᚖfijoyᚗappᚋentᚐUser(ctx context.Context, sel ast.SelectionSet, v *ent.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -5964,6 +6763,50 @@ func (ec *executionContext) marshalNUser2ᚖfijoyᚗappᚋentᚐUser(ctx context
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserHousehold2ᚕᚖfijoyᚗappᚋentᚐUserHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.UserHousehold) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserHousehold2ᚖfijoyᚗappᚋentᚐUserHousehold(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNUserHousehold2ᚖfijoyᚗappᚋentᚐUserHousehold(ctx context.Context, sel ast.SelectionSet, v *ent.UserHousehold) graphql.Marshaler {

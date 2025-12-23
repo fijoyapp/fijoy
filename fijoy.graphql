@@ -108,6 +108,13 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]!
+  accounts: [Account!]!
+  currencies: [Currency!]!
+  households: [Household!]!
+  transactions: [Transaction!]!
+  transactionEntries: [TransactionEntry!]!
+  users: [User!]!
+  userHouseholds: [UserHousehold!]!
 }
 """
 The builtin Time type

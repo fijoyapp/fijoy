@@ -22,6 +22,41 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, erro
 	panic(fmt.Errorf("not implemented: Nodes - nodes"))
 }
 
+// Accounts is the resolver for the accounts field.
+func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
+	panic(fmt.Errorf("not implemented: Accounts - accounts"))
+}
+
+// Currencies is the resolver for the currencies field.
+func (r *queryResolver) Currencies(ctx context.Context) ([]*ent.Currency, error) {
+	panic(fmt.Errorf("not implemented: Currencies - currencies"))
+}
+
+// Households is the resolver for the households field.
+func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error) {
+	panic(fmt.Errorf("not implemented: Households - households"))
+}
+
+// Transactions is the resolver for the transactions field.
+func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
+	panic(fmt.Errorf("not implemented: Transactions - transactions"))
+}
+
+// TransactionEntries is the resolver for the transactionEntries field.
+func (r *queryResolver) TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error) {
+	panic(fmt.Errorf("not implemented: TransactionEntries - transactionEntries"))
+}
+
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context) ([]*ent.User, error) {
+	panic(fmt.Errorf("not implemented: Users - users"))
+}
+
+// UserHouseholds is the resolver for the userHouseholds field.
+func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error) {
+	panic(fmt.Errorf("not implemented: UserHouseholds - userHouseholds"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
 	panic(fmt.Errorf("not implemented: Amount - amount"))

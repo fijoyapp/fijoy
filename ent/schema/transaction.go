@@ -4,6 +4,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
@@ -29,6 +30,12 @@ func (Transaction) Edges() []ent.Edge {
 		edge.From("account", Account.Type).
 			Ref("transactions").
 			Unique(),
+	}
+}
+
+func (Transaction) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
 	}
 }
 
@@ -61,6 +68,12 @@ func (TransactionEntry) Edges() []ent.Edge {
 			Ref("transaction_entries").Unique(),
 		edge.From("currency", Currency.Type).
 			Ref("transaction_entries").Unique(),
+	}
+}
+
+func (TransactionEntry) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
 	}
 }
 

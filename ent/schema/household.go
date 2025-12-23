@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
@@ -31,6 +33,12 @@ func (Household) Edges() []ent.Edge {
 
 		edge.To("accounts", Account.Type),
 		edge.To("transactions", Transaction.Type),
+	}
+}
+
+func (Household) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
 	}
 }
 
