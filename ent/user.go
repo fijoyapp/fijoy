@@ -38,6 +38,11 @@ type UserEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
+
+	namedHouseholds     map[string][]*Household
+	namedUserHouseholds map[string][]*UserHousehold
 }
 
 // HouseholdsOrErr returns the Households value or an error if the edge
@@ -164,6 +169,54 @@ func (_m *User) String() string {
 	builder.WriteString(_m.Email)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedHouseholds returns the Households named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *User) NamedHouseholds(name string) ([]*Household, error) {
+	if _m.Edges.namedHouseholds == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedHouseholds[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *User) appendNamedHouseholds(name string, edges ...*Household) {
+	if _m.Edges.namedHouseholds == nil {
+		_m.Edges.namedHouseholds = make(map[string][]*Household)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedHouseholds[name] = []*Household{}
+	} else {
+		_m.Edges.namedHouseholds[name] = append(_m.Edges.namedHouseholds[name], edges...)
+	}
+}
+
+// NamedUserHouseholds returns the UserHouseholds named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *User) NamedUserHouseholds(name string) ([]*UserHousehold, error) {
+	if _m.Edges.namedUserHouseholds == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedUserHouseholds[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *User) appendNamedUserHouseholds(name string, edges ...*UserHousehold) {
+	if _m.Edges.namedUserHouseholds == nil {
+		_m.Edges.namedUserHouseholds = make(map[string][]*UserHousehold)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedUserHouseholds[name] = []*UserHousehold{}
+	} else {
+		_m.Edges.namedUserHouseholds[name] = append(_m.Edges.namedUserHouseholds[name], edges...)
+	}
 }
 
 // Users is a parsable slice of User.

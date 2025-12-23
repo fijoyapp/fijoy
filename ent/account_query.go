@@ -23,15 +23,19 @@ import (
 // AccountQuery is the builder for querying Account entities.
 type AccountQuery struct {
 	config
-	ctx                    *QueryContext
-	order                  []account.OrderOption
-	inters                 []Interceptor
-	predicates             []predicate.Account
-	withHousehold          *HouseholdQuery
-	withCurrency           *CurrencyQuery
-	withTransactions       *TransactionQuery
-	withTransactionEntries *TransactionEntryQuery
-	withFKs                bool
+	ctx                         *QueryContext
+	order                       []account.OrderOption
+	inters                      []Interceptor
+	predicates                  []predicate.Account
+	withHousehold               *HouseholdQuery
+	withCurrency                *CurrencyQuery
+	withTransactions            *TransactionQuery
+	withTransactionEntries      *TransactionEntryQuery
+	withFKs                     bool
+	modifiers                   []func(*sql.Selector)
+	loadTotal                   []func(context.Context, []*Account) error
+	withNamedTransactions       map[string]*TransactionQuery
+	withNamedTransactionEntries map[string]*TransactionEntryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -503,6 +507,9 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -537,6 +544,25 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			func(n *Account, e *TransactionEntry) {
 				n.Edges.TransactionEntries = append(n.Edges.TransactionEntries, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedTransactions {
+		if err := _q.loadTransactions(ctx, query, nodes,
+			func(n *Account) { n.appendNamedTransactions(name) },
+			func(n *Account, e *Transaction) { n.appendNamedTransactions(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedTransactionEntries {
+		if err := _q.loadTransactionEntries(ctx, query, nodes,
+			func(n *Account) { n.appendNamedTransactionEntries(name) },
+			func(n *Account, e *TransactionEntry) { n.appendNamedTransactionEntries(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range _q.loadTotal {
+		if err := _q.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -672,6 +698,9 @@ func (_q *AccountQuery) loadTransactionEntries(ctx context.Context, query *Trans
 
 func (_q *AccountQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
 		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
@@ -749,6 +778,34 @@ func (_q *AccountQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedTransactions tells the query-builder to eager-load the nodes that are connected to the "transactions"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithNamedTransactions(name string, opts ...func(*TransactionQuery)) *AccountQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedTransactions == nil {
+		_q.withNamedTransactions = make(map[string]*TransactionQuery)
+	}
+	_q.withNamedTransactions[name] = query
+	return _q
+}
+
+// WithNamedTransactionEntries tells the query-builder to eager-load the nodes that are connected to the "transaction_entries"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithNamedTransactionEntries(name string, opts ...func(*TransactionEntryQuery)) *AccountQuery {
+	query := (&TransactionEntryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedTransactionEntries == nil {
+		_q.withNamedTransactionEntries = make(map[string]*TransactionEntryQuery)
+	}
+	_q.withNamedTransactionEntries[name] = query
+	return _q
 }
 
 // AccountGroupBy is the group-by builder for Account entities.

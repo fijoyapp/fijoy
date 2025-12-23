@@ -24,16 +24,22 @@ import (
 // HouseholdQuery is the builder for querying Household entities.
 type HouseholdQuery struct {
 	config
-	ctx                *QueryContext
-	order              []household.OrderOption
-	inters             []Interceptor
-	predicates         []predicate.Household
-	withCurrency       *CurrencyQuery
-	withUsers          *UserQuery
-	withAccounts       *AccountQuery
-	withTransactions   *TransactionQuery
-	withUserHouseholds *UserHouseholdQuery
-	withFKs            bool
+	ctx                     *QueryContext
+	order                   []household.OrderOption
+	inters                  []Interceptor
+	predicates              []predicate.Household
+	withCurrency            *CurrencyQuery
+	withUsers               *UserQuery
+	withAccounts            *AccountQuery
+	withTransactions        *TransactionQuery
+	withUserHouseholds      *UserHouseholdQuery
+	withFKs                 bool
+	modifiers               []func(*sql.Selector)
+	loadTotal               []func(context.Context, []*Household) error
+	withNamedUsers          map[string]*UserQuery
+	withNamedAccounts       map[string]*AccountQuery
+	withNamedTransactions   map[string]*TransactionQuery
+	withNamedUserHouseholds map[string]*UserHouseholdQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -540,6 +546,9 @@ func (_q *HouseholdQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ho
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -580,6 +589,39 @@ func (_q *HouseholdQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ho
 		if err := _q.loadUserHouseholds(ctx, query, nodes,
 			func(n *Household) { n.Edges.UserHouseholds = []*UserHousehold{} },
 			func(n *Household, e *UserHousehold) { n.Edges.UserHouseholds = append(n.Edges.UserHouseholds, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedUsers {
+		if err := _q.loadUsers(ctx, query, nodes,
+			func(n *Household) { n.appendNamedUsers(name) },
+			func(n *Household, e *User) { n.appendNamedUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedAccounts {
+		if err := _q.loadAccounts(ctx, query, nodes,
+			func(n *Household) { n.appendNamedAccounts(name) },
+			func(n *Household, e *Account) { n.appendNamedAccounts(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedTransactions {
+		if err := _q.loadTransactions(ctx, query, nodes,
+			func(n *Household) { n.appendNamedTransactions(name) },
+			func(n *Household, e *Transaction) { n.appendNamedTransactions(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedUserHouseholds {
+		if err := _q.loadUserHouseholds(ctx, query, nodes,
+			func(n *Household) { n.appendNamedUserHouseholds(name) },
+			func(n *Household, e *UserHousehold) { n.appendNamedUserHouseholds(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range _q.loadTotal {
+		if err := _q.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -774,6 +816,9 @@ func (_q *HouseholdQuery) loadUserHouseholds(ctx context.Context, query *UserHou
 
 func (_q *HouseholdQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
 		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
@@ -851,6 +896,62 @@ func (_q *HouseholdQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedUsers tells the query-builder to eager-load the nodes that are connected to the "users"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *HouseholdQuery) WithNamedUsers(name string, opts ...func(*UserQuery)) *HouseholdQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedUsers == nil {
+		_q.withNamedUsers = make(map[string]*UserQuery)
+	}
+	_q.withNamedUsers[name] = query
+	return _q
+}
+
+// WithNamedAccounts tells the query-builder to eager-load the nodes that are connected to the "accounts"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *HouseholdQuery) WithNamedAccounts(name string, opts ...func(*AccountQuery)) *HouseholdQuery {
+	query := (&AccountClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedAccounts == nil {
+		_q.withNamedAccounts = make(map[string]*AccountQuery)
+	}
+	_q.withNamedAccounts[name] = query
+	return _q
+}
+
+// WithNamedTransactions tells the query-builder to eager-load the nodes that are connected to the "transactions"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *HouseholdQuery) WithNamedTransactions(name string, opts ...func(*TransactionQuery)) *HouseholdQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedTransactions == nil {
+		_q.withNamedTransactions = make(map[string]*TransactionQuery)
+	}
+	_q.withNamedTransactions[name] = query
+	return _q
+}
+
+// WithNamedUserHouseholds tells the query-builder to eager-load the nodes that are connected to the "user_households"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *HouseholdQuery) WithNamedUserHouseholds(name string, opts ...func(*UserHouseholdQuery)) *HouseholdQuery {
+	query := (&UserHouseholdClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedUserHouseholds == nil {
+		_q.withNamedUserHouseholds = make(map[string]*UserHouseholdQuery)
+	}
+	_q.withNamedUserHouseholds[name] = query
+	return _q
 }
 
 // HouseholdGroupBy is the group-by builder for Household entities.

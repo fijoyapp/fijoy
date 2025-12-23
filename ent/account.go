@@ -48,6 +48,11 @@ type AccountEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [4]bool
+	// totalCount holds the count of the edges above.
+	totalCount [4]map[string]int
+
+	namedTransactions       map[string][]*Transaction
+	namedTransactionEntries map[string][]*TransactionEntry
 }
 
 // HouseholdOrErr returns the Household value or an error if the edge
@@ -233,6 +238,54 @@ func (_m *Account) String() string {
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedTransactions returns the Transactions named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Account) NamedTransactions(name string) ([]*Transaction, error) {
+	if _m.Edges.namedTransactions == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedTransactions[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Account) appendNamedTransactions(name string, edges ...*Transaction) {
+	if _m.Edges.namedTransactions == nil {
+		_m.Edges.namedTransactions = make(map[string][]*Transaction)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedTransactions[name] = []*Transaction{}
+	} else {
+		_m.Edges.namedTransactions[name] = append(_m.Edges.namedTransactions[name], edges...)
+	}
+}
+
+// NamedTransactionEntries returns the TransactionEntries named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Account) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
+	if _m.Edges.namedTransactionEntries == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedTransactionEntries[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Account) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
+	if _m.Edges.namedTransactionEntries == nil {
+		_m.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
+	} else {
+		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
+	}
 }
 
 // Accounts is a parsable slice of Account.

@@ -1,0 +1,156 @@
+directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
+directive @goModel(model: String, models: [String!], forceGenerate: Boolean) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+type Account implements Node {
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  name: String!
+  type: AccountType!
+  household: Household
+  currency: Currency
+  transactions: [Transaction!]
+  transactionEntries: [TransactionEntry!]
+}
+"""
+AccountType is enum for the field type
+"""
+enum AccountType @goModel(model: "fijoy.app/ent/account.Type") {
+  liquidity
+  investment
+  property
+  receivable
+  liability
+}
+type Currency implements Node {
+  id: ID!
+  code: String!
+  accounts: [Account!]
+  transactionEntries: [TransactionEntry!]
+  households: [Household!]
+}
+"""
+Define a Relay Cursor type:
+https://relay.dev/graphql/connections.htm#sec-Cursor
+"""
+scalar Cursor
+type Household implements Node {
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  name: String!
+  currency: Currency
+  users: [User!]
+  accounts: [Account!]
+  transactions: [Transaction!]
+  userHouseholds: [UserHousehold!]
+}
+"""
+An object with an ID.
+Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
+"""
+interface Node @goModel(model: "fijoy.app/ent.Noder") {
+  """
+  The id of the object.
+  """
+  id: ID!
+}
+"""
+Possible directions in which to order a list of items when provided an `orderBy` argument.
+"""
+enum OrderDirection {
+  """
+  Specifies an ascending order for a given `orderBy` argument.
+  """
+  ASC
+  """
+  Specifies a descending order for a given `orderBy` argument.
+  """
+  DESC
+}
+"""
+Information about pagination in a connection.
+https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: Cursor
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: Cursor
+}
+type Query {
+  """
+  Fetches an object given its ID.
+  """
+  node(
+    """
+    ID of the object.
+    """
+    id: ID!
+  ): Node
+  """
+  Lookup nodes by a list of IDs.
+  """
+  nodes(
+    """
+    The list of node IDs.
+    """
+    ids: [ID!]!
+  ): [Node]!
+}
+"""
+The builtin Time type
+"""
+scalar Time
+type Transaction implements Node {
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  description: String!
+  datetime: Time!
+  account: Account
+}
+type TransactionEntry implements Node {
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  amount: String!
+  account: Account
+  currency: Currency
+}
+type User implements Node {
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  email: String!
+  households: [Household!]
+  userHouseholds: [UserHousehold!]
+}
+type UserHousehold implements Node {
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  userID: ID!
+  householdID: ID!
+  role: UserHouseholdRole!
+  user: User!
+  household: Household!
+}
+"""
+UserHouseholdRole is enum for the field role
+"""
+enum UserHouseholdRole @goModel(model: "fijoy.app/ent/userhousehold.Role") {
+  admin
+  member
+}

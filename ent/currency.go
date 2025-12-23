@@ -35,6 +35,12 @@ type CurrencyEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
+	// totalCount holds the count of the edges above.
+	totalCount [3]map[string]int
+
+	namedAccounts           map[string][]*Account
+	namedTransactionEntries map[string][]*TransactionEntry
+	namedHouseholds         map[string][]*Household
 }
 
 // AccountsOrErr returns the Accounts value or an error if the edge
@@ -155,6 +161,78 @@ func (_m *Currency) String() string {
 	builder.WriteString(_m.Code)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedAccounts returns the Accounts named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Currency) NamedAccounts(name string) ([]*Account, error) {
+	if _m.Edges.namedAccounts == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedAccounts[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Currency) appendNamedAccounts(name string, edges ...*Account) {
+	if _m.Edges.namedAccounts == nil {
+		_m.Edges.namedAccounts = make(map[string][]*Account)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedAccounts[name] = []*Account{}
+	} else {
+		_m.Edges.namedAccounts[name] = append(_m.Edges.namedAccounts[name], edges...)
+	}
+}
+
+// NamedTransactionEntries returns the TransactionEntries named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Currency) NamedTransactionEntries(name string) ([]*TransactionEntry, error) {
+	if _m.Edges.namedTransactionEntries == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedTransactionEntries[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Currency) appendNamedTransactionEntries(name string, edges ...*TransactionEntry) {
+	if _m.Edges.namedTransactionEntries == nil {
+		_m.Edges.namedTransactionEntries = make(map[string][]*TransactionEntry)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
+	} else {
+		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
+	}
+}
+
+// NamedHouseholds returns the Households named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Currency) NamedHouseholds(name string) ([]*Household, error) {
+	if _m.Edges.namedHouseholds == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedHouseholds[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Currency) appendNamedHouseholds(name string, edges ...*Household) {
+	if _m.Edges.namedHouseholds == nil {
+		_m.Edges.namedHouseholds = make(map[string][]*Household)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedHouseholds[name] = []*Household{}
+	} else {
+		_m.Edges.namedHouseholds[name] = append(_m.Edges.namedHouseholds[name], edges...)
+	}
 }
 
 // Currencies is a parsable slice of Currency.

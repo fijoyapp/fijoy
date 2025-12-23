@@ -21,12 +21,16 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                *QueryContext
-	order              []user.OrderOption
-	inters             []Interceptor
-	predicates         []predicate.User
-	withHouseholds     *HouseholdQuery
-	withUserHouseholds *UserHouseholdQuery
+	ctx                     *QueryContext
+	order                   []user.OrderOption
+	inters                  []Interceptor
+	predicates              []predicate.User
+	withHouseholds          *HouseholdQuery
+	withUserHouseholds      *UserHouseholdQuery
+	modifiers               []func(*sql.Selector)
+	loadTotal               []func(context.Context, []*User) error
+	withNamedHouseholds     map[string]*HouseholdQuery
+	withNamedUserHouseholds map[string]*UserHouseholdQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -421,6 +425,9 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -441,6 +448,25 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadUserHouseholds(ctx, query, nodes,
 			func(n *User) { n.Edges.UserHouseholds = []*UserHousehold{} },
 			func(n *User, e *UserHousehold) { n.Edges.UserHouseholds = append(n.Edges.UserHouseholds, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedHouseholds {
+		if err := _q.loadHouseholds(ctx, query, nodes,
+			func(n *User) { n.appendNamedHouseholds(name) },
+			func(n *User, e *Household) { n.appendNamedHouseholds(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedUserHouseholds {
+		if err := _q.loadUserHouseholds(ctx, query, nodes,
+			func(n *User) { n.appendNamedUserHouseholds(name) },
+			func(n *User, e *UserHousehold) { n.appendNamedUserHouseholds(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range _q.loadTotal {
+		if err := _q.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -541,6 +567,9 @@ func (_q *UserQuery) loadUserHouseholds(ctx context.Context, query *UserHousehol
 
 func (_q *UserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
 		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
@@ -618,6 +647,34 @@ func (_q *UserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedHouseholds tells the query-builder to eager-load the nodes that are connected to the "households"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithNamedHouseholds(name string, opts ...func(*HouseholdQuery)) *UserQuery {
+	query := (&HouseholdClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedHouseholds == nil {
+		_q.withNamedHouseholds = make(map[string]*HouseholdQuery)
+	}
+	_q.withNamedHouseholds[name] = query
+	return _q
+}
+
+// WithNamedUserHouseholds tells the query-builder to eager-load the nodes that are connected to the "user_households"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithNamedUserHouseholds(name string, opts ...func(*UserHouseholdQuery)) *UserQuery {
+	query := (&UserHouseholdClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedUserHouseholds == nil {
+		_q.withNamedUserHouseholds = make(map[string]*UserHouseholdQuery)
+	}
+	_q.withNamedUserHouseholds[name] = query
+	return _q
 }
 
 // UserGroupBy is the group-by builder for User entities.

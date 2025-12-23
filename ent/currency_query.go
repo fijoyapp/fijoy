@@ -22,13 +22,18 @@ import (
 // CurrencyQuery is the builder for querying Currency entities.
 type CurrencyQuery struct {
 	config
-	ctx                    *QueryContext
-	order                  []currency.OrderOption
-	inters                 []Interceptor
-	predicates             []predicate.Currency
-	withAccounts           *AccountQuery
-	withTransactionEntries *TransactionEntryQuery
-	withHouseholds         *HouseholdQuery
+	ctx                         *QueryContext
+	order                       []currency.OrderOption
+	inters                      []Interceptor
+	predicates                  []predicate.Currency
+	withAccounts                *AccountQuery
+	withTransactionEntries      *TransactionEntryQuery
+	withHouseholds              *HouseholdQuery
+	modifiers                   []func(*sql.Selector)
+	loadTotal                   []func(context.Context, []*Currency) error
+	withNamedAccounts           map[string]*AccountQuery
+	withNamedTransactionEntries map[string]*TransactionEntryQuery
+	withNamedHouseholds         map[string]*HouseholdQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -458,6 +463,9 @@ func (_q *CurrencyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cur
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
@@ -487,6 +495,32 @@ func (_q *CurrencyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cur
 		if err := _q.loadHouseholds(ctx, query, nodes,
 			func(n *Currency) { n.Edges.Households = []*Household{} },
 			func(n *Currency, e *Household) { n.Edges.Households = append(n.Edges.Households, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedAccounts {
+		if err := _q.loadAccounts(ctx, query, nodes,
+			func(n *Currency) { n.appendNamedAccounts(name) },
+			func(n *Currency, e *Account) { n.appendNamedAccounts(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedTransactionEntries {
+		if err := _q.loadTransactionEntries(ctx, query, nodes,
+			func(n *Currency) { n.appendNamedTransactionEntries(name) },
+			func(n *Currency, e *TransactionEntry) { n.appendNamedTransactionEntries(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedHouseholds {
+		if err := _q.loadHouseholds(ctx, query, nodes,
+			func(n *Currency) { n.appendNamedHouseholds(name) },
+			func(n *Currency, e *Household) { n.appendNamedHouseholds(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range _q.loadTotal {
+		if err := _q.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
@@ -589,6 +623,9 @@ func (_q *CurrencyQuery) loadHouseholds(ctx context.Context, query *HouseholdQue
 
 func (_q *CurrencyQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
+	if len(_q.modifiers) > 0 {
+		_spec.Modifiers = _q.modifiers
+	}
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
 		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
@@ -666,6 +703,48 @@ func (_q *CurrencyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedAccounts tells the query-builder to eager-load the nodes that are connected to the "accounts"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *CurrencyQuery) WithNamedAccounts(name string, opts ...func(*AccountQuery)) *CurrencyQuery {
+	query := (&AccountClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedAccounts == nil {
+		_q.withNamedAccounts = make(map[string]*AccountQuery)
+	}
+	_q.withNamedAccounts[name] = query
+	return _q
+}
+
+// WithNamedTransactionEntries tells the query-builder to eager-load the nodes that are connected to the "transaction_entries"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *CurrencyQuery) WithNamedTransactionEntries(name string, opts ...func(*TransactionEntryQuery)) *CurrencyQuery {
+	query := (&TransactionEntryClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedTransactionEntries == nil {
+		_q.withNamedTransactionEntries = make(map[string]*TransactionEntryQuery)
+	}
+	_q.withNamedTransactionEntries[name] = query
+	return _q
+}
+
+// WithNamedHouseholds tells the query-builder to eager-load the nodes that are connected to the "households"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *CurrencyQuery) WithNamedHouseholds(name string, opts ...func(*HouseholdQuery)) *CurrencyQuery {
+	query := (&HouseholdClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedHouseholds == nil {
+		_q.withNamedHouseholds = make(map[string]*HouseholdQuery)
+	}
+	_q.withNamedHouseholds[name] = query
+	return _q
 }
 
 // CurrencyGroupBy is the group-by builder for Currency entities.

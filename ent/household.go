@@ -46,6 +46,13 @@ type HouseholdEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [5]bool
+	// totalCount holds the count of the edges above.
+	totalCount [5]map[string]int
+
+	namedUsers          map[string][]*User
+	namedAccounts       map[string][]*Account
+	namedTransactions   map[string][]*Transaction
+	namedUserHouseholds map[string][]*UserHousehold
 }
 
 // CurrencyOrErr returns the Currency value or an error if the edge
@@ -225,6 +232,102 @@ func (_m *Household) String() string {
 	builder.WriteString(_m.Name)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedUsers returns the Users named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Household) NamedUsers(name string) ([]*User, error) {
+	if _m.Edges.namedUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Household) appendNamedUsers(name string, edges ...*User) {
+	if _m.Edges.namedUsers == nil {
+		_m.Edges.namedUsers = make(map[string][]*User)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedUsers[name] = []*User{}
+	} else {
+		_m.Edges.namedUsers[name] = append(_m.Edges.namedUsers[name], edges...)
+	}
+}
+
+// NamedAccounts returns the Accounts named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Household) NamedAccounts(name string) ([]*Account, error) {
+	if _m.Edges.namedAccounts == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedAccounts[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Household) appendNamedAccounts(name string, edges ...*Account) {
+	if _m.Edges.namedAccounts == nil {
+		_m.Edges.namedAccounts = make(map[string][]*Account)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedAccounts[name] = []*Account{}
+	} else {
+		_m.Edges.namedAccounts[name] = append(_m.Edges.namedAccounts[name], edges...)
+	}
+}
+
+// NamedTransactions returns the Transactions named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Household) NamedTransactions(name string) ([]*Transaction, error) {
+	if _m.Edges.namedTransactions == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedTransactions[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Household) appendNamedTransactions(name string, edges ...*Transaction) {
+	if _m.Edges.namedTransactions == nil {
+		_m.Edges.namedTransactions = make(map[string][]*Transaction)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedTransactions[name] = []*Transaction{}
+	} else {
+		_m.Edges.namedTransactions[name] = append(_m.Edges.namedTransactions[name], edges...)
+	}
+}
+
+// NamedUserHouseholds returns the UserHouseholds named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Household) NamedUserHouseholds(name string) ([]*UserHousehold, error) {
+	if _m.Edges.namedUserHouseholds == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedUserHouseholds[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Household) appendNamedUserHouseholds(name string, edges ...*UserHousehold) {
+	if _m.Edges.namedUserHouseholds == nil {
+		_m.Edges.namedUserHouseholds = make(map[string][]*UserHousehold)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedUserHouseholds[name] = []*UserHousehold{}
+	} else {
+		_m.Edges.namedUserHouseholds[name] = append(_m.Edges.namedUserHouseholds[name], edges...)
+	}
 }
 
 // Households is a parsable slice of Household.

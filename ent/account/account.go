@@ -4,6 +4,8 @@ package account
 
 import (
 	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -227,4 +229,22 @@ func newTransactionEntriesStep() *sqlgraph.Step {
 		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
 	)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e Type) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *Type) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = Type(str)
+	if err := TypeValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid Type", str)
+	}
+	return nil
 }

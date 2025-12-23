@@ -4,6 +4,8 @@ package userhousehold
 
 import (
 	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -158,4 +160,22 @@ func newHouseholdStep() *sqlgraph.Step {
 		sqlgraph.To(HouseholdInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, HouseholdTable, HouseholdColumn),
 	)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e Role) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *Role) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = Role(str)
+	if err := RoleValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid Role", str)
+	}
+	return nil
 }
