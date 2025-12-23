@@ -15,7 +15,10 @@ func main() {
 		// Tell Ent to generate a GraphQL schema for
 		// the Ent schema in a file named fijoy.graphql.
 		entgql.WithSchemaGenerator(),
-		entgql.WithSchemaPath("fijoy.graphql"),
+		entgql.WithSchemaPath(
+			"fijoy.graphql",
+		),
+		entgql.WithConfigPath("gqlgen.yml"),
 	)
 	if err != nil {
 		log.Fatalf("creating entgql extension: %v", err)
