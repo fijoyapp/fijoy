@@ -16,12 +16,15 @@ import (
 
 // Balance is the resolver for the balance field.
 func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string, error) {
-	sum, err := r.entClient.TransactionEntry.Query().
+	sum, err := r.entClient.TransactionEntry.
+		Query().
 		Where(
-		transactionentry.HasAccountWith(account.IDEQ(obj.ID)),
+			transactionentry.HasAccountWith(
+				account.IDEQ(obj.ID),
+			),
 		).
 		Aggregate(
-		ent.Sum(transactionentry.FieldAmount),
+			ent.Sum(transactionentry.FieldAmount),
 		).
 		Float64(ctx)
 	if err != nil {
