@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"fijoy.app/ent"
+	"fijoy.app/ent/transaction"
 )
 
 // Node is the resolver for the node field.
@@ -38,7 +39,7 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
-	return r.entClient.Transaction.Query().All(ctx)
+	return r.entClient.Transaction.Query().Order(ent.Desc(transaction.FieldDatetime)).All(ctx)
 }
 
 // TransactionEntries is the resolver for the transactionEntries field.
