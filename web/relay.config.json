@@ -1,5 +1,5 @@
 {
   "src": "./src",
-  "schema": "../fijoy.graphql",
+  "schema": "../relay.graphql",
   "language": "typescript"
 }
