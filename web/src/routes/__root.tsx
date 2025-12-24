@@ -1,35 +1,12 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Environment, Network, FetchFunction } from 'relay-runtime'
 
-import reactRelay from 'react-relay'
-const { RelayEnvironmentProvider } = reactRelay
-
-import appCss from '../styles.css?url'
+import '../styles.css'
+import { RelayEnvironmentProvider } from 'react-relay'
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'fijoy.app',
-      },
-    ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
-  }),
-
   shellComponent: RootDocument,
 })
 
@@ -55,26 +32,18 @@ const environment = new Environment({
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <RelayEnvironmentProvider environment={environment}>
-      <html lang="en">
-        <head>
-          <HeadContent />
-        </head>
-        <body>
-          {children}
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-            ]}
-          />
-          <Scripts />
-        </body>
-      </html>
+      {children}
+      <TanStackDevtools
+        config={{
+          position: 'bottom-right',
+        }}
+        plugins={[
+          {
+            name: 'Tanstack Router',
+            render: <TanStackRouterDevtoolsPanel />,
+          },
+        ]}
+      />
     </RelayEnvironmentProvider>
   )
 }
