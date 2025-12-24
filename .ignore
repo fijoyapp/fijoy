@@ -2,6 +2,7 @@ generated.go
 
 ent/*
 !ent/schema/
+!ent/entc.go
 
 web/src/routeTree.gen.ts
 web/pnpm-lock.yaml
