@@ -1,5 +1,6 @@
 {
   "src": "./src",
   "schema": "../relay.graphql",
-  "language": "typescript"
+  "language": "typescript",
+  "eagerEsModules": true
 }

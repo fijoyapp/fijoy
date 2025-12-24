@@ -15,6 +15,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 
 	_ "github.com/lib/pq"
 	"github.com/shopspring/decimal"
@@ -49,6 +50,25 @@ func main() {
 	)
 
 	r := chi.NewRouter()
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{
+			// TODO: DO NOT HARDCODE
+			"http://localhost:5173",
+		}, // Use this to allow specific origin hosts
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+			"X-CSRF-Token",
+			"sentry-trace",
+			"baggage",
+		},
+		AllowCredentials: true,
+		MaxAge:           300, // Maximum value not ignored by any of major browsers
+		Debug:            false,
+	}))
+
 	r.Use(middleware.Logger)
 	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Handle("/query", gqlHandler)

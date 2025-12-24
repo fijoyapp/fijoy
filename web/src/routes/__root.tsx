@@ -34,7 +34,7 @@ export const Route = createRootRoute({
 })
 
 // TODO: DO NOT HARD CODE
-const HTTP_ENDPOINT = 'http://localhost:3000'
+const HTTP_ENDPOINT = 'http://localhost:3000/query'
 
 const fetchGraphQL: FetchFunction = async (request, variables) => {
   const resp = await fetch(HTTP_ENDPOINT, {
