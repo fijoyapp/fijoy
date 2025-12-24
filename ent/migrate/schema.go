@@ -94,6 +94,13 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "transaction_datetime",
+				Unique:  false,
+				Columns: []*schema.Column{TransactionsColumns[4]},
+			},
+		},
 	}
 	// TransactionEntriesColumns holds the columns for the "transaction_entries" table.
 	TransactionEntriesColumns = []*schema.Column{

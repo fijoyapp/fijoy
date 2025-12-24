@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
@@ -28,6 +29,12 @@ func (Transaction) Fields() []ent.Field {
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("transaction_entries", TransactionEntry.Type),
+	}
+}
+
+func (Transaction) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("datetime"),
 	}
 }
 
