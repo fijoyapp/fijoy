@@ -87,7 +87,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	for range 10000 {
 		t := entClient.Transaction.Create().
-			SetDatetime(time.Now().UTC()).
+			SetDatetime(genRandomDatetime()).
 			SaveX(ctx)
 		entClient.TransactionEntry.Create().
 			SetAccount(chase).
@@ -97,7 +97,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	for range 10000 {
 		t := entClient.Transaction.Create().
-			SetDatetime(time.Now().UTC()).
+			SetDatetime(genRandomDatetime()).
 			SaveX(ctx)
 		entClient.TransactionEntry.Create().
 			SetAccount(wealthsimple).
@@ -114,4 +114,8 @@ func genRandomAmount() decimal.Decimal {
 	randomInt := rand.Intn(maxInt-minInt) + minInt
 
 	return decimal.NewFromInt(int64(randomInt)).Div(decimal.NewFromInt(100))
+}
+
+func genRandomDatetime() time.Time {
+	return time.Now().Add(time.Duration(-rand.Intn(365*24)) * time.Hour).UTC()
 }
