@@ -8,7 +8,7 @@ server:
   go run ./cmd/server.go
 
 relay:
-  watchman-make -p 'ent.graphql' 'fijoy.graphql' --run '(rm relay.graphql || true) && node ./web/scripts/merge-graphql.js'
+  watchman-make -p 'ent.graphql' 'fijoy.graphql' --run '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
 
 db-up:
   docker-compose -f docker-compose.dev.yml up

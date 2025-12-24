@@ -33,6 +33,7 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 })
 
+// TODO: DO NOT HARD CODE
 const HTTP_ENDPOINT = 'https://graphql.org/graphql/'
 
 const fetchGraphQL: FetchFunction = async (request, variables) => {

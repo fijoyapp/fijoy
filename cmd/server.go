@@ -25,6 +25,7 @@ func main() {
 
 	entClient, err := ent.Open(
 		"postgres",
+		// TODO: DO NOT HARDCODE
 		"postgresql://user:password@localhost:2345/fijoy?sslmode=disable",
 	)
 	if err != nil {
