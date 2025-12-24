@@ -8,7 +8,7 @@ require (
 	github.com/99designs/gqlgen v0.17.85
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/lib/pq v1.10.9
 	github.com/shopspring/decimal v1.4.0
 	github.com/vektah/gqlparser/v2 v2.5.31
 )

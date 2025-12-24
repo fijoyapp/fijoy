@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -14,17 +15,17 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	_ "github.com/mattn/go-sqlite3"
+
+	_ "github.com/lib/pq"
 	"github.com/shopspring/decimal"
 )
 
 func main() {
 	ctx := context.Background()
 
-	// TODO: Switch to Postgres later
 	entClient, err := ent.Open(
-		"sqlite3",
-		"file:ent?mode=memory&cache=shared&_fk=1",
+		"postgres",
+		"postgresql://user:password@localhost:2345/fijoy?sslmode=disable",
 	)
 	if err != nil {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
@@ -84,20 +85,33 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetType(account.TypeLiquidity).
 		SaveX(ctx)
 
-	t1 := entClient.Transaction.Create().SetDatetime(time.Now()).SaveX(ctx)
-	entClient.TransactionEntry.Create().
-		SetAccount(chase).
-		SetTransaction(t1).SetAmount(decimal.NewFromFloat(100.00)).SaveX(ctx)
+	for range 10000 {
+		t := entClient.Transaction.Create().
+			SetDatetime(time.Now().UTC()).
+			SaveX(ctx)
+		entClient.TransactionEntry.Create().
+			SetAccount(chase).
+			SetTransaction(t).
+			SetAmount(genRandomAmount()).SaveX(ctx)
+	}
 
-	t2 := entClient.Transaction.Create().SetDatetime(time.Now()).SaveX(ctx)
-	entClient.TransactionEntry.Create().
-		SetAccount(wealthsimple).
-		SetTransaction(t2).SetAmount(decimal.NewFromFloat(200.00)).SaveX(ctx)
-
-	t3 := entClient.Transaction.Create().SetDatetime(time.Now()).SaveX(ctx)
-	entClient.TransactionEntry.Create().
-		SetAccount(chase).
-		SetTransaction(t3).SetAmount(decimal.NewFromFloat(-69.00)).SaveX(ctx)
+	for range 10000 {
+		t := entClient.Transaction.Create().
+			SetDatetime(time.Now().UTC()).
+			SaveX(ctx)
+		entClient.TransactionEntry.Create().
+			SetAccount(wealthsimple).
+			SetTransaction(t).
+			SetAmount(genRandomAmount()).SaveX(ctx)
+	}
 
 	return nil
+}
+
+func genRandomAmount() decimal.Decimal {
+	minInt := 0
+	maxInt := 10000
+	randomInt := rand.Intn(maxInt-minInt) + minInt
+
+	return decimal.NewFromInt(int64(randomInt)).Div(decimal.NewFromInt(100))
 }

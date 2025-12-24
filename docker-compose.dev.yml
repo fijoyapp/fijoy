@@ -1,0 +1,19 @@
+services:
+  fijoy-postgres:
+    image: timescale/timescaledb-ha:pg17
+    ports:
+      - 2345:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=user
+      - POSTGRES_DB=fijoy
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  fijoy-redis:
+    image: redis:8.2
+    ports:
+      - 6379:6379
+
+volumes:
+  pgdata:
