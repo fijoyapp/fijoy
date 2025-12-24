@@ -43,8 +43,6 @@ type Client struct {
 	User *UserClient
 	// UserHousehold is the client for interacting with the UserHousehold builders.
 	UserHousehold *UserHouseholdClient
-	// additional fields for node api
-	tables tables
 }
 
 // NewClient creates a new client configured with the given options.

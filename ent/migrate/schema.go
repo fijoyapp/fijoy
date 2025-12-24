@@ -3,6 +3,7 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -194,11 +195,32 @@ var (
 func init() {
 	AccountsTable.ForeignKeys[0].RefTable = CurrenciesTable
 	AccountsTable.ForeignKeys[1].RefTable = HouseholdsTable
+	AccountsTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(0),
+	}
+	CurrenciesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(4294967296),
+	}
 	HouseholdsTable.ForeignKeys[0].RefTable = CurrenciesTable
+	HouseholdsTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(8589934592),
+	}
 	TransactionsTable.ForeignKeys[0].RefTable = HouseholdsTable
+	TransactionsTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(12884901888),
+	}
 	TransactionEntriesTable.ForeignKeys[0].RefTable = AccountsTable
 	TransactionEntriesTable.ForeignKeys[1].RefTable = CurrenciesTable
 	TransactionEntriesTable.ForeignKeys[2].RefTable = TransactionsTable
+	TransactionEntriesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(17179869184),
+	}
+	UsersTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(21474836480),
+	}
 	UserHouseholdsTable.ForeignKeys[0].RefTable = UsersTable
 	UserHouseholdsTable.ForeignKeys[1].RefTable = HouseholdsTable
+	UserHouseholdsTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(25769803776),
+	}
 }

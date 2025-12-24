@@ -11,7 +11,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/shopspring/decimal v1.4.0
 	github.com/vektah/gqlparser/v2 v2.5.31
-	golang.org/x/sync v0.19.0
 )
 
 require (
@@ -38,6 +37,7 @@ require (
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
 	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30 // indirect
 	golang.org/x/mod v0.31.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	golang.org/x/tools v0.40.0 // indirect
 )

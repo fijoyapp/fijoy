@@ -4,24 +4,20 @@ package ent
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"sync"
-	"sync/atomic"
 
 	"entgo.io/contrib/entgql"
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/schema"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/internal"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/hashicorp/go-multierror"
-	"golang.org/x/sync/semaphore"
 )
 
 // Noder wraps the basic Node method.
@@ -89,6 +85,21 @@ type nodeOptions struct {
 	nodeType func(context.Context, int) (string, error)
 }
 
+// Each node has a range of 1<<32 ids. Pre-computing a map of node starting
+// value to node type ensures node type resolution happens in O(1) complexity.
+var nodeTypes = func() map[int]string {
+	var is map[string]int
+	if err := json.Unmarshal([]byte(internal.IncrementStarts), &is); err != nil {
+		panic(err)
+	}
+	// Get a map of range starting value to node type.
+	m := make(map[int]string, len(is))
+	for k, v := range is {
+		m[v] = k // ent ensures there are no duplicate starting values
+	}
+	return m
+}()
+
 func (c *Client) newNodeOpts(opts []NodeOption) *nodeOptions {
 	nopts := &nodeOptions{}
 	for _, opt := range opts {
@@ -96,7 +107,11 @@ func (c *Client) newNodeOpts(opts []NodeOption) *nodeOptions {
 	}
 	if nopts.nodeType == nil {
 		nopts.nodeType = func(ctx context.Context, id int) (string, error) {
-			return c.tables.nodeType(ctx, c.driver, id)
+			t, ok := nodeTypes[int(id/(1<<32-1))<<32]
+			if !ok {
+				return "", fmt.Errorf("cannot resolve table from id %v: %w", id, errNodeInvalidID)
+			}
+			return t, nil
 		}
 	}
 	return nopts
@@ -374,56 +389,4 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		return nil, fmt.Errorf("cannot resolve noders from table %q: %w", table, errNodeInvalidID)
 	}
 	return noders, nil
-}
-
-type tables struct {
-	once  sync.Once
-	sem   *semaphore.Weighted
-	value atomic.Value
-}
-
-func (t *tables) nodeType(ctx context.Context, drv dialect.Driver, id int) (string, error) {
-	tables, err := t.Load(ctx, drv)
-	if err != nil {
-		return "", err
-	}
-	idx := int(id / (1<<32 - 1))
-	if idx < 0 || idx >= len(tables) {
-		return "", fmt.Errorf("cannot resolve table from id %v: %w", id, errNodeInvalidID)
-	}
-	return tables[idx], nil
-}
-
-func (t *tables) Load(ctx context.Context, drv dialect.Driver) ([]string, error) {
-	if tables := t.value.Load(); tables != nil {
-		return tables.([]string), nil
-	}
-	t.once.Do(func() { t.sem = semaphore.NewWeighted(1) })
-	if err := t.sem.Acquire(ctx, 1); err != nil {
-		return nil, err
-	}
-	defer t.sem.Release(1)
-	if tables := t.value.Load(); tables != nil {
-		return tables.([]string), nil
-	}
-	tables, err := t.load(ctx, drv)
-	if err == nil {
-		t.value.Store(tables)
-	}
-	return tables, err
-}
-
-func (*tables) load(ctx context.Context, drv dialect.Driver) ([]string, error) {
-	rows := &sql.Rows{}
-	query, args := sql.Dialect(drv.Dialect()).
-		Select("type").
-		From(sql.Table(schema.TypeTable)).
-		OrderBy(sql.Asc("id")).
-		Query()
-	if err := drv.Query(ctx, query, args, rows); err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var tables []string
-	return tables, sql.ScanSlice(rows, &tables)
 }
