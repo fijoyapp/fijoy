@@ -38,7 +38,11 @@ export function NavProjects({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               render={
-                <Link {...item.link}>
+                <Link
+                  {...item.link}
+                  activeProps={{ className: 'font-semibold' }}
+                  activeOptions={{ exact: true, includeSearch: false }}
+                >
                   <item.icon />
                   <span>{item.name}</span>
                 </Link>
