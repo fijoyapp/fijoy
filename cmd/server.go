@@ -85,24 +85,44 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetType(account.TypeLiquidity).
 		SaveX(ctx)
 
-	for range 10000 {
-		t := entClient.Transaction.Create().
-			SetDatetime(genRandomDatetime()).
+	{
+		const n = 10000
+		txCreates := make([]*ent.TransactionCreate, n)
+		for i := range txCreates {
+			txCreates[i] = entClient.Transaction.Create().
+				SetDatetime(genRandomDatetime())
+		}
+		transactions := entClient.Transaction.CreateBulk(txCreates...).
 			SaveX(ctx)
-		entClient.TransactionEntry.Create().
-			SetAccount(chase).
-			SetTransaction(t).
-			SetAmount(genRandomAmount()).SaveX(ctx)
+
+		txEntryCreates := make([]*ent.TransactionEntryCreate, n)
+		for i, t := range transactions {
+			txEntryCreates[i] = entClient.TransactionEntry.Create().
+				SetAccount(chase).
+				SetTransaction(t).
+				SetAmount(genRandomAmount())
+		}
+		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
 	}
 
-	for range 10000 {
-		t := entClient.Transaction.Create().
-			SetDatetime(genRandomDatetime()).
+	{
+		const n = 10000
+		txCreates := make([]*ent.TransactionCreate, n)
+		for i := range txCreates {
+			txCreates[i] = entClient.Transaction.Create().
+				SetDatetime(genRandomDatetime())
+		}
+		transactions := entClient.Transaction.CreateBulk(txCreates...).
 			SaveX(ctx)
-		entClient.TransactionEntry.Create().
-			SetAccount(wealthsimple).
-			SetTransaction(t).
-			SetAmount(genRandomAmount()).SaveX(ctx)
+
+		txEntryCreates := make([]*ent.TransactionEntryCreate, n)
+		for i, t := range transactions {
+			txEntryCreates[i] = entClient.TransactionEntry.Create().
+				SetAccount(wealthsimple).
+				SetTransaction(t).
+				SetAmount(genRandomAmount())
+		}
+		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
 	}
 
 	return nil
