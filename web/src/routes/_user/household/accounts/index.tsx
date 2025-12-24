@@ -1,9 +1,18 @@
+import { environment } from '@/environment'
 import { createFileRoute } from '@tanstack/react-router'
-import { useLazyLoadQuery } from 'react-relay'
+import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 
 export const Route = createFileRoute('/_user/household/accounts/')({
   component: RouteComponent,
+  loader: async () => {
+    return loadQuery(
+      environment,
+      accountsQuery,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    )
+  },
 })
 
 const accountsQuery = graphql`
@@ -16,7 +25,10 @@ const accountsQuery = graphql`
 `
 
 function RouteComponent() {
-  const data = useLazyLoadQuery(accountsQuery, {})
+  const queryRef = Route.useLoaderData()
+
+  const data = usePreloadedQuery(accountsQuery, queryRef)
   console.log(data)
+
   return <div>Hello "/_user/household/accounts/"!</div>
 }
