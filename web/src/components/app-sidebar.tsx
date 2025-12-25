@@ -82,8 +82,8 @@ const projects: Array<{
 // This is sample data.
 const data = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
+    name: 'Joey',
+    email: 'joey@itsjoeoui.com',
     avatar: '/avatars/shadcn.jpg',
   },
   teams: [
