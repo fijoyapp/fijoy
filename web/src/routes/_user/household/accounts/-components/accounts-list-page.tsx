@@ -11,13 +11,22 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { ItemGroup, ItemSeparator } from '@/components/ui/item'
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemSeparator,
+  ItemTitle,
+} from '@/components/ui/item'
+import currency from 'currency.js'
 
 const AccountsListPageFragment = graphql`
   fragment accountsListPageFragment on Query {
     accounts {
       id
       type
+      balance
       ...accountCardFragment
     }
   }
@@ -35,31 +44,56 @@ export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
     [data.accounts],
   )
 
+  const netWorth = useMemo(() => {
+    return data.accounts
+      .map((account) => currency(account.balance))
+      .reduce((a, b) => a.add(b), currency(0))
+  }, [data.accounts])
+
+  const value = Intl.NumberFormat('en-CA', {
+    currency: 'CAD',
+    style: 'currency',
+  }).format(netWorth.value)
+
   return (
-    <Accordion
-      multiple
-      className="w-full"
-      defaultValue={Object.keys(groupedAccounts)}
-    >
-      {map(groupedAccounts, (accounts, type) => {
-        return (
-          <AccordionItem value={type} key={type}>
-            <AccordionTrigger>{capitalize(type)}</AccordionTrigger>
-            <AccordionContent>
-              <ItemGroup className="gap-0">
-                {accounts.map((account, index) => {
-                  return (
-                    <Fragment key={account.id}>
-                      <AccountCard fragmentRef={account} />
-                      {index !== accounts.length - 1 && <ItemSeparator />}
-                    </Fragment>
-                  )
-                })}
-              </ItemGroup>
-            </AccordionContent>
-          </AccordionItem>
-        )
-      })}
-    </Accordion>
+    <Fragment>
+      <Item
+        variant="outline"
+        render={
+          <>
+            <ItemContent>
+              <ItemDescription>Net Worth</ItemDescription>
+              <ItemTitle className="text-2xl">{value}</ItemTitle>
+            </ItemContent>
+          </>
+        }
+      />
+      <div className="py-2"></div>
+      <Accordion
+        multiple
+        className="w-full"
+        defaultValue={Object.keys(groupedAccounts)}
+      >
+        {map(groupedAccounts, (accounts, type) => {
+          return (
+            <AccordionItem value={type} key={type}>
+              <AccordionTrigger>{capitalize(type)}</AccordionTrigger>
+              <AccordionContent>
+                <ItemGroup className="gap-0">
+                  {accounts.map((account, index) => {
+                    return (
+                      <Fragment key={account.id}>
+                        <AccountCard fragmentRef={account} />
+                        {index !== accounts.length - 1 && <ItemSeparator />}
+                      </Fragment>
+                    )
+                  })}
+                </ItemGroup>
+              </AccordionContent>
+            </AccordionItem>
+          )
+        })}
+      </Accordion>
+    </Fragment>
   )
 }

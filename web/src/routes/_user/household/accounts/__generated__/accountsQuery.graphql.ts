@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<227d43a970517543fdc629fe851bb80f>>
+ * @generated SignedSource<<900cad2f0279cc12e42075abe85dce27>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -69,14 +69,14 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "name",
+            "name": "balance",
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "balance",
+            "name": "name",
             "storageKey": null
           },
           {
@@ -104,12 +104,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "60c3c700ebb681396773f9e1d8e90f6a",
+    "cacheID": "d47e0b60fa3bf9aa9d18d11760364e66",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query accountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    balance\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();
