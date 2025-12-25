@@ -1,5 +1,5 @@
 import { Environment, Network } from 'relay-runtime'
-import type { FetchFunction } from 'relay-runtime';
+import type { FetchFunction } from 'relay-runtime'
 
 // TODO: DO NOT HARD CODE
 const HTTP_ENDPOINT = 'http://localhost:3000/query'

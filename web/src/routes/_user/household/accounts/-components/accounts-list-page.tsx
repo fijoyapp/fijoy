@@ -1,6 +1,7 @@
 import { graphql } from 'relay-runtime'
 import { useFragment } from 'react-relay'
 import { capitalize, groupBy, map } from 'lodash-es'
+import { Fragment } from 'react/jsx-runtime'
 import { AccountCard } from './account-card'
 import type { accountsListPageFragment$key } from './__generated__/accountsListPageFragment.graphql'
 import {
@@ -10,7 +11,6 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { ItemGroup, ItemSeparator } from '@/components/ui/item'
-import { Fragment } from 'react/jsx-runtime'
 
 const AccountsListPageFragment = graphql`
   fragment accountsListPageFragment on Query {

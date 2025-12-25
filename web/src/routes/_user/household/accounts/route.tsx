@@ -2,13 +2,13 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
+import { Fragment } from 'react/jsx-runtime'
+import { useMemo } from 'react'
 import { AccountsListPage } from './-components/accounts-list-page'
 import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
 import { Separator } from '@/components/ui/separator'
 import { environment } from '@/environment'
 import { useScreenSize } from '@/hooks/use-screen-size'
-import { Fragment } from 'react/jsx-runtime'
-import { useMemo } from 'react'
 
 export const Route = createFileRoute('/_user/household/accounts')({
   component: RouteComponent,

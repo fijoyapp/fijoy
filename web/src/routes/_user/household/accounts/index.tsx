@@ -1,11 +1,11 @@
-import { environment } from '@/environment'
-import { useScreenSize } from '@/hooks/use-screen-size'
 import { createFileRoute } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { type accountsQuery } from './__generated__/accountsQuery.graphql'
 import { AccountsListPage } from './-components/accounts-list-page'
+import type {accountsQuery} from './__generated__/accountsQuery.graphql';
+import { useScreenSize } from '@/hooks/use-screen-size'
+import { environment } from '@/environment'
 
 export const Route = createFileRoute('/_user/household/accounts/')({
   component: RouteComponent,
