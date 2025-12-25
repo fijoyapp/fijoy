@@ -79,4 +79,9 @@ const useScreenSize = (): ComparableScreenSize => {
   return new ComparableScreenSize(screenSize)
 }
 
-export { useScreenSize }
+const useDualPaneDisplay = (): boolean => {
+  const size = useScreenSize()
+  return size.greaterThan('md')
+}
+
+export { useScreenSize, useDualPaneDisplay }

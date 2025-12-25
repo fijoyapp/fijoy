@@ -11,6 +11,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { ItemGroup, ItemSeparator } from '@/components/ui/item'
+import { useMemo } from 'react'
 
 const AccountsListPageFragment = graphql`
   fragment accountsListPageFragment on Query {
@@ -29,7 +30,10 @@ type AccountsListPageProps = {
 export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
   const data = useFragment(AccountsListPageFragment, fragmentRef)
 
-  const groupedAccounts = groupBy(data.accounts, (account) => account.type)
+  const groupedAccounts = useMemo(
+    () => groupBy(data.accounts, (account) => account.type),
+    [data.accounts],
+  )
 
   return (
     <Accordion

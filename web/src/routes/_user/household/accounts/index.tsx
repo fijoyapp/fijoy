@@ -1,11 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useMemo } from 'react'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { AccountsListPage } from './-components/accounts-list-page'
-import type {accountsQuery} from './__generated__/accountsQuery.graphql';
-import { useScreenSize } from '@/hooks/use-screen-size'
+import type { accountsQuery } from './__generated__/accountsQuery.graphql'
 import { environment } from '@/environment'
+import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 
 export const Route = createFileRoute('/_user/household/accounts/')({
   component: RouteComponent,
@@ -31,10 +30,9 @@ function RouteComponent() {
 
   const data = usePreloadedQuery<accountsQuery>(accountsQuery, queryRef)
 
-  const size = useScreenSize()
-  const displayTwoPanes = useMemo(() => size.greaterThan('md'), [size])
+  const duelPaneDisplay = useDualPaneDisplay()
 
-  if (displayTwoPanes) {
+  if (duelPaneDisplay) {
     return null
   }
 
