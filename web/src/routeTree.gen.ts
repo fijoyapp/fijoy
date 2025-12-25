@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserHouseholdRouteRouteImport } from './routes/_user/household/route'
 import { Route as UserNewIndexRouteImport } from './routes/_user/new.index'
 import { Route as UserHouseholdIndexRouteImport } from './routes/_user/household/index'
+import { Route as UserHouseholdAccountsRouteRouteImport } from './routes/_user/household/accounts/route'
 import { Route as UserHouseholdAccountsIndexRouteImport } from './routes/_user/household/accounts/index'
+import { Route as UserHouseholdAccountsAccountIdRouteImport } from './routes/_user/household/accounts/$accountId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -35,45 +37,76 @@ const UserHouseholdIndexRoute = UserHouseholdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => UserHouseholdRouteRoute,
 } as any)
+const UserHouseholdAccountsRouteRoute =
+  UserHouseholdAccountsRouteRouteImport.update({
+    id: '/accounts',
+    path: '/accounts',
+    getParentRoute: () => UserHouseholdRouteRoute,
+  } as any)
 const UserHouseholdAccountsIndexRoute =
   UserHouseholdAccountsIndexRouteImport.update({
-    id: '/accounts/',
-    path: '/accounts/',
-    getParentRoute: () => UserHouseholdRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => UserHouseholdAccountsRouteRoute,
+  } as any)
+const UserHouseholdAccountsAccountIdRoute =
+  UserHouseholdAccountsAccountIdRouteImport.update({
+    id: '/$accountId',
+    path: '/$accountId',
+    getParentRoute: () => UserHouseholdAccountsRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/household': typeof UserHouseholdRouteRouteWithChildren
+  '/household/accounts': typeof UserHouseholdAccountsRouteRouteWithChildren
   '/household/': typeof UserHouseholdIndexRoute
   '/new': typeof UserNewIndexRoute
-  '/household/accounts': typeof UserHouseholdAccountsIndexRoute
+  '/household/accounts/$accountId': typeof UserHouseholdAccountsAccountIdRoute
+  '/household/accounts/': typeof UserHouseholdAccountsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/household': typeof UserHouseholdIndexRoute
   '/new': typeof UserNewIndexRoute
+  '/household/accounts/$accountId': typeof UserHouseholdAccountsAccountIdRoute
   '/household/accounts': typeof UserHouseholdAccountsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_user/household': typeof UserHouseholdRouteRouteWithChildren
+  '/_user/household/accounts': typeof UserHouseholdAccountsRouteRouteWithChildren
   '/_user/household/': typeof UserHouseholdIndexRoute
   '/_user/new/': typeof UserNewIndexRoute
+  '/_user/household/accounts/$accountId': typeof UserHouseholdAccountsAccountIdRoute
   '/_user/household/accounts/': typeof UserHouseholdAccountsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/household' | '/household/' | '/new' | '/household/accounts'
+  fullPaths:
+    | '/'
+    | '/household'
+    | '/household/accounts'
+    | '/household/'
+    | '/new'
+    | '/household/accounts/$accountId'
+    | '/household/accounts/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/household' | '/new' | '/household/accounts'
+  to:
+    | '/'
+    | '/household'
+    | '/new'
+    | '/household/accounts/$accountId'
+    | '/household/accounts'
   id:
     | '__root__'
     | '/'
     | '/_user/household'
+    | '/_user/household/accounts'
     | '/_user/household/'
     | '/_user/new/'
+    | '/_user/household/accounts/$accountId'
     | '/_user/household/accounts/'
   fileRoutesById: FileRoutesById
 }
@@ -113,24 +146,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdIndexRouteImport
       parentRoute: typeof UserHouseholdRouteRoute
     }
-    '/_user/household/accounts/': {
-      id: '/_user/household/accounts/'
+    '/_user/household/accounts': {
+      id: '/_user/household/accounts'
       path: '/accounts'
       fullPath: '/household/accounts'
-      preLoaderRoute: typeof UserHouseholdAccountsIndexRouteImport
+      preLoaderRoute: typeof UserHouseholdAccountsRouteRouteImport
       parentRoute: typeof UserHouseholdRouteRoute
+    }
+    '/_user/household/accounts/': {
+      id: '/_user/household/accounts/'
+      path: '/'
+      fullPath: '/household/accounts/'
+      preLoaderRoute: typeof UserHouseholdAccountsIndexRouteImport
+      parentRoute: typeof UserHouseholdAccountsRouteRoute
+    }
+    '/_user/household/accounts/$accountId': {
+      id: '/_user/household/accounts/$accountId'
+      path: '/$accountId'
+      fullPath: '/household/accounts/$accountId'
+      preLoaderRoute: typeof UserHouseholdAccountsAccountIdRouteImport
+      parentRoute: typeof UserHouseholdAccountsRouteRoute
     }
   }
 }
 
-interface UserHouseholdRouteRouteChildren {
-  UserHouseholdIndexRoute: typeof UserHouseholdIndexRoute
+interface UserHouseholdAccountsRouteRouteChildren {
+  UserHouseholdAccountsAccountIdRoute: typeof UserHouseholdAccountsAccountIdRoute
   UserHouseholdAccountsIndexRoute: typeof UserHouseholdAccountsIndexRoute
 }
 
+const UserHouseholdAccountsRouteRouteChildren: UserHouseholdAccountsRouteRouteChildren =
+  {
+    UserHouseholdAccountsAccountIdRoute: UserHouseholdAccountsAccountIdRoute,
+    UserHouseholdAccountsIndexRoute: UserHouseholdAccountsIndexRoute,
+  }
+
+const UserHouseholdAccountsRouteRouteWithChildren =
+  UserHouseholdAccountsRouteRoute._addFileChildren(
+    UserHouseholdAccountsRouteRouteChildren,
+  )
+
+interface UserHouseholdRouteRouteChildren {
+  UserHouseholdAccountsRouteRoute: typeof UserHouseholdAccountsRouteRouteWithChildren
+  UserHouseholdIndexRoute: typeof UserHouseholdIndexRoute
+}
+
 const UserHouseholdRouteRouteChildren: UserHouseholdRouteRouteChildren = {
+  UserHouseholdAccountsRouteRoute: UserHouseholdAccountsRouteRouteWithChildren,
   UserHouseholdIndexRoute: UserHouseholdIndexRoute,
-  UserHouseholdAccountsIndexRoute: UserHouseholdAccountsIndexRoute,
 }
 
 const UserHouseholdRouteRouteWithChildren =

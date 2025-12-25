@@ -13,7 +13,7 @@ func (_m *Account) Household(ctx context.Context) (*Household, error) {
 	if IsNotLoaded(err) {
 		result, err = _m.QueryHousehold().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (_m *Account) Currency(ctx context.Context) (*Currency, error) {
@@ -21,7 +21,7 @@ func (_m *Account) Currency(ctx context.Context) (*Currency, error) {
 	if IsNotLoaded(err) {
 		result, err = _m.QueryCurrency().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (_m *Account) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
@@ -77,7 +77,7 @@ func (_m *Household) Currency(ctx context.Context) (*Currency, error) {
 	if IsNotLoaded(err) {
 		result, err = _m.QueryCurrency().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (_m *Household) Users(ctx context.Context) (result []*User, err error) {
@@ -145,7 +145,7 @@ func (_m *TransactionEntry) Account(ctx context.Context) (*Account, error) {
 	if IsNotLoaded(err) {
 		result, err = _m.QueryAccount().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (_m *TransactionEntry) Currency(ctx context.Context) (*Currency, error) {
@@ -153,7 +153,7 @@ func (_m *TransactionEntry) Currency(ctx context.Context) (*Currency, error) {
 	if IsNotLoaded(err) {
 		result, err = _m.QueryCurrency().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (_m *TransactionEntry) Transaction(ctx context.Context) (*Transaction, error) {
@@ -161,7 +161,7 @@ func (_m *TransactionEntry) Transaction(ctx context.Context) (*Transaction, erro
 	if IsNotLoaded(err) {
 		result, err = _m.QueryTransaction().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (_m *User) Households(ctx context.Context) (result []*Household, err error) {

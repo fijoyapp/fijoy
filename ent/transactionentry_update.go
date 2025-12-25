@@ -65,14 +65,6 @@ func (_u *TransactionEntryUpdate) SetAccountID(id int) *TransactionEntryUpdate {
 	return _u
 }
 
-// SetNillableAccountID sets the "account" edge to the Account entity by ID if the given value is not nil.
-func (_u *TransactionEntryUpdate) SetNillableAccountID(id *int) *TransactionEntryUpdate {
-	if id != nil {
-		_u = _u.SetAccountID(*id)
-	}
-	return _u
-}
-
 // SetAccount sets the "account" edge to the Account entity.
 func (_u *TransactionEntryUpdate) SetAccount(v *Account) *TransactionEntryUpdate {
 	return _u.SetAccountID(v.ID)
@@ -84,14 +76,6 @@ func (_u *TransactionEntryUpdate) SetCurrencyID(id int) *TransactionEntryUpdate 
 	return _u
 }
 
-// SetNillableCurrencyID sets the "currency" edge to the Currency entity by ID if the given value is not nil.
-func (_u *TransactionEntryUpdate) SetNillableCurrencyID(id *int) *TransactionEntryUpdate {
-	if id != nil {
-		_u = _u.SetCurrencyID(*id)
-	}
-	return _u
-}
-
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_u *TransactionEntryUpdate) SetCurrency(v *Currency) *TransactionEntryUpdate {
 	return _u.SetCurrencyID(v.ID)
@@ -100,14 +84,6 @@ func (_u *TransactionEntryUpdate) SetCurrency(v *Currency) *TransactionEntryUpda
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
 func (_u *TransactionEntryUpdate) SetTransactionID(id int) *TransactionEntryUpdate {
 	_u.mutation.SetTransactionID(id)
-	return _u
-}
-
-// SetNillableTransactionID sets the "transaction" edge to the Transaction entity by ID if the given value is not nil.
-func (_u *TransactionEntryUpdate) SetNillableTransactionID(id *int) *TransactionEntryUpdate {
-	if id != nil {
-		_u = _u.SetTransactionID(*id)
-	}
 	return _u
 }
 
@@ -175,7 +151,24 @@ func (_u *TransactionEntryUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *TransactionEntryUpdate) check() error {
+	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.account"`)
+	}
+	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.currency"`)
+	}
+	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.transaction"`)
+	}
+	return nil
+}
+
 func (_u *TransactionEntryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -333,14 +326,6 @@ func (_u *TransactionEntryUpdateOne) SetAccountID(id int) *TransactionEntryUpdat
 	return _u
 }
 
-// SetNillableAccountID sets the "account" edge to the Account entity by ID if the given value is not nil.
-func (_u *TransactionEntryUpdateOne) SetNillableAccountID(id *int) *TransactionEntryUpdateOne {
-	if id != nil {
-		_u = _u.SetAccountID(*id)
-	}
-	return _u
-}
-
 // SetAccount sets the "account" edge to the Account entity.
 func (_u *TransactionEntryUpdateOne) SetAccount(v *Account) *TransactionEntryUpdateOne {
 	return _u.SetAccountID(v.ID)
@@ -352,14 +337,6 @@ func (_u *TransactionEntryUpdateOne) SetCurrencyID(id int) *TransactionEntryUpda
 	return _u
 }
 
-// SetNillableCurrencyID sets the "currency" edge to the Currency entity by ID if the given value is not nil.
-func (_u *TransactionEntryUpdateOne) SetNillableCurrencyID(id *int) *TransactionEntryUpdateOne {
-	if id != nil {
-		_u = _u.SetCurrencyID(*id)
-	}
-	return _u
-}
-
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_u *TransactionEntryUpdateOne) SetCurrency(v *Currency) *TransactionEntryUpdateOne {
 	return _u.SetCurrencyID(v.ID)
@@ -368,14 +345,6 @@ func (_u *TransactionEntryUpdateOne) SetCurrency(v *Currency) *TransactionEntryU
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
 func (_u *TransactionEntryUpdateOne) SetTransactionID(id int) *TransactionEntryUpdateOne {
 	_u.mutation.SetTransactionID(id)
-	return _u
-}
-
-// SetNillableTransactionID sets the "transaction" edge to the Transaction entity by ID if the given value is not nil.
-func (_u *TransactionEntryUpdateOne) SetNillableTransactionID(id *int) *TransactionEntryUpdateOne {
-	if id != nil {
-		_u = _u.SetTransactionID(*id)
-	}
 	return _u
 }
 
@@ -456,7 +425,24 @@ func (_u *TransactionEntryUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *TransactionEntryUpdateOne) check() error {
+	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.account"`)
+	}
+	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.currency"`)
+	}
+	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.transaction"`)
+	}
+	return nil
+}
+
 func (_u *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *TransactionEntry, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(transactionentry.Table, transactionentry.Columns, sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {

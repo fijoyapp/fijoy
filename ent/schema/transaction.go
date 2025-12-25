@@ -70,11 +70,11 @@ func (TransactionEntry) Fields() []ent.Field {
 func (TransactionEntry) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("account", Account.Type).
-			Ref("transaction_entries").Unique(),
+			Ref("transaction_entries").Unique().Required(),
 		edge.From("currency", Currency.Type).
-			Ref("transaction_entries").Unique(),
+			Ref("transaction_entries").Unique().Required(),
 		edge.From("transaction", Transaction.Type).
-			Ref("transaction_entries").Unique(),
+			Ref("transaction_entries").Unique().Required(),
 	}
 }
 

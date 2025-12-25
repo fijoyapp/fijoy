@@ -26,7 +26,7 @@ func (Household) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("currency", Currency.Type).
 			Ref("households").
-			Unique(),
+			Unique().Required(),
 		edge.From("users", User.Type).
 			Ref("households").
 			Through("user_households", UserHousehold.Type),

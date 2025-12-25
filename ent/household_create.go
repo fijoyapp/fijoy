@@ -65,14 +65,6 @@ func (_c *HouseholdCreate) SetCurrencyID(id int) *HouseholdCreate {
 	return _c
 }
 
-// SetNillableCurrencyID sets the "currency" edge to the Currency entity by ID if the given value is not nil.
-func (_c *HouseholdCreate) SetNillableCurrencyID(id *int) *HouseholdCreate {
-	if id != nil {
-		_c = _c.SetCurrencyID(*id)
-	}
-	return _c
-}
-
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_c *HouseholdCreate) SetCurrency(v *Currency) *HouseholdCreate {
 	return _c.SetCurrencyID(v.ID)
@@ -198,6 +190,9 @@ func (_c *HouseholdCreate) check() error {
 		if err := household.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Household.name": %w`, err)}
 		}
+	}
+	if len(_c.mutation.CurrencyIDs()) == 0 {
+		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required edge "Household.currency"`)}
 	}
 	return nil
 }

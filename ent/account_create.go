@@ -69,14 +69,6 @@ func (_c *AccountCreate) SetHouseholdID(id int) *AccountCreate {
 	return _c
 }
 
-// SetNillableHouseholdID sets the "household" edge to the Household entity by ID if the given value is not nil.
-func (_c *AccountCreate) SetNillableHouseholdID(id *int) *AccountCreate {
-	if id != nil {
-		_c = _c.SetHouseholdID(*id)
-	}
-	return _c
-}
-
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *AccountCreate) SetHousehold(v *Household) *AccountCreate {
 	return _c.SetHouseholdID(v.ID)
@@ -85,14 +77,6 @@ func (_c *AccountCreate) SetHousehold(v *Household) *AccountCreate {
 // SetCurrencyID sets the "currency" edge to the Currency entity by ID.
 func (_c *AccountCreate) SetCurrencyID(id int) *AccountCreate {
 	_c.mutation.SetCurrencyID(id)
-	return _c
-}
-
-// SetNillableCurrencyID sets the "currency" edge to the Currency entity by ID if the given value is not nil.
-func (_c *AccountCreate) SetNillableCurrencyID(id *int) *AccountCreate {
-	if id != nil {
-		_c = _c.SetCurrencyID(*id)
-	}
 	return _c
 }
 
@@ -184,6 +168,12 @@ func (_c *AccountCreate) check() error {
 		if err := account.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Account.type": %w`, err)}
 		}
+	}
+	if len(_c.mutation.HouseholdIDs()) == 0 {
+		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Account.household"`)}
+	}
+	if len(_c.mutation.CurrencyIDs()) == 0 {
+		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required edge "Account.currency"`)}
 	}
 	return nil
 }

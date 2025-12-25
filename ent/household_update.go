@@ -59,14 +59,6 @@ func (_u *HouseholdUpdate) SetCurrencyID(id int) *HouseholdUpdate {
 	return _u
 }
 
-// SetNillableCurrencyID sets the "currency" edge to the Currency entity by ID if the given value is not nil.
-func (_u *HouseholdUpdate) SetNillableCurrencyID(id *int) *HouseholdUpdate {
-	if id != nil {
-		_u = _u.SetCurrencyID(*id)
-	}
-	return _u
-}
-
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_u *HouseholdUpdate) SetCurrency(v *Currency) *HouseholdUpdate {
 	return _u.SetCurrencyID(v.ID)
@@ -269,6 +261,9 @@ func (_u *HouseholdUpdate) check() error {
 		if err := household.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Household.name": %w`, err)}
 		}
+	}
+	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Household.currency"`)
 	}
 	return nil
 }
@@ -558,14 +553,6 @@ func (_u *HouseholdUpdateOne) SetCurrencyID(id int) *HouseholdUpdateOne {
 	return _u
 }
 
-// SetNillableCurrencyID sets the "currency" edge to the Currency entity by ID if the given value is not nil.
-func (_u *HouseholdUpdateOne) SetNillableCurrencyID(id *int) *HouseholdUpdateOne {
-	if id != nil {
-		_u = _u.SetCurrencyID(*id)
-	}
-	return _u
-}
-
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_u *HouseholdUpdateOne) SetCurrency(v *Currency) *HouseholdUpdateOne {
 	return _u.SetCurrencyID(v.ID)
@@ -781,6 +768,9 @@ func (_u *HouseholdUpdateOne) check() error {
 		if err := household.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Household.name": %w`, err)}
 		}
+	}
+	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Household.currency"`)
 	}
 	return nil
 }

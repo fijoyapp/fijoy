@@ -64,14 +64,6 @@ func (_c *TransactionEntryCreate) SetAccountID(id int) *TransactionEntryCreate {
 	return _c
 }
 
-// SetNillableAccountID sets the "account" edge to the Account entity by ID if the given value is not nil.
-func (_c *TransactionEntryCreate) SetNillableAccountID(id *int) *TransactionEntryCreate {
-	if id != nil {
-		_c = _c.SetAccountID(*id)
-	}
-	return _c
-}
-
 // SetAccount sets the "account" edge to the Account entity.
 func (_c *TransactionEntryCreate) SetAccount(v *Account) *TransactionEntryCreate {
 	return _c.SetAccountID(v.ID)
@@ -83,14 +75,6 @@ func (_c *TransactionEntryCreate) SetCurrencyID(id int) *TransactionEntryCreate 
 	return _c
 }
 
-// SetNillableCurrencyID sets the "currency" edge to the Currency entity by ID if the given value is not nil.
-func (_c *TransactionEntryCreate) SetNillableCurrencyID(id *int) *TransactionEntryCreate {
-	if id != nil {
-		_c = _c.SetCurrencyID(*id)
-	}
-	return _c
-}
-
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_c *TransactionEntryCreate) SetCurrency(v *Currency) *TransactionEntryCreate {
 	return _c.SetCurrencyID(v.ID)
@@ -99,14 +83,6 @@ func (_c *TransactionEntryCreate) SetCurrency(v *Currency) *TransactionEntryCrea
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
 func (_c *TransactionEntryCreate) SetTransactionID(id int) *TransactionEntryCreate {
 	_c.mutation.SetTransactionID(id)
-	return _c
-}
-
-// SetNillableTransactionID sets the "transaction" edge to the Transaction entity by ID if the given value is not nil.
-func (_c *TransactionEntryCreate) SetNillableTransactionID(id *int) *TransactionEntryCreate {
-	if id != nil {
-		_c = _c.SetTransactionID(*id)
-	}
 	return _c
 }
 
@@ -170,6 +146,15 @@ func (_c *TransactionEntryCreate) check() error {
 	}
 	if _, ok := _c.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "TransactionEntry.amount"`)}
+	}
+	if len(_c.mutation.AccountIDs()) == 0 {
+		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "TransactionEntry.account"`)}
+	}
+	if len(_c.mutation.CurrencyIDs()) == 0 {
+		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required edge "TransactionEntry.currency"`)}
+	}
+	if len(_c.mutation.TransactionIDs()) == 0 {
+		return &ValidationError{Name: "transaction", err: errors.New(`ent: missing required edge "TransactionEntry.transaction"`)}
 	}
 	return nil
 }

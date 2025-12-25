@@ -133,6 +133,12 @@ func (_u *AccountUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
 	}
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Account.household"`)
+	}
+	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Account.currency"`)
+	}
 	return nil
 }
 
@@ -335,6 +341,12 @@ func (_u *AccountUpdateOne) check() error {
 		if err := account.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Account.name": %w`, err)}
 		}
+	}
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Account.household"`)
+	}
+	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Account.currency"`)
 	}
 	return nil
 }

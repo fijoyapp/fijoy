@@ -121,6 +121,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 			txEntryCreates[i] = entClient.TransactionEntry.Create().
 				SetAccount(chase).
 				SetTransaction(t).
+				SetCurrency(usd).
 				SetAmount(genRandomAmount())
 		}
 		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
@@ -141,6 +142,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 			txEntryCreates[i] = entClient.TransactionEntry.Create().
 				SetAccount(wealthsimple).
 				SetTransaction(t).
+				SetCurrency(cad).
 				SetAmount(genRandomAmount())
 		}
 		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)

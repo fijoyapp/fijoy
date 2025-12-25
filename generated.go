@@ -926,9 +926,9 @@ func (ec *executionContext) _Account_household(ctx context.Context, field graphq
 			return obj.Household(ctx)
 		},
 		nil,
-		ec.marshalOHousehold2ᚖfijoyᚗappᚋentᚐHousehold,
+		ec.marshalNHousehold2ᚖfijoyᚗappᚋentᚐHousehold,
 		true,
-		false,
+		true,
 	)
 }
 
@@ -975,9 +975,9 @@ func (ec *executionContext) _Account_currency(ctx context.Context, field graphql
 			return obj.Currency(ctx)
 		},
 		nil,
-		ec.marshalOCurrency2ᚖfijoyᚗappᚋentᚐCurrency,
+		ec.marshalNCurrency2ᚖfijoyᚗappᚋentᚐCurrency,
 		true,
-		false,
+		true,
 	)
 }
 
@@ -1407,9 +1407,9 @@ func (ec *executionContext) _Household_currency(ctx context.Context, field graph
 			return obj.Currency(ctx)
 		},
 		nil,
-		ec.marshalOCurrency2ᚖfijoyᚗappᚋentᚐCurrency,
+		ec.marshalNCurrency2ᚖfijoyᚗappᚋentᚐCurrency,
 		true,
-		false,
+		true,
 	)
 }
 
@@ -2559,9 +2559,9 @@ func (ec *executionContext) _TransactionEntry_account(ctx context.Context, field
 			return obj.Account(ctx)
 		},
 		nil,
-		ec.marshalOAccount2ᚖfijoyᚗappᚋentᚐAccount,
+		ec.marshalNAccount2ᚖfijoyᚗappᚋentᚐAccount,
 		true,
-		false,
+		true,
 	)
 }
 
@@ -2608,9 +2608,9 @@ func (ec *executionContext) _TransactionEntry_currency(ctx context.Context, fiel
 			return obj.Currency(ctx)
 		},
 		nil,
-		ec.marshalOCurrency2ᚖfijoyᚗappᚋentᚐCurrency,
+		ec.marshalNCurrency2ᚖfijoyᚗappᚋentᚐCurrency,
 		true,
-		false,
+		true,
 	)
 }
 
@@ -2649,9 +2649,9 @@ func (ec *executionContext) _TransactionEntry_transaction(ctx context.Context, f
 			return obj.Transaction(ctx)
 		},
 		nil,
-		ec.marshalOTransaction2ᚖfijoyᚗappᚋentᚐTransaction,
+		ec.marshalNTransaction2ᚖfijoyᚗappᚋentᚐTransaction,
 		true,
-		false,
+		true,
 	)
 }
 
@@ -4701,13 +4701,16 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 		case "household":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Account_household(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -4734,13 +4737,16 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 		case "currency":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Account_currency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -5033,13 +5039,16 @@ func (ec *executionContext) _Household(ctx context.Context, sel ast.SelectionSet
 		case "currency":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Household_currency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -5665,13 +5674,16 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 		case "account":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._TransactionEntry_account(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -5698,13 +5710,16 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 		case "currency":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._TransactionEntry_currency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -5731,13 +5746,16 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 		case "transaction":
 			field := field
 
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._TransactionEntry_transaction(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -7205,13 +7223,6 @@ func (ec *executionContext) marshalOAccount2ᚕᚖfijoyᚗappᚋentᚐAccountᚄ
 	return ret
 }
 
-func (ec *executionContext) marshalOAccount2ᚖfijoyᚗappᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v *ent.Account) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Account(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -7240,13 +7251,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	_ = ctx
 	res := graphql.MarshalBoolean(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOCurrency2ᚖfijoyᚗappᚋentᚐCurrency(ctx context.Context, sel ast.SelectionSet, v *ent.Currency) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Currency(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v any) (*entgql.Cursor[int], error) {
@@ -7310,13 +7314,6 @@ func (ec *executionContext) marshalOHousehold2ᚕᚖfijoyᚗappᚋentᚐHousehol
 	}
 
 	return ret
-}
-
-func (ec *executionContext) marshalOHousehold2ᚖfijoyᚗappᚋentᚐHousehold(ctx context.Context, sel ast.SelectionSet, v *ent.Household) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Household(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalONode2fijoyᚗappᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v ent.Noder) graphql.Marshaler {
@@ -7437,13 +7434,6 @@ func (ec *executionContext) marshalOTransaction2ᚕᚖfijoyᚗappᚋentᚐTransa
 	}
 
 	return ret
-}
-
-func (ec *executionContext) marshalOTransaction2ᚖfijoyᚗappᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Transaction(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOTransactionEntry2ᚕᚖfijoyᚗappᚋentᚐTransactionEntryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.TransactionEntry) graphql.Marshaler {

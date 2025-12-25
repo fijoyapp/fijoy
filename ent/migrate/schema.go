@@ -16,8 +16,8 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
-		{Name: "currency_accounts", Type: field.TypeInt, Nullable: true},
-		{Name: "household_accounts", Type: field.TypeInt, Nullable: true},
+		{Name: "currency_accounts", Type: field.TypeInt},
+		{Name: "household_accounts", Type: field.TypeInt},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -29,13 +29,13 @@ var (
 				Symbol:     "accounts_currencies_accounts",
 				Columns:    []*schema.Column{AccountsColumns[5]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "accounts_households_accounts",
 				Columns:    []*schema.Column{AccountsColumns[6]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -56,7 +56,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "currency_households", Type: field.TypeInt, Nullable: true},
+		{Name: "currency_households", Type: field.TypeInt},
 	}
 	// HouseholdsTable holds the schema information for the "households" table.
 	HouseholdsTable = &schema.Table{
@@ -68,7 +68,7 @@ var (
 				Symbol:     "households_currencies_households",
 				Columns:    []*schema.Column{HouseholdsColumns[4]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -108,9 +108,9 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
-		{Name: "account_transaction_entries", Type: field.TypeInt, Nullable: true},
-		{Name: "currency_transaction_entries", Type: field.TypeInt, Nullable: true},
-		{Name: "transaction_transaction_entries", Type: field.TypeInt, Nullable: true},
+		{Name: "account_transaction_entries", Type: field.TypeInt},
+		{Name: "currency_transaction_entries", Type: field.TypeInt},
+		{Name: "transaction_transaction_entries", Type: field.TypeInt},
 	}
 	// TransactionEntriesTable holds the schema information for the "transaction_entries" table.
 	TransactionEntriesTable = &schema.Table{
@@ -122,19 +122,19 @@ var (
 				Symbol:     "transaction_entries_accounts_transaction_entries",
 				Columns:    []*schema.Column{TransactionEntriesColumns[4]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transaction_entries_currencies_transaction_entries",
 				Columns:    []*schema.Column{TransactionEntriesColumns[5]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "transaction_entries_transactions_transaction_entries",
 				Columns:    []*schema.Column{TransactionEntriesColumns[6]},
 				RefColumns: []*schema.Column{TransactionsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}

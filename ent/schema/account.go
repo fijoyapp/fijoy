@@ -29,10 +29,10 @@ func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("household", Household.Type).
 			Ref("accounts").
-			Unique().Immutable(),
+			Unique().Immutable().Required(),
 		edge.From("currency", Currency.Type).
 			Ref("accounts").
-			Unique().Immutable(),
+			Unique().Immutable().Required(),
 
 		edge.To("transaction_entries", TransactionEntry.Type),
 	}
