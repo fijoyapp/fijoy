@@ -10,8 +10,7 @@ import {
   WalletIcon,
 } from 'lucide-react'
 import { NavProjects } from './nav-projects'
-import type {
-  LucideIcon} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react'
 
 // import { NavMain } from '@/components/nav-main'
 import type { ValidateLinkOptions } from '@tanstack/react-router'
@@ -70,12 +69,24 @@ const projects: Array<{
 }> = [
   {
     name: 'Home',
-    link: { to: '/household' },
+    link: {
+      to: '/household',
+      activeOptions: {
+        exact: true,
+        includeSearch: false,
+      },
+    },
     icon: HomeIcon,
   },
   {
     name: 'Accounts',
-    link: { to: '/household/accounts' },
+    link: {
+      to: '/household/accounts',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+    },
     icon: WalletIcon,
   },
 ]
