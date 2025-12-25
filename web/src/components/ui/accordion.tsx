@@ -1,8 +1,8 @@
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 
-import { cn } from '@/lib/utils'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
+import { cn } from '@/lib/utils'
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (

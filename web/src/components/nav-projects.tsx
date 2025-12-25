@@ -1,4 +1,6 @@
 // import { Folder, Forward, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import type { ValidateLinkOptions } from '@tanstack/react-router';
 import type { LucideIcon } from 'lucide-react'
 
 // import {
@@ -17,7 +19,6 @@ import {
   SidebarMenuItem,
   // useSidebar,
 } from '@/components/ui/sidebar'
-import { Link, ValidateLinkOptions } from '@tanstack/react-router'
 
 export function NavProjects({
   projects,

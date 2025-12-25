@@ -1,11 +1,11 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 
-import { environment } from '@/environment'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { Separator } from '@/components/ui/separator'
 import { AccountsListPage } from './-components/accounts-list-page'
-import { type routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
+import type {routeAccountsQuery} from './__generated__/routeAccountsQuery.graphql';
+import { Separator } from '@/components/ui/separator'
+import { environment } from '@/environment'
 
 export const Route = createFileRoute('/_user/household/accounts')({
   component: RouteComponent,

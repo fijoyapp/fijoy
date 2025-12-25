@@ -4,14 +4,17 @@ import {
   Command,
   GalleryVerticalEnd,
   HomeIcon,
-  LucideIcon,
   PersonStandingIcon,
   SquareTerminal,
   UsersIcon,
   WalletIcon,
 } from 'lucide-react'
+import { NavProjects } from './nav-projects'
+import type {
+  LucideIcon} from 'lucide-react';
 
 // import { NavMain } from '@/components/nav-main'
+import type { ValidateLinkOptions } from '@tanstack/react-router'
 import { NavUser } from '@/components/nav-user'
 import { TeamSwitcher } from '@/components/team-switcher'
 import {
@@ -21,8 +24,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { ValidateLinkOptions } from '@tanstack/react-router'
-import { NavProjects } from './nav-projects'
 
 const navMain: Array<{
   title: string

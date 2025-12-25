@@ -1,7 +1,7 @@
 import { graphql } from 'relay-runtime'
 import currency from 'currency.js'
 import { useFragment } from 'react-relay'
-import { accountBalanceDisplayFragment_account$key } from './__generated__/accountBalanceDisplayFragment_account.graphql'
+import type { accountBalanceDisplayFragment_account$key } from './__generated__/accountBalanceDisplayFragment_account.graphql'
 
 const accountBalanceDisplayAccountFragment = graphql`
   fragment accountBalanceDisplayFragment_account on Account {

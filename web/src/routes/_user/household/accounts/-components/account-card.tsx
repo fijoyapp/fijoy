@@ -1,3 +1,10 @@
+import { BadgeCheckIcon, ChevronRightIcon } from 'lucide-react'
+import { graphql } from 'relay-runtime'
+import { useFragment } from 'react-relay'
+import { Link } from '@tanstack/react-router'
+import { AccountBalanceDisplay } from './account-balance-display'
+import type { accountCardFragment$key } from './__generated__/accountCardFragment.graphql'
+import { cn } from '@/lib/utils'
 import {
   Item,
   ItemActions,
@@ -6,13 +13,6 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item'
-import { BadgeCheckIcon, ChevronRightIcon } from 'lucide-react'
-import { graphql } from 'relay-runtime'
-import { accountCardFragment$key } from './__generated__/accountCardFragment.graphql'
-import { useFragment } from 'react-relay'
-import { Link } from '@tanstack/react-router'
-import { cn } from '@/lib/utils'
-import { AccountBalanceDisplay } from './account-balance-display'
 
 const accountCardFragment = graphql`
   fragment accountCardFragment on Account {

@@ -1,14 +1,14 @@
 import { graphql } from 'relay-runtime'
-import { accountsListPageFragment$key } from './__generated__/accountsListPageFragment.graphql'
+import { useFragment } from 'react-relay'
+import { capitalize, groupBy, map } from 'lodash-es'
+import { AccountCard } from './account-card'
+import type { accountsListPageFragment$key } from './__generated__/accountsListPageFragment.graphql'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { useFragment } from 'react-relay'
-import { capitalize, groupBy, map } from 'lodash-es'
-import { AccountCard } from './account-card'
 import { ItemGroup, ItemSeparator } from '@/components/ui/item'
 
 const AccountsListPageFragment = graphql`
