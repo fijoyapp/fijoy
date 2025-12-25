@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { ItemGroup, ItemSeparator } from '@/components/ui/item'
+import { Fragment } from 'react/jsx-runtime'
 
 const AccountsListPageFragment = graphql`
   fragment accountsListPageFragment on Query {
@@ -44,10 +45,10 @@ export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
               <ItemGroup className="gap-0">
                 {accounts.map((account, index) => {
                   return (
-                    <>
-                      <AccountCard key={account.id} fragmentRef={account} />
+                    <Fragment key={account.id}>
+                      <AccountCard fragmentRef={account} />
                       {index !== accounts.length - 1 && <ItemSeparator />}
-                    </>
+                    </Fragment>
                   )
                 })}
               </ItemGroup>
