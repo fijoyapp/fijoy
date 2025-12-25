@@ -12,7 +12,7 @@ import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 export const Route = createFileRoute('/_user/household/accounts')({
   component: RouteComponent,
 
-  loader: async () => {
+  loader: () => {
     return loadQuery<routeAccountsQuery>(
       environment,
       routeAccountsQuery,
