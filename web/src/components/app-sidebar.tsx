@@ -7,6 +7,7 @@ import {
   LucideIcon,
   PersonStandingIcon,
   SquareTerminal,
+  UsersIcon,
   WalletIcon,
 } from 'lucide-react'
 
@@ -87,9 +88,9 @@ const data = {
   },
   teams: [
     {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
+      name: "Joey's Household",
+      logo: UsersIcon,
+      plan: 'Free',
     },
     {
       name: 'Acme Corp.',
