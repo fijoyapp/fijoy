@@ -5,6 +5,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import '../styles.css'
 import { RelayEnvironmentProvider } from 'react-relay'
 import { environment } from '@/environment'
+import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 export const Route = createRootRoute({
   shellComponent: RootDocument,
@@ -25,6 +26,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           },
         ]}
       />
+      <TailwindIndicator />
     </RelayEnvironmentProvider>
   )
 }
