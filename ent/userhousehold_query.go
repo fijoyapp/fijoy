@@ -26,8 +26,8 @@ type UserHouseholdQuery struct {
 	predicates    []predicate.UserHousehold
 	withUser      *UserQuery
 	withHousehold *HouseholdQuery
-	modifiers     []func(*sql.Selector)
 	loadTotal     []func(context.Context, []*UserHousehold) error
+	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -303,8 +303,9 @@ func (_q *UserHouseholdQuery) Clone() *UserHouseholdQuery {
 		withUser:      _q.withUser.Clone(),
 		withHousehold: _q.withHousehold.Clone(),
 		// clone intermediate query.
-		sql:  _q.sql.Clone(),
-		path: _q.path,
+		sql:       _q.sql.Clone(),
+		path:      _q.path,
+		modifiers: append([]func(*sql.Selector){}, _q.modifiers...),
 	}
 }
 
@@ -586,6 +587,9 @@ func (_q *UserHouseholdQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range _q.modifiers {
+		m(selector)
+	}
 	for _, p := range _q.predicates {
 		p(selector)
 	}
@@ -601,6 +605,12 @@ func (_q *UserHouseholdQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (_q *UserHouseholdQuery) Modify(modifiers ...func(s *sql.Selector)) *UserHouseholdSelect {
+	_q.modifiers = append(_q.modifiers, modifiers...)
+	return _q.Select()
 }
 
 // UserHouseholdGroupBy is the group-by builder for UserHousehold entities.
@@ -691,4 +701,10 @@ func (_s *UserHouseholdSelect) sqlScan(ctx context.Context, root *UserHouseholdQ
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (_s *UserHouseholdSelect) Modify(modifiers ...func(s *sql.Selector)) *UserHouseholdSelect {
+	_s.modifiers = append(_s.modifiers, modifiers...)
+	return _s
 }

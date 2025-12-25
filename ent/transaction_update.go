@@ -19,8 +19,9 @@ import (
 // TransactionUpdate is the builder for updating Transaction entities.
 type TransactionUpdate struct {
 	config
-	hooks    []Hook
-	mutation *TransactionMutation
+	hooks     []Hook
+	mutation  *TransactionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the TransactionUpdate builder.
@@ -146,6 +147,12 @@ func (_u *TransactionUpdate) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *TransactionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransactionUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
+}
+
 func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
@@ -212,6 +219,7 @@ func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{transaction.Label}
@@ -227,9 +235,10 @@ func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 // TransactionUpdateOne is the builder for updating a single Transaction entity.
 type TransactionUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *TransactionMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *TransactionMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdateTime sets the "update_time" field.
@@ -362,6 +371,12 @@ func (_u *TransactionUpdateOne) defaults() {
 	}
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *TransactionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransactionUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
+}
+
 func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction, err error) {
 	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
@@ -445,6 +460,7 @@ func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	_node = &Transaction{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

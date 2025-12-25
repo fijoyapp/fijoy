@@ -29,8 +29,8 @@ type CurrencyQuery struct {
 	withAccounts                *AccountQuery
 	withTransactionEntries      *TransactionEntryQuery
 	withHouseholds              *HouseholdQuery
-	modifiers                   []func(*sql.Selector)
 	loadTotal                   []func(context.Context, []*Currency) error
+	modifiers                   []func(*sql.Selector)
 	withNamedAccounts           map[string]*AccountQuery
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
 	withNamedHouseholds         map[string]*HouseholdQuery
@@ -332,8 +332,9 @@ func (_q *CurrencyQuery) Clone() *CurrencyQuery {
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
 		withHouseholds:         _q.withHouseholds.Clone(),
 		// clone intermediate query.
-		sql:  _q.sql.Clone(),
-		path: _q.path,
+		sql:       _q.sql.Clone(),
+		path:      _q.path,
+		modifiers: append([]func(*sql.Selector){}, _q.modifiers...),
 	}
 }
 
@@ -688,6 +689,9 @@ func (_q *CurrencyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range _q.modifiers {
+		m(selector)
+	}
 	for _, p := range _q.predicates {
 		p(selector)
 	}
@@ -703,6 +707,12 @@ func (_q *CurrencyQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (_q *CurrencyQuery) Modify(modifiers ...func(s *sql.Selector)) *CurrencySelect {
+	_q.modifiers = append(_q.modifiers, modifiers...)
+	return _q.Select()
 }
 
 // WithNamedAccounts tells the query-builder to eager-load the nodes that are connected to the "accounts"
@@ -835,4 +845,10 @@ func (_s *CurrencySelect) sqlScan(ctx context.Context, root *CurrencyQuery, v an
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (_s *CurrencySelect) Modify(modifiers ...func(s *sql.Selector)) *CurrencySelect {
+	_s.modifiers = append(_s.modifiers, modifiers...)
+	return _s
 }

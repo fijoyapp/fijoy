@@ -18,8 +18,9 @@ import (
 // UserHouseholdUpdate is the builder for updating UserHousehold entities.
 type UserHouseholdUpdate struct {
 	config
-	hooks    []Hook
-	mutation *UserHouseholdMutation
+	hooks     []Hook
+	mutation  *UserHouseholdMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the UserHouseholdUpdate builder.
@@ -105,6 +106,12 @@ func (_u *UserHouseholdUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *UserHouseholdUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserHouseholdUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
+}
+
 func (_u *UserHouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
@@ -123,6 +130,7 @@ func (_u *UserHouseholdUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(userhousehold.FieldRole, field.TypeEnum, value)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{userhousehold.Label}
@@ -138,9 +146,10 @@ func (_u *UserHouseholdUpdate) sqlSave(ctx context.Context) (_node int, err erro
 // UserHouseholdUpdateOne is the builder for updating a single UserHousehold entity.
 type UserHouseholdUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *UserHouseholdMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *UserHouseholdMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdateTime sets the "update_time" field.
@@ -233,6 +242,12 @@ func (_u *UserHouseholdUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *UserHouseholdUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *UserHouseholdUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
+}
+
 func (_u *UserHouseholdUpdateOne) sqlSave(ctx context.Context) (_node *UserHousehold, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
@@ -268,6 +283,7 @@ func (_u *UserHouseholdUpdateOne) sqlSave(ctx context.Context) (_node *UserHouse
 	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(userhousehold.FieldRole, field.TypeEnum, value)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	_node = &UserHousehold{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

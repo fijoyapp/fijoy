@@ -25,7 +25,7 @@ func main() {
 	}
 	opts := []entc.Option{
 		entc.Extensions(ex),
-		entc.FeatureNames("sql/globalid"),
+		entc.FeatureNames("sql/globalid", "sql/modifier"),
 	}
 	if err := entc.Generate("./ent/schema", &gen.Config{}, opts...); err != nil {
 		log.Fatalf("running ent codegen: %v", err)

@@ -26,8 +26,8 @@ type TransactionQuery struct {
 	predicates                  []predicate.Transaction
 	withTransactionEntries      *TransactionEntryQuery
 	withFKs                     bool
-	modifiers                   []func(*sql.Selector)
 	loadTotal                   []func(context.Context, []*Transaction) error
+	modifiers                   []func(*sql.Selector)
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -281,8 +281,9 @@ func (_q *TransactionQuery) Clone() *TransactionQuery {
 		predicates:             append([]predicate.Transaction{}, _q.predicates...),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
 		// clone intermediate query.
-		sql:  _q.sql.Clone(),
-		path: _q.path,
+		sql:       _q.sql.Clone(),
+		path:      _q.path,
+		modifiers: append([]func(*sql.Selector){}, _q.modifiers...),
 	}
 }
 
@@ -527,6 +528,9 @@ func (_q *TransactionQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
+	for _, m := range _q.modifiers {
+		m(selector)
+	}
 	for _, p := range _q.predicates {
 		p(selector)
 	}
@@ -542,6 +546,12 @@ func (_q *TransactionQuery) sqlQuery(ctx context.Context) *sql.Selector {
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (_q *TransactionQuery) Modify(modifiers ...func(s *sql.Selector)) *TransactionSelect {
+	_q.modifiers = append(_q.modifiers, modifiers...)
+	return _q.Select()
 }
 
 // WithNamedTransactionEntries tells the query-builder to eager-load the nodes that are connected to the "transaction_entries"
@@ -646,4 +656,10 @@ func (_s *TransactionSelect) sqlScan(ctx context.Context, root *TransactionQuery
 	}
 	defer rows.Close()
 	return sql.ScanSlice(rows, v)
+}
+
+// Modify adds a query modifier for attaching custom logic to queries.
+func (_s *TransactionSelect) Modify(modifiers ...func(s *sql.Selector)) *TransactionSelect {
+	_s.modifiers = append(_s.modifiers, modifiers...)
+	return _s
 }

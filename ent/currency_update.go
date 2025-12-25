@@ -20,8 +20,9 @@ import (
 // CurrencyUpdate is the builder for updating Currency entities.
 type CurrencyUpdate struct {
 	config
-	hooks    []Hook
-	mutation *CurrencyMutation
+	hooks     []Hook
+	mutation  *CurrencyMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the CurrencyUpdate builder.
@@ -194,6 +195,12 @@ func (_u *CurrencyUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *CurrencyUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CurrencyUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
+}
+
 func (_u *CurrencyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
@@ -344,6 +351,7 @@ func (_u *CurrencyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{currency.Label}
@@ -359,9 +367,10 @@ func (_u *CurrencyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 // CurrencyUpdateOne is the builder for updating a single Currency entity.
 type CurrencyUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *CurrencyMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *CurrencyMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetCode sets the "code" field.
@@ -541,6 +550,12 @@ func (_u *CurrencyUpdateOne) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *CurrencyUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CurrencyUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
+}
+
 func (_u *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
@@ -708,6 +723,7 @@ func (_u *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	_node = &Currency{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

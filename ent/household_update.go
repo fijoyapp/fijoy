@@ -23,8 +23,9 @@ import (
 // HouseholdUpdate is the builder for updating Household entities.
 type HouseholdUpdate struct {
 	config
-	hooks    []Hook
-	mutation *HouseholdMutation
+	hooks     []Hook
+	mutation  *HouseholdMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // Where appends a list predicates to the HouseholdUpdate builder.
@@ -268,6 +269,12 @@ func (_u *HouseholdUpdate) check() error {
 	return nil
 }
 
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *HouseholdUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *HouseholdUpdate {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
+}
+
 func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
@@ -507,6 +514,7 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{household.Label}
@@ -522,9 +530,10 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 // HouseholdUpdateOne is the builder for updating a single Household entity.
 type HouseholdUpdateOne struct {
 	config
-	fields   []string
-	hooks    []Hook
-	mutation *HouseholdMutation
+	fields    []string
+	hooks     []Hook
+	mutation  *HouseholdMutation
+	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdateTime sets the "update_time" field.
@@ -773,6 +782,12 @@ func (_u *HouseholdUpdateOne) check() error {
 		return errors.New(`ent: clearing a required unique edge "Household.currency"`)
 	}
 	return nil
+}
+
+// Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
+func (_u *HouseholdUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *HouseholdUpdateOne {
+	_u.modifiers = append(_u.modifiers, modifiers...)
+	return _u
 }
 
 func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, err error) {
@@ -1031,6 +1046,7 @@ func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, er
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.AddModifiers(_u.modifiers...)
 	_node = &Household{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

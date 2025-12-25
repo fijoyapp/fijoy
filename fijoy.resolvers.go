@@ -8,8 +8,10 @@ package fijoy
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
 	"fijoy.app/ent"
 	"fijoy.app/ent/account"
+
 	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
 )
@@ -23,10 +25,9 @@ func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string
 				account.IDEQ(obj.ID),
 			),
 		).
-		Aggregate(
-			ent.Sum(transactionentry.FieldAmount),
-		).
-		Float64(ctx)
+		Modify(func(s *sql.Selector) {
+			s.Select("COALESCE(SUM(amount), 0)")
+		}).Float64(ctx)
 	if err != nil {
 		return "", err
 	}
