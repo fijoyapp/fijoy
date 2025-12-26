@@ -1,10 +1,10 @@
-import { PendingComponent } from '@/components/pending-component'
-import { environment } from '@/environment'
 import { createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { type AccountIdQuery } from './__generated__/AccountIdQuery.graphql'
 import { TransactionsList } from '../transactions/-components/transactions-list'
+import type {AccountIdQuery} from './__generated__/AccountIdQuery.graphql';
+import { environment } from '@/environment'
+import { PendingComponent } from '@/components/pending-component'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/accounts/$accountId',

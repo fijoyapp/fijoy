@@ -3,7 +3,9 @@ import { useFragment } from 'react-relay'
 import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
+import currency from 'currency.js'
 import { AccountCard } from './account-card'
+import type { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
 import {
   Accordion,
   AccordionContent,
@@ -18,9 +20,7 @@ import {
   ItemSeparator,
   ItemTitle,
 } from '@/components/ui/item'
-import currency from 'currency.js'
 import { useCurrency } from '@/hooks/use-currency'
-import { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query {

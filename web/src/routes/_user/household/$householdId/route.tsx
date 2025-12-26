@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { AppSidebar } from '@/components/app-sidebar'
 import {
   Breadcrumb,
@@ -15,7 +16,6 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 
 export const Route = createFileRoute('/_user/household/$householdId')({

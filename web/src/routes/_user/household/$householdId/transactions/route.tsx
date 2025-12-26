@@ -1,13 +1,13 @@
-import { PendingComponent } from '@/components/pending-component'
-import { environment } from '@/environment'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { type routeTransactionsQuery } from './__generated__/routeTransactionsQuery.graphql'
-import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { Fragment } from 'react/jsx-runtime'
-import { Separator } from '@/components/ui/separator'
 import { TransactionsPanel } from './-components/transactions-panel'
+import type {routeTransactionsQuery} from './__generated__/routeTransactionsQuery.graphql';
+import { useDualPaneDisplay } from '@/hooks/use-screen-size'
+import { Separator } from '@/components/ui/separator'
+import { environment } from '@/environment'
+import { PendingComponent } from '@/components/pending-component'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions',

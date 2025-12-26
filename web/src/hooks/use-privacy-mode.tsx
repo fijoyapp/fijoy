@@ -1,9 +1,9 @@
 import React, {
   createContext,
   useContext,
-  useState,
   useEffect,
   useMemo,
+  useState,
 } from 'react'
 
 type PrivacyModeContextType = {

@@ -1,7 +1,7 @@
 import { graphql } from 'relay-runtime'
-import { transactionsPanelFragment$key } from './__generated__/transactionsPanelFragment.graphql'
-import { TransactionsList } from './transactions-list'
 import { useFragment } from 'react-relay'
+import { TransactionsList } from './transactions-list'
+import type { transactionsPanelFragment$key } from './__generated__/transactionsPanelFragment.graphql'
 
 const transactionsPanelFragment = graphql`
   fragment transactionsPanelFragment on Query {

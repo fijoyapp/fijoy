@@ -1,8 +1,8 @@
 import { useLazyLoadQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { type useCurrencyQuery } from './__generated__/useCurrencyQuery.graphql'
 import currency from 'currency.js'
 import { usePrivacyMode } from './use-privacy-mode'
+import type {useCurrencyQuery} from './__generated__/useCurrencyQuery.graphql';
 
 const useCurrencyQuery = graphql`
   query useCurrencyQuery {

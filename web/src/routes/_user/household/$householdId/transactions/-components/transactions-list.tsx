@@ -1,11 +1,11 @@
 import { graphql } from 'relay-runtime'
-import { transactionsListFragment$key } from './__generated__/transactionsListFragment.graphql'
 
 import { usePaginationFragment } from 'react-relay'
 import { useInView } from 'react-intersection-observer'
 import { Fragment } from 'react/jsx-runtime'
-import { TransactionCard } from './transaction-card'
 import { useEffect } from 'react'
+import { TransactionCard } from './transaction-card'
+import type { transactionsListFragment$key } from './__generated__/transactionsListFragment.graphql'
 import { ItemGroup } from '@/components/ui/item'
 
 const transactionsListFragment = graphql`

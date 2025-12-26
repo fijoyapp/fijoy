@@ -1,6 +1,6 @@
 import { graphql } from 'relay-runtime'
-import { transactionDetailFragment$key } from './__generated__/transactionDetailFragment.graphql'
 import { useFragment } from 'react-relay'
+import type { transactionDetailFragment$key } from './__generated__/transactionDetailFragment.graphql'
 import {
   Card,
   CardAction,
