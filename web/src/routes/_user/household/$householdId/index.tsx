@@ -1,9 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_user/household/$householdId/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  return <div>Hello "/_user/household/$householdId/"!</div>
+  return (
+    <Navigate
+      from="/household/$householdId"
+      to="/household/$householdId/transactions"
+    />
+  )
 }
