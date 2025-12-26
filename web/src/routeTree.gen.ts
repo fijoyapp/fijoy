@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserHouseholdRouteRouteImport } from './routes/_user/household/route'
 import { Route as UserNewIndexRouteImport } from './routes/_user/new.index'
 import { Route as UserHouseholdIndexRouteImport } from './routes/_user/household/index'
+import { Route as UserHouseholdInvestmentsRouteRouteImport } from './routes/_user/household/investments/route'
 import { Route as UserHouseholdAccountsRouteRouteImport } from './routes/_user/household/accounts/route'
+import { Route as UserHouseholdInvestmentsIndexRouteImport } from './routes/_user/household/investments/index'
 import { Route as UserHouseholdAccountsIndexRouteImport } from './routes/_user/household/accounts/index'
 import { Route as UserHouseholdAccountsAccountIdRouteImport } from './routes/_user/household/accounts/$accountId'
 
@@ -37,11 +39,23 @@ const UserHouseholdIndexRoute = UserHouseholdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => UserHouseholdRouteRoute,
 } as any)
+const UserHouseholdInvestmentsRouteRoute =
+  UserHouseholdInvestmentsRouteRouteImport.update({
+    id: '/investments',
+    path: '/investments',
+    getParentRoute: () => UserHouseholdRouteRoute,
+  } as any)
 const UserHouseholdAccountsRouteRoute =
   UserHouseholdAccountsRouteRouteImport.update({
     id: '/accounts',
     path: '/accounts',
     getParentRoute: () => UserHouseholdRouteRoute,
+  } as any)
+const UserHouseholdInvestmentsIndexRoute =
+  UserHouseholdInvestmentsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => UserHouseholdInvestmentsRouteRoute,
   } as any)
 const UserHouseholdAccountsIndexRoute =
   UserHouseholdAccountsIndexRouteImport.update({
@@ -60,10 +74,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/household': typeof UserHouseholdRouteRouteWithChildren
   '/household/accounts': typeof UserHouseholdAccountsRouteRouteWithChildren
+  '/household/investments': typeof UserHouseholdInvestmentsRouteRouteWithChildren
   '/household/': typeof UserHouseholdIndexRoute
   '/new': typeof UserNewIndexRoute
   '/household/accounts/$accountId': typeof UserHouseholdAccountsAccountIdRoute
   '/household/accounts/': typeof UserHouseholdAccountsIndexRoute
+  '/household/investments/': typeof UserHouseholdInvestmentsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -71,16 +87,19 @@ export interface FileRoutesByTo {
   '/new': typeof UserNewIndexRoute
   '/household/accounts/$accountId': typeof UserHouseholdAccountsAccountIdRoute
   '/household/accounts': typeof UserHouseholdAccountsIndexRoute
+  '/household/investments': typeof UserHouseholdInvestmentsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_user/household': typeof UserHouseholdRouteRouteWithChildren
   '/_user/household/accounts': typeof UserHouseholdAccountsRouteRouteWithChildren
+  '/_user/household/investments': typeof UserHouseholdInvestmentsRouteRouteWithChildren
   '/_user/household/': typeof UserHouseholdIndexRoute
   '/_user/new/': typeof UserNewIndexRoute
   '/_user/household/accounts/$accountId': typeof UserHouseholdAccountsAccountIdRoute
   '/_user/household/accounts/': typeof UserHouseholdAccountsIndexRoute
+  '/_user/household/investments/': typeof UserHouseholdInvestmentsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,10 +107,12 @@ export interface FileRouteTypes {
     | '/'
     | '/household'
     | '/household/accounts'
+    | '/household/investments'
     | '/household/'
     | '/new'
     | '/household/accounts/$accountId'
     | '/household/accounts/'
+    | '/household/investments/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,15 +120,18 @@ export interface FileRouteTypes {
     | '/new'
     | '/household/accounts/$accountId'
     | '/household/accounts'
+    | '/household/investments'
   id:
     | '__root__'
     | '/'
     | '/_user/household'
     | '/_user/household/accounts'
+    | '/_user/household/investments'
     | '/_user/household/'
     | '/_user/new/'
     | '/_user/household/accounts/$accountId'
     | '/_user/household/accounts/'
+    | '/_user/household/investments/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -146,12 +170,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdIndexRouteImport
       parentRoute: typeof UserHouseholdRouteRoute
     }
+    '/_user/household/investments': {
+      id: '/_user/household/investments'
+      path: '/investments'
+      fullPath: '/household/investments'
+      preLoaderRoute: typeof UserHouseholdInvestmentsRouteRouteImport
+      parentRoute: typeof UserHouseholdRouteRoute
+    }
     '/_user/household/accounts': {
       id: '/_user/household/accounts'
       path: '/accounts'
       fullPath: '/household/accounts'
       preLoaderRoute: typeof UserHouseholdAccountsRouteRouteImport
       parentRoute: typeof UserHouseholdRouteRoute
+    }
+    '/_user/household/investments/': {
+      id: '/_user/household/investments/'
+      path: '/'
+      fullPath: '/household/investments/'
+      preLoaderRoute: typeof UserHouseholdInvestmentsIndexRouteImport
+      parentRoute: typeof UserHouseholdInvestmentsRouteRoute
     }
     '/_user/household/accounts/': {
       id: '/_user/household/accounts/'
@@ -186,13 +224,30 @@ const UserHouseholdAccountsRouteRouteWithChildren =
     UserHouseholdAccountsRouteRouteChildren,
   )
 
+interface UserHouseholdInvestmentsRouteRouteChildren {
+  UserHouseholdInvestmentsIndexRoute: typeof UserHouseholdInvestmentsIndexRoute
+}
+
+const UserHouseholdInvestmentsRouteRouteChildren: UserHouseholdInvestmentsRouteRouteChildren =
+  {
+    UserHouseholdInvestmentsIndexRoute: UserHouseholdInvestmentsIndexRoute,
+  }
+
+const UserHouseholdInvestmentsRouteRouteWithChildren =
+  UserHouseholdInvestmentsRouteRoute._addFileChildren(
+    UserHouseholdInvestmentsRouteRouteChildren,
+  )
+
 interface UserHouseholdRouteRouteChildren {
   UserHouseholdAccountsRouteRoute: typeof UserHouseholdAccountsRouteRouteWithChildren
+  UserHouseholdInvestmentsRouteRoute: typeof UserHouseholdInvestmentsRouteRouteWithChildren
   UserHouseholdIndexRoute: typeof UserHouseholdIndexRoute
 }
 
 const UserHouseholdRouteRouteChildren: UserHouseholdRouteRouteChildren = {
   UserHouseholdAccountsRouteRoute: UserHouseholdAccountsRouteRouteWithChildren,
+  UserHouseholdInvestmentsRouteRoute:
+    UserHouseholdInvestmentsRouteRouteWithChildren,
   UserHouseholdIndexRoute: UserHouseholdIndexRoute,
 }
 

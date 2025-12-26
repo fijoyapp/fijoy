@@ -1,6 +1,8 @@
 import * as React from 'react'
 import {
   AudioWaveform,
+  CandlestickChartIcon,
+  ChartNoAxesCombinedIcon,
   Command,
   GalleryVerticalEnd,
   HomeIcon,
@@ -58,6 +60,10 @@ const navMain: Array<{
         title: 'Accounts',
         link: { to: '/household/accounts' },
       },
+      {
+        title: 'Investments',
+        link: { to: '/household/investments' },
+      },
     ],
   },
 ]
@@ -88,6 +94,17 @@ const projects: Array<{
       },
     },
     icon: WalletIcon,
+  },
+  {
+    name: 'Investments',
+    link: {
+      to: '/household/investments',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+    },
+    icon: ChartNoAxesCombinedIcon,
   },
 ]
 
