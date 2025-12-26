@@ -49,7 +49,7 @@ function RouteComponent() {
             <AccountsPanel fragmentRef={data} />
           </div>
           <Separator orientation="vertical" className="w-px" />
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto p-4" key={location.pathname}>
             <Outlet />
           </div>
         </div>
