@@ -5,6 +5,9 @@ package ent
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"strconv"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
@@ -1054,6 +1057,53 @@ func (_m *TransactionQuery) Paginate(
 	}
 	conn.build(nodes, pager, after, first, before, last)
 	return conn, nil
+}
+
+var (
+	// TransactionOrderFieldDatetime orders Transaction by datetime.
+	TransactionOrderFieldDatetime = &TransactionOrderField{
+		Value: func(_m *Transaction) (ent.Value, error) {
+			return _m.Datetime, nil
+		},
+		column: transaction.FieldDatetime,
+		toTerm: transaction.ByDatetime,
+		toCursor: func(_m *Transaction) Cursor {
+			return Cursor{
+				ID:    _m.ID,
+				Value: _m.Datetime,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TransactionOrderField) String() string {
+	var str string
+	switch f.column {
+	case TransactionOrderFieldDatetime.column:
+		str = "DATETIME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TransactionOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TransactionOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TransactionOrderField %T must be a string", v)
+	}
+	switch str {
+	case "DATETIME":
+		*f = *TransactionOrderFieldDatetime
+	default:
+		return fmt.Errorf("%s is not a valid TransactionOrderField", str)
+	}
+	return nil
 }
 
 // TransactionOrderField defines the ordering field of Transaction.

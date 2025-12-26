@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 
+	"entgo.io/contrib/entgql"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
@@ -462,6 +463,28 @@ func newTransactionPaginateArgs(rv map[string]any) *transactionPaginateArgs {
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case map[string]any:
+			var (
+				err1, err2 error
+				order      = &TransactionOrder{Field: &TransactionOrderField{}, Direction: entgql.OrderDirectionAsc}
+			)
+			if d, ok := v[directionField]; ok {
+				err1 = order.Direction.UnmarshalGQL(d)
+			}
+			if f, ok := v[fieldField]; ok {
+				err2 = order.Field.UnmarshalGQL(f)
+			}
+			if err1 == nil && err2 == nil {
+				args.opts = append(args.opts, WithTransactionOrder(order))
+			}
+		case *TransactionOrder:
+			if v != nil {
+				args.opts = append(args.opts, WithTransactionOrder(v))
+			}
+		}
 	}
 	return args
 }

@@ -7,6 +7,7 @@ import { type routeTransactionsQuery } from './__generated__/routeTransactionsQu
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { Fragment } from 'react/jsx-runtime'
 import { Separator } from '@/components/ui/separator'
+import { TransactionsPanel } from './-components/transactions-panel'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions',
@@ -25,9 +26,7 @@ export const Route = createFileRoute(
 
 const routeTransactionsQuery = graphql`
   query routeTransactionsQuery {
-    transactions {
-      id
-    }
+    ...transactionsPanelFragment
   }
 `
 
@@ -46,7 +45,7 @@ function RouteComponent() {
       {duelPaneDisplay ? (
         <div className="flex h-full">
           <div className="flex-1 p-4">
-            {/* <AccountsListPage fragmentRef={data} /> */}
+            <TransactionsPanel fragmentRef={data} />
           </div>
           <Separator orientation="vertical" className="w-px" />
           <div className="flex-1 p-4">

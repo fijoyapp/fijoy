@@ -43,9 +43,9 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	if err := seed(ctx, entClient); err != nil {
-		log.Fatalf("failed seeding database: %v", err)
-	}
+	// if err := seed(ctx, entClient); err != nil {
+	// 	log.Fatalf("failed seeding database: %v", err)
+	// }
 
 	log.Println("migration completed successfully")
 

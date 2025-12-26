@@ -8,8 +8,8 @@ package fijoy
 import (
 	"context"
 
+	"entgo.io/contrib/entgql"
 	"fijoy.app/ent"
-	"fijoy.app/ent/transaction"
 )
 
 // Node is the resolver for the node field.
@@ -38,8 +38,8 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 }
 
 // Transactions is the resolver for the transactions field.
-func (r *queryResolver) Transactions(ctx context.Context) ([]*ent.Transaction, error) {
-	return r.entClient.Transaction.Query().Order(ent.Desc(transaction.FieldDatetime)).All(ctx)
+func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder) (*ent.TransactionConnection, error) {
+	return r.entClient.Transaction.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionOrder(orderBy))
 }
 
 // TransactionEntries is the resolver for the transactionEntries field.

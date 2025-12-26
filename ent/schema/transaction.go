@@ -21,7 +21,10 @@ type Transaction struct {
 func (Transaction) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("description").Optional(),
-		field.Time("datetime"),
+		field.Time("datetime").
+			Annotations(
+				entgql.OrderField("DATETIME"),
+			),
 	}
 }
 
@@ -40,6 +43,7 @@ func (Transaction) Indexes() []ent.Index {
 
 func (Transaction) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		entgql.RelayConnection(),
 		entgql.QueryField(),
 	}
 }

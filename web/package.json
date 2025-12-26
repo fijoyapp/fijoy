@@ -30,6 +30,7 @@
     "nitro": "latest",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-intersection-observer": "^10.0.0",
     "react-relay": "^20.1.1",
     "relay-runtime": "^20.1.1",
     "shadcn": "^3.6.2",

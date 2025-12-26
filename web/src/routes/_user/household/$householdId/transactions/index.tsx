@@ -5,6 +5,7 @@ import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { type transactionsQuery } from './__generated__/transactionsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
+import { TransactionsPanel } from './-components/transactions-panel'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions/',
@@ -25,9 +26,7 @@ export const Route = createFileRoute(
 
 const transactionsQuery = graphql`
   query transactionsQuery {
-    transactions {
-      id
-    }
+    ...transactionsPanelFragment
   }
 `
 
@@ -45,7 +44,7 @@ function RouteComponent() {
   return (
     <div className="flex h-full">
       <div className="flex-1">
-        {/* <AccountsListPage fragmentRef={data} /> */}
+        <TransactionsPanel fragmentRef={data} />
       </div>
     </div>
   )
