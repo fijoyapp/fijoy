@@ -55,19 +55,14 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   return (
     <Fragment>
-      <Item
-        variant="outline"
-        render={
-          <>
-            <ItemContent>
-              <ItemDescription>Net Worth</ItemDescription>
-              <ItemTitle className="text-2xl">
-                {formatCurrencyWithPrivacyMode(netWorth, 'CAD')}
-              </ItemTitle>
-            </ItemContent>
-          </>
-        }
-      />
+      <Item variant="outline">
+        <ItemContent>
+          <ItemDescription>Net Worth</ItemDescription>
+          <ItemTitle className="text-2xl">
+            {formatCurrencyWithPrivacyMode(netWorth, 'CAD')}
+          </ItemTitle>
+        </ItemContent>
+      </Item>
       <div className="py-2"></div>
       <Accordion
         multiple
