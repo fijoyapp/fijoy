@@ -18,6 +18,7 @@ import (
 
 // Balance is the resolver for the balance field.
 func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string, error) {
+	// TODO: should just write a trigger for this
 	sum, err := r.entClient.TransactionEntry.
 		Query().
 		Where(
@@ -33,6 +34,45 @@ func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string
 	}
 
 	return decimal.NewFromFloat(sum).String(), nil
+}
+
+// BalanceInHouseholdCurrency is the resolver for the balanceInHouseholdCurrency field.
+func (r *accountResolver) BalanceInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error) {
+	// TODO: should load the balance from the balance field instead of recalculating
+	sum, err := r.entClient.TransactionEntry.
+		Query().
+		Where(
+			transactionentry.HasAccountWith(
+				account.IDEQ(obj.ID),
+			),
+		).
+		Modify(func(s *sql.Selector) {
+			s.Select("COALESCE(SUM(amount), 0)")
+		}).Float64(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	accountCurrency, err := obj.QueryCurrency().Only(ctx)
+	if err != nil {
+		return "", err
+	}
+	householdCurrency, err := obj.QueryHousehold().QueryCurrency().Only(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	fxRate, err := r.fxrateClient.GetRate(
+		ctx,
+		accountCurrency.Code,
+		householdCurrency.Code,
+		time.Now(),
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return decimal.NewFromFloat(sum).Mul(fxRate).String(), nil
 }
 
 // FxRate is the resolver for the fxRate field.

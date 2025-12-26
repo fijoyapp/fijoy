@@ -53,15 +53,16 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Account struct {
-		Balance            func(childComplexity int) int
-		CreateTime         func(childComplexity int) int
-		Currency           func(childComplexity int) int
-		Household          func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Name               func(childComplexity int) int
-		TransactionEntries func(childComplexity int) int
-		Type               func(childComplexity int) int
-		UpdateTime         func(childComplexity int) int
+		Balance                    func(childComplexity int) int
+		BalanceInHouseholdCurrency func(childComplexity int) int
+		CreateTime                 func(childComplexity int) int
+		Currency                   func(childComplexity int) int
+		Household                  func(childComplexity int) int
+		ID                         func(childComplexity int) int
+		Name                       func(childComplexity int) int
+		TransactionEntries         func(childComplexity int) int
+		Type                       func(childComplexity int) int
+		UpdateTime                 func(childComplexity int) int
 	}
 
 	Currency struct {
@@ -146,6 +147,7 @@ type ComplexityRoot struct {
 
 type AccountResolver interface {
 	Balance(ctx context.Context, obj *ent.Account) (string, error)
+	BalanceInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error)
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
@@ -188,6 +190,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Account.Balance(childComplexity), true
+	case "Account.balanceInHouseholdCurrency":
+		if e.complexity.Account.BalanceInHouseholdCurrency == nil {
+			break
+		}
+
+		return e.complexity.Account.BalanceInHouseholdCurrency(childComplexity), true
 	case "Account.createTime":
 		if e.complexity.Account.CreateTime == nil {
 			break
@@ -1114,6 +1122,35 @@ func (ec *executionContext) fieldContext_Account_balance(_ context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Account_balanceInHouseholdCurrency(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Account_balanceInHouseholdCurrency,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Account().BalanceInHouseholdCurrency(ctx, obj)
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Account_balanceInHouseholdCurrency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Currency_id(ctx context.Context, field graphql.CollectedField, obj *ent.Currency) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -1214,6 +1251,8 @@ func (ec *executionContext) fieldContext_Currency_accounts(_ context.Context, fi
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
+			case "balanceInHouseholdCurrency":
+				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -1557,6 +1596,8 @@ func (ec *executionContext) fieldContext_Household_accounts(_ context.Context, f
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
+			case "balanceInHouseholdCurrency":
+				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -1894,6 +1935,8 @@ func (ec *executionContext) fieldContext_Query_accounts(_ context.Context, field
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
+			case "balanceInHouseholdCurrency":
+				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -2666,6 +2709,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
+			case "balanceInHouseholdCurrency":
+				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 		},
@@ -4888,6 +4933,42 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 					}
 				}()
 				res = ec._Account_balance(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "balanceInHouseholdCurrency":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Account_balanceInHouseholdCurrency(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

@@ -20,6 +20,7 @@ type Account implements Node {
   currency: Currency!
   transactionEntries: [TransactionEntry!]
   balance: String!
+  balanceInHouseholdCurrency: String!
 }
 
 """
