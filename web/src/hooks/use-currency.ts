@@ -2,7 +2,7 @@ import { useLazyLoadQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import currency from 'currency.js'
 import { usePrivacyMode } from './use-privacy-mode'
-import type {useCurrencyQuery} from './__generated__/useCurrencyQuery.graphql';
+import type { useCurrencyQuery } from './__generated__/useCurrencyQuery.graphql'
 
 const useCurrencyQuery = graphql`
   query useCurrencyQuery {
@@ -33,7 +33,6 @@ export function useCurrency() {
         ? currency(currencyValue)
         : currencyValue
 
-    // TODO: DO NOT HARD CODE LOCALE
     const value = Intl.NumberFormat(defaultLocale, {
       currency: currencyCode,
       style: 'currency',
@@ -55,7 +54,6 @@ export function useCurrency() {
         ? currency(currencyValue)
         : currencyValue
 
-    // TODO: DO NOT HARD CODE LOCALE
     const value = Intl.NumberFormat(defaultLocale, {
       currency: currencyCode,
       style: 'currency',
