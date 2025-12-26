@@ -133,6 +133,7 @@ type Query {
   transactionEntries: [TransactionEntry!]!
   users: [User!]!
   userHouseholds: [UserHousehold!]!
+  fxRate(from: String!, to: String!, datetime: DateTime!): String!
 }
 
 """
@@ -186,6 +187,8 @@ enum UserHouseholdRole @goModel(model: "fijoy.app/ent/userhousehold.Role") {
   admin
   member
 }
+
+scalar DateTime
 
 schema {
   query: Query

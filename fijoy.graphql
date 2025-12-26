@@ -1,3 +1,9 @@
 extend type Account {
   balance: String!
 }
+
+scalar DateTime
+
+extend type Query {
+  fxRate(from: String!, to: String!, datetime: DateTime!): String!
+}

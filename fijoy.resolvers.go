@@ -7,11 +7,11 @@ package fijoy
 
 import (
 	"context"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"fijoy.app/ent"
 	"fijoy.app/ent/account"
-
 	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
 )
@@ -33,4 +33,19 @@ func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string
 	}
 
 	return decimal.NewFromFloat(sum).String(), nil
+}
+
+// FxRate is the resolver for the fxRate field.
+func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime string) (string, error) {
+	datetimeParsed, err := time.Parse(time.RFC3339, datetime)
+	if err != nil {
+		return "", err
+	}
+
+	rate, err := r.fxrateClient.GetRate(ctx, from, to, datetimeParsed)
+	if err != nil {
+		return "", err
+	}
+
+	return rate.String(), nil
 }

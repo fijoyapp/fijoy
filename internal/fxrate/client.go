@@ -10,7 +10,11 @@ import (
 // ExchangeRateProvider defines the interface for any exchange rate data source.
 // Implementations of this interface will fetch exchange rate data from specific APIs.
 type ExchangeRateProvider interface {
-	GetRate(ctx context.Context, fromCurrency, toCurrency string, date time.Time) (decimal.Decimal, error)
+	GetRate(
+		ctx context.Context,
+		fromCurrency, toCurrency string,
+		datetime time.Time,
+	) (decimal.Decimal, error)
 }
 
 // Client provides an API-agnostic way to retrieve exchange rates.
@@ -26,6 +30,10 @@ func NewClient(provider ExchangeRateProvider) *Client {
 }
 
 // GetRate retrieves the exchange rate for a given currency pair and date using the configured provider.
-func (c *Client) GetRate(ctx context.Context, fromCurrency, toCurrency string, date time.Time) (decimal.Decimal, error) {
-	return c.provider.GetRate(ctx, fromCurrency, toCurrency, date)
+func (c *Client) GetRate(
+	ctx context.Context,
+	fromCurrency, toCurrency string,
+	datetime time.Time,
+) (decimal.Decimal, error) {
+	return c.provider.GetRate(ctx, fromCurrency, toCurrency, datetime.UTC())
 }

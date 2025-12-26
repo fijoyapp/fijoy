@@ -25,9 +25,18 @@ func NewFrankfurterProvider() *FrankfurterProvider {
 }
 
 // GetRate fetches the exchange rate from the Frankfurter.dev API.
-func (p *FrankfurterProvider) GetRate(ctx context.Context, fromCurrency, toCurrency string, date time.Time) (decimal.Decimal, error) {
-	dateStr := date.Format("2006-01-02")
-	url := fmt.Sprintf("https://api.frankfurter.app/%s?from=%s&to=%s", dateStr, fromCurrency, toCurrency)
+func (p *FrankfurterProvider) GetRate(
+	ctx context.Context,
+	fromCurrency, toCurrency string,
+	datetime time.Time,
+) (decimal.Decimal, error) {
+	dateStr := datetime.Format("2006-01-02")
+	url := fmt.Sprintf(
+		"https://api.frankfurter.app/%s?from=%s&to=%s",
+		dateStr,
+		fromCurrency,
+		toCurrency,
+	)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
@@ -36,12 +45,18 @@ func (p *FrankfurterProvider) GetRate(ctx context.Context, fromCurrency, toCurre
 
 	resp, err := p.client.Do(req)
 	if err != nil {
-		return decimal.Zero, fmt.Errorf("failed to fetch exchange rate: %w", err)
+		return decimal.Zero, fmt.Errorf(
+			"failed to fetch exchange rate: %w",
+			err,
+		)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return decimal.Zero, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		return decimal.Zero, fmt.Errorf(
+			"unexpected status code: %d",
+			resp.StatusCode,
+		)
 	}
 
 	var data struct {
@@ -53,7 +68,10 @@ func (p *FrankfurterProvider) GetRate(ctx context.Context, fromCurrency, toCurre
 
 	rateStr, ok := data.Rates[toCurrency]
 	if !ok {
-		return decimal.Zero, fmt.Errorf("rate for currency %s not found", toCurrency)
+		return decimal.Zero, fmt.Errorf(
+			"rate for currency %s not found",
+			toCurrency,
+		)
 	}
 
 	rate, err := decimal.NewFromString(rateStr.String())
