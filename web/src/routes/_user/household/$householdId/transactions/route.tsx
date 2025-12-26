@@ -43,17 +43,17 @@ function RouteComponent() {
   return (
     <Fragment>
       {duelPaneDisplay ? (
-        <div className="flex h-full">
-          <div className="flex-1 p-4">
+        <div className="flex h-[calc(100vh-48px)]">
+          <div className="flex-1 overflow-y-auto p-4">
             <TransactionsPanel fragmentRef={data} />
           </div>
           <Separator orientation="vertical" className="w-px" />
-          <div className="flex-1 p-4">
+          <div className="flex-1 overflow-y-auto p-4">
             <Outlet />
           </div>
         </div>
       ) : (
-        <div className="flex-1 p-4">
+        <div className="flex-1 p-4 ">
           <Outlet />
         </div>
       )}
