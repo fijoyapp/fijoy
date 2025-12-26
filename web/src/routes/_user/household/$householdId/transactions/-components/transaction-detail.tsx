@@ -45,7 +45,7 @@ export function TransactionDetail({ fragmentRef }: TransactionDetailProps) {
       <CardHeader>
         <CardTitle>CATEGORY</CardTitle>
         <CardDescription>{data.node.description}</CardDescription>
-        <CardAction>Card Action</CardAction>
+        <CardAction>{new Date(data.node.datetime).toDateString()}</CardAction>
       </CardHeader>
       <CardContent>
         <p>Card Content</p>
