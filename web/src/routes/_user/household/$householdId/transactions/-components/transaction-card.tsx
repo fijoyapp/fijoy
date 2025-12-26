@@ -40,40 +40,31 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
   const { formatCurrency } = useCurrency()
 
   return (
-    <Item
-      variant="outline"
-      role="listitem"
-      render={
-        <Link
-          from="/household/$householdId/"
-          to="/household/$householdId/transactions"
-        >
-          <ItemMedia variant="image">
-            <BadgeCheckIcon className="size-5" />
-          </ItemMedia>
-          <ItemContent className="">
-            <ItemTitle className="line-clamp-1">
-              <span>CATEGORY</span>
-            </ItemTitle>
-            <ItemDescription>
-              {new Date(data.datetime).toLocaleDateString()}
-            </ItemDescription>
-          </ItemContent>
-          <ItemContent className="flex-none items-end">
-            <ItemTitle className="line-clamp-1">
-              <span className="">
-                {formatCurrency(
-                  data.transactionEntries![0].amount,
-                  data.transactionEntries![0].account.currency.code,
-                )}
-              </span>
-            </ItemTitle>
-            <ItemDescription>
-              {data.transactionEntries![0].account.name}
-            </ItemDescription>
-          </ItemContent>
-        </Link>
-      }
-    ></Item>
+    <Item variant="outline" role="listitem">
+      <ItemMedia variant="image">
+        <BadgeCheckIcon className="size-5" />
+      </ItemMedia>
+      <ItemContent className="">
+        <ItemTitle className="line-clamp-1">
+          <span>CATEGORY</span>
+        </ItemTitle>
+        <ItemDescription>
+          {new Date(data.datetime).toLocaleDateString()}
+        </ItemDescription>
+      </ItemContent>
+      <ItemContent className="flex-none items-end">
+        <ItemTitle className="line-clamp-1">
+          <span className="">
+            {formatCurrency(
+              data.transactionEntries![0].amount,
+              data.transactionEntries![0].account.currency.code,
+            )}
+          </span>
+        </ItemTitle>
+        <ItemDescription>
+          {data.transactionEntries![0].account.name}
+        </ItemDescription>
+      </ItemContent>
+    </Item>
   )
 }
