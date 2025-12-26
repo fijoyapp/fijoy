@@ -35,7 +35,6 @@ func main() {
 	}
 	defer entClient.Close()
 
-	// Example usage of the fxrate client
 	fxrateProvider := fxrate.NewFrankfurterProvider()
 	fxrateClient := fxrate.NewClient(fxrateProvider)
 
