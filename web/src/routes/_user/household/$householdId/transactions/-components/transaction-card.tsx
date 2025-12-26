@@ -11,6 +11,7 @@ import { transactionCardFragment$key } from './__generated__/transactionCardFrag
 import { useFragment } from 'react-relay'
 import { useCurrency } from '@/hooks/use-currency'
 import { BadgeCheckIcon } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 const transactionCardFragment = graphql`
   fragment transactionCardFragment on Transaction {
@@ -43,7 +44,11 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
       variant="outline"
       role="listitem"
       render={
-        <a href="#">
+        <Link
+          from="/household/$householdId/"
+          to="/household/$householdId/transactions/$transactionId"
+          params={{ transactionId: data.id }}
+        >
           <ItemMedia variant="image">
             <BadgeCheckIcon className="size-5" />
           </ItemMedia>
@@ -68,7 +73,7 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
               {data.transactionEntries![0].account.name}
             </ItemDescription>
           </ItemContent>
-        </a>
+        </Link>
       }
     ></Item>
   )
