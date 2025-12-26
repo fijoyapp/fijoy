@@ -35,5 +35,9 @@ func (c *Client) GetRate(
 	fromCurrency, toCurrency string,
 	datetime time.Time,
 ) (decimal.Decimal, error) {
+	if fromCurrency == toCurrency {
+		return decimal.NewFromInt(1), nil
+	}
+
 	return c.provider.GetRate(ctx, fromCurrency, toCurrency, datetime.UTC())
 }

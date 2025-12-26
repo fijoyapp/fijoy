@@ -26,7 +26,7 @@ const AccountsListPageFragment = graphql`
     accounts {
       id
       type
-      balance
+      balanceInHouseholdCurrency
       ...accountCardFragment
     }
   }
@@ -46,7 +46,7 @@ export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
 
   const netWorth = useMemo(() => {
     return data.accounts
-      .map((account) => currency(account.balance))
+      .map((account) => currency(account.balanceInHouseholdCurrency))
       .reduce((a, b) => a.add(b), currency(0))
   }, [data.accounts])
 

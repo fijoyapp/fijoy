@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<900cad2f0279cc12e42075abe85dce27>>
+ * @generated SignedSource<<c3cff765f1c0e69009c7930fe1462b93>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -69,7 +69,7 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "balance",
+            "name": "balanceInHouseholdCurrency",
             "storageKey": null
           },
           {
@@ -77,6 +77,13 @@ return {
             "args": null,
             "kind": "ScalarField",
             "name": "name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "balance",
             "storageKey": null
           },
           {
@@ -104,12 +111,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d47e0b60fa3bf9aa9d18d11760364e66",
+    "cacheID": "0876348b7c025f90479d6cebe89085f3",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    balance\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query accountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();
