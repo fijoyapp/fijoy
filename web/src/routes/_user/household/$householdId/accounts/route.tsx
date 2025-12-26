@@ -8,6 +8,7 @@ import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.grap
 import { Separator } from '@/components/ui/separator'
 import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
+import { PendingComponent } from '@/components/pending-component'
 
 export const Route = createFileRoute('/_user/household/$householdId/accounts')({
   component: RouteComponent,
@@ -20,6 +21,8 @@ export const Route = createFileRoute('/_user/household/$householdId/accounts')({
       { fetchPolicy: 'store-or-network' },
     )
   },
+
+  pendingComponent: PendingComponent,
 })
 
 const routeAccountsQuery = graphql`

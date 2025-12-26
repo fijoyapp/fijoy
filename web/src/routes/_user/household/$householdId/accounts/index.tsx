@@ -5,19 +5,24 @@ import { AccountsListPage } from './-components/accounts-list-page'
 import type { accountsQuery } from './__generated__/accountsQuery.graphql'
 import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
+import { PendingComponent } from '@/components/pending-component'
 
-export const Route = createFileRoute('/_user/household/$householdId/accounts/')({
-  component: RouteComponent,
+export const Route = createFileRoute('/_user/household/$householdId/accounts/')(
+  {
+    component: RouteComponent,
 
-  loader: () => {
-    return loadQuery<accountsQuery>(
-      environment,
-      accountsQuery,
-      {},
-      { fetchPolicy: 'store-or-network' },
-    )
+    loader: () => {
+      return loadQuery<accountsQuery>(
+        environment,
+        accountsQuery,
+        {},
+        { fetchPolicy: 'store-or-network' },
+      )
+    },
+
+    pendingComponent: PendingComponent,
   },
-})
+)
 
 const accountsQuery = graphql`
   query accountsQuery {
