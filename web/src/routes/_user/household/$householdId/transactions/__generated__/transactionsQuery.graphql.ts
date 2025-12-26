@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0e5e37700f34e3af4a765b5d1b450ca1>>
+ * @generated SignedSource<<a64f939f7f3a2389a931460672b55c27>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -205,22 +205,23 @@ return {
         "alias": null,
         "args": (v0/*: any*/),
         "filters": [
+          "where",
           "orderBy"
         ],
         "handle": "connection",
-        "key": "transactionsPanel_transactions",
+        "key": "transactionsList_transactions",
         "kind": "LinkedHandle",
         "name": "transactions"
       }
     ]
   },
   "params": {
-    "cacheID": "1516b4f0c14a9cdcc7db2df7c7d01fb0",
+    "cacheID": "4656861ab1f88a7fdbdfe694053f6b69",
     "id": null,
     "metadata": {},
     "name": "transactionsQuery",
     "operationKind": "query",
-    "text": "query transactionsQuery {\n  ...transactionsPanelFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsPanelFragment on Query {\n  transactions(first: 20, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query transactionsQuery {\n  ...transactionsPanelFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment on Query {\n  transactions(first: 20, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment on Query {\n  ...transactionsListFragment\n}\n"
   }
 };
 })();

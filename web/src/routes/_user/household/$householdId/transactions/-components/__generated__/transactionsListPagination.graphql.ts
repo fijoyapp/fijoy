@@ -1,0 +1,602 @@
+/**
+ * @generated SignedSource<<e454dfbcecd73d12f7dfbdb54668f171>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
+/* tslint:disable */
+/* eslint-disable */
+// @ts-nocheck
+
+import { ConcreteRequest } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
+export type AccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
+export type UserHouseholdRole = "admin" | "member" | "%future added value";
+export type TransactionWhereInput = {
+  and?: ReadonlyArray<TransactionWhereInput> | null | undefined;
+  createTime?: any | null | undefined;
+  createTimeGT?: any | null | undefined;
+  createTimeGTE?: any | null | undefined;
+  createTimeIn?: ReadonlyArray<any> | null | undefined;
+  createTimeLT?: any | null | undefined;
+  createTimeLTE?: any | null | undefined;
+  createTimeNEQ?: any | null | undefined;
+  createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  datetime?: any | null | undefined;
+  datetimeGT?: any | null | undefined;
+  datetimeGTE?: any | null | undefined;
+  datetimeIn?: ReadonlyArray<any> | null | undefined;
+  datetimeLT?: any | null | undefined;
+  datetimeLTE?: any | null | undefined;
+  datetimeNEQ?: any | null | undefined;
+  datetimeNotIn?: ReadonlyArray<any> | null | undefined;
+  description?: string | null | undefined;
+  descriptionContains?: string | null | undefined;
+  descriptionContainsFold?: string | null | undefined;
+  descriptionEqualFold?: string | null | undefined;
+  descriptionGT?: string | null | undefined;
+  descriptionGTE?: string | null | undefined;
+  descriptionHasPrefix?: string | null | undefined;
+  descriptionHasSuffix?: string | null | undefined;
+  descriptionIn?: ReadonlyArray<string> | null | undefined;
+  descriptionIsNil?: boolean | null | undefined;
+  descriptionLT?: string | null | undefined;
+  descriptionLTE?: string | null | undefined;
+  descriptionNEQ?: string | null | undefined;
+  descriptionNotIn?: ReadonlyArray<string> | null | undefined;
+  descriptionNotNil?: boolean | null | undefined;
+  hasTransactionEntries?: boolean | null | undefined;
+  hasTransactionEntriesWith?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: TransactionWhereInput | null | undefined;
+  or?: ReadonlyArray<TransactionWhereInput> | null | undefined;
+  updateTime?: any | null | undefined;
+  updateTimeGT?: any | null | undefined;
+  updateTimeGTE?: any | null | undefined;
+  updateTimeIn?: ReadonlyArray<any> | null | undefined;
+  updateTimeLT?: any | null | undefined;
+  updateTimeLTE?: any | null | undefined;
+  updateTimeNEQ?: any | null | undefined;
+  updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+};
+export type TransactionEntryWhereInput = {
+  amount?: string | null | undefined;
+  amountGT?: string | null | undefined;
+  amountGTE?: string | null | undefined;
+  amountIn?: ReadonlyArray<string> | null | undefined;
+  amountLT?: string | null | undefined;
+  amountLTE?: string | null | undefined;
+  amountNEQ?: string | null | undefined;
+  amountNotIn?: ReadonlyArray<string> | null | undefined;
+  and?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
+  createTime?: any | null | undefined;
+  createTimeGT?: any | null | undefined;
+  createTimeGTE?: any | null | undefined;
+  createTimeIn?: ReadonlyArray<any> | null | undefined;
+  createTimeLT?: any | null | undefined;
+  createTimeLTE?: any | null | undefined;
+  createTimeNEQ?: any | null | undefined;
+  createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  hasAccount?: boolean | null | undefined;
+  hasAccountWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
+  hasCurrency?: boolean | null | undefined;
+  hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
+  hasTransaction?: boolean | null | undefined;
+  hasTransactionWith?: ReadonlyArray<TransactionWhereInput> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: TransactionEntryWhereInput | null | undefined;
+  or?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
+  updateTime?: any | null | undefined;
+  updateTimeGT?: any | null | undefined;
+  updateTimeGTE?: any | null | undefined;
+  updateTimeIn?: ReadonlyArray<any> | null | undefined;
+  updateTimeLT?: any | null | undefined;
+  updateTimeLTE?: any | null | undefined;
+  updateTimeNEQ?: any | null | undefined;
+  updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+};
+export type AccountWhereInput = {
+  and?: ReadonlyArray<AccountWhereInput> | null | undefined;
+  createTime?: any | null | undefined;
+  createTimeGT?: any | null | undefined;
+  createTimeGTE?: any | null | undefined;
+  createTimeIn?: ReadonlyArray<any> | null | undefined;
+  createTimeLT?: any | null | undefined;
+  createTimeLTE?: any | null | undefined;
+  createTimeNEQ?: any | null | undefined;
+  createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  hasCurrency?: boolean | null | undefined;
+  hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
+  hasHousehold?: boolean | null | undefined;
+  hasHouseholdWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
+  hasTransactionEntries?: boolean | null | undefined;
+  hasTransactionEntriesWith?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  name?: string | null | undefined;
+  nameContains?: string | null | undefined;
+  nameContainsFold?: string | null | undefined;
+  nameEqualFold?: string | null | undefined;
+  nameGT?: string | null | undefined;
+  nameGTE?: string | null | undefined;
+  nameHasPrefix?: string | null | undefined;
+  nameHasSuffix?: string | null | undefined;
+  nameIn?: ReadonlyArray<string> | null | undefined;
+  nameLT?: string | null | undefined;
+  nameLTE?: string | null | undefined;
+  nameNEQ?: string | null | undefined;
+  nameNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: AccountWhereInput | null | undefined;
+  or?: ReadonlyArray<AccountWhereInput> | null | undefined;
+  type?: AccountType | null | undefined;
+  typeIn?: ReadonlyArray<AccountType> | null | undefined;
+  typeNEQ?: AccountType | null | undefined;
+  typeNotIn?: ReadonlyArray<AccountType> | null | undefined;
+  updateTime?: any | null | undefined;
+  updateTimeGT?: any | null | undefined;
+  updateTimeGTE?: any | null | undefined;
+  updateTimeIn?: ReadonlyArray<any> | null | undefined;
+  updateTimeLT?: any | null | undefined;
+  updateTimeLTE?: any | null | undefined;
+  updateTimeNEQ?: any | null | undefined;
+  updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+};
+export type HouseholdWhereInput = {
+  and?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
+  createTime?: any | null | undefined;
+  createTimeGT?: any | null | undefined;
+  createTimeGTE?: any | null | undefined;
+  createTimeIn?: ReadonlyArray<any> | null | undefined;
+  createTimeLT?: any | null | undefined;
+  createTimeLTE?: any | null | undefined;
+  createTimeNEQ?: any | null | undefined;
+  createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  hasAccounts?: boolean | null | undefined;
+  hasAccountsWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
+  hasCurrency?: boolean | null | undefined;
+  hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
+  hasTransactions?: boolean | null | undefined;
+  hasTransactionsWith?: ReadonlyArray<TransactionWhereInput> | null | undefined;
+  hasUserHouseholds?: boolean | null | undefined;
+  hasUserHouseholdsWith?: ReadonlyArray<UserHouseholdWhereInput> | null | undefined;
+  hasUsers?: boolean | null | undefined;
+  hasUsersWith?: ReadonlyArray<UserWhereInput> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  locale?: string | null | undefined;
+  localeContains?: string | null | undefined;
+  localeContainsFold?: string | null | undefined;
+  localeEqualFold?: string | null | undefined;
+  localeGT?: string | null | undefined;
+  localeGTE?: string | null | undefined;
+  localeHasPrefix?: string | null | undefined;
+  localeHasSuffix?: string | null | undefined;
+  localeIn?: ReadonlyArray<string> | null | undefined;
+  localeLT?: string | null | undefined;
+  localeLTE?: string | null | undefined;
+  localeNEQ?: string | null | undefined;
+  localeNotIn?: ReadonlyArray<string> | null | undefined;
+  name?: string | null | undefined;
+  nameContains?: string | null | undefined;
+  nameContainsFold?: string | null | undefined;
+  nameEqualFold?: string | null | undefined;
+  nameGT?: string | null | undefined;
+  nameGTE?: string | null | undefined;
+  nameHasPrefix?: string | null | undefined;
+  nameHasSuffix?: string | null | undefined;
+  nameIn?: ReadonlyArray<string> | null | undefined;
+  nameLT?: string | null | undefined;
+  nameLTE?: string | null | undefined;
+  nameNEQ?: string | null | undefined;
+  nameNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: HouseholdWhereInput | null | undefined;
+  or?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
+  updateTime?: any | null | undefined;
+  updateTimeGT?: any | null | undefined;
+  updateTimeGTE?: any | null | undefined;
+  updateTimeIn?: ReadonlyArray<any> | null | undefined;
+  updateTimeLT?: any | null | undefined;
+  updateTimeLTE?: any | null | undefined;
+  updateTimeNEQ?: any | null | undefined;
+  updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+};
+export type CurrencyWhereInput = {
+  and?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
+  code?: string | null | undefined;
+  codeContains?: string | null | undefined;
+  codeContainsFold?: string | null | undefined;
+  codeEqualFold?: string | null | undefined;
+  codeGT?: string | null | undefined;
+  codeGTE?: string | null | undefined;
+  codeHasPrefix?: string | null | undefined;
+  codeHasSuffix?: string | null | undefined;
+  codeIn?: ReadonlyArray<string> | null | undefined;
+  codeLT?: string | null | undefined;
+  codeLTE?: string | null | undefined;
+  codeNEQ?: string | null | undefined;
+  codeNotIn?: ReadonlyArray<string> | null | undefined;
+  hasAccounts?: boolean | null | undefined;
+  hasAccountsWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
+  hasHouseholds?: boolean | null | undefined;
+  hasHouseholdsWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
+  hasTransactionEntries?: boolean | null | undefined;
+  hasTransactionEntriesWith?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: CurrencyWhereInput | null | undefined;
+  or?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
+};
+export type UserWhereInput = {
+  and?: ReadonlyArray<UserWhereInput> | null | undefined;
+  createTime?: any | null | undefined;
+  createTimeGT?: any | null | undefined;
+  createTimeGTE?: any | null | undefined;
+  createTimeIn?: ReadonlyArray<any> | null | undefined;
+  createTimeLT?: any | null | undefined;
+  createTimeLTE?: any | null | undefined;
+  createTimeNEQ?: any | null | undefined;
+  createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  email?: string | null | undefined;
+  emailContains?: string | null | undefined;
+  emailContainsFold?: string | null | undefined;
+  emailEqualFold?: string | null | undefined;
+  emailGT?: string | null | undefined;
+  emailGTE?: string | null | undefined;
+  emailHasPrefix?: string | null | undefined;
+  emailHasSuffix?: string | null | undefined;
+  emailIn?: ReadonlyArray<string> | null | undefined;
+  emailLT?: string | null | undefined;
+  emailLTE?: string | null | undefined;
+  emailNEQ?: string | null | undefined;
+  emailNotIn?: ReadonlyArray<string> | null | undefined;
+  hasHouseholds?: boolean | null | undefined;
+  hasHouseholdsWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
+  hasUserHouseholds?: boolean | null | undefined;
+  hasUserHouseholdsWith?: ReadonlyArray<UserHouseholdWhereInput> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: UserWhereInput | null | undefined;
+  or?: ReadonlyArray<UserWhereInput> | null | undefined;
+  updateTime?: any | null | undefined;
+  updateTimeGT?: any | null | undefined;
+  updateTimeGTE?: any | null | undefined;
+  updateTimeIn?: ReadonlyArray<any> | null | undefined;
+  updateTimeLT?: any | null | undefined;
+  updateTimeLTE?: any | null | undefined;
+  updateTimeNEQ?: any | null | undefined;
+  updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+};
+export type UserHouseholdWhereInput = {
+  and?: ReadonlyArray<UserHouseholdWhereInput> | null | undefined;
+  createTime?: any | null | undefined;
+  createTimeGT?: any | null | undefined;
+  createTimeGTE?: any | null | undefined;
+  createTimeIn?: ReadonlyArray<any> | null | undefined;
+  createTimeLT?: any | null | undefined;
+  createTimeLTE?: any | null | undefined;
+  createTimeNEQ?: any | null | undefined;
+  createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: UserHouseholdWhereInput | null | undefined;
+  or?: ReadonlyArray<UserHouseholdWhereInput> | null | undefined;
+  role?: UserHouseholdRole | null | undefined;
+  roleIn?: ReadonlyArray<UserHouseholdRole> | null | undefined;
+  roleNEQ?: UserHouseholdRole | null | undefined;
+  roleNotIn?: ReadonlyArray<UserHouseholdRole> | null | undefined;
+  updateTime?: any | null | undefined;
+  updateTimeGT?: any | null | undefined;
+  updateTimeGTE?: any | null | undefined;
+  updateTimeIn?: ReadonlyArray<any> | null | undefined;
+  updateTimeLT?: any | null | undefined;
+  updateTimeLTE?: any | null | undefined;
+  updateTimeNEQ?: any | null | undefined;
+  updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+};
+export type transactionsListPagination$variables = {
+  count?: number | null | undefined;
+  cursor?: any | null | undefined;
+  where?: TransactionWhereInput | null | undefined;
+};
+export type transactionsListPagination$data = {
+  readonly " $fragmentSpreads": FragmentRefs<"transactionsListFragment">;
+};
+export type transactionsListPagination = {
+  response: transactionsListPagination$data;
+  variables: transactionsListPagination$variables;
+};
+
+const node: ConcreteRequest = (function(){
+var v0 = [
+  {
+    "defaultValue": 20,
+    "kind": "LocalArgument",
+    "name": "count"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "cursor"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "where"
+  }
+],
+v1 = {
+  "kind": "Variable",
+  "name": "where",
+  "variableName": "where"
+},
+v2 = [
+  {
+    "kind": "Variable",
+    "name": "after",
+    "variableName": "cursor"
+  },
+  {
+    "kind": "Variable",
+    "name": "first",
+    "variableName": "count"
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": {
+      "direction": "DESC",
+      "field": "DATETIME"
+    }
+  },
+  (v1/*: any*/)
+],
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "transactionsListPagination",
+    "selections": [
+      {
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "count",
+            "variableName": "count"
+          },
+          {
+            "kind": "Variable",
+            "name": "cursor",
+            "variableName": "cursor"
+          },
+          (v1/*: any*/)
+        ],
+        "kind": "FragmentSpread",
+        "name": "transactionsListFragment"
+      }
+    ],
+    "type": "Query",
+    "abstractKey": null
+  },
+  "kind": "Request",
+  "operation": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Operation",
+    "name": "transactionsListPagination",
+    "selections": [
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "concreteType": "TransactionConnection",
+        "kind": "LinkedField",
+        "name": "transactions",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "TransactionEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Transaction",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v3/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "datetime",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "TransactionEntry",
+                    "kind": "LinkedField",
+                    "name": "transactionEntries",
+                    "plural": true,
+                    "selections": [
+                      (v3/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "amount",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Account",
+                        "kind": "LinkedField",
+                        "name": "account",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "name",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "Currency",
+                            "kind": "LinkedField",
+                            "name": "currency",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "code",
+                                "storageKey": null
+                              },
+                              (v3/*: any*/)
+                            ],
+                            "storageKey": null
+                          },
+                          (v3/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "__typename",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "cursor",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "PageInfo",
+            "kind": "LinkedField",
+            "name": "pageInfo",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "hasNextPage",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "endCursor",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": (v2/*: any*/),
+        "filters": [
+          "where",
+          "orderBy"
+        ],
+        "handle": "connection",
+        "key": "transactionsList_transactions",
+        "kind": "LinkedHandle",
+        "name": "transactions"
+      }
+    ]
+  },
+  "params": {
+    "cacheID": "bd55565f0e3da088e379b5beae2d79fe",
+    "id": null,
+    "metadata": {},
+    "name": "transactionsListPagination",
+    "operationKind": "query",
+    "text": "query transactionsListPagination(\n  $count: Int = 20\n  $cursor: Cursor\n  $where: TransactionWhereInput\n) {\n  ...transactionsListFragment_mjR8k\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_mjR8k on Query {\n  transactions(first: $count, after: $cursor, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+  }
+};
+})();
+
+(node as any).hash = "000f25e77b6916e5dd3d709db8d77f55";
+
+export default node;
