@@ -3,7 +3,7 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { Fragment } from 'react/jsx-runtime'
-import { AccountsListPage } from './-components/accounts-list-page'
+import { AccountsPanel } from './-components/accounts-panel'
 import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
 import { Separator } from '@/components/ui/separator'
 import { environment } from '@/environment'
@@ -27,7 +27,7 @@ export const Route = createFileRoute('/_user/household/$householdId/accounts')({
 
 const routeAccountsQuery = graphql`
   query routeAccountsQuery {
-    ...accountsListPageFragment
+    ...accountsPanelFragment
   }
 `
 
@@ -46,7 +46,7 @@ function RouteComponent() {
       {duelPaneDisplay ? (
         <div className="flex h-full">
           <div className="flex-1 p-4">
-            <AccountsListPage fragmentRef={data} />
+            <AccountsPanel fragmentRef={data} />
           </div>
           <Separator orientation="vertical" className="w-px" />
           <div className="flex-1 p-4">

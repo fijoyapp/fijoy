@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { AccountsListPage } from './-components/accounts-list-page'
+import { AccountsPanel } from './-components/accounts-panel'
 import type { accountsQuery } from './__generated__/accountsQuery.graphql'
 import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
@@ -26,7 +26,7 @@ export const Route = createFileRoute('/_user/household/$householdId/accounts/')(
 
 const accountsQuery = graphql`
   query accountsQuery {
-    ...accountsListPageFragment
+    ...accountsPanelFragment
   }
 `
 
@@ -44,7 +44,7 @@ function RouteComponent() {
   return (
     <div className="flex h-full">
       <div className="flex-1">
-        <AccountsListPage fragmentRef={data} />
+        <AccountsPanel fragmentRef={data} />
       </div>
     </div>
   )

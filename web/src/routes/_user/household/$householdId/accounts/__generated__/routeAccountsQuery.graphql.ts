@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<33a1bea7843b21e0f53a90c605ac12de>>
+ * @generated SignedSource<<9475a23c0574b9ee37fa9c7939fbc020>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type routeAccountsQuery$variables = Record<PropertyKey, never>;
 export type routeAccountsQuery$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"accountsListPageFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"accountsPanelFragment">;
 };
 export type routeAccountsQuery = {
   response: routeAccountsQuery$data;
@@ -37,7 +37,7 @@ return {
       {
         "args": null,
         "kind": "FragmentSpread",
-        "name": "accountsListPageFragment"
+        "name": "accountsPanelFragment"
       }
     ],
     "type": "Query",
@@ -111,16 +111,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "73395b676762a644b2b5395f70088475",
+    "cacheID": "8251b875f7d1b5ab0f70e4ea386efcf5",
     "id": null,
     "metadata": {},
     "name": "routeAccountsQuery",
     "operationKind": "query",
-    "text": "query routeAccountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  currency {\n    code\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query routeAccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  currency {\n    code\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsPanelFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c667e964f84164eaf4850dd49d646a90";
+(node as any).hash = "81ba72b4dd01e656e857556d21ab1f9e";
 
 export default node;

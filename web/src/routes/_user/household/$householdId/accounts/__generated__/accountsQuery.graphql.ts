@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6414d1c499b38c2a62df0ca519b11025>>
+ * @generated SignedSource<<ff1f15cda8083c50e09415de6c75385f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type accountsQuery$variables = Record<PropertyKey, never>;
 export type accountsQuery$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"accountsListPageFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"accountsPanelFragment">;
 };
 export type accountsQuery = {
   response: accountsQuery$data;
@@ -37,7 +37,7 @@ return {
       {
         "args": null,
         "kind": "FragmentSpread",
-        "name": "accountsListPageFragment"
+        "name": "accountsPanelFragment"
       }
     ],
     "type": "Query",
@@ -111,16 +111,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d29793cc06c9d24e711ecb057973d608",
+    "cacheID": "34e725459dd7e4ef2d2e6650fda5f1e1",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  currency {\n    code\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query accountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  currency {\n    code\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsPanelFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "eca0f376f20e794d806315b9a01f8246";
+(node as any).hash = "9eff5c9fef5137ae22d5bc222c08d389";
 
 export default node;

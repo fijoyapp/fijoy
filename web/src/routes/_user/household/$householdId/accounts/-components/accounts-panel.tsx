@@ -4,7 +4,6 @@ import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import { AccountCard } from './account-card'
-import type { accountsListPageFragment$key } from './__generated__/accountsListPageFragment.graphql'
 import {
   Accordion,
   AccordionContent,
@@ -21,9 +20,10 @@ import {
 } from '@/components/ui/item'
 import currency from 'currency.js'
 import { useCurrency } from '@/hooks/use-currency'
+import { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
 
-const AccountsListPageFragment = graphql`
-  fragment accountsListPageFragment on Query {
+const AccountsPanelFragment = graphql`
+  fragment accountsPanelFragment on Query {
     accounts {
       id
       type
@@ -34,11 +34,11 @@ const AccountsListPageFragment = graphql`
 `
 
 type AccountsListPageProps = {
-  fragmentRef: accountsListPageFragment$key
+  fragmentRef: accountsPanelFragment$key
 }
 
-export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
-  const data = useFragment(AccountsListPageFragment, fragmentRef)
+export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
+  const data = useFragment(AccountsPanelFragment, fragmentRef)
 
   const { formatCurrencyWithPrivacyMode } = useCurrency()
 
