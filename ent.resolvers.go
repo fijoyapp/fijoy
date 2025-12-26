@@ -7,6 +7,7 @@ package fijoy
 
 import (
 	"context"
+	"fmt"
 
 	"entgo.io/contrib/entgql"
 	"fijoy.app/ent"
@@ -38,7 +39,7 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 }
 
 // Transactions is the resolver for the transactions field.
-func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder) (*ent.TransactionConnection, error) {
+func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error) {
 	return r.entClient.Transaction.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionOrder(orderBy))
 }
 
@@ -62,6 +63,46 @@ func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.Transact
 	return obj.Amount.String(), nil
 }
 
+// Amount is the resolver for the amount field.
+func (r *transactionEntryWhereInputResolver) Amount(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// AmountNeq is the resolver for the amountNEQ field.
+func (r *transactionEntryWhereInputResolver) AmountNeq(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountNeq - amountNEQ"))
+}
+
+// AmountIn is the resolver for the amountIn field.
+func (r *transactionEntryWhereInputResolver) AmountIn(ctx context.Context, obj *ent.TransactionEntryWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: AmountIn - amountIn"))
+}
+
+// AmountNotIn is the resolver for the amountNotIn field.
+func (r *transactionEntryWhereInputResolver) AmountNotIn(ctx context.Context, obj *ent.TransactionEntryWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: AmountNotIn - amountNotIn"))
+}
+
+// AmountGt is the resolver for the amountGT field.
+func (r *transactionEntryWhereInputResolver) AmountGt(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountGt - amountGT"))
+}
+
+// AmountGte is the resolver for the amountGTE field.
+func (r *transactionEntryWhereInputResolver) AmountGte(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountGte - amountGTE"))
+}
+
+// AmountLt is the resolver for the amountLT field.
+func (r *transactionEntryWhereInputResolver) AmountLt(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountLt - amountLT"))
+}
+
+// AmountLte is the resolver for the amountLTE field.
+func (r *transactionEntryWhereInputResolver) AmountLte(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountLte - amountLTE"))
+}
+
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
@@ -71,6 +112,12 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
 
+// TransactionEntryWhereInput returns TransactionEntryWhereInputResolver implementation.
+func (r *Resolver) TransactionEntryWhereInput() TransactionEntryWhereInputResolver {
+	return &transactionEntryWhereInputResolver{r}
+}
+
 type accountResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
+type transactionEntryWhereInputResolver struct{ *Resolver }

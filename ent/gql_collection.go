@@ -127,6 +127,9 @@ func newAccountPaginateArgs(rv map[string]any) *accountPaginateArgs {
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
 	}
+	if v, ok := rv[whereField].(*AccountWhereInput); ok {
+		args.opts = append(args.opts, WithAccountFilter(v.Filter))
+	}
 	return args
 }
 
@@ -229,6 +232,9 @@ func newCurrencyPaginateArgs(rv map[string]any) *currencyPaginateArgs {
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*CurrencyWhereInput); ok {
+		args.opts = append(args.opts, WithCurrencyFilter(v.Filter))
 	}
 	return args
 }
@@ -372,6 +378,9 @@ func newHouseholdPaginateArgs(rv map[string]any) *householdPaginateArgs {
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
 	}
+	if v, ok := rv[whereField].(*HouseholdWhereInput); ok {
+		args.opts = append(args.opts, WithHouseholdFilter(v.Filter))
+	}
 	return args
 }
 
@@ -486,6 +495,9 @@ func newTransactionPaginateArgs(rv map[string]any) *transactionPaginateArgs {
 			}
 		}
 	}
+	if v, ok := rv[whereField].(*TransactionWhereInput); ok {
+		args.opts = append(args.opts, WithTransactionFilter(v.Filter))
+	}
 	return args
 }
 
@@ -593,6 +605,9 @@ func newTransactionEntryPaginateArgs(rv map[string]any) *transactionentryPaginat
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
 	}
+	if v, ok := rv[whereField].(*TransactionEntryWhereInput); ok {
+		args.opts = append(args.opts, WithTransactionEntryFilter(v.Filter))
+	}
 	return args
 }
 
@@ -692,6 +707,9 @@ func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*UserWhereInput); ok {
+		args.opts = append(args.opts, WithUserFilter(v.Filter))
 	}
 	return args
 }
@@ -806,6 +824,9 @@ func newUserHouseholdPaginateArgs(rv map[string]any) *userhouseholdPaginateArgs 
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*UserHouseholdWhereInput); ok {
+		args.opts = append(args.opts, WithUserHouseholdFilter(v.Filter))
 	}
 	return args
 }
