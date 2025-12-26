@@ -54,6 +54,20 @@ func (_u *HouseholdUpdate) SetNillableName(v *string) *HouseholdUpdate {
 	return _u
 }
 
+// SetLocale sets the "locale" field.
+func (_u *HouseholdUpdate) SetLocale(v string) *HouseholdUpdate {
+	_u.mutation.SetLocale(v)
+	return _u
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (_u *HouseholdUpdate) SetNillableLocale(v *string) *HouseholdUpdate {
+	if v != nil {
+		_u.SetLocale(*v)
+	}
+	return _u
+}
+
 // SetCurrencyID sets the "currency" edge to the Currency entity by ID.
 func (_u *HouseholdUpdate) SetCurrencyID(id int) *HouseholdUpdate {
 	_u.mutation.SetCurrencyID(id)
@@ -263,6 +277,11 @@ func (_u *HouseholdUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Household.name": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Locale(); ok {
+		if err := household.LocaleValidator(v); err != nil {
+			return &ValidationError{Name: "locale", err: fmt.Errorf(`ent: validator failed for field "Household.locale": %w`, err)}
+		}
+	}
 	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Household.currency"`)
 	}
@@ -292,6 +311,9 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(household.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Locale(); ok {
+		_spec.SetField(household.FieldLocale, field.TypeString, value)
 	}
 	if _u.mutation.CurrencyCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -556,6 +578,20 @@ func (_u *HouseholdUpdateOne) SetNillableName(v *string) *HouseholdUpdateOne {
 	return _u
 }
 
+// SetLocale sets the "locale" field.
+func (_u *HouseholdUpdateOne) SetLocale(v string) *HouseholdUpdateOne {
+	_u.mutation.SetLocale(v)
+	return _u
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (_u *HouseholdUpdateOne) SetNillableLocale(v *string) *HouseholdUpdateOne {
+	if v != nil {
+		_u.SetLocale(*v)
+	}
+	return _u
+}
+
 // SetCurrencyID sets the "currency" edge to the Currency entity by ID.
 func (_u *HouseholdUpdateOne) SetCurrencyID(id int) *HouseholdUpdateOne {
 	_u.mutation.SetCurrencyID(id)
@@ -778,6 +814,11 @@ func (_u *HouseholdUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Household.name": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.Locale(); ok {
+		if err := household.LocaleValidator(v); err != nil {
+			return &ValidationError{Name: "locale", err: fmt.Errorf(`ent: validator failed for field "Household.locale": %w`, err)}
+		}
+	}
 	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Household.currency"`)
 	}
@@ -824,6 +865,9 @@ func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, er
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(household.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Locale(); ok {
+		_spec.SetField(household.FieldLocale, field.TypeString, value)
 	}
 	if _u.mutation.CurrencyCleared() {
 		edge := &sqlgraph.EdgeSpec{

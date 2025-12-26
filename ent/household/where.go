@@ -70,6 +70,11 @@ func Name(v string) predicate.Household {
 	return predicate.Household(sql.FieldEQ(FieldName, v))
 }
 
+// Locale applies equality check predicate on the "locale" field. It's identical to LocaleEQ.
+func Locale(v string) predicate.Household {
+	return predicate.Household(sql.FieldEQ(FieldLocale, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Household {
 	return predicate.Household(sql.FieldEQ(FieldCreateTime, v))
@@ -213,6 +218,71 @@ func NameEqualFold(v string) predicate.Household {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Household {
 	return predicate.Household(sql.FieldContainsFold(FieldName, v))
+}
+
+// LocaleEQ applies the EQ predicate on the "locale" field.
+func LocaleEQ(v string) predicate.Household {
+	return predicate.Household(sql.FieldEQ(FieldLocale, v))
+}
+
+// LocaleNEQ applies the NEQ predicate on the "locale" field.
+func LocaleNEQ(v string) predicate.Household {
+	return predicate.Household(sql.FieldNEQ(FieldLocale, v))
+}
+
+// LocaleIn applies the In predicate on the "locale" field.
+func LocaleIn(vs ...string) predicate.Household {
+	return predicate.Household(sql.FieldIn(FieldLocale, vs...))
+}
+
+// LocaleNotIn applies the NotIn predicate on the "locale" field.
+func LocaleNotIn(vs ...string) predicate.Household {
+	return predicate.Household(sql.FieldNotIn(FieldLocale, vs...))
+}
+
+// LocaleGT applies the GT predicate on the "locale" field.
+func LocaleGT(v string) predicate.Household {
+	return predicate.Household(sql.FieldGT(FieldLocale, v))
+}
+
+// LocaleGTE applies the GTE predicate on the "locale" field.
+func LocaleGTE(v string) predicate.Household {
+	return predicate.Household(sql.FieldGTE(FieldLocale, v))
+}
+
+// LocaleLT applies the LT predicate on the "locale" field.
+func LocaleLT(v string) predicate.Household {
+	return predicate.Household(sql.FieldLT(FieldLocale, v))
+}
+
+// LocaleLTE applies the LTE predicate on the "locale" field.
+func LocaleLTE(v string) predicate.Household {
+	return predicate.Household(sql.FieldLTE(FieldLocale, v))
+}
+
+// LocaleContains applies the Contains predicate on the "locale" field.
+func LocaleContains(v string) predicate.Household {
+	return predicate.Household(sql.FieldContains(FieldLocale, v))
+}
+
+// LocaleHasPrefix applies the HasPrefix predicate on the "locale" field.
+func LocaleHasPrefix(v string) predicate.Household {
+	return predicate.Household(sql.FieldHasPrefix(FieldLocale, v))
+}
+
+// LocaleHasSuffix applies the HasSuffix predicate on the "locale" field.
+func LocaleHasSuffix(v string) predicate.Household {
+	return predicate.Household(sql.FieldHasSuffix(FieldLocale, v))
+}
+
+// LocaleEqualFold applies the EqualFold predicate on the "locale" field.
+func LocaleEqualFold(v string) predicate.Household {
+	return predicate.Household(sql.FieldEqualFold(FieldLocale, v))
+}
+
+// LocaleContainsFold applies the ContainsFold predicate on the "locale" field.
+func LocaleContainsFold(v string) predicate.Household {
+	return predicate.Household(sql.FieldContainsFold(FieldLocale, v))
 }
 
 // HasCurrency applies the HasEdge predicate on the "currency" edge.

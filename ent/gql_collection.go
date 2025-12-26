@@ -331,6 +331,11 @@ func (_q *HouseholdQuery) collectField(ctx context.Context, oneNode bool, opCtx 
 				selectedFields = append(selectedFields, household.FieldName)
 				fieldSeen[household.FieldName] = struct{}{}
 			}
+		case "locale":
+			if _, ok := fieldSeen[household.FieldLocale]; !ok {
+				selectedFields = append(selectedFields, household.FieldLocale)
+				fieldSeen[household.FieldLocale] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

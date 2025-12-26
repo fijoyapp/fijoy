@@ -56,6 +56,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
+		{Name: "locale", Type: field.TypeString},
 		{Name: "currency_households", Type: field.TypeInt},
 	}
 	// HouseholdsTable holds the schema information for the "households" table.
@@ -66,7 +67,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "households_currencies_households",
-				Columns:    []*schema.Column{HouseholdsColumns[4]},
+				Columns:    []*schema.Column{HouseholdsColumns[5]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

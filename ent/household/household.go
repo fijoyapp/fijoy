@@ -20,6 +20,8 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldLocale holds the string denoting the locale field in the database.
+	FieldLocale = "locale"
 	// EdgeCurrency holds the string denoting the currency edge name in mutations.
 	EdgeCurrency = "currency"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -73,6 +75,7 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldName,
+	FieldLocale,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "households"
@@ -111,6 +114,8 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// LocaleValidator is a validator for the "locale" field. It is called by the builders before save.
+	LocaleValidator func(string) error
 )
 
 // OrderOption defines the ordering options for the Household queries.
@@ -134,6 +139,11 @@ func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByLocale orders the results by the locale field.
+func ByLocale(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocale, opts...).ToFunc()
 }
 
 // ByCurrencyField orders the results by currency field.

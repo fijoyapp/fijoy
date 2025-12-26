@@ -78,6 +78,7 @@ type ComplexityRoot struct {
 		CreateTime     func(childComplexity int) int
 		Currency       func(childComplexity int) int
 		ID             func(childComplexity int) int
+		Locale         func(childComplexity int) int
 		Name           func(childComplexity int) int
 		Transactions   func(childComplexity int) int
 		UpdateTime     func(childComplexity int) int
@@ -300,6 +301,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Household.ID(childComplexity), true
+	case "Household.locale":
+		if e.complexity.Household.Locale == nil {
+			break
+		}
+
+		return e.complexity.Household.Locale(childComplexity), true
 	case "Household.name":
 		if e.complexity.Household.Name == nil {
 			break
@@ -990,6 +997,8 @@ func (ec *executionContext) fieldContext_Account_household(_ context.Context, fi
 				return ec.fieldContext_Household_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
 			case "currency":
 				return ec.fieldContext_Household_currency(ctx, field)
 			case "users":
@@ -1337,6 +1346,8 @@ func (ec *executionContext) fieldContext_Currency_households(_ context.Context, 
 				return ec.fieldContext_Household_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
 			case "currency":
 				return ec.fieldContext_Household_currency(ctx, field)
 			case "users":
@@ -1458,6 +1469,35 @@ func (ec *executionContext) _Household_name(ctx context.Context, field graphql.C
 }
 
 func (ec *executionContext) fieldContext_Household_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Household",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Household_locale(ctx context.Context, field graphql.CollectedField, obj *ent.Household) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Household_locale,
+		func(ctx context.Context) (any, error) {
+			return obj.Locale, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Household_locale(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Household",
 		Field:      field,
@@ -2017,6 +2057,8 @@ func (ec *executionContext) fieldContext_Query_households(_ context.Context, fie
 				return ec.fieldContext_Household_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
 			case "currency":
 				return ec.fieldContext_Household_currency(ctx, field)
 			case "users":
@@ -2950,6 +2992,8 @@ func (ec *executionContext) fieldContext_User_households(_ context.Context, fiel
 				return ec.fieldContext_Household_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
 			case "currency":
 				return ec.fieldContext_Household_currency(ctx, field)
 			case "users":
@@ -3263,6 +3307,8 @@ func (ec *executionContext) fieldContext_UserHousehold_household(_ context.Conte
 				return ec.fieldContext_Household_updateTime(ctx, field)
 			case "name":
 				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
 			case "currency":
 				return ec.fieldContext_Household_currency(ctx, field)
 			case "users":
@@ -5189,6 +5235,11 @@ func (ec *executionContext) _Household(ctx context.Context, sel ast.SelectionSet
 			}
 		case "name":
 			out.Values[i] = ec._Household_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "locale":
+			out.Values[i] = ec._Household_locale(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

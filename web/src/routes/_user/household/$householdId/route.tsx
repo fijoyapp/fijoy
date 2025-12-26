@@ -14,12 +14,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { Button } from '@/components/ui/button'
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
+import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  const { isPrivacyModeEnabled, togglePrivacyMode } = usePrivacyMode()
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -42,6 +47,11 @@ function RouteComponent() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          <div className="grow"></div>
+          <Button variant="outline" onClick={togglePrivacyMode}>
+            {isPrivacyModeEnabled ? <EyeIcon /> : <EyeOffIcon />}
+          </Button>
+          <div className="px-1"></div>
         </header>
         <div className="flex flex-1 flex-col">
           <Outlet />

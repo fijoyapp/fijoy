@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c3cff765f1c0e69009c7930fe1462b93>>
+ * @generated SignedSource<<6414d1c499b38c2a62df0ca519b11025>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -82,13 +82,6 @@ return {
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "balance",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
             "concreteType": "Currency",
             "kind": "LinkedField",
             "name": "currency",
@@ -104,6 +97,13 @@ return {
               (v0/*: any*/)
             ],
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "balance",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -111,12 +111,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0876348b7c025f90479d6cebe89085f3",
+    "cacheID": "d29793cc06c9d24e711ecb057973d608",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query accountsQuery {\n  ...accountsListPageFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  currency {\n    code\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsListPageFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();

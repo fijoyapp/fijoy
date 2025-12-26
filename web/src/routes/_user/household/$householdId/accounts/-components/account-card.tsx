@@ -13,12 +13,16 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item'
+import { useCurrency } from '@/hooks/use-currency'
 
 const accountCardFragment = graphql`
   fragment accountCardFragment on Account {
     id
     name
     type
+    currency {
+      code
+    }
     balance
     ...accountBalanceDisplayFragment_account
   }
@@ -31,12 +35,15 @@ type AccountCardProps = {
 export function AccountCard({ fragmentRef }: AccountCardProps) {
   const data = useFragment(accountCardFragment, fragmentRef)
 
+  const { formatCurrencyWithPrivacyMode } = useCurrency()
+
   return (
     <Item
       render={
         <Link
           className="no-underline!"
-          to="/household/accounts/$accountId"
+          from="/household/$householdId/"
+          to="/household/$householdId/accounts/$accountId"
           activeOptions={{ exact: true }}
           params={{ accountId: data.id }}
         >
@@ -52,7 +59,12 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
               </ItemContent>
               <ItemContent className="">
                 <ItemDescription className="font-mono">
-                  <AccountBalanceDisplay fragmentRef={data} />
+                  <span>
+                    {formatCurrencyWithPrivacyMode(
+                      data.balance,
+                      data.currency.code,
+                    )}
+                  </span>
                 </ItemDescription>
               </ItemContent>
               <ItemActions className="">

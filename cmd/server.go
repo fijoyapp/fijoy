@@ -43,9 +43,9 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// if err := seed(ctx, entClient); err != nil {
-	// 	log.Fatalf("failed seeding database: %v", err)
-	// }
+	if err := seed(ctx, entClient); err != nil {
+		log.Fatalf("failed seeding database: %v", err)
+	}
 
 	log.Println("migration completed successfully")
 
@@ -88,6 +88,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	household := entClient.Household.Create().
 		SetName("Joey's Household").
 		SetCurrency(cad).
+		SetLocale("en-CA").
 		SaveX(ctx)
 
 	entClient.UserHousehold.Create().

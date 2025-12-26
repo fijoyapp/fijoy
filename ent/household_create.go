@@ -59,6 +59,12 @@ func (_c *HouseholdCreate) SetName(v string) *HouseholdCreate {
 	return _c
 }
 
+// SetLocale sets the "locale" field.
+func (_c *HouseholdCreate) SetLocale(v string) *HouseholdCreate {
+	_c.mutation.SetLocale(v)
+	return _c
+}
+
 // SetCurrencyID sets the "currency" edge to the Currency entity by ID.
 func (_c *HouseholdCreate) SetCurrencyID(id int) *HouseholdCreate {
 	_c.mutation.SetCurrencyID(id)
@@ -191,6 +197,14 @@ func (_c *HouseholdCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Household.name": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.Locale(); !ok {
+		return &ValidationError{Name: "locale", err: errors.New(`ent: missing required field "Household.locale"`)}
+	}
+	if v, ok := _c.mutation.Locale(); ok {
+		if err := household.LocaleValidator(v); err != nil {
+			return &ValidationError{Name: "locale", err: fmt.Errorf(`ent: validator failed for field "Household.locale": %w`, err)}
+		}
+	}
 	if len(_c.mutation.CurrencyIDs()) == 0 {
 		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required edge "Household.currency"`)}
 	}
@@ -231,6 +245,10 @@ func (_c *HouseholdCreate) createSpec() (*Household, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(household.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := _c.mutation.Locale(); ok {
+		_spec.SetField(household.FieldLocale, field.TypeString, value)
+		_node.Locale = value
 	}
 	if nodes := _c.mutation.CurrencyIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -63,6 +63,10 @@ func init() {
 	householdDescName := householdFields[0].Descriptor()
 	// household.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	household.NameValidator = householdDescName.Validators[0].(func(string) error)
+	// householdDescLocale is the schema descriptor for locale field.
+	householdDescLocale := householdFields[1].Descriptor()
+	// household.LocaleValidator is a validator for the "locale" field. It is called by the builders before save.
+	household.LocaleValidator = householdDescLocale.Validators[0].(func(string) error)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transactionMixinFields0 := transactionMixin[0].Fields()
 	_ = transactionMixinFields0

@@ -1333,6 +1333,7 @@ type HouseholdMutation struct {
 	create_time            *time.Time
 	update_time            *time.Time
 	name                   *string
+	locale                 *string
 	clearedFields          map[string]struct{}
 	currency               *int
 	clearedcurrency        bool
@@ -1557,6 +1558,42 @@ func (m *HouseholdMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *HouseholdMutation) ResetName() {
 	m.name = nil
+}
+
+// SetLocale sets the "locale" field.
+func (m *HouseholdMutation) SetLocale(s string) {
+	m.locale = &s
+}
+
+// Locale returns the value of the "locale" field in the mutation.
+func (m *HouseholdMutation) Locale() (r string, exists bool) {
+	v := m.locale
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocale returns the old "locale" field's value of the Household entity.
+// If the Household object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HouseholdMutation) OldLocale(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocale is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocale requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocale: %w", err)
+	}
+	return oldValue.Locale, nil
+}
+
+// ResetLocale resets all changes to the "locale" field.
+func (m *HouseholdMutation) ResetLocale() {
+	m.locale = nil
 }
 
 // SetCurrencyID sets the "currency" edge to the Currency entity by id.
@@ -1848,7 +1885,7 @@ func (m *HouseholdMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *HouseholdMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.create_time != nil {
 		fields = append(fields, household.FieldCreateTime)
 	}
@@ -1857,6 +1894,9 @@ func (m *HouseholdMutation) Fields() []string {
 	}
 	if m.name != nil {
 		fields = append(fields, household.FieldName)
+	}
+	if m.locale != nil {
+		fields = append(fields, household.FieldLocale)
 	}
 	return fields
 }
@@ -1872,6 +1912,8 @@ func (m *HouseholdMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case household.FieldName:
 		return m.Name()
+	case household.FieldLocale:
+		return m.Locale()
 	}
 	return nil, false
 }
@@ -1887,6 +1929,8 @@ func (m *HouseholdMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldUpdateTime(ctx)
 	case household.FieldName:
 		return m.OldName(ctx)
+	case household.FieldLocale:
+		return m.OldLocale(ctx)
 	}
 	return nil, fmt.Errorf("unknown Household field %s", name)
 }
@@ -1916,6 +1960,13 @@ func (m *HouseholdMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case household.FieldLocale:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocale(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Household field %s", name)
@@ -1974,6 +2025,9 @@ func (m *HouseholdMutation) ResetField(name string) error {
 		return nil
 	case household.FieldName:
 		m.ResetName()
+		return nil
+	case household.FieldLocale:
+		m.ResetLocale()
 		return nil
 	}
 	return fmt.Errorf("unknown Household field %s", name)

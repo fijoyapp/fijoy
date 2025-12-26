@@ -18,6 +18,7 @@ type Household struct {
 func (Household) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty(),
+		field.String("locale").NotEmpty(),
 	}
 }
 

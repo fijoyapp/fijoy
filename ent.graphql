@@ -37,6 +37,7 @@ type Household implements Node {
   createTime: Time!
   updateTime: Time!
   name: String!
+  locale: String!
   currency: Currency!
   users: [User!]
   accounts: [Account!]

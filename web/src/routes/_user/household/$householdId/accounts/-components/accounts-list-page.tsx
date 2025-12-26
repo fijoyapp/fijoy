@@ -20,6 +20,7 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import currency from 'currency.js'
+import { useCurrency } from '@/hooks/use-currency'
 
 const AccountsListPageFragment = graphql`
   fragment accountsListPageFragment on Query {
@@ -39,6 +40,8 @@ type AccountsListPageProps = {
 export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
   const data = useFragment(AccountsListPageFragment, fragmentRef)
 
+  const { formatCurrencyWithPrivacyMode } = useCurrency()
+
   const groupedAccounts = useMemo(
     () => groupBy(data.accounts, (account) => account.type),
     [data.accounts],
@@ -50,11 +53,6 @@ export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
       .reduce((a, b) => a.add(b), currency(0))
   }, [data.accounts])
 
-  const value = Intl.NumberFormat('en-CA', {
-    currency: 'CAD',
-    style: 'currency',
-  }).format(netWorth.value)
-
   return (
     <Fragment>
       <Item
@@ -63,7 +61,9 @@ export function AccountsListPage({ fragmentRef }: AccountsListPageProps) {
           <>
             <ItemContent>
               <ItemDescription>Net Worth</ItemDescription>
-              <ItemTitle className="text-2xl">{value}</ItemTitle>
+              <ItemTitle className="text-2xl">
+                {formatCurrencyWithPrivacyMode(netWorth, 'CAD')}
+              </ItemTitle>
             </ItemContent>
           </>
         }

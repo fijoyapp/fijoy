@@ -24,6 +24,8 @@ type Household struct {
 	UpdateTime time.Time `json:"update_time,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// Locale holds the value of the "locale" field.
+	Locale string `json:"locale,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HouseholdQuery when eager-loading is set.
 	Edges               HouseholdEdges `json:"edges"`
@@ -109,7 +111,7 @@ func (*Household) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case household.FieldID:
 			values[i] = new(sql.NullInt64)
-		case household.FieldName:
+		case household.FieldName, household.FieldLocale:
 			values[i] = new(sql.NullString)
 		case household.FieldCreateTime, household.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -153,6 +155,12 @@ func (_m *Household) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
+			}
+		case household.FieldLocale:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field locale", values[i])
+			} else if value.Valid {
+				_m.Locale = value.String
 			}
 		case household.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -230,6 +238,9 @@ func (_m *Household) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	builder.WriteString("locale=")
+	builder.WriteString(_m.Locale)
 	builder.WriteByte(')')
 	return builder.String()
 }
