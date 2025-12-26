@@ -55,6 +55,7 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
       <ItemContent className="flex-none items-end">
         <ItemTitle className="line-clamp-1">
           <span className="">
+            {/* TODO: properly handle transaction entries */}
             {formatCurrency(
               data.transactionEntries![0].amount,
               data.transactionEntries![0].account.currency.code,
