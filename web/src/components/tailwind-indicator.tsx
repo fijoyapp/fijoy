@@ -1,5 +1,4 @@
 export function TailwindIndicator() {
-  console.log(import.meta.env)
   if (import.meta.env.NODE_ENV === 'production') return null
 
   return (
