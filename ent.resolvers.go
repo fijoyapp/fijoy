@@ -40,7 +40,7 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error) {
-	return r.entClient.Transaction.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionOrder(orderBy))
+	return r.entClient.Transaction.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionOrder(orderBy), ent.WithTransactionFilter(where.Filter))
 }
 
 // TransactionEntries is the resolver for the transactionEntries field.
