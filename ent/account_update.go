@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/account"
+	"fijoy.app/ent/investment"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transactionentry"
 )
@@ -65,6 +66,21 @@ func (_u *AccountUpdate) AddTransactionEntries(v ...*TransactionEntry) *AccountU
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddInvestmentIDs adds the "investments" edge to the Investment entity by IDs.
+func (_u *AccountUpdate) AddInvestmentIDs(ids ...int) *AccountUpdate {
+	_u.mutation.AddInvestmentIDs(ids...)
+	return _u
+}
+
+// AddInvestments adds the "investments" edges to the Investment entity.
+func (_u *AccountUpdate) AddInvestments(v ...*Investment) *AccountUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddInvestmentIDs(ids...)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdate) Mutation() *AccountMutation {
 	return _u.mutation
@@ -89,6 +105,27 @@ func (_u *AccountUpdate) RemoveTransactionEntries(v ...*TransactionEntry) *Accou
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearInvestments clears all "investments" edges to the Investment entity.
+func (_u *AccountUpdate) ClearInvestments() *AccountUpdate {
+	_u.mutation.ClearInvestments()
+	return _u
+}
+
+// RemoveInvestmentIDs removes the "investments" edge to Investment entities by IDs.
+func (_u *AccountUpdate) RemoveInvestmentIDs(ids ...int) *AccountUpdate {
+	_u.mutation.RemoveInvestmentIDs(ids...)
+	return _u
+}
+
+// RemoveInvestments removes "investments" edges to Investment entities.
+func (_u *AccountUpdate) RemoveInvestments(v ...*Investment) *AccountUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveInvestmentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -212,6 +249,51 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.InvestmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.InvestmentsTable,
+			Columns: []string{account.InvestmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedInvestmentsIDs(); len(nodes) > 0 && !_u.mutation.InvestmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.InvestmentsTable,
+			Columns: []string{account.InvestmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.InvestmentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.InvestmentsTable,
+			Columns: []string{account.InvestmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -269,6 +351,21 @@ func (_u *AccountUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *Accou
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddInvestmentIDs adds the "investments" edge to the Investment entity by IDs.
+func (_u *AccountUpdateOne) AddInvestmentIDs(ids ...int) *AccountUpdateOne {
+	_u.mutation.AddInvestmentIDs(ids...)
+	return _u
+}
+
+// AddInvestments adds the "investments" edges to the Investment entity.
+func (_u *AccountUpdateOne) AddInvestments(v ...*Investment) *AccountUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddInvestmentIDs(ids...)
+}
+
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdateOne) Mutation() *AccountMutation {
 	return _u.mutation
@@ -293,6 +390,27 @@ func (_u *AccountUpdateOne) RemoveTransactionEntries(v ...*TransactionEntry) *Ac
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearInvestments clears all "investments" edges to the Investment entity.
+func (_u *AccountUpdateOne) ClearInvestments() *AccountUpdateOne {
+	_u.mutation.ClearInvestments()
+	return _u
+}
+
+// RemoveInvestmentIDs removes the "investments" edge to Investment entities by IDs.
+func (_u *AccountUpdateOne) RemoveInvestmentIDs(ids ...int) *AccountUpdateOne {
+	_u.mutation.RemoveInvestmentIDs(ids...)
+	return _u
+}
+
+// RemoveInvestments removes "investments" edges to Investment entities.
+func (_u *AccountUpdateOne) RemoveInvestments(v ...*Investment) *AccountUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveInvestmentIDs(ids...)
 }
 
 // Where appends a list predicates to the AccountUpdate builder.
@@ -439,6 +557,51 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.InvestmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.InvestmentsTable,
+			Columns: []string{account.InvestmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedInvestmentsIDs(); len(nodes) > 0 && !_u.mutation.InvestmentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.InvestmentsTable,
+			Columns: []string{account.InvestmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.InvestmentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.InvestmentsTable,
+			Columns: []string{account.InvestmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -12,6 +12,8 @@ import (
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/internal"
+	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
@@ -39,6 +41,16 @@ var householdImplementors = []string{"Household", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Household) IsNode() {}
+
+var investmentImplementors = []string{"Investment", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Investment) IsNode() {}
+
+var lotImplementors = []string{"Lot", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Lot) IsNode() {}
 
 var transactionImplementors = []string{"Transaction", "Node"}
 
@@ -160,6 +172,24 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			Where(household.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, householdImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case investment.Table:
+		query := c.Investment.Query().
+			Where(investment.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, investmentImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case lot.Table:
+		query := c.Lot.Query().
+			Where(lot.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, lotImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -309,6 +339,38 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		query := c.Household.Query().
 			Where(household.IDIn(ids...))
 		query, err := query.CollectFields(ctx, householdImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case investment.Table:
+		query := c.Investment.Query().
+			Where(investment.IDIn(ids...))
+		query, err := query.CollectFields(ctx, investmentImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case lot.Table:
+		query := c.Lot.Query().
+			Where(lot.IDIn(ids...))
+		query, err := query.CollectFields(ctx, lotImplementors...)
 		if err != nil {
 			return nil, err
 		}

@@ -9,6 +9,8 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
@@ -70,6 +72,19 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				return err
 			}
 			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+				*wq = *query
+			})
+
+		case "investments":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&InvestmentClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, investmentImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedInvestments(alias, func(wq *InvestmentQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -311,6 +326,19 @@ func (_q *HouseholdQuery) collectField(ctx context.Context, oneNode bool, opCtx 
 				*wq = *query
 			})
 
+		case "investments":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&InvestmentClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, investmentImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedInvestments(alias, func(wq *InvestmentQuery) {
+				*wq = *query
+			})
+
 		case "userHouseholds":
 			var (
 				alias = field.Alias
@@ -380,6 +408,226 @@ func newHouseholdPaginateArgs(rv map[string]any) *householdPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*HouseholdWhereInput); ok {
 		args.opts = append(args.opts, WithHouseholdFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *InvestmentQuery) CollectFields(ctx context.Context, satisfies ...string) (*InvestmentQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(investment.Columns))
+		selectedFields = []string{investment.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "account":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&AccountClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, accountImplementors)...); err != nil {
+				return err
+			}
+			_q.withAccount = query
+
+		case "household":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&HouseholdClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, householdImplementors)...); err != nil {
+				return err
+			}
+			_q.withHousehold = query
+
+		case "lots":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&LotClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, lotImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedLots(alias, func(wq *LotQuery) {
+				*wq = *query
+			})
+		case "createTime":
+			if _, ok := fieldSeen[investment.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, investment.FieldCreateTime)
+				fieldSeen[investment.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[investment.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, investment.FieldUpdateTime)
+				fieldSeen[investment.FieldUpdateTime] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[investment.FieldName]; !ok {
+				selectedFields = append(selectedFields, investment.FieldName)
+				fieldSeen[investment.FieldName] = struct{}{}
+			}
+		case "type":
+			if _, ok := fieldSeen[investment.FieldType]; !ok {
+				selectedFields = append(selectedFields, investment.FieldType)
+				fieldSeen[investment.FieldType] = struct{}{}
+			}
+		case "symbol":
+			if _, ok := fieldSeen[investment.FieldSymbol]; !ok {
+				selectedFields = append(selectedFields, investment.FieldSymbol)
+				fieldSeen[investment.FieldSymbol] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type investmentPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []InvestmentPaginateOption
+}
+
+func newInvestmentPaginateArgs(rv map[string]any) *investmentPaginateArgs {
+	args := &investmentPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*InvestmentWhereInput); ok {
+		args.opts = append(args.opts, WithInvestmentFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *LotQuery) CollectFields(ctx context.Context, satisfies ...string) (*LotQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(lot.Columns))
+		selectedFields = []string{lot.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "investment":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&InvestmentClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, investmentImplementors)...); err != nil {
+				return err
+			}
+			_q.withInvestment = query
+		case "createTime":
+			if _, ok := fieldSeen[lot.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, lot.FieldCreateTime)
+				fieldSeen[lot.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[lot.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, lot.FieldUpdateTime)
+				fieldSeen[lot.FieldUpdateTime] = struct{}{}
+			}
+		case "datetime":
+			if _, ok := fieldSeen[lot.FieldDatetime]; !ok {
+				selectedFields = append(selectedFields, lot.FieldDatetime)
+				fieldSeen[lot.FieldDatetime] = struct{}{}
+			}
+		case "amount":
+			if _, ok := fieldSeen[lot.FieldAmount]; !ok {
+				selectedFields = append(selectedFields, lot.FieldAmount)
+				fieldSeen[lot.FieldAmount] = struct{}{}
+			}
+		case "price":
+			if _, ok := fieldSeen[lot.FieldPrice]; !ok {
+				selectedFields = append(selectedFields, lot.FieldPrice)
+				fieldSeen[lot.FieldPrice] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type lotPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []LotPaginateOption
+}
+
+func newLotPaginateArgs(rv map[string]any) *lotPaginateArgs {
+	args := &lotPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*LotWhereInput); ok {
+		args.opts = append(args.opts, WithLotFilter(v.Filter))
 	}
 	return args
 }

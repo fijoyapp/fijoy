@@ -35,6 +35,7 @@ func (Account) Edges() []ent.Edge {
 			Unique().Immutable().Required(),
 
 		edge.To("transaction_entries", TransactionEntry.Type),
+		edge.To("investments", Investment.Type),
 	}
 }
 

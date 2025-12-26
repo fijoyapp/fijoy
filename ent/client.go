@@ -18,6 +18,8 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
@@ -35,6 +37,10 @@ type Client struct {
 	Currency *CurrencyClient
 	// Household is the client for interacting with the Household builders.
 	Household *HouseholdClient
+	// Investment is the client for interacting with the Investment builders.
+	Investment *InvestmentClient
+	// Lot is the client for interacting with the Lot builders.
+	Lot *LotClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
 	// TransactionEntry is the client for interacting with the TransactionEntry builders.
@@ -57,6 +63,8 @@ func (c *Client) init() {
 	c.Account = NewAccountClient(c.config)
 	c.Currency = NewCurrencyClient(c.config)
 	c.Household = NewHouseholdClient(c.config)
+	c.Investment = NewInvestmentClient(c.config)
+	c.Lot = NewLotClient(c.config)
 	c.Transaction = NewTransactionClient(c.config)
 	c.TransactionEntry = NewTransactionEntryClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -156,6 +164,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Account:          NewAccountClient(cfg),
 		Currency:         NewCurrencyClient(cfg),
 		Household:        NewHouseholdClient(cfg),
+		Investment:       NewInvestmentClient(cfg),
+		Lot:              NewLotClient(cfg),
 		Transaction:      NewTransactionClient(cfg),
 		TransactionEntry: NewTransactionEntryClient(cfg),
 		User:             NewUserClient(cfg),
@@ -182,6 +192,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Account:          NewAccountClient(cfg),
 		Currency:         NewCurrencyClient(cfg),
 		Household:        NewHouseholdClient(cfg),
+		Investment:       NewInvestmentClient(cfg),
+		Lot:              NewLotClient(cfg),
 		Transaction:      NewTransactionClient(cfg),
 		TransactionEntry: NewTransactionEntryClient(cfg),
 		User:             NewUserClient(cfg),
@@ -215,8 +227,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Account, c.Currency, c.Household, c.Transaction, c.TransactionEntry, c.User,
-		c.UserHousehold,
+		c.Account, c.Currency, c.Household, c.Investment, c.Lot, c.Transaction,
+		c.TransactionEntry, c.User, c.UserHousehold,
 	} {
 		n.Use(hooks...)
 	}
@@ -226,8 +238,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Account, c.Currency, c.Household, c.Transaction, c.TransactionEntry, c.User,
-		c.UserHousehold,
+		c.Account, c.Currency, c.Household, c.Investment, c.Lot, c.Transaction,
+		c.TransactionEntry, c.User, c.UserHousehold,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -242,6 +254,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Currency.mutate(ctx, m)
 	case *HouseholdMutation:
 		return c.Household.mutate(ctx, m)
+	case *InvestmentMutation:
+		return c.Investment.mutate(ctx, m)
+	case *LotMutation:
+		return c.Lot.mutate(ctx, m)
 	case *TransactionMutation:
 		return c.Transaction.mutate(ctx, m)
 	case *TransactionEntryMutation:
@@ -404,6 +420,22 @@ func (c *AccountClient) QueryTransactionEntries(_m *Account) *TransactionEntryQu
 			sqlgraph.From(account.Table, account.FieldID, id),
 			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionEntriesTable, account.TransactionEntriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryInvestments queries the investments edge of a Account.
+func (c *AccountClient) QueryInvestments(_m *Account) *InvestmentQuery {
+	query := (&InvestmentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, id),
+			sqlgraph.To(investment.Table, investment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.InvestmentsTable, account.InvestmentsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -789,6 +821,22 @@ func (c *HouseholdClient) QueryTransactions(_m *Household) *TransactionQuery {
 	return query
 }
 
+// QueryInvestments queries the investments edge of a Household.
+func (c *HouseholdClient) QueryInvestments(_m *Household) *InvestmentQuery {
+	query := (&InvestmentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(household.Table, household.FieldID, id),
+			sqlgraph.To(investment.Table, investment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, household.InvestmentsTable, household.InvestmentsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserHouseholds queries the user_households edge of a Household.
 func (c *HouseholdClient) QueryUserHouseholds(_m *Household) *UserHouseholdQuery {
 	query := (&UserHouseholdClient{config: c.config}).Query()
@@ -827,6 +875,336 @@ func (c *HouseholdClient) mutate(ctx context.Context, m *HouseholdMutation) (Val
 		return (&HouseholdDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Household mutation op: %q", m.Op())
+	}
+}
+
+// InvestmentClient is a client for the Investment schema.
+type InvestmentClient struct {
+	config
+}
+
+// NewInvestmentClient returns a client for the Investment from the given config.
+func NewInvestmentClient(c config) *InvestmentClient {
+	return &InvestmentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `investment.Hooks(f(g(h())))`.
+func (c *InvestmentClient) Use(hooks ...Hook) {
+	c.hooks.Investment = append(c.hooks.Investment, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `investment.Intercept(f(g(h())))`.
+func (c *InvestmentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Investment = append(c.inters.Investment, interceptors...)
+}
+
+// Create returns a builder for creating a Investment entity.
+func (c *InvestmentClient) Create() *InvestmentCreate {
+	mutation := newInvestmentMutation(c.config, OpCreate)
+	return &InvestmentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Investment entities.
+func (c *InvestmentClient) CreateBulk(builders ...*InvestmentCreate) *InvestmentCreateBulk {
+	return &InvestmentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InvestmentClient) MapCreateBulk(slice any, setFunc func(*InvestmentCreate, int)) *InvestmentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InvestmentCreateBulk{err: fmt.Errorf("calling to InvestmentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InvestmentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InvestmentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Investment.
+func (c *InvestmentClient) Update() *InvestmentUpdate {
+	mutation := newInvestmentMutation(c.config, OpUpdate)
+	return &InvestmentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvestmentClient) UpdateOne(_m *Investment) *InvestmentUpdateOne {
+	mutation := newInvestmentMutation(c.config, OpUpdateOne, withInvestment(_m))
+	return &InvestmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvestmentClient) UpdateOneID(id int) *InvestmentUpdateOne {
+	mutation := newInvestmentMutation(c.config, OpUpdateOne, withInvestmentID(id))
+	return &InvestmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Investment.
+func (c *InvestmentClient) Delete() *InvestmentDelete {
+	mutation := newInvestmentMutation(c.config, OpDelete)
+	return &InvestmentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvestmentClient) DeleteOne(_m *Investment) *InvestmentDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvestmentClient) DeleteOneID(id int) *InvestmentDeleteOne {
+	builder := c.Delete().Where(investment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvestmentDeleteOne{builder}
+}
+
+// Query returns a query builder for Investment.
+func (c *InvestmentClient) Query() *InvestmentQuery {
+	return &InvestmentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvestment},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Investment entity by its id.
+func (c *InvestmentClient) Get(ctx context.Context, id int) (*Investment, error) {
+	return c.Query().Where(investment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvestmentClient) GetX(ctx context.Context, id int) *Investment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAccount queries the account edge of a Investment.
+func (c *InvestmentClient) QueryAccount(_m *Investment) *AccountQuery {
+	query := (&AccountClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(investment.Table, investment.FieldID, id),
+			sqlgraph.To(account.Table, account.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, investment.AccountTable, investment.AccountColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryHousehold queries the household edge of a Investment.
+func (c *InvestmentClient) QueryHousehold(_m *Investment) *HouseholdQuery {
+	query := (&HouseholdClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(investment.Table, investment.FieldID, id),
+			sqlgraph.To(household.Table, household.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, investment.HouseholdTable, investment.HouseholdColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLots queries the lots edge of a Investment.
+func (c *InvestmentClient) QueryLots(_m *Investment) *LotQuery {
+	query := (&LotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(investment.Table, investment.FieldID, id),
+			sqlgraph.To(lot.Table, lot.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, investment.LotsTable, investment.LotsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *InvestmentClient) Hooks() []Hook {
+	return c.hooks.Investment
+}
+
+// Interceptors returns the client interceptors.
+func (c *InvestmentClient) Interceptors() []Interceptor {
+	return c.inters.Investment
+}
+
+func (c *InvestmentClient) mutate(ctx context.Context, m *InvestmentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvestmentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvestmentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvestmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvestmentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Investment mutation op: %q", m.Op())
+	}
+}
+
+// LotClient is a client for the Lot schema.
+type LotClient struct {
+	config
+}
+
+// NewLotClient returns a client for the Lot from the given config.
+func NewLotClient(c config) *LotClient {
+	return &LotClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `lot.Hooks(f(g(h())))`.
+func (c *LotClient) Use(hooks ...Hook) {
+	c.hooks.Lot = append(c.hooks.Lot, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `lot.Intercept(f(g(h())))`.
+func (c *LotClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Lot = append(c.inters.Lot, interceptors...)
+}
+
+// Create returns a builder for creating a Lot entity.
+func (c *LotClient) Create() *LotCreate {
+	mutation := newLotMutation(c.config, OpCreate)
+	return &LotCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Lot entities.
+func (c *LotClient) CreateBulk(builders ...*LotCreate) *LotCreateBulk {
+	return &LotCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LotClient) MapCreateBulk(slice any, setFunc func(*LotCreate, int)) *LotCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LotCreateBulk{err: fmt.Errorf("calling to LotClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LotCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LotCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Lot.
+func (c *LotClient) Update() *LotUpdate {
+	mutation := newLotMutation(c.config, OpUpdate)
+	return &LotUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LotClient) UpdateOne(_m *Lot) *LotUpdateOne {
+	mutation := newLotMutation(c.config, OpUpdateOne, withLot(_m))
+	return &LotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LotClient) UpdateOneID(id int) *LotUpdateOne {
+	mutation := newLotMutation(c.config, OpUpdateOne, withLotID(id))
+	return &LotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Lot.
+func (c *LotClient) Delete() *LotDelete {
+	mutation := newLotMutation(c.config, OpDelete)
+	return &LotDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LotClient) DeleteOne(_m *Lot) *LotDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LotClient) DeleteOneID(id int) *LotDeleteOne {
+	builder := c.Delete().Where(lot.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LotDeleteOne{builder}
+}
+
+// Query returns a query builder for Lot.
+func (c *LotClient) Query() *LotQuery {
+	return &LotQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLot},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Lot entity by its id.
+func (c *LotClient) Get(ctx context.Context, id int) (*Lot, error) {
+	return c.Query().Where(lot.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LotClient) GetX(ctx context.Context, id int) *Lot {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryInvestment queries the investment edge of a Lot.
+func (c *LotClient) QueryInvestment(_m *Lot) *InvestmentQuery {
+	query := (&InvestmentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lot.Table, lot.FieldID, id),
+			sqlgraph.To(investment.Table, investment.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lot.InvestmentTable, lot.InvestmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LotClient) Hooks() []Hook {
+	return c.hooks.Lot
+}
+
+// Interceptors returns the client interceptors.
+func (c *LotClient) Interceptors() []Interceptor {
+	return c.inters.Lot
+}
+
+func (c *LotClient) mutate(ctx context.Context, m *LotMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LotCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LotUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LotUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Lot mutation op: %q", m.Op())
 	}
 }
 
@@ -1493,11 +1871,11 @@ func (c *UserHouseholdClient) mutate(ctx context.Context, m *UserHouseholdMutati
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, Currency, Household, Transaction, TransactionEntry, User,
-		UserHousehold []ent.Hook
+		Account, Currency, Household, Investment, Lot, Transaction, TransactionEntry,
+		User, UserHousehold []ent.Hook
 	}
 	inters struct {
-		Account, Currency, Household, Transaction, TransactionEntry, User,
-		UserHousehold []ent.Interceptor
+		Account, Currency, Household, Investment, Lot, Transaction, TransactionEntry,
+		User, UserHousehold []ent.Interceptor
 	}
 )

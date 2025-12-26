@@ -14,6 +14,8 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
@@ -34,6 +36,8 @@ const (
 	TypeAccount          = "Account"
 	TypeCurrency         = "Currency"
 	TypeHousehold        = "Household"
+	TypeInvestment       = "Investment"
+	TypeLot              = "Lot"
 	TypeTransaction      = "Transaction"
 	TypeTransactionEntry = "TransactionEntry"
 	TypeUser             = "User"
@@ -58,6 +62,9 @@ type AccountMutation struct {
 	transaction_entries        map[int]struct{}
 	removedtransaction_entries map[int]struct{}
 	clearedtransaction_entries bool
+	investments                map[int]struct{}
+	removedinvestments         map[int]struct{}
+	clearedinvestments         bool
 	done                       bool
 	oldValue                   func(context.Context) (*Account, error)
 	predicates                 []predicate.Account
@@ -437,6 +444,60 @@ func (m *AccountMutation) ResetTransactionEntries() {
 	m.removedtransaction_entries = nil
 }
 
+// AddInvestmentIDs adds the "investments" edge to the Investment entity by ids.
+func (m *AccountMutation) AddInvestmentIDs(ids ...int) {
+	if m.investments == nil {
+		m.investments = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.investments[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInvestments clears the "investments" edge to the Investment entity.
+func (m *AccountMutation) ClearInvestments() {
+	m.clearedinvestments = true
+}
+
+// InvestmentsCleared reports if the "investments" edge to the Investment entity was cleared.
+func (m *AccountMutation) InvestmentsCleared() bool {
+	return m.clearedinvestments
+}
+
+// RemoveInvestmentIDs removes the "investments" edge to the Investment entity by IDs.
+func (m *AccountMutation) RemoveInvestmentIDs(ids ...int) {
+	if m.removedinvestments == nil {
+		m.removedinvestments = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.investments, ids[i])
+		m.removedinvestments[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInvestments returns the removed IDs of the "investments" edge to the Investment entity.
+func (m *AccountMutation) RemovedInvestmentsIDs() (ids []int) {
+	for id := range m.removedinvestments {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InvestmentsIDs returns the "investments" edge IDs in the mutation.
+func (m *AccountMutation) InvestmentsIDs() (ids []int) {
+	for id := range m.investments {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInvestments resets all changes to the "investments" edge.
+func (m *AccountMutation) ResetInvestments() {
+	m.investments = nil
+	m.clearedinvestments = false
+	m.removedinvestments = nil
+}
+
 // Where appends a list predicates to the AccountMutation builder.
 func (m *AccountMutation) Where(ps ...predicate.Account) {
 	m.predicates = append(m.predicates, ps...)
@@ -621,7 +682,7 @@ func (m *AccountMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AccountMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.household != nil {
 		edges = append(edges, account.EdgeHousehold)
 	}
@@ -630,6 +691,9 @@ func (m *AccountMutation) AddedEdges() []string {
 	}
 	if m.transaction_entries != nil {
 		edges = append(edges, account.EdgeTransactionEntries)
+	}
+	if m.investments != nil {
+		edges = append(edges, account.EdgeInvestments)
 	}
 	return edges
 }
@@ -652,15 +716,24 @@ func (m *AccountMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case account.EdgeInvestments:
+		ids := make([]ent.Value, 0, len(m.investments))
+		for id := range m.investments {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AccountMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedtransaction_entries != nil {
 		edges = append(edges, account.EdgeTransactionEntries)
+	}
+	if m.removedinvestments != nil {
+		edges = append(edges, account.EdgeInvestments)
 	}
 	return edges
 }
@@ -675,13 +748,19 @@ func (m *AccountMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case account.EdgeInvestments:
+		ids := make([]ent.Value, 0, len(m.removedinvestments))
+		for id := range m.removedinvestments {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AccountMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedhousehold {
 		edges = append(edges, account.EdgeHousehold)
 	}
@@ -690,6 +769,9 @@ func (m *AccountMutation) ClearedEdges() []string {
 	}
 	if m.clearedtransaction_entries {
 		edges = append(edges, account.EdgeTransactionEntries)
+	}
+	if m.clearedinvestments {
+		edges = append(edges, account.EdgeInvestments)
 	}
 	return edges
 }
@@ -704,6 +786,8 @@ func (m *AccountMutation) EdgeCleared(name string) bool {
 		return m.clearedcurrency
 	case account.EdgeTransactionEntries:
 		return m.clearedtransaction_entries
+	case account.EdgeInvestments:
+		return m.clearedinvestments
 	}
 	return false
 }
@@ -734,6 +818,9 @@ func (m *AccountMutation) ResetEdge(name string) error {
 		return nil
 	case account.EdgeTransactionEntries:
 		m.ResetTransactionEntries()
+		return nil
+	case account.EdgeInvestments:
+		m.ResetInvestments()
 		return nil
 	}
 	return fmt.Errorf("unknown Account edge %s", name)
@@ -1346,6 +1433,9 @@ type HouseholdMutation struct {
 	transactions           map[int]struct{}
 	removedtransactions    map[int]struct{}
 	clearedtransactions    bool
+	investments            map[int]struct{}
+	removedinvestments     map[int]struct{}
+	clearedinvestments     bool
 	user_households        map[int]struct{}
 	removeduser_households map[int]struct{}
 	cleareduser_households bool
@@ -1797,6 +1887,60 @@ func (m *HouseholdMutation) ResetTransactions() {
 	m.removedtransactions = nil
 }
 
+// AddInvestmentIDs adds the "investments" edge to the Investment entity by ids.
+func (m *HouseholdMutation) AddInvestmentIDs(ids ...int) {
+	if m.investments == nil {
+		m.investments = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.investments[ids[i]] = struct{}{}
+	}
+}
+
+// ClearInvestments clears the "investments" edge to the Investment entity.
+func (m *HouseholdMutation) ClearInvestments() {
+	m.clearedinvestments = true
+}
+
+// InvestmentsCleared reports if the "investments" edge to the Investment entity was cleared.
+func (m *HouseholdMutation) InvestmentsCleared() bool {
+	return m.clearedinvestments
+}
+
+// RemoveInvestmentIDs removes the "investments" edge to the Investment entity by IDs.
+func (m *HouseholdMutation) RemoveInvestmentIDs(ids ...int) {
+	if m.removedinvestments == nil {
+		m.removedinvestments = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.investments, ids[i])
+		m.removedinvestments[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedInvestments returns the removed IDs of the "investments" edge to the Investment entity.
+func (m *HouseholdMutation) RemovedInvestmentsIDs() (ids []int) {
+	for id := range m.removedinvestments {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// InvestmentsIDs returns the "investments" edge IDs in the mutation.
+func (m *HouseholdMutation) InvestmentsIDs() (ids []int) {
+	for id := range m.investments {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetInvestments resets all changes to the "investments" edge.
+func (m *HouseholdMutation) ResetInvestments() {
+	m.investments = nil
+	m.clearedinvestments = false
+	m.removedinvestments = nil
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by ids.
 func (m *HouseholdMutation) AddUserHouseholdIDs(ids ...int) {
 	if m.user_households == nil {
@@ -2035,7 +2179,7 @@ func (m *HouseholdMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *HouseholdMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.currency != nil {
 		edges = append(edges, household.EdgeCurrency)
 	}
@@ -2047,6 +2191,9 @@ func (m *HouseholdMutation) AddedEdges() []string {
 	}
 	if m.transactions != nil {
 		edges = append(edges, household.EdgeTransactions)
+	}
+	if m.investments != nil {
+		edges = append(edges, household.EdgeInvestments)
 	}
 	if m.user_households != nil {
 		edges = append(edges, household.EdgeUserHouseholds)
@@ -2080,6 +2227,12 @@ func (m *HouseholdMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case household.EdgeInvestments:
+		ids := make([]ent.Value, 0, len(m.investments))
+		for id := range m.investments {
+			ids = append(ids, id)
+		}
+		return ids
 	case household.EdgeUserHouseholds:
 		ids := make([]ent.Value, 0, len(m.user_households))
 		for id := range m.user_households {
@@ -2092,7 +2245,7 @@ func (m *HouseholdMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *HouseholdMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedusers != nil {
 		edges = append(edges, household.EdgeUsers)
 	}
@@ -2101,6 +2254,9 @@ func (m *HouseholdMutation) RemovedEdges() []string {
 	}
 	if m.removedtransactions != nil {
 		edges = append(edges, household.EdgeTransactions)
+	}
+	if m.removedinvestments != nil {
+		edges = append(edges, household.EdgeInvestments)
 	}
 	if m.removeduser_households != nil {
 		edges = append(edges, household.EdgeUserHouseholds)
@@ -2130,6 +2286,12 @@ func (m *HouseholdMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case household.EdgeInvestments:
+		ids := make([]ent.Value, 0, len(m.removedinvestments))
+		for id := range m.removedinvestments {
+			ids = append(ids, id)
+		}
+		return ids
 	case household.EdgeUserHouseholds:
 		ids := make([]ent.Value, 0, len(m.removeduser_households))
 		for id := range m.removeduser_households {
@@ -2142,7 +2304,7 @@ func (m *HouseholdMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *HouseholdMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedcurrency {
 		edges = append(edges, household.EdgeCurrency)
 	}
@@ -2154,6 +2316,9 @@ func (m *HouseholdMutation) ClearedEdges() []string {
 	}
 	if m.clearedtransactions {
 		edges = append(edges, household.EdgeTransactions)
+	}
+	if m.clearedinvestments {
+		edges = append(edges, household.EdgeInvestments)
 	}
 	if m.cleareduser_households {
 		edges = append(edges, household.EdgeUserHouseholds)
@@ -2173,6 +2338,8 @@ func (m *HouseholdMutation) EdgeCleared(name string) bool {
 		return m.clearedaccounts
 	case household.EdgeTransactions:
 		return m.clearedtransactions
+	case household.EdgeInvestments:
+		return m.clearedinvestments
 	case household.EdgeUserHouseholds:
 		return m.cleareduser_households
 	}
@@ -2206,11 +2373,1445 @@ func (m *HouseholdMutation) ResetEdge(name string) error {
 	case household.EdgeTransactions:
 		m.ResetTransactions()
 		return nil
+	case household.EdgeInvestments:
+		m.ResetInvestments()
+		return nil
 	case household.EdgeUserHouseholds:
 		m.ResetUserHouseholds()
 		return nil
 	}
 	return fmt.Errorf("unknown Household edge %s", name)
+}
+
+// InvestmentMutation represents an operation that mutates the Investment nodes in the graph.
+type InvestmentMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int
+	create_time      *time.Time
+	update_time      *time.Time
+	name             *string
+	_type            *investment.Type
+	symbol           *string
+	clearedFields    map[string]struct{}
+	account          *int
+	clearedaccount   bool
+	household        *int
+	clearedhousehold bool
+	lots             map[int]struct{}
+	removedlots      map[int]struct{}
+	clearedlots      bool
+	done             bool
+	oldValue         func(context.Context) (*Investment, error)
+	predicates       []predicate.Investment
+}
+
+var _ ent.Mutation = (*InvestmentMutation)(nil)
+
+// investmentOption allows management of the mutation configuration using functional options.
+type investmentOption func(*InvestmentMutation)
+
+// newInvestmentMutation creates new mutation for the Investment entity.
+func newInvestmentMutation(c config, op Op, opts ...investmentOption) *InvestmentMutation {
+	m := &InvestmentMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeInvestment,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withInvestmentID sets the ID field of the mutation.
+func withInvestmentID(id int) investmentOption {
+	return func(m *InvestmentMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Investment
+		)
+		m.oldValue = func(ctx context.Context) (*Investment, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Investment.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withInvestment sets the old Investment of the mutation.
+func withInvestment(node *Investment) investmentOption {
+	return func(m *InvestmentMutation) {
+		m.oldValue = func(context.Context) (*Investment, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m InvestmentMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m InvestmentMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *InvestmentMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *InvestmentMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Investment.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *InvestmentMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *InvestmentMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *InvestmentMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *InvestmentMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *InvestmentMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *InvestmentMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetName sets the "name" field.
+func (m *InvestmentMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *InvestmentMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *InvestmentMutation) ResetName() {
+	m.name = nil
+}
+
+// SetType sets the "type" field.
+func (m *InvestmentMutation) SetType(i investment.Type) {
+	m._type = &i
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *InvestmentMutation) GetType() (r investment.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldType(ctx context.Context) (v investment.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *InvestmentMutation) ResetType() {
+	m._type = nil
+}
+
+// SetSymbol sets the "symbol" field.
+func (m *InvestmentMutation) SetSymbol(s string) {
+	m.symbol = &s
+}
+
+// Symbol returns the value of the "symbol" field in the mutation.
+func (m *InvestmentMutation) Symbol() (r string, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbol returns the old "symbol" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldSymbol(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbol requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbol: %w", err)
+	}
+	return oldValue.Symbol, nil
+}
+
+// ResetSymbol resets all changes to the "symbol" field.
+func (m *InvestmentMutation) ResetSymbol() {
+	m.symbol = nil
+}
+
+// SetAccountID sets the "account" edge to the Account entity by id.
+func (m *InvestmentMutation) SetAccountID(id int) {
+	m.account = &id
+}
+
+// ClearAccount clears the "account" edge to the Account entity.
+func (m *InvestmentMutation) ClearAccount() {
+	m.clearedaccount = true
+}
+
+// AccountCleared reports if the "account" edge to the Account entity was cleared.
+func (m *InvestmentMutation) AccountCleared() bool {
+	return m.clearedaccount
+}
+
+// AccountID returns the "account" edge ID in the mutation.
+func (m *InvestmentMutation) AccountID() (id int, exists bool) {
+	if m.account != nil {
+		return *m.account, true
+	}
+	return
+}
+
+// AccountIDs returns the "account" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AccountID instead. It exists only for internal usage by the builders.
+func (m *InvestmentMutation) AccountIDs() (ids []int) {
+	if id := m.account; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAccount resets all changes to the "account" edge.
+func (m *InvestmentMutation) ResetAccount() {
+	m.account = nil
+	m.clearedaccount = false
+}
+
+// SetHouseholdID sets the "household" edge to the Household entity by id.
+func (m *InvestmentMutation) SetHouseholdID(id int) {
+	m.household = &id
+}
+
+// ClearHousehold clears the "household" edge to the Household entity.
+func (m *InvestmentMutation) ClearHousehold() {
+	m.clearedhousehold = true
+}
+
+// HouseholdCleared reports if the "household" edge to the Household entity was cleared.
+func (m *InvestmentMutation) HouseholdCleared() bool {
+	return m.clearedhousehold
+}
+
+// HouseholdID returns the "household" edge ID in the mutation.
+func (m *InvestmentMutation) HouseholdID() (id int, exists bool) {
+	if m.household != nil {
+		return *m.household, true
+	}
+	return
+}
+
+// HouseholdIDs returns the "household" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// HouseholdID instead. It exists only for internal usage by the builders.
+func (m *InvestmentMutation) HouseholdIDs() (ids []int) {
+	if id := m.household; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetHousehold resets all changes to the "household" edge.
+func (m *InvestmentMutation) ResetHousehold() {
+	m.household = nil
+	m.clearedhousehold = false
+}
+
+// AddLotIDs adds the "lots" edge to the Lot entity by ids.
+func (m *InvestmentMutation) AddLotIDs(ids ...int) {
+	if m.lots == nil {
+		m.lots = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.lots[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLots clears the "lots" edge to the Lot entity.
+func (m *InvestmentMutation) ClearLots() {
+	m.clearedlots = true
+}
+
+// LotsCleared reports if the "lots" edge to the Lot entity was cleared.
+func (m *InvestmentMutation) LotsCleared() bool {
+	return m.clearedlots
+}
+
+// RemoveLotIDs removes the "lots" edge to the Lot entity by IDs.
+func (m *InvestmentMutation) RemoveLotIDs(ids ...int) {
+	if m.removedlots == nil {
+		m.removedlots = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.lots, ids[i])
+		m.removedlots[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLots returns the removed IDs of the "lots" edge to the Lot entity.
+func (m *InvestmentMutation) RemovedLotsIDs() (ids []int) {
+	for id := range m.removedlots {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LotsIDs returns the "lots" edge IDs in the mutation.
+func (m *InvestmentMutation) LotsIDs() (ids []int) {
+	for id := range m.lots {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLots resets all changes to the "lots" edge.
+func (m *InvestmentMutation) ResetLots() {
+	m.lots = nil
+	m.clearedlots = false
+	m.removedlots = nil
+}
+
+// Where appends a list predicates to the InvestmentMutation builder.
+func (m *InvestmentMutation) Where(ps ...predicate.Investment) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the InvestmentMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InvestmentMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Investment, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *InvestmentMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InvestmentMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Investment).
+func (m *InvestmentMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *InvestmentMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, investment.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, investment.FieldUpdateTime)
+	}
+	if m.name != nil {
+		fields = append(fields, investment.FieldName)
+	}
+	if m._type != nil {
+		fields = append(fields, investment.FieldType)
+	}
+	if m.symbol != nil {
+		fields = append(fields, investment.FieldSymbol)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *InvestmentMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case investment.FieldCreateTime:
+		return m.CreateTime()
+	case investment.FieldUpdateTime:
+		return m.UpdateTime()
+	case investment.FieldName:
+		return m.Name()
+	case investment.FieldType:
+		return m.GetType()
+	case investment.FieldSymbol:
+		return m.Symbol()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *InvestmentMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case investment.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case investment.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case investment.FieldName:
+		return m.OldName(ctx)
+	case investment.FieldType:
+		return m.OldType(ctx)
+	case investment.FieldSymbol:
+		return m.OldSymbol(ctx)
+	}
+	return nil, fmt.Errorf("unknown Investment field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InvestmentMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case investment.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case investment.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case investment.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case investment.FieldType:
+		v, ok := value.(investment.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case investment.FieldSymbol:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbol(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Investment field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *InvestmentMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *InvestmentMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InvestmentMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Investment numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *InvestmentMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *InvestmentMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *InvestmentMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Investment nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *InvestmentMutation) ResetField(name string) error {
+	switch name {
+	case investment.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case investment.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case investment.FieldName:
+		m.ResetName()
+		return nil
+	case investment.FieldType:
+		m.ResetType()
+		return nil
+	case investment.FieldSymbol:
+		m.ResetSymbol()
+		return nil
+	}
+	return fmt.Errorf("unknown Investment field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *InvestmentMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.account != nil {
+		edges = append(edges, investment.EdgeAccount)
+	}
+	if m.household != nil {
+		edges = append(edges, investment.EdgeHousehold)
+	}
+	if m.lots != nil {
+		edges = append(edges, investment.EdgeLots)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *InvestmentMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case investment.EdgeAccount:
+		if id := m.account; id != nil {
+			return []ent.Value{*id}
+		}
+	case investment.EdgeHousehold:
+		if id := m.household; id != nil {
+			return []ent.Value{*id}
+		}
+	case investment.EdgeLots:
+		ids := make([]ent.Value, 0, len(m.lots))
+		for id := range m.lots {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *InvestmentMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedlots != nil {
+		edges = append(edges, investment.EdgeLots)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *InvestmentMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case investment.EdgeLots:
+		ids := make([]ent.Value, 0, len(m.removedlots))
+		for id := range m.removedlots {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *InvestmentMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedaccount {
+		edges = append(edges, investment.EdgeAccount)
+	}
+	if m.clearedhousehold {
+		edges = append(edges, investment.EdgeHousehold)
+	}
+	if m.clearedlots {
+		edges = append(edges, investment.EdgeLots)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *InvestmentMutation) EdgeCleared(name string) bool {
+	switch name {
+	case investment.EdgeAccount:
+		return m.clearedaccount
+	case investment.EdgeHousehold:
+		return m.clearedhousehold
+	case investment.EdgeLots:
+		return m.clearedlots
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *InvestmentMutation) ClearEdge(name string) error {
+	switch name {
+	case investment.EdgeAccount:
+		m.ClearAccount()
+		return nil
+	case investment.EdgeHousehold:
+		m.ClearHousehold()
+		return nil
+	}
+	return fmt.Errorf("unknown Investment unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *InvestmentMutation) ResetEdge(name string) error {
+	switch name {
+	case investment.EdgeAccount:
+		m.ResetAccount()
+		return nil
+	case investment.EdgeHousehold:
+		m.ResetHousehold()
+		return nil
+	case investment.EdgeLots:
+		m.ResetLots()
+		return nil
+	}
+	return fmt.Errorf("unknown Investment edge %s", name)
+}
+
+// LotMutation represents an operation that mutates the Lot nodes in the graph.
+type LotMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int
+	create_time       *time.Time
+	update_time       *time.Time
+	datetime          *time.Time
+	amount            *decimal.Decimal
+	addamount         *decimal.Decimal
+	price             *decimal.Decimal
+	addprice          *decimal.Decimal
+	clearedFields     map[string]struct{}
+	investment        *int
+	clearedinvestment bool
+	done              bool
+	oldValue          func(context.Context) (*Lot, error)
+	predicates        []predicate.Lot
+}
+
+var _ ent.Mutation = (*LotMutation)(nil)
+
+// lotOption allows management of the mutation configuration using functional options.
+type lotOption func(*LotMutation)
+
+// newLotMutation creates new mutation for the Lot entity.
+func newLotMutation(c config, op Op, opts ...lotOption) *LotMutation {
+	m := &LotMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeLot,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withLotID sets the ID field of the mutation.
+func withLotID(id int) lotOption {
+	return func(m *LotMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Lot
+		)
+		m.oldValue = func(ctx context.Context) (*Lot, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Lot.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withLot sets the old Lot of the mutation.
+func withLot(node *Lot) lotOption {
+	return func(m *LotMutation) {
+		m.oldValue = func(context.Context) (*Lot, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m LotMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m LotMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *LotMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *LotMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Lot.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *LotMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *LotMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the Lot entity.
+// If the Lot object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LotMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *LotMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *LotMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *LotMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the Lot entity.
+// If the Lot object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LotMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *LotMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetDatetime sets the "datetime" field.
+func (m *LotMutation) SetDatetime(t time.Time) {
+	m.datetime = &t
+}
+
+// Datetime returns the value of the "datetime" field in the mutation.
+func (m *LotMutation) Datetime() (r time.Time, exists bool) {
+	v := m.datetime
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDatetime returns the old "datetime" field's value of the Lot entity.
+// If the Lot object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LotMutation) OldDatetime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDatetime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDatetime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDatetime: %w", err)
+	}
+	return oldValue.Datetime, nil
+}
+
+// ResetDatetime resets all changes to the "datetime" field.
+func (m *LotMutation) ResetDatetime() {
+	m.datetime = nil
+}
+
+// SetAmount sets the "amount" field.
+func (m *LotMutation) SetAmount(d decimal.Decimal) {
+	m.amount = &d
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *LotMutation) Amount() (r decimal.Decimal, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the Lot entity.
+// If the Lot object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LotMutation) OldAmount(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds d to the "amount" field.
+func (m *LotMutation) AddAmount(d decimal.Decimal) {
+	if m.addamount != nil {
+		*m.addamount = m.addamount.Add(d)
+	} else {
+		m.addamount = &d
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *LotMutation) AddedAmount() (r decimal.Decimal, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *LotMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
+// SetPrice sets the "price" field.
+func (m *LotMutation) SetPrice(d decimal.Decimal) {
+	m.price = &d
+	m.addprice = nil
+}
+
+// Price returns the value of the "price" field in the mutation.
+func (m *LotMutation) Price() (r decimal.Decimal, exists bool) {
+	v := m.price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPrice returns the old "price" field's value of the Lot entity.
+// If the Lot object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *LotMutation) OldPrice(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPrice: %w", err)
+	}
+	return oldValue.Price, nil
+}
+
+// AddPrice adds d to the "price" field.
+func (m *LotMutation) AddPrice(d decimal.Decimal) {
+	if m.addprice != nil {
+		*m.addprice = m.addprice.Add(d)
+	} else {
+		m.addprice = &d
+	}
+}
+
+// AddedPrice returns the value that was added to the "price" field in this mutation.
+func (m *LotMutation) AddedPrice() (r decimal.Decimal, exists bool) {
+	v := m.addprice
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPrice resets all changes to the "price" field.
+func (m *LotMutation) ResetPrice() {
+	m.price = nil
+	m.addprice = nil
+}
+
+// SetInvestmentID sets the "investment" edge to the Investment entity by id.
+func (m *LotMutation) SetInvestmentID(id int) {
+	m.investment = &id
+}
+
+// ClearInvestment clears the "investment" edge to the Investment entity.
+func (m *LotMutation) ClearInvestment() {
+	m.clearedinvestment = true
+}
+
+// InvestmentCleared reports if the "investment" edge to the Investment entity was cleared.
+func (m *LotMutation) InvestmentCleared() bool {
+	return m.clearedinvestment
+}
+
+// InvestmentID returns the "investment" edge ID in the mutation.
+func (m *LotMutation) InvestmentID() (id int, exists bool) {
+	if m.investment != nil {
+		return *m.investment, true
+	}
+	return
+}
+
+// InvestmentIDs returns the "investment" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// InvestmentID instead. It exists only for internal usage by the builders.
+func (m *LotMutation) InvestmentIDs() (ids []int) {
+	if id := m.investment; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetInvestment resets all changes to the "investment" edge.
+func (m *LotMutation) ResetInvestment() {
+	m.investment = nil
+	m.clearedinvestment = false
+}
+
+// Where appends a list predicates to the LotMutation builder.
+func (m *LotMutation) Where(ps ...predicate.Lot) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the LotMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *LotMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Lot, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *LotMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *LotMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Lot).
+func (m *LotMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *LotMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, lot.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, lot.FieldUpdateTime)
+	}
+	if m.datetime != nil {
+		fields = append(fields, lot.FieldDatetime)
+	}
+	if m.amount != nil {
+		fields = append(fields, lot.FieldAmount)
+	}
+	if m.price != nil {
+		fields = append(fields, lot.FieldPrice)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *LotMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case lot.FieldCreateTime:
+		return m.CreateTime()
+	case lot.FieldUpdateTime:
+		return m.UpdateTime()
+	case lot.FieldDatetime:
+		return m.Datetime()
+	case lot.FieldAmount:
+		return m.Amount()
+	case lot.FieldPrice:
+		return m.Price()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *LotMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case lot.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case lot.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case lot.FieldDatetime:
+		return m.OldDatetime(ctx)
+	case lot.FieldAmount:
+		return m.OldAmount(ctx)
+	case lot.FieldPrice:
+		return m.OldPrice(ctx)
+	}
+	return nil, fmt.Errorf("unknown Lot field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LotMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case lot.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case lot.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case lot.FieldDatetime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDatetime(v)
+		return nil
+	case lot.FieldAmount:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
+	case lot.FieldPrice:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPrice(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Lot field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *LotMutation) AddedFields() []string {
+	var fields []string
+	if m.addamount != nil {
+		fields = append(fields, lot.FieldAmount)
+	}
+	if m.addprice != nil {
+		fields = append(fields, lot.FieldPrice)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *LotMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case lot.FieldAmount:
+		return m.AddedAmount()
+	case lot.FieldPrice:
+		return m.AddedPrice()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *LotMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case lot.FieldAmount:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
+	case lot.FieldPrice:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPrice(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Lot numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *LotMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *LotMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *LotMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Lot nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *LotMutation) ResetField(name string) error {
+	switch name {
+	case lot.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case lot.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case lot.FieldDatetime:
+		m.ResetDatetime()
+		return nil
+	case lot.FieldAmount:
+		m.ResetAmount()
+		return nil
+	case lot.FieldPrice:
+		m.ResetPrice()
+		return nil
+	}
+	return fmt.Errorf("unknown Lot field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *LotMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.investment != nil {
+		edges = append(edges, lot.EdgeInvestment)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *LotMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case lot.EdgeInvestment:
+		if id := m.investment; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *LotMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *LotMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *LotMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedinvestment {
+		edges = append(edges, lot.EdgeInvestment)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *LotMutation) EdgeCleared(name string) bool {
+	switch name {
+	case lot.EdgeInvestment:
+		return m.clearedinvestment
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *LotMutation) ClearEdge(name string) error {
+	switch name {
+	case lot.EdgeInvestment:
+		m.ClearInvestment()
+		return nil
+	}
+	return fmt.Errorf("unknown Lot unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *LotMutation) ResetEdge(name string) error {
+	switch name {
+	case lot.EdgeInvestment:
+		m.ResetInvestment()
+		return nil
+	}
+	return fmt.Errorf("unknown Lot edge %s", name)
 }
 
 // TransactionMutation represents an operation that mutates the Transaction nodes in the graph.

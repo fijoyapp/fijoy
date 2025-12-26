@@ -43,17 +43,20 @@ type HouseholdEdges struct {
 	Accounts []*Account `json:"accounts,omitempty"`
 	// Transactions holds the value of the transactions edge.
 	Transactions []*Transaction `json:"transactions,omitempty"`
+	// Investments holds the value of the investments edge.
+	Investments []*Investment `json:"investments,omitempty"`
 	// UserHouseholds holds the value of the user_households edge.
 	UserHouseholds []*UserHousehold `json:"user_households,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [6]map[string]int
 
 	namedUsers          map[string][]*User
 	namedAccounts       map[string][]*Account
 	namedTransactions   map[string][]*Transaction
+	namedInvestments    map[string][]*Investment
 	namedUserHouseholds map[string][]*UserHousehold
 }
 
@@ -95,10 +98,19 @@ func (e HouseholdEdges) TransactionsOrErr() ([]*Transaction, error) {
 	return nil, &NotLoadedError{edge: "transactions"}
 }
 
+// InvestmentsOrErr returns the Investments value or an error if the edge
+// was not loaded in eager-loading.
+func (e HouseholdEdges) InvestmentsOrErr() ([]*Investment, error) {
+	if e.loadedTypes[4] {
+		return e.Investments, nil
+	}
+	return nil, &NotLoadedError{edge: "investments"}
+}
+
 // UserHouseholdsOrErr returns the UserHouseholds value or an error if the edge
 // was not loaded in eager-loading.
 func (e HouseholdEdges) UserHouseholdsOrErr() ([]*UserHousehold, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		return e.UserHouseholds, nil
 	}
 	return nil, &NotLoadedError{edge: "user_households"}
@@ -200,6 +212,11 @@ func (_m *Household) QueryAccounts() *AccountQuery {
 // QueryTransactions queries the "transactions" edge of the Household entity.
 func (_m *Household) QueryTransactions() *TransactionQuery {
 	return NewHouseholdClient(_m.config).QueryTransactions(_m)
+}
+
+// QueryInvestments queries the "investments" edge of the Household entity.
+func (_m *Household) QueryInvestments() *InvestmentQuery {
+	return NewHouseholdClient(_m.config).QueryInvestments(_m)
 }
 
 // QueryUserHouseholds queries the "user_households" edge of the Household entity.
@@ -314,6 +331,30 @@ func (_m *Household) appendNamedTransactions(name string, edges ...*Transaction)
 		_m.Edges.namedTransactions[name] = []*Transaction{}
 	} else {
 		_m.Edges.namedTransactions[name] = append(_m.Edges.namedTransactions[name], edges...)
+	}
+}
+
+// NamedInvestments returns the Investments named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Household) NamedInvestments(name string) ([]*Investment, error) {
+	if _m.Edges.namedInvestments == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedInvestments[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Household) appendNamedInvestments(name string, edges ...*Investment) {
+	if _m.Edges.namedInvestments == nil {
+		_m.Edges.namedInvestments = make(map[string][]*Investment)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedInvestments[name] = []*Investment{}
+	} else {
+		_m.Edges.namedInvestments[name] = append(_m.Edges.namedInvestments[name], edges...)
 	}
 }
 

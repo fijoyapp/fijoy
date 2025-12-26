@@ -30,6 +30,8 @@ const (
 	EdgeAccounts = "accounts"
 	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
 	EdgeTransactions = "transactions"
+	// EdgeInvestments holds the string denoting the investments edge name in mutations.
+	EdgeInvestments = "investments"
 	// EdgeUserHouseholds holds the string denoting the user_households edge name in mutations.
 	EdgeUserHouseholds = "user_households"
 	// Table holds the table name of the household in the database.
@@ -60,6 +62,13 @@ const (
 	TransactionsInverseTable = "transactions"
 	// TransactionsColumn is the table column denoting the transactions relation/edge.
 	TransactionsColumn = "household_transactions"
+	// InvestmentsTable is the table that holds the investments relation/edge.
+	InvestmentsTable = "investments"
+	// InvestmentsInverseTable is the table name for the Investment entity.
+	// It exists in this package in order to avoid circular dependency with the "investment" package.
+	InvestmentsInverseTable = "investments"
+	// InvestmentsColumn is the table column denoting the investments relation/edge.
+	InvestmentsColumn = "household_investments"
 	// UserHouseholdsTable is the table that holds the user_households relation/edge.
 	UserHouseholdsTable = "user_households"
 	// UserHouseholdsInverseTable is the table name for the UserHousehold entity.
@@ -195,6 +204,20 @@ func ByTransactions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByInvestmentsCount orders the results by investments count.
+func ByInvestmentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvestmentsStep(), opts...)
+	}
+}
+
+// ByInvestments orders the results by investments terms.
+func ByInvestments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvestmentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserHouseholdsCount orders the results by user_households count.
 func ByUserHouseholdsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -234,6 +257,13 @@ func newTransactionsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionsTable, TransactionsColumn),
+	)
+}
+func newInvestmentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvestmentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, InvestmentsTable, InvestmentsColumn),
 	)
 }
 func newUserHouseholdsStep() *sqlgraph.Step {

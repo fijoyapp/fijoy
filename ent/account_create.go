@@ -13,6 +13,7 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/investment"
 	"fijoy.app/ent/transactionentry"
 )
 
@@ -98,6 +99,21 @@ func (_c *AccountCreate) AddTransactionEntries(v ...*TransactionEntry) *AccountC
 		ids[i] = v[i].ID
 	}
 	return _c.AddTransactionEntryIDs(ids...)
+}
+
+// AddInvestmentIDs adds the "investments" edge to the Investment entity by IDs.
+func (_c *AccountCreate) AddInvestmentIDs(ids ...int) *AccountCreate {
+	_c.mutation.AddInvestmentIDs(ids...)
+	return _c
+}
+
+// AddInvestments adds the "investments" edges to the Investment entity.
+func (_c *AccountCreate) AddInvestments(v ...*Investment) *AccountCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddInvestmentIDs(ids...)
 }
 
 // Mutation returns the AccountMutation object of the builder.
@@ -260,6 +276,22 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.InvestmentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   account.InvestmentsTable,
+			Columns: []string{account.InvestmentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

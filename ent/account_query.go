@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/investment"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transactionentry"
 )
@@ -29,10 +30,12 @@ type AccountQuery struct {
 	withHousehold               *HouseholdQuery
 	withCurrency                *CurrencyQuery
 	withTransactionEntries      *TransactionEntryQuery
+	withInvestments             *InvestmentQuery
 	withFKs                     bool
 	loadTotal                   []func(context.Context, []*Account) error
 	modifiers                   []func(*sql.Selector)
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
+	withNamedInvestments        map[string]*InvestmentQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -128,6 +131,28 @@ func (_q *AccountQuery) QueryTransactionEntries() *TransactionEntryQuery {
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, account.TransactionEntriesTable, account.TransactionEntriesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryInvestments chains the current query on the "investments" edge.
+func (_q *AccountQuery) QueryInvestments() *InvestmentQuery {
+	query := (&InvestmentClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, selector),
+			sqlgraph.To(investment.Table, investment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, account.InvestmentsTable, account.InvestmentsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -330,6 +355,7 @@ func (_q *AccountQuery) Clone() *AccountQuery {
 		withHousehold:          _q.withHousehold.Clone(),
 		withCurrency:           _q.withCurrency.Clone(),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
+		withInvestments:        _q.withInvestments.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -367,6 +393,17 @@ func (_q *AccountQuery) WithTransactionEntries(opts ...func(*TransactionEntryQue
 		opt(query)
 	}
 	_q.withTransactionEntries = query
+	return _q
+}
+
+// WithInvestments tells the query-builder to eager-load the nodes that are connected to
+// the "investments" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithInvestments(opts ...func(*InvestmentQuery)) *AccountQuery {
+	query := (&InvestmentClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withInvestments = query
 	return _q
 }
 
@@ -449,10 +486,11 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		nodes       = []*Account{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withHousehold != nil,
 			_q.withCurrency != nil,
 			_q.withTransactionEntries != nil,
+			_q.withInvestments != nil,
 		}
 	)
 	if _q.withHousehold != nil || _q.withCurrency != nil {
@@ -503,10 +541,24 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			return nil, err
 		}
 	}
+	if query := _q.withInvestments; query != nil {
+		if err := _q.loadInvestments(ctx, query, nodes,
+			func(n *Account) { n.Edges.Investments = []*Investment{} },
+			func(n *Account, e *Investment) { n.Edges.Investments = append(n.Edges.Investments, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range _q.withNamedTransactionEntries {
 		if err := _q.loadTransactionEntries(ctx, query, nodes,
 			func(n *Account) { n.appendNamedTransactionEntries(name) },
 			func(n *Account, e *TransactionEntry) { n.appendNamedTransactionEntries(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedInvestments {
+		if err := _q.loadInvestments(ctx, query, nodes,
+			func(n *Account) { n.appendNamedInvestments(name) },
+			func(n *Account, e *Investment) { n.appendNamedInvestments(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -608,6 +660,37 @@ func (_q *AccountQuery) loadTransactionEntries(ctx context.Context, query *Trans
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "account_transaction_entries" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *AccountQuery) loadInvestments(ctx context.Context, query *InvestmentQuery, nodes []*Account, init func(*Account), assign func(*Account, *Investment)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Account)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Investment(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(account.InvestmentsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.account_investments
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "account_investments" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "account_investments" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -718,6 +801,20 @@ func (_q *AccountQuery) WithNamedTransactionEntries(name string, opts ...func(*T
 		_q.withNamedTransactionEntries = make(map[string]*TransactionEntryQuery)
 	}
 	_q.withNamedTransactionEntries[name] = query
+	return _q
+}
+
+// WithNamedInvestments tells the query-builder to eager-load the nodes that are connected to the "investments"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithNamedInvestments(name string, opts ...func(*InvestmentQuery)) *AccountQuery {
+	query := (&InvestmentClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedInvestments == nil {
+		_q.withNamedInvestments = make(map[string]*InvestmentQuery)
+	}
+	_q.withNamedInvestments[name] = query
 	return _q
 }
 

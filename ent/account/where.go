@@ -304,6 +304,29 @@ func HasTransactionEntriesWith(preds ...predicate.TransactionEntry) predicate.Ac
 	})
 }
 
+// HasInvestments applies the HasEdge predicate on the "investments" edge.
+func HasInvestments() predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, InvestmentsTable, InvestmentsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasInvestmentsWith applies the HasEdge predicate on the "investments" edge with a given conditions (other predicates).
+func HasInvestmentsWith(preds ...predicate.Investment) predicate.Account {
+	return predicate.Account(func(s *sql.Selector) {
+		step := newInvestmentsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Account) predicate.Account {
 	return predicate.Account(sql.AndPredicates(predicates...))

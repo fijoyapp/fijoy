@@ -13,6 +13,16 @@ import (
 	"fijoy.app/ent"
 )
 
+// Amount is the resolver for the amount field.
+func (r *lotResolver) Amount(ctx context.Context, obj *ent.Lot) (string, error) {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// Price is the resolver for the price field.
+func (r *lotResolver) Price(ctx context.Context, obj *ent.Lot) (string, error) {
+	panic(fmt.Errorf("not implemented: Price - price"))
+}
+
 // Node is the resolver for the node field.
 func (r *queryResolver) Node(ctx context.Context, id int) (ent.Noder, error) {
 	return r.entClient.Noder(ctx, id)
@@ -38,6 +48,16 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 	return r.entClient.Household.Query().All(ctx)
 }
 
+// Investments is the resolver for the investments field.
+func (r *queryResolver) Investments(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) (*ent.InvestmentConnection, error) {
+	panic(fmt.Errorf("not implemented: Investments - investments"))
+}
+
+// Lots is the resolver for the lots field.
+func (r *queryResolver) Lots(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) (*ent.LotConnection, error) {
+	panic(fmt.Errorf("not implemented: Lots - lots"))
+}
+
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error) {
 	return r.entClient.Transaction.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionOrder(orderBy), ent.WithTransactionFilter(where.Filter))
@@ -61,6 +81,86 @@ func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehol
 // Amount is the resolver for the amount field.
 func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
 	return obj.Amount.String(), nil
+}
+
+// Amount is the resolver for the amount field.
+func (r *lotWhereInputResolver) Amount(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// AmountNeq is the resolver for the amountNEQ field.
+func (r *lotWhereInputResolver) AmountNeq(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountNeq - amountNEQ"))
+}
+
+// AmountIn is the resolver for the amountIn field.
+func (r *lotWhereInputResolver) AmountIn(ctx context.Context, obj *ent.LotWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: AmountIn - amountIn"))
+}
+
+// AmountNotIn is the resolver for the amountNotIn field.
+func (r *lotWhereInputResolver) AmountNotIn(ctx context.Context, obj *ent.LotWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: AmountNotIn - amountNotIn"))
+}
+
+// AmountGt is the resolver for the amountGT field.
+func (r *lotWhereInputResolver) AmountGt(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountGt - amountGT"))
+}
+
+// AmountGte is the resolver for the amountGTE field.
+func (r *lotWhereInputResolver) AmountGte(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountGte - amountGTE"))
+}
+
+// AmountLt is the resolver for the amountLT field.
+func (r *lotWhereInputResolver) AmountLt(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountLt - amountLT"))
+}
+
+// AmountLte is the resolver for the amountLTE field.
+func (r *lotWhereInputResolver) AmountLte(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountLte - amountLTE"))
+}
+
+// Price is the resolver for the price field.
+func (r *lotWhereInputResolver) Price(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Price - price"))
+}
+
+// PriceNeq is the resolver for the priceNEQ field.
+func (r *lotWhereInputResolver) PriceNeq(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: PriceNeq - priceNEQ"))
+}
+
+// PriceIn is the resolver for the priceIn field.
+func (r *lotWhereInputResolver) PriceIn(ctx context.Context, obj *ent.LotWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: PriceIn - priceIn"))
+}
+
+// PriceNotIn is the resolver for the priceNotIn field.
+func (r *lotWhereInputResolver) PriceNotIn(ctx context.Context, obj *ent.LotWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: PriceNotIn - priceNotIn"))
+}
+
+// PriceGt is the resolver for the priceGT field.
+func (r *lotWhereInputResolver) PriceGt(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: PriceGt - priceGT"))
+}
+
+// PriceGte is the resolver for the priceGTE field.
+func (r *lotWhereInputResolver) PriceGte(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: PriceGte - priceGTE"))
+}
+
+// PriceLt is the resolver for the priceLT field.
+func (r *lotWhereInputResolver) PriceLt(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: PriceLt - priceLT"))
+}
+
+// PriceLte is the resolver for the priceLTE field.
+func (r *lotWhereInputResolver) PriceLte(ctx context.Context, obj *ent.LotWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: PriceLte - priceLTE"))
 }
 
 // Amount is the resolver for the amount field.
@@ -106,11 +206,17 @@ func (r *transactionEntryWhereInputResolver) AmountLte(ctx context.Context, obj 
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
+// Lot returns LotResolver implementation.
+func (r *Resolver) Lot() LotResolver { return &lotResolver{r} }
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
+
+// LotWhereInput returns LotWhereInputResolver implementation.
+func (r *Resolver) LotWhereInput() LotWhereInputResolver { return &lotWhereInputResolver{r} }
 
 // TransactionEntryWhereInput returns TransactionEntryWhereInputResolver implementation.
 func (r *Resolver) TransactionEntryWhereInput() TransactionEntryWhereInputResolver {
@@ -118,6 +224,8 @@ func (r *Resolver) TransactionEntryWhereInput() TransactionEntryWhereInputResolv
 }
 
 type accountResolver struct{ *Resolver }
+type lotResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
+type lotWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }

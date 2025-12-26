@@ -43,13 +43,16 @@ type AccountEdges struct {
 	Currency *Currency `json:"currency,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
+	// Investments holds the value of the investments edge.
+	Investments []*Investment `json:"investments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
 	namedTransactionEntries map[string][]*TransactionEntry
+	namedInvestments        map[string][]*Investment
 }
 
 // HouseholdOrErr returns the Household value or an error if the edge
@@ -81,6 +84,15 @@ func (e AccountEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
+}
+
+// InvestmentsOrErr returns the Investments value or an error if the edge
+// was not loaded in eager-loading.
+func (e AccountEdges) InvestmentsOrErr() ([]*Investment, error) {
+	if e.loadedTypes[3] {
+		return e.Investments, nil
+	}
+	return nil, &NotLoadedError{edge: "investments"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -185,6 +197,11 @@ func (_m *Account) QueryTransactionEntries() *TransactionEntryQuery {
 	return NewAccountClient(_m.config).QueryTransactionEntries(_m)
 }
 
+// QueryInvestments queries the "investments" edge of the Account entity.
+func (_m *Account) QueryInvestments() *InvestmentQuery {
+	return NewAccountClient(_m.config).QueryInvestments(_m)
+}
+
 // Update returns a builder for updating this Account.
 // Note that you need to call Account.Unwrap() before calling this method if this Account
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -244,6 +261,30 @@ func (_m *Account) appendNamedTransactionEntries(name string, edges ...*Transact
 		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
 	} else {
 		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
+	}
+}
+
+// NamedInvestments returns the Investments named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Account) NamedInvestments(name string) ([]*Investment, error) {
+	if _m.Edges.namedInvestments == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedInvestments[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Account) appendNamedInvestments(name string, edges ...*Investment) {
+	if _m.Edges.namedInvestments == nil {
+		_m.Edges.namedInvestments = make(map[string][]*Investment)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedInvestments[name] = []*Investment{}
+	} else {
+		_m.Edges.namedInvestments[name] = append(_m.Edges.namedInvestments[name], edges...)
 	}
 }
 

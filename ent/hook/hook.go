@@ -45,6 +45,30 @@ func (f HouseholdFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.HouseholdMutation", m)
 }
 
+// The InvestmentFunc type is an adapter to allow the use of ordinary
+// function as Investment mutator.
+type InvestmentFunc func(context.Context, *ent.InvestmentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f InvestmentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.InvestmentMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvestmentMutation", m)
+}
+
+// The LotFunc type is an adapter to allow the use of ordinary
+// function as Lot mutator.
+type LotFunc func(context.Context, *ent.LotMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f LotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.LotMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LotMutation", m)
+}
+
 // The TransactionFunc type is an adapter to allow the use of ordinary
 // function as Transaction mutator.
 type TransactionFunc func(context.Context, *ent.TransactionMutation) (ent.Value, error)

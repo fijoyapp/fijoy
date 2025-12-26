@@ -15,6 +15,8 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
@@ -82,6 +84,8 @@ func checkColumn(t, c string) error {
 			account.Table:          account.ValidColumn,
 			currency.Table:         currency.ValidColumn,
 			household.Table:        household.ValidColumn,
+			investment.Table:       investment.ValidColumn,
+			lot.Table:              lot.ValidColumn,
 			transaction.Table:      transaction.ValidColumn,
 			transactionentry.Table: transactionentry.ValidColumn,
 			user.Table:             user.ValidColumn,

@@ -34,6 +34,7 @@ func (Household) Edges() []ent.Edge {
 
 		edge.To("accounts", Account.Type),
 		edge.To("transactions", Transaction.Type),
+		edge.To("investments", Investment.Type),
 	}
 }
 

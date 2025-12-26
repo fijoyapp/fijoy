@@ -8,6 +8,8 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/schema"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
@@ -67,6 +69,40 @@ func init() {
 	householdDescLocale := householdFields[1].Descriptor()
 	// household.LocaleValidator is a validator for the "locale" field. It is called by the builders before save.
 	household.LocaleValidator = householdDescLocale.Validators[0].(func(string) error)
+	investmentMixin := schema.Investment{}.Mixin()
+	investmentMixinFields0 := investmentMixin[0].Fields()
+	_ = investmentMixinFields0
+	investmentFields := schema.Investment{}.Fields()
+	_ = investmentFields
+	// investmentDescCreateTime is the schema descriptor for create_time field.
+	investmentDescCreateTime := investmentMixinFields0[0].Descriptor()
+	// investment.DefaultCreateTime holds the default value on creation for the create_time field.
+	investment.DefaultCreateTime = investmentDescCreateTime.Default.(func() time.Time)
+	// investmentDescUpdateTime is the schema descriptor for update_time field.
+	investmentDescUpdateTime := investmentMixinFields0[1].Descriptor()
+	// investment.DefaultUpdateTime holds the default value on creation for the update_time field.
+	investment.DefaultUpdateTime = investmentDescUpdateTime.Default.(func() time.Time)
+	// investment.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	investment.UpdateDefaultUpdateTime = investmentDescUpdateTime.UpdateDefault.(func() time.Time)
+	// investmentDescSymbol is the schema descriptor for symbol field.
+	investmentDescSymbol := investmentFields[2].Descriptor()
+	// investment.SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
+	investment.SymbolValidator = investmentDescSymbol.Validators[0].(func(string) error)
+	lotMixin := schema.Lot{}.Mixin()
+	lotMixinFields0 := lotMixin[0].Fields()
+	_ = lotMixinFields0
+	lotFields := schema.Lot{}.Fields()
+	_ = lotFields
+	// lotDescCreateTime is the schema descriptor for create_time field.
+	lotDescCreateTime := lotMixinFields0[0].Descriptor()
+	// lot.DefaultCreateTime holds the default value on creation for the create_time field.
+	lot.DefaultCreateTime = lotDescCreateTime.Default.(func() time.Time)
+	// lotDescUpdateTime is the schema descriptor for update_time field.
+	lotDescUpdateTime := lotMixinFields0[1].Descriptor()
+	// lot.DefaultUpdateTime holds the default value on creation for the update_time field.
+	lot.DefaultUpdateTime = lotDescUpdateTime.Default.(func() time.Time)
+	// lot.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	lot.UpdateDefaultUpdateTime = lotDescUpdateTime.UpdateDefault.(func() time.Time)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transactionMixinFields0 := transactionMixin[0].Fields()
 	_ = transactionMixinFields0

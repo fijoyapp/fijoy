@@ -36,6 +36,18 @@ func (_m *Account) TransactionEntries(ctx context.Context) (result []*Transactio
 	return result, err
 }
 
+func (_m *Account) Investments(ctx context.Context) (result []*Investment, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedInvestments(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.InvestmentsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryInvestments().All(ctx)
+	}
+	return result, err
+}
+
 func (_m *Currency) Accounts(ctx context.Context) (result []*Account, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = _m.NamedAccounts(graphql.GetFieldContext(ctx).Field.Alias)
@@ -116,6 +128,18 @@ func (_m *Household) Transactions(ctx context.Context) (result []*Transaction, e
 	return result, err
 }
 
+func (_m *Household) Investments(ctx context.Context) (result []*Investment, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedInvestments(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.InvestmentsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryInvestments().All(ctx)
+	}
+	return result, err
+}
+
 func (_m *Household) UserHouseholds(ctx context.Context) (result []*UserHousehold, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = _m.NamedUserHouseholds(graphql.GetFieldContext(ctx).Field.Alias)
@@ -124,6 +148,42 @@ func (_m *Household) UserHouseholds(ctx context.Context) (result []*UserHousehol
 	}
 	if IsNotLoaded(err) {
 		result, err = _m.QueryUserHouseholds().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Investment) Account(ctx context.Context) (*Account, error) {
+	result, err := _m.Edges.AccountOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryAccount().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *Investment) Household(ctx context.Context) (*Household, error) {
+	result, err := _m.Edges.HouseholdOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryHousehold().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *Investment) Lots(ctx context.Context) (result []*Lot, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedLots(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.LotsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryLots().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Lot) Investment(ctx context.Context) (*Investment, error) {
+	result, err := _m.Edges.InvestmentOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryInvestment().Only(ctx)
 	}
 	return result, err
 }

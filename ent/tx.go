@@ -18,6 +18,10 @@ type Tx struct {
 	Currency *CurrencyClient
 	// Household is the client for interacting with the Household builders.
 	Household *HouseholdClient
+	// Investment is the client for interacting with the Investment builders.
+	Investment *InvestmentClient
+	// Lot is the client for interacting with the Lot builders.
+	Lot *LotClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
 	// TransactionEntry is the client for interacting with the TransactionEntry builders.
@@ -160,6 +164,8 @@ func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
 	tx.Currency = NewCurrencyClient(tx.config)
 	tx.Household = NewHouseholdClient(tx.config)
+	tx.Investment = NewInvestmentClient(tx.config)
+	tx.Lot = NewLotClient(tx.config)
 	tx.Transaction = NewTransactionClient(tx.config)
 	tx.TransactionEntry = NewTransactionEntryClient(tx.config)
 	tx.User = NewUserClient(tx.config)

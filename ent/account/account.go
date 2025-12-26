@@ -31,6 +31,8 @@ const (
 	EdgeCurrency = "currency"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
+	// EdgeInvestments holds the string denoting the investments edge name in mutations.
+	EdgeInvestments = "investments"
 	// Table holds the table name of the account in the database.
 	Table = "accounts"
 	// HouseholdTable is the table that holds the household relation/edge.
@@ -54,6 +56,13 @@ const (
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
 	TransactionEntriesColumn = "account_transaction_entries"
+	// InvestmentsTable is the table that holds the investments relation/edge.
+	InvestmentsTable = "investments"
+	// InvestmentsInverseTable is the table name for the Investment entity.
+	// It exists in this package in order to avoid circular dependency with the "investment" package.
+	InvestmentsInverseTable = "investments"
+	// InvestmentsColumn is the table column denoting the investments relation/edge.
+	InvestmentsColumn = "account_investments"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -179,6 +188,20 @@ func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByInvestmentsCount orders the results by investments count.
+func ByInvestmentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvestmentsStep(), opts...)
+	}
+}
+
+// ByInvestments orders the results by investments terms.
+func ByInvestments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvestmentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newHouseholdStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -198,6 +221,13 @@ func newTransactionEntriesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
+	)
+}
+func newInvestmentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvestmentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, InvestmentsTable, InvestmentsColumn),
 	)
 }
 
