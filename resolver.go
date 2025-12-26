@@ -2,6 +2,7 @@ package fijoy
 
 import (
 	"fijoy.app/ent"
+	"fijoy.app/internal/fxrate"
 	"github.com/99designs/gqlgen/graphql"
 )
 
@@ -11,12 +12,16 @@ import (
 // here.
 
 type Resolver struct {
-	entClient *ent.Client
+	entClient    *ent.Client
+	fxrateClient *fxrate.Client
 }
 
 // NewSchema creates a graphql executable schema.
-func NewSchema(entClient *ent.Client) graphql.ExecutableSchema {
+func NewSchema(
+	entClient *ent.Client,
+	fxrateClient *fxrate.Client,
+) graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{
-		Resolvers: &Resolver{entClient},
+		Resolvers: &Resolver{entClient, fxrateClient},
 	})
 }

@@ -11,6 +11,7 @@ import (
 	"fijoy.app/ent"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/internal/fxrate"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
@@ -34,19 +35,23 @@ func main() {
 	}
 	defer entClient.Close()
 
+	// Example usage of the fxrate client
+	fxrateProvider := fxrate.NewFrankfurterProvider()
+	fxrateClient := fxrate.NewClient(fxrateProvider)
+
 	// Run the auto migration tool.
-	if err := entClient.Schema.Create(context.Background()); err != nil {
+	if err := entClient.Schema.Create(ctx); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	if err := seed(ctx, entClient); err != nil {
-		log.Fatalf("failed seeding database: %v", err)
-	}
+	// if err := seed(ctx, entClient); err != nil {
+	// 	log.Fatalf("failed seeding database: %v", err)
+	// }
 
 	log.Println("migration completed successfully")
 
 	gqlHandler := handler.NewDefaultServer(
-		fijoy.NewSchema(entClient),
+		fijoy.NewSchema(entClient, fxrateClient),
 	)
 
 	r := chi.NewRouter()
