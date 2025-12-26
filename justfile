@@ -1,4 +1,4 @@
-gen:
+codegen:
   go generate .
 
 web:

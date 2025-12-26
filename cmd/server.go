@@ -10,6 +10,7 @@ import (
 	"fijoy.app"
 	"fijoy.app/ent"
 	"fijoy.app/ent/account"
+	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
 	"fijoy.app/internal/fxrate"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -43,9 +44,9 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	// if err := seed(ctx, entClient); err != nil {
-	// 	log.Fatalf("failed seeding database: %v", err)
-	// }
+	if err := seed(ctx, entClient); err != nil {
+		log.Fatalf("failed seeding database: %v", err)
+	}
 
 	log.Println("migration completed successfully")
 
@@ -80,6 +81,13 @@ func main() {
 }
 
 func seed(ctx context.Context, entClient *ent.Client) error {
+	alreadySeeded := entClient.User.Query().
+		Where(user.EmailEQ("joey@jyu.dev")).
+		ExistX(ctx)
+	if alreadySeeded {
+		return nil
+	}
+
 	cad := entClient.Currency.Create().SetCode("CAD").SaveX(ctx)
 	usd := entClient.Currency.Create().SetCode("USD").SaveX(ctx)
 
