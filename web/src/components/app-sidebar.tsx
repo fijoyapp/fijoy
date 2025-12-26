@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+  ArrowLeftRightIcon,
   AudioWaveform,
   CandlestickChartIcon,
   ChartNoAxesCombinedIcon,
@@ -74,15 +75,15 @@ const projects: Array<{
   icon: LucideIcon
 }> = [
   {
-    name: 'Home',
+    name: 'Transactions',
     link: {
-      to: '/household/$householdId',
+      to: '/household/$householdId/transactions',
       activeOptions: {
-        exact: true,
+        exact: false,
         includeSearch: false,
       },
     },
-    icon: HomeIcon,
+    icon: ArrowLeftRightIcon,
   },
   {
     name: 'Accounts',
