@@ -58,11 +58,11 @@ const navMain: Array<{
       },
       {
         title: 'Accounts',
-        link: { to: '/household/accounts' },
+        link: { to: '/household/$householdId/accounts' },
       },
       {
         title: 'Investments',
-        link: { to: '/household/investments' },
+        link: { to: '/household/$householdId/investments' },
       },
     ],
   },
@@ -76,7 +76,7 @@ const projects: Array<{
   {
     name: 'Home',
     link: {
-      to: '/household',
+      to: '/household/$householdId',
       activeOptions: {
         exact: true,
         includeSearch: false,
@@ -87,7 +87,7 @@ const projects: Array<{
   {
     name: 'Accounts',
     link: {
-      to: '/household/accounts',
+      to: '/household/$householdId/accounts',
       activeOptions: {
         exact: false,
         includeSearch: false,
@@ -98,7 +98,7 @@ const projects: Array<{
   {
     name: 'Investments',
     link: {
-      to: '/household/investments',
+      to: '/household/$householdId/investments',
       activeOptions: {
         exact: false,
         includeSearch: false,

@@ -6,7 +6,7 @@ import type { accountsQuery } from './__generated__/accountsQuery.graphql'
 import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 
-export const Route = createFileRoute('/_user/household/accounts/')({
+export const Route = createFileRoute('/_user/household/$householdId/accounts/')({
   component: RouteComponent,
 
   loader: () => {

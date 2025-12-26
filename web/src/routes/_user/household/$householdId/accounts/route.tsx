@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 
-export const Route = createFileRoute('/_user/household/accounts')({
+export const Route = createFileRoute('/_user/household/$householdId/accounts')({
   component: RouteComponent,
 
   loader: () => {
