@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b23291e9e71500e634dd9cc15e048bad>>
+ * @generated SignedSource<<aaed6252fa4e856ecea84bf8d36a0c3c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -76,7 +76,16 @@ return {
   "selections": [
     {
       "alias": "transactions",
-      "args": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "orderBy",
+          "value": {
+            "direction": "DESC",
+            "field": "DATETIME"
+          }
+        }
+      ],
       "concreteType": "TransactionConnection",
       "kind": "LinkedField",
       "name": "__transactionsPanel_transactions_connection",
@@ -156,7 +165,7 @@ return {
           "storageKey": null
         }
       ],
-      "storageKey": null
+      "storageKey": "__transactionsPanel_transactions_connection(orderBy:{\"direction\":\"DESC\",\"field\":\"DATETIME\"})"
     }
   ],
   "type": "Query",
@@ -164,6 +173,6 @@ return {
 };
 })();
 
-(node as any).hash = "cfa8888af5855c1102c8ef83d3c52821";
+(node as any).hash = "56ca4baa4451975c27ff71d946222315";
 
 export default node;

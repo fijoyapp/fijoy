@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer'
 import { Fragment } from 'react/jsx-runtime'
 import { TransactionCard } from './transaction-card'
 import { useEffect } from 'react'
+import { ItemGroup } from '@/components/ui/item'
 
 const transactionsPanelFragment = graphql`
   fragment transactionsPanelFragment on Query
@@ -13,8 +14,11 @@ const transactionsPanelFragment = graphql`
     cursor: { type: "Cursor" }
   )
   @refetchable(queryName: "transactionsPanelPagination") {
-    transactions(first: $count, after: $cursor)
-      @connection(key: "transactionsPanel_transactions") {
+    transactions(
+      first: $count
+      after: $cursor
+      orderBy: { field: DATETIME, direction: DESC }
+    ) @connection(key: "transactionsPanel_transactions") {
       edges {
         node {
           id
@@ -47,17 +51,19 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
 
   return (
     <div>
-      {data.transactions.edges?.map((transaction) => {
-        if (!transaction?.node) {
-          return null
-        }
+      <ItemGroup>
+        {data.transactions.edges?.map((transaction) => {
+          if (!transaction?.node) {
+            return null
+          }
 
-        return (
-          <Fragment key={transaction.node.id}>
-            <TransactionCard fragmentRef={transaction.node} />
-          </Fragment>
-        )
-      })}
+          return (
+            <Fragment key={transaction.node.id}>
+              <TransactionCard fragmentRef={transaction.node} />
+            </Fragment>
+          )
+        })}
+      </ItemGroup>
       <div ref={ref}></div>
     </div>
   )

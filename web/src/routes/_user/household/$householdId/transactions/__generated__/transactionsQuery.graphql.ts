@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<21c61ace4cf194539acb8eeee7488697>>
+ * @generated SignedSource<<0e5e37700f34e3af4a765b5d1b450ca1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,8 +25,23 @@ var v0 = [
     "kind": "Literal",
     "name": "first",
     "value": 20
+  },
+  {
+    "kind": "Literal",
+    "name": "orderBy",
+    "value": {
+      "direction": "DESC",
+      "field": "DATETIME"
+    }
   }
-];
+],
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -73,11 +88,69 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "id",
+                    "name": "datetime",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "TransactionEntry",
+                    "kind": "LinkedField",
+                    "name": "transactionEntries",
+                    "plural": true,
+                    "selections": [
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "amount",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Account",
+                        "kind": "LinkedField",
+                        "name": "account",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "name",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "Currency",
+                            "kind": "LinkedField",
+                            "name": "currency",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "code",
+                                "storageKey": null
+                              },
+                              (v1/*: any*/)
+                            ],
+                            "storageKey": null
+                          },
+                          (v1/*: any*/)
+                        ],
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   },
                   {
@@ -126,12 +199,14 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "transactions(first:20)"
+        "storageKey": "transactions(first:20,orderBy:{\"direction\":\"DESC\",\"field\":\"DATETIME\"})"
       },
       {
         "alias": null,
         "args": (v0/*: any*/),
-        "filters": null,
+        "filters": [
+          "orderBy"
+        ],
         "handle": "connection",
         "key": "transactionsPanel_transactions",
         "kind": "LinkedHandle",
@@ -140,12 +215,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d383d88ccd3c232eec366b04a1e7e229",
+    "cacheID": "1516b4f0c14a9cdcc7db2df7c7d01fb0",
     "id": null,
     "metadata": {},
     "name": "transactionsQuery",
     "operationKind": "query",
-    "text": "query transactionsQuery {\n  ...transactionsPanelFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n}\n\nfragment transactionsPanelFragment on Query {\n  transactions(first: 20) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query transactionsQuery {\n  ...transactionsPanelFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsPanelFragment on Query {\n  transactions(first: 20, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
