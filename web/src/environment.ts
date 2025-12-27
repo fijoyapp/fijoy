@@ -1,11 +1,11 @@
 import { Environment, Network } from 'relay-runtime'
 import type { FetchFunction } from 'relay-runtime'
+import { env } from './env'
 
-// TODO: DO NOT HARD CODE
-const HTTP_ENDPOINT = 'http://localhost:3000/query'
+const HTTP_ENDPOINT = env.VITE_SERVER_URL
 
 const fetchGraphQL: FetchFunction = async (request, variables) => {
-  const resp = await fetch(HTTP_ENDPOINT, {
+  const resp = await fetch(HTTP_ENDPOINT + '/query', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query: request.text, variables }),
