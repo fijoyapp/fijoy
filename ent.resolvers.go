@@ -15,12 +15,12 @@ import (
 
 // Amount is the resolver for the amount field.
 func (r *lotResolver) Amount(ctx context.Context, obj *ent.Lot) (string, error) {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	return obj.Amount.String(), nil
 }
 
 // Price is the resolver for the price field.
 func (r *lotResolver) Price(ctx context.Context, obj *ent.Lot) (string, error) {
-	panic(fmt.Errorf("not implemented: Price - price"))
+	return obj.Price.String(), nil
 }
 
 // Node is the resolver for the node field.
@@ -50,12 +50,12 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 
 // Investments is the resolver for the investments field.
 func (r *queryResolver) Investments(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) (*ent.InvestmentConnection, error) {
-	panic(fmt.Errorf("not implemented: Investments - investments"))
+	return r.entClient.Investment.Query().Paginate(ctx, after, first, before, last, ent.WithInvestmentFilter(where.Filter))
 }
 
 // Lots is the resolver for the lots field.
 func (r *queryResolver) Lots(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) (*ent.LotConnection, error) {
-	panic(fmt.Errorf("not implemented: Lots - lots"))
+	return r.entClient.Lot.Query().Paginate(ctx, after, first, before, last, ent.WithLotFilter(where.Filter))
 }
 
 // Transactions is the resolver for the transactions field.
