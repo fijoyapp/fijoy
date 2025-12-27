@@ -34,6 +34,7 @@ import (
 type config struct {
 	PostgresURL string `env:"POSTGRES_URL"`
 	WebURL      string `env:"WEB_URL"`
+	PORT        string `env:"PORT"`
 }
 
 func main() {
@@ -118,7 +119,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Handle("/query", gqlHandler)
-	r.Handle(
+	r.Get(
 		"/health",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
@@ -126,7 +127,7 @@ func main() {
 		}),
 	)
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":"+cfg.PORT, r)
 }
 
 func seed(ctx context.Context, entClient *ent.Client) error {
