@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	"entgo.io/ent/dialect"
@@ -18,6 +19,7 @@ import (
 	"fijoy.app/internal/fxrate"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/caarlos0/env/v11"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -25,15 +27,33 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/joho/godotenv"
 	"github.com/shopspring/decimal"
 )
+
+type config struct {
+	PostgresURL string `env:"POSTGRES_URL"`
+	WebURL      string `env:"WEB_URL"`
+}
 
 func main() {
 	ctx := context.Background()
 
+	if os.Getenv("RAILWAY_PUBLIC_DOMAIN") == "" {
+		err := godotenv.Load()
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	cfg, err := env.ParseAs[config]()
+	if err != nil {
+		panic(err)
+	}
+
 	db, err := sql.Open(
 		"pgx",
-		"postgresql://user:password@localhost:2345/fijoy?sslmode=disable",
+		cfg.PostgresURL,
 	)
 	if err != nil {
 		panic(err)
@@ -79,8 +99,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{
-			// TODO: DO NOT HARDCODE
-			"http://localhost:5173",
+			cfg.WebURL,
 		}, // Use this to allow specific origin hosts
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{
