@@ -408,6 +408,10 @@ type CurrencyWhereInput struct {
 	HasAccounts     *bool                `json:"hasAccounts,omitempty"`
 	HasAccountsWith []*AccountWhereInput `json:"hasAccountsWith,omitempty"`
 
+	// "investments" edge predicates.
+	HasInvestments     *bool                   `json:"hasInvestments,omitempty"`
+	HasInvestmentsWith []*InvestmentWhereInput `json:"hasInvestmentsWith,omitempty"`
+
 	// "transaction_entries" edge predicates.
 	HasTransactionEntries     *bool                         `json:"hasTransactionEntries,omitempty"`
 	HasTransactionEntriesWith []*TransactionEntryWhereInput `json:"hasTransactionEntriesWith,omitempty"`
@@ -569,6 +573,24 @@ func (i *CurrencyWhereInput) P() (predicate.Currency, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, currency.HasAccountsWith(with...))
+	}
+	if i.HasInvestments != nil {
+		p := currency.HasInvestments()
+		if !*i.HasInvestments {
+			p = currency.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasInvestmentsWith) > 0 {
+		with := make([]predicate.Investment, 0, len(i.HasInvestmentsWith))
+		for _, w := range i.HasInvestmentsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasInvestmentsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, currency.HasInvestmentsWith(with...))
 	}
 	if i.HasTransactionEntries != nil {
 		p := currency.HasTransactionEntries()
@@ -1129,6 +1151,10 @@ type InvestmentWhereInput struct {
 	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
 	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
 
+	// "currency" edge predicates.
+	HasCurrency     *bool                 `json:"hasCurrency,omitempty"`
+	HasCurrencyWith []*CurrencyWhereInput `json:"hasCurrencyWith,omitempty"`
+
 	// "lots" edge predicates.
 	HasLots     *bool            `json:"hasLots,omitempty"`
 	HasLotsWith []*LotWhereInput `json:"hasLotsWith,omitempty"`
@@ -1403,6 +1429,24 @@ func (i *InvestmentWhereInput) P() (predicate.Investment, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, investment.HasHouseholdWith(with...))
+	}
+	if i.HasCurrency != nil {
+		p := investment.HasCurrency()
+		if !*i.HasCurrency {
+			p = investment.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasCurrencyWith) > 0 {
+		with := make([]predicate.Currency, 0, len(i.HasCurrencyWith))
+		for _, w := range i.HasCurrencyWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasCurrencyWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, investment.HasCurrencyWith(with...))
 	}
 	if i.HasLots != nil {
 		p := investment.HasLots()

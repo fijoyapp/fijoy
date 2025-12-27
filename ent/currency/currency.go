@@ -16,6 +16,8 @@ const (
 	FieldCode = "code"
 	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
 	EdgeAccounts = "accounts"
+	// EdgeInvestments holds the string denoting the investments edge name in mutations.
+	EdgeInvestments = "investments"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
 	// EdgeHouseholds holds the string denoting the households edge name in mutations.
@@ -29,6 +31,13 @@ const (
 	AccountsInverseTable = "accounts"
 	// AccountsColumn is the table column denoting the accounts relation/edge.
 	AccountsColumn = "currency_accounts"
+	// InvestmentsTable is the table that holds the investments relation/edge.
+	InvestmentsTable = "investments"
+	// InvestmentsInverseTable is the table name for the Investment entity.
+	// It exists in this package in order to avoid circular dependency with the "investment" package.
+	InvestmentsInverseTable = "investments"
+	// InvestmentsColumn is the table column denoting the investments relation/edge.
+	InvestmentsColumn = "currency_investments"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
@@ -93,6 +102,20 @@ func ByAccounts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByInvestmentsCount orders the results by investments count.
+func ByInvestmentsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newInvestmentsStep(), opts...)
+	}
+}
+
+// ByInvestments orders the results by investments terms.
+func ByInvestments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newInvestmentsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByTransactionEntriesCount orders the results by transaction_entries count.
 func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -125,6 +148,13 @@ func newAccountsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AccountsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, AccountsTable, AccountsColumn),
+	)
+}
+func newInvestmentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(InvestmentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, InvestmentsTable, InvestmentsColumn),
 	)
 }
 func newTransactionEntriesStep() *sqlgraph.Step {

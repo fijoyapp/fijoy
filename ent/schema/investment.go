@@ -36,6 +36,9 @@ func (Investment) Edges() []ent.Edge {
 			Unique().
 			Immutable().
 			Required(),
+		edge.From("currency", Currency.Type).
+			Ref("investments").
+			Unique().Immutable().Required(),
 
 		edge.To("lots", Lot.Type),
 	}

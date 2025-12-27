@@ -31,6 +31,8 @@ const (
 	EdgeAccount = "account"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
 	EdgeHousehold = "household"
+	// EdgeCurrency holds the string denoting the currency edge name in mutations.
+	EdgeCurrency = "currency"
 	// EdgeLots holds the string denoting the lots edge name in mutations.
 	EdgeLots = "lots"
 	// Table holds the table name of the investment in the database.
@@ -49,6 +51,13 @@ const (
 	HouseholdInverseTable = "households"
 	// HouseholdColumn is the table column denoting the household relation/edge.
 	HouseholdColumn = "household_investments"
+	// CurrencyTable is the table that holds the currency relation/edge.
+	CurrencyTable = "investments"
+	// CurrencyInverseTable is the table name for the Currency entity.
+	// It exists in this package in order to avoid circular dependency with the "currency" package.
+	CurrencyInverseTable = "currencies"
+	// CurrencyColumn is the table column denoting the currency relation/edge.
+	CurrencyColumn = "currency_investments"
 	// LotsTable is the table that holds the lots relation/edge.
 	LotsTable = "lots"
 	// LotsInverseTable is the table name for the Lot entity.
@@ -72,6 +81,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"account_investments",
+	"currency_investments",
 	"household_investments",
 }
 
@@ -171,6 +181,13 @@ func ByHouseholdField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByCurrencyField orders the results by currency field.
+func ByCurrencyField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCurrencyStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByLotsCount orders the results by lots count.
 func ByLotsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -196,6 +213,13 @@ func newHouseholdStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(HouseholdInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, HouseholdTable, HouseholdColumn),
+	)
+}
+func newCurrencyStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CurrencyInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, CurrencyTable, CurrencyColumn),
 	)
 }
 func newLotsStep() *sqlgraph.Step {

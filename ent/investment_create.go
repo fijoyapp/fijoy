@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/account"
+	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
@@ -89,6 +90,17 @@ func (_c *InvestmentCreate) SetHouseholdID(id int) *InvestmentCreate {
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *InvestmentCreate) SetHousehold(v *Household) *InvestmentCreate {
 	return _c.SetHouseholdID(v.ID)
+}
+
+// SetCurrencyID sets the "currency" edge to the Currency entity by ID.
+func (_c *InvestmentCreate) SetCurrencyID(id int) *InvestmentCreate {
+	_c.mutation.SetCurrencyID(id)
+	return _c
+}
+
+// SetCurrency sets the "currency" edge to the Currency entity.
+func (_c *InvestmentCreate) SetCurrency(v *Currency) *InvestmentCreate {
+	return _c.SetCurrencyID(v.ID)
 }
 
 // AddLotIDs adds the "lots" edge to the Lot entity by IDs.
@@ -184,6 +196,9 @@ func (_c *InvestmentCreate) check() error {
 	if len(_c.mutation.HouseholdIDs()) == 0 {
 		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Investment.household"`)}
 	}
+	if len(_c.mutation.CurrencyIDs()) == 0 {
+		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required edge "Investment.currency"`)}
+	}
 	return nil
 }
 
@@ -262,6 +277,23 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.household_investments = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.CurrencyIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   investment.CurrencyTable,
+			Columns: []string{investment.CurrencyColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(currency.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.currency_investments = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.LotsIDs(); len(nodes) > 0 {

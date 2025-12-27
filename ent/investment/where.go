@@ -351,6 +351,29 @@ func HasHouseholdWith(preds ...predicate.Household) predicate.Investment {
 	})
 }
 
+// HasCurrency applies the HasEdge predicate on the "currency" edge.
+func HasCurrency() predicate.Investment {
+	return predicate.Investment(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, CurrencyTable, CurrencyColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasCurrencyWith applies the HasEdge predicate on the "currency" edge with a given conditions (other predicates).
+func HasCurrencyWith(preds ...predicate.Currency) predicate.Investment {
+	return predicate.Investment(func(s *sql.Selector) {
+		step := newCurrencyStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasLots applies the HasEdge predicate on the "lots" edge.
 func HasLots() predicate.Investment {
 	return predicate.Investment(func(s *sql.Selector) {

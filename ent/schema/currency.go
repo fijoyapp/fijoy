@@ -24,6 +24,7 @@ func (Currency) Fields() []ent.Field {
 func (Currency) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("accounts", Account.Type),
+		edge.To("investments", Investment.Type),
 		edge.To("transaction_entries", TransactionEntry.Type),
 		edge.To("households", Household.Type),
 	}

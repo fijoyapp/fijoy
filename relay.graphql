@@ -125,6 +125,7 @@ type Currency implements Node {
   id: ID!
   code: String!
   accounts: [Account!]
+  investments: [Investment!]
   transactionEntries: [TransactionEntry!]
   households: [Household!]
 }
@@ -169,6 +170,11 @@ input CurrencyWhereInput {
   """
   hasAccounts: Boolean
   hasAccountsWith: [AccountWhereInput!]
+  """
+  investments edge predicates
+  """
+  hasInvestments: Boolean
+  hasInvestmentsWith: [InvestmentWhereInput!]
   """
   transaction_entries edge predicates
   """
@@ -315,6 +321,7 @@ type Investment implements Node {
   symbol: String!
   account: Account!
   household: Household!
+  currency: Currency!
   lots: [Lot!]
 }
 
@@ -448,6 +455,11 @@ input InvestmentWhereInput {
   """
   hasHousehold: Boolean
   hasHouseholdWith: [HouseholdWhereInput!]
+  """
+  currency edge predicates
+  """
+  hasCurrency: Boolean
+  hasCurrencyWith: [CurrencyWhereInput!]
   """
   lots edge predicates
   """

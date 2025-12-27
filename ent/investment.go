@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"fijoy.app/ent/account"
+	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 )
@@ -33,6 +34,7 @@ type Investment struct {
 	// The values are being populated by the InvestmentQuery when eager-loading is set.
 	Edges                 InvestmentEdges `json:"edges"`
 	account_investments   *int
+	currency_investments  *int
 	household_investments *int
 	selectValues          sql.SelectValues
 }
@@ -43,13 +45,15 @@ type InvestmentEdges struct {
 	Account *Account `json:"account,omitempty"`
 	// Household holds the value of the household edge.
 	Household *Household `json:"household,omitempty"`
+	// Currency holds the value of the currency edge.
+	Currency *Currency `json:"currency,omitempty"`
 	// Lots holds the value of the lots edge.
 	Lots []*Lot `json:"lots,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
 	namedLots map[string][]*Lot
 }
@@ -76,10 +80,21 @@ func (e InvestmentEdges) HouseholdOrErr() (*Household, error) {
 	return nil, &NotLoadedError{edge: "household"}
 }
 
+// CurrencyOrErr returns the Currency value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e InvestmentEdges) CurrencyOrErr() (*Currency, error) {
+	if e.Currency != nil {
+		return e.Currency, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: currency.Label}
+	}
+	return nil, &NotLoadedError{edge: "currency"}
+}
+
 // LotsOrErr returns the Lots value or an error if the edge
 // was not loaded in eager-loading.
 func (e InvestmentEdges) LotsOrErr() ([]*Lot, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Lots, nil
 	}
 	return nil, &NotLoadedError{edge: "lots"}
@@ -98,7 +113,9 @@ func (*Investment) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case investment.ForeignKeys[0]: // account_investments
 			values[i] = new(sql.NullInt64)
-		case investment.ForeignKeys[1]: // household_investments
+		case investment.ForeignKeys[1]: // currency_investments
+			values[i] = new(sql.NullInt64)
+		case investment.ForeignKeys[2]: // household_investments
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -160,6 +177,13 @@ func (_m *Investment) assignValues(columns []string, values []any) error {
 			}
 		case investment.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field currency_investments", value)
+			} else if value.Valid {
+				_m.currency_investments = new(int)
+				*_m.currency_investments = int(value.Int64)
+			}
+		case investment.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field household_investments", value)
 			} else if value.Valid {
 				_m.household_investments = new(int)
@@ -186,6 +210,11 @@ func (_m *Investment) QueryAccount() *AccountQuery {
 // QueryHousehold queries the "household" edge of the Investment entity.
 func (_m *Investment) QueryHousehold() *HouseholdQuery {
 	return NewInvestmentClient(_m.config).QueryHousehold(_m)
+}
+
+// QueryCurrency queries the "currency" edge of the Investment entity.
+func (_m *Investment) QueryCurrency() *CurrencyQuery {
+	return NewInvestmentClient(_m.config).QueryCurrency(_m)
 }
 
 // QueryLots queries the "lots" edge of the Investment entity.

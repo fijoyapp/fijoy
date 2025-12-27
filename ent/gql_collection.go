@@ -183,6 +183,19 @@ func (_q *CurrencyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				*wq = *query
 			})
 
+		case "investments":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&InvestmentClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, investmentImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedInvestments(alias, func(wq *InvestmentQuery) {
+				*wq = *query
+			})
+
 		case "transactionEntries":
 			var (
 				alias = field.Alias
@@ -455,6 +468,17 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				return err
 			}
 			_q.withHousehold = query
+
+		case "currency":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&CurrencyClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, currencyImplementors)...); err != nil {
+				return err
+			}
+			_q.withCurrency = query
 
 		case "lots":
 			var (

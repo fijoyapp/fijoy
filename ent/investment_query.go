@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/account"
+	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
@@ -28,6 +29,7 @@ type InvestmentQuery struct {
 	predicates    []predicate.Investment
 	withAccount   *AccountQuery
 	withHousehold *HouseholdQuery
+	withCurrency  *CurrencyQuery
 	withLots      *LotQuery
 	withFKs       bool
 	loadTotal     []func(context.Context, []*Investment) error
@@ -106,6 +108,28 @@ func (_q *InvestmentQuery) QueryHousehold() *HouseholdQuery {
 			sqlgraph.From(investment.Table, investment.FieldID, selector),
 			sqlgraph.To(household.Table, household.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, investment.HouseholdTable, investment.HouseholdColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryCurrency chains the current query on the "currency" edge.
+func (_q *InvestmentQuery) QueryCurrency() *CurrencyQuery {
+	query := (&CurrencyClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(investment.Table, investment.FieldID, selector),
+			sqlgraph.To(currency.Table, currency.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, investment.CurrencyTable, investment.CurrencyColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -329,6 +353,7 @@ func (_q *InvestmentQuery) Clone() *InvestmentQuery {
 		predicates:    append([]predicate.Investment{}, _q.predicates...),
 		withAccount:   _q.withAccount.Clone(),
 		withHousehold: _q.withHousehold.Clone(),
+		withCurrency:  _q.withCurrency.Clone(),
 		withLots:      _q.withLots.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
@@ -356,6 +381,17 @@ func (_q *InvestmentQuery) WithHousehold(opts ...func(*HouseholdQuery)) *Investm
 		opt(query)
 	}
 	_q.withHousehold = query
+	return _q
+}
+
+// WithCurrency tells the query-builder to eager-load the nodes that are connected to
+// the "currency" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *InvestmentQuery) WithCurrency(opts ...func(*CurrencyQuery)) *InvestmentQuery {
+	query := (&CurrencyClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withCurrency = query
 	return _q
 }
 
@@ -449,13 +485,14 @@ func (_q *InvestmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 		nodes       = []*Investment{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withAccount != nil,
 			_q.withHousehold != nil,
+			_q.withCurrency != nil,
 			_q.withLots != nil,
 		}
 	)
-	if _q.withAccount != nil || _q.withHousehold != nil {
+	if _q.withAccount != nil || _q.withHousehold != nil || _q.withCurrency != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -491,6 +528,12 @@ func (_q *InvestmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 	if query := _q.withHousehold; query != nil {
 		if err := _q.loadHousehold(ctx, query, nodes, nil,
 			func(n *Investment, e *Household) { n.Edges.Household = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withCurrency; query != nil {
+		if err := _q.loadCurrency(ctx, query, nodes, nil,
+			func(n *Investment, e *Currency) { n.Edges.Currency = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -573,6 +616,38 @@ func (_q *InvestmentQuery) loadHousehold(ctx context.Context, query *HouseholdQu
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "household_investments" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *InvestmentQuery) loadCurrency(ctx context.Context, query *CurrencyQuery, nodes []*Investment, init func(*Investment), assign func(*Investment, *Currency)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Investment)
+	for i := range nodes {
+		if nodes[i].currency_investments == nil {
+			continue
+		}
+		fk := *nodes[i].currency_investments
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(currency.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "currency_investments" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

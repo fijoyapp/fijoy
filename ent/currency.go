@@ -28,17 +28,20 @@ type Currency struct {
 type CurrencyEdges struct {
 	// Accounts holds the value of the accounts edge.
 	Accounts []*Account `json:"accounts,omitempty"`
+	// Investments holds the value of the investments edge.
+	Investments []*Investment `json:"investments,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// Households holds the value of the households edge.
 	Households []*Household `json:"households,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
 	namedAccounts           map[string][]*Account
+	namedInvestments        map[string][]*Investment
 	namedTransactionEntries map[string][]*TransactionEntry
 	namedHouseholds         map[string][]*Household
 }
@@ -52,10 +55,19 @@ func (e CurrencyEdges) AccountsOrErr() ([]*Account, error) {
 	return nil, &NotLoadedError{edge: "accounts"}
 }
 
+// InvestmentsOrErr returns the Investments value or an error if the edge
+// was not loaded in eager-loading.
+func (e CurrencyEdges) InvestmentsOrErr() ([]*Investment, error) {
+	if e.loadedTypes[1] {
+		return e.Investments, nil
+	}
+	return nil, &NotLoadedError{edge: "investments"}
+}
+
 // TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e CurrencyEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
@@ -64,7 +76,7 @@ func (e CurrencyEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
 // HouseholdsOrErr returns the Households value or an error if the edge
 // was not loaded in eager-loading.
 func (e CurrencyEdges) HouseholdsOrErr() ([]*Household, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Households, nil
 	}
 	return nil, &NotLoadedError{edge: "households"}
@@ -122,6 +134,11 @@ func (_m *Currency) Value(name string) (ent.Value, error) {
 // QueryAccounts queries the "accounts" edge of the Currency entity.
 func (_m *Currency) QueryAccounts() *AccountQuery {
 	return NewCurrencyClient(_m.config).QueryAccounts(_m)
+}
+
+// QueryInvestments queries the "investments" edge of the Currency entity.
+func (_m *Currency) QueryInvestments() *InvestmentQuery {
+	return NewCurrencyClient(_m.config).QueryInvestments(_m)
 }
 
 // QueryTransactionEntries queries the "transaction_entries" edge of the Currency entity.
@@ -184,6 +201,30 @@ func (_m *Currency) appendNamedAccounts(name string, edges ...*Account) {
 		_m.Edges.namedAccounts[name] = []*Account{}
 	} else {
 		_m.Edges.namedAccounts[name] = append(_m.Edges.namedAccounts[name], edges...)
+	}
+}
+
+// NamedInvestments returns the Investments named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Currency) NamedInvestments(name string) ([]*Investment, error) {
+	if _m.Edges.namedInvestments == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedInvestments[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Currency) appendNamedInvestments(name string, edges ...*Investment) {
+	if _m.Edges.namedInvestments == nil {
+		_m.Edges.namedInvestments = make(map[string][]*Investment)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedInvestments[name] = []*Investment{}
+	} else {
+		_m.Edges.namedInvestments[name] = append(_m.Edges.namedInvestments[name], edges...)
 	}
 }
 
