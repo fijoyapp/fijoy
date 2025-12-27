@@ -118,6 +118,14 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Handle("/query", gqlHandler)
+	r.Handle(
+		"/health",
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte("OK"))
+		}),
+	)
+
 	http.ListenAndServe(":3000", r)
 }
 
