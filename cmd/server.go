@@ -39,6 +39,9 @@ func main() {
 		panic(err)
 	}
 
+	// TODO: remove this when we go to production
+	db.ExecContext(ctx, "DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
+
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		panic(err)
