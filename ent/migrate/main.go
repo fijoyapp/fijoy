@@ -40,7 +40,7 @@ func main() {
 	err = migrate.NamedDiff(
 		ctx,
 		// TODO: DO NOT HARDCODE
-		"postgresql://user:password@localhost:2345/fijoy?sslmode=disable",
+		"postgresql://user:password@localhost:2345/fijoy-migration?sslmode=disable",
 		os.Args[1],
 		opts...)
 	if err != nil {
