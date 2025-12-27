@@ -78,6 +78,16 @@ type AccountWhereInput struct {
 	TypeIn    []account.Type `json:"typeIn,omitempty"`
 	TypeNotIn []account.Type `json:"typeNotIn,omitempty"`
 
+	// "balance" field predicates.
+	Balance      *decimal.Decimal  `json:"balance,omitempty"`
+	BalanceNEQ   *decimal.Decimal  `json:"balanceNEQ,omitempty"`
+	BalanceIn    []decimal.Decimal `json:"balanceIn,omitempty"`
+	BalanceNotIn []decimal.Decimal `json:"balanceNotIn,omitempty"`
+	BalanceGT    *decimal.Decimal  `json:"balanceGT,omitempty"`
+	BalanceGTE   *decimal.Decimal  `json:"balanceGTE,omitempty"`
+	BalanceLT    *decimal.Decimal  `json:"balanceLT,omitempty"`
+	BalanceLTE   *decimal.Decimal  `json:"balanceLTE,omitempty"`
+
 	// "household" edge predicates.
 	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
 	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
@@ -288,6 +298,30 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	}
 	if len(i.TypeNotIn) > 0 {
 		predicates = append(predicates, account.TypeNotIn(i.TypeNotIn...))
+	}
+	if i.Balance != nil {
+		predicates = append(predicates, account.BalanceEQ(*i.Balance))
+	}
+	if i.BalanceNEQ != nil {
+		predicates = append(predicates, account.BalanceNEQ(*i.BalanceNEQ))
+	}
+	if len(i.BalanceIn) > 0 {
+		predicates = append(predicates, account.BalanceIn(i.BalanceIn...))
+	}
+	if len(i.BalanceNotIn) > 0 {
+		predicates = append(predicates, account.BalanceNotIn(i.BalanceNotIn...))
+	}
+	if i.BalanceGT != nil {
+		predicates = append(predicates, account.BalanceGT(*i.BalanceGT))
+	}
+	if i.BalanceGTE != nil {
+		predicates = append(predicates, account.BalanceGTE(*i.BalanceGTE))
+	}
+	if i.BalanceLT != nil {
+		predicates = append(predicates, account.BalanceLT(*i.BalanceLT))
+	}
+	if i.BalanceLTE != nil {
+		predicates = append(predicates, account.BalanceLTE(*i.BalanceLTE))
 	}
 
 	if i.HasHousehold != nil {

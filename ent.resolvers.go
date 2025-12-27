@@ -13,6 +13,11 @@ import (
 	"fijoy.app/ent"
 )
 
+// Balance is the resolver for the balance field.
+func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string, error) {
+	return obj.Balance.String(), nil
+}
+
 // Amount is the resolver for the amount field.
 func (r *investmentResolver) Amount(ctx context.Context, obj *ent.Investment) (string, error) {
 	panic(fmt.Errorf("not implemented: Amount - amount"))
@@ -86,6 +91,46 @@ func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehol
 // Amount is the resolver for the amount field.
 func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
 	return obj.Amount.String(), nil
+}
+
+// Balance is the resolver for the balance field.
+func (r *accountWhereInputResolver) Balance(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+
+// BalanceNeq is the resolver for the balanceNEQ field.
+func (r *accountWhereInputResolver) BalanceNeq(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: BalanceNeq - balanceNEQ"))
+}
+
+// BalanceIn is the resolver for the balanceIn field.
+func (r *accountWhereInputResolver) BalanceIn(ctx context.Context, obj *ent.AccountWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: BalanceIn - balanceIn"))
+}
+
+// BalanceNotIn is the resolver for the balanceNotIn field.
+func (r *accountWhereInputResolver) BalanceNotIn(ctx context.Context, obj *ent.AccountWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: BalanceNotIn - balanceNotIn"))
+}
+
+// BalanceGt is the resolver for the balanceGT field.
+func (r *accountWhereInputResolver) BalanceGt(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: BalanceGt - balanceGT"))
+}
+
+// BalanceGte is the resolver for the balanceGTE field.
+func (r *accountWhereInputResolver) BalanceGte(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: BalanceGte - balanceGTE"))
+}
+
+// BalanceLt is the resolver for the balanceLT field.
+func (r *accountWhereInputResolver) BalanceLt(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: BalanceLt - balanceLT"))
+}
+
+// BalanceLte is the resolver for the balanceLTE field.
+func (r *accountWhereInputResolver) BalanceLte(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: BalanceLte - balanceLTE"))
 }
 
 // Amount is the resolver for the amount field.
@@ -263,6 +308,11 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
 
+// AccountWhereInput returns AccountWhereInputResolver implementation.
+func (r *Resolver) AccountWhereInput() AccountWhereInputResolver {
+	return &accountWhereInputResolver{r}
+}
+
 // InvestmentWhereInput returns InvestmentWhereInputResolver implementation.
 func (r *Resolver) InvestmentWhereInput() InvestmentWhereInputResolver {
 	return &investmentWhereInputResolver{r}
@@ -281,6 +331,7 @@ type investmentResolver struct{ *Resolver }
 type lotResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
+type accountWhereInputResolver struct{ *Resolver }
 type investmentWhereInputResolver struct{ *Resolver }
 type lotWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }

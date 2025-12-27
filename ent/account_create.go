@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/transactionentry"
+	"github.com/shopspring/decimal"
 )
 
 // AccountCreate is the builder for creating a Account entity.
@@ -61,6 +62,20 @@ func (_c *AccountCreate) SetName(v string) *AccountCreate {
 // SetType sets the "type" field.
 func (_c *AccountCreate) SetType(v account.Type) *AccountCreate {
 	_c.mutation.SetType(v)
+	return _c
+}
+
+// SetBalance sets the "balance" field.
+func (_c *AccountCreate) SetBalance(v decimal.Decimal) *AccountCreate {
+	_c.mutation.SetBalance(v)
+	return _c
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (_c *AccountCreate) SetNillableBalance(v *decimal.Decimal) *AccountCreate {
+	if v != nil {
+		_c.SetBalance(*v)
+	}
 	return _c
 }
 
@@ -159,6 +174,10 @@ func (_c *AccountCreate) defaults() {
 		v := account.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	if _, ok := _c.mutation.Balance(); !ok {
+		v := account.DefaultBalance()
+		_c.mutation.SetBalance(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -184,6 +203,9 @@ func (_c *AccountCreate) check() error {
 		if err := account.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Account.type": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.Balance(); !ok {
+		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}
 	}
 	if len(_c.mutation.HouseholdIDs()) == 0 {
 		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Account.household"`)}
@@ -232,6 +254,10 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(account.FieldType, field.TypeEnum, value)
 		_node.Type = value
+	}
+	if value, ok := _c.mutation.Balance(); ok {
+		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
+		_node.Balance = value
 	}
 	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

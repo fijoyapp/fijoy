@@ -54,6 +54,8 @@ type AccountMutation struct {
 	update_time                *time.Time
 	name                       *string
 	_type                      *account.Type
+	balance                    *decimal.Decimal
+	addbalance                 *decimal.Decimal
 	clearedFields              map[string]struct{}
 	household                  *int
 	clearedhousehold           bool
@@ -312,6 +314,62 @@ func (m *AccountMutation) ResetType() {
 	m._type = nil
 }
 
+// SetBalance sets the "balance" field.
+func (m *AccountMutation) SetBalance(d decimal.Decimal) {
+	m.balance = &d
+	m.addbalance = nil
+}
+
+// Balance returns the value of the "balance" field in the mutation.
+func (m *AccountMutation) Balance() (r decimal.Decimal, exists bool) {
+	v := m.balance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBalance returns the old "balance" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldBalance(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBalance is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBalance requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBalance: %w", err)
+	}
+	return oldValue.Balance, nil
+}
+
+// AddBalance adds d to the "balance" field.
+func (m *AccountMutation) AddBalance(d decimal.Decimal) {
+	if m.addbalance != nil {
+		*m.addbalance = m.addbalance.Add(d)
+	} else {
+		m.addbalance = &d
+	}
+}
+
+// AddedBalance returns the value that was added to the "balance" field in this mutation.
+func (m *AccountMutation) AddedBalance() (r decimal.Decimal, exists bool) {
+	v := m.addbalance
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBalance resets all changes to the "balance" field.
+func (m *AccountMutation) ResetBalance() {
+	m.balance = nil
+	m.addbalance = nil
+}
+
 // SetHouseholdID sets the "household" edge to the Household entity by id.
 func (m *AccountMutation) SetHouseholdID(id int) {
 	m.household = &id
@@ -532,7 +590,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, account.FieldCreateTime)
 	}
@@ -544,6 +602,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, account.FieldType)
+	}
+	if m.balance != nil {
+		fields = append(fields, account.FieldBalance)
 	}
 	return fields
 }
@@ -561,6 +622,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case account.FieldType:
 		return m.GetType()
+	case account.FieldBalance:
+		return m.Balance()
 	}
 	return nil, false
 }
@@ -578,6 +641,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldName(ctx)
 	case account.FieldType:
 		return m.OldType(ctx)
+	case account.FieldBalance:
+		return m.OldBalance(ctx)
 	}
 	return nil, fmt.Errorf("unknown Account field %s", name)
 }
@@ -615,6 +680,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetType(v)
 		return nil
+	case account.FieldBalance:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBalance(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Account field %s", name)
 }
@@ -622,13 +694,21 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *AccountMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addbalance != nil {
+		fields = append(fields, account.FieldBalance)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *AccountMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case account.FieldBalance:
+		return m.AddedBalance()
+	}
 	return nil, false
 }
 
@@ -637,6 +717,13 @@ func (m *AccountMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *AccountMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case account.FieldBalance:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBalance(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Account numeric field %s", name)
 }
@@ -675,6 +762,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldType:
 		m.ResetType()
+		return nil
+	case account.FieldBalance:
+		m.ResetBalance()
 		return nil
 	}
 	return fmt.Errorf("unknown Account field %s", name)

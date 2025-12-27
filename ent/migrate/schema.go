@@ -16,6 +16,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
+		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "currency_accounts", Type: field.TypeInt},
 		{Name: "household_accounts", Type: field.TypeInt},
 	}
@@ -27,13 +28,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "accounts_currencies_accounts",
-				Columns:    []*schema.Column{AccountsColumns[5]},
+				Columns:    []*schema.Column{AccountsColumns[6]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "accounts_households_accounts",
-				Columns:    []*schema.Column{AccountsColumns[6]},
+				Columns:    []*schema.Column{AccountsColumns[7]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

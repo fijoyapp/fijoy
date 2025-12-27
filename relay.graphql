@@ -16,11 +16,11 @@ type Account implements Node {
   updateTime: Time!
   name: String!
   type: AccountType!
+  balance: String!
   household: Household!
   currency: Currency!
   transactionEntries: [TransactionEntry!]
   investments: [Investment!]
-  balance: String!
   balanceInHouseholdCurrency: String!
 }
 
@@ -99,6 +99,17 @@ input AccountWhereInput {
   typeNEQ: AccountType
   typeIn: [AccountType!]
   typeNotIn: [AccountType!]
+  """
+  balance field predicates
+  """
+  balance: String
+  balanceNEQ: String
+  balanceIn: [String!]
+  balanceNotIn: [String!]
+  balanceGT: String
+  balanceGTE: String
+  balanceLT: String
+  balanceLTE: String
   """
   household edge predicates
   """

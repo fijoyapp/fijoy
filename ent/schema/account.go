@@ -3,10 +3,12 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
+	"github.com/shopspring/decimal"
 )
 
 // Account holds the schema definition for the Account entity.
@@ -21,6 +23,15 @@ func (Account) Fields() []ent.Field {
 		field.Enum("type").
 			Values("liquidity", "investment", "property", "receivable", "liability").
 			Immutable(),
+
+		field.Float("balance").GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.Postgres: "numeric(36,18)",
+			}).
+			Annotations(entgql.Type("String")).
+			DefaultFunc(func() decimal.Decimal {
+				return decimal.NewFromInt(0)
+			}),
 	}
 }
 

@@ -1,5 +1,4 @@
 extend type Account {
-  balance: String!
   balanceInHouseholdCurrency: String!
 }
 

@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transactionentry"
+	"github.com/shopspring/decimal"
 )
 
 // AccountUpdate is the builder for updating Account entities.
@@ -48,6 +49,27 @@ func (_u *AccountUpdate) SetNillableName(v *string) *AccountUpdate {
 	if v != nil {
 		_u.SetName(*v)
 	}
+	return _u
+}
+
+// SetBalance sets the "balance" field.
+func (_u *AccountUpdate) SetBalance(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (_u *AccountUpdate) SetNillableBalance(v *decimal.Decimal) *AccountUpdate {
+	if v != nil {
+		_u.SetBalance(*v)
+	}
+	return _u
+}
+
+// AddBalance adds value to the "balance" field.
+func (_u *AccountUpdate) AddBalance(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.AddBalance(v)
 	return _u
 }
 
@@ -204,6 +226,12 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Balance(); ok {
+		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedBalance(); ok {
+		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
+	}
 	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -333,6 +361,27 @@ func (_u *AccountUpdateOne) SetNillableName(v *string) *AccountUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
 	}
+	return _u
+}
+
+// SetBalance sets the "balance" field.
+func (_u *AccountUpdateOne) SetBalance(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.ResetBalance()
+	_u.mutation.SetBalance(v)
+	return _u
+}
+
+// SetNillableBalance sets the "balance" field if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableBalance(v *decimal.Decimal) *AccountUpdateOne {
+	if v != nil {
+		_u.SetBalance(*v)
+	}
+	return _u
+}
+
+// AddBalance adds value to the "balance" field.
+func (_u *AccountUpdateOne) AddBalance(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.AddBalance(v)
 	return _u
 }
 
@@ -518,6 +567,12 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(account.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Balance(); ok {
+		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedBalance(); ok {
+		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
 	}
 	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{

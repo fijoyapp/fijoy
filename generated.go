@@ -49,6 +49,7 @@ type ResolverRoot interface {
 	Lot() LotResolver
 	Query() QueryResolver
 	TransactionEntry() TransactionEntryResolver
+	AccountWhereInput() AccountWhereInputResolver
 	InvestmentWhereInput() InvestmentWhereInputResolver
 	LotWhereInput() LotWhereInputResolver
 	TransactionEntryWhereInput() TransactionEntryWhereInputResolver
@@ -216,6 +217,7 @@ type ComplexityRoot struct {
 
 type AccountResolver interface {
 	Balance(ctx context.Context, obj *ent.Account) (string, error)
+
 	BalanceInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error)
 }
 type InvestmentResolver interface {
@@ -243,6 +245,16 @@ type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 }
 
+type AccountWhereInputResolver interface {
+	Balance(ctx context.Context, obj *ent.AccountWhereInput, data *string) error
+	BalanceNeq(ctx context.Context, obj *ent.AccountWhereInput, data *string) error
+	BalanceIn(ctx context.Context, obj *ent.AccountWhereInput, data []string) error
+	BalanceNotIn(ctx context.Context, obj *ent.AccountWhereInput, data []string) error
+	BalanceGt(ctx context.Context, obj *ent.AccountWhereInput, data *string) error
+	BalanceGte(ctx context.Context, obj *ent.AccountWhereInput, data *string) error
+	BalanceLt(ctx context.Context, obj *ent.AccountWhereInput, data *string) error
+	BalanceLte(ctx context.Context, obj *ent.AccountWhereInput, data *string) error
+}
 type InvestmentWhereInputResolver interface {
 	Amount(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
 	AmountNeq(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
@@ -1441,6 +1453,35 @@ func (ec *executionContext) fieldContext_Account_type(_ context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _Account_balance(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Account_balance,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Account().Balance(ctx, obj)
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Account_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Account_household(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -1635,35 +1676,6 @@ func (ec *executionContext) fieldContext_Account_investments(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Account_balance(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Account_balance,
-		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Account().Balance(ctx, obj)
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Account_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Account",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Account_balanceInHouseholdCurrency(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -1785,6 +1797,8 @@ func (ec *executionContext) fieldContext_Currency_accounts(_ context.Context, fi
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
 				return ec.fieldContext_Account_type(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
 			case "household":
 				return ec.fieldContext_Account_household(ctx, field)
 			case "currency":
@@ -1793,8 +1807,6 @@ func (ec *executionContext) fieldContext_Currency_accounts(_ context.Context, fi
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "investments":
 				return ec.fieldContext_Account_investments(ctx, field)
-			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
 			case "balanceInHouseholdCurrency":
 				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
@@ -2220,6 +2232,8 @@ func (ec *executionContext) fieldContext_Household_accounts(_ context.Context, f
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
 				return ec.fieldContext_Account_type(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
 			case "household":
 				return ec.fieldContext_Account_household(ctx, field)
 			case "currency":
@@ -2228,8 +2242,6 @@ func (ec *executionContext) fieldContext_Household_accounts(_ context.Context, f
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "investments":
 				return ec.fieldContext_Account_investments(ctx, field)
-			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
 			case "balanceInHouseholdCurrency":
 				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
@@ -2619,6 +2631,8 @@ func (ec *executionContext) fieldContext_Investment_account(_ context.Context, f
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
 				return ec.fieldContext_Account_type(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
 			case "household":
 				return ec.fieldContext_Account_household(ctx, field)
 			case "currency":
@@ -2627,8 +2641,6 @@ func (ec *executionContext) fieldContext_Investment_account(_ context.Context, f
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "investments":
 				return ec.fieldContext_Account_investments(ctx, field)
-			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
 			case "balanceInHouseholdCurrency":
 				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
@@ -3600,6 +3612,8 @@ func (ec *executionContext) fieldContext_Query_accounts(_ context.Context, field
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
 				return ec.fieldContext_Account_type(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
 			case "household":
 				return ec.fieldContext_Account_household(ctx, field)
 			case "currency":
@@ -3608,8 +3622,6 @@ func (ec *executionContext) fieldContext_Query_accounts(_ context.Context, field
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "investments":
 				return ec.fieldContext_Account_investments(ctx, field)
-			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
 			case "balanceInHouseholdCurrency":
 				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
@@ -4661,6 +4673,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
 				return ec.fieldContext_Account_type(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
 			case "household":
 				return ec.fieldContext_Account_household(ctx, field)
 			case "currency":
@@ -4669,8 +4683,6 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_transactionEntries(ctx, field)
 			case "investments":
 				return ec.fieldContext_Account_investments(ctx, field)
-			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
 			case "balanceInHouseholdCurrency":
 				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
 			}
@@ -6705,7 +6717,7 @@ func (ec *executionContext) unmarshalInputAccountWhereInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasInvestments", "hasInvestmentsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "balance", "balanceNEQ", "balanceIn", "balanceNotIn", "balanceGT", "balanceGTE", "balanceLT", "balanceLTE", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasInvestments", "hasInvestmentsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7020,6 +7032,78 @@ func (ec *executionContext) unmarshalInputAccountWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.TypeNotIn = data
+		case "balance":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balance"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().Balance(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balanceNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balanceNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().BalanceNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balanceIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balanceIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().BalanceIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balanceNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balanceNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().BalanceNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balanceGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balanceGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().BalanceGt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balanceGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balanceGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().BalanceGte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balanceLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balanceLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().BalanceLt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "balanceLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("balanceLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountWhereInput().BalanceLte(ctx, &it, data); err != nil {
+				return it, err
+			}
 		case "hasHousehold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHousehold"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -10183,6 +10267,42 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "balance":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Account_balance(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "household":
 			field := field
 
@@ -10298,42 +10418,6 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 					}
 				}()
 				res = ec._Account_investments(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "balance":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Account_balance(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
 				return res
 			}
 

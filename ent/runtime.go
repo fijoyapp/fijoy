@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"github.com/shopspring/decimal"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -40,6 +41,10 @@ func init() {
 	accountDescName := accountFields[0].Descriptor()
 	// account.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	account.NameValidator = accountDescName.Validators[0].(func(string) error)
+	// accountDescBalance is the schema descriptor for balance field.
+	accountDescBalance := accountFields[2].Descriptor()
+	// account.DefaultBalance holds the default value on creation for the balance field.
+	account.DefaultBalance = accountDescBalance.Default.(func() decimal.Decimal)
 	currencyFields := schema.Currency{}.Fields()
 	_ = currencyFields
 	// currencyDescCode is the schema descriptor for code field.

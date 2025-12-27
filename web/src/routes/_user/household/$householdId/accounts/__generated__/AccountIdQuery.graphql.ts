@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2b876f20c2d4a8958f4bd337cd72df89>>
+ * @generated SignedSource<<fea5a2e2a57bc75d7a85e74741c37654>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -112,6 +112,14 @@ export type TransactionEntryWhereInput = {
 };
 export type AccountWhereInput = {
   and?: ReadonlyArray<AccountWhereInput> | null | undefined;
+  balance?: string | null | undefined;
+  balanceGT?: string | null | undefined;
+  balanceGTE?: string | null | undefined;
+  balanceIn?: ReadonlyArray<string> | null | undefined;
+  balanceLT?: string | null | undefined;
+  balanceLTE?: string | null | undefined;
+  balanceNEQ?: string | null | undefined;
+  balanceNotIn?: ReadonlyArray<string> | null | undefined;
   createTime?: any | null | undefined;
   createTimeGT?: any | null | undefined;
   createTimeGTE?: any | null | undefined;
