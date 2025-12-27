@@ -23,8 +23,8 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-
-	_ "github.com/lib/pq"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/shopspring/decimal"
 )
 
@@ -32,8 +32,8 @@ func main() {
 	ctx := context.Background()
 
 	db, err := sql.Open(
-		"postgres",
-		"postgres://localhost:5432/database?sslmode=enable",
+		"pgx",
+		"postgresql://user:password@localhost:2345/fijoy?sslmode=disable",
 	)
 	if err != nil {
 		panic(err)
@@ -45,7 +45,7 @@ func main() {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file:///ent/migrate/migrations",
+		"file://ent/migrate/migrations",
 		"postgres", driver)
 	if err != nil {
 		panic(err)
