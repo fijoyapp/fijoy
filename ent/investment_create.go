@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
+	"github.com/shopspring/decimal"
 )
 
 // InvestmentCreate is the builder for creating a Investment entity.
@@ -67,6 +68,12 @@ func (_c *InvestmentCreate) SetType(v investment.Type) *InvestmentCreate {
 // SetSymbol sets the "symbol" field.
 func (_c *InvestmentCreate) SetSymbol(v string) *InvestmentCreate {
 	_c.mutation.SetSymbol(v)
+	return _c
+}
+
+// SetAmount sets the "amount" field.
+func (_c *InvestmentCreate) SetAmount(v decimal.Decimal) *InvestmentCreate {
+	_c.mutation.SetAmount(v)
 	return _c
 }
 
@@ -190,6 +197,9 @@ func (_c *InvestmentCreate) check() error {
 			return &ValidationError{Name: "symbol", err: fmt.Errorf(`ent: validator failed for field "Investment.symbol": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.Amount(); !ok {
+		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Investment.amount"`)}
+	}
 	if len(_c.mutation.AccountIDs()) == 0 {
 		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "Investment.account"`)}
 	}
@@ -244,6 +254,10 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Symbol(); ok {
 		_spec.SetField(investment.FieldSymbol, field.TypeString, value)
 		_node.Symbol = value
+	}
+	if value, ok := _c.mutation.Amount(); ok {
+		_spec.SetField(investment.FieldAmount, field.TypeFloat64, value)
+		_node.Amount = value
 	}
 	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

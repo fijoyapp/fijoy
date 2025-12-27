@@ -1143,6 +1143,16 @@ type InvestmentWhereInput struct {
 	SymbolEqualFold    *string  `json:"symbolEqualFold,omitempty"`
 	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
 
+	// "amount" field predicates.
+	Amount      *decimal.Decimal  `json:"amount,omitempty"`
+	AmountNEQ   *decimal.Decimal  `json:"amountNEQ,omitempty"`
+	AmountIn    []decimal.Decimal `json:"amountIn,omitempty"`
+	AmountNotIn []decimal.Decimal `json:"amountNotIn,omitempty"`
+	AmountGT    *decimal.Decimal  `json:"amountGT,omitempty"`
+	AmountGTE   *decimal.Decimal  `json:"amountGTE,omitempty"`
+	AmountLT    *decimal.Decimal  `json:"amountLT,omitempty"`
+	AmountLTE   *decimal.Decimal  `json:"amountLTE,omitempty"`
+
 	// "account" edge predicates.
 	HasAccount     *bool                `json:"hasAccount,omitempty"`
 	HasAccountWith []*AccountWhereInput `json:"hasAccountWith,omitempty"`
@@ -1392,6 +1402,30 @@ func (i *InvestmentWhereInput) P() (predicate.Investment, error) {
 	}
 	if i.SymbolContainsFold != nil {
 		predicates = append(predicates, investment.SymbolContainsFold(*i.SymbolContainsFold))
+	}
+	if i.Amount != nil {
+		predicates = append(predicates, investment.AmountEQ(*i.Amount))
+	}
+	if i.AmountNEQ != nil {
+		predicates = append(predicates, investment.AmountNEQ(*i.AmountNEQ))
+	}
+	if len(i.AmountIn) > 0 {
+		predicates = append(predicates, investment.AmountIn(i.AmountIn...))
+	}
+	if len(i.AmountNotIn) > 0 {
+		predicates = append(predicates, investment.AmountNotIn(i.AmountNotIn...))
+	}
+	if i.AmountGT != nil {
+		predicates = append(predicates, investment.AmountGT(*i.AmountGT))
+	}
+	if i.AmountGTE != nil {
+		predicates = append(predicates, investment.AmountGTE(*i.AmountGTE))
+	}
+	if i.AmountLT != nil {
+		predicates = append(predicates, investment.AmountLT(*i.AmountLT))
+	}
+	if i.AmountLTE != nil {
+		predicates = append(predicates, investment.AmountLTE(*i.AmountLTE))
 	}
 
 	if i.HasAccount != nil {

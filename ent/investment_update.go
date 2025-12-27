@@ -14,6 +14,7 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"fijoy.app/ent/predicate"
+	"github.com/shopspring/decimal"
 )
 
 // InvestmentUpdate is the builder for updating Investment entities.
@@ -75,6 +76,27 @@ func (_u *InvestmentUpdate) SetNillableSymbol(v *string) *InvestmentUpdate {
 	if v != nil {
 		_u.SetSymbol(*v)
 	}
+	return _u
+}
+
+// SetAmount sets the "amount" field.
+func (_u *InvestmentUpdate) SetAmount(v decimal.Decimal) *InvestmentUpdate {
+	_u.mutation.ResetAmount()
+	_u.mutation.SetAmount(v)
+	return _u
+}
+
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (_u *InvestmentUpdate) SetNillableAmount(v *decimal.Decimal) *InvestmentUpdate {
+	if v != nil {
+		_u.SetAmount(*v)
+	}
+	return _u
+}
+
+// AddAmount adds value to the "amount" field.
+func (_u *InvestmentUpdate) AddAmount(v decimal.Decimal) *InvestmentUpdate {
+	_u.mutation.AddAmount(v)
 	return _u
 }
 
@@ -209,6 +231,12 @@ func (_u *InvestmentUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if value, ok := _u.mutation.Symbol(); ok {
 		_spec.SetField(investment.FieldSymbol, field.TypeString, value)
 	}
+	if value, ok := _u.mutation.Amount(); ok {
+		_spec.SetField(investment.FieldAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedAmount(); ok {
+		_spec.AddField(investment.FieldAmount, field.TypeFloat64, value)
+	}
 	if _u.mutation.LotsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -321,6 +349,27 @@ func (_u *InvestmentUpdateOne) SetNillableSymbol(v *string) *InvestmentUpdateOne
 	if v != nil {
 		_u.SetSymbol(*v)
 	}
+	return _u
+}
+
+// SetAmount sets the "amount" field.
+func (_u *InvestmentUpdateOne) SetAmount(v decimal.Decimal) *InvestmentUpdateOne {
+	_u.mutation.ResetAmount()
+	_u.mutation.SetAmount(v)
+	return _u
+}
+
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (_u *InvestmentUpdateOne) SetNillableAmount(v *decimal.Decimal) *InvestmentUpdateOne {
+	if v != nil {
+		_u.SetAmount(*v)
+	}
+	return _u
+}
+
+// AddAmount adds value to the "amount" field.
+func (_u *InvestmentUpdateOne) AddAmount(v decimal.Decimal) *InvestmentUpdateOne {
+	_u.mutation.AddAmount(v)
 	return _u
 }
 
@@ -484,6 +533,12 @@ func (_u *InvestmentUpdateOne) sqlSave(ctx context.Context) (_node *Investment, 
 	}
 	if value, ok := _u.mutation.Symbol(); ok {
 		_spec.SetField(investment.FieldSymbol, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Amount(); ok {
+		_spec.SetField(investment.FieldAmount, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedAmount(); ok {
+		_spec.AddField(investment.FieldAmount, field.TypeFloat64, value)
 	}
 	if _u.mutation.LotsCleared() {
 		edge := &sqlgraph.EdgeSpec{

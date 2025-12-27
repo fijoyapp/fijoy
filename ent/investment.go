@@ -13,6 +13,7 @@ import (
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
+	"github.com/shopspring/decimal"
 )
 
 // Investment is the model entity for the Investment schema.
@@ -30,6 +31,8 @@ type Investment struct {
 	Type investment.Type `json:"type,omitempty"`
 	// Symbol holds the value of the "symbol" field.
 	Symbol string `json:"symbol,omitempty"`
+	// Amount holds the value of the "amount" field.
+	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvestmentQuery when eager-loading is set.
 	Edges                 InvestmentEdges `json:"edges"`
@@ -105,6 +108,8 @@ func (*Investment) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case investment.FieldAmount:
+			values[i] = new(decimal.Decimal)
 		case investment.FieldID:
 			values[i] = new(sql.NullInt64)
 		case investment.FieldName, investment.FieldType, investment.FieldSymbol:
@@ -167,6 +172,12 @@ func (_m *Investment) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field symbol", values[i])
 			} else if value.Valid {
 				_m.Symbol = value.String
+			}
+		case investment.FieldAmount:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field amount", values[i])
+			} else if value != nil {
+				_m.Amount = *value
 			}
 		case investment.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -259,6 +270,9 @@ func (_m *Investment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("symbol=")
 	builder.WriteString(_m.Symbol)
+	builder.WriteString(", ")
+	builder.WriteString("amount=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Amount))
 	builder.WriteByte(')')
 	return builder.String()
 }

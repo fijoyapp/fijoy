@@ -22,6 +22,12 @@ func (Investment) Fields() []ent.Field {
 		field.String("name"),
 		field.Enum("type").Values("stock", "crypto"),
 		field.String("symbol").NotEmpty(),
+
+		field.Float("amount").GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.Postgres: "numeric(36,18)",
+			}).
+			Annotations(entgql.Type("String")),
 	}
 }
 

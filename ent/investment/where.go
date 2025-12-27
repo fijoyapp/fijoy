@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"fijoy.app/ent/predicate"
+	"github.com/shopspring/decimal"
 )
 
 // ID filters vertices based on their ID field.
@@ -73,6 +74,11 @@ func Name(v string) predicate.Investment {
 // Symbol applies equality check predicate on the "symbol" field. It's identical to SymbolEQ.
 func Symbol(v string) predicate.Investment {
 	return predicate.Investment(sql.FieldEQ(FieldSymbol, v))
+}
+
+// Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
+func Amount(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldAmount, v))
 }
 
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
@@ -303,6 +309,46 @@ func SymbolEqualFold(v string) predicate.Investment {
 // SymbolContainsFold applies the ContainsFold predicate on the "symbol" field.
 func SymbolContainsFold(v string) predicate.Investment {
 	return predicate.Investment(sql.FieldContainsFold(FieldSymbol, v))
+}
+
+// AmountEQ applies the EQ predicate on the "amount" field.
+func AmountEQ(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldAmount, v))
+}
+
+// AmountNEQ applies the NEQ predicate on the "amount" field.
+func AmountNEQ(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldNEQ(FieldAmount, v))
+}
+
+// AmountIn applies the In predicate on the "amount" field.
+func AmountIn(vs ...decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldIn(FieldAmount, vs...))
+}
+
+// AmountNotIn applies the NotIn predicate on the "amount" field.
+func AmountNotIn(vs ...decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldNotIn(FieldAmount, vs...))
+}
+
+// AmountGT applies the GT predicate on the "amount" field.
+func AmountGT(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldGT(FieldAmount, v))
+}
+
+// AmountGTE applies the GTE predicate on the "amount" field.
+func AmountGTE(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldGTE(FieldAmount, v))
+}
+
+// AmountLT applies the LT predicate on the "amount" field.
+func AmountLT(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldLT(FieldAmount, v))
+}
+
+// AmountLTE applies the LTE predicate on the "amount" field.
+func AmountLTE(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldLTE(FieldAmount, v))
 }
 
 // HasAccount applies the HasEdge predicate on the "account" edge.

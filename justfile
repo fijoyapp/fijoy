@@ -21,3 +21,9 @@ db-up:
 
 db-down:
   docker-compose -f docker-compose.dev.yml down
+
+migrate-hash:
+  atlas migrate hash --dir file://ent/migrate/migrations
+
+migrate name:
+  go run -mod=mod ent/migrate/main.go {{name}}

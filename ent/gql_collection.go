@@ -517,6 +517,11 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				selectedFields = append(selectedFields, investment.FieldSymbol)
 				fieldSeen[investment.FieldSymbol] = struct{}{}
 			}
+		case "amount":
+			if _, ok := fieldSeen[investment.FieldAmount]; !ok {
+				selectedFields = append(selectedFields, investment.FieldAmount)
+				fieldSeen[investment.FieldAmount] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

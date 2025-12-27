@@ -27,6 +27,8 @@ const (
 	FieldType = "type"
 	// FieldSymbol holds the string denoting the symbol field in the database.
 	FieldSymbol = "symbol"
+	// FieldAmount holds the string denoting the amount field in the database.
+	FieldAmount = "amount"
 	// EdgeAccount holds the string denoting the account edge name in mutations.
 	EdgeAccount = "account"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
@@ -75,6 +77,7 @@ var Columns = []string{
 	FieldName,
 	FieldType,
 	FieldSymbol,
+	FieldAmount,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "investments"
@@ -165,6 +168,11 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 // BySymbol orders the results by the symbol field.
 func BySymbol(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSymbol, opts...).ToFunc()
+}
+
+// ByAmount orders the results by the amount field.
+func ByAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAmount, opts...).ToFunc()
 }
 
 // ByAccountField orders the results by account field.

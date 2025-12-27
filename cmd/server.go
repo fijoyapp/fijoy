@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"math/rand"
 	"net/http"
 	"time"
 
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
 	"fijoy.app"
 	"fijoy.app/ent"
 	"fijoy.app/ent/account"
@@ -18,6 +21,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 
 	_ "github.com/lib/pq"
 	"github.com/shopspring/decimal"
@@ -26,29 +31,43 @@ import (
 func main() {
 	ctx := context.Background()
 
-	entClient, err := ent.Open(
+	db, err := sql.Open(
 		"postgres",
-		// TODO: DO NOT HARDCODE
-		"postgresql://user:password@localhost:2345/fijoy?sslmode=disable",
+		"postgres://localhost:5432/database?sslmode=enable",
 	)
 	if err != nil {
-		log.Fatalf("failed opening connection to sqlite: %v", err)
+		panic(err)
 	}
+
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file:///ent/migrate/migrations",
+		"postgres", driver)
+	if err != nil {
+		panic(err)
+	}
+	err = m.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		log.Fatalf("migration failed: %v", err)
+		panic(err)
+	}
+
+	log.Println("migration completed successfully")
+
+	drv := entsql.OpenDB(dialect.Postgres, db)
+	entClient := ent.NewClient(ent.Driver(drv))
 	defer entClient.Close()
 
 	fxrateProvider := fxrate.NewFrankfurterProvider()
 	fxrateClient := fxrate.NewClient(fxrateProvider)
 
-	// Run the auto migration tool.
-	if err := entClient.Schema.Create(ctx); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
-	}
-
 	if err := seed(ctx, entClient); err != nil {
 		log.Fatalf("failed seeding database: %v", err)
 	}
-
-	log.Println("migration completed successfully")
 
 	gqlHandler := handler.NewDefaultServer(
 		fijoy.NewSchema(entClient, fxrateClient),

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<baf8b87cc1e8c53c89216318ce025338>>
+ * @generated SignedSource<<2b876f20c2d4a8958f4bd337cd72df89>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -266,6 +266,14 @@ export type CurrencyWhereInput = {
   or?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
 };
 export type InvestmentWhereInput = {
+  amount?: string | null | undefined;
+  amountGT?: string | null | undefined;
+  amountGTE?: string | null | undefined;
+  amountIn?: ReadonlyArray<string> | null | undefined;
+  amountLT?: string | null | undefined;
+  amountLTE?: string | null | undefined;
+  amountNEQ?: string | null | undefined;
+  amountNotIn?: ReadonlyArray<string> | null | undefined;
   and?: ReadonlyArray<InvestmentWhereInput> | null | undefined;
   createTime?: any | null | undefined;
   createTimeGT?: any | null | undefined;

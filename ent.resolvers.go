@@ -14,6 +14,11 @@ import (
 )
 
 // Amount is the resolver for the amount field.
+func (r *investmentResolver) Amount(ctx context.Context, obj *ent.Investment) (string, error) {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// Amount is the resolver for the amount field.
 func (r *lotResolver) Amount(ctx context.Context, obj *ent.Lot) (string, error) {
 	return obj.Amount.String(), nil
 }
@@ -81,6 +86,46 @@ func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehol
 // Amount is the resolver for the amount field.
 func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
 	return obj.Amount.String(), nil
+}
+
+// Amount is the resolver for the amount field.
+func (r *investmentWhereInputResolver) Amount(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// AmountNeq is the resolver for the amountNEQ field.
+func (r *investmentWhereInputResolver) AmountNeq(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountNeq - amountNEQ"))
+}
+
+// AmountIn is the resolver for the amountIn field.
+func (r *investmentWhereInputResolver) AmountIn(ctx context.Context, obj *ent.InvestmentWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: AmountIn - amountIn"))
+}
+
+// AmountNotIn is the resolver for the amountNotIn field.
+func (r *investmentWhereInputResolver) AmountNotIn(ctx context.Context, obj *ent.InvestmentWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: AmountNotIn - amountNotIn"))
+}
+
+// AmountGt is the resolver for the amountGT field.
+func (r *investmentWhereInputResolver) AmountGt(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountGt - amountGT"))
+}
+
+// AmountGte is the resolver for the amountGTE field.
+func (r *investmentWhereInputResolver) AmountGte(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountGte - amountGTE"))
+}
+
+// AmountLt is the resolver for the amountLT field.
+func (r *investmentWhereInputResolver) AmountLt(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountLt - amountLT"))
+}
+
+// AmountLte is the resolver for the amountLTE field.
+func (r *investmentWhereInputResolver) AmountLte(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: AmountLte - amountLTE"))
 }
 
 // Amount is the resolver for the amount field.
@@ -206,6 +251,9 @@ func (r *transactionEntryWhereInputResolver) AmountLte(ctx context.Context, obj 
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
+// Investment returns InvestmentResolver implementation.
+func (r *Resolver) Investment() InvestmentResolver { return &investmentResolver{r} }
+
 // Lot returns LotResolver implementation.
 func (r *Resolver) Lot() LotResolver { return &lotResolver{r} }
 
@@ -214,6 +262,11 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
+
+// InvestmentWhereInput returns InvestmentWhereInputResolver implementation.
+func (r *Resolver) InvestmentWhereInput() InvestmentWhereInputResolver {
+	return &investmentWhereInputResolver{r}
+}
 
 // LotWhereInput returns LotWhereInputResolver implementation.
 func (r *Resolver) LotWhereInput() LotWhereInputResolver { return &lotWhereInputResolver{r} }
@@ -224,8 +277,10 @@ func (r *Resolver) TransactionEntryWhereInput() TransactionEntryWhereInputResolv
 }
 
 type accountResolver struct{ *Resolver }
+type investmentResolver struct{ *Resolver }
 type lotResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
+type investmentWhereInputResolver struct{ *Resolver }
 type lotWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }

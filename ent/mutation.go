@@ -2477,6 +2477,8 @@ type InvestmentMutation struct {
 	name             *string
 	_type            *investment.Type
 	symbol           *string
+	amount           *decimal.Decimal
+	addamount        *decimal.Decimal
 	clearedFields    map[string]struct{}
 	account          *int
 	clearedaccount   bool
@@ -2770,6 +2772,62 @@ func (m *InvestmentMutation) ResetSymbol() {
 	m.symbol = nil
 }
 
+// SetAmount sets the "amount" field.
+func (m *InvestmentMutation) SetAmount(d decimal.Decimal) {
+	m.amount = &d
+	m.addamount = nil
+}
+
+// Amount returns the value of the "amount" field in the mutation.
+func (m *InvestmentMutation) Amount() (r decimal.Decimal, exists bool) {
+	v := m.amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAmount returns the old "amount" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldAmount(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAmount: %w", err)
+	}
+	return oldValue.Amount, nil
+}
+
+// AddAmount adds d to the "amount" field.
+func (m *InvestmentMutation) AddAmount(d decimal.Decimal) {
+	if m.addamount != nil {
+		*m.addamount = m.addamount.Add(d)
+	} else {
+		m.addamount = &d
+	}
+}
+
+// AddedAmount returns the value that was added to the "amount" field in this mutation.
+func (m *InvestmentMutation) AddedAmount() (r decimal.Decimal, exists bool) {
+	v := m.addamount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAmount resets all changes to the "amount" field.
+func (m *InvestmentMutation) ResetAmount() {
+	m.amount = nil
+	m.addamount = nil
+}
+
 // SetAccountID sets the "account" edge to the Account entity by id.
 func (m *InvestmentMutation) SetAccountID(id int) {
 	m.account = &id
@@ -2975,7 +3033,7 @@ func (m *InvestmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InvestmentMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, investment.FieldCreateTime)
 	}
@@ -2990,6 +3048,9 @@ func (m *InvestmentMutation) Fields() []string {
 	}
 	if m.symbol != nil {
 		fields = append(fields, investment.FieldSymbol)
+	}
+	if m.amount != nil {
+		fields = append(fields, investment.FieldAmount)
 	}
 	return fields
 }
@@ -3009,6 +3070,8 @@ func (m *InvestmentMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case investment.FieldSymbol:
 		return m.Symbol()
+	case investment.FieldAmount:
+		return m.Amount()
 	}
 	return nil, false
 }
@@ -3028,6 +3091,8 @@ func (m *InvestmentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldType(ctx)
 	case investment.FieldSymbol:
 		return m.OldSymbol(ctx)
+	case investment.FieldAmount:
+		return m.OldAmount(ctx)
 	}
 	return nil, fmt.Errorf("unknown Investment field %s", name)
 }
@@ -3072,6 +3137,13 @@ func (m *InvestmentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSymbol(v)
 		return nil
+	case investment.FieldAmount:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Investment field %s", name)
 }
@@ -3079,13 +3151,21 @@ func (m *InvestmentMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *InvestmentMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addamount != nil {
+		fields = append(fields, investment.FieldAmount)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *InvestmentMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case investment.FieldAmount:
+		return m.AddedAmount()
+	}
 	return nil, false
 }
 
@@ -3094,6 +3174,13 @@ func (m *InvestmentMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *InvestmentMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case investment.FieldAmount:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Investment numeric field %s", name)
 }
@@ -3135,6 +3222,9 @@ func (m *InvestmentMutation) ResetField(name string) error {
 		return nil
 	case investment.FieldSymbol:
 		m.ResetSymbol()
+		return nil
+	case investment.FieldAmount:
+		m.ResetAmount()
 		return nil
 	}
 	return fmt.Errorf("unknown Investment field %s", name)

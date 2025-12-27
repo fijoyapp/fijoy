@@ -299,6 +299,7 @@ type Investment implements Node {
   name: String!
   type: InvestmentType!
   symbol: String!
+  amount: String!
   account: Account!
   household: Household!
   currency: Currency!
@@ -421,6 +422,17 @@ input InvestmentWhereInput {
   symbolHasSuffix: String
   symbolEqualFold: String
   symbolContainsFold: String
+  """
+  amount field predicates
+  """
+  amount: String
+  amountNEQ: String
+  amountIn: [String!]
+  amountNotIn: [String!]
+  amountGT: String
+  amountGTE: String
+  amountLT: String
+  amountLTE: String
   """
   account edge predicates
   """
