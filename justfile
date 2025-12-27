@@ -5,7 +5,7 @@ web:
   cd web && pnpm dev
 
 server:
-  go run ./cmd/server.go
+  go run ./cmd/server/main.go
 
 merge-graphql:
   watchman-make -p 'ent.graphql' 'fijoy.graphql' --run '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
