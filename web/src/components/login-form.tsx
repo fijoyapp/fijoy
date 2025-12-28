@@ -36,6 +36,21 @@ export function LoginForm({
           <form>
             <FieldGroup>
               <Field>
+                {/* TODO: hide this when we actually go into prod */}
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    navigate({
+                      href: env.VITE_SERVER_URL + '/auth/local/callback',
+                      reloadDocument: true,
+                    })
+                  }}
+                >
+                  Sandbox
+                </Button>
+              </Field>
+              <Field>
                 <Button
                   variant="outline"
                   type="button"

@@ -168,6 +168,25 @@ func main() {
 	r.Get(
 		"/auth/{provider}/callback",
 		func(res http.ResponseWriter, req *http.Request) {
+			p := req.PathValue("provider")
+			if !isProd && p == "local" {
+				userID := entClient.User.Query().
+					Where(user.EmailEQ("joey@itsjoeoui.com")).
+					OnlyIDX(ctx)
+
+				_, tokenString, _ := tokenAuth.Encode(
+					map[string]interface{}{
+						"user_id": strconv.Itoa(userID),
+					},
+				)
+
+				res.Header().
+					Set("Location", cfg.WebURL+"/auth/callback?token="+tokenString)
+				res.WriteHeader(http.StatusTemporaryRedirect)
+				return
+
+			}
+
 			gothicUser, err := gothic.CompleteUserAuth(res, req)
 			if err != nil {
 				// TODO: redirect to frontend with error message
@@ -319,7 +338,11 @@ func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
 				}
 
 				if isMember {
-					ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), hid)
+					ctx = context.WithValue(
+						ctx,
+						contextkeys.HouseholdIDKey(),
+						hid,
+					)
 				}
 
 			}
