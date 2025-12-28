@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,7 +17,6 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { env } from '@/env'
-import { useNavigate } from '@tanstack/react-router'
 
 export function LoginForm({
   className,

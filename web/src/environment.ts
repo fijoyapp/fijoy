@@ -1,10 +1,10 @@
 import { Environment, Network } from 'relay-runtime'
-import type { FetchFunction } from 'relay-runtime'
 import { env } from './env'
 import {
   LOCAL_STORAGE_HOUSEHOLD_ID_KEY,
   LOCAL_STORAGE_TOKEN_KEY,
 } from './constant'
+import type { FetchFunction } from 'relay-runtime'
 
 const HTTP_ENDPOINT = env.VITE_SERVER_URL
 

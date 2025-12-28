@@ -1,9 +1,9 @@
-import { PendingComponent } from '@/components/pending-component'
-import { environment } from '@/environment'
-import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { type householdIdQuery } from './__generated__/householdIdQuery.graphql'
+import type { householdIdQuery } from './__generated__/householdIdQuery.graphql'
+import { environment } from '@/environment'
+import { PendingComponent } from '@/components/pending-component'
 import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 
 export const Route = createFileRoute('/_user/household/')({

@@ -7,6 +7,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 
+import { useNavigate } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -23,7 +24,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { useNavigate } from '@tanstack/react-router'
 import { logout } from '@/lib/auth'
 
 export function NavUser({

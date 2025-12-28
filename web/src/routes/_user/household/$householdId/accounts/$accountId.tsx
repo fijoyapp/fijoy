@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { TransactionsList } from '../transactions/-components/transactions-list'
-import type {AccountIdQuery} from './__generated__/AccountIdQuery.graphql';
+import type { AccountIdQuery } from './__generated__/AccountIdQuery.graphql'
 import { environment } from '@/environment'
 import { PendingComponent } from '@/components/pending-component'
 

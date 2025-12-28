@@ -5,10 +5,12 @@ import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
 import { AccountCard } from './account-card'
 import type {
-  accountsPanelFragment$key,
   AccountType,
+  accountsPanelFragment$key,
 } from './__generated__/accountsPanelFragment.graphql'
 import {
   Accordion,
@@ -24,8 +26,6 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
 import { cn } from '@/lib/utils'
 
 const AccountsPanelFragment = graphql`
@@ -43,7 +43,7 @@ type AccountsListPageProps = {
   fragmentRef: accountsPanelFragment$key
 }
 
-const categoryOrder: AccountType[] = [
+const categoryOrder: Array<AccountType> = [
   'liquidity',
   'investment',
   'property',
@@ -85,9 +85,6 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         defaultValue={Object.keys(groupedAccounts)}
       >
         {map(categoryOrder, (type) => {
-          if (!groupedAccounts[type]) {
-            return null
-          }
           const accounts = groupedAccounts[type]
           return (
             <AccordionItem value={type} key={type}>

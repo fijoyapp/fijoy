@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { TransactionsPanel } from './-components/transactions-panel'
-import type {transactionsQuery} from './__generated__/transactionsQuery.graphql';
+import type { transactionsQuery } from './__generated__/transactionsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { environment } from '@/environment'
 import { PendingComponent } from '@/components/pending-component'

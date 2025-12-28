@@ -1,4 +1,3 @@
-import { LOCAL_STORAGE_PRIVACY_MODE_KEY } from '@/constant'
 import React, {
   createContext,
   useContext,
@@ -6,6 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { LOCAL_STORAGE_PRIVACY_MODE_KEY } from '@/constant'
 
 type PrivacyModeContextType = {
   isPrivacyModeEnabled: boolean
