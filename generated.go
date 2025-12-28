@@ -164,7 +164,6 @@ type ComplexityRoot struct {
 		TransactionEntries    func(childComplexity int) int
 		Transactions          func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) int
 		UserHouseholds        func(childComplexity int) int
-		UserKeys              func(childComplexity int) int
 		Users                 func(childComplexity int) int
 	}
 
@@ -269,7 +268,6 @@ type QueryResolver interface {
 	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
 	Users(ctx context.Context) ([]*ent.User, error)
 	UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error)
-	UserKeys(ctx context.Context) ([]*ent.UserKey, error)
 	FxRate(ctx context.Context, from string, to string, datetime string) (string, error)
 }
 type TransactionEntryResolver interface {
@@ -822,12 +820,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.UserHouseholds(childComplexity), true
-	case "Query.userKeys":
-		if e.complexity.Query.UserKeys == nil {
-			break
-		}
-
-		return e.complexity.Query.UserKeys(childComplexity), true
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
 			break
@@ -4295,49 +4287,6 @@ func (ec *executionContext) fieldContext_Query_userHouseholds(_ context.Context,
 				return ec.fieldContext_UserHousehold_household(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserHousehold", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_userKeys(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Query_userKeys,
-		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Query().UserKeys(ctx)
-		},
-		nil,
-		ec.marshalNUserKey2ᚕᚖfijoyᚗappᚋentᚐUserKeyᚄ,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Query_userKeys(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_UserKey_id(ctx, field)
-			case "createTime":
-				return ec.fieldContext_UserKey_createTime(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_UserKey_updateTime(ctx, field)
-			case "key":
-				return ec.fieldContext_UserKey_key(ctx, field)
-			case "name":
-				return ec.fieldContext_UserKey_name(ctx, field)
-			case "user":
-				return ec.fieldContext_UserKey_user(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserKey", field.Name)
 		},
 	}
 	return fc, nil
@@ -13892,28 +13841,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "userKeys":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_userKeys(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "fxRate":
 			field := field
 
@@ -16063,50 +15990,6 @@ func (ec *executionContext) marshalNUserHouseholdRole2fijoyᚗappᚋentᚋuserho
 func (ec *executionContext) unmarshalNUserHouseholdWhereInput2ᚖfijoyᚗappᚋentᚐUserHouseholdWhereInput(ctx context.Context, v any) (*ent.UserHouseholdWhereInput, error) {
 	res, err := ec.unmarshalInputUserHouseholdWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUserKey2ᚕᚖfijoyᚗappᚋentᚐUserKeyᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.UserKey) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUserKey2ᚖfijoyᚗappᚋentᚐUserKey(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNUserKey2ᚖfijoyᚗappᚋentᚐUserKey(ctx context.Context, sel ast.SelectionSet, v *ent.UserKey) graphql.Marshaler {

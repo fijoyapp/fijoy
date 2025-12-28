@@ -745,7 +745,6 @@ type Query {
   transactionEntries: [TransactionEntry!]!
   users: [User!]!
   userHouseholds: [UserHousehold!]!
-  userKeys: [UserKey!]!
 }
 """
 The builtin Time type
