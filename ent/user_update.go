@@ -17,6 +17,7 @@ import (
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -112,6 +113,21 @@ func (_u *UserUpdate) AddTransactions(v ...*Transaction) *UserUpdate {
 	return _u.AddTransactionIDs(ids...)
 }
 
+// AddKeyIDs adds the "keys" edge to the UserKey entity by IDs.
+func (_u *UserUpdate) AddKeyIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddKeyIDs(ids...)
+	return _u
+}
+
+// AddKeys adds the "keys" edges to the UserKey entity.
+func (_u *UserUpdate) AddKeys(v ...*UserKey) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddKeyIDs(ids...)
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
 func (_u *UserUpdate) AddUserHouseholdIDs(ids ...int) *UserUpdate {
 	_u.mutation.AddUserHouseholdIDs(ids...)
@@ -193,6 +209,27 @@ func (_u *UserUpdate) RemoveTransactions(v ...*Transaction) *UserUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionIDs(ids...)
+}
+
+// ClearKeys clears all "keys" edges to the UserKey entity.
+func (_u *UserUpdate) ClearKeys() *UserUpdate {
+	_u.mutation.ClearKeys()
+	return _u
+}
+
+// RemoveKeyIDs removes the "keys" edge to UserKey entities by IDs.
+func (_u *UserUpdate) RemoveKeyIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveKeyIDs(ids...)
+	return _u
+}
+
+// RemoveKeys removes "keys" edges to UserKey entities.
+func (_u *UserUpdate) RemoveKeys(v ...*UserKey) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveKeyIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -441,6 +478,51 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.KeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.KeysTable,
+			Columns: []string{user.KeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedKeysIDs(); len(nodes) > 0 && !_u.mutation.KeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.KeysTable,
+			Columns: []string{user.KeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.KeysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.KeysTable,
+			Columns: []string{user.KeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _u.mutation.UserHouseholdsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -587,6 +669,21 @@ func (_u *UserUpdateOne) AddTransactions(v ...*Transaction) *UserUpdateOne {
 	return _u.AddTransactionIDs(ids...)
 }
 
+// AddKeyIDs adds the "keys" edge to the UserKey entity by IDs.
+func (_u *UserUpdateOne) AddKeyIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddKeyIDs(ids...)
+	return _u
+}
+
+// AddKeys adds the "keys" edges to the UserKey entity.
+func (_u *UserUpdateOne) AddKeys(v ...*UserKey) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddKeyIDs(ids...)
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
 func (_u *UserUpdateOne) AddUserHouseholdIDs(ids ...int) *UserUpdateOne {
 	_u.mutation.AddUserHouseholdIDs(ids...)
@@ -668,6 +765,27 @@ func (_u *UserUpdateOne) RemoveTransactions(v ...*Transaction) *UserUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionIDs(ids...)
+}
+
+// ClearKeys clears all "keys" edges to the UserKey entity.
+func (_u *UserUpdateOne) ClearKeys() *UserUpdateOne {
+	_u.mutation.ClearKeys()
+	return _u
+}
+
+// RemoveKeyIDs removes the "keys" edge to UserKey entities by IDs.
+func (_u *UserUpdateOne) RemoveKeyIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveKeyIDs(ids...)
+	return _u
+}
+
+// RemoveKeys removes "keys" edges to UserKey entities.
+func (_u *UserUpdateOne) RemoveKeys(v ...*UserKey) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveKeyIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -939,6 +1057,51 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.KeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.KeysTable,
+			Columns: []string{user.KeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedKeysIDs(); len(nodes) > 0 && !_u.mutation.KeysCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.KeysTable,
+			Columns: []string{user.KeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.KeysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.KeysTable,
+			Columns: []string{user.KeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -39,17 +39,20 @@ type UserEdges struct {
 	Accounts []*Account `json:"accounts,omitempty"`
 	// Transactions holds the value of the transactions edge.
 	Transactions []*Transaction `json:"transactions,omitempty"`
+	// Keys holds the value of the keys edge.
+	Keys []*UserKey `json:"keys,omitempty"`
 	// UserHouseholds holds the value of the user_households edge.
 	UserHouseholds []*UserHousehold `json:"user_households,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [5]map[string]int
 
 	namedHouseholds     map[string][]*Household
 	namedAccounts       map[string][]*Account
 	namedTransactions   map[string][]*Transaction
+	namedKeys           map[string][]*UserKey
 	namedUserHouseholds map[string][]*UserHousehold
 }
 
@@ -80,10 +83,19 @@ func (e UserEdges) TransactionsOrErr() ([]*Transaction, error) {
 	return nil, &NotLoadedError{edge: "transactions"}
 }
 
+// KeysOrErr returns the Keys value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) KeysOrErr() ([]*UserKey, error) {
+	if e.loadedTypes[3] {
+		return e.Keys, nil
+	}
+	return nil, &NotLoadedError{edge: "keys"}
+}
+
 // UserHouseholdsOrErr returns the UserHouseholds value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) UserHouseholdsOrErr() ([]*UserHousehold, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.UserHouseholds, nil
 	}
 	return nil, &NotLoadedError{edge: "user_households"}
@@ -171,6 +183,11 @@ func (_m *User) QueryAccounts() *AccountQuery {
 // QueryTransactions queries the "transactions" edge of the User entity.
 func (_m *User) QueryTransactions() *TransactionQuery {
 	return NewUserClient(_m.config).QueryTransactions(_m)
+}
+
+// QueryKeys queries the "keys" edge of the User entity.
+func (_m *User) QueryKeys() *UserKeyQuery {
+	return NewUserClient(_m.config).QueryKeys(_m)
 }
 
 // QueryUserHouseholds queries the "user_households" edge of the User entity.
@@ -285,6 +302,30 @@ func (_m *User) appendNamedTransactions(name string, edges ...*Transaction) {
 		_m.Edges.namedTransactions[name] = []*Transaction{}
 	} else {
 		_m.Edges.namedTransactions[name] = append(_m.Edges.namedTransactions[name], edges...)
+	}
+}
+
+// NamedKeys returns the Keys named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *User) NamedKeys(name string) ([]*UserKey, error) {
+	if _m.Edges.namedKeys == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedKeys[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *User) appendNamedKeys(name string, edges ...*UserKey) {
+	if _m.Edges.namedKeys == nil {
+		_m.Edges.namedKeys = make(map[string][]*UserKey)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedKeys[name] = []*UserKey{}
+	} else {
+		_m.Edges.namedKeys[name] = append(_m.Edges.namedKeys[name], edges...)
 	}
 }
 

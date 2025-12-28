@@ -22,6 +22,7 @@ import (
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -92,6 +93,7 @@ func checkColumn(t, c string) error {
 			transactionentry.Table:    transactionentry.ValidColumn,
 			user.Table:                user.ValidColumn,
 			userhousehold.Table:       userhousehold.ValidColumn,
+			userkey.Table:             userkey.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

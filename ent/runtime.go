@@ -16,6 +16,7 @@ import (
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 	"github.com/shopspring/decimal"
 )
 
@@ -196,4 +197,27 @@ func init() {
 	userhousehold.DefaultUpdateTime = userhouseholdDescUpdateTime.Default.(func() time.Time)
 	// userhousehold.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	userhousehold.UpdateDefaultUpdateTime = userhouseholdDescUpdateTime.UpdateDefault.(func() time.Time)
+	userkeyMixin := schema.UserKey{}.Mixin()
+	userkeyMixinFields0 := userkeyMixin[0].Fields()
+	_ = userkeyMixinFields0
+	userkeyFields := schema.UserKey{}.Fields()
+	_ = userkeyFields
+	// userkeyDescCreateTime is the schema descriptor for create_time field.
+	userkeyDescCreateTime := userkeyMixinFields0[0].Descriptor()
+	// userkey.DefaultCreateTime holds the default value on creation for the create_time field.
+	userkey.DefaultCreateTime = userkeyDescCreateTime.Default.(func() time.Time)
+	// userkeyDescUpdateTime is the schema descriptor for update_time field.
+	userkeyDescUpdateTime := userkeyMixinFields0[1].Descriptor()
+	// userkey.DefaultUpdateTime holds the default value on creation for the update_time field.
+	userkey.DefaultUpdateTime = userkeyDescUpdateTime.Default.(func() time.Time)
+	// userkey.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	userkey.UpdateDefaultUpdateTime = userkeyDescUpdateTime.UpdateDefault.(func() time.Time)
+	// userkeyDescKey is the schema descriptor for key field.
+	userkeyDescKey := userkeyFields[0].Descriptor()
+	// userkey.KeyValidator is a validator for the "key" field. It is called by the builders before save.
+	userkey.KeyValidator = userkeyDescKey.Validators[0].(func(string) error)
+	// userkeyDescName is the schema descriptor for name field.
+	userkeyDescName := userkeyFields[1].Descriptor()
+	// userkey.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	userkey.NameValidator = userkeyDescName.Validators[0].(func(string) error)
 }

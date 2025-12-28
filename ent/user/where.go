@@ -354,6 +354,29 @@ func HasTransactionsWith(preds ...predicate.Transaction) predicate.User {
 	})
 }
 
+// HasKeys applies the HasEdge predicate on the "keys" edge.
+func HasKeys() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, KeysTable, KeysColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasKeysWith applies the HasEdge predicate on the "keys" edge with a given conditions (other predicates).
+func HasKeysWith(preds ...predicate.UserKey) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newKeysStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserHouseholds applies the HasEdge predicate on the "user_households" edge.
 func HasUserHouseholds() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

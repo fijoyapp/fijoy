@@ -288,6 +288,29 @@ var (
 			},
 		},
 	}
+	// UserKeysColumns holds the columns for the "user_keys" table.
+	UserKeysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "key", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
+		{Name: "user_keys", Type: field.TypeInt},
+	}
+	// UserKeysTable holds the schema information for the "user_keys" table.
+	UserKeysTable = &schema.Table{
+		Name:       "user_keys",
+		Columns:    UserKeysColumns,
+		PrimaryKey: []*schema.Column{UserKeysColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_keys_users_keys",
+				Columns:    []*schema.Column{UserKeysColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
@@ -300,6 +323,7 @@ var (
 		TransactionEntriesTable,
 		UsersTable,
 		UserHouseholdsTable,
+		UserKeysTable,
 	}
 )
 
@@ -349,5 +373,9 @@ func init() {
 	UserHouseholdsTable.ForeignKeys[1].RefTable = HouseholdsTable
 	UserHouseholdsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(25769803776),
+	}
+	UserKeysTable.ForeignKeys[0].RefTable = UsersTable
+	UserKeysTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(42949672960),
 	}
 }

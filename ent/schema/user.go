@@ -29,6 +29,7 @@ func (User) Edges() []ent.Edge {
 			Through("user_households", UserHousehold.Type),
 		edge.To("accounts", Account.Type),
 		edge.To("transactions", Transaction.Type),
+		edge.To("keys", UserKey.Type),
 	}
 }
 
@@ -39,6 +40,40 @@ func (User) Annotations() []schema.Annotation {
 }
 
 func (User) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.Time{},
+	}
+}
+
+// UserKey holds the schema definition for the UserKey entity.
+type UserKey struct {
+	ent.Schema
+}
+
+// Fields of the UserKey.
+func (UserKey) Fields() []ent.Field {
+	return []ent.Field{
+		field.String("key").NotEmpty(),
+		field.String("name").NotEmpty(),
+	}
+}
+
+// Edges of the UserKey.
+func (UserKey) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.From("user", User.Type).
+			Ref("keys").
+			Unique().
+			Immutable().
+			Required(),
+	}
+}
+
+func (UserKey) Annotations() []schema.Annotation {
+	return []schema.Annotation{}
+}
+
+func (UserKey) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
 	}

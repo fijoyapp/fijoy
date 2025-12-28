@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7b1a4d8a878a9892ba5925ebbb9aefe4>>
+ * @generated SignedSource<<d4b1019097da56ea4d374f6d380ecbf3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -101,6 +101,8 @@ export type UserWhereInput = {
   hasAccountsWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
   hasHouseholds?: boolean | null | undefined;
   hasHouseholdsWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
+  hasKeys?: boolean | null | undefined;
+  hasKeysWith?: ReadonlyArray<UserKeyWhereInput> | null | undefined;
   hasTransactions?: boolean | null | undefined;
   hasTransactionsWith?: ReadonlyArray<TransactionWhereInput> | null | undefined;
   hasUserHouseholds?: boolean | null | undefined;
@@ -499,6 +501,63 @@ export type UserHouseholdWhereInput = {
   roleIn?: ReadonlyArray<UserHouseholdRole> | null | undefined;
   roleNEQ?: UserHouseholdRole | null | undefined;
   roleNotIn?: ReadonlyArray<UserHouseholdRole> | null | undefined;
+  updateTime?: any | null | undefined;
+  updateTimeGT?: any | null | undefined;
+  updateTimeGTE?: any | null | undefined;
+  updateTimeIn?: ReadonlyArray<any> | null | undefined;
+  updateTimeLT?: any | null | undefined;
+  updateTimeLTE?: any | null | undefined;
+  updateTimeNEQ?: any | null | undefined;
+  updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+};
+export type UserKeyWhereInput = {
+  and?: ReadonlyArray<UserKeyWhereInput> | null | undefined;
+  createTime?: any | null | undefined;
+  createTimeGT?: any | null | undefined;
+  createTimeGTE?: any | null | undefined;
+  createTimeIn?: ReadonlyArray<any> | null | undefined;
+  createTimeLT?: any | null | undefined;
+  createTimeLTE?: any | null | undefined;
+  createTimeNEQ?: any | null | undefined;
+  createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  hasUser?: boolean | null | undefined;
+  hasUserWith?: ReadonlyArray<UserWhereInput> | null | undefined;
+  id?: string | null | undefined;
+  idGT?: string | null | undefined;
+  idGTE?: string | null | undefined;
+  idIn?: ReadonlyArray<string> | null | undefined;
+  idLT?: string | null | undefined;
+  idLTE?: string | null | undefined;
+  idNEQ?: string | null | undefined;
+  idNotIn?: ReadonlyArray<string> | null | undefined;
+  key?: string | null | undefined;
+  keyContains?: string | null | undefined;
+  keyContainsFold?: string | null | undefined;
+  keyEqualFold?: string | null | undefined;
+  keyGT?: string | null | undefined;
+  keyGTE?: string | null | undefined;
+  keyHasPrefix?: string | null | undefined;
+  keyHasSuffix?: string | null | undefined;
+  keyIn?: ReadonlyArray<string> | null | undefined;
+  keyLT?: string | null | undefined;
+  keyLTE?: string | null | undefined;
+  keyNEQ?: string | null | undefined;
+  keyNotIn?: ReadonlyArray<string> | null | undefined;
+  name?: string | null | undefined;
+  nameContains?: string | null | undefined;
+  nameContainsFold?: string | null | undefined;
+  nameEqualFold?: string | null | undefined;
+  nameGT?: string | null | undefined;
+  nameGTE?: string | null | undefined;
+  nameHasPrefix?: string | null | undefined;
+  nameHasSuffix?: string | null | undefined;
+  nameIn?: ReadonlyArray<string> | null | undefined;
+  nameLT?: string | null | undefined;
+  nameLTE?: string | null | undefined;
+  nameNEQ?: string | null | undefined;
+  nameNotIn?: ReadonlyArray<string> | null | undefined;
+  not?: UserKeyWhereInput | null | undefined;
+  or?: ReadonlyArray<UserKeyWhereInput> | null | undefined;
   updateTime?: any | null | undefined;
   updateTimeGT?: any | null | undefined;
   updateTimeGTE?: any | null | undefined;

@@ -32,6 +32,8 @@ type Tx struct {
 	User *UserClient
 	// UserHousehold is the client for interacting with the UserHousehold builders.
 	UserHousehold *UserHouseholdClient
+	// UserKey is the client for interacting with the UserKey builders.
+	UserKey *UserKeyClient
 
 	// lazily loaded.
 	client     *Client
@@ -173,6 +175,7 @@ func (tx *Tx) init() {
 	tx.TransactionEntry = NewTransactionEntryClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserHousehold = NewUserHouseholdClient(tx.config)
+	tx.UserKey = NewUserKeyClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

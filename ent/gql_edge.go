@@ -324,6 +324,18 @@ func (_m *User) Transactions(ctx context.Context) (result []*Transaction, err er
 	return result, err
 }
 
+func (_m *User) Keys(ctx context.Context) (result []*UserKey, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedKeys(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.KeysOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryKeys().All(ctx)
+	}
+	return result, err
+}
+
 func (_m *User) UserHouseholds(ctx context.Context) (result []*UserHousehold, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = _m.NamedUserHouseholds(graphql.GetFieldContext(ctx).Field.Alias)
@@ -348,6 +360,14 @@ func (_m *UserHousehold) Household(ctx context.Context) (*Household, error) {
 	result, err := _m.Edges.HouseholdOrErr()
 	if IsNotLoaded(err) {
 		result, err = _m.QueryHousehold().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *UserKey) User(ctx context.Context) (*User, error) {
+	result, err := _m.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryUser().Only(ctx)
 	}
 	return result, err
 }

@@ -25,6 +25,7 @@ import (
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 )
 
 // Client is the client that holds all ent builders.
@@ -52,6 +53,8 @@ type Client struct {
 	User *UserClient
 	// UserHousehold is the client for interacting with the UserHousehold builders.
 	UserHousehold *UserHouseholdClient
+	// UserKey is the client for interacting with the UserKey builders.
+	UserKey *UserKeyClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -73,6 +76,7 @@ func (c *Client) init() {
 	c.TransactionEntry = NewTransactionEntryClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserHousehold = NewUserHouseholdClient(c.config)
+	c.UserKey = NewUserKeyClient(c.config)
 }
 
 type (
@@ -175,6 +179,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		TransactionEntry:    NewTransactionEntryClient(cfg),
 		User:                NewUserClient(cfg),
 		UserHousehold:       NewUserHouseholdClient(cfg),
+		UserKey:             NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -204,6 +209,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		TransactionEntry:    NewTransactionEntryClient(cfg),
 		User:                NewUserClient(cfg),
 		UserHousehold:       NewUserHouseholdClient(cfg),
+		UserKey:             NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -234,7 +240,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Account, c.Currency, c.Household, c.Investment, c.Lot, c.Transaction,
-		c.TransactionCategory, c.TransactionEntry, c.User, c.UserHousehold,
+		c.TransactionCategory, c.TransactionEntry, c.User, c.UserHousehold, c.UserKey,
 	} {
 		n.Use(hooks...)
 	}
@@ -245,7 +251,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Account, c.Currency, c.Household, c.Investment, c.Lot, c.Transaction,
-		c.TransactionCategory, c.TransactionEntry, c.User, c.UserHousehold,
+		c.TransactionCategory, c.TransactionEntry, c.User, c.UserHousehold, c.UserKey,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -274,6 +280,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.User.mutate(ctx, m)
 	case *UserHouseholdMutation:
 		return c.UserHousehold.mutate(ctx, m)
+	case *UserKeyMutation:
+		return c.UserKey.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -1947,6 +1955,22 @@ func (c *UserClient) QueryTransactions(_m *User) *TransactionQuery {
 	return query
 }
 
+// QueryKeys queries the keys edge of a User.
+func (c *UserClient) QueryKeys(_m *User) *UserKeyQuery {
+	query := (&UserKeyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(userkey.Table, userkey.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.KeysTable, user.KeysColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserHouseholds queries the user_households edge of a User.
 func (c *UserClient) QueryUserHouseholds(_m *User) *UserHouseholdQuery {
 	query := (&UserHouseholdClient{config: c.config}).Query()
@@ -2153,14 +2177,163 @@ func (c *UserHouseholdClient) mutate(ctx context.Context, m *UserHouseholdMutati
 	}
 }
 
+// UserKeyClient is a client for the UserKey schema.
+type UserKeyClient struct {
+	config
+}
+
+// NewUserKeyClient returns a client for the UserKey from the given config.
+func NewUserKeyClient(c config) *UserKeyClient {
+	return &UserKeyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `userkey.Hooks(f(g(h())))`.
+func (c *UserKeyClient) Use(hooks ...Hook) {
+	c.hooks.UserKey = append(c.hooks.UserKey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `userkey.Intercept(f(g(h())))`.
+func (c *UserKeyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserKey = append(c.inters.UserKey, interceptors...)
+}
+
+// Create returns a builder for creating a UserKey entity.
+func (c *UserKeyClient) Create() *UserKeyCreate {
+	mutation := newUserKeyMutation(c.config, OpCreate)
+	return &UserKeyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserKey entities.
+func (c *UserKeyClient) CreateBulk(builders ...*UserKeyCreate) *UserKeyCreateBulk {
+	return &UserKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserKeyClient) MapCreateBulk(slice any, setFunc func(*UserKeyCreate, int)) *UserKeyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserKeyCreateBulk{err: fmt.Errorf("calling to UserKeyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserKeyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserKey.
+func (c *UserKeyClient) Update() *UserKeyUpdate {
+	mutation := newUserKeyMutation(c.config, OpUpdate)
+	return &UserKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserKeyClient) UpdateOne(_m *UserKey) *UserKeyUpdateOne {
+	mutation := newUserKeyMutation(c.config, OpUpdateOne, withUserKey(_m))
+	return &UserKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserKeyClient) UpdateOneID(id int) *UserKeyUpdateOne {
+	mutation := newUserKeyMutation(c.config, OpUpdateOne, withUserKeyID(id))
+	return &UserKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserKey.
+func (c *UserKeyClient) Delete() *UserKeyDelete {
+	mutation := newUserKeyMutation(c.config, OpDelete)
+	return &UserKeyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserKeyClient) DeleteOne(_m *UserKey) *UserKeyDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserKeyClient) DeleteOneID(id int) *UserKeyDeleteOne {
+	builder := c.Delete().Where(userkey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserKeyDeleteOne{builder}
+}
+
+// Query returns a query builder for UserKey.
+func (c *UserKeyClient) Query() *UserKeyQuery {
+	return &UserKeyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserKey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserKey entity by its id.
+func (c *UserKeyClient) Get(ctx context.Context, id int) (*UserKey, error) {
+	return c.Query().Where(userkey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserKeyClient) GetX(ctx context.Context, id int) *UserKey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a UserKey.
+func (c *UserKeyClient) QueryUser(_m *UserKey) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(userkey.Table, userkey.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, userkey.UserTable, userkey.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserKeyClient) Hooks() []Hook {
+	return c.hooks.UserKey
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserKeyClient) Interceptors() []Interceptor {
+	return c.inters.UserKey
+}
+
+func (c *UserKeyClient) mutate(ctx context.Context, m *UserKeyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserKeyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserKey mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
 		Account, Currency, Household, Investment, Lot, Transaction, TransactionCategory,
-		TransactionEntry, User, UserHousehold []ent.Hook
+		TransactionEntry, User, UserHousehold, UserKey []ent.Hook
 	}
 	inters struct {
 		Account, Currency, Household, Investment, Lot, Transaction, TransactionCategory,
-		TransactionEntry, User, UserHousehold []ent.Interceptor
+		TransactionEntry, User, UserHousehold, UserKey []ent.Interceptor
 	}
 )

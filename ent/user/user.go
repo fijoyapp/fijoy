@@ -28,6 +28,8 @@ const (
 	EdgeAccounts = "accounts"
 	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
 	EdgeTransactions = "transactions"
+	// EdgeKeys holds the string denoting the keys edge name in mutations.
+	EdgeKeys = "keys"
 	// EdgeUserHouseholds holds the string denoting the user_households edge name in mutations.
 	EdgeUserHouseholds = "user_households"
 	// Table holds the table name of the user in the database.
@@ -51,6 +53,13 @@ const (
 	TransactionsInverseTable = "transactions"
 	// TransactionsColumn is the table column denoting the transactions relation/edge.
 	TransactionsColumn = "user_transactions"
+	// KeysTable is the table that holds the keys relation/edge.
+	KeysTable = "user_keys"
+	// KeysInverseTable is the table name for the UserKey entity.
+	// It exists in this package in order to avoid circular dependency with the "userkey" package.
+	KeysInverseTable = "user_keys"
+	// KeysColumn is the table column denoting the keys relation/edge.
+	KeysColumn = "user_keys"
 	// UserHouseholdsTable is the table that holds the user_households relation/edge.
 	UserHouseholdsTable = "user_households"
 	// UserHouseholdsInverseTable is the table name for the UserHousehold entity.
@@ -168,6 +177,20 @@ func ByTransactions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByKeysCount orders the results by keys count.
+func ByKeysCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newKeysStep(), opts...)
+	}
+}
+
+// ByKeys orders the results by keys terms.
+func ByKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newKeysStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserHouseholdsCount orders the results by user_households count.
 func ByUserHouseholdsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -200,6 +223,13 @@ func newTransactionsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionsTable, TransactionsColumn),
+	)
+}
+func newKeysStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(KeysInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, KeysTable, KeysColumn),
 	)
 }
 func newUserHouseholdsStep() *sqlgraph.Step {

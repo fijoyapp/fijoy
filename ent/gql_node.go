@@ -19,6 +19,7 @@ import (
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/hashicorp/go-multierror"
 )
@@ -77,6 +78,11 @@ var userhouseholdImplementors = []string{"UserHousehold", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*UserHousehold) IsNode() {}
+
+var userkeyImplementors = []string{"UserKey", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*UserKey) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -241,6 +247,15 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			Where(userhousehold.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, userhouseholdImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case userkey.Table:
+		query := c.UserKey.Query().
+			Where(userkey.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, userkeyImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -466,6 +481,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		query := c.UserHousehold.Query().
 			Where(userhousehold.IDIn(ids...))
 		query, err := query.CollectFields(ctx, userhouseholdImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case userkey.Table:
+		query := c.UserKey.Query().
+			Where(userkey.IDIn(ids...))
+		query, err := query.CollectFields(ctx, userkeyImplementors...)
 		if err != nil {
 			return nil, err
 		}

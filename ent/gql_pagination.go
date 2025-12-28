@@ -22,6 +22,7 @@ import (
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -2639,6 +2640,255 @@ func (_m *UserHousehold) ToEdge(order *UserHouseholdOrder) *UserHouseholdEdge {
 		order = DefaultUserHouseholdOrder
 	}
 	return &UserHouseholdEdge{
+		Node:   _m,
+		Cursor: order.Field.toCursor(_m),
+	}
+}
+
+// UserKeyEdge is the edge representation of UserKey.
+type UserKeyEdge struct {
+	Node   *UserKey `json:"node"`
+	Cursor Cursor   `json:"cursor"`
+}
+
+// UserKeyConnection is the connection containing edges to UserKey.
+type UserKeyConnection struct {
+	Edges      []*UserKeyEdge `json:"edges"`
+	PageInfo   PageInfo       `json:"pageInfo"`
+	TotalCount int            `json:"totalCount"`
+}
+
+func (c *UserKeyConnection) build(nodes []*UserKey, pager *userkeyPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *UserKey
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *UserKey {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *UserKey {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*UserKeyEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &UserKeyEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// UserKeyPaginateOption enables pagination customization.
+type UserKeyPaginateOption func(*userkeyPager) error
+
+// WithUserKeyOrder configures pagination ordering.
+func WithUserKeyOrder(order *UserKeyOrder) UserKeyPaginateOption {
+	if order == nil {
+		order = DefaultUserKeyOrder
+	}
+	o := *order
+	return func(pager *userkeyPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultUserKeyOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithUserKeyFilter configures pagination filter.
+func WithUserKeyFilter(filter func(*UserKeyQuery) (*UserKeyQuery, error)) UserKeyPaginateOption {
+	return func(pager *userkeyPager) error {
+		if filter == nil {
+			return errors.New("UserKeyQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type userkeyPager struct {
+	reverse bool
+	order   *UserKeyOrder
+	filter  func(*UserKeyQuery) (*UserKeyQuery, error)
+}
+
+func newUserKeyPager(opts []UserKeyPaginateOption, reverse bool) (*userkeyPager, error) {
+	pager := &userkeyPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultUserKeyOrder
+	}
+	return pager, nil
+}
+
+func (p *userkeyPager) applyFilter(query *UserKeyQuery) (*UserKeyQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *userkeyPager) toCursor(_m *UserKey) Cursor {
+	return p.order.Field.toCursor(_m)
+}
+
+func (p *userkeyPager) applyCursors(query *UserKeyQuery, after, before *Cursor) (*UserKeyQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultUserKeyOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *userkeyPager) applyOrder(query *UserKeyQuery) *UserKeyQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultUserKeyOrder.Field {
+		query = query.Order(DefaultUserKeyOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *userkeyPager) orderExpr(query *UserKeyQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultUserKeyOrder.Field {
+			b.Comma().Ident(DefaultUserKeyOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to UserKey.
+func (_m *UserKeyQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...UserKeyPaginateOption,
+) (*UserKeyConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newUserKeyPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if _m, err = pager.applyFilter(_m); err != nil {
+		return nil, err
+	}
+	conn := &UserKeyConnection{Edges: []*UserKeyEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := _m.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if _m, err = pager.applyCursors(_m, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		_m.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := _m.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	_m = pager.applyOrder(_m)
+	nodes, err := _m.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// UserKeyOrderField defines the ordering field of UserKey.
+type UserKeyOrderField struct {
+	// Value extracts the ordering value from the given UserKey.
+	Value    func(*UserKey) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) userkey.OrderOption
+	toCursor func(*UserKey) Cursor
+}
+
+// UserKeyOrder defines the ordering of UserKey.
+type UserKeyOrder struct {
+	Direction OrderDirection     `json:"direction"`
+	Field     *UserKeyOrderField `json:"field"`
+}
+
+// DefaultUserKeyOrder is the default ordering of UserKey.
+var DefaultUserKeyOrder = &UserKeyOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &UserKeyOrderField{
+		Value: func(_m *UserKey) (ent.Value, error) {
+			return _m.ID, nil
+		},
+		column: userkey.FieldID,
+		toTerm: userkey.ByID,
+		toCursor: func(_m *UserKey) Cursor {
+			return Cursor{ID: _m.ID}
+		},
+	},
+}
+
+// ToEdge converts UserKey into UserKeyEdge.
+func (_m *UserKey) ToEdge(order *UserKeyOrder) *UserKeyEdge {
+	if order == nil {
+		order = DefaultUserKeyOrder
+	}
+	return &UserKeyEdge{
 		Node:   _m,
 		Cursor: order.Field.toCursor(_m),
 	}

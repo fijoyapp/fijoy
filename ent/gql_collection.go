@@ -16,6 +16,7 @@ import (
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 	"github.com/99designs/gqlgen/graphql"
 )
 
@@ -1094,6 +1095,19 @@ func (_q *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 				*wq = *query
 			})
 
+		case "keys":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserKeyClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userkeyImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedKeys(alias, func(wq *UserKeyQuery) {
+				*wq = *query
+			})
+
 		case "userHouseholds":
 			var (
 				alias = field.Alias
@@ -1280,6 +1294,99 @@ func newUserHouseholdPaginateArgs(rv map[string]any) *userhouseholdPaginateArgs 
 	}
 	if v, ok := rv[whereField].(*UserHouseholdWhereInput); ok {
 		args.opts = append(args.opts, WithUserHouseholdFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *UserKeyQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserKeyQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userkey.Columns))
+		selectedFields = []string{userkey.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
+				return err
+			}
+			_q.withUser = query
+		case "createTime":
+			if _, ok := fieldSeen[userkey.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldCreateTime)
+				fieldSeen[userkey.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[userkey.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldUpdateTime)
+				fieldSeen[userkey.FieldUpdateTime] = struct{}{}
+			}
+		case "key":
+			if _, ok := fieldSeen[userkey.FieldKey]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldKey)
+				fieldSeen[userkey.FieldKey] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[userkey.FieldName]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldName)
+				fieldSeen[userkey.FieldName] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type userkeyPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserKeyPaginateOption
+}
+
+func newUserKeyPaginateArgs(rv map[string]any) *userkeyPaginateArgs {
+	args := &userkeyPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*UserKeyWhereInput); ok {
+		args.opts = append(args.opts, WithUserKeyFilter(v.Filter))
 	}
 	return args
 }

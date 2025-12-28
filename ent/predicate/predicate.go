@@ -35,3 +35,6 @@ type User func(*sql.Selector)
 
 // UserHousehold is the predicate function for userhousehold builders.
 type UserHousehold func(*sql.Selector)
+
+// UserKey is the predicate function for userkey builders.
+type UserKey func(*sql.Selector)

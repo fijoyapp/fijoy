@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -107,6 +108,21 @@ func (_c *UserCreate) AddTransactions(v ...*Transaction) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddTransactionIDs(ids...)
+}
+
+// AddKeyIDs adds the "keys" edge to the UserKey entity by IDs.
+func (_c *UserCreate) AddKeyIDs(ids ...int) *UserCreate {
+	_c.mutation.AddKeyIDs(ids...)
+	return _c
+}
+
+// AddKeys adds the "keys" edges to the UserKey entity.
+func (_c *UserCreate) AddKeys(v ...*UserKey) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddKeyIDs(ids...)
 }
 
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
@@ -280,6 +296,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.KeysIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.KeysTable,
+			Columns: []string{user.KeysColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

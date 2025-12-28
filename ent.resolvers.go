@@ -93,6 +93,11 @@ func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehol
 	return r.entClient.UserHousehold.Query().All(ctx)
 }
 
+// UserKeys is the resolver for the userKeys field.
+func (r *queryResolver) UserKeys(ctx context.Context) ([]*ent.UserKey, error) {
+	panic(fmt.Errorf("not implemented: UserKeys - userKeys"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error) {
 	return obj.Amount.String(), nil
