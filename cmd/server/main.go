@@ -10,6 +10,8 @@ import (
 	"os"
 	"time"
 
+	_ "fijoy.app/ent/runtime"
+
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"fijoy.app"
@@ -260,7 +262,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	cad := entClient.Currency.Create().SetCode("CAD").SaveX(ctx)
 	usd := entClient.Currency.Create().SetCode("USD").SaveX(ctx)
 
-	entUser := entClient.User.Create().
+	joey := entClient.User.Create().
 		SetEmail("joey@itsjoeoui.com").
 		SetName("Joey").
 		SaveX(ctx)
@@ -272,22 +274,47 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SaveX(ctx)
 
 	entClient.UserHousehold.Create().
-		SetUser(entUser).
+		SetUser(joey).
 		SetHousehold(household).
 		SetRole(userhousehold.RoleAdmin).
+		SaveX(ctx)
+
+	differentJoey := entClient.User.Create().
+		SetEmail("joey@jyu.dev").
+		SetName("Different Joey").
+		SaveX(ctx)
+
+	differentHousehold := entClient.Household.Create().
+		SetName("Different Joey's Household").
+		SetCurrency(cad).
+		SetLocale("en-CA").
+		SaveX(ctx)
+
+	entClient.UserHousehold.Create().
+		SetUser(differentJoey).
+		SetHousehold(differentHousehold).
+		SetRole(userhousehold.RoleAdmin).
+		SaveX(ctx)
+
+	entClient.Account.Create().
+		SetName("You should not see this account").
+		SetCurrency(usd).
+		SetUser(differentJoey).
+		SetHousehold(differentHousehold).
+		SetType(account.TypeLiquidity).
 		SaveX(ctx)
 
 	chase := entClient.Account.Create().
 		SetName("Chase Total Checking").
 		SetCurrency(usd).
-		SetUser(entUser).
+		SetUser(joey).
 		SetHousehold(household).
 		SetType(account.TypeLiquidity).
 		SaveX(ctx)
 
 	wealthsimple := entClient.Account.Create().
 		SetName("Wealthsimple Visa Infinite").
-		SetUser(entUser).
+		SetUser(joey).
 		SetCurrency(cad).
 		SetHousehold(household).
 		SetType(account.TypeLiability).
@@ -310,7 +337,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	{
 		transaction := entClient.Transaction.Create().
-			SetUser(entUser).
+			SetUser(joey).
 			SetHousehold(household).
 			SetCategory(salary).
 			SetDatetime(genRandomDatetime()).SaveX(ctx)
@@ -326,7 +353,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
-				SetUser(entUser).
+				SetUser(joey).
 				SetHousehold(household).
 				SetCategory(restaurant).
 				SetDatetime(genRandomDatetime())
@@ -350,7 +377,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
-				SetUser(entUser).
+				SetUser(joey).
 				SetHousehold(household).
 				SetCategory(grocery).
 				SetDatetime(genRandomDatetime())
