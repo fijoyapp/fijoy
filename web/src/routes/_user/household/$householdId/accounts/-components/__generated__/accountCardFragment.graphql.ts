@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f737d9416e6d7d1e2ca148fc93a07f62>>
+ * @generated SignedSource<<163fbc79b8611ed6f528f35126126e24>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,9 @@ export type accountCardFragment$data = {
   readonly name: string;
   readonly type: AccountType;
   readonly updateTime: any;
+  readonly user: {
+    readonly name: string;
+  };
   readonly " $fragmentSpreads": FragmentRefs<"accountBalanceDisplayFragment_account">;
   readonly " $fragmentType": "accountCardFragment";
 };
@@ -28,7 +31,15 @@ export type accountCardFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"accountCardFragment">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -41,13 +52,7 @@ const node: ReaderFragment = {
       "name": "id",
       "storageKey": null
     },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    },
+    (v0/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -83,6 +88,18 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "user",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/)
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "kind": "ScalarField",
       "name": "balance",
       "storageKey": null
@@ -96,7 +113,8 @@ const node: ReaderFragment = {
   "type": "Account",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "27e82c4bb9a717ffda9366dcb70d640c";
+(node as any).hash = "a42eaa360f4ed2ad17b5f57667a591d7";
 
 export default node;

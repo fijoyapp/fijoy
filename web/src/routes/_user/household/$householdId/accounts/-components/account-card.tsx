@@ -1,4 +1,4 @@
-import { BadgeCheckIcon, ChevronRightIcon } from 'lucide-react'
+import { BadgeCheckIcon, ChevronRightIcon, PiggyBankIcon } from 'lucide-react'
 import { graphql } from 'relay-runtime'
 import { useFragment } from 'react-relay'
 import { Link } from '@tanstack/react-router'
@@ -24,6 +24,9 @@ const accountCardFragment = graphql`
     currency {
       code
     }
+    user {
+      name
+    }
     balance
     ...accountBalanceDisplayFragment_account
   }
@@ -42,7 +45,7 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
     <Item
       render={
         <Link
-          className="no-underline!"
+          className="no-underline! "
           from="/household/$householdId/"
           to="/household/$householdId/accounts/$accountId"
           activeOptions={{ exact: true }}
@@ -50,14 +53,14 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
         >
           {({ isActive }) => (
             <>
-              {/* <ItemMedia> */}
-              {/*   <BadgeCheckIcon className="size-5" /> */}
-              {/* </ItemMedia> */}
+              <ItemMedia variant="image">
+                <PiggyBankIcon className="size-6" />
+              </ItemMedia>
               <ItemContent>
                 <ItemTitle className={cn(isActive && 'font-semibold')}>
                   {data.name}
                 </ItemTitle>
-                <ItemDescription>{}</ItemDescription>
+                <ItemDescription>{data.user.name}</ItemDescription>
               </ItemContent>
               <ItemContent className="items-end">
                 <ItemTitle className="font-mono">
