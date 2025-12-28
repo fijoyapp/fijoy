@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/user"
 )
 
@@ -29,10 +30,11 @@ type Transaction struct {
 	Datetime time.Time `json:"datetime,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
-	Edges                  TransactionEdges `json:"edges"`
-	household_transactions *int
-	user_transactions      *int
-	selectValues           sql.SelectValues
+	Edges                             TransactionEdges `json:"edges"`
+	household_transactions            *int
+	transaction_category_transactions *int
+	user_transactions                 *int
+	selectValues                      sql.SelectValues
 }
 
 // TransactionEdges holds the relations/edges for other nodes in the graph.
@@ -41,13 +43,15 @@ type TransactionEdges struct {
 	User *User `json:"user,omitempty"`
 	// Household holds the value of the household edge.
 	Household *Household `json:"household,omitempty"`
+	// Category holds the value of the category edge.
+	Category *TransactionCategory `json:"category,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
 	namedTransactionEntries map[string][]*TransactionEntry
 }
@@ -74,10 +78,21 @@ func (e TransactionEdges) HouseholdOrErr() (*Household, error) {
 	return nil, &NotLoadedError{edge: "household"}
 }
 
+// CategoryOrErr returns the Category value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransactionEdges) CategoryOrErr() (*TransactionCategory, error) {
+	if e.Category != nil {
+		return e.Category, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: transactioncategory.Label}
+	}
+	return nil, &NotLoadedError{edge: "category"}
+}
+
 // TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e TransactionEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
@@ -96,7 +111,9 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case transaction.ForeignKeys[0]: // household_transactions
 			values[i] = new(sql.NullInt64)
-		case transaction.ForeignKeys[1]: // user_transactions
+		case transaction.ForeignKeys[1]: // transaction_category_transactions
+			values[i] = new(sql.NullInt64)
+		case transaction.ForeignKeys[2]: // user_transactions
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -152,6 +169,13 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 			}
 		case transaction.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field transaction_category_transactions", value)
+			} else if value.Valid {
+				_m.transaction_category_transactions = new(int)
+				*_m.transaction_category_transactions = int(value.Int64)
+			}
+		case transaction.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_transactions", value)
 			} else if value.Valid {
 				_m.user_transactions = new(int)
@@ -178,6 +202,11 @@ func (_m *Transaction) QueryUser() *UserQuery {
 // QueryHousehold queries the "household" edge of the Transaction entity.
 func (_m *Transaction) QueryHousehold() *HouseholdQuery {
 	return NewTransactionClient(_m.config).QueryHousehold(_m)
+}
+
+// QueryCategory queries the "category" edge of the Transaction entity.
+func (_m *Transaction) QueryCategory() *TransactionCategoryQuery {
+	return NewTransactionClient(_m.config).QueryCategory(_m)
 }
 
 // QueryTransactionEntries queries the "transaction_entries" edge of the Transaction entity.

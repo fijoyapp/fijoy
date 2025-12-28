@@ -20,7 +20,7 @@ func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string
 
 // Amount is the resolver for the amount field.
 func (r *investmentResolver) Amount(ctx context.Context, obj *ent.Investment) (string, error) {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	return obj.Amount.String(), nil
 }
 
 // Amount is the resolver for the amount field.
@@ -71,6 +71,11 @@ func (r *queryResolver) Lots(ctx context.Context, after *entgql.Cursor[int], fir
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error) {
 	return r.entClient.Transaction.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionOrder(orderBy), ent.WithTransactionFilter(where.Filter))
+}
+
+// TransactionCategories is the resolver for the transactionCategories field.
+func (r *queryResolver) TransactionCategories(ctx context.Context) ([]*ent.TransactionCategory, error) {
+	return r.entClient.TransactionCategory.Query().All(ctx)
 }
 
 // TransactionEntries is the resolver for the transactionEntries field.

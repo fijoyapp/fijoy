@@ -81,6 +81,18 @@ func (f TransactionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TransactionMutation", m)
 }
 
+// The TransactionCategoryFunc type is an adapter to allow the use of ordinary
+// function as TransactionCategory mutator.
+type TransactionCategoryFunc func(context.Context, *ent.TransactionCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TransactionCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TransactionCategoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TransactionCategoryMutation", m)
+}
+
 // The TransactionEntryFunc type is an adapter to allow the use of ordinary
 // function as TransactionEntry mutator.
 type TransactionEntryFunc func(context.Context, *ent.TransactionEntryMutation) (ent.Value, error)

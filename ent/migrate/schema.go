@@ -152,6 +152,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "datetime", Type: field.TypeTime},
 		{Name: "household_transactions", Type: field.TypeInt},
+		{Name: "transaction_category_transactions", Type: field.TypeInt},
 		{Name: "user_transactions", Type: field.TypeInt},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
@@ -167,8 +168,14 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "transactions_users_transactions",
+				Symbol:     "transactions_transaction_categories_transactions",
 				Columns:    []*schema.Column{TransactionsColumns[6]},
+				RefColumns: []*schema.Column{TransactionCategoriesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transactions_users_transactions",
+				Columns:    []*schema.Column{TransactionsColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -180,6 +187,20 @@ var (
 				Columns: []*schema.Column{TransactionsColumns[4]},
 			},
 		},
+	}
+	// TransactionCategoriesColumns holds the columns for the "transaction_categories" table.
+	TransactionCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer"}},
+	}
+	// TransactionCategoriesTable holds the schema information for the "transaction_categories" table.
+	TransactionCategoriesTable = &schema.Table{
+		Name:       "transaction_categories",
+		Columns:    TransactionCategoriesColumns,
+		PrimaryKey: []*schema.Column{TransactionCategoriesColumns[0]},
 	}
 	// TransactionEntriesColumns holds the columns for the "transaction_entries" table.
 	TransactionEntriesColumns = []*schema.Column{
@@ -275,6 +296,7 @@ var (
 		InvestmentsTable,
 		LotsTable,
 		TransactionsTable,
+		TransactionCategoriesTable,
 		TransactionEntriesTable,
 		UsersTable,
 		UserHouseholdsTable,
@@ -306,9 +328,13 @@ func init() {
 		IncrementStart: func(i int) *int { return &i }(34359738368),
 	}
 	TransactionsTable.ForeignKeys[0].RefTable = HouseholdsTable
-	TransactionsTable.ForeignKeys[1].RefTable = UsersTable
+	TransactionsTable.ForeignKeys[1].RefTable = TransactionCategoriesTable
+	TransactionsTable.ForeignKeys[2].RefTable = UsersTable
 	TransactionsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(12884901888),
+	}
+	TransactionCategoriesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(38654705664),
 	}
 	TransactionEntriesTable.ForeignKeys[0].RefTable = AccountsTable
 	TransactionEntriesTable.ForeignKeys[1].RefTable = CurrenciesTable

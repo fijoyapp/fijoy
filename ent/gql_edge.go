@@ -232,6 +232,14 @@ func (_m *Transaction) Household(ctx context.Context) (*Household, error) {
 	return result, err
 }
 
+func (_m *Transaction) Category(ctx context.Context) (*TransactionCategory, error) {
+	result, err := _m.Edges.CategoryOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryCategory().Only(ctx)
+	}
+	return result, err
+}
+
 func (_m *Transaction) TransactionEntries(ctx context.Context) (result []*TransactionEntry, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = _m.NamedTransactionEntries(graphql.GetFieldContext(ctx).Field.Alias)
@@ -240,6 +248,18 @@ func (_m *Transaction) TransactionEntries(ctx context.Context) (result []*Transa
 	}
 	if IsNotLoaded(err) {
 		result, err = _m.QueryTransactionEntries().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *TransactionCategory) Transactions(ctx context.Context) (result []*Transaction, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedTransactions(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.TransactionsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryTransactions().All(ctx)
 	}
 	return result, err
 }

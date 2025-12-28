@@ -17,6 +17,7 @@ import (
 	"fijoy.app/ent"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/investment"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/userhousehold"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -151,21 +152,23 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Accounts           func(childComplexity int) int
-		Currencies         func(childComplexity int) int
-		FxRate             func(childComplexity int, from string, to string, datetime string) int
-		Households         func(childComplexity int) int
-		Investments        func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) int
-		Lots               func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) int
-		Node               func(childComplexity int, id int) int
-		Nodes              func(childComplexity int, ids []int) int
-		TransactionEntries func(childComplexity int) int
-		Transactions       func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) int
-		UserHouseholds     func(childComplexity int) int
-		Users              func(childComplexity int) int
+		Accounts              func(childComplexity int) int
+		Currencies            func(childComplexity int) int
+		FxRate                func(childComplexity int, from string, to string, datetime string) int
+		Households            func(childComplexity int) int
+		Investments           func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) int
+		Lots                  func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) int
+		Node                  func(childComplexity int, id int) int
+		Nodes                 func(childComplexity int, ids []int) int
+		TransactionCategories func(childComplexity int) int
+		TransactionEntries    func(childComplexity int) int
+		Transactions          func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) int
+		UserHouseholds        func(childComplexity int) int
+		Users                 func(childComplexity int) int
 	}
 
 	Transaction struct {
+		Category           func(childComplexity int) int
 		CreateTime         func(childComplexity int) int
 		Datetime           func(childComplexity int) int
 		Description        func(childComplexity int) int
@@ -174,6 +177,15 @@ type ComplexityRoot struct {
 		TransactionEntries func(childComplexity int) int
 		UpdateTime         func(childComplexity int) int
 		User               func(childComplexity int) int
+	}
+
+	TransactionCategory struct {
+		CreateTime   func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Transactions func(childComplexity int) int
+		Type         func(childComplexity int) int
+		UpdateTime   func(childComplexity int) int
 	}
 
 	TransactionConnection struct {
@@ -242,6 +254,7 @@ type QueryResolver interface {
 	Investments(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) (*ent.InvestmentConnection, error)
 	Lots(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) (*ent.LotConnection, error)
 	Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error)
+	TransactionCategories(ctx context.Context) ([]*ent.TransactionCategory, error)
 	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
 	Users(ctx context.Context) ([]*ent.User, error)
 	UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error)
@@ -768,6 +781,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]int)), true
+	case "Query.transactionCategories":
+		if e.complexity.Query.TransactionCategories == nil {
+			break
+		}
+
+		return e.complexity.Query.TransactionCategories(childComplexity), true
 	case "Query.transactionEntries":
 		if e.complexity.Query.TransactionEntries == nil {
 			break
@@ -798,6 +817,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Users(childComplexity), true
 
+	case "Transaction.category":
+		if e.complexity.Transaction.Category == nil {
+			break
+		}
+
+		return e.complexity.Transaction.Category(childComplexity), true
 	case "Transaction.createTime":
 		if e.complexity.Transaction.CreateTime == nil {
 			break
@@ -846,6 +871,43 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Transaction.User(childComplexity), true
+
+	case "TransactionCategory.createTime":
+		if e.complexity.TransactionCategory.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.CreateTime(childComplexity), true
+	case "TransactionCategory.id":
+		if e.complexity.TransactionCategory.ID == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.ID(childComplexity), true
+	case "TransactionCategory.name":
+		if e.complexity.TransactionCategory.Name == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.Name(childComplexity), true
+	case "TransactionCategory.transactions":
+		if e.complexity.TransactionCategory.Transactions == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.Transactions(childComplexity), true
+	case "TransactionCategory.type":
+		if e.complexity.TransactionCategory.Type == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.Type(childComplexity), true
+	case "TransactionCategory.updateTime":
+		if e.complexity.TransactionCategory.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.UpdateTime(childComplexity), true
 
 	case "TransactionConnection.edges":
 		if e.complexity.TransactionConnection.Edges == nil {
@@ -1039,6 +1101,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputHouseholdWhereInput,
 		ec.unmarshalInputInvestmentWhereInput,
 		ec.unmarshalInputLotWhereInput,
+		ec.unmarshalInputTransactionCategoryWhereInput,
 		ec.unmarshalInputTransactionEntryWhereInput,
 		ec.unmarshalInputTransactionOrder,
 		ec.unmarshalInputTransactionWhereInput,
@@ -2390,6 +2453,8 @@ func (ec *executionContext) fieldContext_Household_transactions(_ context.Contex
 				return ec.fieldContext_Transaction_user(ctx, field)
 			case "household":
 				return ec.fieldContext_Transaction_household(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
@@ -3983,6 +4048,49 @@ func (ec *executionContext) fieldContext_Query_transactions(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_transactionCategories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_transactionCategories,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().TransactionCategories(ctx)
+		},
+		nil,
+		ec.marshalNTransactionCategory2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_transactionCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TransactionCategory_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_TransactionCategory_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_TransactionCategory_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_TransactionCategory_name(ctx, field)
+			case "type":
+				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "transactions":
+				return ec.fieldContext_TransactionCategory_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionCategory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_transactionEntries(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4520,6 +4628,49 @@ func (ec *executionContext) fieldContext_Transaction_household(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Transaction_category(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Transaction_category,
+		func(ctx context.Context) (any, error) {
+			return obj.Category(ctx)
+		},
+		nil,
+		ec.marshalNTransactionCategory2ᚖfijoyᚗappᚋentᚐTransactionCategory,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Transaction_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Transaction",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TransactionCategory_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_TransactionCategory_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_TransactionCategory_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_TransactionCategory_name(ctx, field)
+			case "type":
+				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "transactions":
+				return ec.fieldContext_TransactionCategory_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionCategory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Transaction_transactionEntries(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4560,6 +4711,200 @@ func (ec *executionContext) fieldContext_Transaction_transactionEntries(_ contex
 				return ec.fieldContext_TransactionEntry_transaction(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TransactionEntry", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TransactionCategory_id(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TransactionCategory_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_createTime,
+		func(ctx context.Context) (any, error) {
+			return obj.CreateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TransactionCategory_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_updateTime,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TransactionCategory_name(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TransactionCategory_type(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_type,
+		func(ctx context.Context) (any, error) {
+			return obj.Type, nil
+		},
+		nil,
+		ec.marshalNTransactionCategoryType2fijoyᚗappᚋentᚋtransactioncategoryᚐType,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type TransactionCategoryType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TransactionCategory_transactions(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_transactions,
+		func(ctx context.Context) (any, error) {
+			return obj.Transactions(ctx)
+		},
+		nil,
+		ec.marshalOTransaction2ᚕᚖfijoyᚗappᚋentᚐTransactionᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_transactions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Transaction_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Transaction_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "description":
+				return ec.fieldContext_Transaction_description(ctx, field)
+			case "datetime":
+				return ec.fieldContext_Transaction_datetime(ctx, field)
+			case "user":
+				return ec.fieldContext_Transaction_user(ctx, field)
+			case "household":
+				return ec.fieldContext_Transaction_household(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
 		},
 	}
 	return fc, nil
@@ -4706,6 +5051,8 @@ func (ec *executionContext) fieldContext_TransactionEdge_node(_ context.Context,
 				return ec.fieldContext_Transaction_user(ctx, field)
 			case "household":
 				return ec.fieldContext_Transaction_household(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
@@ -4996,6 +5343,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_transaction(_ context.
 				return ec.fieldContext_Transaction_user(ctx, field)
 			case "household":
 				return ec.fieldContext_Transaction_household(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
@@ -5296,6 +5645,8 @@ func (ec *executionContext) fieldContext_User_transactions(_ context.Context, fi
 				return ec.fieldContext_Transaction_user(ctx, field)
 			case "household":
 				return ec.fieldContext_Transaction_household(ctx, field)
+			case "category":
+				return ec.fieldContext_Transaction_category(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Transaction_transactionEntries(ctx, field)
 			}
@@ -9233,6 +9584,348 @@ func (ec *executionContext) unmarshalInputLotWhereInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx context.Context, obj any) (ent.TransactionCategoryWhereInput, error) {
+	var it ent.TransactionCategoryWhereInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "hasTransactions", "hasTransactionsWith"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalOTransactionCategoryWhereInput2ᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalOTransactionCategoryWhereInput2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalOTransactionCategoryWhereInput2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "createTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTime = data
+		case "createTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNEQ = data
+		case "createTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeIn = data
+		case "createTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNotIn = data
+		case "createTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGT = data
+		case "createTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGTE = data
+		case "createTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLT = data
+		case "createTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLTE = data
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTime = data
+		case "updateTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNEQ = data
+		case "updateTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeIn = data
+		case "updateTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNotIn = data
+		case "updateTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGT = data
+		case "updateTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGTE = data
+		case "updateTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLT = data
+		case "updateTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLTE = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "nameNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNEQ = data
+		case "nameIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameIn = data
+		case "nameNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNotIn = data
+		case "nameGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameGT = data
+		case "nameGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameGTE = data
+		case "nameLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameLT = data
+		case "nameLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameLTE = data
+		case "nameContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameContains = data
+		case "nameHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameHasPrefix = data
+		case "nameHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameHasSuffix = data
+		case "nameEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameEqualFold = data
+		case "nameContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameContainsFold = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOTransactionCategoryType2ᚖfijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		case "typeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNEQ"))
+			data, err := ec.unmarshalOTransactionCategoryType2ᚖfijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TypeNEQ = data
+		case "typeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeIn"))
+			data, err := ec.unmarshalOTransactionCategoryType2ᚕfijoyᚗappᚋentᚋtransactioncategoryᚐTypeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TypeIn = data
+		case "typeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("typeNotIn"))
+			data, err := ec.unmarshalOTransactionCategoryType2ᚕfijoyᚗappᚋentᚋtransactioncategoryᚐTypeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TypeNotIn = data
+		case "hasTransactions":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactions"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTransactions = data
+		case "hasTransactionsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactionsWith"))
+			data, err := ec.unmarshalOTransactionWhereInput2ᚕᚖfijoyᚗappᚋentᚐTransactionWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTransactionsWith = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTransactionEntryWhereInput(ctx context.Context, obj any) (ent.TransactionEntryWhereInput, error) {
 	var it ent.TransactionEntryWhereInput
 	asMap := map[string]any{}
@@ -9601,7 +10294,7 @@ func (ec *executionContext) unmarshalInputTransactionWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "description", "descriptionNEQ", "descriptionIn", "descriptionNotIn", "descriptionGT", "descriptionGTE", "descriptionLT", "descriptionLTE", "descriptionContains", "descriptionHasPrefix", "descriptionHasSuffix", "descriptionIsNil", "descriptionNotNil", "descriptionEqualFold", "descriptionContainsFold", "datetime", "datetimeNEQ", "datetimeIn", "datetimeNotIn", "datetimeGT", "datetimeGTE", "datetimeLT", "datetimeLTE", "hasUser", "hasUserWith", "hasHousehold", "hasHouseholdWith", "hasTransactionEntries", "hasTransactionEntriesWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "description", "descriptionNEQ", "descriptionIn", "descriptionNotIn", "descriptionGT", "descriptionGTE", "descriptionLT", "descriptionLTE", "descriptionContains", "descriptionHasPrefix", "descriptionHasSuffix", "descriptionIsNil", "descriptionNotNil", "descriptionEqualFold", "descriptionContainsFold", "datetime", "datetimeNEQ", "datetimeIn", "datetimeNotIn", "datetimeGT", "datetimeGTE", "datetimeLT", "datetimeLTE", "hasUser", "hasUserWith", "hasHousehold", "hasHouseholdWith", "hasCategory", "hasCategoryWith", "hasTransactionEntries", "hasTransactionEntriesWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -9986,6 +10679,20 @@ func (ec *executionContext) unmarshalInputTransactionWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.HasHouseholdWith = data
+		case "hasCategory":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCategory"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasCategory = data
+		case "hasCategoryWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCategoryWith"))
+			data, err := ec.unmarshalOTransactionCategoryWhereInput2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasCategoryWith = data
 		case "hasTransactionEntries":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactionEntries"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -10713,6 +11420,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._TransactionEntry(ctx, sel, obj)
+	case *ent.TransactionCategory:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._TransactionCategory(ctx, sel, obj)
 	case *ent.Transaction:
 		if obj == nil {
 			return graphql.Null
@@ -12314,6 +13026,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "transactionCategories":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_transactionCategories(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "transactionEntries":
 			field := field
 
@@ -12538,6 +13272,42 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "category":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Transaction_category(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "transactionEntries":
 			field := field
 
@@ -12548,6 +13318,98 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 					}
 				}()
 				res = ec._Transaction_transactionEntries(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var transactionCategoryImplementors = []string{"TransactionCategory", "Node"}
+
+func (ec *executionContext) _TransactionCategory(ctx context.Context, sel ast.SelectionSet, obj *ent.TransactionCategory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, transactionCategoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TransactionCategory")
+		case "id":
+			out.Values[i] = ec._TransactionCategory_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._TransactionCategory_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._TransactionCategory_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._TransactionCategory_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "type":
+			out.Values[i] = ec._TransactionCategory_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "transactions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._TransactionCategory_transactions(ctx, field, obj)
 				return res
 			}
 
@@ -13989,6 +14851,75 @@ func (ec *executionContext) marshalNTransaction2ᚖfijoyᚗappᚋentᚐTransacti
 	return ec._Transaction(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNTransactionCategory2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.TransactionCategory) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTransactionCategory2ᚖfijoyᚗappᚋentᚐTransactionCategory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTransactionCategory2ᚖfijoyᚗappᚋentᚐTransactionCategory(ctx context.Context, sel ast.SelectionSet, v *ent.TransactionCategory) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TransactionCategory(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNTransactionCategoryType2fijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx context.Context, v any) (transactioncategory.Type, error) {
+	var res transactioncategory.Type
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTransactionCategoryType2fijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx context.Context, sel ast.SelectionSet, v transactioncategory.Type) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNTransactionCategoryWhereInput2ᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInput(ctx context.Context, v any) (*ent.TransactionCategoryWhereInput, error) {
+	res, err := ec.unmarshalInputTransactionCategoryWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNTransactionConnection2fijoyᚗappᚋentᚐTransactionConnection(ctx context.Context, sel ast.SelectionSet, v ent.TransactionConnection) graphql.Marshaler {
 	return ec._TransactionConnection(ctx, sel, &v)
 }
@@ -15351,6 +16282,113 @@ func (ec *executionContext) marshalOTransaction2ᚖfijoyᚗappᚋentᚐTransacti
 		return graphql.Null
 	}
 	return ec._Transaction(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOTransactionCategoryType2ᚕfijoyᚗappᚋentᚋtransactioncategoryᚐTypeᚄ(ctx context.Context, v any) ([]transactioncategory.Type, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]transactioncategory.Type, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTransactionCategoryType2fijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOTransactionCategoryType2ᚕfijoyᚗappᚋentᚋtransactioncategoryᚐTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []transactioncategory.Type) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTransactionCategoryType2fijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOTransactionCategoryType2ᚖfijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx context.Context, v any) (*transactioncategory.Type, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(transactioncategory.Type)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTransactionCategoryType2ᚖfijoyᚗappᚋentᚋtransactioncategoryᚐType(ctx context.Context, sel ast.SelectionSet, v *transactioncategory.Type) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOTransactionCategoryWhereInput2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInputᚄ(ctx context.Context, v any) ([]*ent.TransactionCategoryWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*ent.TransactionCategoryWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNTransactionCategoryWhereInput2ᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOTransactionCategoryWhereInput2ᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInput(ctx context.Context, v any) (*ent.TransactionCategoryWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTransactionCategoryWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOTransactionEdge2ᚕᚖfijoyᚗappᚋentᚐTransactionEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.TransactionEdge) graphql.Marshaler {

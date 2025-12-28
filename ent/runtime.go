@@ -12,6 +12,7 @@ import (
 	"fijoy.app/ent/lot"
 	"fijoy.app/ent/schema"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
@@ -123,6 +124,25 @@ func init() {
 	transaction.DefaultUpdateTime = transactionDescUpdateTime.Default.(func() time.Time)
 	// transaction.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	transaction.UpdateDefaultUpdateTime = transactionDescUpdateTime.UpdateDefault.(func() time.Time)
+	transactioncategoryMixin := schema.TransactionCategory{}.Mixin()
+	transactioncategoryMixinFields0 := transactioncategoryMixin[0].Fields()
+	_ = transactioncategoryMixinFields0
+	transactioncategoryFields := schema.TransactionCategory{}.Fields()
+	_ = transactioncategoryFields
+	// transactioncategoryDescCreateTime is the schema descriptor for create_time field.
+	transactioncategoryDescCreateTime := transactioncategoryMixinFields0[0].Descriptor()
+	// transactioncategory.DefaultCreateTime holds the default value on creation for the create_time field.
+	transactioncategory.DefaultCreateTime = transactioncategoryDescCreateTime.Default.(func() time.Time)
+	// transactioncategoryDescUpdateTime is the schema descriptor for update_time field.
+	transactioncategoryDescUpdateTime := transactioncategoryMixinFields0[1].Descriptor()
+	// transactioncategory.DefaultUpdateTime holds the default value on creation for the update_time field.
+	transactioncategory.DefaultUpdateTime = transactioncategoryDescUpdateTime.Default.(func() time.Time)
+	// transactioncategory.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	transactioncategory.UpdateDefaultUpdateTime = transactioncategoryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// transactioncategoryDescName is the schema descriptor for name field.
+	transactioncategoryDescName := transactioncategoryFields[0].Descriptor()
+	// transactioncategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	transactioncategory.NameValidator = transactioncategoryDescName.Validators[0].(func(string) error)
 	transactionentryMixin := schema.TransactionEntry{}.Mixin()
 	transactionentryMixinFields0 := transactionentryMixin[0].Fields()
 	_ = transactionentryMixinFields0

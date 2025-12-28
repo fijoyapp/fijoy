@@ -38,6 +38,10 @@ func (Transaction) Edges() []ent.Edge {
 			Unique().
 			Immutable().
 			Required(),
+		edge.From("category", TransactionCategory.Type).
+			Ref("transactions").
+			Unique().
+			Required(),
 
 		edge.To("transaction_entries", TransactionEntry.Type),
 	}
@@ -57,6 +61,38 @@ func (Transaction) Annotations() []schema.Annotation {
 }
 
 func (Transaction) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.Time{},
+	}
+}
+
+// TransactionCategory holds the schema definition for the TransactionCategory entity.
+type TransactionCategory struct {
+	ent.Schema
+}
+
+// Fields of the TransactionCategory.
+func (TransactionCategory) Fields() []ent.Field {
+	return []ent.Field{
+		field.String("name").NotEmpty(),
+		field.Enum("type").Values("expense", "income", "transfer"),
+	}
+}
+
+// Edges of the TransactionCategory.
+func (TransactionCategory) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("transactions", Transaction.Type),
+	}
+}
+
+func (TransactionCategory) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+	}
+}
+
+func (TransactionCategory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
 	}

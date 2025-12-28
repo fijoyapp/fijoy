@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 )
@@ -93,6 +94,17 @@ func (_c *TransactionCreate) SetHousehold(v *Household) *TransactionCreate {
 	return _c.SetHouseholdID(v.ID)
 }
 
+// SetCategoryID sets the "category" edge to the TransactionCategory entity by ID.
+func (_c *TransactionCreate) SetCategoryID(id int) *TransactionCreate {
+	_c.mutation.SetCategoryID(id)
+	return _c
+}
+
+// SetCategory sets the "category" edge to the TransactionCategory entity.
+func (_c *TransactionCreate) SetCategory(v *TransactionCategory) *TransactionCreate {
+	return _c.SetCategoryID(v.ID)
+}
+
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (_c *TransactionCreate) AddTransactionEntryIDs(ids ...int) *TransactionCreate {
 	_c.mutation.AddTransactionEntryIDs(ids...)
@@ -170,6 +182,9 @@ func (_c *TransactionCreate) check() error {
 	if len(_c.mutation.HouseholdIDs()) == 0 {
 		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Transaction.household"`)}
 	}
+	if len(_c.mutation.CategoryIDs()) == 0 {
+		return &ValidationError{Name: "category", err: errors.New(`ent: missing required edge "Transaction.category"`)}
+	}
 	return nil
 }
 
@@ -244,6 +259,23 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.household_transactions = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.CategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.transaction_category_transactions = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {

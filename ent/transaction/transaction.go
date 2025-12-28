@@ -26,6 +26,8 @@ const (
 	EdgeUser = "user"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
 	EdgeHousehold = "household"
+	// EdgeCategory holds the string denoting the category edge name in mutations.
+	EdgeCategory = "category"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
 	// Table holds the table name of the transaction in the database.
@@ -44,6 +46,13 @@ const (
 	HouseholdInverseTable = "households"
 	// HouseholdColumn is the table column denoting the household relation/edge.
 	HouseholdColumn = "household_transactions"
+	// CategoryTable is the table that holds the category relation/edge.
+	CategoryTable = "transactions"
+	// CategoryInverseTable is the table name for the TransactionCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "transactioncategory" package.
+	CategoryInverseTable = "transaction_categories"
+	// CategoryColumn is the table column denoting the category relation/edge.
+	CategoryColumn = "transaction_category_transactions"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
@@ -66,6 +75,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"household_transactions",
+	"transaction_category_transactions",
 	"user_transactions",
 }
 
@@ -135,6 +145,13 @@ func ByHouseholdField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByCategoryField orders the results by category field.
+func ByCategoryField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newCategoryStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByTransactionEntriesCount orders the results by transaction_entries count.
 func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -160,6 +177,13 @@ func newHouseholdStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(HouseholdInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, HouseholdTable, HouseholdColumn),
+	)
+}
+func newCategoryStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(CategoryInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, CategoryTable, CategoryColumn),
 	)
 }
 func newTransactionEntriesStep() *sqlgraph.Step {

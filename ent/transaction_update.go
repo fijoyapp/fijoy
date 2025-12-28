@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 )
@@ -82,6 +83,17 @@ func (_u *TransactionUpdate) SetUser(v *User) *TransactionUpdate {
 	return _u.SetUserID(v.ID)
 }
 
+// SetCategoryID sets the "category" edge to the TransactionCategory entity by ID.
+func (_u *TransactionUpdate) SetCategoryID(id int) *TransactionUpdate {
+	_u.mutation.SetCategoryID(id)
+	return _u
+}
+
+// SetCategory sets the "category" edge to the TransactionCategory entity.
+func (_u *TransactionUpdate) SetCategory(v *TransactionCategory) *TransactionUpdate {
+	return _u.SetCategoryID(v.ID)
+}
+
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (_u *TransactionUpdate) AddTransactionEntryIDs(ids ...int) *TransactionUpdate {
 	_u.mutation.AddTransactionEntryIDs(ids...)
@@ -105,6 +117,12 @@ func (_u *TransactionUpdate) Mutation() *TransactionMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (_u *TransactionUpdate) ClearUser() *TransactionUpdate {
 	_u.mutation.ClearUser()
+	return _u
+}
+
+// ClearCategory clears the "category" edge to the TransactionCategory entity.
+func (_u *TransactionUpdate) ClearCategory() *TransactionUpdate {
+	_u.mutation.ClearCategory()
 	return _u
 }
 
@@ -173,6 +191,9 @@ func (_u *TransactionUpdate) check() error {
 	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.household"`)
 	}
+	if _u.mutation.CategoryCleared() && len(_u.mutation.CategoryIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.category"`)
+	}
 	return nil
 }
 
@@ -228,6 +249,35 @@ func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -353,6 +403,17 @@ func (_u *TransactionUpdateOne) SetUser(v *User) *TransactionUpdateOne {
 	return _u.SetUserID(v.ID)
 }
 
+// SetCategoryID sets the "category" edge to the TransactionCategory entity by ID.
+func (_u *TransactionUpdateOne) SetCategoryID(id int) *TransactionUpdateOne {
+	_u.mutation.SetCategoryID(id)
+	return _u
+}
+
+// SetCategory sets the "category" edge to the TransactionCategory entity.
+func (_u *TransactionUpdateOne) SetCategory(v *TransactionCategory) *TransactionUpdateOne {
+	return _u.SetCategoryID(v.ID)
+}
+
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (_u *TransactionUpdateOne) AddTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
 	_u.mutation.AddTransactionEntryIDs(ids...)
@@ -376,6 +437,12 @@ func (_u *TransactionUpdateOne) Mutation() *TransactionMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (_u *TransactionUpdateOne) ClearUser() *TransactionUpdateOne {
 	_u.mutation.ClearUser()
+	return _u
+}
+
+// ClearCategory clears the "category" edge to the TransactionCategory entity.
+func (_u *TransactionUpdateOne) ClearCategory() *TransactionUpdateOne {
+	_u.mutation.ClearCategory()
 	return _u
 }
 
@@ -457,6 +524,9 @@ func (_u *TransactionUpdateOne) check() error {
 	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.household"`)
 	}
+	if _u.mutation.CategoryCleared() && len(_u.mutation.CategoryIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.category"`)
+	}
 	return nil
 }
 
@@ -529,6 +599,35 @@ func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.CategoryCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.CategoryIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.CategoryTable,
+			Columns: []string{transaction.CategoryColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

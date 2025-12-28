@@ -24,6 +24,9 @@ type Lot func(*sql.Selector)
 // Transaction is the predicate function for transaction builders.
 type Transaction func(*sql.Selector)
 
+// TransactionCategory is the predicate function for transactioncategory builders.
+type TransactionCategory func(*sql.Selector)
+
 // TransactionEntry is the predicate function for transactionentry builders.
 type TransactionEntry func(*sql.Selector)
 

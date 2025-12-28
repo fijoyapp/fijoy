@@ -12,6 +12,7 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
@@ -721,6 +722,17 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			}
 			_q.withHousehold = query
 
+		case "category":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionCategoryClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, transactioncategoryImplementors)...); err != nil {
+				return err
+			}
+			_q.withCategory = query
+
 		case "transactionEntries":
 			var (
 				alias = field.Alias
@@ -812,6 +824,101 @@ func newTransactionPaginateArgs(rv map[string]any) *transactionPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*TransactionWhereInput); ok {
 		args.opts = append(args.opts, WithTransactionFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *TransactionCategoryQuery) CollectFields(ctx context.Context, satisfies ...string) (*TransactionCategoryQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *TransactionCategoryQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(transactioncategory.Columns))
+		selectedFields = []string{transactioncategory.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "transactions":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedTransactions(alias, func(wq *TransactionQuery) {
+				*wq = *query
+			})
+		case "createTime":
+			if _, ok := fieldSeen[transactioncategory.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldCreateTime)
+				fieldSeen[transactioncategory.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[transactioncategory.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldUpdateTime)
+				fieldSeen[transactioncategory.FieldUpdateTime] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[transactioncategory.FieldName]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldName)
+				fieldSeen[transactioncategory.FieldName] = struct{}{}
+			}
+		case "type":
+			if _, ok := fieldSeen[transactioncategory.FieldType]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldType)
+				fieldSeen[transactioncategory.FieldType] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type transactioncategoryPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TransactionCategoryPaginateOption
+}
+
+func newTransactionCategoryPaginateArgs(rv map[string]any) *transactioncategoryPaginateArgs {
+	args := &transactioncategoryPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*TransactionCategoryWhereInput); ok {
+		args.opts = append(args.opts, WithTransactionCategoryFilter(v.Filter))
 	}
 	return args
 }

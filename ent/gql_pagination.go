@@ -18,6 +18,7 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
@@ -1642,6 +1643,255 @@ func (_m *Transaction) ToEdge(order *TransactionOrder) *TransactionEdge {
 		order = DefaultTransactionOrder
 	}
 	return &TransactionEdge{
+		Node:   _m,
+		Cursor: order.Field.toCursor(_m),
+	}
+}
+
+// TransactionCategoryEdge is the edge representation of TransactionCategory.
+type TransactionCategoryEdge struct {
+	Node   *TransactionCategory `json:"node"`
+	Cursor Cursor               `json:"cursor"`
+}
+
+// TransactionCategoryConnection is the connection containing edges to TransactionCategory.
+type TransactionCategoryConnection struct {
+	Edges      []*TransactionCategoryEdge `json:"edges"`
+	PageInfo   PageInfo                   `json:"pageInfo"`
+	TotalCount int                        `json:"totalCount"`
+}
+
+func (c *TransactionCategoryConnection) build(nodes []*TransactionCategory, pager *transactioncategoryPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *TransactionCategory
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *TransactionCategory {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *TransactionCategory {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TransactionCategoryEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TransactionCategoryEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TransactionCategoryPaginateOption enables pagination customization.
+type TransactionCategoryPaginateOption func(*transactioncategoryPager) error
+
+// WithTransactionCategoryOrder configures pagination ordering.
+func WithTransactionCategoryOrder(order *TransactionCategoryOrder) TransactionCategoryPaginateOption {
+	if order == nil {
+		order = DefaultTransactionCategoryOrder
+	}
+	o := *order
+	return func(pager *transactioncategoryPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultTransactionCategoryOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithTransactionCategoryFilter configures pagination filter.
+func WithTransactionCategoryFilter(filter func(*TransactionCategoryQuery) (*TransactionCategoryQuery, error)) TransactionCategoryPaginateOption {
+	return func(pager *transactioncategoryPager) error {
+		if filter == nil {
+			return errors.New("TransactionCategoryQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type transactioncategoryPager struct {
+	reverse bool
+	order   *TransactionCategoryOrder
+	filter  func(*TransactionCategoryQuery) (*TransactionCategoryQuery, error)
+}
+
+func newTransactionCategoryPager(opts []TransactionCategoryPaginateOption, reverse bool) (*transactioncategoryPager, error) {
+	pager := &transactioncategoryPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultTransactionCategoryOrder
+	}
+	return pager, nil
+}
+
+func (p *transactioncategoryPager) applyFilter(query *TransactionCategoryQuery) (*TransactionCategoryQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *transactioncategoryPager) toCursor(_m *TransactionCategory) Cursor {
+	return p.order.Field.toCursor(_m)
+}
+
+func (p *transactioncategoryPager) applyCursors(query *TransactionCategoryQuery, after, before *Cursor) (*TransactionCategoryQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultTransactionCategoryOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *transactioncategoryPager) applyOrder(query *TransactionCategoryQuery) *TransactionCategoryQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultTransactionCategoryOrder.Field {
+		query = query.Order(DefaultTransactionCategoryOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *transactioncategoryPager) orderExpr(query *TransactionCategoryQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTransactionCategoryOrder.Field {
+			b.Comma().Ident(DefaultTransactionCategoryOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to TransactionCategory.
+func (_m *TransactionCategoryQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TransactionCategoryPaginateOption,
+) (*TransactionCategoryConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTransactionCategoryPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if _m, err = pager.applyFilter(_m); err != nil {
+		return nil, err
+	}
+	conn := &TransactionCategoryConnection{Edges: []*TransactionCategoryEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := _m.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if _m, err = pager.applyCursors(_m, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		_m.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := _m.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	_m = pager.applyOrder(_m)
+	nodes, err := _m.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// TransactionCategoryOrderField defines the ordering field of TransactionCategory.
+type TransactionCategoryOrderField struct {
+	// Value extracts the ordering value from the given TransactionCategory.
+	Value    func(*TransactionCategory) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) transactioncategory.OrderOption
+	toCursor func(*TransactionCategory) Cursor
+}
+
+// TransactionCategoryOrder defines the ordering of TransactionCategory.
+type TransactionCategoryOrder struct {
+	Direction OrderDirection                 `json:"direction"`
+	Field     *TransactionCategoryOrderField `json:"field"`
+}
+
+// DefaultTransactionCategoryOrder is the default ordering of TransactionCategory.
+var DefaultTransactionCategoryOrder = &TransactionCategoryOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TransactionCategoryOrderField{
+		Value: func(_m *TransactionCategory) (ent.Value, error) {
+			return _m.ID, nil
+		},
+		column: transactioncategory.FieldID,
+		toTerm: transactioncategory.ByID,
+		toCursor: func(_m *TransactionCategory) Cursor {
+			return Cursor{ID: _m.ID}
+		},
+	},
+}
+
+// ToEdge converts TransactionCategory into TransactionCategoryEdge.
+func (_m *TransactionCategory) ToEdge(order *TransactionCategoryOrder) *TransactionCategoryEdge {
+	if order == nil {
+		order = DefaultTransactionCategoryOrder
+	}
+	return &TransactionCategoryEdge{
 		Node:   _m,
 		Cursor: order.Field.toCursor(_m),
 	}

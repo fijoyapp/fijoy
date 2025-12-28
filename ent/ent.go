@@ -18,6 +18,7 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
@@ -81,15 +82,16 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			account.Table:          account.ValidColumn,
-			currency.Table:         currency.ValidColumn,
-			household.Table:        household.ValidColumn,
-			investment.Table:       investment.ValidColumn,
-			lot.Table:              lot.ValidColumn,
-			transaction.Table:      transaction.ValidColumn,
-			transactionentry.Table: transactionentry.ValidColumn,
-			user.Table:             user.ValidColumn,
-			userhousehold.Table:    userhousehold.ValidColumn,
+			account.Table:             account.ValidColumn,
+			currency.Table:            currency.ValidColumn,
+			household.Table:           household.ValidColumn,
+			investment.Table:          investment.ValidColumn,
+			lot.Table:                 lot.ValidColumn,
+			transaction.Table:         transaction.ValidColumn,
+			transactioncategory.Table: transactioncategory.ValidColumn,
+			transactionentry.Table:    transactionentry.ValidColumn,
+			user.Table:                user.ValidColumn,
+			userhousehold.Table:       userhousehold.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)
