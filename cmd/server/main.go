@@ -196,7 +196,7 @@ func main() {
 					SetKey(gothicUser.UserID).
 					SetProvider(userkey.ProviderGoogle).
 					OnConflict(entsql.ConflictColumns(userkey.FieldProvider, userkey.FieldKey)).
-					DoNothing().Exec(ctx)
+					Ignore().Exec(ctx)
 				if err != nil {
 					res.WriteHeader(http.StatusInternalServerError)
 					log.Printf("failed creating user key: %v", err)
