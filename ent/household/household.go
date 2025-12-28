@@ -32,6 +32,12 @@ const (
 	EdgeTransactions = "transactions"
 	// EdgeInvestments holds the string denoting the investments edge name in mutations.
 	EdgeInvestments = "investments"
+	// EdgeLots holds the string denoting the lots edge name in mutations.
+	EdgeLots = "lots"
+	// EdgeTransactionCategories holds the string denoting the transaction_categories edge name in mutations.
+	EdgeTransactionCategories = "transaction_categories"
+	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
+	EdgeTransactionEntries = "transaction_entries"
 	// EdgeUserHouseholds holds the string denoting the user_households edge name in mutations.
 	EdgeUserHouseholds = "user_households"
 	// Table holds the table name of the household in the database.
@@ -54,21 +60,42 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountsInverseTable = "accounts"
 	// AccountsColumn is the table column denoting the accounts relation/edge.
-	AccountsColumn = "household_accounts"
+	AccountsColumn = "household_id"
 	// TransactionsTable is the table that holds the transactions relation/edge.
 	TransactionsTable = "transactions"
 	// TransactionsInverseTable is the table name for the Transaction entity.
 	// It exists in this package in order to avoid circular dependency with the "transaction" package.
 	TransactionsInverseTable = "transactions"
 	// TransactionsColumn is the table column denoting the transactions relation/edge.
-	TransactionsColumn = "household_transactions"
+	TransactionsColumn = "household_id"
 	// InvestmentsTable is the table that holds the investments relation/edge.
 	InvestmentsTable = "investments"
 	// InvestmentsInverseTable is the table name for the Investment entity.
 	// It exists in this package in order to avoid circular dependency with the "investment" package.
 	InvestmentsInverseTable = "investments"
 	// InvestmentsColumn is the table column denoting the investments relation/edge.
-	InvestmentsColumn = "household_investments"
+	InvestmentsColumn = "household_id"
+	// LotsTable is the table that holds the lots relation/edge.
+	LotsTable = "lots"
+	// LotsInverseTable is the table name for the Lot entity.
+	// It exists in this package in order to avoid circular dependency with the "lot" package.
+	LotsInverseTable = "lots"
+	// LotsColumn is the table column denoting the lots relation/edge.
+	LotsColumn = "household_id"
+	// TransactionCategoriesTable is the table that holds the transaction_categories relation/edge.
+	TransactionCategoriesTable = "transaction_categories"
+	// TransactionCategoriesInverseTable is the table name for the TransactionCategory entity.
+	// It exists in this package in order to avoid circular dependency with the "transactioncategory" package.
+	TransactionCategoriesInverseTable = "transaction_categories"
+	// TransactionCategoriesColumn is the table column denoting the transaction_categories relation/edge.
+	TransactionCategoriesColumn = "household_id"
+	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
+	TransactionEntriesTable = "transaction_entries"
+	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
+	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
+	TransactionEntriesInverseTable = "transaction_entries"
+	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
+	TransactionEntriesColumn = "household_id"
 	// UserHouseholdsTable is the table that holds the user_households relation/edge.
 	UserHouseholdsTable = "user_households"
 	// UserHouseholdsInverseTable is the table name for the UserHousehold entity.
@@ -218,6 +245,48 @@ func ByInvestments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByLotsCount orders the results by lots count.
+func ByLotsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLotsStep(), opts...)
+	}
+}
+
+// ByLots orders the results by lots terms.
+func ByLots(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLotsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTransactionCategoriesCount orders the results by transaction_categories count.
+func ByTransactionCategoriesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTransactionCategoriesStep(), opts...)
+	}
+}
+
+// ByTransactionCategories orders the results by transaction_categories terms.
+func ByTransactionCategories(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransactionCategoriesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTransactionEntriesCount orders the results by transaction_entries count.
+func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newTransactionEntriesStep(), opts...)
+	}
+}
+
+// ByTransactionEntries orders the results by transaction_entries terms.
+func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserHouseholdsCount orders the results by user_households count.
 func ByUserHouseholdsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -264,6 +333,27 @@ func newInvestmentsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(InvestmentsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, InvestmentsTable, InvestmentsColumn),
+	)
+}
+func newLotsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LotsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LotsTable, LotsColumn),
+	)
+}
+func newTransactionCategoriesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TransactionCategoriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionCategoriesTable, TransactionCategoriesColumn),
+	)
+}
+func newTransactionEntriesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
 	)
 }
 func newUserHouseholdsStep() *sqlgraph.Step {

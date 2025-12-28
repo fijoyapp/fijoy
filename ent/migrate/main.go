@@ -25,6 +25,8 @@ func main() {
 	}
 	// Migrate diff options.
 	opts := []schema.MigrateOption{
+		schema.WithDropColumn(true), // allow dropping columns
+		schema.WithDropIndex(true),  // allow dropping indexes
 		schema.WithDir(
 			dir,
 		), // provide migration directory

@@ -24,6 +24,8 @@ type Transaction struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// HouseholdID holds the value of the "household_id" field.
+	HouseholdID int `json:"household_id,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// Datetime holds the value of the "datetime" field.
@@ -31,7 +33,6 @@ type Transaction struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
 	Edges                             TransactionEdges `json:"edges"`
-	household_transactions            *int
 	transaction_category_transactions *int
 	user_transactions                 *int
 	selectValues                      sql.SelectValues
@@ -103,17 +104,15 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transaction.FieldID:
+		case transaction.FieldID, transaction.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
 		case transaction.FieldDescription:
 			values[i] = new(sql.NullString)
 		case transaction.FieldCreateTime, transaction.FieldUpdateTime, transaction.FieldDatetime:
 			values[i] = new(sql.NullTime)
-		case transaction.ForeignKeys[0]: // household_transactions
+		case transaction.ForeignKeys[0]: // transaction_category_transactions
 			values[i] = new(sql.NullInt64)
-		case transaction.ForeignKeys[1]: // transaction_category_transactions
-			values[i] = new(sql.NullInt64)
-		case transaction.ForeignKeys[2]: // user_transactions
+		case transaction.ForeignKeys[1]: // user_transactions
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -148,6 +147,12 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
 			}
+		case transaction.FieldHouseholdID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field household_id", values[i])
+			} else if value.Valid {
+				_m.HouseholdID = int(value.Int64)
+			}
 		case transaction.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
@@ -162,19 +167,12 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 			}
 		case transaction.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field household_transactions", value)
-			} else if value.Valid {
-				_m.household_transactions = new(int)
-				*_m.household_transactions = int(value.Int64)
-			}
-		case transaction.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field transaction_category_transactions", value)
 			} else if value.Valid {
 				_m.transaction_category_transactions = new(int)
 				*_m.transaction_category_transactions = int(value.Int64)
 			}
-		case transaction.ForeignKeys[2]:
+		case transaction.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_transactions", value)
 			} else if value.Valid {
@@ -242,6 +240,9 @@ func (_m *Transaction) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("household_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.HouseholdID))
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(_m.Description)

@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -12,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactioncategory"
@@ -24,6 +26,7 @@ type TransactionCategoryQuery struct {
 	order                 []transactioncategory.OrderOption
 	inters                []Interceptor
 	predicates            []predicate.TransactionCategory
+	withHousehold         *HouseholdQuery
 	withTransactions      *TransactionQuery
 	loadTotal             []func(context.Context, []*TransactionCategory) error
 	modifiers             []func(*sql.Selector)
@@ -62,6 +65,28 @@ func (_q *TransactionCategoryQuery) Unique(unique bool) *TransactionCategoryQuer
 func (_q *TransactionCategoryQuery) Order(o ...transactioncategory.OrderOption) *TransactionCategoryQuery {
 	_q.order = append(_q.order, o...)
 	return _q
+}
+
+// QueryHousehold chains the current query on the "household" edge.
+func (_q *TransactionCategoryQuery) QueryHousehold() *HouseholdQuery {
+	query := (&HouseholdClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transactioncategory.Table, transactioncategory.FieldID, selector),
+			sqlgraph.To(household.Table, household.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transactioncategory.HouseholdTable, transactioncategory.HouseholdColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryTransactions chains the current query on the "transactions" edge.
@@ -278,12 +303,24 @@ func (_q *TransactionCategoryQuery) Clone() *TransactionCategoryQuery {
 		order:            append([]transactioncategory.OrderOption{}, _q.order...),
 		inters:           append([]Interceptor{}, _q.inters...),
 		predicates:       append([]predicate.TransactionCategory{}, _q.predicates...),
+		withHousehold:    _q.withHousehold.Clone(),
 		withTransactions: _q.withTransactions.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
 		modifiers: append([]func(*sql.Selector){}, _q.modifiers...),
 	}
+}
+
+// WithHousehold tells the query-builder to eager-load the nodes that are connected to
+// the "household" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TransactionCategoryQuery) WithHousehold(opts ...func(*HouseholdQuery)) *TransactionCategoryQuery {
+	query := (&HouseholdClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withHousehold = query
+	return _q
 }
 
 // WithTransactions tells the query-builder to eager-load the nodes that are connected to
@@ -368,6 +405,12 @@ func (_q *TransactionCategoryQuery) prepareQuery(ctx context.Context) error {
 		}
 		_q.sql = prev
 	}
+	if transactioncategory.Policy == nil {
+		return errors.New("ent: uninitialized transactioncategory.Policy (forgotten import ent/runtime?)")
+	}
+	if err := transactioncategory.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -375,7 +418,8 @@ func (_q *TransactionCategoryQuery) sqlAll(ctx context.Context, hooks ...queryHo
 	var (
 		nodes       = []*TransactionCategory{}
 		_spec       = _q.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
+			_q.withHousehold != nil,
 			_q.withTransactions != nil,
 		}
 	)
@@ -400,6 +444,12 @@ func (_q *TransactionCategoryQuery) sqlAll(ctx context.Context, hooks ...queryHo
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withHousehold; query != nil {
+		if err := _q.loadHousehold(ctx, query, nodes, nil,
+			func(n *TransactionCategory, e *Household) { n.Edges.Household = e }); err != nil {
+			return nil, err
+		}
+	}
 	if query := _q.withTransactions; query != nil {
 		if err := _q.loadTransactions(ctx, query, nodes,
 			func(n *TransactionCategory) { n.Edges.Transactions = []*Transaction{} },
@@ -422,6 +472,35 @@ func (_q *TransactionCategoryQuery) sqlAll(ctx context.Context, hooks ...queryHo
 	return nodes, nil
 }
 
+func (_q *TransactionCategoryQuery) loadHousehold(ctx context.Context, query *HouseholdQuery, nodes []*TransactionCategory, init func(*TransactionCategory), assign func(*TransactionCategory, *Household)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*TransactionCategory)
+	for i := range nodes {
+		fk := nodes[i].HouseholdID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(household.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "household_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (_q *TransactionCategoryQuery) loadTransactions(ctx context.Context, query *TransactionQuery, nodes []*TransactionCategory, init func(*TransactionCategory), assign func(*TransactionCategory, *Transaction)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*TransactionCategory)
@@ -481,6 +560,9 @@ func (_q *TransactionCategoryQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != transactioncategory.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withHousehold != nil {
+			_spec.Node.AddColumnOnce(transactioncategory.FieldHouseholdID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

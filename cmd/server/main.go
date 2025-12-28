@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	_ "fijoy.app/ent/runtime"
@@ -157,6 +158,7 @@ func main() {
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator(tokenAuth))
+		r.Use(AuthMiddleware(entClient))
 
 		r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 		r.Handle("/query", gqlHandler)
@@ -208,7 +210,9 @@ func main() {
 
 				// TODO: implement short-lived token + refresh token
 				_, tokenString, _ := tokenAuth.Encode(
-					map[string]interface{}{"user_id": userID},
+					map[string]interface{}{
+						"user_id": strconv.Itoa(userID),
+					},
 				)
 
 				res.Header().
@@ -251,6 +255,80 @@ func main() {
 	http.ListenAndServe(":"+cfg.Port, r)
 }
 
+func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+
+			_, claims, err := jwtauth.FromContext(ctx)
+			if err != nil {
+				http.Error(
+					w,
+					"Unauthorized: Invalid token",
+					http.StatusUnauthorized,
+				)
+				return
+			}
+
+			userIDStr, ok := claims["user_id"].(string)
+			if !ok {
+				http.Error(
+					w,
+					"Unauthorized: Invalid user ID",
+					http.StatusUnauthorized,
+				)
+			}
+			userID, err := strconv.Atoi(userIDStr)
+			if err != nil {
+				http.Error(
+					w,
+					"Bad Request: Invalid user ID format",
+					http.StatusBadRequest,
+				)
+			}
+
+			ctx = context.WithValue(ctx, "user_id", userIDStr)
+
+			householdIDStr := r.Header.Get("X-Household-ID")
+			if householdIDStr != "" {
+				hid, err := strconv.Atoi(householdIDStr)
+				if err != nil {
+					http.Error(
+						w,
+						"Bad Request: Invalid Household ID",
+						http.StatusBadRequest,
+					)
+					return
+				}
+
+				isMember, err := client.UserHousehold.Query().
+					Where(
+						userhousehold.UserID(userID),
+						userhousehold.HouseholdID(hid),
+					).
+					Exist(ctx)
+				if err != nil {
+					// Log this error in production
+					http.Error(
+						w,
+						"Internal Server Error",
+						http.StatusInternalServerError,
+					)
+					return
+				}
+
+				if isMember {
+					ctx = context.WithValue(ctx, "household_id", hid)
+				}
+
+			}
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+			log.Println("auth middleware executed")
+		})
+	}
+}
+
 func seed(ctx context.Context, entClient *ent.Client) error {
 	alreadySeeded := entClient.User.Query().
 		Where(user.EmailEQ("joey@itsjoeoui.com")).
@@ -273,6 +351,8 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetLocale("en-CA").
 		SaveX(ctx)
 
+	ctx = context.WithValue(ctx, "household_id", household.ID)
+
 	entClient.UserHousehold.Create().
 		SetUser(joey).
 		SetHousehold(household).
@@ -290,11 +370,17 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetLocale("en-CA").
 		SaveX(ctx)
 
+	differentCtx := context.WithValue(
+		ctx,
+		"household_id",
+		differentHousehold.ID,
+	)
+
 	entClient.UserHousehold.Create().
 		SetUser(differentJoey).
 		SetHousehold(differentHousehold).
 		SetRole(userhousehold.RoleAdmin).
-		SaveX(ctx)
+		SaveX(differentCtx)
 
 	entClient.Account.Create().
 		SetName("You should not see this account").
@@ -302,7 +388,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetUser(differentJoey).
 		SetHousehold(differentHousehold).
 		SetType(account.TypeLiquidity).
-		SaveX(ctx)
+		SaveX(differentCtx)
 
 	chase := entClient.Account.Create().
 		SetName("Chase Total Checking").
@@ -322,16 +408,19 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	restaurant := entClient.TransactionCategory.Create().
 		SetName("Restaurant").
+		SetHousehold(household).
 		SetType(transactioncategory.TypeExpense).
 		SaveX(ctx)
 
 	grocery := entClient.TransactionCategory.Create().
 		SetName("Grocery").
+		SetHousehold(household).
 		SetType(transactioncategory.TypeExpense).
 		SaveX(ctx)
 
 	salary := entClient.TransactionCategory.Create().
 		SetName("Salary").
+		SetHousehold(household).
 		SetType(transactioncategory.TypeIncome).
 		SaveX(ctx)
 
@@ -343,13 +432,14 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 			SetDatetime(genRandomDatetime()).SaveX(ctx)
 		entClient.TransactionEntry.Create().
 			SetAccount(chase).
+			SetHousehold(household).
 			SetTransaction(transaction).
 			SetCurrency(usd).
 			SetAmount(decimal.NewFromInt(1000000)).SaveX(ctx)
 	}
 
 	{
-		const n = 10000
+		const n = 1000
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
@@ -365,6 +455,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		for i, t := range transactions {
 			txEntryCreates[i] = entClient.TransactionEntry.Create().
 				SetAccount(chase).
+				SetHousehold(household).
 				SetTransaction(t).
 				SetCurrency(usd).
 				SetAmount(genRandomAmount().Mul(decimal.NewFromInt(-1)))
@@ -373,7 +464,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	}
 
 	{
-		const n = 10000
+		const n = 1000
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
@@ -389,6 +480,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		for i, t := range transactions {
 			txEntryCreates[i] = entClient.TransactionEntry.Create().
 				SetAccount(wealthsimple).
+				SetHousehold(household).
 				SetTransaction(t).
 				SetCurrency(cad).
 				SetAmount(genRandomAmount().Mul(decimal.NewFromInt(-1)))

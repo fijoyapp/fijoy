@@ -66,6 +66,11 @@ func UpdateTime(v time.Time) predicate.Lot {
 	return predicate.Lot(sql.FieldEQ(FieldUpdateTime, v))
 }
 
+// HouseholdID applies equality check predicate on the "household_id" field. It's identical to HouseholdIDEQ.
+func HouseholdID(v int) predicate.Lot {
+	return predicate.Lot(sql.FieldEQ(FieldHouseholdID, v))
+}
+
 // Datetime applies equality check predicate on the "datetime" field. It's identical to DatetimeEQ.
 func Datetime(v time.Time) predicate.Lot {
 	return predicate.Lot(sql.FieldEQ(FieldDatetime, v))
@@ -159,6 +164,26 @@ func UpdateTimeLT(v time.Time) predicate.Lot {
 // UpdateTimeLTE applies the LTE predicate on the "update_time" field.
 func UpdateTimeLTE(v time.Time) predicate.Lot {
 	return predicate.Lot(sql.FieldLTE(FieldUpdateTime, v))
+}
+
+// HouseholdIDEQ applies the EQ predicate on the "household_id" field.
+func HouseholdIDEQ(v int) predicate.Lot {
+	return predicate.Lot(sql.FieldEQ(FieldHouseholdID, v))
+}
+
+// HouseholdIDNEQ applies the NEQ predicate on the "household_id" field.
+func HouseholdIDNEQ(v int) predicate.Lot {
+	return predicate.Lot(sql.FieldNEQ(FieldHouseholdID, v))
+}
+
+// HouseholdIDIn applies the In predicate on the "household_id" field.
+func HouseholdIDIn(vs ...int) predicate.Lot {
+	return predicate.Lot(sql.FieldIn(FieldHouseholdID, vs...))
+}
+
+// HouseholdIDNotIn applies the NotIn predicate on the "household_id" field.
+func HouseholdIDNotIn(vs ...int) predicate.Lot {
+	return predicate.Lot(sql.FieldNotIn(FieldHouseholdID, vs...))
 }
 
 // DatetimeEQ applies the EQ predicate on the "datetime" field.
@@ -279,6 +304,29 @@ func PriceLT(v decimal.Decimal) predicate.Lot {
 // PriceLTE applies the LTE predicate on the "price" field.
 func PriceLTE(v decimal.Decimal) predicate.Lot {
 	return predicate.Lot(sql.FieldLTE(FieldPrice, v))
+}
+
+// HasHousehold applies the HasEdge predicate on the "household" edge.
+func HasHousehold() predicate.Lot {
+	return predicate.Lot(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, HouseholdTable, HouseholdColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasHouseholdWith applies the HasEdge predicate on the "household" edge with a given conditions (other predicates).
+func HasHouseholdWith(preds ...predicate.Household) predicate.Lot {
+	return predicate.Lot(func(s *sql.Selector) {
+		step := newHouseholdStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // HasInvestment applies the HasEdge predicate on the "investment" edge.

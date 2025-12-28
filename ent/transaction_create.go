@@ -54,6 +54,12 @@ func (_c *TransactionCreate) SetNillableUpdateTime(v *time.Time) *TransactionCre
 	return _c
 }
 
+// SetHouseholdID sets the "household_id" field.
+func (_c *TransactionCreate) SetHouseholdID(v int) *TransactionCreate {
+	_c.mutation.SetHouseholdID(v)
+	return _c
+}
+
 // SetDescription sets the "description" field.
 func (_c *TransactionCreate) SetDescription(v string) *TransactionCreate {
 	_c.mutation.SetDescription(v)
@@ -83,12 +89,6 @@ func (_c *TransactionCreate) SetUserID(id int) *TransactionCreate {
 // SetUser sets the "user" edge to the User entity.
 func (_c *TransactionCreate) SetUser(v *User) *TransactionCreate {
 	return _c.SetUserID(v.ID)
-}
-
-// SetHouseholdID sets the "household" edge to the Household entity by ID.
-func (_c *TransactionCreate) SetHouseholdID(id int) *TransactionCreate {
-	_c.mutation.SetHouseholdID(id)
-	return _c
 }
 
 // SetHousehold sets the "household" edge to the Household entity.
@@ -129,7 +129,9 @@ func (_c *TransactionCreate) Mutation() *TransactionMutation {
 
 // Save creates the Transaction in the database.
 func (_c *TransactionCreate) Save(ctx context.Context) (*Transaction, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -156,15 +158,22 @@ func (_c *TransactionCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *TransactionCreate) defaults() {
+func (_c *TransactionCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if transaction.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized transaction.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := transaction.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if transaction.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized transaction.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := transaction.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -174,6 +183,9 @@ func (_c *TransactionCreate) check() error {
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Transaction.update_time"`)}
+	}
+	if _, ok := _c.mutation.HouseholdID(); !ok {
+		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "Transaction.household_id"`)}
 	}
 	if _, ok := _c.mutation.Datetime(); !ok {
 		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
@@ -261,7 +273,7 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.household_transactions = &nodes[0]
+		_node.HouseholdID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.CategoryIDs(); len(nodes) > 0 {
@@ -404,6 +416,9 @@ func (u *TransactionUpsertOne) UpdateNewValues() *TransactionUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.CreateTime(); exists {
 			s.SetIgnore(transaction.FieldCreateTime)
+		}
+		if _, exists := u.create.mutation.HouseholdID(); exists {
+			s.SetIgnore(transaction.FieldHouseholdID)
 		}
 	}))
 	return u
@@ -663,6 +678,9 @@ func (u *TransactionUpsertBulk) UpdateNewValues() *TransactionUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.CreateTime(); exists {
 				s.SetIgnore(transaction.FieldCreateTime)
+			}
+			if _, exists := b.mutation.HouseholdID(); exists {
+				s.SetIgnore(transaction.FieldHouseholdID)
 			}
 		}
 	}))

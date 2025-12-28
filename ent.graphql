@@ -4,6 +4,7 @@ type Account implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
+  householdID: ID!
   name: String!
   type: AccountType!
   balance: String!
@@ -64,6 +65,13 @@ input AccountWhereInput {
   updateTimeGTE: Time
   updateTimeLT: Time
   updateTimeLTE: Time
+  """
+  household_id field predicates
+  """
+  householdID: ID
+  householdIDNEQ: ID
+  householdIDIn: [ID!]
+  householdIDNotIn: [ID!]
   """
   name field predicates
   """
@@ -204,6 +212,9 @@ type Household implements Node {
   accounts: [Account!]
   transactions: [Transaction!]
   investments: [Investment!]
+  lots: [Lot!]
+  transactionCategories: [TransactionCategory!]
+  transactionEntries: [TransactionEntry!]
   userHouseholds: [UserHousehold!]
 }
 """
@@ -305,6 +316,21 @@ input HouseholdWhereInput {
   hasInvestments: Boolean
   hasInvestmentsWith: [InvestmentWhereInput!]
   """
+  lots edge predicates
+  """
+  hasLots: Boolean
+  hasLotsWith: [LotWhereInput!]
+  """
+  transaction_categories edge predicates
+  """
+  hasTransactionCategories: Boolean
+  hasTransactionCategoriesWith: [TransactionCategoryWhereInput!]
+  """
+  transaction_entries edge predicates
+  """
+  hasTransactionEntries: Boolean
+  hasTransactionEntriesWith: [TransactionEntryWhereInput!]
+  """
   user_households edge predicates
   """
   hasUserHouseholds: Boolean
@@ -314,6 +340,7 @@ type Investment implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
+  householdID: ID!
   name: String!
   type: InvestmentType!
   symbol: String!
@@ -402,6 +429,13 @@ input InvestmentWhereInput {
   updateTimeLT: Time
   updateTimeLTE: Time
   """
+  household_id field predicates
+  """
+  householdID: ID
+  householdIDNEQ: ID
+  householdIDIn: [ID!]
+  householdIDNotIn: [ID!]
+  """
   name field predicates
   """
   name: String
@@ -476,9 +510,11 @@ type Lot implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
+  householdID: ID!
   datetime: Time!
   amount: String!
   price: String!
+  household: Household!
   investment: Investment!
 }
 """
@@ -553,6 +589,13 @@ input LotWhereInput {
   updateTimeLT: Time
   updateTimeLTE: Time
   """
+  household_id field predicates
+  """
+  householdID: ID
+  householdIDNEQ: ID
+  householdIDIn: [ID!]
+  householdIDNotIn: [ID!]
+  """
   datetime field predicates
   """
   datetime: Time
@@ -585,6 +628,11 @@ input LotWhereInput {
   priceGTE: String
   priceLT: String
   priceLTE: String
+  """
+  household edge predicates
+  """
+  hasHousehold: Boolean
+  hasHouseholdWith: [HouseholdWhereInput!]
   """
   investment edge predicates
   """
@@ -754,6 +802,7 @@ type Transaction implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
+  householdID: ID!
   description: String
   datetime: Time!
   user: User!
@@ -765,8 +814,10 @@ type TransactionCategory implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
+  householdID: ID!
   name: String!
   type: TransactionCategoryType!
+  household: Household!
   transactions: [Transaction!]
 }
 """
@@ -819,6 +870,13 @@ input TransactionCategoryWhereInput {
   updateTimeLT: Time
   updateTimeLTE: Time
   """
+  household_id field predicates
+  """
+  householdID: ID
+  householdIDNEQ: ID
+  householdIDIn: [ID!]
+  householdIDNotIn: [ID!]
+  """
   name field predicates
   """
   name: String
@@ -841,6 +899,11 @@ input TransactionCategoryWhereInput {
   typeNEQ: TransactionCategoryType
   typeIn: [TransactionCategoryType!]
   typeNotIn: [TransactionCategoryType!]
+  """
+  household edge predicates
+  """
+  hasHousehold: Boolean
+  hasHouseholdWith: [HouseholdWhereInput!]
   """
   transactions edge predicates
   """
@@ -881,7 +944,9 @@ type TransactionEntry implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
+  householdID: ID!
   amount: String!
+  household: Household!
   account: Account!
   currency: Currency!
   transaction: Transaction!
@@ -928,6 +993,13 @@ input TransactionEntryWhereInput {
   updateTimeLT: Time
   updateTimeLTE: Time
   """
+  household_id field predicates
+  """
+  householdID: ID
+  householdIDNEQ: ID
+  householdIDIn: [ID!]
+  householdIDNotIn: [ID!]
+  """
   amount field predicates
   """
   amount: String
@@ -938,6 +1010,11 @@ input TransactionEntryWhereInput {
   amountGTE: String
   amountLT: String
   amountLTE: String
+  """
+  household edge predicates
+  """
+  hasHousehold: Boolean
+  hasHouseholdWith: [HouseholdWhereInput!]
   """
   account edge predicates
   """
@@ -1014,6 +1091,13 @@ input TransactionWhereInput {
   updateTimeGTE: Time
   updateTimeLT: Time
   updateTimeLTE: Time
+  """
+  household_id field predicates
+  """
+  householdID: ID
+  householdIDNEQ: ID
+  householdIDIn: [ID!]
+  householdIDNotIn: [ID!]
   """
   description field predicates
   """

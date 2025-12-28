@@ -143,7 +143,9 @@ func (_u *InvestmentUpdate) RemoveLots(v ...*Lot) *InvestmentUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *InvestmentUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -170,11 +172,15 @@ func (_u *InvestmentUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *InvestmentUpdate) defaults() {
+func (_u *InvestmentUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if investment.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized investment.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := investment.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -429,7 +435,9 @@ func (_u *InvestmentUpdateOne) Select(field string, fields ...string) *Investmen
 
 // Save executes the query and returns the updated Investment entity.
 func (_u *InvestmentUpdateOne) Save(ctx context.Context) (*Investment, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -456,11 +464,15 @@ func (_u *InvestmentUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *InvestmentUpdateOne) defaults() {
+func (_u *InvestmentUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if investment.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized investment.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := investment.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

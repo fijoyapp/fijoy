@@ -7,6 +7,12 @@ const HTTP_ENDPOINT = env.VITE_SERVER_URL
 const fetchGraphQL: FetchFunction = async (request, variables) => {
   const token = localStorage.getItem('token')
   const householdId = localStorage.getItem('householdId')
+  console.log(
+    'Fetching GraphQL with token:',
+    token,
+    'and householdId:',
+    householdId,
+  )
 
   const resp = await fetch(HTTP_ENDPOINT + '/query', {
     method: 'POST',
@@ -18,6 +24,7 @@ const fetchGraphQL: FetchFunction = async (request, variables) => {
     body: JSON.stringify({ query: request.text, variables }),
   })
   if (!resp.ok) {
+    console.log(resp.text())
     throw new Error('Response failed.')
   }
   return await resp.json()

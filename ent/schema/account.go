@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
+	fijoy_mixin "fijoy.app/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
 
@@ -39,6 +40,7 @@ func (Account) Fields() []ent.Field {
 func (Account) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("household", Household.Type).
+			Field("household_id").
 			Ref("accounts").
 			Unique().Immutable().Required(),
 		edge.From("currency", Currency.Type).
@@ -62,5 +64,6 @@ func (Account) Annotations() []schema.Annotation {
 func (Account) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
+		fijoy_mixin.HouseholdMixin{},
 	}
 }

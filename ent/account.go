@@ -25,6 +25,8 @@ type Account struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// HouseholdID holds the value of the "household_id" field.
+	HouseholdID int `json:"household_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
@@ -33,11 +35,10 @@ type Account struct {
 	Balance decimal.Decimal `json:"balance,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
-	Edges              AccountEdges `json:"edges"`
-	currency_accounts  *int
-	household_accounts *int
-	user_accounts      *int
-	selectValues       sql.SelectValues
+	Edges             AccountEdges `json:"edges"`
+	currency_accounts *int
+	user_accounts     *int
+	selectValues      sql.SelectValues
 }
 
 // AccountEdges holds the relations/edges for other nodes in the graph.
@@ -120,7 +121,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case account.FieldBalance:
 			values[i] = new(decimal.Decimal)
-		case account.FieldID:
+		case account.FieldID, account.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
 		case account.FieldName, account.FieldType:
 			values[i] = new(sql.NullString)
@@ -128,9 +129,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case account.ForeignKeys[0]: // currency_accounts
 			values[i] = new(sql.NullInt64)
-		case account.ForeignKeys[1]: // household_accounts
-			values[i] = new(sql.NullInt64)
-		case account.ForeignKeys[2]: // user_accounts
+		case account.ForeignKeys[1]: // user_accounts
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -165,6 +164,12 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
 			}
+		case account.FieldHouseholdID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field household_id", values[i])
+			} else if value.Valid {
+				_m.HouseholdID = int(value.Int64)
+			}
 		case account.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -191,13 +196,6 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 				*_m.currency_accounts = int(value.Int64)
 			}
 		case account.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field household_accounts", value)
-			} else if value.Valid {
-				_m.household_accounts = new(int)
-				*_m.household_accounts = int(value.Int64)
-			}
-		case account.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_accounts", value)
 			} else if value.Valid {
@@ -270,6 +268,9 @@ func (_m *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("household_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.HouseholdID))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)

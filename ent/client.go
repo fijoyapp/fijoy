@@ -477,7 +477,8 @@ func (c *AccountClient) QueryInvestments(_m *Account) *InvestmentQuery {
 
 // Hooks returns the client hooks.
 func (c *AccountClient) Hooks() []Hook {
-	return c.hooks.Account
+	hooks := c.hooks.Account
+	return append(hooks[:len(hooks):len(hooks)], account.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -885,6 +886,54 @@ func (c *HouseholdClient) QueryInvestments(_m *Household) *InvestmentQuery {
 	return query
 }
 
+// QueryLots queries the lots edge of a Household.
+func (c *HouseholdClient) QueryLots(_m *Household) *LotQuery {
+	query := (&LotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(household.Table, household.FieldID, id),
+			sqlgraph.To(lot.Table, lot.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, household.LotsTable, household.LotsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransactionCategories queries the transaction_categories edge of a Household.
+func (c *HouseholdClient) QueryTransactionCategories(_m *Household) *TransactionCategoryQuery {
+	query := (&TransactionCategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(household.Table, household.FieldID, id),
+			sqlgraph.To(transactioncategory.Table, transactioncategory.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, household.TransactionCategoriesTable, household.TransactionCategoriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryTransactionEntries queries the transaction_entries edge of a Household.
+func (c *HouseholdClient) QueryTransactionEntries(_m *Household) *TransactionEntryQuery {
+	query := (&TransactionEntryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(household.Table, household.FieldID, id),
+			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, household.TransactionEntriesTable, household.TransactionEntriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserHouseholds queries the user_households edge of a Household.
 func (c *HouseholdClient) QueryUserHouseholds(_m *Household) *UserHouseholdQuery {
 	query := (&UserHouseholdClient{config: c.config}).Query()
@@ -1100,7 +1149,8 @@ func (c *InvestmentClient) QueryLots(_m *Investment) *LotQuery {
 
 // Hooks returns the client hooks.
 func (c *InvestmentClient) Hooks() []Hook {
-	return c.hooks.Investment
+	hooks := c.hooks.Investment
+	return append(hooks[:len(hooks):len(hooks)], investment.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1231,6 +1281,22 @@ func (c *LotClient) GetX(ctx context.Context, id int) *Lot {
 	return obj
 }
 
+// QueryHousehold queries the household edge of a Lot.
+func (c *LotClient) QueryHousehold(_m *Lot) *HouseholdQuery {
+	query := (&HouseholdClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lot.Table, lot.FieldID, id),
+			sqlgraph.To(household.Table, household.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lot.HouseholdTable, lot.HouseholdColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryInvestment queries the investment edge of a Lot.
 func (c *LotClient) QueryInvestment(_m *Lot) *InvestmentQuery {
 	query := (&InvestmentClient{config: c.config}).Query()
@@ -1249,7 +1315,8 @@ func (c *LotClient) QueryInvestment(_m *Lot) *InvestmentQuery {
 
 // Hooks returns the client hooks.
 func (c *LotClient) Hooks() []Hook {
-	return c.hooks.Lot
+	hooks := c.hooks.Lot
+	return append(hooks[:len(hooks):len(hooks)], lot.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1446,7 +1513,8 @@ func (c *TransactionClient) QueryTransactionEntries(_m *Transaction) *Transactio
 
 // Hooks returns the client hooks.
 func (c *TransactionClient) Hooks() []Hook {
-	return c.hooks.Transaction
+	hooks := c.hooks.Transaction
+	return append(hooks[:len(hooks):len(hooks)], transaction.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1577,6 +1645,22 @@ func (c *TransactionCategoryClient) GetX(ctx context.Context, id int) *Transacti
 	return obj
 }
 
+// QueryHousehold queries the household edge of a TransactionCategory.
+func (c *TransactionCategoryClient) QueryHousehold(_m *TransactionCategory) *HouseholdQuery {
+	query := (&HouseholdClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transactioncategory.Table, transactioncategory.FieldID, id),
+			sqlgraph.To(household.Table, household.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transactioncategory.HouseholdTable, transactioncategory.HouseholdColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryTransactions queries the transactions edge of a TransactionCategory.
 func (c *TransactionCategoryClient) QueryTransactions(_m *TransactionCategory) *TransactionQuery {
 	query := (&TransactionClient{config: c.config}).Query()
@@ -1595,7 +1679,8 @@ func (c *TransactionCategoryClient) QueryTransactions(_m *TransactionCategory) *
 
 // Hooks returns the client hooks.
 func (c *TransactionCategoryClient) Hooks() []Hook {
-	return c.hooks.TransactionCategory
+	hooks := c.hooks.TransactionCategory
+	return append(hooks[:len(hooks):len(hooks)], transactioncategory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1726,6 +1811,22 @@ func (c *TransactionEntryClient) GetX(ctx context.Context, id int) *TransactionE
 	return obj
 }
 
+// QueryHousehold queries the household edge of a TransactionEntry.
+func (c *TransactionEntryClient) QueryHousehold(_m *TransactionEntry) *HouseholdQuery {
+	query := (&HouseholdClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transactionentry.Table, transactionentry.FieldID, id),
+			sqlgraph.To(household.Table, household.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, transactionentry.HouseholdTable, transactionentry.HouseholdColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryAccount queries the account edge of a TransactionEntry.
 func (c *TransactionEntryClient) QueryAccount(_m *TransactionEntry) *AccountQuery {
 	query := (&AccountClient{config: c.config}).Query()
@@ -1776,7 +1877,8 @@ func (c *TransactionEntryClient) QueryTransaction(_m *TransactionEntry) *Transac
 
 // Hooks returns the client hooks.
 func (c *TransactionEntryClient) Hooks() []Hook {
-	return c.hooks.TransactionEntry
+	hooks := c.hooks.TransactionEntry
+	return append(hooks[:len(hooks):len(hooks)], transactionentry.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

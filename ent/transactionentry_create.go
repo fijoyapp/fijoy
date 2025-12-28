@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
@@ -54,10 +55,21 @@ func (_c *TransactionEntryCreate) SetNillableUpdateTime(v *time.Time) *Transacti
 	return _c
 }
 
+// SetHouseholdID sets the "household_id" field.
+func (_c *TransactionEntryCreate) SetHouseholdID(v int) *TransactionEntryCreate {
+	_c.mutation.SetHouseholdID(v)
+	return _c
+}
+
 // SetAmount sets the "amount" field.
 func (_c *TransactionEntryCreate) SetAmount(v decimal.Decimal) *TransactionEntryCreate {
 	_c.mutation.SetAmount(v)
 	return _c
+}
+
+// SetHousehold sets the "household" edge to the Household entity.
+func (_c *TransactionEntryCreate) SetHousehold(v *Household) *TransactionEntryCreate {
+	return _c.SetHouseholdID(v.ID)
 }
 
 // SetAccountID sets the "account" edge to the Account entity by ID.
@@ -100,7 +112,9 @@ func (_c *TransactionEntryCreate) Mutation() *TransactionEntryMutation {
 
 // Save creates the TransactionEntry in the database.
 func (_c *TransactionEntryCreate) Save(ctx context.Context) (*TransactionEntry, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -127,15 +141,22 @@ func (_c *TransactionEntryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *TransactionEntryCreate) defaults() {
+func (_c *TransactionEntryCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if transactionentry.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactionentry.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := transactionentry.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if transactionentry.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactionentry.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := transactionentry.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -146,8 +167,14 @@ func (_c *TransactionEntryCreate) check() error {
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "TransactionEntry.update_time"`)}
 	}
+	if _, ok := _c.mutation.HouseholdID(); !ok {
+		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "TransactionEntry.household_id"`)}
+	}
 	if _, ok := _c.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "TransactionEntry.amount"`)}
+	}
+	if len(_c.mutation.HouseholdIDs()) == 0 {
+		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "TransactionEntry.household"`)}
 	}
 	if len(_c.mutation.AccountIDs()) == 0 {
 		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "TransactionEntry.account"`)}
@@ -196,6 +223,23 @@ func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cre
 	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(transactionentry.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
+	}
+	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transactionentry.HouseholdTable,
+			Columns: []string{transactionentry.HouseholdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.HouseholdID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -343,6 +387,9 @@ func (u *TransactionEntryUpsertOne) UpdateNewValues() *TransactionEntryUpsertOne
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.CreateTime(); exists {
 			s.SetIgnore(transactionentry.FieldCreateTime)
+		}
+		if _, exists := u.create.mutation.HouseholdID(); exists {
+			s.SetIgnore(transactionentry.FieldHouseholdID)
 		}
 	}))
 	return u
@@ -588,6 +635,9 @@ func (u *TransactionEntryUpsertBulk) UpdateNewValues() *TransactionEntryUpsertBu
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.CreateTime(); exists {
 				s.SetIgnore(transactionentry.FieldCreateTime)
+			}
+			if _, exists := b.mutation.HouseholdID(); exists {
+				s.SetIgnore(transactionentry.FieldHouseholdID)
 			}
 		}
 	}))

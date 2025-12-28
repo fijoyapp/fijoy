@@ -15,7 +15,10 @@ import (
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
+	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
 )
@@ -137,6 +140,51 @@ func (_c *HouseholdCreate) AddInvestments(v ...*Investment) *HouseholdCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddInvestmentIDs(ids...)
+}
+
+// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
+func (_c *HouseholdCreate) AddLotIDs(ids ...int) *HouseholdCreate {
+	_c.mutation.AddLotIDs(ids...)
+	return _c
+}
+
+// AddLots adds the "lots" edges to the Lot entity.
+func (_c *HouseholdCreate) AddLots(v ...*Lot) *HouseholdCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddLotIDs(ids...)
+}
+
+// AddTransactionCategoryIDs adds the "transaction_categories" edge to the TransactionCategory entity by IDs.
+func (_c *HouseholdCreate) AddTransactionCategoryIDs(ids ...int) *HouseholdCreate {
+	_c.mutation.AddTransactionCategoryIDs(ids...)
+	return _c
+}
+
+// AddTransactionCategories adds the "transaction_categories" edges to the TransactionCategory entity.
+func (_c *HouseholdCreate) AddTransactionCategories(v ...*TransactionCategory) *HouseholdCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddTransactionCategoryIDs(ids...)
+}
+
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
+func (_c *HouseholdCreate) AddTransactionEntryIDs(ids ...int) *HouseholdCreate {
+	_c.mutation.AddTransactionEntryIDs(ids...)
+	return _c
+}
+
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (_c *HouseholdCreate) AddTransactionEntries(v ...*TransactionEntry) *HouseholdCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddTransactionEntryIDs(ids...)
 }
 
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
@@ -347,6 +395,54 @@ func (_c *HouseholdCreate) createSpec() (*Household, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.LotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.LotsTable,
+			Columns: []string{household.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TransactionCategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionCategoriesTable,
+			Columns: []string{household.TransactionCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionEntriesTable,
+			Columns: []string{household.TransactionEntriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

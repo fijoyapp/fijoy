@@ -65,6 +65,11 @@ func UpdateTime(v time.Time) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldEQ(FieldUpdateTime, v))
 }
 
+// HouseholdID applies equality check predicate on the "household_id" field. It's identical to HouseholdIDEQ.
+func HouseholdID(v int) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldEQ(FieldHouseholdID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldEQ(FieldName, v))
@@ -150,6 +155,26 @@ func UpdateTimeLTE(v time.Time) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldLTE(FieldUpdateTime, v))
 }
 
+// HouseholdIDEQ applies the EQ predicate on the "household_id" field.
+func HouseholdIDEQ(v int) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldEQ(FieldHouseholdID, v))
+}
+
+// HouseholdIDNEQ applies the NEQ predicate on the "household_id" field.
+func HouseholdIDNEQ(v int) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldNEQ(FieldHouseholdID, v))
+}
+
+// HouseholdIDIn applies the In predicate on the "household_id" field.
+func HouseholdIDIn(vs ...int) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldIn(FieldHouseholdID, vs...))
+}
+
+// HouseholdIDNotIn applies the NotIn predicate on the "household_id" field.
+func HouseholdIDNotIn(vs ...int) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldNotIn(FieldHouseholdID, vs...))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldEQ(FieldName, v))
@@ -233,6 +258,29 @@ func TypeIn(vs ...Type) predicate.TransactionCategory {
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldNotIn(FieldType, vs...))
+}
+
+// HasHousehold applies the HasEdge predicate on the "household" edge.
+func HasHousehold() predicate.TransactionCategory {
+	return predicate.TransactionCategory(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, HouseholdTable, HouseholdColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasHouseholdWith applies the HasEdge predicate on the "household" edge with a given conditions (other predicates).
+func HasHouseholdWith(preds ...predicate.Household) predicate.TransactionCategory {
+	return predicate.TransactionCategory(func(s *sql.Selector) {
+		step := newHouseholdStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // HasTransactions applies the HasEdge predicate on the "transactions" edge.

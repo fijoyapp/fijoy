@@ -400,6 +400,75 @@ func HasInvestmentsWith(preds ...predicate.Investment) predicate.Household {
 	})
 }
 
+// HasLots applies the HasEdge predicate on the "lots" edge.
+func HasLots() predicate.Household {
+	return predicate.Household(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LotsTable, LotsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLotsWith applies the HasEdge predicate on the "lots" edge with a given conditions (other predicates).
+func HasLotsWith(preds ...predicate.Lot) predicate.Household {
+	return predicate.Household(func(s *sql.Selector) {
+		step := newLotsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTransactionCategories applies the HasEdge predicate on the "transaction_categories" edge.
+func HasTransactionCategories() predicate.Household {
+	return predicate.Household(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransactionCategoriesTable, TransactionCategoriesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTransactionCategoriesWith applies the HasEdge predicate on the "transaction_categories" edge with a given conditions (other predicates).
+func HasTransactionCategoriesWith(preds ...predicate.TransactionCategory) predicate.Household {
+	return predicate.Household(func(s *sql.Selector) {
+		step := newTransactionCategoriesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTransactionEntries applies the HasEdge predicate on the "transaction_entries" edge.
+func HasTransactionEntries() predicate.Household {
+	return predicate.Household(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTransactionEntriesWith applies the HasEdge predicate on the "transaction_entries" edge with a given conditions (other predicates).
+func HasTransactionEntriesWith(preds ...predicate.TransactionEntry) predicate.Household {
+	return predicate.Household(func(s *sql.Selector) {
+		step := newTransactionEntriesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUserHouseholds applies the HasEdge predicate on the "user_households" edge.
 func HasUserHouseholds() predicate.Household {
 	return predicate.Household(func(s *sql.Selector) {

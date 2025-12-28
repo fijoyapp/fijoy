@@ -67,6 +67,7 @@ type ComplexityRoot struct {
 		CreateTime                 func(childComplexity int) int
 		Currency                   func(childComplexity int) int
 		Household                  func(childComplexity int) int
+		HouseholdID                func(childComplexity int) int
 		ID                         func(childComplexity int) int
 		Investments                func(childComplexity int) int
 		Name                       func(childComplexity int) int
@@ -86,31 +87,35 @@ type ComplexityRoot struct {
 	}
 
 	Household struct {
-		Accounts       func(childComplexity int) int
-		CreateTime     func(childComplexity int) int
-		Currency       func(childComplexity int) int
-		ID             func(childComplexity int) int
-		Investments    func(childComplexity int) int
-		Locale         func(childComplexity int) int
-		Name           func(childComplexity int) int
-		Transactions   func(childComplexity int) int
-		UpdateTime     func(childComplexity int) int
-		UserHouseholds func(childComplexity int) int
-		Users          func(childComplexity int) int
+		Accounts              func(childComplexity int) int
+		CreateTime            func(childComplexity int) int
+		Currency              func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Investments           func(childComplexity int) int
+		Locale                func(childComplexity int) int
+		Lots                  func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		TransactionCategories func(childComplexity int) int
+		TransactionEntries    func(childComplexity int) int
+		Transactions          func(childComplexity int) int
+		UpdateTime            func(childComplexity int) int
+		UserHouseholds        func(childComplexity int) int
+		Users                 func(childComplexity int) int
 	}
 
 	Investment struct {
-		Account    func(childComplexity int) int
-		Amount     func(childComplexity int) int
-		CreateTime func(childComplexity int) int
-		Currency   func(childComplexity int) int
-		Household  func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Lots       func(childComplexity int) int
-		Name       func(childComplexity int) int
-		Symbol     func(childComplexity int) int
-		Type       func(childComplexity int) int
-		UpdateTime func(childComplexity int) int
+		Account     func(childComplexity int) int
+		Amount      func(childComplexity int) int
+		CreateTime  func(childComplexity int) int
+		Currency    func(childComplexity int) int
+		Household   func(childComplexity int) int
+		HouseholdID func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Lots        func(childComplexity int) int
+		Name        func(childComplexity int) int
+		Symbol      func(childComplexity int) int
+		Type        func(childComplexity int) int
+		UpdateTime  func(childComplexity int) int
 	}
 
 	InvestmentConnection struct {
@@ -125,13 +130,15 @@ type ComplexityRoot struct {
 	}
 
 	Lot struct {
-		Amount     func(childComplexity int) int
-		CreateTime func(childComplexity int) int
-		Datetime   func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Investment func(childComplexity int) int
-		Price      func(childComplexity int) int
-		UpdateTime func(childComplexity int) int
+		Amount      func(childComplexity int) int
+		CreateTime  func(childComplexity int) int
+		Datetime    func(childComplexity int) int
+		Household   func(childComplexity int) int
+		HouseholdID func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Investment  func(childComplexity int) int
+		Price       func(childComplexity int) int
+		UpdateTime  func(childComplexity int) int
 	}
 
 	LotConnection struct {
@@ -174,6 +181,7 @@ type ComplexityRoot struct {
 		Datetime           func(childComplexity int) int
 		Description        func(childComplexity int) int
 		Household          func(childComplexity int) int
+		HouseholdID        func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		TransactionEntries func(childComplexity int) int
 		UpdateTime         func(childComplexity int) int
@@ -182,6 +190,8 @@ type ComplexityRoot struct {
 
 	TransactionCategory struct {
 		CreateTime   func(childComplexity int) int
+		Household    func(childComplexity int) int
+		HouseholdID  func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Transactions func(childComplexity int) int
@@ -205,6 +215,8 @@ type ComplexityRoot struct {
 		Amount      func(childComplexity int) int
 		CreateTime  func(childComplexity int) int
 		Currency    func(childComplexity int) int
+		Household   func(childComplexity int) int
+		HouseholdID func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Transaction func(childComplexity int) int
 		UpdateTime  func(childComplexity int) int
@@ -373,6 +385,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Account.Household(childComplexity), true
+	case "Account.householdID":
+		if e.complexity.Account.HouseholdID == nil {
+			break
+		}
+
+		return e.complexity.Account.HouseholdID(childComplexity), true
 	case "Account.id":
 		if e.complexity.Account.ID == nil {
 			break
@@ -489,12 +507,30 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Household.Locale(childComplexity), true
+	case "Household.lots":
+		if e.complexity.Household.Lots == nil {
+			break
+		}
+
+		return e.complexity.Household.Lots(childComplexity), true
 	case "Household.name":
 		if e.complexity.Household.Name == nil {
 			break
 		}
 
 		return e.complexity.Household.Name(childComplexity), true
+	case "Household.transactionCategories":
+		if e.complexity.Household.TransactionCategories == nil {
+			break
+		}
+
+		return e.complexity.Household.TransactionCategories(childComplexity), true
+	case "Household.transactionEntries":
+		if e.complexity.Household.TransactionEntries == nil {
+			break
+		}
+
+		return e.complexity.Household.TransactionEntries(childComplexity), true
 	case "Household.transactions":
 		if e.complexity.Household.Transactions == nil {
 			break
@@ -550,6 +586,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Investment.Household(childComplexity), true
+	case "Investment.householdID":
+		if e.complexity.Investment.HouseholdID == nil {
+			break
+		}
+
+		return e.complexity.Investment.HouseholdID(childComplexity), true
 	case "Investment.id":
 		if e.complexity.Investment.ID == nil {
 			break
@@ -637,6 +679,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Lot.Datetime(childComplexity), true
+	case "Lot.household":
+		if e.complexity.Lot.Household == nil {
+			break
+		}
+
+		return e.complexity.Lot.Household(childComplexity), true
+	case "Lot.householdID":
+		if e.complexity.Lot.HouseholdID == nil {
+			break
+		}
+
+		return e.complexity.Lot.HouseholdID(childComplexity), true
 	case "Lot.id":
 		if e.complexity.Lot.ID == nil {
 			break
@@ -858,6 +912,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Transaction.Household(childComplexity), true
+	case "Transaction.householdID":
+		if e.complexity.Transaction.HouseholdID == nil {
+			break
+		}
+
+		return e.complexity.Transaction.HouseholdID(childComplexity), true
 	case "Transaction.id":
 		if e.complexity.Transaction.ID == nil {
 			break
@@ -889,6 +949,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.TransactionCategory.CreateTime(childComplexity), true
+	case "TransactionCategory.household":
+		if e.complexity.TransactionCategory.Household == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.Household(childComplexity), true
+	case "TransactionCategory.householdID":
+		if e.complexity.TransactionCategory.HouseholdID == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.HouseholdID(childComplexity), true
 	case "TransactionCategory.id":
 		if e.complexity.TransactionCategory.ID == nil {
 			break
@@ -976,6 +1048,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.TransactionEntry.Currency(childComplexity), true
+	case "TransactionEntry.household":
+		if e.complexity.TransactionEntry.Household == nil {
+			break
+		}
+
+		return e.complexity.TransactionEntry.Household(childComplexity), true
+	case "TransactionEntry.householdID":
+		if e.complexity.TransactionEntry.HouseholdID == nil {
+			break
+		}
+
+		return e.complexity.TransactionEntry.HouseholdID(childComplexity), true
 	case "TransactionEntry.id":
 		if e.complexity.TransactionEntry.ID == nil {
 			break
@@ -1555,6 +1639,35 @@ func (ec *executionContext) fieldContext_Account_updateTime(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Account_householdID(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Account_householdID,
+		func(ctx context.Context) (any, error) {
+			return obj.HouseholdID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Account_householdID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Account_name(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -1686,6 +1799,12 @@ func (ec *executionContext) fieldContext_Account_household(_ context.Context, fi
 				return ec.fieldContext_Household_transactions(ctx, field)
 			case "investments":
 				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -1819,8 +1938,12 @@ func (ec *executionContext) fieldContext_Account_transactionEntries(_ context.Co
 				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionEntry_householdID(ctx, field)
 			case "amount":
 				return ec.fieldContext_TransactionEntry_amount(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionEntry_household(ctx, field)
 			case "account":
 				return ec.fieldContext_TransactionEntry_account(ctx, field)
 			case "currency":
@@ -1864,6 +1987,8 @@ func (ec *executionContext) fieldContext_Account_investments(_ context.Context, 
 				return ec.fieldContext_Investment_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Investment_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Investment_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Investment_name(ctx, field)
 			case "type":
@@ -2004,6 +2129,8 @@ func (ec *executionContext) fieldContext_Currency_accounts(_ context.Context, fi
 				return ec.fieldContext_Account_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Account_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
@@ -2059,6 +2186,8 @@ func (ec *executionContext) fieldContext_Currency_investments(_ context.Context,
 				return ec.fieldContext_Investment_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Investment_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Investment_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Investment_name(ctx, field)
 			case "type":
@@ -2112,8 +2241,12 @@ func (ec *executionContext) fieldContext_Currency_transactionEntries(_ context.C
 				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionEntry_householdID(ctx, field)
 			case "amount":
 				return ec.fieldContext_TransactionEntry_amount(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionEntry_household(ctx, field)
 			case "account":
 				return ec.fieldContext_TransactionEntry_account(ctx, field)
 			case "currency":
@@ -2171,6 +2304,12 @@ func (ec *executionContext) fieldContext_Currency_households(_ context.Context, 
 				return ec.fieldContext_Household_transactions(ctx, field)
 			case "investments":
 				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -2449,6 +2588,8 @@ func (ec *executionContext) fieldContext_Household_accounts(_ context.Context, f
 				return ec.fieldContext_Account_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Account_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
@@ -2504,6 +2645,8 @@ func (ec *executionContext) fieldContext_Household_transactions(_ context.Contex
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Transaction_householdID(ctx, field)
 			case "description":
 				return ec.fieldContext_Transaction_description(ctx, field)
 			case "datetime":
@@ -2553,6 +2696,8 @@ func (ec *executionContext) fieldContext_Household_investments(_ context.Context
 				return ec.fieldContext_Investment_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Investment_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Investment_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Investment_name(ctx, field)
 			case "type":
@@ -2571,6 +2716,151 @@ func (ec *executionContext) fieldContext_Household_investments(_ context.Context
 				return ec.fieldContext_Investment_lots(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Investment", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Household_lots(ctx context.Context, field graphql.CollectedField, obj *ent.Household) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Household_lots,
+		func(ctx context.Context) (any, error) {
+			return obj.Lots(ctx)
+		},
+		nil,
+		ec.marshalOLot2ᚕᚖfijoyᚗappᚋentᚐLotᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Household_lots(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Household",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Lot_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Lot_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Lot_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Lot_householdID(ctx, field)
+			case "datetime":
+				return ec.fieldContext_Lot_datetime(ctx, field)
+			case "amount":
+				return ec.fieldContext_Lot_amount(ctx, field)
+			case "price":
+				return ec.fieldContext_Lot_price(ctx, field)
+			case "household":
+				return ec.fieldContext_Lot_household(ctx, field)
+			case "investment":
+				return ec.fieldContext_Lot_investment(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Lot", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Household_transactionCategories(ctx context.Context, field graphql.CollectedField, obj *ent.Household) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Household_transactionCategories,
+		func(ctx context.Context) (any, error) {
+			return obj.TransactionCategories(ctx)
+		},
+		nil,
+		ec.marshalOTransactionCategory2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Household_transactionCategories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Household",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TransactionCategory_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_TransactionCategory_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_TransactionCategory_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionCategory_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_TransactionCategory_name(ctx, field)
+			case "type":
+				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionCategory_household(ctx, field)
+			case "transactions":
+				return ec.fieldContext_TransactionCategory_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionCategory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Household_transactionEntries(ctx context.Context, field graphql.CollectedField, obj *ent.Household) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Household_transactionEntries,
+		func(ctx context.Context) (any, error) {
+			return obj.TransactionEntries(ctx)
+		},
+		nil,
+		ec.marshalOTransactionEntry2ᚕᚖfijoyᚗappᚋentᚐTransactionEntryᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Household_transactionEntries(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Household",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TransactionEntry_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionEntry_householdID(ctx, field)
+			case "amount":
+				return ec.fieldContext_TransactionEntry_amount(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionEntry_household(ctx, field)
+			case "account":
+				return ec.fieldContext_TransactionEntry_account(ctx, field)
+			case "currency":
+				return ec.fieldContext_TransactionEntry_currency(ctx, field)
+			case "transaction":
+				return ec.fieldContext_TransactionEntry_transaction(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionEntry", field.Name)
 		},
 	}
 	return fc, nil
@@ -2705,6 +2995,35 @@ func (ec *executionContext) fieldContext_Investment_updateTime(_ context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Investment_householdID(ctx context.Context, field graphql.CollectedField, obj *ent.Investment) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Investment_householdID,
+		func(ctx context.Context) (any, error) {
+			return obj.HouseholdID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Investment_householdID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Investment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2856,6 +3175,8 @@ func (ec *executionContext) fieldContext_Investment_account(_ context.Context, f
 				return ec.fieldContext_Account_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Account_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
@@ -2925,6 +3246,12 @@ func (ec *executionContext) fieldContext_Investment_household(_ context.Context,
 				return ec.fieldContext_Household_transactions(ctx, field)
 			case "investments":
 				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -3007,12 +3334,16 @@ func (ec *executionContext) fieldContext_Investment_lots(_ context.Context, fiel
 				return ec.fieldContext_Lot_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Lot_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Lot_householdID(ctx, field)
 			case "datetime":
 				return ec.fieldContext_Lot_datetime(ctx, field)
 			case "amount":
 				return ec.fieldContext_Lot_amount(ctx, field)
 			case "price":
 				return ec.fieldContext_Lot_price(ctx, field)
+			case "household":
+				return ec.fieldContext_Lot_household(ctx, field)
 			case "investment":
 				return ec.fieldContext_Lot_investment(ctx, field)
 			}
@@ -3155,6 +3486,8 @@ func (ec *executionContext) fieldContext_InvestmentEdge_node(_ context.Context, 
 				return ec.fieldContext_Investment_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Investment_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Investment_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Investment_name(ctx, field)
 			case "type":
@@ -3294,6 +3627,35 @@ func (ec *executionContext) fieldContext_Lot_updateTime(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Lot_householdID(ctx context.Context, field graphql.CollectedField, obj *ent.Lot) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Lot_householdID,
+		func(ctx context.Context) (any, error) {
+			return obj.HouseholdID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Lot_householdID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Lot",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Lot_datetime(ctx context.Context, field graphql.CollectedField, obj *ent.Lot) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3381,6 +3743,65 @@ func (ec *executionContext) fieldContext_Lot_price(_ context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _Lot_household(ctx context.Context, field graphql.CollectedField, obj *ent.Lot) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Lot_household,
+		func(ctx context.Context) (any, error) {
+			return obj.Household(ctx)
+		},
+		nil,
+		ec.marshalNHousehold2ᚖfijoyᚗappᚋentᚐHousehold,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Lot_household(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Lot",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Household_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Household_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Household_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
+			case "currency":
+				return ec.fieldContext_Household_currency(ctx, field)
+			case "users":
+				return ec.fieldContext_Household_users(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Household_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Household_transactions(ctx, field)
+			case "investments":
+				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_Household_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Lot_investment(ctx context.Context, field graphql.CollectedField, obj *ent.Lot) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3411,6 +3832,8 @@ func (ec *executionContext) fieldContext_Lot_investment(_ context.Context, field
 				return ec.fieldContext_Investment_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Investment_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Investment_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Investment_name(ctx, field)
 			case "type":
@@ -3567,12 +3990,16 @@ func (ec *executionContext) fieldContext_LotEdge_node(_ context.Context, field g
 				return ec.fieldContext_Lot_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Lot_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Lot_householdID(ctx, field)
 			case "datetime":
 				return ec.fieldContext_Lot_datetime(ctx, field)
 			case "amount":
 				return ec.fieldContext_Lot_amount(ctx, field)
 			case "price":
 				return ec.fieldContext_Lot_price(ctx, field)
+			case "household":
+				return ec.fieldContext_Lot_household(ctx, field)
 			case "investment":
 				return ec.fieldContext_Lot_investment(ctx, field)
 			}
@@ -3839,6 +4266,8 @@ func (ec *executionContext) fieldContext_Query_accounts(_ context.Context, field
 				return ec.fieldContext_Account_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Account_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
@@ -3951,6 +4380,12 @@ func (ec *executionContext) fieldContext_Query_households(_ context.Context, fie
 				return ec.fieldContext_Household_transactions(ctx, field)
 			case "investments":
 				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -4137,10 +4572,14 @@ func (ec *executionContext) fieldContext_Query_transactionCategories(_ context.C
 				return ec.fieldContext_TransactionCategory_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionCategory_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionCategory_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionCategory_household(ctx, field)
 			case "transactions":
 				return ec.fieldContext_TransactionCategory_transactions(ctx, field)
 			}
@@ -4180,8 +4619,12 @@ func (ec *executionContext) fieldContext_Query_transactionEntries(_ context.Cont
 				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionEntry_householdID(ctx, field)
 			case "amount":
 				return ec.fieldContext_TransactionEntry_amount(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionEntry_household(ctx, field)
 			case "account":
 				return ec.fieldContext_TransactionEntry_account(ctx, field)
 			case "currency":
@@ -4529,6 +4972,35 @@ func (ec *executionContext) fieldContext_Transaction_updateTime(_ context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Transaction_householdID(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Transaction_householdID,
+		func(ctx context.Context) (any, error) {
+			return obj.HouseholdID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Transaction_householdID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Transaction",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Transaction_description(ctx context.Context, field graphql.CollectedField, obj *ent.Transaction) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4682,6 +5154,12 @@ func (ec *executionContext) fieldContext_Transaction_household(_ context.Context
 				return ec.fieldContext_Household_transactions(ctx, field)
 			case "investments":
 				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -4721,10 +5199,14 @@ func (ec *executionContext) fieldContext_Transaction_category(_ context.Context,
 				return ec.fieldContext_TransactionCategory_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionCategory_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionCategory_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionCategory_household(ctx, field)
 			case "transactions":
 				return ec.fieldContext_TransactionCategory_transactions(ctx, field)
 			}
@@ -4764,8 +5246,12 @@ func (ec *executionContext) fieldContext_Transaction_transactionEntries(_ contex
 				return ec.fieldContext_TransactionEntry_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_TransactionEntry_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionEntry_householdID(ctx, field)
 			case "amount":
 				return ec.fieldContext_TransactionEntry_amount(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionEntry_household(ctx, field)
 			case "account":
 				return ec.fieldContext_TransactionEntry_account(ctx, field)
 			case "currency":
@@ -4866,6 +5352,35 @@ func (ec *executionContext) fieldContext_TransactionCategory_updateTime(_ contex
 	return fc, nil
 }
 
+func (ec *executionContext) _TransactionCategory_householdID(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_householdID,
+		func(ctx context.Context) (any, error) {
+			return obj.HouseholdID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_householdID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TransactionCategory_name(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4924,6 +5439,65 @@ func (ec *executionContext) fieldContext_TransactionCategory_type(_ context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _TransactionCategory_household(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_household,
+		func(ctx context.Context) (any, error) {
+			return obj.Household(ctx)
+		},
+		nil,
+		ec.marshalNHousehold2ᚖfijoyᚗappᚋentᚐHousehold,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_household(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Household_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Household_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Household_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
+			case "currency":
+				return ec.fieldContext_Household_currency(ctx, field)
+			case "users":
+				return ec.fieldContext_Household_users(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Household_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Household_transactions(ctx, field)
+			case "investments":
+				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_Household_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TransactionCategory_transactions(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4954,6 +5528,8 @@ func (ec *executionContext) fieldContext_TransactionCategory_transactions(_ cont
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Transaction_householdID(ctx, field)
 			case "description":
 				return ec.fieldContext_Transaction_description(ctx, field)
 			case "datetime":
@@ -5106,6 +5682,8 @@ func (ec *executionContext) fieldContext_TransactionEdge_node(_ context.Context,
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Transaction_householdID(ctx, field)
 			case "description":
 				return ec.fieldContext_Transaction_description(ctx, field)
 			case "datetime":
@@ -5241,6 +5819,35 @@ func (ec *executionContext) fieldContext_TransactionEntry_updateTime(_ context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _TransactionEntry_householdID(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionEntry) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionEntry_householdID,
+		func(ctx context.Context) (any, error) {
+			return obj.HouseholdID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionEntry_householdID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TransactionEntry_amount(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionEntry) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -5265,6 +5872,65 @@ func (ec *executionContext) fieldContext_TransactionEntry_amount(_ context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _TransactionEntry_household(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionEntry) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionEntry_household,
+		func(ctx context.Context) (any, error) {
+			return obj.Household(ctx)
+		},
+		nil,
+		ec.marshalNHousehold2ᚖfijoyᚗappᚋentᚐHousehold,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionEntry_household(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionEntry",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Household_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Household_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Household_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
+			case "currency":
+				return ec.fieldContext_Household_currency(ctx, field)
+			case "users":
+				return ec.fieldContext_Household_users(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Household_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Household_transactions(ctx, field)
+			case "investments":
+				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_Household_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
 		},
 	}
 	return fc, nil
@@ -5300,6 +5966,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Account_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
@@ -5398,6 +6066,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_transaction(_ context.
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Transaction_householdID(ctx, field)
 			case "description":
 				return ec.fieldContext_Transaction_description(ctx, field)
 			case "datetime":
@@ -5606,6 +6276,12 @@ func (ec *executionContext) fieldContext_User_households(_ context.Context, fiel
 				return ec.fieldContext_Household_transactions(ctx, field)
 			case "investments":
 				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -5645,6 +6321,8 @@ func (ec *executionContext) fieldContext_User_accounts(_ context.Context, field 
 				return ec.fieldContext_Account_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Account_householdID(ctx, field)
 			case "name":
 				return ec.fieldContext_Account_name(ctx, field)
 			case "type":
@@ -5700,6 +6378,8 @@ func (ec *executionContext) fieldContext_User_transactions(_ context.Context, fi
 				return ec.fieldContext_Transaction_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Transaction_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Transaction_householdID(ctx, field)
 			case "description":
 				return ec.fieldContext_Transaction_description(ctx, field)
 			case "datetime":
@@ -6078,6 +6758,12 @@ func (ec *executionContext) fieldContext_UserHousehold_household(_ context.Conte
 				return ec.fieldContext_Household_transactions(ctx, field)
 			case "investments":
 				return ec.fieldContext_Household_investments(ctx, field)
+			case "lots":
+				return ec.fieldContext_Household_lots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -7736,7 +8422,7 @@ func (ec *executionContext) unmarshalInputAccountWhereInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "balance", "balanceNEQ", "balanceIn", "balanceNotIn", "balanceGT", "balanceGTE", "balanceLT", "balanceLTE", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasUser", "hasUserWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasInvestments", "hasInvestmentsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "balance", "balanceNEQ", "balanceIn", "balanceNotIn", "balanceGT", "balanceGTE", "balanceLT", "balanceLTE", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasUser", "hasUserWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasInvestments", "hasInvestmentsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -7932,6 +8618,34 @@ func (ec *executionContext) unmarshalInputAccountWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.UpdateTimeLTE = data
+		case "householdID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdID = data
+		case "householdIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNEQ = data
+		case "householdIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDIn = data
+		case "householdIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNotIn = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -8450,7 +9164,7 @@ func (ec *executionContext) unmarshalInputHouseholdWhereInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "locale", "localeNEQ", "localeIn", "localeNotIn", "localeGT", "localeGTE", "localeLT", "localeLTE", "localeContains", "localeHasPrefix", "localeHasSuffix", "localeEqualFold", "localeContainsFold", "hasCurrency", "hasCurrencyWith", "hasUsers", "hasUsersWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasInvestments", "hasInvestmentsWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "locale", "localeNEQ", "localeIn", "localeNotIn", "localeGT", "localeGTE", "localeLT", "localeLTE", "localeContains", "localeHasPrefix", "localeHasSuffix", "localeEqualFold", "localeContainsFold", "hasCurrency", "hasCurrencyWith", "hasUsers", "hasUsersWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasInvestments", "hasInvestmentsWith", "hasLots", "hasLotsWith", "hasTransactionCategories", "hasTransactionCategoriesWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8898,6 +9612,48 @@ func (ec *executionContext) unmarshalInputHouseholdWhereInput(ctx context.Contex
 				return it, err
 			}
 			it.HasInvestmentsWith = data
+		case "hasLots":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasLots"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasLots = data
+		case "hasLotsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasLotsWith"))
+			data, err := ec.unmarshalOLotWhereInput2ᚕᚖfijoyᚗappᚋentᚐLotWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasLotsWith = data
+		case "hasTransactionCategories":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactionCategories"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTransactionCategories = data
+		case "hasTransactionCategoriesWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactionCategoriesWith"))
+			data, err := ec.unmarshalOTransactionCategoryWhereInput2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTransactionCategoriesWith = data
+		case "hasTransactionEntries":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactionEntries"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTransactionEntries = data
+		case "hasTransactionEntriesWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactionEntriesWith"))
+			data, err := ec.unmarshalOTransactionEntryWhereInput2ᚕᚖfijoyᚗappᚋentᚐTransactionEntryWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasTransactionEntriesWith = data
 		case "hasUserHouseholds":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserHouseholds"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -8925,7 +9681,7 @@ func (ec *executionContext) unmarshalInputInvestmentWhereInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "amount", "amountNEQ", "amountIn", "amountNotIn", "amountGT", "amountGTE", "amountLT", "amountLTE", "hasAccount", "hasAccountWith", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasLots", "hasLotsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "amount", "amountNEQ", "amountIn", "amountNotIn", "amountGT", "amountGTE", "amountLT", "amountLTE", "hasAccount", "hasAccountWith", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasLots", "hasLotsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -9121,6 +9877,34 @@ func (ec *executionContext) unmarshalInputInvestmentWhereInput(ctx context.Conte
 				return it, err
 			}
 			it.UpdateTimeLTE = data
+		case "householdID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdID = data
+		case "householdIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNEQ = data
+		case "householdIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDIn = data
+		case "householdIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNotIn = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -9472,7 +10256,7 @@ func (ec *executionContext) unmarshalInputLotWhereInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "datetime", "datetimeNEQ", "datetimeIn", "datetimeNotIn", "datetimeGT", "datetimeGTE", "datetimeLT", "datetimeLTE", "amount", "amountNEQ", "amountIn", "amountNotIn", "amountGT", "amountGTE", "amountLT", "amountLTE", "price", "priceNEQ", "priceIn", "priceNotIn", "priceGT", "priceGTE", "priceLT", "priceLTE", "hasInvestment", "hasInvestmentWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "datetime", "datetimeNEQ", "datetimeIn", "datetimeNotIn", "datetimeGT", "datetimeGTE", "datetimeLT", "datetimeLTE", "amount", "amountNEQ", "amountIn", "amountNotIn", "amountGT", "amountGTE", "amountLT", "amountLTE", "price", "priceNEQ", "priceIn", "priceNotIn", "priceGT", "priceGTE", "priceLT", "priceLTE", "hasHousehold", "hasHouseholdWith", "hasInvestment", "hasInvestmentWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -9668,6 +10452,34 @@ func (ec *executionContext) unmarshalInputLotWhereInput(ctx context.Context, obj
 				return it, err
 			}
 			it.UpdateTimeLTE = data
+		case "householdID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdID = data
+		case "householdIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNEQ = data
+		case "householdIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDIn = data
+		case "householdIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNotIn = data
 		case "datetime":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datetime"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -9868,6 +10680,20 @@ func (ec *executionContext) unmarshalInputLotWhereInput(ctx context.Context, obj
 			if err = ec.resolvers.LotWhereInput().PriceLte(ctx, &it, data); err != nil {
 				return it, err
 			}
+		case "hasHousehold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHousehold"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHousehold = data
+		case "hasHouseholdWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHouseholdWith"))
+			data, err := ec.unmarshalOHouseholdWhereInput2ᚕᚖfijoyᚗappᚋentᚐHouseholdWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHouseholdWith = data
 		case "hasInvestment":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasInvestment"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -9895,7 +10721,7 @@ func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "hasTransactions", "hasTransactionsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "hasHousehold", "hasHouseholdWith", "hasTransactions", "hasTransactionsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10091,6 +10917,34 @@ func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx cont
 				return it, err
 			}
 			it.UpdateTimeLTE = data
+		case "householdID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdID = data
+		case "householdIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNEQ = data
+		case "householdIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDIn = data
+		case "householdIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNotIn = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -10210,6 +11064,20 @@ func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx cont
 				return it, err
 			}
 			it.TypeNotIn = data
+		case "hasHousehold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHousehold"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHousehold = data
+		case "hasHouseholdWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHouseholdWith"))
+			data, err := ec.unmarshalOHouseholdWhereInput2ᚕᚖfijoyᚗappᚋentᚐHouseholdWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHouseholdWith = data
 		case "hasTransactions":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasTransactions"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -10237,7 +11105,7 @@ func (ec *executionContext) unmarshalInputTransactionEntryWhereInput(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "amount", "amountNEQ", "amountIn", "amountNotIn", "amountGT", "amountGTE", "amountLT", "amountLTE", "hasAccount", "hasAccountWith", "hasCurrency", "hasCurrencyWith", "hasTransaction", "hasTransactionWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "amount", "amountNEQ", "amountIn", "amountNotIn", "amountGT", "amountGTE", "amountLT", "amountLTE", "hasHousehold", "hasHouseholdWith", "hasAccount", "hasAccountWith", "hasCurrency", "hasCurrencyWith", "hasTransaction", "hasTransactionWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10433,6 +11301,34 @@ func (ec *executionContext) unmarshalInputTransactionEntryWhereInput(ctx context
 				return it, err
 			}
 			it.UpdateTimeLTE = data
+		case "householdID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdID = data
+		case "householdIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNEQ = data
+		case "householdIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDIn = data
+		case "householdIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNotIn = data
 		case "amount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("amount"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -10505,6 +11401,20 @@ func (ec *executionContext) unmarshalInputTransactionEntryWhereInput(ctx context
 			if err = ec.resolvers.TransactionEntryWhereInput().AmountLte(ctx, &it, data); err != nil {
 				return it, err
 			}
+		case "hasHousehold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHousehold"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHousehold = data
+		case "hasHouseholdWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHouseholdWith"))
+			data, err := ec.unmarshalOHouseholdWhereInput2ᚕᚖfijoyᚗappᚋentᚐHouseholdWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHouseholdWith = data
 		case "hasAccount":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasAccount"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -10598,7 +11508,7 @@ func (ec *executionContext) unmarshalInputTransactionWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "description", "descriptionNEQ", "descriptionIn", "descriptionNotIn", "descriptionGT", "descriptionGTE", "descriptionLT", "descriptionLTE", "descriptionContains", "descriptionHasPrefix", "descriptionHasSuffix", "descriptionIsNil", "descriptionNotNil", "descriptionEqualFold", "descriptionContainsFold", "datetime", "datetimeNEQ", "datetimeIn", "datetimeNotIn", "datetimeGT", "datetimeGTE", "datetimeLT", "datetimeLTE", "hasUser", "hasUserWith", "hasHousehold", "hasHouseholdWith", "hasCategory", "hasCategoryWith", "hasTransactionEntries", "hasTransactionEntriesWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "description", "descriptionNEQ", "descriptionIn", "descriptionNotIn", "descriptionGT", "descriptionGTE", "descriptionLT", "descriptionLTE", "descriptionContains", "descriptionHasPrefix", "descriptionHasSuffix", "descriptionIsNil", "descriptionNotNil", "descriptionEqualFold", "descriptionContainsFold", "datetime", "datetimeNEQ", "datetimeIn", "datetimeNotIn", "datetimeGT", "datetimeGTE", "datetimeLT", "datetimeLTE", "hasUser", "hasUserWith", "hasHousehold", "hasHouseholdWith", "hasCategory", "hasCategoryWith", "hasTransactionEntries", "hasTransactionEntriesWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10794,6 +11704,34 @@ func (ec *executionContext) unmarshalInputTransactionWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.UpdateTimeLTE = data
+		case "householdID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdID = data
+		case "householdIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNEQ = data
+		case "householdIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDIn = data
+		case "householdIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNotIn = data
 		case "description":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -12159,6 +13097,11 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "householdID":
+			out.Values[i] = ec._Account_householdID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "name":
 			out.Values[i] = ec._Account_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -12818,6 +13761,105 @@ func (ec *executionContext) _Household(ctx context.Context, sel ast.SelectionSet
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "lots":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Household_lots(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "transactionCategories":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Household_transactionCategories(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "transactionEntries":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Household_transactionEntries(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "userHouseholds":
 			field := field
 
@@ -12897,6 +13939,11 @@ func (ec *executionContext) _Investment(ctx context.Context, sel ast.SelectionSe
 			}
 		case "updateTime":
 			out.Values[i] = ec._Investment_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "householdID":
+			out.Values[i] = ec._Investment_householdID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -13228,6 +14275,11 @@ func (ec *executionContext) _Lot(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "householdID":
+			out.Values[i] = ec._Lot_householdID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "datetime":
 			out.Values[i] = ec._Lot_datetime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -13279,6 +14331,42 @@ func (ec *executionContext) _Lot(ctx context.Context, sel ast.SelectionSet, obj 
 					}
 				}()
 				res = ec._Lot_price(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "household":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Lot_household(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -13858,6 +14946,11 @@ func (ec *executionContext) _Transaction(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "householdID":
+			out.Values[i] = ec._Transaction_householdID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "description":
 			out.Values[i] = ec._Transaction_description(ctx, field, obj)
 		case "datetime":
@@ -14055,6 +15148,11 @@ func (ec *executionContext) _TransactionCategory(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "householdID":
+			out.Values[i] = ec._TransactionCategory_householdID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "name":
 			out.Values[i] = ec._TransactionCategory_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -14065,6 +15163,42 @@ func (ec *executionContext) _TransactionCategory(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "household":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._TransactionCategory_household(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "transactions":
 			field := field
 
@@ -14234,6 +15368,11 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "householdID":
+			out.Values[i] = ec._TransactionEntry_householdID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "amount":
 			field := field
 
@@ -14244,6 +15383,42 @@ func (ec *executionContext) _TransactionEntry(ctx context.Context, sel ast.Selec
 					}
 				}()
 				res = ec._TransactionEntry_amount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "household":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._TransactionEntry_household(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -17100,6 +18275,53 @@ func (ec *executionContext) marshalOTransaction2ᚖfijoyᚗappᚋentᚐTransacti
 		return graphql.Null
 	}
 	return ec._Transaction(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOTransactionCategory2ᚕᚖfijoyᚗappᚋentᚐTransactionCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.TransactionCategory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTransactionCategory2ᚖfijoyᚗappᚋentᚐTransactionCategory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOTransactionCategoryType2ᚕfijoyᚗappᚋentᚋtransactioncategoryᚐTypeᚄ(ctx context.Context, v any) ([]transactioncategory.Type, error) {

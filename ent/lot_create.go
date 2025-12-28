@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"github.com/shopspring/decimal"
@@ -52,6 +53,12 @@ func (_c *LotCreate) SetNillableUpdateTime(v *time.Time) *LotCreate {
 	return _c
 }
 
+// SetHouseholdID sets the "household_id" field.
+func (_c *LotCreate) SetHouseholdID(v int) *LotCreate {
+	_c.mutation.SetHouseholdID(v)
+	return _c
+}
+
 // SetDatetime sets the "datetime" field.
 func (_c *LotCreate) SetDatetime(v time.Time) *LotCreate {
 	_c.mutation.SetDatetime(v)
@@ -68,6 +75,11 @@ func (_c *LotCreate) SetAmount(v decimal.Decimal) *LotCreate {
 func (_c *LotCreate) SetPrice(v decimal.Decimal) *LotCreate {
 	_c.mutation.SetPrice(v)
 	return _c
+}
+
+// SetHousehold sets the "household" edge to the Household entity.
+func (_c *LotCreate) SetHousehold(v *Household) *LotCreate {
+	return _c.SetHouseholdID(v.ID)
 }
 
 // SetInvestmentID sets the "investment" edge to the Investment entity by ID.
@@ -88,7 +100,9 @@ func (_c *LotCreate) Mutation() *LotMutation {
 
 // Save creates the Lot in the database.
 func (_c *LotCreate) Save(ctx context.Context) (*Lot, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -115,15 +129,22 @@ func (_c *LotCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *LotCreate) defaults() {
+func (_c *LotCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if lot.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized lot.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := lot.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if lot.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized lot.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := lot.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -134,6 +155,9 @@ func (_c *LotCreate) check() error {
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Lot.update_time"`)}
 	}
+	if _, ok := _c.mutation.HouseholdID(); !ok {
+		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "Lot.household_id"`)}
+	}
 	if _, ok := _c.mutation.Datetime(); !ok {
 		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Lot.datetime"`)}
 	}
@@ -142,6 +166,9 @@ func (_c *LotCreate) check() error {
 	}
 	if _, ok := _c.mutation.Price(); !ok {
 		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "Lot.price"`)}
+	}
+	if len(_c.mutation.HouseholdIDs()) == 0 {
+		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Lot.household"`)}
 	}
 	if len(_c.mutation.InvestmentIDs()) == 0 {
 		return &ValidationError{Name: "investment", err: errors.New(`ent: missing required edge "Lot.investment"`)}
@@ -192,6 +219,23 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Price(); ok {
 		_spec.SetField(lot.FieldPrice, field.TypeFloat64, value)
 		_node.Price = value
+	}
+	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   lot.HouseholdTable,
+			Columns: []string{lot.HouseholdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.HouseholdID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.InvestmentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -335,6 +379,9 @@ func (u *LotUpsertOne) UpdateNewValues() *LotUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.CreateTime(); exists {
 			s.SetIgnore(lot.FieldCreateTime)
+		}
+		if _, exists := u.create.mutation.HouseholdID(); exists {
+			s.SetIgnore(lot.FieldHouseholdID)
 		}
 	}))
 	return u
@@ -615,6 +662,9 @@ func (u *LotUpsertBulk) UpdateNewValues() *LotUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.CreateTime(); exists {
 				s.SetIgnore(lot.FieldCreateTime)
+			}
+			if _, exists := b.mutation.HouseholdID(); exists {
+				s.SetIgnore(lot.FieldHouseholdID)
 			}
 		}
 	}))

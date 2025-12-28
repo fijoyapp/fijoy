@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
@@ -25,6 +26,8 @@ type TransactionEntry struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// HouseholdID holds the value of the "household_id" field.
+	HouseholdID int `json:"household_id,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -38,6 +41,8 @@ type TransactionEntry struct {
 
 // TransactionEntryEdges holds the relations/edges for other nodes in the graph.
 type TransactionEntryEdges struct {
+	// Household holds the value of the household edge.
+	Household *Household `json:"household,omitempty"`
 	// Account holds the value of the account edge.
 	Account *Account `json:"account,omitempty"`
 	// Currency holds the value of the currency edge.
@@ -46,9 +51,20 @@ type TransactionEntryEdges struct {
 	Transaction *Transaction `json:"transaction,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
+}
+
+// HouseholdOrErr returns the Household value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransactionEntryEdges) HouseholdOrErr() (*Household, error) {
+	if e.Household != nil {
+		return e.Household, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: household.Label}
+	}
+	return nil, &NotLoadedError{edge: "household"}
 }
 
 // AccountOrErr returns the Account value or an error if the edge
@@ -56,7 +72,7 @@ type TransactionEntryEdges struct {
 func (e TransactionEntryEdges) AccountOrErr() (*Account, error) {
 	if e.Account != nil {
 		return e.Account, nil
-	} else if e.loadedTypes[0] {
+	} else if e.loadedTypes[1] {
 		return nil, &NotFoundError{label: account.Label}
 	}
 	return nil, &NotLoadedError{edge: "account"}
@@ -67,7 +83,7 @@ func (e TransactionEntryEdges) AccountOrErr() (*Account, error) {
 func (e TransactionEntryEdges) CurrencyOrErr() (*Currency, error) {
 	if e.Currency != nil {
 		return e.Currency, nil
-	} else if e.loadedTypes[1] {
+	} else if e.loadedTypes[2] {
 		return nil, &NotFoundError{label: currency.Label}
 	}
 	return nil, &NotLoadedError{edge: "currency"}
@@ -78,7 +94,7 @@ func (e TransactionEntryEdges) CurrencyOrErr() (*Currency, error) {
 func (e TransactionEntryEdges) TransactionOrErr() (*Transaction, error) {
 	if e.Transaction != nil {
 		return e.Transaction, nil
-	} else if e.loadedTypes[2] {
+	} else if e.loadedTypes[3] {
 		return nil, &NotFoundError{label: transaction.Label}
 	}
 	return nil, &NotLoadedError{edge: "transaction"}
@@ -91,7 +107,7 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case transactionentry.FieldAmount:
 			values[i] = new(decimal.Decimal)
-		case transactionentry.FieldID:
+		case transactionentry.FieldID, transactionentry.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
 		case transactionentry.FieldCreateTime, transactionentry.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -134,6 +150,12 @@ func (_m *TransactionEntry) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
 			}
+		case transactionentry.FieldHouseholdID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field household_id", values[i])
+			} else if value.Valid {
+				_m.HouseholdID = int(value.Int64)
+			}
 		case transactionentry.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
@@ -172,6 +194,11 @@ func (_m *TransactionEntry) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *TransactionEntry) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryHousehold queries the "household" edge of the TransactionEntry entity.
+func (_m *TransactionEntry) QueryHousehold() *HouseholdQuery {
+	return NewTransactionEntryClient(_m.config).QueryHousehold(_m)
 }
 
 // QueryAccount queries the "account" edge of the TransactionEntry entity.
@@ -217,6 +244,9 @@ func (_m *TransactionEntry) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("household_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.HouseholdID))
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Amount))

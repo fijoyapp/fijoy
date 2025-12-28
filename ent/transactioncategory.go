@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/transactioncategory"
 )
 
@@ -21,6 +22,8 @@ type TransactionCategory struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// HouseholdID holds the value of the "household_id" field.
+	HouseholdID int `json:"household_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
@@ -33,21 +36,34 @@ type TransactionCategory struct {
 
 // TransactionCategoryEdges holds the relations/edges for other nodes in the graph.
 type TransactionCategoryEdges struct {
+	// Household holds the value of the household edge.
+	Household *Household `json:"household,omitempty"`
 	// Transactions holds the value of the transactions edge.
 	Transactions []*Transaction `json:"transactions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
 
 	namedTransactions map[string][]*Transaction
+}
+
+// HouseholdOrErr returns the Household value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransactionCategoryEdges) HouseholdOrErr() (*Household, error) {
+	if e.Household != nil {
+		return e.Household, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: household.Label}
+	}
+	return nil, &NotLoadedError{edge: "household"}
 }
 
 // TransactionsOrErr returns the Transactions value or an error if the edge
 // was not loaded in eager-loading.
 func (e TransactionCategoryEdges) TransactionsOrErr() ([]*Transaction, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		return e.Transactions, nil
 	}
 	return nil, &NotLoadedError{edge: "transactions"}
@@ -58,7 +74,7 @@ func (*TransactionCategory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transactioncategory.FieldID:
+		case transactioncategory.FieldID, transactioncategory.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
 		case transactioncategory.FieldName, transactioncategory.FieldType:
 			values[i] = new(sql.NullString)
@@ -97,6 +113,12 @@ func (_m *TransactionCategory) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
 			}
+		case transactioncategory.FieldHouseholdID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field household_id", values[i])
+			} else if value.Valid {
+				_m.HouseholdID = int(value.Int64)
+			}
 		case transactioncategory.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -120,6 +142,11 @@ func (_m *TransactionCategory) assignValues(columns []string, values []any) erro
 // This includes values selected through modifiers, order, etc.
 func (_m *TransactionCategory) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryHousehold queries the "household" edge of the TransactionCategory entity.
+func (_m *TransactionCategory) QueryHousehold() *HouseholdQuery {
+	return NewTransactionCategoryClient(_m.config).QueryHousehold(_m)
 }
 
 // QueryTransactions queries the "transactions" edge of the TransactionCategory entity.
@@ -155,6 +182,9 @@ func (_m *TransactionCategory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("household_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.HouseholdID))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)

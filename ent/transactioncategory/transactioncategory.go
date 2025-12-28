@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -21,14 +22,25 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldHouseholdID holds the string denoting the household_id field in the database.
+	FieldHouseholdID = "household_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// EdgeHousehold holds the string denoting the household edge name in mutations.
+	EdgeHousehold = "household"
 	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
 	EdgeTransactions = "transactions"
 	// Table holds the table name of the transactioncategory in the database.
 	Table = "transaction_categories"
+	// HouseholdTable is the table that holds the household relation/edge.
+	HouseholdTable = "transaction_categories"
+	// HouseholdInverseTable is the table name for the Household entity.
+	// It exists in this package in order to avoid circular dependency with the "household" package.
+	HouseholdInverseTable = "households"
+	// HouseholdColumn is the table column denoting the household relation/edge.
+	HouseholdColumn = "household_id"
 	// TransactionsTable is the table that holds the transactions relation/edge.
 	TransactionsTable = "transactions"
 	// TransactionsInverseTable is the table name for the Transaction entity.
@@ -43,6 +55,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldHouseholdID,
 	FieldName,
 	FieldType,
 }
@@ -57,7 +70,14 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "fijoy.app/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the "create_time" field.
 	DefaultCreateTime func() time.Time
 	// DefaultUpdateTime holds the default value on creation for the "update_time" field.
@@ -110,6 +130,11 @@ func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
 }
 
+// ByHouseholdID orders the results by the household_id field.
+func ByHouseholdID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHouseholdID, opts...).ToFunc()
+}
+
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
@@ -118,6 +143,13 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByHouseholdField orders the results by household field.
+func ByHouseholdField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newHouseholdStep(), sql.OrderByField(field, opts...))
+	}
 }
 
 // ByTransactionsCount orders the results by transactions count.
@@ -132,6 +164,13 @@ func ByTransactions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newTransactionsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
+}
+func newHouseholdStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(HouseholdInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, HouseholdTable, HouseholdColumn),
+	)
 }
 func newTransactionsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

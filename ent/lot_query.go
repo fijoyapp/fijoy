@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"fijoy.app/ent/predicate"
@@ -23,6 +25,7 @@ type LotQuery struct {
 	order          []lot.OrderOption
 	inters         []Interceptor
 	predicates     []predicate.Lot
+	withHousehold  *HouseholdQuery
 	withInvestment *InvestmentQuery
 	withFKs        bool
 	loadTotal      []func(context.Context, []*Lot) error
@@ -61,6 +64,28 @@ func (_q *LotQuery) Unique(unique bool) *LotQuery {
 func (_q *LotQuery) Order(o ...lot.OrderOption) *LotQuery {
 	_q.order = append(_q.order, o...)
 	return _q
+}
+
+// QueryHousehold chains the current query on the "household" edge.
+func (_q *LotQuery) QueryHousehold() *HouseholdQuery {
+	query := (&HouseholdClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lot.Table, lot.FieldID, selector),
+			sqlgraph.To(household.Table, household.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lot.HouseholdTable, lot.HouseholdColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QueryInvestment chains the current query on the "investment" edge.
@@ -277,12 +302,24 @@ func (_q *LotQuery) Clone() *LotQuery {
 		order:          append([]lot.OrderOption{}, _q.order...),
 		inters:         append([]Interceptor{}, _q.inters...),
 		predicates:     append([]predicate.Lot{}, _q.predicates...),
+		withHousehold:  _q.withHousehold.Clone(),
 		withInvestment: _q.withInvestment.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
 		modifiers: append([]func(*sql.Selector){}, _q.modifiers...),
 	}
+}
+
+// WithHousehold tells the query-builder to eager-load the nodes that are connected to
+// the "household" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *LotQuery) WithHousehold(opts ...func(*HouseholdQuery)) *LotQuery {
+	query := (&HouseholdClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withHousehold = query
+	return _q
 }
 
 // WithInvestment tells the query-builder to eager-load the nodes that are connected to
@@ -367,6 +404,12 @@ func (_q *LotQuery) prepareQuery(ctx context.Context) error {
 		}
 		_q.sql = prev
 	}
+	if lot.Policy == nil {
+		return errors.New("ent: uninitialized lot.Policy (forgotten import ent/runtime?)")
+	}
+	if err := lot.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -375,7 +418,8 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 		nodes       = []*Lot{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
+			_q.withHousehold != nil,
 			_q.withInvestment != nil,
 		}
 	)
@@ -406,6 +450,12 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := _q.withHousehold; query != nil {
+		if err := _q.loadHousehold(ctx, query, nodes, nil,
+			func(n *Lot, e *Household) { n.Edges.Household = e }); err != nil {
+			return nil, err
+		}
+	}
 	if query := _q.withInvestment; query != nil {
 		if err := _q.loadInvestment(ctx, query, nodes, nil,
 			func(n *Lot, e *Investment) { n.Edges.Investment = e }); err != nil {
@@ -420,6 +470,35 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 	return nodes, nil
 }
 
+func (_q *LotQuery) loadHousehold(ctx context.Context, query *HouseholdQuery, nodes []*Lot, init func(*Lot), assign func(*Lot, *Household)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Lot)
+	for i := range nodes {
+		fk := nodes[i].HouseholdID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(household.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "household_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (_q *LotQuery) loadInvestment(ctx context.Context, query *InvestmentQuery, nodes []*Lot, init func(*Lot), assign func(*Lot, *Investment)) error {
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Lot)
@@ -480,6 +559,9 @@ func (_q *LotQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != lot.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withHousehold != nil {
+			_spec.Node.AddColumnOnce(lot.FieldHouseholdID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

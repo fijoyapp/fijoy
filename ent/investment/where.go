@@ -66,6 +66,11 @@ func UpdateTime(v time.Time) predicate.Investment {
 	return predicate.Investment(sql.FieldEQ(FieldUpdateTime, v))
 }
 
+// HouseholdID applies equality check predicate on the "household_id" field. It's identical to HouseholdIDEQ.
+func HouseholdID(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldHouseholdID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Investment {
 	return predicate.Investment(sql.FieldEQ(FieldName, v))
@@ -159,6 +164,26 @@ func UpdateTimeLT(v time.Time) predicate.Investment {
 // UpdateTimeLTE applies the LTE predicate on the "update_time" field.
 func UpdateTimeLTE(v time.Time) predicate.Investment {
 	return predicate.Investment(sql.FieldLTE(FieldUpdateTime, v))
+}
+
+// HouseholdIDEQ applies the EQ predicate on the "household_id" field.
+func HouseholdIDEQ(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldHouseholdID, v))
+}
+
+// HouseholdIDNEQ applies the NEQ predicate on the "household_id" field.
+func HouseholdIDNEQ(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldNEQ(FieldHouseholdID, v))
+}
+
+// HouseholdIDIn applies the In predicate on the "household_id" field.
+func HouseholdIDIn(vs ...int) predicate.Investment {
+	return predicate.Investment(sql.FieldIn(FieldHouseholdID, vs...))
+}
+
+// HouseholdIDNotIn applies the NotIn predicate on the "household_id" field.
+func HouseholdIDNotIn(vs ...int) predicate.Investment {
+	return predicate.Investment(sql.FieldNotIn(FieldHouseholdID, vs...))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.

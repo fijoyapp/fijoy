@@ -59,6 +59,12 @@ type AccountWhereInput struct {
 	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
 	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
 
+	// "household_id" field predicates.
+	HouseholdID      *int  `json:"householdID,omitempty"`
+	HouseholdIDNEQ   *int  `json:"householdIDNEQ,omitempty"`
+	HouseholdIDIn    []int `json:"householdIDIn,omitempty"`
+	HouseholdIDNotIn []int `json:"householdIDNotIn,omitempty"`
+
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
 	NameNEQ          *string  `json:"nameNEQ,omitempty"`
@@ -253,6 +259,18 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	}
 	if i.UpdateTimeLTE != nil {
 		predicates = append(predicates, account.UpdateTimeLTE(*i.UpdateTimeLTE))
+	}
+	if i.HouseholdID != nil {
+		predicates = append(predicates, account.HouseholdIDEQ(*i.HouseholdID))
+	}
+	if i.HouseholdIDNEQ != nil {
+		predicates = append(predicates, account.HouseholdIDNEQ(*i.HouseholdIDNEQ))
+	}
+	if len(i.HouseholdIDIn) > 0 {
+		predicates = append(predicates, account.HouseholdIDIn(i.HouseholdIDIn...))
+	}
+	if len(i.HouseholdIDNotIn) > 0 {
+		predicates = append(predicates, account.HouseholdIDNotIn(i.HouseholdIDNotIn...))
 	}
 	if i.Name != nil {
 		predicates = append(predicates, account.NameEQ(*i.Name))
@@ -783,6 +801,18 @@ type HouseholdWhereInput struct {
 	HasInvestments     *bool                   `json:"hasInvestments,omitempty"`
 	HasInvestmentsWith []*InvestmentWhereInput `json:"hasInvestmentsWith,omitempty"`
 
+	// "lots" edge predicates.
+	HasLots     *bool            `json:"hasLots,omitempty"`
+	HasLotsWith []*LotWhereInput `json:"hasLotsWith,omitempty"`
+
+	// "transaction_categories" edge predicates.
+	HasTransactionCategories     *bool                            `json:"hasTransactionCategories,omitempty"`
+	HasTransactionCategoriesWith []*TransactionCategoryWhereInput `json:"hasTransactionCategoriesWith,omitempty"`
+
+	// "transaction_entries" edge predicates.
+	HasTransactionEntries     *bool                         `json:"hasTransactionEntries,omitempty"`
+	HasTransactionEntriesWith []*TransactionEntryWhereInput `json:"hasTransactionEntriesWith,omitempty"`
+
 	// "user_households" edge predicates.
 	HasUserHouseholds     *bool                      `json:"hasUserHouseholds,omitempty"`
 	HasUserHouseholdsWith []*UserHouseholdWhereInput `json:"hasUserHouseholdsWith,omitempty"`
@@ -1100,6 +1130,60 @@ func (i *HouseholdWhereInput) P() (predicate.Household, error) {
 		}
 		predicates = append(predicates, household.HasInvestmentsWith(with...))
 	}
+	if i.HasLots != nil {
+		p := household.HasLots()
+		if !*i.HasLots {
+			p = household.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasLotsWith) > 0 {
+		with := make([]predicate.Lot, 0, len(i.HasLotsWith))
+		for _, w := range i.HasLotsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasLotsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, household.HasLotsWith(with...))
+	}
+	if i.HasTransactionCategories != nil {
+		p := household.HasTransactionCategories()
+		if !*i.HasTransactionCategories {
+			p = household.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasTransactionCategoriesWith) > 0 {
+		with := make([]predicate.TransactionCategory, 0, len(i.HasTransactionCategoriesWith))
+		for _, w := range i.HasTransactionCategoriesWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasTransactionCategoriesWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, household.HasTransactionCategoriesWith(with...))
+	}
+	if i.HasTransactionEntries != nil {
+		p := household.HasTransactionEntries()
+		if !*i.HasTransactionEntries {
+			p = household.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasTransactionEntriesWith) > 0 {
+		with := make([]predicate.TransactionEntry, 0, len(i.HasTransactionEntriesWith))
+		for _, w := range i.HasTransactionEntriesWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasTransactionEntriesWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, household.HasTransactionEntriesWith(with...))
+	}
 	if i.HasUserHouseholds != nil {
 		p := household.HasUserHouseholds()
 		if !*i.HasUserHouseholds {
@@ -1164,6 +1248,12 @@ type InvestmentWhereInput struct {
 	UpdateTimeGTE   *time.Time  `json:"updateTimeGTE,omitempty"`
 	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
 	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
+
+	// "household_id" field predicates.
+	HouseholdID      *int  `json:"householdID,omitempty"`
+	HouseholdIDNEQ   *int  `json:"householdIDNEQ,omitempty"`
+	HouseholdIDIn    []int `json:"householdIDIn,omitempty"`
+	HouseholdIDNotIn []int `json:"householdIDNotIn,omitempty"`
 
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
@@ -1370,6 +1460,18 @@ func (i *InvestmentWhereInput) P() (predicate.Investment, error) {
 	}
 	if i.UpdateTimeLTE != nil {
 		predicates = append(predicates, investment.UpdateTimeLTE(*i.UpdateTimeLTE))
+	}
+	if i.HouseholdID != nil {
+		predicates = append(predicates, investment.HouseholdIDEQ(*i.HouseholdID))
+	}
+	if i.HouseholdIDNEQ != nil {
+		predicates = append(predicates, investment.HouseholdIDNEQ(*i.HouseholdIDNEQ))
+	}
+	if len(i.HouseholdIDIn) > 0 {
+		predicates = append(predicates, investment.HouseholdIDIn(i.HouseholdIDIn...))
+	}
+	if len(i.HouseholdIDNotIn) > 0 {
+		predicates = append(predicates, investment.HouseholdIDNotIn(i.HouseholdIDNotIn...))
 	}
 	if i.Name != nil {
 		predicates = append(predicates, investment.NameEQ(*i.Name))
@@ -1605,6 +1707,12 @@ type LotWhereInput struct {
 	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
 	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
 
+	// "household_id" field predicates.
+	HouseholdID      *int  `json:"householdID,omitempty"`
+	HouseholdIDNEQ   *int  `json:"householdIDNEQ,omitempty"`
+	HouseholdIDIn    []int `json:"householdIDIn,omitempty"`
+	HouseholdIDNotIn []int `json:"householdIDNotIn,omitempty"`
+
 	// "datetime" field predicates.
 	Datetime      *time.Time  `json:"datetime,omitempty"`
 	DatetimeNEQ   *time.Time  `json:"datetimeNEQ,omitempty"`
@@ -1634,6 +1742,10 @@ type LotWhereInput struct {
 	PriceGTE   *decimal.Decimal  `json:"priceGTE,omitempty"`
 	PriceLT    *decimal.Decimal  `json:"priceLT,omitempty"`
 	PriceLTE   *decimal.Decimal  `json:"priceLTE,omitempty"`
+
+	// "household" edge predicates.
+	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
+	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
 
 	// "investment" edge predicates.
 	HasInvestment     *bool                   `json:"hasInvestment,omitempty"`
@@ -1783,6 +1895,18 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 	if i.UpdateTimeLTE != nil {
 		predicates = append(predicates, lot.UpdateTimeLTE(*i.UpdateTimeLTE))
 	}
+	if i.HouseholdID != nil {
+		predicates = append(predicates, lot.HouseholdIDEQ(*i.HouseholdID))
+	}
+	if i.HouseholdIDNEQ != nil {
+		predicates = append(predicates, lot.HouseholdIDNEQ(*i.HouseholdIDNEQ))
+	}
+	if len(i.HouseholdIDIn) > 0 {
+		predicates = append(predicates, lot.HouseholdIDIn(i.HouseholdIDIn...))
+	}
+	if len(i.HouseholdIDNotIn) > 0 {
+		predicates = append(predicates, lot.HouseholdIDNotIn(i.HouseholdIDNotIn...))
+	}
 	if i.Datetime != nil {
 		predicates = append(predicates, lot.DatetimeEQ(*i.Datetime))
 	}
@@ -1856,6 +1980,24 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 		predicates = append(predicates, lot.PriceLTE(*i.PriceLTE))
 	}
 
+	if i.HasHousehold != nil {
+		p := lot.HasHousehold()
+		if !*i.HasHousehold {
+			p = lot.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasHouseholdWith) > 0 {
+		with := make([]predicate.Household, 0, len(i.HasHouseholdWith))
+		for _, w := range i.HasHouseholdWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasHouseholdWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, lot.HasHouseholdWith(with...))
+	}
 	if i.HasInvestment != nil {
 		p := lot.HasInvestment()
 		if !*i.HasInvestment {
@@ -1920,6 +2062,12 @@ type TransactionWhereInput struct {
 	UpdateTimeGTE   *time.Time  `json:"updateTimeGTE,omitempty"`
 	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
 	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
+
+	// "household_id" field predicates.
+	HouseholdID      *int  `json:"householdID,omitempty"`
+	HouseholdIDNEQ   *int  `json:"householdIDNEQ,omitempty"`
+	HouseholdIDIn    []int `json:"householdIDIn,omitempty"`
+	HouseholdIDNotIn []int `json:"householdIDNotIn,omitempty"`
 
 	// "description" field predicates.
 	Description             *string  `json:"description,omitempty"`
@@ -2107,6 +2255,18 @@ func (i *TransactionWhereInput) P() (predicate.Transaction, error) {
 	}
 	if i.UpdateTimeLTE != nil {
 		predicates = append(predicates, transaction.UpdateTimeLTE(*i.UpdateTimeLTE))
+	}
+	if i.HouseholdID != nil {
+		predicates = append(predicates, transaction.HouseholdIDEQ(*i.HouseholdID))
+	}
+	if i.HouseholdIDNEQ != nil {
+		predicates = append(predicates, transaction.HouseholdIDNEQ(*i.HouseholdIDNEQ))
+	}
+	if len(i.HouseholdIDIn) > 0 {
+		predicates = append(predicates, transaction.HouseholdIDIn(i.HouseholdIDIn...))
+	}
+	if len(i.HouseholdIDNotIn) > 0 {
+		predicates = append(predicates, transaction.HouseholdIDNotIn(i.HouseholdIDNotIn...))
 	}
 	if i.Description != nil {
 		predicates = append(predicates, transaction.DescriptionEQ(*i.Description))
@@ -2297,6 +2457,12 @@ type TransactionCategoryWhereInput struct {
 	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
 	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
 
+	// "household_id" field predicates.
+	HouseholdID      *int  `json:"householdID,omitempty"`
+	HouseholdIDNEQ   *int  `json:"householdIDNEQ,omitempty"`
+	HouseholdIDIn    []int `json:"householdIDIn,omitempty"`
+	HouseholdIDNotIn []int `json:"householdIDNotIn,omitempty"`
+
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
 	NameNEQ          *string  `json:"nameNEQ,omitempty"`
@@ -2317,6 +2483,10 @@ type TransactionCategoryWhereInput struct {
 	TypeNEQ   *transactioncategory.Type  `json:"typeNEQ,omitempty"`
 	TypeIn    []transactioncategory.Type `json:"typeIn,omitempty"`
 	TypeNotIn []transactioncategory.Type `json:"typeNotIn,omitempty"`
+
+	// "household" edge predicates.
+	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
+	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
 
 	// "transactions" edge predicates.
 	HasTransactions     *bool                    `json:"hasTransactions,omitempty"`
@@ -2466,6 +2636,18 @@ func (i *TransactionCategoryWhereInput) P() (predicate.TransactionCategory, erro
 	if i.UpdateTimeLTE != nil {
 		predicates = append(predicates, transactioncategory.UpdateTimeLTE(*i.UpdateTimeLTE))
 	}
+	if i.HouseholdID != nil {
+		predicates = append(predicates, transactioncategory.HouseholdIDEQ(*i.HouseholdID))
+	}
+	if i.HouseholdIDNEQ != nil {
+		predicates = append(predicates, transactioncategory.HouseholdIDNEQ(*i.HouseholdIDNEQ))
+	}
+	if len(i.HouseholdIDIn) > 0 {
+		predicates = append(predicates, transactioncategory.HouseholdIDIn(i.HouseholdIDIn...))
+	}
+	if len(i.HouseholdIDNotIn) > 0 {
+		predicates = append(predicates, transactioncategory.HouseholdIDNotIn(i.HouseholdIDNotIn...))
+	}
 	if i.Name != nil {
 		predicates = append(predicates, transactioncategory.NameEQ(*i.Name))
 	}
@@ -2518,6 +2700,24 @@ func (i *TransactionCategoryWhereInput) P() (predicate.TransactionCategory, erro
 		predicates = append(predicates, transactioncategory.TypeNotIn(i.TypeNotIn...))
 	}
 
+	if i.HasHousehold != nil {
+		p := transactioncategory.HasHousehold()
+		if !*i.HasHousehold {
+			p = transactioncategory.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasHouseholdWith) > 0 {
+		with := make([]predicate.Household, 0, len(i.HasHouseholdWith))
+		for _, w := range i.HasHouseholdWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasHouseholdWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, transactioncategory.HasHouseholdWith(with...))
+	}
 	if i.HasTransactions != nil {
 		p := transactioncategory.HasTransactions()
 		if !*i.HasTransactions {
@@ -2583,6 +2783,12 @@ type TransactionEntryWhereInput struct {
 	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
 	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
 
+	// "household_id" field predicates.
+	HouseholdID      *int  `json:"householdID,omitempty"`
+	HouseholdIDNEQ   *int  `json:"householdIDNEQ,omitempty"`
+	HouseholdIDIn    []int `json:"householdIDIn,omitempty"`
+	HouseholdIDNotIn []int `json:"householdIDNotIn,omitempty"`
+
 	// "amount" field predicates.
 	Amount      *decimal.Decimal  `json:"amount,omitempty"`
 	AmountNEQ   *decimal.Decimal  `json:"amountNEQ,omitempty"`
@@ -2592,6 +2798,10 @@ type TransactionEntryWhereInput struct {
 	AmountGTE   *decimal.Decimal  `json:"amountGTE,omitempty"`
 	AmountLT    *decimal.Decimal  `json:"amountLT,omitempty"`
 	AmountLTE   *decimal.Decimal  `json:"amountLTE,omitempty"`
+
+	// "household" edge predicates.
+	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
+	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
 
 	// "account" edge predicates.
 	HasAccount     *bool                `json:"hasAccount,omitempty"`
@@ -2749,6 +2959,18 @@ func (i *TransactionEntryWhereInput) P() (predicate.TransactionEntry, error) {
 	if i.UpdateTimeLTE != nil {
 		predicates = append(predicates, transactionentry.UpdateTimeLTE(*i.UpdateTimeLTE))
 	}
+	if i.HouseholdID != nil {
+		predicates = append(predicates, transactionentry.HouseholdIDEQ(*i.HouseholdID))
+	}
+	if i.HouseholdIDNEQ != nil {
+		predicates = append(predicates, transactionentry.HouseholdIDNEQ(*i.HouseholdIDNEQ))
+	}
+	if len(i.HouseholdIDIn) > 0 {
+		predicates = append(predicates, transactionentry.HouseholdIDIn(i.HouseholdIDIn...))
+	}
+	if len(i.HouseholdIDNotIn) > 0 {
+		predicates = append(predicates, transactionentry.HouseholdIDNotIn(i.HouseholdIDNotIn...))
+	}
 	if i.Amount != nil {
 		predicates = append(predicates, transactionentry.AmountEQ(*i.Amount))
 	}
@@ -2774,6 +2996,24 @@ func (i *TransactionEntryWhereInput) P() (predicate.TransactionEntry, error) {
 		predicates = append(predicates, transactionentry.AmountLTE(*i.AmountLTE))
 	}
 
+	if i.HasHousehold != nil {
+		p := transactionentry.HasHousehold()
+		if !*i.HasHousehold {
+			p = transactionentry.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasHouseholdWith) > 0 {
+		with := make([]predicate.Household, 0, len(i.HasHouseholdWith))
+		for _, w := range i.HasHouseholdWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasHouseholdWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, transactionentry.HasHouseholdWith(with...))
+	}
 	if i.HasAccount != nil {
 		p := transactionentry.HasAccount()
 		if !*i.HasAccount {

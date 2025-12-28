@@ -118,7 +118,9 @@ func (_u *TransactionEntryUpdate) ClearTransaction() *TransactionEntryUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *TransactionEntryUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -145,15 +147,22 @@ func (_u *TransactionEntryUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *TransactionEntryUpdate) defaults() {
+func (_u *TransactionEntryUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if transactionentry.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactionentry.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := transactionentry.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TransactionEntryUpdate) check() error {
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.household"`)
+	}
 	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.account"`)
 	}
@@ -400,7 +409,9 @@ func (_u *TransactionEntryUpdateOne) Select(field string, fields ...string) *Tra
 
 // Save executes the query and returns the updated TransactionEntry entity.
 func (_u *TransactionEntryUpdateOne) Save(ctx context.Context) (*TransactionEntry, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -427,15 +438,22 @@ func (_u *TransactionEntryUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *TransactionEntryUpdateOne) defaults() {
+func (_u *TransactionEntryUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if transactionentry.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactionentry.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := transactionentry.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TransactionEntryUpdateOne) check() error {
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionEntry.household"`)
+	}
 	if _u.mutation.AccountCleared() && len(_u.mutation.AccountIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.account"`)
 	}

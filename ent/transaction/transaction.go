@@ -5,6 +5,7 @@ package transaction
 import (
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -18,6 +19,8 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldHouseholdID holds the string denoting the household_id field in the database.
+	FieldHouseholdID = "household_id"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldDatetime holds the string denoting the datetime field in the database.
@@ -45,7 +48,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "household" package.
 	HouseholdInverseTable = "households"
 	// HouseholdColumn is the table column denoting the household relation/edge.
-	HouseholdColumn = "household_transactions"
+	HouseholdColumn = "household_id"
 	// CategoryTable is the table that holds the category relation/edge.
 	CategoryTable = "transactions"
 	// CategoryInverseTable is the table name for the TransactionCategory entity.
@@ -67,6 +70,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldHouseholdID,
 	FieldDescription,
 	FieldDatetime,
 }
@@ -74,7 +78,6 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "transactions"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"household_transactions",
 	"transaction_category_transactions",
 	"user_transactions",
 }
@@ -94,7 +97,14 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "fijoy.app/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the "create_time" field.
 	DefaultCreateTime func() time.Time
 	// DefaultUpdateTime holds the default value on creation for the "update_time" field.
@@ -119,6 +129,11 @@ func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdateTime orders the results by the update_time field.
 func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+}
+
+// ByHouseholdID orders the results by the household_id field.
+func ByHouseholdID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHouseholdID, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.

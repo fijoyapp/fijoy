@@ -18,7 +18,7 @@ var (
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "currency_accounts", Type: field.TypeInt},
-		{Name: "household_accounts", Type: field.TypeInt},
+		{Name: "household_id", Type: field.TypeInt},
 		{Name: "user_accounts", Type: field.TypeInt},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
@@ -92,7 +92,7 @@ var (
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "account_investments", Type: field.TypeInt},
 		{Name: "currency_investments", Type: field.TypeInt},
-		{Name: "household_investments", Type: field.TypeInt},
+		{Name: "household_id", Type: field.TypeInt},
 	}
 	// InvestmentsTable holds the schema information for the "investments" table.
 	InvestmentsTable = &schema.Table{
@@ -128,6 +128,7 @@ var (
 		{Name: "datetime", Type: field.TypeTime},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "price", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "household_id", Type: field.TypeInt},
 		{Name: "investment_lots", Type: field.TypeInt},
 	}
 	// LotsTable holds the schema information for the "lots" table.
@@ -137,8 +138,14 @@ var (
 		PrimaryKey: []*schema.Column{LotsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "lots_investments_lots",
+				Symbol:     "lots_households_lots",
 				Columns:    []*schema.Column{LotsColumns[6]},
+				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lots_investments_lots",
+				Columns:    []*schema.Column{LotsColumns[7]},
 				RefColumns: []*schema.Column{InvestmentsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -151,7 +158,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "datetime", Type: field.TypeTime},
-		{Name: "household_transactions", Type: field.TypeInt},
+		{Name: "household_id", Type: field.TypeInt},
 		{Name: "transaction_category_transactions", Type: field.TypeInt},
 		{Name: "user_transactions", Type: field.TypeInt},
 	}
@@ -195,12 +202,21 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer"}},
+		{Name: "household_id", Type: field.TypeInt},
 	}
 	// TransactionCategoriesTable holds the schema information for the "transaction_categories" table.
 	TransactionCategoriesTable = &schema.Table{
 		Name:       "transaction_categories",
 		Columns:    TransactionCategoriesColumns,
 		PrimaryKey: []*schema.Column{TransactionCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "transaction_categories_households_transaction_categories",
+				Columns:    []*schema.Column{TransactionCategoriesColumns[5]},
+				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
 	}
 	// TransactionEntriesColumns holds the columns for the "transaction_entries" table.
 	TransactionEntriesColumns = []*schema.Column{
@@ -210,6 +226,7 @@ var (
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "account_transaction_entries", Type: field.TypeInt},
 		{Name: "currency_transaction_entries", Type: field.TypeInt},
+		{Name: "household_id", Type: field.TypeInt},
 		{Name: "transaction_transaction_entries", Type: field.TypeInt},
 	}
 	// TransactionEntriesTable holds the schema information for the "transaction_entries" table.
@@ -231,8 +248,14 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 			{
-				Symbol:     "transaction_entries_transactions_transaction_entries",
+				Symbol:     "transaction_entries_households_transaction_entries",
 				Columns:    []*schema.Column{TransactionEntriesColumns[6]},
+				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transaction_entries_transactions_transaction_entries",
+				Columns:    []*schema.Column{TransactionEntriesColumns[7]},
 				RefColumns: []*schema.Column{TransactionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -354,7 +377,8 @@ func init() {
 	InvestmentsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(30064771072),
 	}
-	LotsTable.ForeignKeys[0].RefTable = InvestmentsTable
+	LotsTable.ForeignKeys[0].RefTable = HouseholdsTable
+	LotsTable.ForeignKeys[1].RefTable = InvestmentsTable
 	LotsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(34359738368),
 	}
@@ -364,12 +388,14 @@ func init() {
 	TransactionsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(12884901888),
 	}
+	TransactionCategoriesTable.ForeignKeys[0].RefTable = HouseholdsTable
 	TransactionCategoriesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(38654705664),
 	}
 	TransactionEntriesTable.ForeignKeys[0].RefTable = AccountsTable
 	TransactionEntriesTable.ForeignKeys[1].RefTable = CurrenciesTable
-	TransactionEntriesTable.ForeignKeys[2].RefTable = TransactionsTable
+	TransactionEntriesTable.ForeignKeys[2].RefTable = HouseholdsTable
+	TransactionEntriesTable.ForeignKeys[3].RefTable = TransactionsTable
 	TransactionEntriesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(17179869184),
 	}

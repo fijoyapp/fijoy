@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
+	fijoy_mixin "fijoy.app/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
 
@@ -39,6 +40,7 @@ func (Investment) Edges() []ent.Edge {
 			Unique().Immutable().Required(),
 		edge.From("household", Household.Type).
 			Ref("investments").
+			Field("household_id").
 			Unique().
 			Immutable().
 			Required(),
@@ -60,6 +62,7 @@ func (Investment) Annotations() []schema.Annotation {
 func (Investment) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
+		fijoy_mixin.HouseholdMixin{},
 	}
 }
 
@@ -90,6 +93,12 @@ func (Lot) Fields() []ent.Field {
 // Edges of the Lot.
 func (Lot) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.From("household", Household.Type).
+			Ref("lots").
+			Field("household_id").
+			Unique().
+			Immutable().
+			Required(),
 		edge.From("investment", Investment.Type).
 			Ref("lots").
 			Unique().Immutable().Required(),
@@ -106,5 +115,6 @@ func (Lot) Annotations() []schema.Annotation {
 func (Lot) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
+		fijoy_mixin.HouseholdMixin{},
 	}
 }

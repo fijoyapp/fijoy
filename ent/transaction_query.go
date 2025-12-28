@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -477,6 +478,12 @@ func (_q *TransactionQuery) prepareQuery(ctx context.Context) error {
 		}
 		_q.sql = prev
 	}
+	if transaction.Policy == nil {
+		return errors.New("ent: uninitialized transaction.Policy (forgotten import ent/runtime?)")
+	}
+	if err := transaction.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -492,7 +499,7 @@ func (_q *TransactionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 			_q.withTransactionEntries != nil,
 		}
 	)
-	if _q.withUser != nil || _q.withHousehold != nil || _q.withCategory != nil {
+	if _q.withUser != nil || _q.withCategory != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -597,10 +604,7 @@ func (_q *TransactionQuery) loadHousehold(ctx context.Context, query *HouseholdQ
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Transaction)
 	for i := range nodes {
-		if nodes[i].household_transactions == nil {
-			continue
-		}
-		fk := *nodes[i].household_transactions
+		fk := nodes[i].HouseholdID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -617,7 +621,7 @@ func (_q *TransactionQuery) loadHousehold(ctx context.Context, query *HouseholdQ
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "household_transactions" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "household_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -716,6 +720,9 @@ func (_q *TransactionQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != transaction.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withHousehold != nil {
+			_spec.Node.AddColumnOnce(transaction.FieldHouseholdID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

@@ -107,7 +107,9 @@ func (_u *TransactionCategoryUpdate) RemoveTransactions(v ...*Transaction) *Tran
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *TransactionCategoryUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -134,11 +136,15 @@ func (_u *TransactionCategoryUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *TransactionCategoryUpdate) defaults() {
+func (_u *TransactionCategoryUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if transactioncategory.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactioncategory.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := transactioncategory.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -152,6 +158,9 @@ func (_u *TransactionCategoryUpdate) check() error {
 		if err := transactioncategory.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "TransactionCategory.type": %w`, err)}
 		}
+	}
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionCategory.household"`)
 	}
 	return nil
 }
@@ -340,7 +349,9 @@ func (_u *TransactionCategoryUpdateOne) Select(field string, fields ...string) *
 
 // Save executes the query and returns the updated TransactionCategory entity.
 func (_u *TransactionCategoryUpdateOne) Save(ctx context.Context) (*TransactionCategory, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -367,11 +378,15 @@ func (_u *TransactionCategoryUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *TransactionCategoryUpdateOne) defaults() {
+func (_u *TransactionCategoryUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if transactioncategory.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactioncategory.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := transactioncategory.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -385,6 +400,9 @@ func (_u *TransactionCategoryUpdateOne) check() error {
 		if err := transactioncategory.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "TransactionCategory.type": %w`, err)}
 		}
+	}
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "TransactionCategory.household"`)
 	}
 	return nil
 }

@@ -1,4 +1,4 @@
-h1:QsviL2I0xqdkLz0c4vfRSW9zQ0dbEtuq4JQLP6IzaDg=
+h1:nktqm/qgMUqWk+NA468cSC4CJyaCkNilcBw7JQtOhy0=
 20251227194320_init.down.sql h1:5baeWD6L/JXznOtbohI31fdS2IFv+wfC3QyoHGa+4Hc=
 20251227194320_init.up.sql h1:kRLvYOa04/U2E9Gg9Xy++Z12WeDg1lgZHkEho4fCZv4=
 20251227201720_investment-amount.down.sql h1:2gb5k26rP3509tNlakXi9qZQNBM+JHSjdA1sO5egQeM=
@@ -15,3 +15,5 @@ h1:QsviL2I0xqdkLz0c4vfRSW9zQ0dbEtuq4JQLP6IzaDg=
 20251228172853_user-key.up.sql h1:shOnukvpYyO++QN7SAVcgFBi/1xd+s7F5V7XOzLfvJ4=
 20251228173033_user-email-unique.down.sql h1:WuJ/l6xRM4KjG+mMLZ14yQDCaI7lFJwgvXM5yXaHrwQ=
 20251228173033_user-email-unique.up.sql h1:vYxt/Z8ozXjqEHi6+dsnINT5+W3jQtI229lfGSW1N4c=
+20251228194126_household-edge.down.sql h1:i2/YPkm/Eqb7P5JKCme2/NTrAyauntqG3DseORpUujk=
+20251228194126_household-edge.up.sql h1:odpug8RgPUdmZdAjpSKHu10c1EkKoOfKU/ECfMt3Ddw=

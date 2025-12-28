@@ -15,8 +15,11 @@ import (
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/transactioncategory"
+	"fijoy.app/ent/transactionentry"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
 )
@@ -140,6 +143,51 @@ func (_u *HouseholdUpdate) AddInvestments(v ...*Investment) *HouseholdUpdate {
 	return _u.AddInvestmentIDs(ids...)
 }
 
+// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
+func (_u *HouseholdUpdate) AddLotIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.AddLotIDs(ids...)
+	return _u
+}
+
+// AddLots adds the "lots" edges to the Lot entity.
+func (_u *HouseholdUpdate) AddLots(v ...*Lot) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLotIDs(ids...)
+}
+
+// AddTransactionCategoryIDs adds the "transaction_categories" edge to the TransactionCategory entity by IDs.
+func (_u *HouseholdUpdate) AddTransactionCategoryIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.AddTransactionCategoryIDs(ids...)
+	return _u
+}
+
+// AddTransactionCategories adds the "transaction_categories" edges to the TransactionCategory entity.
+func (_u *HouseholdUpdate) AddTransactionCategories(v ...*TransactionCategory) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTransactionCategoryIDs(ids...)
+}
+
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
+func (_u *HouseholdUpdate) AddTransactionEntryIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.AddTransactionEntryIDs(ids...)
+	return _u
+}
+
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (_u *HouseholdUpdate) AddTransactionEntries(v ...*TransactionEntry) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTransactionEntryIDs(ids...)
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
 func (_u *HouseholdUpdate) AddUserHouseholdIDs(ids ...int) *HouseholdUpdate {
 	_u.mutation.AddUserHouseholdIDs(ids...)
@@ -248,6 +296,69 @@ func (_u *HouseholdUpdate) RemoveInvestments(v ...*Investment) *HouseholdUpdate 
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveInvestmentIDs(ids...)
+}
+
+// ClearLots clears all "lots" edges to the Lot entity.
+func (_u *HouseholdUpdate) ClearLots() *HouseholdUpdate {
+	_u.mutation.ClearLots()
+	return _u
+}
+
+// RemoveLotIDs removes the "lots" edge to Lot entities by IDs.
+func (_u *HouseholdUpdate) RemoveLotIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.RemoveLotIDs(ids...)
+	return _u
+}
+
+// RemoveLots removes "lots" edges to Lot entities.
+func (_u *HouseholdUpdate) RemoveLots(v ...*Lot) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLotIDs(ids...)
+}
+
+// ClearTransactionCategories clears all "transaction_categories" edges to the TransactionCategory entity.
+func (_u *HouseholdUpdate) ClearTransactionCategories() *HouseholdUpdate {
+	_u.mutation.ClearTransactionCategories()
+	return _u
+}
+
+// RemoveTransactionCategoryIDs removes the "transaction_categories" edge to TransactionCategory entities by IDs.
+func (_u *HouseholdUpdate) RemoveTransactionCategoryIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.RemoveTransactionCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveTransactionCategories removes "transaction_categories" edges to TransactionCategory entities.
+func (_u *HouseholdUpdate) RemoveTransactionCategories(v ...*TransactionCategory) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTransactionCategoryIDs(ids...)
+}
+
+// ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
+func (_u *HouseholdUpdate) ClearTransactionEntries() *HouseholdUpdate {
+	_u.mutation.ClearTransactionEntries()
+	return _u
+}
+
+// RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
+func (_u *HouseholdUpdate) RemoveTransactionEntryIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.RemoveTransactionEntryIDs(ids...)
+	return _u
+}
+
+// RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
+func (_u *HouseholdUpdate) RemoveTransactionEntries(v ...*TransactionEntry) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTransactionEntryIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -573,6 +684,141 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.LotsTable,
+			Columns: []string{household.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLotsIDs(); len(nodes) > 0 && !_u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.LotsTable,
+			Columns: []string{household.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.LotsTable,
+			Columns: []string{household.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TransactionCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionCategoriesTable,
+			Columns: []string{household.TransactionCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTransactionCategoriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionCategoriesTable,
+			Columns: []string{household.TransactionCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TransactionCategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionCategoriesTable,
+			Columns: []string{household.TransactionCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TransactionEntriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionEntriesTable,
+			Columns: []string{household.TransactionEntriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionEntriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionEntriesTable,
+			Columns: []string{household.TransactionEntriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionEntriesTable,
+			Columns: []string{household.TransactionEntriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _u.mutation.UserHouseholdsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -745,6 +991,51 @@ func (_u *HouseholdUpdateOne) AddInvestments(v ...*Investment) *HouseholdUpdateO
 	return _u.AddInvestmentIDs(ids...)
 }
 
+// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
+func (_u *HouseholdUpdateOne) AddLotIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.AddLotIDs(ids...)
+	return _u
+}
+
+// AddLots adds the "lots" edges to the Lot entity.
+func (_u *HouseholdUpdateOne) AddLots(v ...*Lot) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLotIDs(ids...)
+}
+
+// AddTransactionCategoryIDs adds the "transaction_categories" edge to the TransactionCategory entity by IDs.
+func (_u *HouseholdUpdateOne) AddTransactionCategoryIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.AddTransactionCategoryIDs(ids...)
+	return _u
+}
+
+// AddTransactionCategories adds the "transaction_categories" edges to the TransactionCategory entity.
+func (_u *HouseholdUpdateOne) AddTransactionCategories(v ...*TransactionCategory) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTransactionCategoryIDs(ids...)
+}
+
+// AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
+func (_u *HouseholdUpdateOne) AddTransactionEntryIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.AddTransactionEntryIDs(ids...)
+	return _u
+}
+
+// AddTransactionEntries adds the "transaction_entries" edges to the TransactionEntry entity.
+func (_u *HouseholdUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddTransactionEntryIDs(ids...)
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
 func (_u *HouseholdUpdateOne) AddUserHouseholdIDs(ids ...int) *HouseholdUpdateOne {
 	_u.mutation.AddUserHouseholdIDs(ids...)
@@ -853,6 +1144,69 @@ func (_u *HouseholdUpdateOne) RemoveInvestments(v ...*Investment) *HouseholdUpda
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveInvestmentIDs(ids...)
+}
+
+// ClearLots clears all "lots" edges to the Lot entity.
+func (_u *HouseholdUpdateOne) ClearLots() *HouseholdUpdateOne {
+	_u.mutation.ClearLots()
+	return _u
+}
+
+// RemoveLotIDs removes the "lots" edge to Lot entities by IDs.
+func (_u *HouseholdUpdateOne) RemoveLotIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.RemoveLotIDs(ids...)
+	return _u
+}
+
+// RemoveLots removes "lots" edges to Lot entities.
+func (_u *HouseholdUpdateOne) RemoveLots(v ...*Lot) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLotIDs(ids...)
+}
+
+// ClearTransactionCategories clears all "transaction_categories" edges to the TransactionCategory entity.
+func (_u *HouseholdUpdateOne) ClearTransactionCategories() *HouseholdUpdateOne {
+	_u.mutation.ClearTransactionCategories()
+	return _u
+}
+
+// RemoveTransactionCategoryIDs removes the "transaction_categories" edge to TransactionCategory entities by IDs.
+func (_u *HouseholdUpdateOne) RemoveTransactionCategoryIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.RemoveTransactionCategoryIDs(ids...)
+	return _u
+}
+
+// RemoveTransactionCategories removes "transaction_categories" edges to TransactionCategory entities.
+func (_u *HouseholdUpdateOne) RemoveTransactionCategories(v ...*TransactionCategory) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTransactionCategoryIDs(ids...)
+}
+
+// ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
+func (_u *HouseholdUpdateOne) ClearTransactionEntries() *HouseholdUpdateOne {
+	_u.mutation.ClearTransactionEntries()
+	return _u
+}
+
+// RemoveTransactionEntryIDs removes the "transaction_entries" edge to TransactionEntry entities by IDs.
+func (_u *HouseholdUpdateOne) RemoveTransactionEntryIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.RemoveTransactionEntryIDs(ids...)
+	return _u
+}
+
+// RemoveTransactionEntries removes "transaction_entries" edges to TransactionEntry entities.
+func (_u *HouseholdUpdateOne) RemoveTransactionEntries(v ...*TransactionEntry) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveTransactionEntryIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -1201,6 +1555,141 @@ func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.LotsTable,
+			Columns: []string{household.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLotsIDs(); len(nodes) > 0 && !_u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.LotsTable,
+			Columns: []string{household.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.LotsTable,
+			Columns: []string{household.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TransactionCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionCategoriesTable,
+			Columns: []string{household.TransactionCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTransactionCategoriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionCategoriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionCategoriesTable,
+			Columns: []string{household.TransactionCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TransactionCategoriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionCategoriesTable,
+			Columns: []string{household.TransactionCategoriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.TransactionEntriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionEntriesTable,
+			Columns: []string{household.TransactionEntriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedTransactionEntriesIDs(); len(nodes) > 0 && !_u.mutation.TransactionEntriesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionEntriesTable,
+			Columns: []string{household.TransactionEntriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.TransactionEntriesTable,
+			Columns: []string{household.TransactionEntriesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

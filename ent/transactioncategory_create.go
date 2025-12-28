@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactioncategory"
 )
@@ -51,6 +52,12 @@ func (_c *TransactionCategoryCreate) SetNillableUpdateTime(v *time.Time) *Transa
 	return _c
 }
 
+// SetHouseholdID sets the "household_id" field.
+func (_c *TransactionCategoryCreate) SetHouseholdID(v int) *TransactionCategoryCreate {
+	_c.mutation.SetHouseholdID(v)
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *TransactionCategoryCreate) SetName(v string) *TransactionCategoryCreate {
 	_c.mutation.SetName(v)
@@ -61,6 +68,11 @@ func (_c *TransactionCategoryCreate) SetName(v string) *TransactionCategoryCreat
 func (_c *TransactionCategoryCreate) SetType(v transactioncategory.Type) *TransactionCategoryCreate {
 	_c.mutation.SetType(v)
 	return _c
+}
+
+// SetHousehold sets the "household" edge to the Household entity.
+func (_c *TransactionCategoryCreate) SetHousehold(v *Household) *TransactionCategoryCreate {
+	return _c.SetHouseholdID(v.ID)
 }
 
 // AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
@@ -85,7 +97,9 @@ func (_c *TransactionCategoryCreate) Mutation() *TransactionCategoryMutation {
 
 // Save creates the TransactionCategory in the database.
 func (_c *TransactionCategoryCreate) Save(ctx context.Context) (*TransactionCategory, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -112,15 +126,22 @@ func (_c *TransactionCategoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *TransactionCategoryCreate) defaults() {
+func (_c *TransactionCategoryCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if transactioncategory.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactioncategory.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := transactioncategory.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if transactioncategory.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized transactioncategory.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := transactioncategory.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -130,6 +151,9 @@ func (_c *TransactionCategoryCreate) check() error {
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "TransactionCategory.update_time"`)}
+	}
+	if _, ok := _c.mutation.HouseholdID(); !ok {
+		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "TransactionCategory.household_id"`)}
 	}
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "TransactionCategory.name"`)}
@@ -146,6 +170,9 @@ func (_c *TransactionCategoryCreate) check() error {
 		if err := transactioncategory.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "TransactionCategory.type": %w`, err)}
 		}
+	}
+	if len(_c.mutation.HouseholdIDs()) == 0 {
+		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "TransactionCategory.household"`)}
 	}
 	return nil
 }
@@ -189,6 +216,23 @@ func (_c *TransactionCategoryCreate) createSpec() (*TransactionCategory, *sqlgra
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(transactioncategory.FieldType, field.TypeEnum, value)
 		_node.Type = value
+	}
+	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transactioncategory.HouseholdTable,
+			Columns: []string{transactioncategory.HouseholdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.HouseholdID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -307,6 +351,9 @@ func (u *TransactionCategoryUpsertOne) UpdateNewValues() *TransactionCategoryUps
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.CreateTime(); exists {
 			s.SetIgnore(transactioncategory.FieldCreateTime)
+		}
+		if _, exists := u.create.mutation.HouseholdID(); exists {
+			s.SetIgnore(transactioncategory.FieldHouseholdID)
 		}
 	}))
 	return u
@@ -559,6 +606,9 @@ func (u *TransactionCategoryUpsertBulk) UpdateNewValues() *TransactionCategoryUp
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.CreateTime(); exists {
 				s.SetIgnore(transactioncategory.FieldCreateTime)
+			}
+			if _, exists := b.mutation.HouseholdID(); exists {
+				s.SetIgnore(transactioncategory.FieldHouseholdID)
 			}
 		}
 	}))

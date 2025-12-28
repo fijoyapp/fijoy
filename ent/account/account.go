@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shopspring/decimal"
@@ -22,6 +23,8 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldHouseholdID holds the string denoting the household_id field in the database.
+	FieldHouseholdID = "household_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldType holds the string denoting the type field in the database.
@@ -46,7 +49,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "household" package.
 	HouseholdInverseTable = "households"
 	// HouseholdColumn is the table column denoting the household relation/edge.
-	HouseholdColumn = "household_accounts"
+	HouseholdColumn = "household_id"
 	// CurrencyTable is the table that holds the currency relation/edge.
 	CurrencyTable = "accounts"
 	// CurrencyInverseTable is the table name for the Currency entity.
@@ -82,6 +85,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldHouseholdID,
 	FieldName,
 	FieldType,
 	FieldBalance,
@@ -91,7 +95,6 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"currency_accounts",
-	"household_accounts",
 	"user_accounts",
 }
 
@@ -110,7 +113,14 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "fijoy.app/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the "create_time" field.
 	DefaultCreateTime func() time.Time
 	// DefaultUpdateTime holds the default value on creation for the "update_time" field.
@@ -165,6 +175,11 @@ func ByCreateTime(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdateTime orders the results by the update_time field.
 func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
+}
+
+// ByHouseholdID orders the results by the household_id field.
+func ByHouseholdID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldHouseholdID, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.

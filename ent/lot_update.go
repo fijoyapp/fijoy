@@ -99,7 +99,9 @@ func (_u *LotUpdate) Mutation() *LotMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *LotUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -126,15 +128,22 @@ func (_u *LotUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *LotUpdate) defaults() {
+func (_u *LotUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if lot.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized lot.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := lot.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *LotUpdate) check() error {
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Lot.household"`)
+	}
 	if _u.mutation.InvestmentCleared() && len(_u.mutation.InvestmentIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Lot.investment"`)
 	}
@@ -281,7 +290,9 @@ func (_u *LotUpdateOne) Select(field string, fields ...string) *LotUpdateOne {
 
 // Save executes the query and returns the updated Lot entity.
 func (_u *LotUpdateOne) Save(ctx context.Context) (*Lot, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -308,15 +319,22 @@ func (_u *LotUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *LotUpdateOne) defaults() {
+func (_u *LotUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if lot.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized lot.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := lot.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *LotUpdateOne) check() error {
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Lot.household"`)
+	}
 	if _u.mutation.InvestmentCleared() && len(_u.mutation.InvestmentIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Lot.investment"`)
 	}

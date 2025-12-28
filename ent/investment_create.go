@@ -55,6 +55,12 @@ func (_c *InvestmentCreate) SetNillableUpdateTime(v *time.Time) *InvestmentCreat
 	return _c
 }
 
+// SetHouseholdID sets the "household_id" field.
+func (_c *InvestmentCreate) SetHouseholdID(v int) *InvestmentCreate {
+	_c.mutation.SetHouseholdID(v)
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *InvestmentCreate) SetName(v string) *InvestmentCreate {
 	_c.mutation.SetName(v)
@@ -88,12 +94,6 @@ func (_c *InvestmentCreate) SetAccountID(id int) *InvestmentCreate {
 // SetAccount sets the "account" edge to the Account entity.
 func (_c *InvestmentCreate) SetAccount(v *Account) *InvestmentCreate {
 	return _c.SetAccountID(v.ID)
-}
-
-// SetHouseholdID sets the "household" edge to the Household entity by ID.
-func (_c *InvestmentCreate) SetHouseholdID(id int) *InvestmentCreate {
-	_c.mutation.SetHouseholdID(id)
-	return _c
 }
 
 // SetHousehold sets the "household" edge to the Household entity.
@@ -134,7 +134,9 @@ func (_c *InvestmentCreate) Mutation() *InvestmentMutation {
 
 // Save creates the Investment in the database.
 func (_c *InvestmentCreate) Save(ctx context.Context) (*Investment, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -161,15 +163,22 @@ func (_c *InvestmentCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *InvestmentCreate) defaults() {
+func (_c *InvestmentCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if investment.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized investment.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := investment.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if investment.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized investment.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := investment.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -179,6 +188,9 @@ func (_c *InvestmentCreate) check() error {
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Investment.update_time"`)}
+	}
+	if _, ok := _c.mutation.HouseholdID(); !ok {
+		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "Investment.household_id"`)}
 	}
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Investment.name"`)}
@@ -293,7 +305,7 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.household_investments = &nodes[0]
+		_node.HouseholdID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.CurrencyIDs(); len(nodes) > 0 {
@@ -460,6 +472,9 @@ func (u *InvestmentUpsertOne) UpdateNewValues() *InvestmentUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.CreateTime(); exists {
 			s.SetIgnore(investment.FieldCreateTime)
+		}
+		if _, exists := u.create.mutation.HouseholdID(); exists {
+			s.SetIgnore(investment.FieldHouseholdID)
 		}
 	}))
 	return u
@@ -747,6 +762,9 @@ func (u *InvestmentUpsertBulk) UpdateNewValues() *InvestmentUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.CreateTime(); exists {
 				s.SetIgnore(investment.FieldCreateTime)
+			}
+			if _, exists := b.mutation.HouseholdID(); exists {
+				s.SetIgnore(investment.FieldHouseholdID)
 			}
 		}
 	}))

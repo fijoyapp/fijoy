@@ -52,6 +52,10 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				return err
 			}
 			_q.withHousehold = query
+			if _, ok := fieldSeen[account.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, account.FieldHouseholdID)
+				fieldSeen[account.FieldHouseholdID] = struct{}{}
+			}
 
 		case "currency":
 			var (
@@ -109,6 +113,11 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[account.FieldUpdateTime]; !ok {
 				selectedFields = append(selectedFields, account.FieldUpdateTime)
 				fieldSeen[account.FieldUpdateTime] = struct{}{}
+			}
+		case "householdID":
+			if _, ok := fieldSeen[account.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, account.FieldHouseholdID)
+				fieldSeen[account.FieldHouseholdID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[account.FieldName]; !ok {
@@ -370,6 +379,45 @@ func (_q *HouseholdQuery) collectField(ctx context.Context, oneNode bool, opCtx 
 				*wq = *query
 			})
 
+		case "lots":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&LotClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, lotImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedLots(alias, func(wq *LotQuery) {
+				*wq = *query
+			})
+
+		case "transactionCategories":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionCategoryClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactioncategoryImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedTransactionCategories(alias, func(wq *TransactionCategoryQuery) {
+				*wq = *query
+			})
+
+		case "transactionEntries":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionEntryClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, transactionentryImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+				*wq = *query
+			})
+
 		case "userHouseholds":
 			var (
 				alias = field.Alias
@@ -486,6 +534,10 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				return err
 			}
 			_q.withHousehold = query
+			if _, ok := fieldSeen[investment.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, investment.FieldHouseholdID)
+				fieldSeen[investment.FieldHouseholdID] = struct{}{}
+			}
 
 		case "currency":
 			var (
@@ -519,6 +571,11 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 			if _, ok := fieldSeen[investment.FieldUpdateTime]; !ok {
 				selectedFields = append(selectedFields, investment.FieldUpdateTime)
 				fieldSeen[investment.FieldUpdateTime] = struct{}{}
+			}
+		case "householdID":
+			if _, ok := fieldSeen[investment.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, investment.FieldHouseholdID)
+				fieldSeen[investment.FieldHouseholdID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[investment.FieldName]; !ok {
@@ -603,6 +660,21 @@ func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
+		case "household":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&HouseholdClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, householdImplementors)...); err != nil {
+				return err
+			}
+			_q.withHousehold = query
+			if _, ok := fieldSeen[lot.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, lot.FieldHouseholdID)
+				fieldSeen[lot.FieldHouseholdID] = struct{}{}
+			}
+
 		case "investment":
 			var (
 				alias = field.Alias
@@ -622,6 +694,11 @@ func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 			if _, ok := fieldSeen[lot.FieldUpdateTime]; !ok {
 				selectedFields = append(selectedFields, lot.FieldUpdateTime)
 				fieldSeen[lot.FieldUpdateTime] = struct{}{}
+			}
+		case "householdID":
+			if _, ok := fieldSeen[lot.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, lot.FieldHouseholdID)
+				fieldSeen[lot.FieldHouseholdID] = struct{}{}
 			}
 		case "datetime":
 			if _, ok := fieldSeen[lot.FieldDatetime]; !ok {
@@ -722,6 +799,10 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			_q.withHousehold = query
+			if _, ok := fieldSeen[transaction.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldHouseholdID)
+				fieldSeen[transaction.FieldHouseholdID] = struct{}{}
+			}
 
 		case "category":
 			var (
@@ -755,6 +836,11 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			if _, ok := fieldSeen[transaction.FieldUpdateTime]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldUpdateTime)
 				fieldSeen[transaction.FieldUpdateTime] = struct{}{}
+			}
+		case "householdID":
+			if _, ok := fieldSeen[transaction.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldHouseholdID)
+				fieldSeen[transaction.FieldHouseholdID] = struct{}{}
 			}
 		case "description":
 			if _, ok := fieldSeen[transaction.FieldDescription]; !ok {
@@ -851,6 +937,21 @@ func (_q *TransactionCategoryQuery) collectField(ctx context.Context, oneNode bo
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
+		case "household":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&HouseholdClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, householdImplementors)...); err != nil {
+				return err
+			}
+			_q.withHousehold = query
+			if _, ok := fieldSeen[transactioncategory.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldHouseholdID)
+				fieldSeen[transactioncategory.FieldHouseholdID] = struct{}{}
+			}
+
 		case "transactions":
 			var (
 				alias = field.Alias
@@ -872,6 +973,11 @@ func (_q *TransactionCategoryQuery) collectField(ctx context.Context, oneNode bo
 			if _, ok := fieldSeen[transactioncategory.FieldUpdateTime]; !ok {
 				selectedFields = append(selectedFields, transactioncategory.FieldUpdateTime)
 				fieldSeen[transactioncategory.FieldUpdateTime] = struct{}{}
+			}
+		case "householdID":
+			if _, ok := fieldSeen[transactioncategory.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldHouseholdID)
+				fieldSeen[transactioncategory.FieldHouseholdID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[transactioncategory.FieldName]; !ok {
@@ -946,6 +1052,21 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
 
+		case "household":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&HouseholdClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, householdImplementors)...); err != nil {
+				return err
+			}
+			_q.withHousehold = query
+			if _, ok := fieldSeen[transactionentry.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldHouseholdID)
+				fieldSeen[transactionentry.FieldHouseholdID] = struct{}{}
+			}
+
 		case "account":
 			var (
 				alias = field.Alias
@@ -987,6 +1108,11 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 			if _, ok := fieldSeen[transactionentry.FieldUpdateTime]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldUpdateTime)
 				fieldSeen[transactionentry.FieldUpdateTime] = struct{}{}
+			}
+		case "householdID":
+			if _, ok := fieldSeen[transactionentry.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldHouseholdID)
+				fieldSeen[transactionentry.FieldHouseholdID] = struct{}{}
 			}
 		case "amount":
 			if _, ok := fieldSeen[transactionentry.FieldAmount]; !ok {

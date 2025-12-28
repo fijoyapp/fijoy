@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"github.com/shopspring/decimal"
@@ -23,6 +24,8 @@ type Lot struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// HouseholdID holds the value of the "household_id" field.
+	HouseholdID int `json:"household_id,omitempty"`
 	// Datetime holds the value of the "datetime" field.
 	Datetime time.Time `json:"datetime,omitempty"`
 	// Amount holds the value of the "amount" field.
@@ -38,13 +41,26 @@ type Lot struct {
 
 // LotEdges holds the relations/edges for other nodes in the graph.
 type LotEdges struct {
+	// Household holds the value of the household edge.
+	Household *Household `json:"household,omitempty"`
 	// Investment holds the value of the investment edge.
 	Investment *Investment `json:"investment,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
+}
+
+// HouseholdOrErr returns the Household value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e LotEdges) HouseholdOrErr() (*Household, error) {
+	if e.Household != nil {
+		return e.Household, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: household.Label}
+	}
+	return nil, &NotLoadedError{edge: "household"}
 }
 
 // InvestmentOrErr returns the Investment value or an error if the edge
@@ -52,7 +68,7 @@ type LotEdges struct {
 func (e LotEdges) InvestmentOrErr() (*Investment, error) {
 	if e.Investment != nil {
 		return e.Investment, nil
-	} else if e.loadedTypes[0] {
+	} else if e.loadedTypes[1] {
 		return nil, &NotFoundError{label: investment.Label}
 	}
 	return nil, &NotLoadedError{edge: "investment"}
@@ -65,7 +81,7 @@ func (*Lot) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case lot.FieldAmount, lot.FieldPrice:
 			values[i] = new(decimal.Decimal)
-		case lot.FieldID:
+		case lot.FieldID, lot.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
 		case lot.FieldCreateTime, lot.FieldUpdateTime, lot.FieldDatetime:
 			values[i] = new(sql.NullTime)
@@ -103,6 +119,12 @@ func (_m *Lot) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
+			}
+		case lot.FieldHouseholdID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field household_id", values[i])
+			} else if value.Valid {
+				_m.HouseholdID = int(value.Int64)
 			}
 		case lot.FieldDatetime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -142,6 +164,11 @@ func (_m *Lot) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
+// QueryHousehold queries the "household" edge of the Lot entity.
+func (_m *Lot) QueryHousehold() *HouseholdQuery {
+	return NewLotClient(_m.config).QueryHousehold(_m)
+}
+
 // QueryInvestment queries the "investment" edge of the Lot entity.
 func (_m *Lot) QueryInvestment() *InvestmentQuery {
 	return NewLotClient(_m.config).QueryInvestment(_m)
@@ -175,6 +202,9 @@ func (_m *Lot) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("household_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.HouseholdID))
 	builder.WriteString(", ")
 	builder.WriteString("datetime=")
 	builder.WriteString(_m.Datetime.Format(time.ANSIC))
