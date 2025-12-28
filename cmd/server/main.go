@@ -169,7 +169,8 @@ func main() {
 		"/auth/{provider}/callback",
 		func(res http.ResponseWriter, req *http.Request) {
 			p := req.PathValue("provider")
-			if !isProd && p == "local" {
+			// TODO: set this to local only when we go to production
+			if p == "local" {
 				userID := entClient.User.Query().
 					Where(user.EmailEQ("joey@itsjoeoui.com")).
 					OnlyIDX(ctx)
