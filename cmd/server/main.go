@@ -35,7 +35,7 @@ import (
 type config struct {
 	PostgresURL string `env:"POSTGRES_URL"`
 	WebURL      string `env:"WEB_URL"`
-	PORT        string `env:"PORT"`
+	Port        string `env:"PORT"`
 }
 
 func main() {
@@ -128,7 +128,7 @@ func main() {
 		}),
 	)
 
-	http.ListenAndServe(":"+cfg.PORT, r)
+	http.ListenAndServe(":"+cfg.Port, r)
 }
 
 func seed(ctx context.Context, entClient *ent.Client) error {
