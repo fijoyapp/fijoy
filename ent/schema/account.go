@@ -44,6 +44,9 @@ func (Account) Edges() []ent.Edge {
 		edge.From("currency", Currency.Type).
 			Ref("accounts").
 			Unique().Immutable().Required(),
+		edge.From("user", User.Type).
+			Ref("accounts").
+			Unique().Required(),
 
 		edge.To("transaction_entries", TransactionEntry.Type),
 		edge.To("investments", Investment.Type),

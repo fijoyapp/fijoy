@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/transactionentry"
+	"fijoy.app/ent/user"
 	"github.com/shopspring/decimal"
 )
 
@@ -99,6 +100,17 @@ func (_c *AccountCreate) SetCurrencyID(id int) *AccountCreate {
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_c *AccountCreate) SetCurrency(v *Currency) *AccountCreate {
 	return _c.SetCurrencyID(v.ID)
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (_c *AccountCreate) SetUserID(id int) *AccountCreate {
+	_c.mutation.SetUserID(id)
+	return _c
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_c *AccountCreate) SetUser(v *User) *AccountCreate {
+	return _c.SetUserID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
@@ -213,6 +225,9 @@ func (_c *AccountCreate) check() error {
 	if len(_c.mutation.CurrencyIDs()) == 0 {
 		return &ValidationError{Name: "currency", err: errors.New(`ent: missing required edge "Account.currency"`)}
 	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Account.user"`)}
+	}
 	return nil
 }
 
@@ -291,6 +306,23 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.currency_accounts = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   account.UserTable,
+			Columns: []string{account.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_accounts = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {

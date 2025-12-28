@@ -14,6 +14,7 @@ import (
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
+	"fijoy.app/ent/user"
 )
 
 // TransactionUpdate is the builder for updating Transaction entities.
@@ -70,6 +71,17 @@ func (_u *TransactionUpdate) SetNillableDatetime(v *time.Time) *TransactionUpdat
 	return _u
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (_u *TransactionUpdate) SetUserID(id int) *TransactionUpdate {
+	_u.mutation.SetUserID(id)
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *TransactionUpdate) SetUser(v *User) *TransactionUpdate {
+	return _u.SetUserID(v.ID)
+}
+
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (_u *TransactionUpdate) AddTransactionEntryIDs(ids ...int) *TransactionUpdate {
 	_u.mutation.AddTransactionEntryIDs(ids...)
@@ -88,6 +100,12 @@ func (_u *TransactionUpdate) AddTransactionEntries(v ...*TransactionEntry) *Tran
 // Mutation returns the TransactionMutation object of the builder.
 func (_u *TransactionUpdate) Mutation() *TransactionMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *TransactionUpdate) ClearUser() *TransactionUpdate {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
@@ -147,6 +165,17 @@ func (_u *TransactionUpdate) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *TransactionUpdate) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.user"`)
+	}
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.household"`)
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (_u *TransactionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransactionUpdate {
 	_u.modifiers = append(_u.modifiers, modifiers...)
@@ -154,6 +183,9 @@ func (_u *TransactionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Tr
 }
 
 func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -173,6 +205,35 @@ func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	}
 	if value, ok := _u.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.UserTable,
+			Columns: []string{transaction.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.UserTable,
+			Columns: []string{transaction.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -281,6 +342,17 @@ func (_u *TransactionUpdateOne) SetNillableDatetime(v *time.Time) *TransactionUp
 	return _u
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (_u *TransactionUpdateOne) SetUserID(id int) *TransactionUpdateOne {
+	_u.mutation.SetUserID(id)
+	return _u
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_u *TransactionUpdateOne) SetUser(v *User) *TransactionUpdateOne {
+	return _u.SetUserID(v.ID)
+}
+
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (_u *TransactionUpdateOne) AddTransactionEntryIDs(ids ...int) *TransactionUpdateOne {
 	_u.mutation.AddTransactionEntryIDs(ids...)
@@ -299,6 +371,12 @@ func (_u *TransactionUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *T
 // Mutation returns the TransactionMutation object of the builder.
 func (_u *TransactionUpdateOne) Mutation() *TransactionMutation {
 	return _u.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (_u *TransactionUpdateOne) ClearUser() *TransactionUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
@@ -371,6 +449,17 @@ func (_u *TransactionUpdateOne) defaults() {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *TransactionUpdateOne) check() error {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.user"`)
+	}
+	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Transaction.household"`)
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (_u *TransactionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TransactionUpdateOne {
 	_u.modifiers = append(_u.modifiers, modifiers...)
@@ -378,6 +467,9 @@ func (_u *TransactionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(transaction.Table, transaction.Columns, sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -414,6 +506,35 @@ func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction
 	}
 	if value, ok := _u.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
+	}
+	if _u.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.UserTable,
+			Columns: []string{transaction.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.UserTable,
+			Columns: []string{transaction.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{

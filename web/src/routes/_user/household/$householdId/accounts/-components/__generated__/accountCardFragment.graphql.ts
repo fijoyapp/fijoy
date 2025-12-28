@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<857e6ebac133d263b71e5ebdae020c98>>
+ * @generated SignedSource<<f737d9416e6d7d1e2ca148fc93a07f62>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,6 +19,7 @@ export type accountCardFragment$data = {
   readonly id: string;
   readonly name: string;
   readonly type: AccountType;
+  readonly updateTime: any;
   readonly " $fragmentSpreads": FragmentRefs<"accountBalanceDisplayFragment_account">;
   readonly " $fragmentType": "accountCardFragment";
 };
@@ -57,6 +58,13 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "updateTime",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "Currency",
       "kind": "LinkedField",
       "name": "currency",
@@ -89,6 +97,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "b359d8c6ceafe04caacc5540556a858f";
+(node as any).hash = "27e82c4bb9a717ffda9366dcb70d640c";
 
 export default node;

@@ -10,8 +10,10 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactionentry"
+	"fijoy.app/ent/user"
 )
 
 // TransactionCreate is the builder for creating a Transaction entity.
@@ -67,6 +69,28 @@ func (_c *TransactionCreate) SetNillableDescription(v *string) *TransactionCreat
 func (_c *TransactionCreate) SetDatetime(v time.Time) *TransactionCreate {
 	_c.mutation.SetDatetime(v)
 	return _c
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (_c *TransactionCreate) SetUserID(id int) *TransactionCreate {
+	_c.mutation.SetUserID(id)
+	return _c
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (_c *TransactionCreate) SetUser(v *User) *TransactionCreate {
+	return _c.SetUserID(v.ID)
+}
+
+// SetHouseholdID sets the "household" edge to the Household entity by ID.
+func (_c *TransactionCreate) SetHouseholdID(id int) *TransactionCreate {
+	_c.mutation.SetHouseholdID(id)
+	return _c
+}
+
+// SetHousehold sets the "household" edge to the Household entity.
+func (_c *TransactionCreate) SetHousehold(v *Household) *TransactionCreate {
+	return _c.SetHouseholdID(v.ID)
 }
 
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
@@ -140,6 +164,12 @@ func (_c *TransactionCreate) check() error {
 	if _, ok := _c.mutation.Datetime(); !ok {
 		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
 	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Transaction.user"`)}
+	}
+	if len(_c.mutation.HouseholdIDs()) == 0 {
+		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Transaction.household"`)}
+	}
 	return nil
 }
 
@@ -181,6 +211,40 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Datetime(); ok {
 		_spec.SetField(transaction.FieldDatetime, field.TypeTime, value)
 		_node.Datetime = value
+	}
+	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.UserTable,
+			Columns: []string{transaction.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_transactions = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   transaction.HouseholdTable,
+			Columns: []string{transaction.HouseholdColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.household_transactions = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

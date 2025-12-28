@@ -9,6 +9,7 @@ type Account implements Node {
   balance: String!
   household: Household!
   currency: Currency!
+  user: User!
   transactionEntries: [TransactionEntry!]
   investments: [Investment!]
 }
@@ -107,6 +108,11 @@ input AccountWhereInput {
   """
   hasCurrency: Boolean
   hasCurrencyWith: [CurrencyWhereInput!]
+  """
+  user edge predicates
+  """
+  hasUser: Boolean
+  hasUserWith: [UserWhereInput!]
   """
   transaction_entries edge predicates
   """
@@ -749,6 +755,8 @@ type Transaction implements Node {
   updateTime: Time!
   description: String
   datetime: Time!
+  user: User!
+  household: Household!
   transactionEntries: [TransactionEntry!]
 }
 """
@@ -948,6 +956,16 @@ input TransactionWhereInput {
   datetimeLT: Time
   datetimeLTE: Time
   """
+  user edge predicates
+  """
+  hasUser: Boolean
+  hasUserWith: [UserWhereInput!]
+  """
+  household edge predicates
+  """
+  hasHousehold: Boolean
+  hasHouseholdWith: [HouseholdWhereInput!]
+  """
   transaction_entries edge predicates
   """
   hasTransactionEntries: Boolean
@@ -958,7 +976,10 @@ type User implements Node {
   createTime: Time!
   updateTime: Time!
   email: String!
+  name: String!
   households: [Household!]
+  accounts: [Account!]
+  transactions: [Transaction!]
   userHouseholds: [UserHousehold!]
 }
 type UserHousehold implements Node {
@@ -1085,10 +1106,36 @@ input UserWhereInput {
   emailEqualFold: String
   emailContainsFold: String
   """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameEqualFold: String
+  nameContainsFold: String
+  """
   households edge predicates
   """
   hasHouseholds: Boolean
   hasHouseholdsWith: [HouseholdWhereInput!]
+  """
+  accounts edge predicates
+  """
+  hasAccounts: Boolean
+  hasAccountsWith: [AccountWhereInput!]
+  """
+  transactions edge predicates
+  """
+  hasTransactions: Boolean
+  hasTransactionsWith: [TransactionWhereInput!]
   """
   user_households edge predicates
   """

@@ -31,6 +31,14 @@ func (Transaction) Fields() []ent.Field {
 // Edges of the Transaction.
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.From("user", User.Type).
+			Ref("transactions").Unique().Required(),
+		edge.From("household", Household.Type).
+			Ref("transactions").
+			Unique().
+			Immutable().
+			Required(),
+
 		edge.To("transaction_entries", TransactionEntry.Type),
 	}
 }

@@ -22,10 +22,28 @@ const (
 	FieldDescription = "description"
 	// FieldDatetime holds the string denoting the datetime field in the database.
 	FieldDatetime = "datetime"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
+	// EdgeHousehold holds the string denoting the household edge name in mutations.
+	EdgeHousehold = "household"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "transactions"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_transactions"
+	// HouseholdTable is the table that holds the household relation/edge.
+	HouseholdTable = "transactions"
+	// HouseholdInverseTable is the table name for the Household entity.
+	// It exists in this package in order to avoid circular dependency with the "household" package.
+	HouseholdInverseTable = "households"
+	// HouseholdColumn is the table column denoting the household relation/edge.
+	HouseholdColumn = "household_transactions"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
@@ -48,6 +66,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"household_transactions",
+	"user_transactions",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -102,6 +121,20 @@ func ByDatetime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDatetime, opts...).ToFunc()
 }
 
+// ByUserField orders the results by user field.
+func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByHouseholdField orders the results by household field.
+func ByHouseholdField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newHouseholdStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByTransactionEntriesCount orders the results by transaction_entries count.
 func ByTransactionEntriesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -114,6 +147,20 @@ func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
+}
+func newUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+	)
+}
+func newHouseholdStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(HouseholdInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, HouseholdTable, HouseholdColumn),
+	)
 }
 func newTransactionEntriesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

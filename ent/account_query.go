@@ -18,6 +18,7 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transactionentry"
+	"fijoy.app/ent/user"
 )
 
 // AccountQuery is the builder for querying Account entities.
@@ -29,6 +30,7 @@ type AccountQuery struct {
 	predicates                  []predicate.Account
 	withHousehold               *HouseholdQuery
 	withCurrency                *CurrencyQuery
+	withUser                    *UserQuery
 	withTransactionEntries      *TransactionEntryQuery
 	withInvestments             *InvestmentQuery
 	withFKs                     bool
@@ -109,6 +111,28 @@ func (_q *AccountQuery) QueryCurrency() *CurrencyQuery {
 			sqlgraph.From(account.Table, account.FieldID, selector),
 			sqlgraph.To(currency.Table, currency.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, account.CurrencyTable, account.CurrencyColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (_q *AccountQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(account.Table, account.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, account.UserTable, account.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -354,6 +378,7 @@ func (_q *AccountQuery) Clone() *AccountQuery {
 		predicates:             append([]predicate.Account{}, _q.predicates...),
 		withHousehold:          _q.withHousehold.Clone(),
 		withCurrency:           _q.withCurrency.Clone(),
+		withUser:               _q.withUser.Clone(),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
 		withInvestments:        _q.withInvestments.Clone(),
 		// clone intermediate query.
@@ -382,6 +407,17 @@ func (_q *AccountQuery) WithCurrency(opts ...func(*CurrencyQuery)) *AccountQuery
 		opt(query)
 	}
 	_q.withCurrency = query
+	return _q
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *AccountQuery) WithUser(opts ...func(*UserQuery)) *AccountQuery {
+	query := (&UserClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withUser = query
 	return _q
 }
 
@@ -486,14 +522,15 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 		nodes       = []*Account{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			_q.withHousehold != nil,
 			_q.withCurrency != nil,
+			_q.withUser != nil,
 			_q.withTransactionEntries != nil,
 			_q.withInvestments != nil,
 		}
 	)
-	if _q.withHousehold != nil || _q.withCurrency != nil {
+	if _q.withHousehold != nil || _q.withCurrency != nil || _q.withUser != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -529,6 +566,12 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 	if query := _q.withCurrency; query != nil {
 		if err := _q.loadCurrency(ctx, query, nodes, nil,
 			func(n *Account, e *Currency) { n.Edges.Currency = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withUser; query != nil {
+		if err := _q.loadUser(ctx, query, nodes, nil,
+			func(n *Account, e *User) { n.Edges.User = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -627,6 +670,38 @@ func (_q *AccountQuery) loadCurrency(ctx context.Context, query *CurrencyQuery, 
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "currency_accounts" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *AccountQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Account, init func(*Account), assign func(*Account, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Account)
+	for i := range nodes {
+		if nodes[i].user_accounts == nil {
+			continue
+		}
+		fk := *nodes[i].user_accounts
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_accounts" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

@@ -141,7 +141,10 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	cad := entClient.Currency.Create().SetCode("CAD").SaveX(ctx)
 	usd := entClient.Currency.Create().SetCode("USD").SaveX(ctx)
 
-	user := entClient.User.Create().SetEmail("joey@jyu.dev").SaveX(ctx)
+	user := entClient.User.Create().
+		SetEmail("joey@jyu.dev").
+		SetName("Joey").
+		SaveX(ctx)
 
 	household := entClient.Household.Create().
 		SetName("Joey's Household").
@@ -158,12 +161,14 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	chase := entClient.Account.Create().
 		SetName("Chase Total Checking").
 		SetCurrency(usd).
+		SetUser(user).
 		SetHousehold(household).
 		SetType(account.TypeLiquidity).
 		SaveX(ctx)
 
 	wealthsimple := entClient.Account.Create().
 		SetName("Wealthsimple Chequing").
+		SetUser(user).
 		SetCurrency(cad).
 		SetHousehold(household).
 		SetType(account.TypeLiquidity).
@@ -174,6 +179,8 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
+				SetUser(user).
+				SetHousehold(household).
 				SetDatetime(genRandomDatetime())
 		}
 		transactions := entClient.Transaction.CreateBulk(txCreates...).
@@ -195,6 +202,8 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
+				SetUser(user).
+				SetHousehold(household).
 				SetDatetime(genRandomDatetime())
 		}
 		transactions := entClient.Transaction.CreateBulk(txCreates...).

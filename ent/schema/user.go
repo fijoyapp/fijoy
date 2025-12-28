@@ -18,6 +18,7 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("email").NotEmpty(),
+		field.String("name").NotEmpty(),
 	}
 }
 
@@ -26,6 +27,8 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("households", Household.Type).
 			Through("user_households", UserHousehold.Type),
+		edge.To("accounts", Account.Type),
+		edge.To("transactions", Transaction.Type),
 	}
 }
 

@@ -9,7 +9,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"fijoy.app/ent/household"
 	"fijoy.app/ent/transaction"
+	"fijoy.app/ent/user"
 )
 
 // Transaction is the model entity for the Transaction schema.
@@ -29,26 +31,53 @@ type Transaction struct {
 	// The values are being populated by the TransactionQuery when eager-loading is set.
 	Edges                  TransactionEdges `json:"edges"`
 	household_transactions *int
+	user_transactions      *int
 	selectValues           sql.SelectValues
 }
 
 // TransactionEdges holds the relations/edges for other nodes in the graph.
 type TransactionEdges struct {
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// Household holds the value of the household edge.
+	Household *Household `json:"household,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [3]map[string]int
 
 	namedTransactionEntries map[string][]*TransactionEntry
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransactionEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
+// HouseholdOrErr returns the Household value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e TransactionEdges) HouseholdOrErr() (*Household, error) {
+	if e.Household != nil {
+		return e.Household, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: household.Label}
+	}
+	return nil, &NotLoadedError{edge: "household"}
 }
 
 // TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e TransactionEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[2] {
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
@@ -66,6 +95,8 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 		case transaction.FieldCreateTime, transaction.FieldUpdateTime, transaction.FieldDatetime:
 			values[i] = new(sql.NullTime)
 		case transaction.ForeignKeys[0]: // household_transactions
+			values[i] = new(sql.NullInt64)
+		case transaction.ForeignKeys[1]: // user_transactions
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -119,6 +150,13 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 				_m.household_transactions = new(int)
 				*_m.household_transactions = int(value.Int64)
 			}
+		case transaction.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_transactions", value)
+			} else if value.Valid {
+				_m.user_transactions = new(int)
+				*_m.user_transactions = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -130,6 +168,16 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (_m *Transaction) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
+}
+
+// QueryUser queries the "user" edge of the Transaction entity.
+func (_m *Transaction) QueryUser() *UserQuery {
+	return NewTransactionClient(_m.config).QueryUser(_m)
+}
+
+// QueryHousehold queries the "household" edge of the Transaction entity.
+func (_m *Transaction) QueryHousehold() *HouseholdQuery {
+	return NewTransactionClient(_m.config).QueryHousehold(_m)
 }
 
 // QueryTransactionEntries queries the "transaction_entries" edge of the Transaction entity.

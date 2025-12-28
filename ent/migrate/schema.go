@@ -19,6 +19,7 @@ var (
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "currency_accounts", Type: field.TypeInt},
 		{Name: "household_accounts", Type: field.TypeInt},
+		{Name: "user_accounts", Type: field.TypeInt},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -36,6 +37,12 @@ var (
 				Symbol:     "accounts_households_accounts",
 				Columns:    []*schema.Column{AccountsColumns[7]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "accounts_users_accounts",
+				Columns:    []*schema.Column{AccountsColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
@@ -144,7 +151,8 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "datetime", Type: field.TypeTime},
-		{Name: "household_transactions", Type: field.TypeInt, Nullable: true},
+		{Name: "household_transactions", Type: field.TypeInt},
+		{Name: "user_transactions", Type: field.TypeInt},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
 	TransactionsTable = &schema.Table{
@@ -156,7 +164,13 @@ var (
 				Symbol:     "transactions_households_transactions",
 				Columns:    []*schema.Column{TransactionsColumns[5]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "transactions_users_transactions",
+				Columns:    []*schema.Column{TransactionsColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -209,6 +223,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "email", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -269,6 +284,7 @@ var (
 func init() {
 	AccountsTable.ForeignKeys[0].RefTable = CurrenciesTable
 	AccountsTable.ForeignKeys[1].RefTable = HouseholdsTable
+	AccountsTable.ForeignKeys[2].RefTable = UsersTable
 	AccountsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(0),
 	}
@@ -290,6 +306,7 @@ func init() {
 		IncrementStart: func(i int) *int { return &i }(34359738368),
 	}
 	TransactionsTable.ForeignKeys[0].RefTable = HouseholdsTable
+	TransactionsTable.ForeignKeys[1].RefTable = UsersTable
 	TransactionsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(12884901888),
 	}

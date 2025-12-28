@@ -13,12 +13,14 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
+import { getFormattedDate, getPrettyTime } from '@/lib/time'
 
 const accountCardFragment = graphql`
   fragment accountCardFragment on Account {
     id
     name
     type
+    updateTime
     currency {
       code
     }
@@ -48,22 +50,26 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
         >
           {({ isActive }) => (
             <>
-              <ItemMedia>
-                <BadgeCheckIcon className="size-5" />
-              </ItemMedia>
+              {/* <ItemMedia> */}
+              {/*   <BadgeCheckIcon className="size-5" /> */}
+              {/* </ItemMedia> */}
               <ItemContent>
                 <ItemTitle className={cn(isActive && 'font-semibold')}>
                   {data.name}
                 </ItemTitle>
+                <ItemDescription>{}</ItemDescription>
               </ItemContent>
-              <ItemContent className="">
-                <ItemDescription className="font-mono">
+              <ItemContent className="items-end">
+                <ItemTitle className="font-mono">
                   <span>
                     {formatCurrencyWithPrivacyMode(
                       data.balance,
                       data.currency.code,
                     )}
                   </span>
+                </ItemTitle>
+                <ItemDescription className="">
+                  <span>{getPrettyTime(new Date(data.updateTime))}</span>
                 </ItemDescription>
               </ItemContent>
             </>

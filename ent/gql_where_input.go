@@ -96,6 +96,10 @@ type AccountWhereInput struct {
 	HasCurrency     *bool                 `json:"hasCurrency,omitempty"`
 	HasCurrencyWith []*CurrencyWhereInput `json:"hasCurrencyWith,omitempty"`
 
+	// "user" edge predicates.
+	HasUser     *bool             `json:"hasUser,omitempty"`
+	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+
 	// "transaction_entries" edge predicates.
 	HasTransactionEntries     *bool                         `json:"hasTransactionEntries,omitempty"`
 	HasTransactionEntriesWith []*TransactionEntryWhereInput `json:"hasTransactionEntriesWith,omitempty"`
@@ -359,6 +363,24 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, account.HasCurrencyWith(with...))
+	}
+	if i.HasUser != nil {
+		p := account.HasUser()
+		if !*i.HasUser {
+			p = account.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasUserWith) > 0 {
+		with := make([]predicate.User, 0, len(i.HasUserWith))
+		for _, w := range i.HasUserWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasUserWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, account.HasUserWith(with...))
 	}
 	if i.HasTransactionEntries != nil {
 		p := account.HasTransactionEntries()
@@ -1924,6 +1946,14 @@ type TransactionWhereInput struct {
 	DatetimeLT    *time.Time  `json:"datetimeLT,omitempty"`
 	DatetimeLTE   *time.Time  `json:"datetimeLTE,omitempty"`
 
+	// "user" edge predicates.
+	HasUser     *bool             `json:"hasUser,omitempty"`
+	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+
+	// "household" edge predicates.
+	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
+	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
+
 	// "transaction_entries" edge predicates.
 	HasTransactionEntries     *bool                         `json:"hasTransactionEntries,omitempty"`
 	HasTransactionEntriesWith []*TransactionEntryWhereInput `json:"hasTransactionEntriesWith,omitempty"`
@@ -2142,6 +2172,42 @@ func (i *TransactionWhereInput) P() (predicate.Transaction, error) {
 		predicates = append(predicates, transaction.DatetimeLTE(*i.DatetimeLTE))
 	}
 
+	if i.HasUser != nil {
+		p := transaction.HasUser()
+		if !*i.HasUser {
+			p = transaction.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasUserWith) > 0 {
+		with := make([]predicate.User, 0, len(i.HasUserWith))
+		for _, w := range i.HasUserWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasUserWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, transaction.HasUserWith(with...))
+	}
+	if i.HasHousehold != nil {
+		p := transaction.HasHousehold()
+		if !*i.HasHousehold {
+			p = transaction.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasHouseholdWith) > 0 {
+		with := make([]predicate.Household, 0, len(i.HasHouseholdWith))
+		for _, w := range i.HasHouseholdWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasHouseholdWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, transaction.HasHouseholdWith(with...))
+	}
 	if i.HasTransactionEntries != nil {
 		p := transaction.HasTransactionEntries()
 		if !*i.HasTransactionEntries {
@@ -2514,9 +2580,32 @@ type UserWhereInput struct {
 	EmailEqualFold    *string  `json:"emailEqualFold,omitempty"`
 	EmailContainsFold *string  `json:"emailContainsFold,omitempty"`
 
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
 	// "households" edge predicates.
 	HasHouseholds     *bool                  `json:"hasHouseholds,omitempty"`
 	HasHouseholdsWith []*HouseholdWhereInput `json:"hasHouseholdsWith,omitempty"`
+
+	// "accounts" edge predicates.
+	HasAccounts     *bool                `json:"hasAccounts,omitempty"`
+	HasAccountsWith []*AccountWhereInput `json:"hasAccountsWith,omitempty"`
+
+	// "transactions" edge predicates.
+	HasTransactions     *bool                    `json:"hasTransactions,omitempty"`
+	HasTransactionsWith []*TransactionWhereInput `json:"hasTransactionsWith,omitempty"`
 
 	// "user_households" edge predicates.
 	HasUserHouseholds     *bool                      `json:"hasUserHouseholds,omitempty"`
@@ -2705,6 +2794,45 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if i.EmailContainsFold != nil {
 		predicates = append(predicates, user.EmailContainsFold(*i.EmailContainsFold))
 	}
+	if i.Name != nil {
+		predicates = append(predicates, user.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, user.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, user.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, user.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, user.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, user.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, user.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, user.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, user.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, user.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, user.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, user.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, user.NameContainsFold(*i.NameContainsFold))
+	}
 
 	if i.HasHouseholds != nil {
 		p := user.HasHouseholds()
@@ -2723,6 +2851,42 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, user.HasHouseholdsWith(with...))
+	}
+	if i.HasAccounts != nil {
+		p := user.HasAccounts()
+		if !*i.HasAccounts {
+			p = user.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasAccountsWith) > 0 {
+		with := make([]predicate.Account, 0, len(i.HasAccountsWith))
+		for _, w := range i.HasAccountsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasAccountsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, user.HasAccountsWith(with...))
+	}
+	if i.HasTransactions != nil {
+		p := user.HasTransactions()
+		if !*i.HasTransactions {
+			p = user.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasTransactionsWith) > 0 {
+		with := make([]predicate.Transaction, 0, len(i.HasTransactionsWith))
+		for _, w := range i.HasTransactionsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasTransactionsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, user.HasTransactionsWith(with...))
 	}
 	if i.HasUserHouseholds != nil {
 		p := user.HasUserHouseholds()

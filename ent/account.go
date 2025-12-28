@@ -12,6 +12,7 @@ import (
 	"fijoy.app/ent/account"
 	"fijoy.app/ent/currency"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/user"
 	"github.com/shopspring/decimal"
 )
 
@@ -35,6 +36,7 @@ type Account struct {
 	Edges              AccountEdges `json:"edges"`
 	currency_accounts  *int
 	household_accounts *int
+	user_accounts      *int
 	selectValues       sql.SelectValues
 }
 
@@ -44,15 +46,17 @@ type AccountEdges struct {
 	Household *Household `json:"household,omitempty"`
 	// Currency holds the value of the currency edge.
 	Currency *Currency `json:"currency,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// Investments holds the value of the investments edge.
 	Investments []*Investment `json:"investments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [5]map[string]int
 
 	namedTransactionEntries map[string][]*TransactionEntry
 	namedInvestments        map[string][]*Investment
@@ -80,10 +84,21 @@ func (e AccountEdges) CurrencyOrErr() (*Currency, error) {
 	return nil, &NotLoadedError{edge: "currency"}
 }
 
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AccountEdges) UserOrErr() (*User, error) {
+	if e.User != nil {
+		return e.User, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: user.Label}
+	}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
 // TransactionEntriesOrErr returns the TransactionEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e AccountEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
@@ -92,7 +107,7 @@ func (e AccountEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
 // InvestmentsOrErr returns the Investments value or an error if the edge
 // was not loaded in eager-loading.
 func (e AccountEdges) InvestmentsOrErr() ([]*Investment, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.Investments, nil
 	}
 	return nil, &NotLoadedError{edge: "investments"}
@@ -114,6 +129,8 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 		case account.ForeignKeys[0]: // currency_accounts
 			values[i] = new(sql.NullInt64)
 		case account.ForeignKeys[1]: // household_accounts
+			values[i] = new(sql.NullInt64)
+		case account.ForeignKeys[2]: // user_accounts
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -180,6 +197,13 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 				_m.household_accounts = new(int)
 				*_m.household_accounts = int(value.Int64)
 			}
+		case account.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_accounts", value)
+			} else if value.Valid {
+				_m.user_accounts = new(int)
+				*_m.user_accounts = int(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -201,6 +225,11 @@ func (_m *Account) QueryHousehold() *HouseholdQuery {
 // QueryCurrency queries the "currency" edge of the Account entity.
 func (_m *Account) QueryCurrency() *CurrencyQuery {
 	return NewAccountClient(_m.config).QueryCurrency(_m)
+}
+
+// QueryUser queries the "user" edge of the Account entity.
+func (_m *Account) QueryUser() *UserQuery {
+	return NewAccountClient(_m.config).QueryUser(_m)
 }
 
 // QueryTransactionEntries queries the "transaction_entries" edge of the Account entity.
