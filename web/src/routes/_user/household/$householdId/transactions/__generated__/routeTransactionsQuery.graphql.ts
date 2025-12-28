@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<27f917c450ff4b2582a31a4779a35f19>>
+ * @generated SignedSource<<68d28aed8116610da5681fd810208a1c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -40,6 +40,13 @@ v1 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
   "storageKey": null
 };
 return {
@@ -99,6 +106,26 @@ return {
                   {
                     "alias": null,
                     "args": null,
+                    "concreteType": "TransactionCategory",
+                    "kind": "LinkedField",
+                    "name": "category",
+                    "plural": false,
+                    "selections": [
+                      (v2/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "type",
+                        "storageKey": null
+                      },
+                      (v1/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "TransactionEntry",
                     "kind": "LinkedField",
                     "name": "transactionEntries",
@@ -120,13 +147,7 @@ return {
                         "name": "account",
                         "plural": false,
                         "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "name",
-                            "storageKey": null
-                          },
+                          (v2/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -216,12 +237,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f30e29c49d7fba9302878d061e917c35",
+    "cacheID": "3e7c4b48aae61b20a16827f78e92e2ca",
     "id": null,
     "metadata": {},
     "name": "routeTransactionsQuery",
     "operationKind": "query",
-    "text": "query routeTransactionsQuery {\n  ...transactionsPanelFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment on Query {\n  transactions(first: 20, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment on Query {\n  ...transactionsListFragment\n}\n"
+    "text": "query routeTransactionsQuery {\n  ...transactionsPanelFragment\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment on Query {\n  transactions(first: 20, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment on Query {\n  ...transactionsListFragment\n}\n"
   }
 };
 })();

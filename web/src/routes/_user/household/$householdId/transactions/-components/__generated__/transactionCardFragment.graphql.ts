@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b5f416aefd7833355803fa14e2338bfa>>
+ * @generated SignedSource<<10969966c28b182ea6182b1437efefc0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,8 +9,13 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type TransactionCategoryType = "expense" | "income" | "transfer" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type transactionCardFragment$data = {
+  readonly category: {
+    readonly name: string;
+    readonly type: TransactionCategoryType;
+  };
   readonly datetime: any;
   readonly id: string;
   readonly transactionEntries: ReadonlyArray<{
@@ -37,6 +42,13 @@ var v0 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
 };
 return {
   "argumentDefinitions": [],
@@ -50,6 +62,25 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "datetime",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "TransactionCategory",
+      "kind": "LinkedField",
+      "name": "category",
+      "plural": false,
+      "selections": [
+        (v1/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "type",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
@@ -76,13 +107,7 @@ return {
           "name": "account",
           "plural": false,
           "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "name",
-              "storageKey": null
-            },
+            (v1/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -113,6 +138,6 @@ return {
 };
 })();
 
-(node as any).hash = "5982eb6beec41b3c79d8f1ab16cdfb5e";
+(node as any).hash = "0ea7f60bb52838c1ac248a78fe6fa597";
 
 export default node;

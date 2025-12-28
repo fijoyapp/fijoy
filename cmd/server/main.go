@@ -14,6 +14,7 @@ import (
 	"fijoy.app"
 	"fijoy.app/ent"
 	"fijoy.app/ent/account"
+	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
 	"fijoy.app/internal/fxrate"
@@ -167,12 +168,40 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SaveX(ctx)
 
 	wealthsimple := entClient.Account.Create().
-		SetName("Wealthsimple Chequing").
+		SetName("Wealthsimple Visa Infinite").
 		SetUser(user).
 		SetCurrency(cad).
 		SetHousehold(household).
-		SetType(account.TypeLiquidity).
+		SetType(account.TypeLiability).
 		SaveX(ctx)
+
+	restaurant := entClient.TransactionCategory.Create().
+		SetName("Restaurant").
+		SetType(transactioncategory.TypeExpense).
+		SaveX(ctx)
+
+	grocery := entClient.TransactionCategory.Create().
+		SetName("Grocery").
+		SetType(transactioncategory.TypeExpense).
+		SaveX(ctx)
+
+	salary := entClient.TransactionCategory.Create().
+		SetName("Salary").
+		SetType(transactioncategory.TypeIncome).
+		SaveX(ctx)
+
+	{
+		transaction := entClient.Transaction.Create().
+			SetUser(user).
+			SetHousehold(household).
+			SetCategory(salary).
+			SetDatetime(genRandomDatetime()).SaveX(ctx)
+		entClient.TransactionEntry.Create().
+			SetAccount(chase).
+			SetTransaction(transaction).
+			SetCurrency(usd).
+			SetAmount(decimal.NewFromInt(1000000)).SaveX(ctx)
+	}
 
 	{
 		const n = 10000
@@ -181,6 +210,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 			txCreates[i] = entClient.Transaction.Create().
 				SetUser(user).
 				SetHousehold(household).
+				SetCategory(restaurant).
 				SetDatetime(genRandomDatetime())
 		}
 		transactions := entClient.Transaction.CreateBulk(txCreates...).
@@ -192,7 +222,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 				SetAccount(chase).
 				SetTransaction(t).
 				SetCurrency(usd).
-				SetAmount(genRandomAmount())
+				SetAmount(genRandomAmount().Mul(decimal.NewFromInt(-1)))
 		}
 		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
 	}
@@ -204,6 +234,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 			txCreates[i] = entClient.Transaction.Create().
 				SetUser(user).
 				SetHousehold(household).
+				SetCategory(grocery).
 				SetDatetime(genRandomDatetime())
 		}
 		transactions := entClient.Transaction.CreateBulk(txCreates...).
@@ -215,7 +246,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 				SetAccount(wealthsimple).
 				SetTransaction(t).
 				SetCurrency(cad).
-				SetAmount(genRandomAmount())
+				SetAmount(genRandomAmount().Mul(decimal.NewFromInt(-1)))
 		}
 		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
 	}

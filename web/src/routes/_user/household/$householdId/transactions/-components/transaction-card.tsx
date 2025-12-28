@@ -17,6 +17,10 @@ const transactionCardFragment = graphql`
   fragment transactionCardFragment on Transaction {
     id
     datetime
+    category {
+      name
+      type
+    }
     transactionEntries {
       id
       amount
@@ -46,7 +50,7 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
       </ItemMedia>
       <ItemContent className="">
         <ItemTitle className="line-clamp-1">
-          <span>CATEGORY</span>
+          <span>{data.category.name}</span>
         </ItemTitle>
         <ItemDescription>
           {new Date(data.datetime).toLocaleDateString()}
