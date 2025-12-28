@@ -1,4 +1,5 @@
 import { graphql } from 'relay-runtime'
+import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment } from 'react-relay'
 import { capitalize, groupBy, map } from 'lodash-es'
@@ -27,9 +28,16 @@ import {
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
+import { useHousehold } from '@/hooks/use-household'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query {
+    households {
+      id
+      currency {
+        code
+      }
+    }
     accounts {
       id
       type
@@ -61,6 +69,10 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
     [data.accounts],
   )
 
+  const { householdId } = useHousehold()
+  const household = data.households.find((h) => h.id === householdId)
+  invariant(household, 'Household not found')
+
   const netWorth = useMemo(() => {
     return data.accounts
       .map((account) => currency(account.balanceInHouseholdCurrency))
@@ -73,8 +85,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         <ItemContent>
           <ItemDescription>Net Worth</ItemDescription>
           <ItemTitle className="text-2xl">
-            {/* TODO: DO NOT HARD CODE */}
-            {formatCurrencyWithPrivacyMode(netWorth, 'CAD')}
+            {formatCurrencyWithPrivacyMode(netWorth, household.currency.code)}
           </ItemTitle>
         </ItemContent>
       </Item>

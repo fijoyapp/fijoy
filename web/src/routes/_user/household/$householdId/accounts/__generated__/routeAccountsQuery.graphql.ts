@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4cf5efdf2c56213c157134687510360f>>
+ * @generated SignedSource<<707aecef2fad49d4ab8aa87bfd18c1c4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,6 +28,25 @@ var v0 = {
   "storageKey": null
 },
 v1 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Currency",
+  "kind": "LinkedField",
+  "name": "currency",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "code",
+      "storageKey": null
+    },
+    (v0/*: any*/)
+  ],
+  "storageKey": null
+},
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -59,6 +78,19 @@ return {
       {
         "alias": null,
         "args": null,
+        "concreteType": "Household",
+        "kind": "LinkedField",
+        "name": "households",
+        "plural": true,
+        "selections": [
+          (v0/*: any*/),
+          (v1/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
         "concreteType": "Account",
         "kind": "LinkedField",
         "name": "accounts",
@@ -79,7 +111,7 @@ return {
             "name": "balanceInHouseholdCurrency",
             "storageKey": null
           },
-          (v1/*: any*/),
+          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -87,25 +119,7 @@ return {
             "name": "updateTime",
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "Currency",
-            "kind": "LinkedField",
-            "name": "currency",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "code",
-                "storageKey": null
-              },
-              (v0/*: any*/)
-            ],
-            "storageKey": null
-          },
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -114,7 +128,7 @@ return {
             "name": "user",
             "plural": false,
             "selections": [
-              (v1/*: any*/),
+              (v2/*: any*/),
               (v0/*: any*/)
             ],
             "storageKey": null
@@ -132,12 +146,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "eddf202cfa7c2787016df799d2497279",
+    "cacheID": "41c911ab003bde771a8cbf7f8001b74d",
     "id": null,
     "metadata": {},
     "name": "routeAccountsQuery",
     "operationKind": "query",
-    "text": "query routeAccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsPanelFragment on Query {\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query routeAccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();
