@@ -66,9 +66,6 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
                   </span>
                 </ItemDescription>
               </ItemContent>
-              <ItemActions className="">
-                <ChevronRightIcon className="size-4" />
-              </ItemActions>
             </>
           )}
         </Link>

@@ -1,4 +1,5 @@
 import { graphql } from 'relay-runtime'
+import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment } from 'react-relay'
 import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
@@ -10,7 +11,6 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
 } from '@/components/ui/accordion'
 import {
   Item,
@@ -21,6 +21,9 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
+import { cn } from '@/lib/utils'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query {
@@ -59,6 +62,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         <ItemContent>
           <ItemDescription>Net Worth</ItemDescription>
           <ItemTitle className="text-2xl">
+            {/* TODO: DO NOT HARD CODE */}
             {formatCurrencyWithPrivacyMode(netWorth, 'CAD')}
           </ItemTitle>
         </ItemContent>
@@ -72,14 +76,27 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         {map(groupedAccounts, (accounts, type) => {
           return (
             <AccordionItem value={type} key={type}>
-              <AccordionTrigger>{capitalize(type)}</AccordionTrigger>
+              <AccordionTrigger className="justify-normal **:data-[slot=accordion-trigger-icon]:ml-0 gap-2 hover:no-underline cursor-pointer">
+                <span>{capitalize(type)}</span>
+                <span className="grow"></span>
+                <span className="mr-3 font-mono">
+                  {formatCurrencyWithPrivacyMode(
+                    accounts
+                      .map((account) =>
+                        currency(account.balanceInHouseholdCurrency),
+                      )
+                      .reduce((a, b) => a.add(b), currency(0)),
+                    'CAD',
+                  )}
+                </span>
+              </AccordionTrigger>
               <AccordionContent>
                 <ItemGroup className="gap-0">
                   {accounts.map((account, index) => {
                     return (
                       <Fragment key={account.id}>
+                        <ItemSeparator className="my-1" />
                         <AccountCard fragmentRef={account} />
-                        {index !== accounts.length - 1 && <ItemSeparator />}
                       </Fragment>
                     )
                   })}
@@ -90,5 +107,38 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         })}
       </Accordion>
     </Fragment>
+  )
+}
+
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: AccordionPrimitive.Trigger.Props) {
+  return (
+    <AccordionPrimitive.Header className="flex">
+      <AccordionPrimitive.Trigger
+        data-slot="accordion-trigger"
+        className={cn(
+          '**:data-[slot=accordion-trigger-icon]:text-muted-foreground gap-6 p-2 text-left text-xs/relaxed font-medium hover:underline **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 group/accordion-trigger relative flex flex-1 items-start justify-between border border-transparent transition-all outline-none disabled:pointer-events-none disabled:opacity-50',
+          className,
+        )}
+        {...props}
+      >
+        <HugeiconsIcon
+          icon={ArrowDown01Icon}
+          strokeWidth={2}
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+        />
+        <HugeiconsIcon
+          icon={ArrowUp01Icon}
+          strokeWidth={2}
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+        />
+        {children}
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
   )
 }
