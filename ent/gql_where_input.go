@@ -3157,9 +3157,9 @@ type UserWhereInput struct {
 	HasTransactions     *bool                    `json:"hasTransactions,omitempty"`
 	HasTransactionsWith []*TransactionWhereInput `json:"hasTransactionsWith,omitempty"`
 
-	// "keys" edge predicates.
-	HasKeys     *bool                `json:"hasKeys,omitempty"`
-	HasKeysWith []*UserKeyWhereInput `json:"hasKeysWith,omitempty"`
+	// "user_keys" edge predicates.
+	HasUserKeys     *bool                `json:"hasUserKeys,omitempty"`
+	HasUserKeysWith []*UserKeyWhereInput `json:"hasUserKeysWith,omitempty"`
 
 	// "user_households" edge predicates.
 	HasUserHouseholds     *bool                      `json:"hasUserHouseholds,omitempty"`
@@ -3442,23 +3442,23 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 		}
 		predicates = append(predicates, user.HasTransactionsWith(with...))
 	}
-	if i.HasKeys != nil {
-		p := user.HasKeys()
-		if !*i.HasKeys {
+	if i.HasUserKeys != nil {
+		p := user.HasUserKeys()
+		if !*i.HasUserKeys {
 			p = user.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasKeysWith) > 0 {
-		with := make([]predicate.UserKey, 0, len(i.HasKeysWith))
-		for _, w := range i.HasKeysWith {
+	if len(i.HasUserKeysWith) > 0 {
+		with := make([]predicate.UserKey, 0, len(i.HasUserKeysWith))
+		for _, w := range i.HasUserKeysWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasKeysWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasUserKeysWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, user.HasKeysWith(with...))
+		predicates = append(predicates, user.HasUserKeysWith(with...))
 	}
 	if i.HasUserHouseholds != nil {
 		p := user.HasUserHouseholds()

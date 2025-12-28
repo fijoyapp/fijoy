@@ -227,11 +227,11 @@ type ComplexityRoot struct {
 		Email          func(childComplexity int) int
 		Households     func(childComplexity int) int
 		ID             func(childComplexity int) int
-		Keys           func(childComplexity int) int
 		Name           func(childComplexity int) int
 		Transactions   func(childComplexity int) int
 		UpdateTime     func(childComplexity int) int
 		UserHouseholds func(childComplexity int) int
+		UserKeys       func(childComplexity int) int
 	}
 
 	UserHousehold struct {
@@ -1101,12 +1101,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.ID(childComplexity), true
-	case "User.keys":
-		if e.complexity.User.Keys == nil {
-			break
-		}
-
-		return e.complexity.User.Keys(childComplexity), true
 	case "User.name":
 		if e.complexity.User.Name == nil {
 			break
@@ -1131,6 +1125,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.UserHouseholds(childComplexity), true
+	case "User.userKeys":
+		if e.complexity.User.UserKeys == nil {
+			break
+		}
+
+		return e.complexity.User.UserKeys(childComplexity), true
 
 	case "UserHousehold.createTime":
 		if e.complexity.UserHousehold.CreateTime == nil {
@@ -1889,8 +1889,8 @@ func (ec *executionContext) fieldContext_Account_user(_ context.Context, field g
 				return ec.fieldContext_User_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_User_transactions(ctx, field)
-			case "keys":
-				return ec.fieldContext_User_keys(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -2539,8 +2539,8 @@ func (ec *executionContext) fieldContext_Household_users(_ context.Context, fiel
 				return ec.fieldContext_User_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_User_transactions(ctx, field)
-			case "keys":
-				return ec.fieldContext_User_keys(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -5040,8 +5040,8 @@ func (ec *executionContext) fieldContext_Transaction_user(_ context.Context, fie
 				return ec.fieldContext_User_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_User_transactions(ctx, field)
-			case "keys":
-				return ec.fieldContext_User_keys(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -6340,14 +6340,14 @@ func (ec *executionContext) fieldContext_User_transactions(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _User_keys(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_userKeys(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_User_keys,
+		ec.fieldContext_User_userKeys,
 		func(ctx context.Context) (any, error) {
-			return obj.Keys(ctx)
+			return obj.UserKeys(ctx)
 		},
 		nil,
 		ec.marshalOUserKey2ᚕᚖfijoyᚗappᚋentᚐUserKeyᚄ,
@@ -6356,7 +6356,7 @@ func (ec *executionContext) _User_keys(ctx context.Context, field graphql.Collec
 	)
 }
 
-func (ec *executionContext) fieldContext_User_keys(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_userKeys(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -6644,8 +6644,8 @@ func (ec *executionContext) fieldContext_UserHousehold_user(_ context.Context, f
 				return ec.fieldContext_User_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_User_transactions(ctx, field)
-			case "keys":
-				return ec.fieldContext_User_keys(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -6899,8 +6899,8 @@ func (ec *executionContext) fieldContext_UserKey_user(_ context.Context, field g
 				return ec.fieldContext_User_accounts(ctx, field)
 			case "transactions":
 				return ec.fieldContext_User_transactions(ctx, field)
-			case "keys":
-				return ec.fieldContext_User_keys(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -12482,7 +12482,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasHouseholds", "hasHouseholdsWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasKeys", "hasKeysWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasHouseholds", "hasHouseholdsWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasUserKeys", "hasUserKeysWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12902,20 +12902,20 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.HasTransactionsWith = data
-		case "hasKeys":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasKeys"))
+		case "hasUserKeys":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserKeys"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasKeys = data
-		case "hasKeysWith":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasKeysWith"))
+			it.HasUserKeys = data
+		case "hasUserKeysWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserKeysWith"))
 			data, err := ec.unmarshalOUserKeyWhereInput2ᚕᚖfijoyᚗappᚋentᚐUserKeyWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasKeysWith = data
+			it.HasUserKeysWith = data
 		case "hasUserHouseholds":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserHouseholds"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -15630,7 +15630,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "keys":
+		case "userKeys":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -15639,7 +15639,7 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._User_keys(ctx, field, obj)
+				res = ec._User_userKeys(ctx, field, obj)
 				return res
 			}
 

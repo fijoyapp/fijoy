@@ -87,7 +87,9 @@ func (_c *UserHouseholdCreate) Mutation() *UserHouseholdMutation {
 
 // Save creates the UserHousehold in the database.
 func (_c *UserHouseholdCreate) Save(ctx context.Context) (*UserHousehold, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -114,15 +116,22 @@ func (_c *UserHouseholdCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *UserHouseholdCreate) defaults() {
+func (_c *UserHouseholdCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if userhousehold.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized userhousehold.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := userhousehold.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if userhousehold.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized userhousehold.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := userhousehold.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

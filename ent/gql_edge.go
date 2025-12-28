@@ -384,14 +384,14 @@ func (_m *User) Transactions(ctx context.Context) (result []*Transaction, err er
 	return result, err
 }
 
-func (_m *User) Keys(ctx context.Context) (result []*UserKey, err error) {
+func (_m *User) UserKeys(ctx context.Context) (result []*UserKey, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = _m.NamedKeys(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = _m.NamedUserKeys(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = _m.Edges.KeysOrErr()
+		result, err = _m.Edges.UserKeysOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = _m.QueryKeys().All(ctx)
+		result, err = _m.QueryUserKeys().All(ctx)
 	}
 	return result, err
 }

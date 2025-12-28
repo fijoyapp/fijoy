@@ -7,6 +7,8 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
+	"fijoy.app/ent/privacy"
+	"fijoy.app/ent/rules"
 )
 
 // Household holds the schema definition for the Household entity.
@@ -47,9 +49,24 @@ func (Household) Annotations() []schema.Annotation {
 	}
 }
 
+func (Household) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			rules.AllowPrivacyBypass(),
+			rules.FilterMemberHousehold(),
+		},
+		Mutation: privacy.MutationPolicy{
+			privacy.OnMutationOperation(
+				privacy.AlwaysAllowRule(),
+				ent.OpCreate,
+			),
+			rules.FilterMemberHousehold(),
+		},
+	}
+}
+
 func (Household) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }

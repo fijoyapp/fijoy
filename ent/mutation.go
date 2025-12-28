@@ -6913,9 +6913,9 @@ type UserMutation struct {
 	transactions           map[int]struct{}
 	removedtransactions    map[int]struct{}
 	clearedtransactions    bool
-	keys                   map[int]struct{}
-	removedkeys            map[int]struct{}
-	clearedkeys            bool
+	user_keys              map[int]struct{}
+	removeduser_keys       map[int]struct{}
+	cleareduser_keys       bool
 	user_households        map[int]struct{}
 	removeduser_households map[int]struct{}
 	cleareduser_households bool
@@ -7328,58 +7328,58 @@ func (m *UserMutation) ResetTransactions() {
 	m.removedtransactions = nil
 }
 
-// AddKeyIDs adds the "keys" edge to the UserKey entity by ids.
-func (m *UserMutation) AddKeyIDs(ids ...int) {
-	if m.keys == nil {
-		m.keys = make(map[int]struct{})
+// AddUserKeyIDs adds the "user_keys" edge to the UserKey entity by ids.
+func (m *UserMutation) AddUserKeyIDs(ids ...int) {
+	if m.user_keys == nil {
+		m.user_keys = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.keys[ids[i]] = struct{}{}
+		m.user_keys[ids[i]] = struct{}{}
 	}
 }
 
-// ClearKeys clears the "keys" edge to the UserKey entity.
-func (m *UserMutation) ClearKeys() {
-	m.clearedkeys = true
+// ClearUserKeys clears the "user_keys" edge to the UserKey entity.
+func (m *UserMutation) ClearUserKeys() {
+	m.cleareduser_keys = true
 }
 
-// KeysCleared reports if the "keys" edge to the UserKey entity was cleared.
-func (m *UserMutation) KeysCleared() bool {
-	return m.clearedkeys
+// UserKeysCleared reports if the "user_keys" edge to the UserKey entity was cleared.
+func (m *UserMutation) UserKeysCleared() bool {
+	return m.cleareduser_keys
 }
 
-// RemoveKeyIDs removes the "keys" edge to the UserKey entity by IDs.
-func (m *UserMutation) RemoveKeyIDs(ids ...int) {
-	if m.removedkeys == nil {
-		m.removedkeys = make(map[int]struct{})
+// RemoveUserKeyIDs removes the "user_keys" edge to the UserKey entity by IDs.
+func (m *UserMutation) RemoveUserKeyIDs(ids ...int) {
+	if m.removeduser_keys == nil {
+		m.removeduser_keys = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.keys, ids[i])
-		m.removedkeys[ids[i]] = struct{}{}
+		delete(m.user_keys, ids[i])
+		m.removeduser_keys[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedKeys returns the removed IDs of the "keys" edge to the UserKey entity.
-func (m *UserMutation) RemovedKeysIDs() (ids []int) {
-	for id := range m.removedkeys {
+// RemovedUserKeys returns the removed IDs of the "user_keys" edge to the UserKey entity.
+func (m *UserMutation) RemovedUserKeysIDs() (ids []int) {
+	for id := range m.removeduser_keys {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// KeysIDs returns the "keys" edge IDs in the mutation.
-func (m *UserMutation) KeysIDs() (ids []int) {
-	for id := range m.keys {
+// UserKeysIDs returns the "user_keys" edge IDs in the mutation.
+func (m *UserMutation) UserKeysIDs() (ids []int) {
+	for id := range m.user_keys {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetKeys resets all changes to the "keys" edge.
-func (m *UserMutation) ResetKeys() {
-	m.keys = nil
-	m.clearedkeys = false
-	m.removedkeys = nil
+// ResetUserKeys resets all changes to the "user_keys" edge.
+func (m *UserMutation) ResetUserKeys() {
+	m.user_keys = nil
+	m.cleareduser_keys = false
+	m.removeduser_keys = nil
 }
 
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by ids.
@@ -7630,8 +7630,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.transactions != nil {
 		edges = append(edges, user.EdgeTransactions)
 	}
-	if m.keys != nil {
-		edges = append(edges, user.EdgeKeys)
+	if m.user_keys != nil {
+		edges = append(edges, user.EdgeUserKeys)
 	}
 	if m.user_households != nil {
 		edges = append(edges, user.EdgeUserHouseholds)
@@ -7661,9 +7661,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeKeys:
-		ids := make([]ent.Value, 0, len(m.keys))
-		for id := range m.keys {
+	case user.EdgeUserKeys:
+		ids := make([]ent.Value, 0, len(m.user_keys))
+		for id := range m.user_keys {
 			ids = append(ids, id)
 		}
 		return ids
@@ -7689,8 +7689,8 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedtransactions != nil {
 		edges = append(edges, user.EdgeTransactions)
 	}
-	if m.removedkeys != nil {
-		edges = append(edges, user.EdgeKeys)
+	if m.removeduser_keys != nil {
+		edges = append(edges, user.EdgeUserKeys)
 	}
 	if m.removeduser_households != nil {
 		edges = append(edges, user.EdgeUserHouseholds)
@@ -7720,9 +7720,9 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeKeys:
-		ids := make([]ent.Value, 0, len(m.removedkeys))
-		for id := range m.removedkeys {
+	case user.EdgeUserKeys:
+		ids := make([]ent.Value, 0, len(m.removeduser_keys))
+		for id := range m.removeduser_keys {
 			ids = append(ids, id)
 		}
 		return ids
@@ -7748,8 +7748,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedtransactions {
 		edges = append(edges, user.EdgeTransactions)
 	}
-	if m.clearedkeys {
-		edges = append(edges, user.EdgeKeys)
+	if m.cleareduser_keys {
+		edges = append(edges, user.EdgeUserKeys)
 	}
 	if m.cleareduser_households {
 		edges = append(edges, user.EdgeUserHouseholds)
@@ -7767,8 +7767,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedaccounts
 	case user.EdgeTransactions:
 		return m.clearedtransactions
-	case user.EdgeKeys:
-		return m.clearedkeys
+	case user.EdgeUserKeys:
+		return m.cleareduser_keys
 	case user.EdgeUserHouseholds:
 		return m.cleareduser_households
 	}
@@ -7796,8 +7796,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeTransactions:
 		m.ResetTransactions()
 		return nil
-	case user.EdgeKeys:
-		m.ResetKeys()
+	case user.EdgeUserKeys:
+		m.ResetUserKeys()
 		return nil
 	case user.EdgeUserHouseholds:
 		m.ResetUserHouseholds()

@@ -67,6 +67,15 @@ func init() {
 	// currency.CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	currency.CodeValidator = currencyDescCode.Validators[0].(func(string) error)
 	householdMixin := schema.Household{}.Mixin()
+	household.Policy = privacy.NewPolicies(schema.Household{})
+	household.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := household.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	householdMixinFields0 := householdMixin[0].Fields()
 	_ = householdMixinFields0
 	householdFields := schema.Household{}.Fields()
@@ -218,6 +227,15 @@ func init() {
 	// transactionentry.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	transactionentry.UpdateDefaultUpdateTime = transactionentryDescUpdateTime.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
+	user.Policy = privacy.NewPolicies(schema.User{})
+	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := user.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
 	userFields := schema.User{}.Fields()
@@ -241,6 +259,15 @@ func init() {
 	// user.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	user.NameValidator = userDescName.Validators[0].(func(string) error)
 	userhouseholdMixin := schema.UserHousehold{}.Mixin()
+	userhousehold.Policy = privacy.NewPolicies(schema.UserHousehold{})
+	userhousehold.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := userhousehold.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	userhouseholdMixinFields0 := userhouseholdMixin[0].Fields()
 	_ = userhouseholdMixinFields0
 	userhouseholdFields := schema.UserHousehold{}.Fields()
@@ -256,6 +283,15 @@ func init() {
 	// userhousehold.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	userhousehold.UpdateDefaultUpdateTime = userhouseholdDescUpdateTime.UpdateDefault.(func() time.Time)
 	userkeyMixin := schema.UserKey{}.Mixin()
+	userkey.Policy = privacy.NewPolicies(schema.UserKey{})
+	userkey.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := userkey.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	userkeyMixinFields0 := userkeyMixin[0].Fields()
 	_ = userkeyMixinFields0
 	userkeyFields := schema.UserKey{}.Fields()

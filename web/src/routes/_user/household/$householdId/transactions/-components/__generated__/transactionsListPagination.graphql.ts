@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<829e173a36f081ddeb3c7920901e888b>>
+ * @generated SignedSource<<6b63812c0fb1ad2c87e5997658be3510>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -106,12 +106,12 @@ export type UserWhereInput = {
   hasAccountsWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
   hasHouseholds?: boolean | null | undefined;
   hasHouseholdsWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
-  hasKeys?: boolean | null | undefined;
-  hasKeysWith?: ReadonlyArray<UserKeyWhereInput> | null | undefined;
   hasTransactions?: boolean | null | undefined;
   hasTransactionsWith?: ReadonlyArray<TransactionWhereInput> | null | undefined;
   hasUserHouseholds?: boolean | null | undefined;
   hasUserHouseholdsWith?: ReadonlyArray<UserHouseholdWhereInput> | null | undefined;
+  hasUserKeys?: boolean | null | undefined;
+  hasUserKeysWith?: ReadonlyArray<UserKeyWhereInput> | null | undefined;
   id?: string | null | undefined;
   idGT?: string | null | undefined;
   idGTE?: string | null | undefined;

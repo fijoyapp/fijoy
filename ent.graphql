@@ -1156,7 +1156,7 @@ type User implements Node {
   households: [Household!]
   accounts: [Account!]
   transactions: [Transaction!]
-  keys: [UserKey!]
+  userKeys: [UserKey!]
   userHouseholds: [UserHousehold!]
 }
 type UserHousehold implements Node {
@@ -1398,10 +1398,10 @@ input UserWhereInput {
   hasTransactions: Boolean
   hasTransactionsWith: [TransactionWhereInput!]
   """
-  keys edge predicates
+  user_keys edge predicates
   """
-  hasKeys: Boolean
-  hasKeysWith: [UserKeyWhereInput!]
+  hasUserKeys: Boolean
+  hasUserKeysWith: [UserKeyWhereInput!]
   """
   user_households edge predicates
   """

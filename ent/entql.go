@@ -664,12 +664,12 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Transaction",
 	)
 	graph.MustAddE(
-		"keys",
+		"user_keys",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 		},
 		"User",
@@ -1820,14 +1820,14 @@ func (f *UserFilter) WhereHasTransactionsWith(preds ...predicate.Transaction) {
 	})))
 }
 
-// WhereHasKeys applies a predicate to check if query has an edge keys.
-func (f *UserFilter) WhereHasKeys() {
-	f.Where(entql.HasEdge("keys"))
+// WhereHasUserKeys applies a predicate to check if query has an edge user_keys.
+func (f *UserFilter) WhereHasUserKeys() {
+	f.Where(entql.HasEdge("user_keys"))
 }
 
-// WhereHasKeysWith applies a predicate to check if query has an edge keys with a given conditions (other predicates).
-func (f *UserFilter) WhereHasKeysWith(preds ...predicate.UserKey) {
-	f.Where(entql.HasEdgeWith("keys", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasUserKeysWith applies a predicate to check if query has an edge user_keys with a given conditions (other predicates).
+func (f *UserFilter) WhereHasUserKeysWith(preds ...predicate.UserKey) {
+	f.Where(entql.HasEdgeWith("user_keys", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

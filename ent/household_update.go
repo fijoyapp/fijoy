@@ -384,7 +384,9 @@ func (_u *HouseholdUpdate) RemoveUserHouseholds(v ...*UserHousehold) *HouseholdU
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *HouseholdUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -411,11 +413,15 @@ func (_u *HouseholdUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *HouseholdUpdate) defaults() {
+func (_u *HouseholdUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if household.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized household.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := household.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -504,7 +510,7 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			},
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -524,7 +530,7 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -544,7 +550,7 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
@@ -1245,7 +1251,9 @@ func (_u *HouseholdUpdateOne) Select(field string, fields ...string) *HouseholdU
 
 // Save executes the query and returns the updated Household entity.
 func (_u *HouseholdUpdateOne) Save(ctx context.Context) (*Household, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -1272,11 +1280,15 @@ func (_u *HouseholdUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *HouseholdUpdateOne) defaults() {
+func (_u *HouseholdUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if household.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized household.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := household.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -1382,7 +1394,7 @@ func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, er
 			},
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1402,7 +1414,7 @@ func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, er
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1422,7 +1434,7 @@ func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, er
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)

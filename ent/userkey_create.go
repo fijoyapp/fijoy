@@ -81,7 +81,9 @@ func (_c *UserKeyCreate) Mutation() *UserKeyMutation {
 
 // Save creates the UserKey in the database.
 func (_c *UserKeyCreate) Save(ctx context.Context) (*UserKey, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -108,15 +110,22 @@ func (_c *UserKeyCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *UserKeyCreate) defaults() {
+func (_c *UserKeyCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if userkey.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized userkey.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := userkey.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if userkey.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized userkey.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := userkey.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -203,7 +212,7 @@ func (_c *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_keys = &nodes[0]
+		_node.user_user_keys = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

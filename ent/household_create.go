@@ -209,7 +209,9 @@ func (_c *HouseholdCreate) Mutation() *HouseholdMutation {
 
 // Save creates the Household in the database.
 func (_c *HouseholdCreate) Save(ctx context.Context) (*Household, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -236,15 +238,22 @@ func (_c *HouseholdCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *HouseholdCreate) defaults() {
+func (_c *HouseholdCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if household.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized household.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := household.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if household.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized household.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := household.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -349,7 +358,7 @@ func (_c *HouseholdCreate) createSpec() (*Household, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _c.config, mutation: newUserHouseholdMutation(_c.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges = append(_spec.Edges, edge)

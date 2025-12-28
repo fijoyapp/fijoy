@@ -5,6 +5,7 @@ package user
 import (
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -28,8 +29,8 @@ const (
 	EdgeAccounts = "accounts"
 	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
 	EdgeTransactions = "transactions"
-	// EdgeKeys holds the string denoting the keys edge name in mutations.
-	EdgeKeys = "keys"
+	// EdgeUserKeys holds the string denoting the user_keys edge name in mutations.
+	EdgeUserKeys = "user_keys"
 	// EdgeUserHouseholds holds the string denoting the user_households edge name in mutations.
 	EdgeUserHouseholds = "user_households"
 	// Table holds the table name of the user in the database.
@@ -53,13 +54,13 @@ const (
 	TransactionsInverseTable = "transactions"
 	// TransactionsColumn is the table column denoting the transactions relation/edge.
 	TransactionsColumn = "user_transactions"
-	// KeysTable is the table that holds the keys relation/edge.
-	KeysTable = "user_keys"
-	// KeysInverseTable is the table name for the UserKey entity.
+	// UserKeysTable is the table that holds the user_keys relation/edge.
+	UserKeysTable = "user_keys"
+	// UserKeysInverseTable is the table name for the UserKey entity.
 	// It exists in this package in order to avoid circular dependency with the "userkey" package.
-	KeysInverseTable = "user_keys"
-	// KeysColumn is the table column denoting the keys relation/edge.
-	KeysColumn = "user_keys"
+	UserKeysInverseTable = "user_keys"
+	// UserKeysColumn is the table column denoting the user_keys relation/edge.
+	UserKeysColumn = "user_user_keys"
 	// UserHouseholdsTable is the table that holds the user_households relation/edge.
 	UserHouseholdsTable = "user_households"
 	// UserHouseholdsInverseTable is the table name for the UserHousehold entity.
@@ -94,7 +95,14 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "fijoy.app/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the "create_time" field.
 	DefaultCreateTime func() time.Time
 	// DefaultUpdateTime holds the default value on creation for the "update_time" field.
@@ -177,17 +185,17 @@ func ByTransactions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByKeysCount orders the results by keys count.
-func ByKeysCount(opts ...sql.OrderTermOption) OrderOption {
+// ByUserKeysCount orders the results by user_keys count.
+func ByUserKeysCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newKeysStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newUserKeysStep(), opts...)
 	}
 }
 
-// ByKeys orders the results by keys terms.
-func ByKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByUserKeys orders the results by user_keys terms.
+func ByUserKeys(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newKeysStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newUserKeysStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -225,11 +233,11 @@ func newTransactionsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionsTable, TransactionsColumn),
 	)
 }
-func newKeysStep() *sqlgraph.Step {
+func newUserKeysStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(KeysInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, KeysTable, KeysColumn),
+		sqlgraph.To(UserKeysInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, UserKeysTable, UserKeysColumn),
 	)
 }
 func newUserHouseholdsStep() *sqlgraph.Step {

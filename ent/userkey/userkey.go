@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -35,7 +36,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_keys"
+	UserColumn = "user_user_keys"
 )
 
 // Columns holds all SQL columns for userkey fields.
@@ -50,7 +51,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "user_keys"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"user_keys",
+	"user_user_keys",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -68,7 +69,14 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "fijoy.app/ent/runtime"
 var (
+	Hooks  [1]ent.Hook
+	Policy ent.Policy
 	// DefaultCreateTime holds the default value on creation for the "create_time" field.
 	DefaultCreateTime func() time.Time
 	// DefaultUpdateTime holds the default value on creation for the "update_time" field.

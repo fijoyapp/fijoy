@@ -173,7 +173,7 @@ func main() {
 			if p == "local" {
 				userID := entClient.User.Query().
 					Where(user.EmailEQ("joey@itsjoeoui.com")).
-					OnlyIDX(ctx)
+					OnlyIDX(contextkeys.NewPrivacyBypassContext(ctx))
 
 				_, tokenString, _ := tokenAuth.Encode(
 					map[string]interface{}{
@@ -210,7 +210,7 @@ func main() {
 					SetEmail(gothicUser.Email).
 					SetName(gothicUser.Name).
 					OnConflict(entsql.ConflictColumns(user.FieldEmail)).
-					Ignore().ID(ctx)
+					Ignore().ID(contextkeys.NewPrivacyBypassContext(ctx))
 				if err != nil {
 					res.WriteHeader(http.StatusInternalServerError)
 					log.Printf("failed creating user: %v", err)
@@ -222,7 +222,7 @@ func main() {
 					SetKey(gothicUser.UserID).
 					SetProvider(userkey.ProviderGoogle).
 					OnConflict(entsql.ConflictColumns(userkey.FieldProvider, userkey.FieldKey)).
-					Ignore().Exec(ctx)
+					Ignore().Exec(contextkeys.NewPrivacyBypassContext(ctx))
 				if err != nil {
 					res.WriteHeader(http.StatusInternalServerError)
 					log.Printf("failed creating user key: %v", err)
@@ -327,7 +327,7 @@ func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
 						userhousehold.UserID(userID),
 						userhousehold.HouseholdID(hid),
 					).
-					Exist(ctx)
+					Exist(contextkeys.NewPrivacyBypassContext(ctx))
 				if err != nil {
 					// Log this error in production
 					http.Error(
@@ -349,7 +349,6 @@ func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
 			}
 
 			next.ServeHTTP(w, r.WithContext(ctx))
-			log.Println("auth middleware executed")
 		})
 	}
 }
@@ -357,7 +356,7 @@ func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
 func seed(ctx context.Context, entClient *ent.Client) error {
 	alreadySeeded := entClient.User.Query().
 		Where(user.EmailEQ("joey@itsjoeoui.com")).
-		ExistX(ctx)
+		ExistX(contextkeys.NewPrivacyBypassContext(ctx))
 	if alreadySeeded {
 		return nil
 	}

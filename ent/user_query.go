@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -31,14 +32,14 @@ type UserQuery struct {
 	withHouseholds          *HouseholdQuery
 	withAccounts            *AccountQuery
 	withTransactions        *TransactionQuery
-	withKeys                *UserKeyQuery
+	withUserKeys            *UserKeyQuery
 	withUserHouseholds      *UserHouseholdQuery
 	loadTotal               []func(context.Context, []*User) error
 	modifiers               []func(*sql.Selector)
 	withNamedHouseholds     map[string]*HouseholdQuery
 	withNamedAccounts       map[string]*AccountQuery
 	withNamedTransactions   map[string]*TransactionQuery
-	withNamedKeys           map[string]*UserKeyQuery
+	withNamedUserKeys       map[string]*UserKeyQuery
 	withNamedUserHouseholds map[string]*UserHouseholdQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -142,8 +143,8 @@ func (_q *UserQuery) QueryTransactions() *TransactionQuery {
 	return query
 }
 
-// QueryKeys chains the current query on the "keys" edge.
-func (_q *UserQuery) QueryKeys() *UserKeyQuery {
+// QueryUserKeys chains the current query on the "user_keys" edge.
+func (_q *UserQuery) QueryUserKeys() *UserKeyQuery {
 	query := (&UserKeyClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -156,7 +157,7 @@ func (_q *UserQuery) QueryKeys() *UserKeyQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(userkey.Table, userkey.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.KeysTable, user.KeysColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeysTable, user.UserKeysColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -381,7 +382,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		withHouseholds:     _q.withHouseholds.Clone(),
 		withAccounts:       _q.withAccounts.Clone(),
 		withTransactions:   _q.withTransactions.Clone(),
-		withKeys:           _q.withKeys.Clone(),
+		withUserKeys:       _q.withUserKeys.Clone(),
 		withUserHouseholds: _q.withUserHouseholds.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
@@ -423,14 +424,14 @@ func (_q *UserQuery) WithTransactions(opts ...func(*TransactionQuery)) *UserQuer
 	return _q
 }
 
-// WithKeys tells the query-builder to eager-load the nodes that are connected to
-// the "keys" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithKeys(opts ...func(*UserKeyQuery)) *UserQuery {
+// WithUserKeys tells the query-builder to eager-load the nodes that are connected to
+// the "user_keys" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithUserKeys(opts ...func(*UserKeyQuery)) *UserQuery {
 	query := (&UserKeyClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withKeys = query
+	_q.withUserKeys = query
 	return _q
 }
 
@@ -516,6 +517,12 @@ func (_q *UserQuery) prepareQuery(ctx context.Context) error {
 		}
 		_q.sql = prev
 	}
+	if user.Policy == nil {
+		return errors.New("ent: uninitialized user.Policy (forgotten import ent/runtime?)")
+	}
+	if err := user.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -527,7 +534,7 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			_q.withHouseholds != nil,
 			_q.withAccounts != nil,
 			_q.withTransactions != nil,
-			_q.withKeys != nil,
+			_q.withUserKeys != nil,
 			_q.withUserHouseholds != nil,
 		}
 	)
@@ -573,10 +580,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := _q.withKeys; query != nil {
-		if err := _q.loadKeys(ctx, query, nodes,
-			func(n *User) { n.Edges.Keys = []*UserKey{} },
-			func(n *User, e *UserKey) { n.Edges.Keys = append(n.Edges.Keys, e) }); err != nil {
+	if query := _q.withUserKeys; query != nil {
+		if err := _q.loadUserKeys(ctx, query, nodes,
+			func(n *User) { n.Edges.UserKeys = []*UserKey{} },
+			func(n *User, e *UserKey) { n.Edges.UserKeys = append(n.Edges.UserKeys, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -608,10 +615,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	for name, query := range _q.withNamedKeys {
-		if err := _q.loadKeys(ctx, query, nodes,
-			func(n *User) { n.appendNamedKeys(name) },
-			func(n *User, e *UserKey) { n.appendNamedKeys(name, e) }); err != nil {
+	for name, query := range _q.withNamedUserKeys {
+		if err := _q.loadUserKeys(ctx, query, nodes,
+			func(n *User) { n.appendNamedUserKeys(name) },
+			func(n *User, e *UserKey) { n.appendNamedUserKeys(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -753,7 +760,7 @@ func (_q *UserQuery) loadTransactions(ctx context.Context, query *TransactionQue
 	}
 	return nil
 }
-func (_q *UserQuery) loadKeys(ctx context.Context, query *UserKeyQuery, nodes []*User, init func(*User), assign func(*User, *UserKey)) error {
+func (_q *UserQuery) loadUserKeys(ctx context.Context, query *UserKeyQuery, nodes []*User, init func(*User), assign func(*User, *UserKey)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*User)
 	for i := range nodes {
@@ -765,20 +772,20 @@ func (_q *UserQuery) loadKeys(ctx context.Context, query *UserKeyQuery, nodes []
 	}
 	query.withFKs = true
 	query.Where(predicate.UserKey(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.KeysColumn), fks...))
+		s.Where(sql.InValues(s.C(user.UserKeysColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_keys
+		fk := n.user_user_keys
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_keys" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "user_user_keys" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_keys" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_user_keys" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -950,17 +957,17 @@ func (_q *UserQuery) WithNamedTransactions(name string, opts ...func(*Transactio
 	return _q
 }
 
-// WithNamedKeys tells the query-builder to eager-load the nodes that are connected to the "keys"
+// WithNamedUserKeys tells the query-builder to eager-load the nodes that are connected to the "user_keys"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithNamedKeys(name string, opts ...func(*UserKeyQuery)) *UserQuery {
+func (_q *UserQuery) WithNamedUserKeys(name string, opts ...func(*UserKeyQuery)) *UserQuery {
 	query := (&UserKeyClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if _q.withNamedKeys == nil {
-		_q.withNamedKeys = make(map[string]*UserKeyQuery)
+	if _q.withNamedUserKeys == nil {
+		_q.withNamedUserKeys = make(map[string]*UserKeyQuery)
 	}
-	_q.withNamedKeys[name] = query
+	_q.withNamedUserKeys[name] = query
 	return _q
 }
 

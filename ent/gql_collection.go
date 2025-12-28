@@ -1221,7 +1221,7 @@ func (_q *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 				*wq = *query
 			})
 
-		case "keys":
+		case "userKeys":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -1230,7 +1230,7 @@ func (_q *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userkeyImplementors)...); err != nil {
 				return err
 			}
-			_q.WithNamedKeys(alias, func(wq *UserKeyQuery) {
+			_q.WithNamedUserKeys(alias, func(wq *UserKeyQuery) {
 				*wq = *query
 			})
 

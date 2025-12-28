@@ -318,7 +318,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "provider", Type: field.TypeEnum, Enums: []string{"google"}},
 		{Name: "key", Type: field.TypeString},
-		{Name: "user_keys", Type: field.TypeInt},
+		{Name: "user_user_keys", Type: field.TypeInt},
 	}
 	// UserKeysTable holds the schema information for the "user_keys" table.
 	UserKeysTable = &schema.Table{
@@ -327,7 +327,7 @@ var (
 		PrimaryKey: []*schema.Column{UserKeysColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "user_keys_users_keys",
+				Symbol:     "user_keys_users_user_keys",
 				Columns:    []*schema.Column{UserKeysColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,

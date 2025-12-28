@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -367,6 +368,12 @@ func (_q *UserKeyQuery) prepareQuery(ctx context.Context) error {
 		}
 		_q.sql = prev
 	}
+	if userkey.Policy == nil {
+		return errors.New("ent: uninitialized userkey.Policy (forgotten import ent/runtime?)")
+	}
+	if err := userkey.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -424,10 +431,10 @@ func (_q *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*UserKey)
 	for i := range nodes {
-		if nodes[i].user_keys == nil {
+		if nodes[i].user_user_keys == nil {
 			continue
 		}
-		fk := *nodes[i].user_keys
+		fk := *nodes[i].user_user_keys
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -444,7 +451,7 @@ func (_q *UserKeyQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_keys" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_user_keys" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

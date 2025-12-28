@@ -113,19 +113,19 @@ func (_u *UserUpdate) AddTransactions(v ...*Transaction) *UserUpdate {
 	return _u.AddTransactionIDs(ids...)
 }
 
-// AddKeyIDs adds the "keys" edge to the UserKey entity by IDs.
-func (_u *UserUpdate) AddKeyIDs(ids ...int) *UserUpdate {
-	_u.mutation.AddKeyIDs(ids...)
+// AddUserKeyIDs adds the "user_keys" edge to the UserKey entity by IDs.
+func (_u *UserUpdate) AddUserKeyIDs(ids ...int) *UserUpdate {
+	_u.mutation.AddUserKeyIDs(ids...)
 	return _u
 }
 
-// AddKeys adds the "keys" edges to the UserKey entity.
-func (_u *UserUpdate) AddKeys(v ...*UserKey) *UserUpdate {
+// AddUserKeys adds the "user_keys" edges to the UserKey entity.
+func (_u *UserUpdate) AddUserKeys(v ...*UserKey) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddKeyIDs(ids...)
+	return _u.AddUserKeyIDs(ids...)
 }
 
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
@@ -211,25 +211,25 @@ func (_u *UserUpdate) RemoveTransactions(v ...*Transaction) *UserUpdate {
 	return _u.RemoveTransactionIDs(ids...)
 }
 
-// ClearKeys clears all "keys" edges to the UserKey entity.
-func (_u *UserUpdate) ClearKeys() *UserUpdate {
-	_u.mutation.ClearKeys()
+// ClearUserKeys clears all "user_keys" edges to the UserKey entity.
+func (_u *UserUpdate) ClearUserKeys() *UserUpdate {
+	_u.mutation.ClearUserKeys()
 	return _u
 }
 
-// RemoveKeyIDs removes the "keys" edge to UserKey entities by IDs.
-func (_u *UserUpdate) RemoveKeyIDs(ids ...int) *UserUpdate {
-	_u.mutation.RemoveKeyIDs(ids...)
+// RemoveUserKeyIDs removes the "user_keys" edge to UserKey entities by IDs.
+func (_u *UserUpdate) RemoveUserKeyIDs(ids ...int) *UserUpdate {
+	_u.mutation.RemoveUserKeyIDs(ids...)
 	return _u
 }
 
-// RemoveKeys removes "keys" edges to UserKey entities.
-func (_u *UserUpdate) RemoveKeys(v ...*UserKey) *UserUpdate {
+// RemoveUserKeys removes "user_keys" edges to UserKey entities.
+func (_u *UserUpdate) RemoveUserKeys(v ...*UserKey) *UserUpdate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveKeyIDs(ids...)
+	return _u.RemoveUserKeyIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -255,7 +255,9 @@ func (_u *UserUpdate) RemoveUserHouseholds(v ...*UserHousehold) *UserUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *UserUpdate) Save(ctx context.Context) (int, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -282,11 +284,15 @@ func (_u *UserUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *UserUpdate) defaults() {
+func (_u *UserUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if user.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := user.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -343,7 +349,7 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			},
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -363,7 +369,7 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -383,7 +389,7 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
@@ -478,12 +484,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.KeysCleared() {
+	if _u.mutation.UserKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -491,12 +497,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedKeysIDs(); len(nodes) > 0 && !_u.mutation.KeysCleared() {
+	if nodes := _u.mutation.RemovedUserKeysIDs(); len(nodes) > 0 && !_u.mutation.UserKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -507,12 +513,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.KeysIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserKeysIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -669,19 +675,19 @@ func (_u *UserUpdateOne) AddTransactions(v ...*Transaction) *UserUpdateOne {
 	return _u.AddTransactionIDs(ids...)
 }
 
-// AddKeyIDs adds the "keys" edge to the UserKey entity by IDs.
-func (_u *UserUpdateOne) AddKeyIDs(ids ...int) *UserUpdateOne {
-	_u.mutation.AddKeyIDs(ids...)
+// AddUserKeyIDs adds the "user_keys" edge to the UserKey entity by IDs.
+func (_u *UserUpdateOne) AddUserKeyIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.AddUserKeyIDs(ids...)
 	return _u
 }
 
-// AddKeys adds the "keys" edges to the UserKey entity.
-func (_u *UserUpdateOne) AddKeys(v ...*UserKey) *UserUpdateOne {
+// AddUserKeys adds the "user_keys" edges to the UserKey entity.
+func (_u *UserUpdateOne) AddUserKeys(v ...*UserKey) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddKeyIDs(ids...)
+	return _u.AddUserKeyIDs(ids...)
 }
 
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
@@ -767,25 +773,25 @@ func (_u *UserUpdateOne) RemoveTransactions(v ...*Transaction) *UserUpdateOne {
 	return _u.RemoveTransactionIDs(ids...)
 }
 
-// ClearKeys clears all "keys" edges to the UserKey entity.
-func (_u *UserUpdateOne) ClearKeys() *UserUpdateOne {
-	_u.mutation.ClearKeys()
+// ClearUserKeys clears all "user_keys" edges to the UserKey entity.
+func (_u *UserUpdateOne) ClearUserKeys() *UserUpdateOne {
+	_u.mutation.ClearUserKeys()
 	return _u
 }
 
-// RemoveKeyIDs removes the "keys" edge to UserKey entities by IDs.
-func (_u *UserUpdateOne) RemoveKeyIDs(ids ...int) *UserUpdateOne {
-	_u.mutation.RemoveKeyIDs(ids...)
+// RemoveUserKeyIDs removes the "user_keys" edge to UserKey entities by IDs.
+func (_u *UserUpdateOne) RemoveUserKeyIDs(ids ...int) *UserUpdateOne {
+	_u.mutation.RemoveUserKeyIDs(ids...)
 	return _u
 }
 
-// RemoveKeys removes "keys" edges to UserKey entities.
-func (_u *UserUpdateOne) RemoveKeys(v ...*UserKey) *UserUpdateOne {
+// RemoveUserKeys removes "user_keys" edges to UserKey entities.
+func (_u *UserUpdateOne) RemoveUserKeys(v ...*UserKey) *UserUpdateOne {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.RemoveKeyIDs(ids...)
+	return _u.RemoveUserKeyIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -824,7 +830,9 @@ func (_u *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne {
 
 // Save executes the query and returns the updated User entity.
 func (_u *UserUpdateOne) Save(ctx context.Context) (*User, error) {
-	_u.defaults()
+	if err := _u.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -851,11 +859,15 @@ func (_u *UserUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *UserUpdateOne) defaults() {
+func (_u *UserUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
+		if user.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := user.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -929,7 +941,7 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			},
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -949,7 +961,7 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -969,7 +981,7 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _u.config, mutation: newUserHouseholdMutation(_u.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
@@ -1064,12 +1076,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.KeysCleared() {
+	if _u.mutation.UserKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -1077,12 +1089,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.RemovedKeysIDs(); len(nodes) > 0 && !_u.mutation.KeysCleared() {
+	if nodes := _u.mutation.RemovedUserKeysIDs(); len(nodes) > 0 && !_u.mutation.UserKeysCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),
@@ -1093,12 +1105,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := _u.mutation.KeysIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserKeysIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),

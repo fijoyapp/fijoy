@@ -952,7 +952,8 @@ func (c *HouseholdClient) QueryUserHouseholds(_m *Household) *UserHouseholdQuery
 
 // Hooks returns the client hooks.
 func (c *HouseholdClient) Hooks() []Hook {
-	return c.hooks.Household
+	hooks := c.hooks.Household
+	return append(hooks[:len(hooks):len(hooks)], household.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2057,15 +2058,15 @@ func (c *UserClient) QueryTransactions(_m *User) *TransactionQuery {
 	return query
 }
 
-// QueryKeys queries the keys edge of a User.
-func (c *UserClient) QueryKeys(_m *User) *UserKeyQuery {
+// QueryUserKeys queries the user_keys edge of a User.
+func (c *UserClient) QueryUserKeys(_m *User) *UserKeyQuery {
 	query := (&UserKeyClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(userkey.Table, userkey.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.KeysTable, user.KeysColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeysTable, user.UserKeysColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -2091,7 +2092,8 @@ func (c *UserClient) QueryUserHouseholds(_m *User) *UserHouseholdQuery {
 
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
-	return c.hooks.User
+	hooks := c.hooks.User
+	return append(hooks[:len(hooks):len(hooks)], user.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2256,7 +2258,8 @@ func (c *UserHouseholdClient) QueryHousehold(_m *UserHousehold) *HouseholdQuery 
 
 // Hooks returns the client hooks.
 func (c *UserHouseholdClient) Hooks() []Hook {
-	return c.hooks.UserHousehold
+	hooks := c.hooks.UserHousehold
+	return append(hooks[:len(hooks):len(hooks)], userhousehold.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2405,7 +2408,8 @@ func (c *UserKeyClient) QueryUser(_m *UserKey) *UserQuery {
 
 // Hooks returns the client hooks.
 func (c *UserKeyClient) Hooks() []Hook {
-	return c.hooks.UserKey
+	hooks := c.hooks.UserKey
+	return append(hooks[:len(hooks):len(hooks)], userkey.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

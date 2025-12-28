@@ -112,19 +112,19 @@ func (_c *UserCreate) AddTransactions(v ...*Transaction) *UserCreate {
 	return _c.AddTransactionIDs(ids...)
 }
 
-// AddKeyIDs adds the "keys" edge to the UserKey entity by IDs.
-func (_c *UserCreate) AddKeyIDs(ids ...int) *UserCreate {
-	_c.mutation.AddKeyIDs(ids...)
+// AddUserKeyIDs adds the "user_keys" edge to the UserKey entity by IDs.
+func (_c *UserCreate) AddUserKeyIDs(ids ...int) *UserCreate {
+	_c.mutation.AddUserKeyIDs(ids...)
 	return _c
 }
 
-// AddKeys adds the "keys" edges to the UserKey entity.
-func (_c *UserCreate) AddKeys(v ...*UserKey) *UserCreate {
+// AddUserKeys adds the "user_keys" edges to the UserKey entity.
+func (_c *UserCreate) AddUserKeys(v ...*UserKey) *UserCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddKeyIDs(ids...)
+	return _c.AddUserKeyIDs(ids...)
 }
 
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
@@ -149,7 +149,9 @@ func (_c *UserCreate) Mutation() *UserMutation {
 
 // Save creates the User in the database.
 func (_c *UserCreate) Save(ctx context.Context) (*User, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -176,15 +178,22 @@ func (_c *UserCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *UserCreate) defaults() {
+func (_c *UserCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
+		if user.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.DefaultCreateTime (forgotten import ent/runtime?)")
+		}
 		v := user.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
+		if user.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized user.DefaultUpdateTime (forgotten import ent/runtime?)")
+		}
 		v := user.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -269,7 +278,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		createE := &UserHouseholdCreate{config: _c.config, mutation: newUserHouseholdMutation(_c.config, OpCreate)}
-		createE.defaults()
+		_ = createE.defaults()
 		_, specE := createE.createSpec()
 		edge.Target.Fields = specE.Fields
 		_spec.Edges = append(_spec.Edges, edge)
@@ -306,12 +315,12 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.KeysIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.UserKeysIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.KeysTable,
-			Columns: []string{user.KeysColumn},
+			Table:   user.UserKeysTable,
+			Columns: []string{user.UserKeysColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt),

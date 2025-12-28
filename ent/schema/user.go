@@ -8,6 +8,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
+	"fijoy.app/ent/privacy"
+	"fijoy.app/ent/rules"
 )
 
 // User holds the schema definition for the User entity.
@@ -30,7 +32,7 @@ func (User) Edges() []ent.Edge {
 			Through("user_households", UserHousehold.Type),
 		edge.To("accounts", Account.Type),
 		edge.To("transactions", Transaction.Type),
-		edge.To("keys", UserKey.Type),
+		edge.To("user_keys", UserKey.Type),
 	}
 }
 
@@ -38,9 +40,24 @@ func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{}
 }
 
+func (User) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			rules.AllowPrivacyBypass(),
+			rules.FilterMe(),
+		},
+		Mutation: privacy.MutationPolicy{
+			privacy.OnMutationOperation(
+				privacy.AlwaysAllowRule(),
+				ent.OpCreate,
+			),
+			rules.FilterMe(),
+		},
+	}
+}
+
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }
@@ -68,7 +85,7 @@ func (UserKey) Indexes() []ent.Index {
 func (UserKey) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
-			Ref("keys").
+			Ref("user_keys").
 			Unique().
 			Immutable().
 			Required(),
@@ -79,9 +96,24 @@ func (UserKey) Annotations() []schema.Annotation {
 	return []schema.Annotation{}
 }
 
+func (UserKey) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			rules.AllowPrivacyBypass(),
+			rules.FilterOwner(),
+		},
+		Mutation: privacy.MutationPolicy{
+			privacy.OnMutationOperation(
+				privacy.AlwaysAllowRule(),
+				ent.OpCreate,
+			),
+			rules.FilterOwner(),
+		},
+	}
+}
+
 func (UserKey) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }
@@ -122,9 +154,21 @@ func (UserHousehold) Annotations() []schema.Annotation {
 	}
 }
 
+func (UserHousehold) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			rules.AllowPrivacyBypass(),
+			rules.FilterCoMembers(),
+		},
+		Mutation: privacy.MutationPolicy{
+			// TODO: allow admin mutate the user list in household
+			privacy.AlwaysAllowRule(),
+		},
+	}
+}
+
 func (UserHousehold) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }
