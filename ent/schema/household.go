@@ -49,6 +49,7 @@ func (Household) Annotations() []schema.Annotation {
 
 func (Household) Mixin() []ent.Mixin {
 	return []ent.Mixin{
+		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }

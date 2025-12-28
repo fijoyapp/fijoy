@@ -40,6 +40,7 @@ func (User) Annotations() []schema.Annotation {
 
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
+		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }
@@ -80,6 +81,7 @@ func (UserKey) Annotations() []schema.Annotation {
 
 func (UserKey) Mixin() []ent.Mixin {
 	return []ent.Mixin{
+		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }
@@ -122,6 +124,7 @@ func (UserHousehold) Annotations() []schema.Annotation {
 
 func (UserHousehold) Mixin() []ent.Mixin {
 	return []ent.Mixin{
+		// TODO: privacy rule missing
 		mixin.Time{},
 	}
 }
