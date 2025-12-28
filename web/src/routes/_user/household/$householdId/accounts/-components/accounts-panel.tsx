@@ -85,6 +85,9 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         defaultValue={Object.keys(groupedAccounts)}
       >
         {map(categoryOrder, (type) => {
+          if (type in groupedAccounts === false) {
+            return null
+          }
           const accounts = groupedAccounts[type]
           return (
             <AccordionItem value={type} key={type}>
