@@ -20,6 +20,9 @@ import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
+  beforeLoad: ({ params }) => {
+    localStorage.setItem('householdId', params.householdId)
+  },
 })
 
 function RouteComponent() {
