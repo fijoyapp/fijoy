@@ -143,6 +143,7 @@ func main() {
 			"Content-Type",
 			"X-CSRF-Token",
 			"sentry-trace",
+			"X-Household-ID",
 			"baggage",
 		},
 		AllowCredentials: true,

@@ -13,8 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login.index'
 import { Route as UserHouseholdRouteRouteImport } from './routes/_user/household/route'
 import { Route as AuthCallbackIndexRouteImport } from './routes/auth.callback.index'
-import { Route as UserNewIndexRouteImport } from './routes/_user/new.index'
 import { Route as UserHouseholdIndexRouteImport } from './routes/_user/household/index'
+import { Route as UserHouseholdNewRouteImport } from './routes/_user/household/new'
 import { Route as UserHouseholdHouseholdIdRouteRouteImport } from './routes/_user/household/$householdId/route'
 import { Route as UserHouseholdHouseholdIdIndexRouteImport } from './routes/_user/household/$householdId/index'
 import { Route as UserHouseholdHouseholdIdTransactionsRouteRouteImport } from './routes/_user/household/$householdId/transactions/route'
@@ -45,14 +45,14 @@ const AuthCallbackIndexRoute = AuthCallbackIndexRouteImport.update({
   path: '/auth/callback/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UserNewIndexRoute = UserNewIndexRouteImport.update({
-  id: '/_user/new/',
-  path: '/new/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const UserHouseholdIndexRoute = UserHouseholdIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => UserHouseholdRouteRoute,
+} as any)
+const UserHouseholdNewRoute = UserHouseholdNewRouteImport.update({
+  id: '/new',
+  path: '/new',
   getParentRoute: () => UserHouseholdRouteRoute,
 } as any)
 const UserHouseholdHouseholdIdRouteRoute =
@@ -115,8 +115,8 @@ export interface FileRoutesByFullPath {
   '/household': typeof UserHouseholdRouteRouteWithChildren
   '/login': typeof LoginIndexRoute
   '/household/$householdId': typeof UserHouseholdHouseholdIdRouteRouteWithChildren
+  '/household/new': typeof UserHouseholdNewRoute
   '/household/': typeof UserHouseholdIndexRoute
-  '/new': typeof UserNewIndexRoute
   '/auth/callback': typeof AuthCallbackIndexRoute
   '/household/$householdId/accounts': typeof UserHouseholdHouseholdIdAccountsRouteRouteWithChildren
   '/household/$householdId/investments': typeof UserHouseholdHouseholdIdInvestmentsRouteRouteWithChildren
@@ -130,8 +130,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginIndexRoute
+  '/household/new': typeof UserHouseholdNewRoute
   '/household': typeof UserHouseholdIndexRoute
-  '/new': typeof UserNewIndexRoute
   '/auth/callback': typeof AuthCallbackIndexRoute
   '/household/$householdId': typeof UserHouseholdHouseholdIdIndexRoute
   '/household/$householdId/accounts/$accountId': typeof UserHouseholdHouseholdIdAccountsAccountIdRoute
@@ -145,8 +145,8 @@ export interface FileRoutesById {
   '/_user/household': typeof UserHouseholdRouteRouteWithChildren
   '/login/': typeof LoginIndexRoute
   '/_user/household/$householdId': typeof UserHouseholdHouseholdIdRouteRouteWithChildren
+  '/_user/household/new': typeof UserHouseholdNewRoute
   '/_user/household/': typeof UserHouseholdIndexRoute
-  '/_user/new/': typeof UserNewIndexRoute
   '/auth/callback/': typeof AuthCallbackIndexRoute
   '/_user/household/$householdId/accounts': typeof UserHouseholdHouseholdIdAccountsRouteRouteWithChildren
   '/_user/household/$householdId/investments': typeof UserHouseholdHouseholdIdInvestmentsRouteRouteWithChildren
@@ -164,8 +164,8 @@ export interface FileRouteTypes {
     | '/household'
     | '/login'
     | '/household/$householdId'
+    | '/household/new'
     | '/household/'
-    | '/new'
     | '/auth/callback'
     | '/household/$householdId/accounts'
     | '/household/$householdId/investments'
@@ -179,8 +179,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/household/new'
     | '/household'
-    | '/new'
     | '/auth/callback'
     | '/household/$householdId'
     | '/household/$householdId/accounts/$accountId'
@@ -193,8 +193,8 @@ export interface FileRouteTypes {
     | '/_user/household'
     | '/login/'
     | '/_user/household/$householdId'
+    | '/_user/household/new'
     | '/_user/household/'
-    | '/_user/new/'
     | '/auth/callback/'
     | '/_user/household/$householdId/accounts'
     | '/_user/household/$householdId/investments'
@@ -210,7 +210,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   UserHouseholdRouteRoute: typeof UserHouseholdRouteRouteWithChildren
   LoginIndexRoute: typeof LoginIndexRoute
-  UserNewIndexRoute: typeof UserNewIndexRoute
   AuthCallbackIndexRoute: typeof AuthCallbackIndexRoute
 }
 
@@ -244,18 +243,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_user/new/': {
-      id: '/_user/new/'
-      path: '/new'
-      fullPath: '/new'
-      preLoaderRoute: typeof UserNewIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_user/household/': {
       id: '/_user/household/'
       path: '/'
       fullPath: '/household/'
       preLoaderRoute: typeof UserHouseholdIndexRouteImport
+      parentRoute: typeof UserHouseholdRouteRoute
+    }
+    '/_user/household/new': {
+      id: '/_user/household/new'
+      path: '/new'
+      fullPath: '/household/new'
+      preLoaderRoute: typeof UserHouseholdNewRouteImport
       parentRoute: typeof UserHouseholdRouteRoute
     }
     '/_user/household/$householdId': {
@@ -397,12 +396,14 @@ const UserHouseholdHouseholdIdRouteRouteWithChildren =
 
 interface UserHouseholdRouteRouteChildren {
   UserHouseholdHouseholdIdRouteRoute: typeof UserHouseholdHouseholdIdRouteRouteWithChildren
+  UserHouseholdNewRoute: typeof UserHouseholdNewRoute
   UserHouseholdIndexRoute: typeof UserHouseholdIndexRoute
 }
 
 const UserHouseholdRouteRouteChildren: UserHouseholdRouteRouteChildren = {
   UserHouseholdHouseholdIdRouteRoute:
     UserHouseholdHouseholdIdRouteRouteWithChildren,
+  UserHouseholdNewRoute: UserHouseholdNewRoute,
   UserHouseholdIndexRoute: UserHouseholdIndexRoute,
 }
 
@@ -413,7 +414,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   UserHouseholdRouteRoute: UserHouseholdRouteRouteWithChildren,
   LoginIndexRoute: LoginIndexRoute,
-  UserNewIndexRoute: UserNewIndexRoute,
   AuthCallbackIndexRoute: AuthCallbackIndexRoute,
 }
 export const routeTree = rootRouteImport
