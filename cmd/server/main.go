@@ -406,6 +406,12 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetRole(userhousehold.RoleAdmin).
 		SaveX(differentCtx)
 
+	entClient.UserHousehold.Create().
+		SetUser(differentJoey).
+		SetHousehold(household).
+		SetRole(userhousehold.RoleMember).
+		SaveX(ctx)
+
 	entClient.Account.Create().
 		SetName("You should not see this account").
 		SetCurrency(usd).

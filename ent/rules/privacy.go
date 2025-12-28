@@ -5,7 +5,9 @@ import (
 
 	"entgo.io/ent/entql"
 	"fijoy.app/ent"
+	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/privacy"
+	"fijoy.app/ent/user"
 	"fijoy.app/internal/contextkeys"
 )
 
@@ -31,15 +33,19 @@ func FilterByHousehold() privacy.QueryMutationRule {
 				return privacy.Denyf("security: missing household context")
 			}
 
-			if tf, ok := f.(HouseholdScoped); ok {
-				tf.WhereHouseholdID(entql.IntEQ(hid))
+			tf, ok := f.(HouseholdScoped)
+			if !ok {
+				return privacy.Denyf("cannot apply household filter")
 			}
+
+			tf.WhereHouseholdID(entql.IntEQ(hid))
 
 			return privacy.Skip
 		},
 	)
 }
 
+// FilterMe is used by the User schema, such that anyone can only see their own user record.
 func FilterMe() privacy.QueryMutationRule {
 	type MeFilter interface {
 		WhereID(entql.IntP)
@@ -52,14 +58,19 @@ func FilterMe() privacy.QueryMutationRule {
 				return privacy.Denyf("unauthenticated filter me")
 			}
 
-			if tf, ok := f.(MeFilter); ok {
-				tf.WhereID(entql.IntEQ(uid))
+			tf, ok := f.(MeFilter)
+			if !ok {
+				return privacy.Denyf("cannot apply me filter")
 			}
+
+			tf.WhereID(entql.IntEQ(uid))
+
 			return privacy.Skip
 		},
 	)
 }
 
+// FilterOwner is used by the UserKey schema, such that anyone can only see their own user keys.
 func FilterOwner() privacy.QueryMutationRule {
 	type OwnerFilter interface {
 		WhereHasUserWith(func(*ent.UserFilter))
@@ -72,19 +83,24 @@ func FilterOwner() privacy.QueryMutationRule {
 				return privacy.Denyf("unauthenticated filter owner")
 			}
 
-			if tf, ok := f.(OwnerFilter); ok {
-				tf.WhereHasUserWith(func(uf *ent.UserFilter) {
-					uf.WhereID(entql.IntEQ(uid))
-				})
+			tf, ok := f.(OwnerFilter)
+			if !ok {
+				return privacy.Denyf("cannot apply owner filter")
 			}
+
+			tf.WhereHasUserWith(func(uf *ent.UserFilter) {
+				uf.WhereID(entql.IntEQ(uid))
+			})
+
 			return privacy.Skip
 		},
 	)
 }
 
+// FilterMemberHousehold is used by the UserHousehold schema, such that anyone can only see households they are a member of.
 func FilterMemberHousehold() privacy.QueryMutationRule {
 	type MemberHouseholdFilter interface {
-		WhereHasUsersWith(func(*ent.UserFilter))
+		WhereHasUsersWith(preds ...predicate.User)
 	}
 
 	return privacy.FilterFunc(
@@ -94,17 +110,20 @@ func FilterMemberHousehold() privacy.QueryMutationRule {
 				return privacy.Denyf("unauthenticated member household")
 			}
 
-			// Filter: Show Households where 'users' edge contains ME
-			if tf, ok := f.(MemberHouseholdFilter); ok {
-				tf.WhereHasUsersWith(func(uf *ent.UserFilter) {
-					uf.WhereID(entql.IntEQ(uid))
-				})
+			tf, ok := f.(MemberHouseholdFilter)
+			if !ok {
+				return privacy.Denyf("cannot apply household membership filter")
 			}
+
+			// Apply filter
+			tf.WhereHasUsersWith(user.IDEQ(uid))
+
 			return privacy.Skip
 		},
 	)
 }
 
+// FilterCoMembers is used to restrict access to co-members within the same household.
 func FilterCoMembers() privacy.QueryMutationRule {
 	type CoMemberFilter interface {
 		WhereHouseholdID(entql.IntP)
@@ -117,9 +136,13 @@ func FilterCoMembers() privacy.QueryMutationRule {
 				return privacy.Denyf("security: missing household context")
 			}
 
-			if tf, ok := f.(CoMemberFilter); ok {
-				tf.WhereHouseholdID(entql.IntEQ(hid))
+			tf, ok := f.(CoMemberFilter)
+			if !ok {
+				return privacy.Denyf("cannot apply co-member filter")
 			}
+
+			tf.WhereHouseholdID(entql.IntEQ(hid))
+
 			return privacy.Skip
 		},
 	)
