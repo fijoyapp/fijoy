@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_TOKEN_KEY } from '@/constant'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { z } from 'zod'
 
@@ -11,7 +12,7 @@ export const Route = createFileRoute('/auth/callback/')({
 })
 
 function RouteComponent() {
-  localStorage.setItem('token', Route.useSearch().token)
+  localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, Route.useSearch().token)
 
   return <Navigate to="/household" />
 }

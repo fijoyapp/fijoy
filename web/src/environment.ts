@@ -1,12 +1,16 @@
 import { Environment, Network } from 'relay-runtime'
 import type { FetchFunction } from 'relay-runtime'
 import { env } from './env'
+import {
+  LOCAL_STORAGE_HOUSEHOLD_ID_KEY,
+  LOCAL_STORAGE_TOKEN_KEY,
+} from './constant'
 
 const HTTP_ENDPOINT = env.VITE_SERVER_URL
 
 const fetchGraphQL: FetchFunction = async (request, variables) => {
-  const token = localStorage.getItem('token')
-  const householdId = localStorage.getItem('householdId')
+  const token = localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY)
+  const householdId = localStorage.getItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY)
 
   const resp = await fetch(HTTP_ENDPOINT + '/query', {
     method: 'POST',

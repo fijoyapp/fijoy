@@ -4,6 +4,7 @@ import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { type householdIdQuery } from './__generated__/householdIdQuery.graphql'
+import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 
 export const Route = createFileRoute('/_user/household/')({
   component: RouteComponent,
@@ -30,7 +31,7 @@ function RouteComponent() {
   const queryRef = Route.useLoaderData()
   const data = usePreloadedQuery<householdIdQuery>(householdIdQuery, queryRef)
 
-  const householdId = localStorage.getItem('householdId')
+  const householdId = localStorage.getItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY)
 
   if (householdId && data.households.some((h) => h.id === householdId)) {
     return <Navigate to={'/household/$householdId'} params={{ householdId }} />

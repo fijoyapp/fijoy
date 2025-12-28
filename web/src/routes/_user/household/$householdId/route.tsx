@@ -17,11 +17,12 @@ import {
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
+import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
   beforeLoad: ({ params }) => {
-    localStorage.setItem('householdId', params.householdId)
+    localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
   },
 })
 

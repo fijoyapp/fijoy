@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_PRIVACY_MODE_KEY } from '@/constant'
 import React, {
   createContext,
   useContext,
@@ -22,7 +23,7 @@ export function PrivacyModeProvider({
 }) {
   const [isPrivacyModeEnabled, setIsPrivacyModeEnabled] = useState(() => {
     if (typeof window !== 'undefined') {
-      const storedValue = localStorage.getItem('privacyMode')
+      const storedValue = localStorage.getItem(LOCAL_STORAGE_PRIVACY_MODE_KEY)
       return storedValue ? JSON.parse(storedValue) : false
     }
     return false
@@ -30,7 +31,10 @@ export function PrivacyModeProvider({
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('privacyMode', JSON.stringify(isPrivacyModeEnabled))
+      localStorage.setItem(
+        LOCAL_STORAGE_PRIVACY_MODE_KEY,
+        JSON.stringify(isPrivacyModeEnabled),
+      )
     }
   }, [isPrivacyModeEnabled])
 
