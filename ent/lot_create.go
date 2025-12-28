@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/investment"
@@ -20,6 +21,7 @@ type LotCreate struct {
 	config
 	mutation *LotMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreateTime sets the "create_time" field.
@@ -170,6 +172,7 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 		_node = &Lot{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(lot.Table, sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = _c.conflict
 	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(lot.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -210,11 +213,269 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Lot.Create().
+//		SetCreateTime(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.LotUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *LotCreate) OnConflict(opts ...sql.ConflictOption) *LotUpsertOne {
+	_c.conflict = opts
+	return &LotUpsertOne{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Lot.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *LotCreate) OnConflictColumns(columns ...string) *LotUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &LotUpsertOne{
+		create: _c,
+	}
+}
+
+type (
+	// LotUpsertOne is the builder for "upsert"-ing
+	//  one Lot node.
+	LotUpsertOne struct {
+		create *LotCreate
+	}
+
+	// LotUpsert is the "OnConflict" setter.
+	LotUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetUpdateTime sets the "update_time" field.
+func (u *LotUpsert) SetUpdateTime(v time.Time) *LotUpsert {
+	u.Set(lot.FieldUpdateTime, v)
+	return u
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *LotUpsert) UpdateUpdateTime() *LotUpsert {
+	u.SetExcluded(lot.FieldUpdateTime)
+	return u
+}
+
+// SetDatetime sets the "datetime" field.
+func (u *LotUpsert) SetDatetime(v time.Time) *LotUpsert {
+	u.Set(lot.FieldDatetime, v)
+	return u
+}
+
+// UpdateDatetime sets the "datetime" field to the value that was provided on create.
+func (u *LotUpsert) UpdateDatetime() *LotUpsert {
+	u.SetExcluded(lot.FieldDatetime)
+	return u
+}
+
+// SetAmount sets the "amount" field.
+func (u *LotUpsert) SetAmount(v decimal.Decimal) *LotUpsert {
+	u.Set(lot.FieldAmount, v)
+	return u
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *LotUpsert) UpdateAmount() *LotUpsert {
+	u.SetExcluded(lot.FieldAmount)
+	return u
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *LotUpsert) AddAmount(v decimal.Decimal) *LotUpsert {
+	u.Add(lot.FieldAmount, v)
+	return u
+}
+
+// SetPrice sets the "price" field.
+func (u *LotUpsert) SetPrice(v decimal.Decimal) *LotUpsert {
+	u.Set(lot.FieldPrice, v)
+	return u
+}
+
+// UpdatePrice sets the "price" field to the value that was provided on create.
+func (u *LotUpsert) UpdatePrice() *LotUpsert {
+	u.SetExcluded(lot.FieldPrice)
+	return u
+}
+
+// AddPrice adds v to the "price" field.
+func (u *LotUpsert) AddPrice(v decimal.Decimal) *LotUpsert {
+	u.Add(lot.FieldPrice, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.Lot.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *LotUpsertOne) UpdateNewValues() *LotUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.CreateTime(); exists {
+			s.SetIgnore(lot.FieldCreateTime)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Lot.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *LotUpsertOne) Ignore() *LotUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *LotUpsertOne) DoNothing() *LotUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the LotCreate.OnConflict
+// documentation for more info.
+func (u *LotUpsertOne) Update(set func(*LotUpsert)) *LotUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&LotUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *LotUpsertOne) SetUpdateTime(v time.Time) *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *LotUpsertOne) UpdateUpdateTime() *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetDatetime sets the "datetime" field.
+func (u *LotUpsertOne) SetDatetime(v time.Time) *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.SetDatetime(v)
+	})
+}
+
+// UpdateDatetime sets the "datetime" field to the value that was provided on create.
+func (u *LotUpsertOne) UpdateDatetime() *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdateDatetime()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *LotUpsertOne) SetAmount(v decimal.Decimal) *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *LotUpsertOne) AddAmount(v decimal.Decimal) *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.AddAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *LotUpsertOne) UpdateAmount() *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// SetPrice sets the "price" field.
+func (u *LotUpsertOne) SetPrice(v decimal.Decimal) *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.SetPrice(v)
+	})
+}
+
+// AddPrice adds v to the "price" field.
+func (u *LotUpsertOne) AddPrice(v decimal.Decimal) *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.AddPrice(v)
+	})
+}
+
+// UpdatePrice sets the "price" field to the value that was provided on create.
+func (u *LotUpsertOne) UpdatePrice() *LotUpsertOne {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdatePrice()
+	})
+}
+
+// Exec executes the query.
+func (u *LotUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for LotCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *LotUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *LotUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *LotUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // LotCreateBulk is the builder for creating many Lot entities in bulk.
 type LotCreateBulk struct {
 	config
 	err      error
 	builders []*LotCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the Lot entities in the database.
@@ -244,6 +505,7 @@ func (_c *LotCreateBulk) Save(ctx context.Context) ([]*Lot, error) {
 					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -294,6 +556,187 @@ func (_c *LotCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (_c *LotCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Lot.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.LotUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *LotCreateBulk) OnConflict(opts ...sql.ConflictOption) *LotUpsertBulk {
+	_c.conflict = opts
+	return &LotUpsertBulk{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Lot.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *LotCreateBulk) OnConflictColumns(columns ...string) *LotUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &LotUpsertBulk{
+		create: _c,
+	}
+}
+
+// LotUpsertBulk is the builder for "upsert"-ing
+// a bulk of Lot nodes.
+type LotUpsertBulk struct {
+	create *LotCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.Lot.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *LotUpsertBulk) UpdateNewValues() *LotUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.CreateTime(); exists {
+				s.SetIgnore(lot.FieldCreateTime)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Lot.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *LotUpsertBulk) Ignore() *LotUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *LotUpsertBulk) DoNothing() *LotUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the LotCreateBulk.OnConflict
+// documentation for more info.
+func (u *LotUpsertBulk) Update(set func(*LotUpsert)) *LotUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&LotUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *LotUpsertBulk) SetUpdateTime(v time.Time) *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *LotUpsertBulk) UpdateUpdateTime() *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetDatetime sets the "datetime" field.
+func (u *LotUpsertBulk) SetDatetime(v time.Time) *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.SetDatetime(v)
+	})
+}
+
+// UpdateDatetime sets the "datetime" field to the value that was provided on create.
+func (u *LotUpsertBulk) UpdateDatetime() *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdateDatetime()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *LotUpsertBulk) SetAmount(v decimal.Decimal) *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *LotUpsertBulk) AddAmount(v decimal.Decimal) *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.AddAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *LotUpsertBulk) UpdateAmount() *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// SetPrice sets the "price" field.
+func (u *LotUpsertBulk) SetPrice(v decimal.Decimal) *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.SetPrice(v)
+	})
+}
+
+// AddPrice adds v to the "price" field.
+func (u *LotUpsertBulk) AddPrice(v decimal.Decimal) *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.AddPrice(v)
+	})
+}
+
+// UpdatePrice sets the "price" field to the value that was provided on create.
+func (u *LotUpsertBulk) UpdatePrice() *LotUpsertBulk {
+	return u.Update(func(s *LotUpsert) {
+		s.UpdatePrice()
+	})
+}
+
+// Exec executes the query.
+func (u *LotUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the LotCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for LotCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *LotUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

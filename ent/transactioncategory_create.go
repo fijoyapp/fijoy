@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/transaction"
@@ -19,6 +20,7 @@ type TransactionCategoryCreate struct {
 	config
 	mutation *TransactionCategoryMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreateTime sets the "create_time" field.
@@ -171,6 +173,7 @@ func (_c *TransactionCategoryCreate) createSpec() (*TransactionCategory, *sqlgra
 		_node = &TransactionCategory{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(transactioncategory.Table, sqlgraph.NewFieldSpec(transactioncategory.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = _c.conflict
 	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(transactioncategory.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -206,11 +209,217 @@ func (_c *TransactionCategoryCreate) createSpec() (*TransactionCategory, *sqlgra
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.TransactionCategory.Create().
+//		SetCreateTime(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.TransactionCategoryUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *TransactionCategoryCreate) OnConflict(opts ...sql.ConflictOption) *TransactionCategoryUpsertOne {
+	_c.conflict = opts
+	return &TransactionCategoryUpsertOne{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.TransactionCategory.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *TransactionCategoryCreate) OnConflictColumns(columns ...string) *TransactionCategoryUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &TransactionCategoryUpsertOne{
+		create: _c,
+	}
+}
+
+type (
+	// TransactionCategoryUpsertOne is the builder for "upsert"-ing
+	//  one TransactionCategory node.
+	TransactionCategoryUpsertOne struct {
+		create *TransactionCategoryCreate
+	}
+
+	// TransactionCategoryUpsert is the "OnConflict" setter.
+	TransactionCategoryUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetUpdateTime sets the "update_time" field.
+func (u *TransactionCategoryUpsert) SetUpdateTime(v time.Time) *TransactionCategoryUpsert {
+	u.Set(transactioncategory.FieldUpdateTime, v)
+	return u
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *TransactionCategoryUpsert) UpdateUpdateTime() *TransactionCategoryUpsert {
+	u.SetExcluded(transactioncategory.FieldUpdateTime)
+	return u
+}
+
+// SetName sets the "name" field.
+func (u *TransactionCategoryUpsert) SetName(v string) *TransactionCategoryUpsert {
+	u.Set(transactioncategory.FieldName, v)
+	return u
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *TransactionCategoryUpsert) UpdateName() *TransactionCategoryUpsert {
+	u.SetExcluded(transactioncategory.FieldName)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *TransactionCategoryUpsert) SetType(v transactioncategory.Type) *TransactionCategoryUpsert {
+	u.Set(transactioncategory.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *TransactionCategoryUpsert) UpdateType() *TransactionCategoryUpsert {
+	u.SetExcluded(transactioncategory.FieldType)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.TransactionCategory.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *TransactionCategoryUpsertOne) UpdateNewValues() *TransactionCategoryUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.CreateTime(); exists {
+			s.SetIgnore(transactioncategory.FieldCreateTime)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.TransactionCategory.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *TransactionCategoryUpsertOne) Ignore() *TransactionCategoryUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *TransactionCategoryUpsertOne) DoNothing() *TransactionCategoryUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the TransactionCategoryCreate.OnConflict
+// documentation for more info.
+func (u *TransactionCategoryUpsertOne) Update(set func(*TransactionCategoryUpsert)) *TransactionCategoryUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&TransactionCategoryUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *TransactionCategoryUpsertOne) SetUpdateTime(v time.Time) *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertOne) UpdateUpdateTime() *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *TransactionCategoryUpsertOne) SetName(v string) *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertOne) UpdateName() *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *TransactionCategoryUpsertOne) SetType(v transactioncategory.Type) *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertOne) UpdateType() *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateType()
+	})
+}
+
+// Exec executes the query.
+func (u *TransactionCategoryUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for TransactionCategoryCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *TransactionCategoryUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *TransactionCategoryUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *TransactionCategoryUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // TransactionCategoryCreateBulk is the builder for creating many TransactionCategory entities in bulk.
 type TransactionCategoryCreateBulk struct {
 	config
 	err      error
 	builders []*TransactionCategoryCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the TransactionCategory entities in the database.
@@ -240,6 +449,7 @@ func (_c *TransactionCategoryCreateBulk) Save(ctx context.Context) ([]*Transacti
 					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -290,6 +500,159 @@ func (_c *TransactionCategoryCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (_c *TransactionCategoryCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.TransactionCategory.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.TransactionCategoryUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *TransactionCategoryCreateBulk) OnConflict(opts ...sql.ConflictOption) *TransactionCategoryUpsertBulk {
+	_c.conflict = opts
+	return &TransactionCategoryUpsertBulk{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.TransactionCategory.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *TransactionCategoryCreateBulk) OnConflictColumns(columns ...string) *TransactionCategoryUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &TransactionCategoryUpsertBulk{
+		create: _c,
+	}
+}
+
+// TransactionCategoryUpsertBulk is the builder for "upsert"-ing
+// a bulk of TransactionCategory nodes.
+type TransactionCategoryUpsertBulk struct {
+	create *TransactionCategoryCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.TransactionCategory.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *TransactionCategoryUpsertBulk) UpdateNewValues() *TransactionCategoryUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.CreateTime(); exists {
+				s.SetIgnore(transactioncategory.FieldCreateTime)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.TransactionCategory.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *TransactionCategoryUpsertBulk) Ignore() *TransactionCategoryUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *TransactionCategoryUpsertBulk) DoNothing() *TransactionCategoryUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the TransactionCategoryCreateBulk.OnConflict
+// documentation for more info.
+func (u *TransactionCategoryUpsertBulk) Update(set func(*TransactionCategoryUpsert)) *TransactionCategoryUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&TransactionCategoryUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *TransactionCategoryUpsertBulk) SetUpdateTime(v time.Time) *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertBulk) UpdateUpdateTime() *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *TransactionCategoryUpsertBulk) SetName(v string) *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertBulk) UpdateName() *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *TransactionCategoryUpsertBulk) SetType(v transactioncategory.Type) *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertBulk) UpdateType() *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateType()
+	})
+}
+
+// Exec executes the query.
+func (u *TransactionCategoryUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the TransactionCategoryCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for TransactionCategoryCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *TransactionCategoryUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

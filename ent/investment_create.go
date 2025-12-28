@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/account"
@@ -23,6 +24,7 @@ type InvestmentCreate struct {
 	config
 	mutation *InvestmentMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreateTime sets the "create_time" field.
@@ -235,6 +237,7 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 		_node = &Investment{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(investment.Table, sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = _c.conflict
 	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(investment.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -329,11 +332,282 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Investment.Create().
+//		SetCreateTime(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.InvestmentUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *InvestmentCreate) OnConflict(opts ...sql.ConflictOption) *InvestmentUpsertOne {
+	_c.conflict = opts
+	return &InvestmentUpsertOne{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Investment.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *InvestmentCreate) OnConflictColumns(columns ...string) *InvestmentUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &InvestmentUpsertOne{
+		create: _c,
+	}
+}
+
+type (
+	// InvestmentUpsertOne is the builder for "upsert"-ing
+	//  one Investment node.
+	InvestmentUpsertOne struct {
+		create *InvestmentCreate
+	}
+
+	// InvestmentUpsert is the "OnConflict" setter.
+	InvestmentUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetUpdateTime sets the "update_time" field.
+func (u *InvestmentUpsert) SetUpdateTime(v time.Time) *InvestmentUpsert {
+	u.Set(investment.FieldUpdateTime, v)
+	return u
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *InvestmentUpsert) UpdateUpdateTime() *InvestmentUpsert {
+	u.SetExcluded(investment.FieldUpdateTime)
+	return u
+}
+
+// SetName sets the "name" field.
+func (u *InvestmentUpsert) SetName(v string) *InvestmentUpsert {
+	u.Set(investment.FieldName, v)
+	return u
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *InvestmentUpsert) UpdateName() *InvestmentUpsert {
+	u.SetExcluded(investment.FieldName)
+	return u
+}
+
+// SetType sets the "type" field.
+func (u *InvestmentUpsert) SetType(v investment.Type) *InvestmentUpsert {
+	u.Set(investment.FieldType, v)
+	return u
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *InvestmentUpsert) UpdateType() *InvestmentUpsert {
+	u.SetExcluded(investment.FieldType)
+	return u
+}
+
+// SetSymbol sets the "symbol" field.
+func (u *InvestmentUpsert) SetSymbol(v string) *InvestmentUpsert {
+	u.Set(investment.FieldSymbol, v)
+	return u
+}
+
+// UpdateSymbol sets the "symbol" field to the value that was provided on create.
+func (u *InvestmentUpsert) UpdateSymbol() *InvestmentUpsert {
+	u.SetExcluded(investment.FieldSymbol)
+	return u
+}
+
+// SetAmount sets the "amount" field.
+func (u *InvestmentUpsert) SetAmount(v decimal.Decimal) *InvestmentUpsert {
+	u.Set(investment.FieldAmount, v)
+	return u
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *InvestmentUpsert) UpdateAmount() *InvestmentUpsert {
+	u.SetExcluded(investment.FieldAmount)
+	return u
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *InvestmentUpsert) AddAmount(v decimal.Decimal) *InvestmentUpsert {
+	u.Add(investment.FieldAmount, v)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.Investment.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *InvestmentUpsertOne) UpdateNewValues() *InvestmentUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.CreateTime(); exists {
+			s.SetIgnore(investment.FieldCreateTime)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Investment.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *InvestmentUpsertOne) Ignore() *InvestmentUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *InvestmentUpsertOne) DoNothing() *InvestmentUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the InvestmentCreate.OnConflict
+// documentation for more info.
+func (u *InvestmentUpsertOne) Update(set func(*InvestmentUpsert)) *InvestmentUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&InvestmentUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *InvestmentUpsertOne) SetUpdateTime(v time.Time) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *InvestmentUpsertOne) UpdateUpdateTime() *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *InvestmentUpsertOne) SetName(v string) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *InvestmentUpsertOne) UpdateName() *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *InvestmentUpsertOne) SetType(v investment.Type) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *InvestmentUpsertOne) UpdateType() *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetSymbol sets the "symbol" field.
+func (u *InvestmentUpsertOne) SetSymbol(v string) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetSymbol(v)
+	})
+}
+
+// UpdateSymbol sets the "symbol" field to the value that was provided on create.
+func (u *InvestmentUpsertOne) UpdateSymbol() *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateSymbol()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *InvestmentUpsertOne) SetAmount(v decimal.Decimal) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *InvestmentUpsertOne) AddAmount(v decimal.Decimal) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.AddAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *InvestmentUpsertOne) UpdateAmount() *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// Exec executes the query.
+func (u *InvestmentUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for InvestmentCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *InvestmentUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *InvestmentUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *InvestmentUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // InvestmentCreateBulk is the builder for creating many Investment entities in bulk.
 type InvestmentCreateBulk struct {
 	config
 	err      error
 	builders []*InvestmentCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the Investment entities in the database.
@@ -363,6 +637,7 @@ func (_c *InvestmentCreateBulk) Save(ctx context.Context) ([]*Investment, error)
 					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -413,6 +688,194 @@ func (_c *InvestmentCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (_c *InvestmentCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.Investment.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.InvestmentUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *InvestmentCreateBulk) OnConflict(opts ...sql.ConflictOption) *InvestmentUpsertBulk {
+	_c.conflict = opts
+	return &InvestmentUpsertBulk{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.Investment.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *InvestmentCreateBulk) OnConflictColumns(columns ...string) *InvestmentUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &InvestmentUpsertBulk{
+		create: _c,
+	}
+}
+
+// InvestmentUpsertBulk is the builder for "upsert"-ing
+// a bulk of Investment nodes.
+type InvestmentUpsertBulk struct {
+	create *InvestmentCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.Investment.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *InvestmentUpsertBulk) UpdateNewValues() *InvestmentUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.CreateTime(); exists {
+				s.SetIgnore(investment.FieldCreateTime)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.Investment.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *InvestmentUpsertBulk) Ignore() *InvestmentUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *InvestmentUpsertBulk) DoNothing() *InvestmentUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the InvestmentCreateBulk.OnConflict
+// documentation for more info.
+func (u *InvestmentUpsertBulk) Update(set func(*InvestmentUpsert)) *InvestmentUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&InvestmentUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *InvestmentUpsertBulk) SetUpdateTime(v time.Time) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *InvestmentUpsertBulk) UpdateUpdateTime() *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *InvestmentUpsertBulk) SetName(v string) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *InvestmentUpsertBulk) UpdateName() *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateName()
+	})
+}
+
+// SetType sets the "type" field.
+func (u *InvestmentUpsertBulk) SetType(v investment.Type) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetType(v)
+	})
+}
+
+// UpdateType sets the "type" field to the value that was provided on create.
+func (u *InvestmentUpsertBulk) UpdateType() *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateType()
+	})
+}
+
+// SetSymbol sets the "symbol" field.
+func (u *InvestmentUpsertBulk) SetSymbol(v string) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetSymbol(v)
+	})
+}
+
+// UpdateSymbol sets the "symbol" field to the value that was provided on create.
+func (u *InvestmentUpsertBulk) UpdateSymbol() *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateSymbol()
+	})
+}
+
+// SetAmount sets the "amount" field.
+func (u *InvestmentUpsertBulk) SetAmount(v decimal.Decimal) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetAmount(v)
+	})
+}
+
+// AddAmount adds v to the "amount" field.
+func (u *InvestmentUpsertBulk) AddAmount(v decimal.Decimal) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.AddAmount(v)
+	})
+}
+
+// UpdateAmount sets the "amount" field to the value that was provided on create.
+func (u *InvestmentUpsertBulk) UpdateAmount() *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateAmount()
+	})
+}
+
+// Exec executes the query.
+func (u *InvestmentUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the InvestmentCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for InvestmentCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *InvestmentUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

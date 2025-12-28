@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/user"
@@ -19,6 +20,7 @@ type UserKeyCreate struct {
 	config
 	mutation *UserKeyMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreateTime sets the "create_time" field.
@@ -170,6 +172,7 @@ func (_c *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 		_node = &UserKey{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(userkey.Table, sqlgraph.NewFieldSpec(userkey.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = _c.conflict
 	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(userkey.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -206,11 +209,217 @@ func (_c *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserKey.Create().
+//		SetCreateTime(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserKeyUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *UserKeyCreate) OnConflict(opts ...sql.ConflictOption) *UserKeyUpsertOne {
+	_c.conflict = opts
+	return &UserKeyUpsertOne{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserKey.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *UserKeyCreate) OnConflictColumns(columns ...string) *UserKeyUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &UserKeyUpsertOne{
+		create: _c,
+	}
+}
+
+type (
+	// UserKeyUpsertOne is the builder for "upsert"-ing
+	//  one UserKey node.
+	UserKeyUpsertOne struct {
+		create *UserKeyCreate
+	}
+
+	// UserKeyUpsert is the "OnConflict" setter.
+	UserKeyUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetUpdateTime sets the "update_time" field.
+func (u *UserKeyUpsert) SetUpdateTime(v time.Time) *UserKeyUpsert {
+	u.Set(userkey.FieldUpdateTime, v)
+	return u
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *UserKeyUpsert) UpdateUpdateTime() *UserKeyUpsert {
+	u.SetExcluded(userkey.FieldUpdateTime)
+	return u
+}
+
+// SetKey sets the "key" field.
+func (u *UserKeyUpsert) SetKey(v string) *UserKeyUpsert {
+	u.Set(userkey.FieldKey, v)
+	return u
+}
+
+// UpdateKey sets the "key" field to the value that was provided on create.
+func (u *UserKeyUpsert) UpdateKey() *UserKeyUpsert {
+	u.SetExcluded(userkey.FieldKey)
+	return u
+}
+
+// SetName sets the "name" field.
+func (u *UserKeyUpsert) SetName(v string) *UserKeyUpsert {
+	u.Set(userkey.FieldName, v)
+	return u
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *UserKeyUpsert) UpdateName() *UserKeyUpsert {
+	u.SetExcluded(userkey.FieldName)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.UserKey.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *UserKeyUpsertOne) UpdateNewValues() *UserKeyUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.CreateTime(); exists {
+			s.SetIgnore(userkey.FieldCreateTime)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserKey.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *UserKeyUpsertOne) Ignore() *UserKeyUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserKeyUpsertOne) DoNothing() *UserKeyUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserKeyCreate.OnConflict
+// documentation for more info.
+func (u *UserKeyUpsertOne) Update(set func(*UserKeyUpsert)) *UserKeyUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserKeyUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *UserKeyUpsertOne) SetUpdateTime(v time.Time) *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *UserKeyUpsertOne) UpdateUpdateTime() *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetKey sets the "key" field.
+func (u *UserKeyUpsertOne) SetKey(v string) *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetKey(v)
+	})
+}
+
+// UpdateKey sets the "key" field to the value that was provided on create.
+func (u *UserKeyUpsertOne) UpdateKey() *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateKey()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *UserKeyUpsertOne) SetName(v string) *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *UserKeyUpsertOne) UpdateName() *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateName()
+	})
+}
+
+// Exec executes the query.
+func (u *UserKeyUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UserKeyCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserKeyUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UserKeyUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UserKeyUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UserKeyCreateBulk is the builder for creating many UserKey entities in bulk.
 type UserKeyCreateBulk struct {
 	config
 	err      error
 	builders []*UserKeyCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UserKey entities in the database.
@@ -240,6 +449,7 @@ func (_c *UserKeyCreateBulk) Save(ctx context.Context) ([]*UserKey, error) {
 					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -290,6 +500,159 @@ func (_c *UserKeyCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (_c *UserKeyCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserKey.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserKeyUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *UserKeyCreateBulk) OnConflict(opts ...sql.ConflictOption) *UserKeyUpsertBulk {
+	_c.conflict = opts
+	return &UserKeyUpsertBulk{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserKey.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *UserKeyCreateBulk) OnConflictColumns(columns ...string) *UserKeyUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &UserKeyUpsertBulk{
+		create: _c,
+	}
+}
+
+// UserKeyUpsertBulk is the builder for "upsert"-ing
+// a bulk of UserKey nodes.
+type UserKeyUpsertBulk struct {
+	create *UserKeyCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UserKey.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *UserKeyUpsertBulk) UpdateNewValues() *UserKeyUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.CreateTime(); exists {
+				s.SetIgnore(userkey.FieldCreateTime)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserKey.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *UserKeyUpsertBulk) Ignore() *UserKeyUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserKeyUpsertBulk) DoNothing() *UserKeyUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserKeyCreateBulk.OnConflict
+// documentation for more info.
+func (u *UserKeyUpsertBulk) Update(set func(*UserKeyUpsert)) *UserKeyUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserKeyUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *UserKeyUpsertBulk) SetUpdateTime(v time.Time) *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *UserKeyUpsertBulk) UpdateUpdateTime() *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetKey sets the "key" field.
+func (u *UserKeyUpsertBulk) SetKey(v string) *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetKey(v)
+	})
+}
+
+// UpdateKey sets the "key" field to the value that was provided on create.
+func (u *UserKeyUpsertBulk) UpdateKey() *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateKey()
+	})
+}
+
+// SetName sets the "name" field.
+func (u *UserKeyUpsertBulk) SetName(v string) *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetName(v)
+	})
+}
+
+// UpdateName sets the "name" field to the value that was provided on create.
+func (u *UserKeyUpsertBulk) UpdateName() *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateName()
+	})
+}
+
+// Exec executes the query.
+func (u *UserKeyUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the UserKeyCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UserKeyCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserKeyUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

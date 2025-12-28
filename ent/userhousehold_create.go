@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/household"
@@ -20,6 +21,7 @@ type UserHouseholdCreate struct {
 	config
 	mutation *UserHouseholdMutation
 	hooks    []Hook
+	conflict []sql.ConflictOption
 }
 
 // SetCreateTime sets the "create_time" field.
@@ -177,6 +179,7 @@ func (_c *UserHouseholdCreate) createSpec() (*UserHousehold, *sqlgraph.CreateSpe
 		_node = &UserHousehold{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(userhousehold.Table, sqlgraph.NewFieldSpec(userhousehold.FieldID, field.TypeInt))
 	)
+	_spec.OnConflict = _c.conflict
 	if value, ok := _c.mutation.CreateTime(); ok {
 		_spec.SetField(userhousehold.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
@@ -226,11 +229,197 @@ func (_c *UserHouseholdCreate) createSpec() (*UserHousehold, *sqlgraph.CreateSpe
 	return _node, _spec
 }
 
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserHousehold.Create().
+//		SetCreateTime(v).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserHouseholdUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *UserHouseholdCreate) OnConflict(opts ...sql.ConflictOption) *UserHouseholdUpsertOne {
+	_c.conflict = opts
+	return &UserHouseholdUpsertOne{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserHousehold.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *UserHouseholdCreate) OnConflictColumns(columns ...string) *UserHouseholdUpsertOne {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &UserHouseholdUpsertOne{
+		create: _c,
+	}
+}
+
+type (
+	// UserHouseholdUpsertOne is the builder for "upsert"-ing
+	//  one UserHousehold node.
+	UserHouseholdUpsertOne struct {
+		create *UserHouseholdCreate
+	}
+
+	// UserHouseholdUpsert is the "OnConflict" setter.
+	UserHouseholdUpsert struct {
+		*sql.UpdateSet
+	}
+)
+
+// SetUpdateTime sets the "update_time" field.
+func (u *UserHouseholdUpsert) SetUpdateTime(v time.Time) *UserHouseholdUpsert {
+	u.Set(userhousehold.FieldUpdateTime, v)
+	return u
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *UserHouseholdUpsert) UpdateUpdateTime() *UserHouseholdUpsert {
+	u.SetExcluded(userhousehold.FieldUpdateTime)
+	return u
+}
+
+// SetRole sets the "role" field.
+func (u *UserHouseholdUpsert) SetRole(v userhousehold.Role) *UserHouseholdUpsert {
+	u.Set(userhousehold.FieldRole, v)
+	return u
+}
+
+// UpdateRole sets the "role" field to the value that was provided on create.
+func (u *UserHouseholdUpsert) UpdateRole() *UserHouseholdUpsert {
+	u.SetExcluded(userhousehold.FieldRole)
+	return u
+}
+
+// UpdateNewValues updates the mutable fields using the new values that were set on create.
+// Using this option is equivalent to using:
+//
+//	client.UserHousehold.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *UserHouseholdUpsertOne) UpdateNewValues() *UserHouseholdUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		if _, exists := u.create.mutation.CreateTime(); exists {
+			s.SetIgnore(userhousehold.FieldCreateTime)
+		}
+		if _, exists := u.create.mutation.UserID(); exists {
+			s.SetIgnore(userhousehold.FieldUserID)
+		}
+		if _, exists := u.create.mutation.HouseholdID(); exists {
+			s.SetIgnore(userhousehold.FieldHouseholdID)
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserHousehold.Create().
+//	    OnConflict(sql.ResolveWithIgnore()).
+//	    Exec(ctx)
+func (u *UserHouseholdUpsertOne) Ignore() *UserHouseholdUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserHouseholdUpsertOne) DoNothing() *UserHouseholdUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserHouseholdCreate.OnConflict
+// documentation for more info.
+func (u *UserHouseholdUpsertOne) Update(set func(*UserHouseholdUpsert)) *UserHouseholdUpsertOne {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserHouseholdUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *UserHouseholdUpsertOne) SetUpdateTime(v time.Time) *UserHouseholdUpsertOne {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *UserHouseholdUpsertOne) UpdateUpdateTime() *UserHouseholdUpsertOne {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetRole sets the "role" field.
+func (u *UserHouseholdUpsertOne) SetRole(v userhousehold.Role) *UserHouseholdUpsertOne {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.SetRole(v)
+	})
+}
+
+// UpdateRole sets the "role" field to the value that was provided on create.
+func (u *UserHouseholdUpsertOne) UpdateRole() *UserHouseholdUpsertOne {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.UpdateRole()
+	})
+}
+
+// Exec executes the query.
+func (u *UserHouseholdUpsertOne) Exec(ctx context.Context) error {
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UserHouseholdCreate.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserHouseholdUpsertOne) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// Exec executes the UPSERT query and returns the inserted/updated ID.
+func (u *UserHouseholdUpsertOne) ID(ctx context.Context) (id int, err error) {
+	node, err := u.create.Save(ctx)
+	if err != nil {
+		return id, err
+	}
+	return node.ID, nil
+}
+
+// IDX is like ID, but panics if an error occurs.
+func (u *UserHouseholdUpsertOne) IDX(ctx context.Context) int {
+	id, err := u.ID(ctx)
+	if err != nil {
+		panic(err)
+	}
+	return id
+}
+
 // UserHouseholdCreateBulk is the builder for creating many UserHousehold entities in bulk.
 type UserHouseholdCreateBulk struct {
 	config
 	err      error
 	builders []*UserHouseholdCreate
+	conflict []sql.ConflictOption
 }
 
 // Save creates the UserHousehold entities in the database.
@@ -260,6 +449,7 @@ func (_c *UserHouseholdCreateBulk) Save(ctx context.Context) ([]*UserHousehold, 
 					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
+					spec.OnConflict = _c.conflict
 					// Invoke the actual operation on the latest mutation in the chain.
 					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
@@ -310,6 +500,151 @@ func (_c *UserHouseholdCreateBulk) Exec(ctx context.Context) error {
 // ExecX is like Exec, but panics if an error occurs.
 func (_c *UserHouseholdCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
+		panic(err)
+	}
+}
+
+// OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
+// of the `INSERT` statement. For example:
+//
+//	client.UserHousehold.CreateBulk(builders...).
+//		OnConflict(
+//			// Update the row with the new values
+//			// the was proposed for insertion.
+//			sql.ResolveWithNewValues(),
+//		).
+//		// Override some of the fields with custom
+//		// update values.
+//		Update(func(u *ent.UserHouseholdUpsert) {
+//			SetCreateTime(v+v).
+//		}).
+//		Exec(ctx)
+func (_c *UserHouseholdCreateBulk) OnConflict(opts ...sql.ConflictOption) *UserHouseholdUpsertBulk {
+	_c.conflict = opts
+	return &UserHouseholdUpsertBulk{
+		create: _c,
+	}
+}
+
+// OnConflictColumns calls `OnConflict` and configures the columns
+// as conflict target. Using this option is equivalent to using:
+//
+//	client.UserHousehold.Create().
+//		OnConflict(sql.ConflictColumns(columns...)).
+//		Exec(ctx)
+func (_c *UserHouseholdCreateBulk) OnConflictColumns(columns ...string) *UserHouseholdUpsertBulk {
+	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
+	return &UserHouseholdUpsertBulk{
+		create: _c,
+	}
+}
+
+// UserHouseholdUpsertBulk is the builder for "upsert"-ing
+// a bulk of UserHousehold nodes.
+type UserHouseholdUpsertBulk struct {
+	create *UserHouseholdCreateBulk
+}
+
+// UpdateNewValues updates the mutable fields using the new values that
+// were set on create. Using this option is equivalent to using:
+//
+//	client.UserHousehold.Create().
+//		OnConflict(
+//			sql.ResolveWithNewValues(),
+//		).
+//		Exec(ctx)
+func (u *UserHouseholdUpsertBulk) UpdateNewValues() *UserHouseholdUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
+		for _, b := range u.create.builders {
+			if _, exists := b.mutation.CreateTime(); exists {
+				s.SetIgnore(userhousehold.FieldCreateTime)
+			}
+			if _, exists := b.mutation.UserID(); exists {
+				s.SetIgnore(userhousehold.FieldUserID)
+			}
+			if _, exists := b.mutation.HouseholdID(); exists {
+				s.SetIgnore(userhousehold.FieldHouseholdID)
+			}
+		}
+	}))
+	return u
+}
+
+// Ignore sets each column to itself in case of conflict.
+// Using this option is equivalent to using:
+//
+//	client.UserHousehold.Create().
+//		OnConflict(sql.ResolveWithIgnore()).
+//		Exec(ctx)
+func (u *UserHouseholdUpsertBulk) Ignore() *UserHouseholdUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
+	return u
+}
+
+// DoNothing configures the conflict_action to `DO NOTHING`.
+// Supported only by SQLite and PostgreSQL.
+func (u *UserHouseholdUpsertBulk) DoNothing() *UserHouseholdUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.DoNothing())
+	return u
+}
+
+// Update allows overriding fields `UPDATE` values. See the UserHouseholdCreateBulk.OnConflict
+// documentation for more info.
+func (u *UserHouseholdUpsertBulk) Update(set func(*UserHouseholdUpsert)) *UserHouseholdUpsertBulk {
+	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
+		set(&UserHouseholdUpsert{UpdateSet: update})
+	}))
+	return u
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (u *UserHouseholdUpsertBulk) SetUpdateTime(v time.Time) *UserHouseholdUpsertBulk {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.SetUpdateTime(v)
+	})
+}
+
+// UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
+func (u *UserHouseholdUpsertBulk) UpdateUpdateTime() *UserHouseholdUpsertBulk {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.UpdateUpdateTime()
+	})
+}
+
+// SetRole sets the "role" field.
+func (u *UserHouseholdUpsertBulk) SetRole(v userhousehold.Role) *UserHouseholdUpsertBulk {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.SetRole(v)
+	})
+}
+
+// UpdateRole sets the "role" field to the value that was provided on create.
+func (u *UserHouseholdUpsertBulk) UpdateRole() *UserHouseholdUpsertBulk {
+	return u.Update(func(s *UserHouseholdUpsert) {
+		s.UpdateRole()
+	})
+}
+
+// Exec executes the query.
+func (u *UserHouseholdUpsertBulk) Exec(ctx context.Context) error {
+	if u.create.err != nil {
+		return u.create.err
+	}
+	for i, b := range u.create.builders {
+		if len(b.conflict) != 0 {
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the UserHouseholdCreateBulk instead", i)
+		}
+	}
+	if len(u.create.conflict) == 0 {
+		return errors.New("ent: missing options for UserHouseholdCreateBulk.OnConflict")
+	}
+	return u.create.Exec(ctx)
+}
+
+// ExecX is like Exec, but panics if an error occurs.
+func (u *UserHouseholdUpsertBulk) ExecX(ctx context.Context) {
+	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
