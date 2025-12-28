@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -27,21 +28,31 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/gorilla/sessions"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
+	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
+	"github.com/markbates/goth/providers/google"
 	"github.com/shopspring/decimal"
 )
 
 type config struct {
-	PostgresURL string `env:"POSTGRES_URL"`
-	WebURL      string `env:"WEB_URL"`
-	Port        string `env:"PORT"`
+	PostgresURL        string `env:"POSTGRES_URL,notEmpty"`
+	WebURL             string `env:"WEB_URL,notEmpty"`
+	Port               string `env:"PORT,notEmpty"`
+	GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
+	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
+	GoogleRedirectURL  string `env:"GOOGLE_REDIRECT_URL"`
+	SessionSecret      string `env:"SESSION_SECRET,notEmpty"`
 }
 
 func main() {
 	ctx := context.Background()
 
-	if os.Getenv("RAILWAY_PUBLIC_DOMAIN") == "" {
+	isProd := os.Getenv("RAILWAY_PUBLIC_DOMAIN") != ""
+
+	if !isProd {
 		err := godotenv.Load()
 		if err != nil {
 			panic(err)
@@ -52,6 +63,23 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	maxAge := 86400 * 30 // 30 days
+	store := sessions.NewCookieStore([]byte(cfg.SessionSecret))
+	store.MaxAge(maxAge)
+	store.Options.Path = "/"
+	store.Options.HttpOnly = true // HttpOnly should always be enabled
+	store.Options.Secure = isProd
+	gothic.Store = store
+
+	goth.UseProviders(
+		google.New(
+			cfg.GoogleClientID,
+			cfg.GoogleClientSecret,
+			cfg.GoogleRedirectURL,
+			"email", "profile",
+		),
+	)
 
 	db, err := sql.Open(
 		"pgx",
@@ -120,6 +148,37 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Handle("/query", gqlHandler)
+
+	r.Get(
+		"/auth/{provider}/callback",
+		func(res http.ResponseWriter, req *http.Request) {
+			user, err := gothic.CompleteUserAuth(res, req)
+			if err != nil {
+				fmt.Fprintln(res, err)
+				return
+			}
+			fmt.Fprintf(res, "User: %+v", user)
+		},
+	)
+
+	r.Get(
+		"/logout/{provider}",
+		func(res http.ResponseWriter, req *http.Request) {
+			gothic.Logout(res, req)
+			res.Header().Set("Location", "/")
+			res.WriteHeader(http.StatusTemporaryRedirect)
+		},
+	)
+
+	r.Get("/auth/{provider}", func(res http.ResponseWriter, req *http.Request) {
+		// try to get the user without re-authenticating
+		if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
+			fmt.Fprintf(res, "User: %+v", gothUser)
+		} else {
+			gothic.BeginAuthHandler(res, req)
+		}
+	})
+
 	r.Get(
 		"/health",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
