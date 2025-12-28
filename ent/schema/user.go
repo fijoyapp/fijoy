@@ -35,9 +35,7 @@ func (User) Edges() []ent.Edge {
 }
 
 func (User) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entgql.QueryField(),
-	}
+	return []schema.Annotation{}
 }
 
 func (User) Mixin() []ent.Mixin {

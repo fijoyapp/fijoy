@@ -172,7 +172,6 @@ type ComplexityRoot struct {
 		TransactionEntries    func(childComplexity int) int
 		Transactions          func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) int
 		UserHouseholds        func(childComplexity int) int
-		Users                 func(childComplexity int) int
 	}
 
 	Transaction struct {
@@ -279,7 +278,6 @@ type QueryResolver interface {
 	Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error)
 	TransactionCategories(ctx context.Context) ([]*ent.TransactionCategory, error)
 	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
-	Users(ctx context.Context) ([]*ent.User, error)
 	UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error)
 	FxRate(ctx context.Context, from string, to string, datetime string) (string, error)
 }
@@ -875,12 +873,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.UserHouseholds(childComplexity), true
-	case "Query.users":
-		if e.complexity.Query.Users == nil {
-			break
-		}
-
-		return e.complexity.Query.Users(childComplexity), true
 
 	case "Transaction.category":
 		if e.complexity.Transaction.Category == nil {
@@ -4633,57 +4625,6 @@ func (ec *executionContext) fieldContext_Query_transactionEntries(_ context.Cont
 				return ec.fieldContext_TransactionEntry_transaction(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TransactionEntry", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Query_users,
-		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Query().Users(ctx)
-		},
-		nil,
-		ec.marshalNUser2ᚕᚖfijoyᚗappᚋentᚐUserᚄ,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Query_users(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "createTime":
-				return ec.fieldContext_User_createTime(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_User_updateTime(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "name":
-				return ec.fieldContext_User_name(ctx, field)
-			case "households":
-				return ec.fieldContext_User_households(ctx, field)
-			case "accounts":
-				return ec.fieldContext_User_accounts(ctx, field)
-			case "transactions":
-				return ec.fieldContext_User_transactions(ctx, field)
-			case "keys":
-				return ec.fieldContext_User_keys(ctx, field)
-			case "userHouseholds":
-				return ec.fieldContext_User_userHouseholds(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -14823,28 +14764,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "users":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_users(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "userHouseholds":
 			field := field
 
@@ -16980,50 +16899,6 @@ func (ec *executionContext) marshalNTransactionOrderField2ᚖfijoyᚗappᚋent�
 func (ec *executionContext) unmarshalNTransactionWhereInput2ᚖfijoyᚗappᚋentᚐTransactionWhereInput(ctx context.Context, v any) (*ent.TransactionWhereInput, error) {
 	res, err := ec.unmarshalInputTransactionWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUser2ᚕᚖfijoyᚗappᚋentᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.User) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUser2ᚖfijoyᚗappᚋentᚐUser(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNUser2ᚖfijoyᚗappᚋentᚐUser(ctx context.Context, sel ast.SelectionSet, v *ent.User) graphql.Marshaler {

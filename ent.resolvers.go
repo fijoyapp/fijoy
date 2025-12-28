@@ -83,11 +83,6 @@ func (r *queryResolver) TransactionEntries(ctx context.Context) ([]*ent.Transact
 	return r.entClient.TransactionEntry.Query().All(ctx)
 }
 
-// Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*ent.User, error) {
-	panic(fmt.Errorf("not implemented: Users - users"))
-}
-
 // UserHouseholds is the resolver for the userHouseholds field.
 func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error) {
 	return r.entClient.UserHousehold.Query().All(ctx)
@@ -340,3 +335,15 @@ type accountWhereInputResolver struct{ *Resolver }
 type investmentWhereInputResolver struct{ *Resolver }
 type lotWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *queryResolver) Users(ctx context.Context) ([]*ent.User, error) {
+	panic(fmt.Errorf("not implemented: Users - users"))
+}
+*/

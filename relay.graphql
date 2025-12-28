@@ -809,7 +809,6 @@ type Query {
   ): TransactionConnection!
   transactionCategories: [TransactionCategory!]!
   transactionEntries: [TransactionEntry!]!
-  users: [User!]!
   userHouseholds: [UserHousehold!]!
   fxRate(from: String!, to: String!, datetime: DateTime!): String!
 }

@@ -791,7 +791,6 @@ type Query {
   ): TransactionConnection!
   transactionCategories: [TransactionCategory!]!
   transactionEntries: [TransactionEntry!]!
-  users: [User!]!
   userHouseholds: [UserHousehold!]!
 }
 """
