@@ -6,7 +6,10 @@ import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
 import { AccountCard } from './account-card'
-import type { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
+import type {
+  accountsPanelFragment$key,
+  AccountType,
+} from './__generated__/accountsPanelFragment.graphql'
 import {
   Accordion,
   AccordionContent,
@@ -39,6 +42,14 @@ const AccountsPanelFragment = graphql`
 type AccountsListPageProps = {
   fragmentRef: accountsPanelFragment$key
 }
+
+const categoryOrder: AccountType[] = [
+  'liquidity',
+  'investment',
+  'property',
+  'receivable',
+  'liability',
+]
 
 export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const data = useFragment(AccountsPanelFragment, fragmentRef)
@@ -73,7 +84,11 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         className="w-full"
         defaultValue={Object.keys(groupedAccounts)}
       >
-        {map(groupedAccounts, (accounts, type) => {
+        {map(categoryOrder, (type) => {
+          if (!groupedAccounts[type]) {
+            return null
+          }
+          const accounts = groupedAccounts[type]
           return (
             <AccordionItem value={type} key={type}>
               <AccordionTrigger className="justify-normal **:data-[slot=accordion-trigger-icon]:ml-0 gap-2 hover:no-underline cursor-pointer">
