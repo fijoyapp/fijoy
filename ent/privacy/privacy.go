@@ -7,6 +7,7 @@ import (
 
 	"fijoy.app/ent"
 
+	"entgo.io/ent/entql"
 	"entgo.io/ent/privacy"
 )
 
@@ -372,4 +373,95 @@ func (f UserKeyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserKeyMutation", m)
+}
+
+type (
+	// Filter is the interface that wraps the Where function
+	// for filtering nodes in queries and mutations.
+	Filter interface {
+		// Where applies a filter on the executed query/mutation.
+		Where(entql.P)
+	}
+
+	// The FilterFunc type is an adapter that allows the use of ordinary
+	// functions as filters for query and mutation types.
+	FilterFunc func(context.Context, Filter) error
+)
+
+// EvalQuery calls f(ctx, q) if the query implements the Filter interface, otherwise it is denied.
+func (f FilterFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	fr, err := queryFilter(q)
+	if err != nil {
+		return err
+	}
+	return f(ctx, fr)
+}
+
+// EvalMutation calls f(ctx, q) if the mutation implements the Filter interface, otherwise it is denied.
+func (f FilterFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	fr, err := mutationFilter(m)
+	if err != nil {
+		return err
+	}
+	return f(ctx, fr)
+}
+
+var _ QueryMutationRule = FilterFunc(nil)
+
+func queryFilter(q ent.Query) (Filter, error) {
+	switch q := q.(type) {
+	case *ent.AccountQuery:
+		return q.Filter(), nil
+	case *ent.CurrencyQuery:
+		return q.Filter(), nil
+	case *ent.HouseholdQuery:
+		return q.Filter(), nil
+	case *ent.InvestmentQuery:
+		return q.Filter(), nil
+	case *ent.LotQuery:
+		return q.Filter(), nil
+	case *ent.TransactionQuery:
+		return q.Filter(), nil
+	case *ent.TransactionCategoryQuery:
+		return q.Filter(), nil
+	case *ent.TransactionEntryQuery:
+		return q.Filter(), nil
+	case *ent.UserQuery:
+		return q.Filter(), nil
+	case *ent.UserHouseholdQuery:
+		return q.Filter(), nil
+	case *ent.UserKeyQuery:
+		return q.Filter(), nil
+	default:
+		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
+	}
+}
+
+func mutationFilter(m ent.Mutation) (Filter, error) {
+	switch m := m.(type) {
+	case *ent.AccountMutation:
+		return m.Filter(), nil
+	case *ent.CurrencyMutation:
+		return m.Filter(), nil
+	case *ent.HouseholdMutation:
+		return m.Filter(), nil
+	case *ent.InvestmentMutation:
+		return m.Filter(), nil
+	case *ent.LotMutation:
+		return m.Filter(), nil
+	case *ent.TransactionMutation:
+		return m.Filter(), nil
+	case *ent.TransactionCategoryMutation:
+		return m.Filter(), nil
+	case *ent.TransactionEntryMutation:
+		return m.Filter(), nil
+	case *ent.UserMutation:
+		return m.Filter(), nil
+	case *ent.UserHouseholdMutation:
+		return m.Filter(), nil
+	case *ent.UserKeyMutation:
+		return m.Filter(), nil
+	default:
+		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)
+	}
 }
