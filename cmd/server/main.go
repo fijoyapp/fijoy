@@ -22,6 +22,7 @@ import (
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
 	"fijoy.app/ent/userkey"
+	"fijoy.app/internal/contextkeys"
 	"fijoy.app/internal/fxrate"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -287,7 +288,7 @@ func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
 				)
 			}
 
-			ctx = context.WithValue(ctx, "user_id", userIDStr)
+			ctx = context.WithValue(ctx, contextkeys.UserIDKey(), userID)
 
 			householdIDStr := r.Header.Get("X-Household-ID")
 			if householdIDStr != "" {
@@ -318,7 +319,7 @@ func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
 				}
 
 				if isMember {
-					ctx = context.WithValue(ctx, "household_id", hid)
+					ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), hid)
 				}
 
 			}
@@ -351,7 +352,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetLocale("en-CA").
 		SaveX(ctx)
 
-	ctx = context.WithValue(ctx, "household_id", household.ID)
+	ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), household.ID)
 
 	entClient.UserHousehold.Create().
 		SetUser(joey).
@@ -372,7 +373,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	differentCtx := context.WithValue(
 		ctx,
-		"household_id",
+		contextkeys.HouseholdIDKey(),
 		differentHousehold.ID,
 	)
 
