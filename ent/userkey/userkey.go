@@ -3,6 +3,9 @@
 package userkey
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -18,10 +21,10 @@ const (
 	FieldCreateTime = "create_time"
 	// FieldUpdateTime holds the string denoting the update_time field in the database.
 	FieldUpdateTime = "update_time"
+	// FieldProvider holds the string denoting the provider field in the database.
+	FieldProvider = "provider"
 	// FieldKey holds the string denoting the key field in the database.
 	FieldKey = "key"
-	// FieldName holds the string denoting the name field in the database.
-	FieldName = "name"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the userkey in the database.
@@ -40,8 +43,8 @@ var Columns = []string{
 	FieldID,
 	FieldCreateTime,
 	FieldUpdateTime,
+	FieldProvider,
 	FieldKey,
-	FieldName,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "user_keys"
@@ -74,9 +77,29 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// KeyValidator is a validator for the "key" field. It is called by the builders before save.
 	KeyValidator func(string) error
-	// NameValidator is a validator for the "name" field. It is called by the builders before save.
-	NameValidator func(string) error
 )
+
+// Provider defines the type for the "provider" enum field.
+type Provider string
+
+// Provider values.
+const (
+	ProviderGoogle Provider = "google"
+)
+
+func (pr Provider) String() string {
+	return string(pr)
+}
+
+// ProviderValidator is a validator for the "provider" field enum values. It is called by the builders before save.
+func ProviderValidator(pr Provider) error {
+	switch pr {
+	case ProviderGoogle:
+		return nil
+	default:
+		return fmt.Errorf("userkey: invalid enum value for provider field: %q", pr)
+	}
+}
 
 // OrderOption defines the ordering options for the UserKey queries.
 type OrderOption func(*sql.Selector)
@@ -96,14 +119,14 @@ func ByUpdateTime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdateTime, opts...).ToFunc()
 }
 
+// ByProvider orders the results by the provider field.
+func ByProvider(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldProvider, opts...).ToFunc()
+}
+
 // ByKey orders the results by the key field.
 func ByKey(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldKey, opts...).ToFunc()
-}
-
-// ByName orders the results by the name field.
-func ByName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.
@@ -118,4 +141,22 @@ func newUserStep() *sqlgraph.Step {
 		sqlgraph.To(UserInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 	)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e Provider) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *Provider) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = Provider(str)
+	if err := ProviderValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid Provider", str)
+	}
+	return nil
 }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<27d2f07366d74c3a540017192d924628>>
+ * @generated SignedSource<<0c2ed141b13a0115f0b2cb6a55c6a2a2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type AccountType = "investment" | "liability" | "liquidity" | "property" 
 export type InvestmentType = "crypto" | "stock" | "%future added value";
 export type TransactionCategoryType = "expense" | "income" | "transfer" | "%future added value";
 export type UserHouseholdRole = "admin" | "member" | "%future added value";
+export type UserKeyProvider = "google" | "%future added value";
 export type TransactionWhereInput = {
   and?: ReadonlyArray<TransactionWhereInput> | null | undefined;
   createTime?: any | null | undefined;
@@ -543,21 +544,12 @@ export type UserKeyWhereInput = {
   keyLTE?: string | null | undefined;
   keyNEQ?: string | null | undefined;
   keyNotIn?: ReadonlyArray<string> | null | undefined;
-  name?: string | null | undefined;
-  nameContains?: string | null | undefined;
-  nameContainsFold?: string | null | undefined;
-  nameEqualFold?: string | null | undefined;
-  nameGT?: string | null | undefined;
-  nameGTE?: string | null | undefined;
-  nameHasPrefix?: string | null | undefined;
-  nameHasSuffix?: string | null | undefined;
-  nameIn?: ReadonlyArray<string> | null | undefined;
-  nameLT?: string | null | undefined;
-  nameLTE?: string | null | undefined;
-  nameNEQ?: string | null | undefined;
-  nameNotIn?: ReadonlyArray<string> | null | undefined;
   not?: UserKeyWhereInput | null | undefined;
   or?: ReadonlyArray<UserKeyWhereInput> | null | undefined;
+  provider?: UserKeyProvider | null | undefined;
+  providerIn?: ReadonlyArray<UserKeyProvider> | null | undefined;
+  providerNEQ?: UserKeyProvider | null | undefined;
+  providerNotIn?: ReadonlyArray<UserKeyProvider> | null | undefined;
   updateTime?: any | null | undefined;
   updateTimeGT?: any | null | undefined;
   updateTimeGTE?: any | null | undefined;

@@ -243,7 +243,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "email", Type: field.TypeString},
+		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "name", Type: field.TypeString},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -293,8 +293,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
+		{Name: "provider", Type: field.TypeEnum, Enums: []string{"google"}},
 		{Name: "key", Type: field.TypeString},
-		{Name: "name", Type: field.TypeString},
 		{Name: "user_keys", Type: field.TypeInt},
 	}
 	// UserKeysTable holds the schema information for the "user_keys" table.
@@ -308,6 +308,13 @@ var (
 				Columns:    []*schema.Column{UserKeysColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "userkey_provider_key",
+				Unique:  true,
+				Columns: []*schema.Column{UserKeysColumns[3], UserKeysColumns[4]},
 			},
 		},
 	}

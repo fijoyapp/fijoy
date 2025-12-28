@@ -23,6 +23,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { useNavigate } from '@tanstack/react-router'
+import { logout } from '@/lib/auth'
 
 export function NavUser({
   user,
@@ -34,6 +36,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const navigate = useNavigate()
 
   return (
     <SidebarMenu>
@@ -100,7 +103,12 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                logout()
+                navigate({ to: '/' })
+              }}
+            >
               <LogOut />
               Log out
             </DropdownMenuItem>

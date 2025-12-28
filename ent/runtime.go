@@ -213,11 +213,7 @@ func init() {
 	// userkey.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	userkey.UpdateDefaultUpdateTime = userkeyDescUpdateTime.UpdateDefault.(func() time.Time)
 	// userkeyDescKey is the schema descriptor for key field.
-	userkeyDescKey := userkeyFields[0].Descriptor()
+	userkeyDescKey := userkeyFields[1].Descriptor()
 	// userkey.KeyValidator is a validator for the "key" field. It is called by the builders before save.
 	userkey.KeyValidator = userkeyDescKey.Validators[0].(func(string) error)
-	// userkeyDescName is the schema descriptor for name field.
-	userkeyDescName := userkeyFields[1].Descriptor()
-	// userkey.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	userkey.NameValidator = userkeyDescName.Validators[0].(func(string) error)
 }

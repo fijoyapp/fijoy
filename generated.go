@@ -19,6 +19,7 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -237,7 +238,7 @@ type ComplexityRoot struct {
 		CreateTime func(childComplexity int) int
 		ID         func(childComplexity int) int
 		Key        func(childComplexity int) int
-		Name       func(childComplexity int) int
+		Provider   func(childComplexity int) int
 		UpdateTime func(childComplexity int) int
 		User       func(childComplexity int) int
 	}
@@ -1122,12 +1123,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.UserKey.Key(childComplexity), true
-	case "UserKey.name":
-		if e.complexity.UserKey.Name == nil {
+	case "UserKey.provider":
+		if e.complexity.UserKey.Provider == nil {
 			break
 		}
 
-		return e.complexity.UserKey.Name(childComplexity), true
+		return e.complexity.UserKey.Provider(childComplexity), true
 	case "UserKey.updateTime":
 		if e.complexity.UserKey.UpdateTime == nil {
 			break
@@ -5748,10 +5749,10 @@ func (ec *executionContext) fieldContext_User_keys(_ context.Context, field grap
 				return ec.fieldContext_UserKey_createTime(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_UserKey_updateTime(ctx, field)
+			case "provider":
+				return ec.fieldContext_UserKey_provider(ctx, field)
 			case "key":
 				return ec.fieldContext_UserKey_key(ctx, field)
-			case "name":
-				return ec.fieldContext_UserKey_name(ctx, field)
 			case "user":
 				return ec.fieldContext_UserKey_user(ctx, field)
 			}
@@ -6173,6 +6174,35 @@ func (ec *executionContext) fieldContext_UserKey_updateTime(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _UserKey_provider(ctx context.Context, field graphql.CollectedField, obj *ent.UserKey) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_UserKey_provider,
+		func(ctx context.Context) (any, error) {
+			return obj.Provider, nil
+		},
+		nil,
+		ec.marshalNUserKeyProvider2fijoyᚗappᚋentᚋuserkeyᚐProvider,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_UserKey_provider(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserKey",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UserKeyProvider does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserKey_key(ctx context.Context, field graphql.CollectedField, obj *ent.UserKey) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -6190,35 +6220,6 @@ func (ec *executionContext) _UserKey_key(ctx context.Context, field graphql.Coll
 }
 
 func (ec *executionContext) fieldContext_UserKey_key(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserKey",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UserKey_name(ctx context.Context, field graphql.CollectedField, obj *ent.UserKey) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_UserKey_name,
-		func(ctx context.Context) (any, error) {
-			return obj.Name, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_UserKey_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserKey",
 		Field:      field,
@@ -11260,7 +11261,7 @@ func (ec *executionContext) unmarshalInputUserKeyWhereInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "key", "keyNEQ", "keyIn", "keyNotIn", "keyGT", "keyGTE", "keyLT", "keyLTE", "keyContains", "keyHasPrefix", "keyHasSuffix", "keyEqualFold", "keyContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasUser", "hasUserWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "provider", "providerNEQ", "providerIn", "providerNotIn", "key", "keyNEQ", "keyIn", "keyNotIn", "keyGT", "keyGTE", "keyLT", "keyLTE", "keyContains", "keyHasPrefix", "keyHasSuffix", "keyEqualFold", "keyContainsFold", "hasUser", "hasUserWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -11456,6 +11457,34 @@ func (ec *executionContext) unmarshalInputUserKeyWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.UpdateTimeLTE = data
+		case "provider":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("provider"))
+			data, err := ec.unmarshalOUserKeyProvider2ᚖfijoyᚗappᚋentᚋuserkeyᚐProvider(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Provider = data
+		case "providerNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("providerNEQ"))
+			data, err := ec.unmarshalOUserKeyProvider2ᚖfijoyᚗappᚋentᚋuserkeyᚐProvider(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProviderNEQ = data
+		case "providerIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("providerIn"))
+			data, err := ec.unmarshalOUserKeyProvider2ᚕfijoyᚗappᚋentᚋuserkeyᚐProviderᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProviderIn = data
+		case "providerNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("providerNotIn"))
+			data, err := ec.unmarshalOUserKeyProvider2ᚕfijoyᚗappᚋentᚋuserkeyᚐProviderᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProviderNotIn = data
 		case "key":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("key"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -11547,97 +11576,6 @@ func (ec *executionContext) unmarshalInputUserKeyWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.KeyContainsFold = data
-		case "name":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Name = data
-		case "nameNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameNEQ = data
-		case "nameIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameIn = data
-		case "nameNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameNotIn = data
-		case "nameGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameGT = data
-		case "nameGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameGTE = data
-		case "nameLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameLT = data
-		case "nameLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameLTE = data
-		case "nameContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameContains = data
-		case "nameHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameHasPrefix = data
-		case "nameHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameHasSuffix = data
-		case "nameEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameEqualFold = data
-		case "nameContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.NameContainsFold = data
 		case "hasUser":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUser"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -14849,13 +14787,13 @@ func (ec *executionContext) _UserKey(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "key":
-			out.Values[i] = ec._UserKey_key(ctx, field, obj)
+		case "provider":
+			out.Values[i] = ec._UserKey_provider(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "name":
-			out.Values[i] = ec._UserKey_name(ctx, field, obj)
+		case "key":
+			out.Values[i] = ec._UserKey_key(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -16000,6 +15938,16 @@ func (ec *executionContext) marshalNUserKey2ᚖfijoyᚗappᚋentᚐUserKey(ctx c
 		return graphql.Null
 	}
 	return ec._UserKey(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUserKeyProvider2fijoyᚗappᚋentᚋuserkeyᚐProvider(ctx context.Context, v any) (userkey.Provider, error) {
+	var res userkey.Provider
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUserKeyProvider2fijoyᚗappᚋentᚋuserkeyᚐProvider(ctx context.Context, sel ast.SelectionSet, v userkey.Provider) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNUserKeyWhereInput2ᚖfijoyᚗappᚋentᚐUserKeyWhereInput(ctx context.Context, v any) (*ent.UserKeyWhereInput, error) {
@@ -17662,6 +17610,87 @@ func (ec *executionContext) marshalOUserKey2ᚕᚖfijoyᚗappᚋentᚐUserKeyᚄ
 	}
 
 	return ret
+}
+
+func (ec *executionContext) unmarshalOUserKeyProvider2ᚕfijoyᚗappᚋentᚋuserkeyᚐProviderᚄ(ctx context.Context, v any) ([]userkey.Provider, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]userkey.Provider, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUserKeyProvider2fijoyᚗappᚋentᚋuserkeyᚐProvider(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOUserKeyProvider2ᚕfijoyᚗappᚋentᚋuserkeyᚐProviderᚄ(ctx context.Context, sel ast.SelectionSet, v []userkey.Provider) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserKeyProvider2fijoyᚗappᚋentᚋuserkeyᚐProvider(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOUserKeyProvider2ᚖfijoyᚗappᚋentᚋuserkeyᚐProvider(ctx context.Context, v any) (*userkey.Provider, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(userkey.Provider)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUserKeyProvider2ᚖfijoyᚗappᚋentᚋuserkeyᚐProvider(ctx context.Context, sel ast.SelectionSet, v *userkey.Provider) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOUserKeyWhereInput2ᚕᚖfijoyᚗappᚋentᚐUserKeyWhereInputᚄ(ctx context.Context, v any) ([]*ent.UserKeyWhereInput, error) {

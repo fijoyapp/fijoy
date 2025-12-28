@@ -35,6 +35,20 @@ func (_u *UserKeyUpdate) SetUpdateTime(v time.Time) *UserKeyUpdate {
 	return _u
 }
 
+// SetProvider sets the "provider" field.
+func (_u *UserKeyUpdate) SetProvider(v userkey.Provider) *UserKeyUpdate {
+	_u.mutation.SetProvider(v)
+	return _u
+}
+
+// SetNillableProvider sets the "provider" field if the given value is not nil.
+func (_u *UserKeyUpdate) SetNillableProvider(v *userkey.Provider) *UserKeyUpdate {
+	if v != nil {
+		_u.SetProvider(*v)
+	}
+	return _u
+}
+
 // SetKey sets the "key" field.
 func (_u *UserKeyUpdate) SetKey(v string) *UserKeyUpdate {
 	_u.mutation.SetKey(v)
@@ -45,20 +59,6 @@ func (_u *UserKeyUpdate) SetKey(v string) *UserKeyUpdate {
 func (_u *UserKeyUpdate) SetNillableKey(v *string) *UserKeyUpdate {
 	if v != nil {
 		_u.SetKey(*v)
-	}
-	return _u
-}
-
-// SetName sets the "name" field.
-func (_u *UserKeyUpdate) SetName(v string) *UserKeyUpdate {
-	_u.mutation.SetName(v)
-	return _u
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (_u *UserKeyUpdate) SetNillableName(v *string) *UserKeyUpdate {
-	if v != nil {
-		_u.SetName(*v)
 	}
 	return _u
 }
@@ -106,14 +106,14 @@ func (_u *UserKeyUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *UserKeyUpdate) check() error {
+	if v, ok := _u.mutation.Provider(); ok {
+		if err := userkey.ProviderValidator(v); err != nil {
+			return &ValidationError{Name: "provider", err: fmt.Errorf(`ent: validator failed for field "UserKey.provider": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Key(); ok {
 		if err := userkey.KeyValidator(v); err != nil {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.Name(); ok {
-		if err := userkey.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "UserKey.name": %w`, err)}
 		}
 	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
@@ -143,11 +143,11 @@ func (_u *UserKeyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.Provider(); ok {
+		_spec.SetField(userkey.FieldProvider, field.TypeEnum, value)
+	}
 	if value, ok := _u.mutation.Key(); ok {
 		_spec.SetField(userkey.FieldKey, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(userkey.FieldName, field.TypeString, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -177,6 +177,20 @@ func (_u *UserKeyUpdateOne) SetUpdateTime(v time.Time) *UserKeyUpdateOne {
 	return _u
 }
 
+// SetProvider sets the "provider" field.
+func (_u *UserKeyUpdateOne) SetProvider(v userkey.Provider) *UserKeyUpdateOne {
+	_u.mutation.SetProvider(v)
+	return _u
+}
+
+// SetNillableProvider sets the "provider" field if the given value is not nil.
+func (_u *UserKeyUpdateOne) SetNillableProvider(v *userkey.Provider) *UserKeyUpdateOne {
+	if v != nil {
+		_u.SetProvider(*v)
+	}
+	return _u
+}
+
 // SetKey sets the "key" field.
 func (_u *UserKeyUpdateOne) SetKey(v string) *UserKeyUpdateOne {
 	_u.mutation.SetKey(v)
@@ -187,20 +201,6 @@ func (_u *UserKeyUpdateOne) SetKey(v string) *UserKeyUpdateOne {
 func (_u *UserKeyUpdateOne) SetNillableKey(v *string) *UserKeyUpdateOne {
 	if v != nil {
 		_u.SetKey(*v)
-	}
-	return _u
-}
-
-// SetName sets the "name" field.
-func (_u *UserKeyUpdateOne) SetName(v string) *UserKeyUpdateOne {
-	_u.mutation.SetName(v)
-	return _u
-}
-
-// SetNillableName sets the "name" field if the given value is not nil.
-func (_u *UserKeyUpdateOne) SetNillableName(v *string) *UserKeyUpdateOne {
-	if v != nil {
-		_u.SetName(*v)
 	}
 	return _u
 }
@@ -261,14 +261,14 @@ func (_u *UserKeyUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *UserKeyUpdateOne) check() error {
+	if v, ok := _u.mutation.Provider(); ok {
+		if err := userkey.ProviderValidator(v); err != nil {
+			return &ValidationError{Name: "provider", err: fmt.Errorf(`ent: validator failed for field "UserKey.provider": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Key(); ok {
 		if err := userkey.KeyValidator(v); err != nil {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
-		}
-	}
-	if v, ok := _u.mutation.Name(); ok {
-		if err := userkey.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "UserKey.name": %w`, err)}
 		}
 	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
@@ -315,11 +315,11 @@ func (_u *UserKeyUpdateOne) sqlSave(ctx context.Context) (_node *UserKey, err er
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 	}
+	if value, ok := _u.mutation.Provider(); ok {
+		_spec.SetField(userkey.FieldProvider, field.TypeEnum, value)
+	}
 	if value, ok := _u.mutation.Key(); ok {
 		_spec.SetField(userkey.FieldKey, field.TypeString, value)
-	}
-	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(userkey.FieldName, field.TypeString, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &UserKey{config: _u.config}

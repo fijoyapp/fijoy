@@ -22,10 +22,10 @@ type UserKey struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	// UpdateTime holds the value of the "update_time" field.
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	// Provider holds the value of the "provider" field.
+	Provider userkey.Provider `json:"provider,omitempty"`
 	// Key holds the value of the "key" field.
 	Key string `json:"key,omitempty"`
-	// Name holds the value of the "name" field.
-	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserKeyQuery when eager-loading is set.
 	Edges        UserKeyEdges `json:"edges"`
@@ -62,7 +62,7 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case userkey.FieldID:
 			values[i] = new(sql.NullInt64)
-		case userkey.FieldKey, userkey.FieldName:
+		case userkey.FieldProvider, userkey.FieldKey:
 			values[i] = new(sql.NullString)
 		case userkey.FieldCreateTime, userkey.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -101,17 +101,17 @@ func (_m *UserKey) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
 			}
+		case userkey.FieldProvider:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field provider", values[i])
+			} else if value.Valid {
+				_m.Provider = userkey.Provider(value.String)
+			}
 		case userkey.FieldKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field key", values[i])
 			} else if value.Valid {
 				_m.Key = value.String
-			}
-		case userkey.FieldName:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field name", values[i])
-			} else if value.Valid {
-				_m.Name = value.String
 			}
 		case userkey.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -167,11 +167,11 @@ func (_m *UserKey) String() string {
 	builder.WriteString("update_time=")
 	builder.WriteString(_m.UpdateTime.Format(time.ANSIC))
 	builder.WriteString(", ")
+	builder.WriteString("provider=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Provider))
+	builder.WriteString(", ")
 	builder.WriteString("key=")
 	builder.WriteString(_m.Key)
-	builder.WriteString(", ")
-	builder.WriteString("name=")
-	builder.WriteString(_m.Name)
 	builder.WriteByte(')')
 	return builder.String()
 }

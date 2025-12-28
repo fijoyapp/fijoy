@@ -70,11 +70,6 @@ func Key(v string) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldKey, v))
 }
 
-// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
-func Name(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldEQ(FieldName, v))
-}
-
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldCreateTime, v))
@@ -155,6 +150,26 @@ func UpdateTimeLTE(v time.Time) predicate.UserKey {
 	return predicate.UserKey(sql.FieldLTE(FieldUpdateTime, v))
 }
 
+// ProviderEQ applies the EQ predicate on the "provider" field.
+func ProviderEQ(v Provider) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEQ(FieldProvider, v))
+}
+
+// ProviderNEQ applies the NEQ predicate on the "provider" field.
+func ProviderNEQ(v Provider) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNEQ(FieldProvider, v))
+}
+
+// ProviderIn applies the In predicate on the "provider" field.
+func ProviderIn(vs ...Provider) predicate.UserKey {
+	return predicate.UserKey(sql.FieldIn(FieldProvider, vs...))
+}
+
+// ProviderNotIn applies the NotIn predicate on the "provider" field.
+func ProviderNotIn(vs ...Provider) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNotIn(FieldProvider, vs...))
+}
+
 // KeyEQ applies the EQ predicate on the "key" field.
 func KeyEQ(v string) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldKey, v))
@@ -218,71 +233,6 @@ func KeyEqualFold(v string) predicate.UserKey {
 // KeyContainsFold applies the ContainsFold predicate on the "key" field.
 func KeyContainsFold(v string) predicate.UserKey {
 	return predicate.UserKey(sql.FieldContainsFold(FieldKey, v))
-}
-
-// NameEQ applies the EQ predicate on the "name" field.
-func NameEQ(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldEQ(FieldName, v))
-}
-
-// NameNEQ applies the NEQ predicate on the "name" field.
-func NameNEQ(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldNEQ(FieldName, v))
-}
-
-// NameIn applies the In predicate on the "name" field.
-func NameIn(vs ...string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldIn(FieldName, vs...))
-}
-
-// NameNotIn applies the NotIn predicate on the "name" field.
-func NameNotIn(vs ...string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldNotIn(FieldName, vs...))
-}
-
-// NameGT applies the GT predicate on the "name" field.
-func NameGT(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldGT(FieldName, v))
-}
-
-// NameGTE applies the GTE predicate on the "name" field.
-func NameGTE(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldGTE(FieldName, v))
-}
-
-// NameLT applies the LT predicate on the "name" field.
-func NameLT(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldLT(FieldName, v))
-}
-
-// NameLTE applies the LTE predicate on the "name" field.
-func NameLTE(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldLTE(FieldName, v))
-}
-
-// NameContains applies the Contains predicate on the "name" field.
-func NameContains(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldContains(FieldName, v))
-}
-
-// NameHasPrefix applies the HasPrefix predicate on the "name" field.
-func NameHasPrefix(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldHasPrefix(FieldName, v))
-}
-
-// NameHasSuffix applies the HasSuffix predicate on the "name" field.
-func NameHasSuffix(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldHasSuffix(FieldName, v))
-}
-
-// NameEqualFold applies the EqualFold predicate on the "name" field.
-func NameEqualFold(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldEqualFold(FieldName, v))
-}
-
-// NameContainsFold applies the ContainsFold predicate on the "name" field.
-func NameContainsFold(v string) predicate.UserKey {
-	return predicate.UserKey(sql.FieldContainsFold(FieldName, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

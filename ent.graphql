@@ -1146,9 +1146,15 @@ type UserKey implements Node {
   id: ID!
   createTime: Time!
   updateTime: Time!
+  provider: UserKeyProvider!
   key: String!
-  name: String!
   user: User!
+}
+"""
+UserKeyProvider is enum for the field provider
+"""
+enum UserKeyProvider @goModel(model: "fijoy.app/ent/userkey.Provider") {
+  google
 }
 """
 UserKeyWhereInput is used for filtering UserKey objects.
@@ -1192,6 +1198,13 @@ input UserKeyWhereInput {
   updateTimeLT: Time
   updateTimeLTE: Time
   """
+  provider field predicates
+  """
+  provider: UserKeyProvider
+  providerNEQ: UserKeyProvider
+  providerIn: [UserKeyProvider!]
+  providerNotIn: [UserKeyProvider!]
+  """
   key field predicates
   """
   key: String
@@ -1207,22 +1220,6 @@ input UserKeyWhereInput {
   keyHasSuffix: String
   keyEqualFold: String
   keyContainsFold: String
-  """
-  name field predicates
-  """
-  name: String
-  nameNEQ: String
-  nameIn: [String!]
-  nameNotIn: [String!]
-  nameGT: String
-  nameGTE: String
-  nameLT: String
-  nameLTE: String
-  nameContains: String
-  nameHasPrefix: String
-  nameHasSuffix: String
-  nameEqualFold: String
-  nameContainsFold: String
   """
   user edge predicates
   """

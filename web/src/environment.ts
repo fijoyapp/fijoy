@@ -5,9 +5,14 @@ import { env } from './env'
 const HTTP_ENDPOINT = env.VITE_SERVER_URL
 
 const fetchGraphQL: FetchFunction = async (request, variables) => {
+  const token = localStorage.getItem('token')
+
   const resp = await fetch(HTTP_ENDPOINT + '/query', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: JSON.stringify({ query: request.text, variables }),
   })
   if (!resp.ok) {

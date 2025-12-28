@@ -7781,8 +7781,8 @@ type UserKeyMutation struct {
 	id            *int
 	create_time   *time.Time
 	update_time   *time.Time
+	provider      *userkey.Provider
 	key           *string
-	name          *string
 	clearedFields map[string]struct{}
 	user          *int
 	cleareduser   bool
@@ -7961,6 +7961,42 @@ func (m *UserKeyMutation) ResetUpdateTime() {
 	m.update_time = nil
 }
 
+// SetProvider sets the "provider" field.
+func (m *UserKeyMutation) SetProvider(u userkey.Provider) {
+	m.provider = &u
+}
+
+// Provider returns the value of the "provider" field in the mutation.
+func (m *UserKeyMutation) Provider() (r userkey.Provider, exists bool) {
+	v := m.provider
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProvider returns the old "provider" field's value of the UserKey entity.
+// If the UserKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserKeyMutation) OldProvider(ctx context.Context) (v userkey.Provider, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProvider is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProvider requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProvider: %w", err)
+	}
+	return oldValue.Provider, nil
+}
+
+// ResetProvider resets all changes to the "provider" field.
+func (m *UserKeyMutation) ResetProvider() {
+	m.provider = nil
+}
+
 // SetKey sets the "key" field.
 func (m *UserKeyMutation) SetKey(s string) {
 	m.key = &s
@@ -7995,42 +8031,6 @@ func (m *UserKeyMutation) OldKey(ctx context.Context) (v string, err error) {
 // ResetKey resets all changes to the "key" field.
 func (m *UserKeyMutation) ResetKey() {
 	m.key = nil
-}
-
-// SetName sets the "name" field.
-func (m *UserKeyMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the value of the "name" field in the mutation.
-func (m *UserKeyMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old "name" field's value of the UserKey entity.
-// If the UserKey object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserKeyMutation) OldName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
-	}
-	return oldValue.Name, nil
-}
-
-// ResetName resets all changes to the "name" field.
-func (m *UserKeyMutation) ResetName() {
-	m.name = nil
 }
 
 // SetUserID sets the "user" edge to the User entity by id.
@@ -8113,11 +8113,11 @@ func (m *UserKeyMutation) Fields() []string {
 	if m.update_time != nil {
 		fields = append(fields, userkey.FieldUpdateTime)
 	}
+	if m.provider != nil {
+		fields = append(fields, userkey.FieldProvider)
+	}
 	if m.key != nil {
 		fields = append(fields, userkey.FieldKey)
-	}
-	if m.name != nil {
-		fields = append(fields, userkey.FieldName)
 	}
 	return fields
 }
@@ -8131,10 +8131,10 @@ func (m *UserKeyMutation) Field(name string) (ent.Value, bool) {
 		return m.CreateTime()
 	case userkey.FieldUpdateTime:
 		return m.UpdateTime()
+	case userkey.FieldProvider:
+		return m.Provider()
 	case userkey.FieldKey:
 		return m.Key()
-	case userkey.FieldName:
-		return m.Name()
 	}
 	return nil, false
 }
@@ -8148,10 +8148,10 @@ func (m *UserKeyMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreateTime(ctx)
 	case userkey.FieldUpdateTime:
 		return m.OldUpdateTime(ctx)
+	case userkey.FieldProvider:
+		return m.OldProvider(ctx)
 	case userkey.FieldKey:
 		return m.OldKey(ctx)
-	case userkey.FieldName:
-		return m.OldName(ctx)
 	}
 	return nil, fmt.Errorf("unknown UserKey field %s", name)
 }
@@ -8175,19 +8175,19 @@ func (m *UserKeyMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdateTime(v)
 		return nil
+	case userkey.FieldProvider:
+		v, ok := value.(userkey.Provider)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProvider(v)
+		return nil
 	case userkey.FieldKey:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetKey(v)
-		return nil
-	case userkey.FieldName:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetName(v)
 		return nil
 	}
 	return fmt.Errorf("unknown UserKey field %s", name)
@@ -8244,11 +8244,11 @@ func (m *UserKeyMutation) ResetField(name string) error {
 	case userkey.FieldUpdateTime:
 		m.ResetUpdateTime()
 		return nil
+	case userkey.FieldProvider:
+		m.ResetProvider()
+		return nil
 	case userkey.FieldKey:
 		m.ResetKey()
-		return nil
-	case userkey.FieldName:
-		m.ResetName()
 		return nil
 	}
 	return fmt.Errorf("unknown UserKey field %s", name)

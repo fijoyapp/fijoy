@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 )
 
@@ -17,7 +18,7 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("email").NotEmpty(),
+		field.String("email").NotEmpty().Unique(),
 		field.String("name").NotEmpty(),
 	}
 }
@@ -53,8 +54,14 @@ type UserKey struct {
 // Fields of the UserKey.
 func (UserKey) Fields() []ent.Field {
 	return []ent.Field{
+		field.Enum("provider").Values("google"),
 		field.String("key").NotEmpty(),
-		field.String("name").NotEmpty(),
+	}
+}
+
+func (UserKey) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("provider", "key").Unique(),
 	}
 }
 

@@ -18,6 +18,7 @@ import (
 	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/user"
 	"fijoy.app/ent/userhousehold"
+	"fijoy.app/ent/userkey"
 	"fijoy.app/internal/fxrate"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -25,6 +26,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -45,6 +47,7 @@ type config struct {
 	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
 	GoogleRedirectURL  string `env:"GOOGLE_REDIRECT_URL"`
 	SessionSecret      string `env:"SESSION_SECRET,notEmpty"`
+	JWTSecret          string `env:"JWT_SECRET,notEmpty"`
 }
 
 func main() {
@@ -64,7 +67,9 @@ func main() {
 		panic(err)
 	}
 
-	maxAge := 86400 * 30 // 30 days
+	tokenAuth := jwtauth.New("HS256", []byte(cfg.JWTSecret), nil)
+
+	maxAge := 60 * 10 // 10 minutes
 	store := sessions.NewCookieStore([]byte(cfg.SessionSecret))
 	store.MaxAge(maxAge)
 	store.Options.Path = "/"
@@ -146,18 +151,75 @@ func main() {
 	}))
 
 	r.Use(middleware.Logger)
-	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	r.Handle("/query", gqlHandler)
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator(tokenAuth))
+
+		r.Handle("/", playground.Handler("GraphQL playground", "/query"))
+		r.Handle("/query", gqlHandler)
+	})
 
 	r.Get(
 		"/auth/{provider}/callback",
 		func(res http.ResponseWriter, req *http.Request) {
-			user, err := gothic.CompleteUserAuth(res, req)
+			gothicUser, err := gothic.CompleteUserAuth(res, req)
 			if err != nil {
+				// TODO: redirect to frontend with error message
 				fmt.Fprintln(res, err)
 				return
 			}
-			fmt.Fprintf(res, "User: %+v", user)
+
+			switch gothicUser.Provider {
+			case "google":
+				if verifiedEmail, ok := gothicUser.RawData["verified_email"].(bool); !ok ||
+					!verifiedEmail {
+					fmt.Fprintln(
+						res,
+						"email not verified or could not be determined",
+					)
+					return
+				}
+
+				userID, err := entClient.User.Create().
+					SetEmail(gothicUser.Email).
+					SetName(gothicUser.Name).
+					OnConflict(entsql.ConflictColumns(user.FieldEmail)).
+					Ignore().ID(ctx)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Printf("failed creating user: %v", err)
+					return
+				}
+
+				err = entClient.UserKey.Create().
+					SetUserID(userID).
+					SetKey(gothicUser.UserID).
+					SetProvider(userkey.ProviderGoogle).
+					OnConflict(entsql.ConflictColumns(userkey.FieldProvider, userkey.FieldKey)).
+					DoNothing().Exec(ctx)
+				if err != nil {
+					res.WriteHeader(http.StatusInternalServerError)
+					log.Printf("failed creating user key: %v", err)
+					return
+				}
+
+				// TODO: implement short-lived token + refresh token
+				_, tokenString, _ := tokenAuth.Encode(
+					map[string]interface{}{"user_id": userID},
+				)
+
+				res.Header().
+					Set("Location", cfg.WebURL+"/auth/callback?token="+tokenString)
+				res.WriteHeader(http.StatusTemporaryRedirect)
+
+			default:
+				fmt.Fprintf(
+					res,
+					"provider %s not supported",
+					gothicUser.Provider,
+				)
+				return
+			}
 		},
 	)
 
@@ -165,18 +227,14 @@ func main() {
 		"/logout/{provider}",
 		func(res http.ResponseWriter, req *http.Request) {
 			gothic.Logout(res, req)
-			res.Header().Set("Location", "/")
+
+			res.Header().Set("Location", cfg.WebURL)
 			res.WriteHeader(http.StatusTemporaryRedirect)
 		},
 	)
 
 	r.Get("/auth/{provider}", func(res http.ResponseWriter, req *http.Request) {
-		// try to get the user without re-authenticating
-		if gothUser, err := gothic.CompleteUserAuth(res, req); err == nil {
-			fmt.Fprintf(res, "User: %+v", gothUser)
-		} else {
-			gothic.BeginAuthHandler(res, req)
-		}
+		gothic.BeginAuthHandler(res, req)
 	})
 
 	r.Get(
@@ -192,7 +250,7 @@ func main() {
 
 func seed(ctx context.Context, entClient *ent.Client) error {
 	alreadySeeded := entClient.User.Query().
-		Where(user.EmailEQ("joey@jyu.dev")).
+		Where(user.EmailEQ("joey@itsjoeoui.com")).
 		ExistX(ctx)
 	if alreadySeeded {
 		return nil
@@ -201,8 +259,8 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	cad := entClient.Currency.Create().SetCode("CAD").SaveX(ctx)
 	usd := entClient.Currency.Create().SetCode("USD").SaveX(ctx)
 
-	user := entClient.User.Create().
-		SetEmail("joey@jyu.dev").
+	entUser := entClient.User.Create().
+		SetEmail("joey@itsjoeoui.com").
 		SetName("Joey").
 		SaveX(ctx)
 
@@ -213,7 +271,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SaveX(ctx)
 
 	entClient.UserHousehold.Create().
-		SetUser(user).
+		SetUser(entUser).
 		SetHousehold(household).
 		SetRole(userhousehold.RoleAdmin).
 		SaveX(ctx)
@@ -221,14 +279,14 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	chase := entClient.Account.Create().
 		SetName("Chase Total Checking").
 		SetCurrency(usd).
-		SetUser(user).
+		SetUser(entUser).
 		SetHousehold(household).
 		SetType(account.TypeLiquidity).
 		SaveX(ctx)
 
 	wealthsimple := entClient.Account.Create().
 		SetName("Wealthsimple Visa Infinite").
-		SetUser(user).
+		SetUser(entUser).
 		SetCurrency(cad).
 		SetHousehold(household).
 		SetType(account.TypeLiability).
@@ -251,7 +309,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	{
 		transaction := entClient.Transaction.Create().
-			SetUser(user).
+			SetUser(entUser).
 			SetHousehold(household).
 			SetCategory(salary).
 			SetDatetime(genRandomDatetime()).SaveX(ctx)
@@ -267,7 +325,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
-				SetUser(user).
+				SetUser(entUser).
 				SetHousehold(household).
 				SetCategory(restaurant).
 				SetDatetime(genRandomDatetime())
@@ -291,7 +349,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		txCreates := make([]*ent.TransactionCreate, n)
 		for i := range txCreates {
 			txCreates[i] = entClient.Transaction.Create().
-				SetUser(user).
+				SetUser(entUser).
 				SetHousehold(household).
 				SetCategory(grocery).
 				SetDatetime(genRandomDatetime())

@@ -3575,6 +3575,12 @@ type UserKeyWhereInput struct {
 	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
 	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
 
+	// "provider" field predicates.
+	Provider      *userkey.Provider  `json:"provider,omitempty"`
+	ProviderNEQ   *userkey.Provider  `json:"providerNEQ,omitempty"`
+	ProviderIn    []userkey.Provider `json:"providerIn,omitempty"`
+	ProviderNotIn []userkey.Provider `json:"providerNotIn,omitempty"`
+
 	// "key" field predicates.
 	Key             *string  `json:"key,omitempty"`
 	KeyNEQ          *string  `json:"keyNEQ,omitempty"`
@@ -3589,21 +3595,6 @@ type UserKeyWhereInput struct {
 	KeyHasSuffix    *string  `json:"keyHasSuffix,omitempty"`
 	KeyEqualFold    *string  `json:"keyEqualFold,omitempty"`
 	KeyContainsFold *string  `json:"keyContainsFold,omitempty"`
-
-	// "name" field predicates.
-	Name             *string  `json:"name,omitempty"`
-	NameNEQ          *string  `json:"nameNEQ,omitempty"`
-	NameIn           []string `json:"nameIn,omitempty"`
-	NameNotIn        []string `json:"nameNotIn,omitempty"`
-	NameGT           *string  `json:"nameGT,omitempty"`
-	NameGTE          *string  `json:"nameGTE,omitempty"`
-	NameLT           *string  `json:"nameLT,omitempty"`
-	NameLTE          *string  `json:"nameLTE,omitempty"`
-	NameContains     *string  `json:"nameContains,omitempty"`
-	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
-	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
-	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
-	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
 	// "user" edge predicates.
 	HasUser     *bool             `json:"hasUser,omitempty"`
@@ -3753,6 +3744,18 @@ func (i *UserKeyWhereInput) P() (predicate.UserKey, error) {
 	if i.UpdateTimeLTE != nil {
 		predicates = append(predicates, userkey.UpdateTimeLTE(*i.UpdateTimeLTE))
 	}
+	if i.Provider != nil {
+		predicates = append(predicates, userkey.ProviderEQ(*i.Provider))
+	}
+	if i.ProviderNEQ != nil {
+		predicates = append(predicates, userkey.ProviderNEQ(*i.ProviderNEQ))
+	}
+	if len(i.ProviderIn) > 0 {
+		predicates = append(predicates, userkey.ProviderIn(i.ProviderIn...))
+	}
+	if len(i.ProviderNotIn) > 0 {
+		predicates = append(predicates, userkey.ProviderNotIn(i.ProviderNotIn...))
+	}
 	if i.Key != nil {
 		predicates = append(predicates, userkey.KeyEQ(*i.Key))
 	}
@@ -3791,45 +3794,6 @@ func (i *UserKeyWhereInput) P() (predicate.UserKey, error) {
 	}
 	if i.KeyContainsFold != nil {
 		predicates = append(predicates, userkey.KeyContainsFold(*i.KeyContainsFold))
-	}
-	if i.Name != nil {
-		predicates = append(predicates, userkey.NameEQ(*i.Name))
-	}
-	if i.NameNEQ != nil {
-		predicates = append(predicates, userkey.NameNEQ(*i.NameNEQ))
-	}
-	if len(i.NameIn) > 0 {
-		predicates = append(predicates, userkey.NameIn(i.NameIn...))
-	}
-	if len(i.NameNotIn) > 0 {
-		predicates = append(predicates, userkey.NameNotIn(i.NameNotIn...))
-	}
-	if i.NameGT != nil {
-		predicates = append(predicates, userkey.NameGT(*i.NameGT))
-	}
-	if i.NameGTE != nil {
-		predicates = append(predicates, userkey.NameGTE(*i.NameGTE))
-	}
-	if i.NameLT != nil {
-		predicates = append(predicates, userkey.NameLT(*i.NameLT))
-	}
-	if i.NameLTE != nil {
-		predicates = append(predicates, userkey.NameLTE(*i.NameLTE))
-	}
-	if i.NameContains != nil {
-		predicates = append(predicates, userkey.NameContains(*i.NameContains))
-	}
-	if i.NameHasPrefix != nil {
-		predicates = append(predicates, userkey.NameHasPrefix(*i.NameHasPrefix))
-	}
-	if i.NameHasSuffix != nil {
-		predicates = append(predicates, userkey.NameHasSuffix(*i.NameHasSuffix))
-	}
-	if i.NameEqualFold != nil {
-		predicates = append(predicates, userkey.NameEqualFold(*i.NameEqualFold))
-	}
-	if i.NameContainsFold != nil {
-		predicates = append(predicates, userkey.NameContainsFold(*i.NameContainsFold))
 	}
 
 	if i.HasUser != nil {

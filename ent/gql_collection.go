@@ -1340,15 +1340,15 @@ func (_q *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, userkey.FieldUpdateTime)
 				fieldSeen[userkey.FieldUpdateTime] = struct{}{}
 			}
+		case "provider":
+			if _, ok := fieldSeen[userkey.FieldProvider]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldProvider)
+				fieldSeen[userkey.FieldProvider] = struct{}{}
+			}
 		case "key":
 			if _, ok := fieldSeen[userkey.FieldKey]; !ok {
 				selectedFields = append(selectedFields, userkey.FieldKey)
 				fieldSeen[userkey.FieldKey] = struct{}{}
-			}
-		case "name":
-			if _, ok := fieldSeen[userkey.FieldName]; !ok {
-				selectedFields = append(selectedFields, userkey.FieldName)
-				fieldSeen[userkey.FieldName] = struct{}{}
 			}
 		case "id":
 		case "__typename":

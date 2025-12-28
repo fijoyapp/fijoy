@@ -51,15 +51,15 @@ func (_c *UserKeyCreate) SetNillableUpdateTime(v *time.Time) *UserKeyCreate {
 	return _c
 }
 
-// SetKey sets the "key" field.
-func (_c *UserKeyCreate) SetKey(v string) *UserKeyCreate {
-	_c.mutation.SetKey(v)
+// SetProvider sets the "provider" field.
+func (_c *UserKeyCreate) SetProvider(v userkey.Provider) *UserKeyCreate {
+	_c.mutation.SetProvider(v)
 	return _c
 }
 
-// SetName sets the "name" field.
-func (_c *UserKeyCreate) SetName(v string) *UserKeyCreate {
-	_c.mutation.SetName(v)
+// SetKey sets the "key" field.
+func (_c *UserKeyCreate) SetKey(v string) *UserKeyCreate {
+	_c.mutation.SetKey(v)
 	return _c
 }
 
@@ -127,20 +127,20 @@ func (_c *UserKeyCreate) check() error {
 	if _, ok := _c.mutation.UpdateTime(); !ok {
 		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "UserKey.update_time"`)}
 	}
+	if _, ok := _c.mutation.Provider(); !ok {
+		return &ValidationError{Name: "provider", err: errors.New(`ent: missing required field "UserKey.provider"`)}
+	}
+	if v, ok := _c.mutation.Provider(); ok {
+		if err := userkey.ProviderValidator(v); err != nil {
+			return &ValidationError{Name: "provider", err: fmt.Errorf(`ent: validator failed for field "UserKey.provider": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.Key(); !ok {
 		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "UserKey.key"`)}
 	}
 	if v, ok := _c.mutation.Key(); ok {
 		if err := userkey.KeyValidator(v); err != nil {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
-		}
-	}
-	if _, ok := _c.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "UserKey.name"`)}
-	}
-	if v, ok := _c.mutation.Name(); ok {
-		if err := userkey.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "UserKey.name": %w`, err)}
 		}
 	}
 	if len(_c.mutation.UserIDs()) == 0 {
@@ -181,13 +181,13 @@ func (_c *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 		_spec.SetField(userkey.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
+	if value, ok := _c.mutation.Provider(); ok {
+		_spec.SetField(userkey.FieldProvider, field.TypeEnum, value)
+		_node.Provider = value
+	}
 	if value, ok := _c.mutation.Key(); ok {
 		_spec.SetField(userkey.FieldKey, field.TypeString, value)
 		_node.Key = value
-	}
-	if value, ok := _c.mutation.Name(); ok {
-		_spec.SetField(userkey.FieldName, field.TypeString, value)
-		_node.Name = value
 	}
 	if nodes := _c.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -270,6 +270,18 @@ func (u *UserKeyUpsert) UpdateUpdateTime() *UserKeyUpsert {
 	return u
 }
 
+// SetProvider sets the "provider" field.
+func (u *UserKeyUpsert) SetProvider(v userkey.Provider) *UserKeyUpsert {
+	u.Set(userkey.FieldProvider, v)
+	return u
+}
+
+// UpdateProvider sets the "provider" field to the value that was provided on create.
+func (u *UserKeyUpsert) UpdateProvider() *UserKeyUpsert {
+	u.SetExcluded(userkey.FieldProvider)
+	return u
+}
+
 // SetKey sets the "key" field.
 func (u *UserKeyUpsert) SetKey(v string) *UserKeyUpsert {
 	u.Set(userkey.FieldKey, v)
@@ -279,18 +291,6 @@ func (u *UserKeyUpsert) SetKey(v string) *UserKeyUpsert {
 // UpdateKey sets the "key" field to the value that was provided on create.
 func (u *UserKeyUpsert) UpdateKey() *UserKeyUpsert {
 	u.SetExcluded(userkey.FieldKey)
-	return u
-}
-
-// SetName sets the "name" field.
-func (u *UserKeyUpsert) SetName(v string) *UserKeyUpsert {
-	u.Set(userkey.FieldName, v)
-	return u
-}
-
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *UserKeyUpsert) UpdateName() *UserKeyUpsert {
-	u.SetExcluded(userkey.FieldName)
 	return u
 }
 
@@ -353,6 +353,20 @@ func (u *UserKeyUpsertOne) UpdateUpdateTime() *UserKeyUpsertOne {
 	})
 }
 
+// SetProvider sets the "provider" field.
+func (u *UserKeyUpsertOne) SetProvider(v userkey.Provider) *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetProvider(v)
+	})
+}
+
+// UpdateProvider sets the "provider" field to the value that was provided on create.
+func (u *UserKeyUpsertOne) UpdateProvider() *UserKeyUpsertOne {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateProvider()
+	})
+}
+
 // SetKey sets the "key" field.
 func (u *UserKeyUpsertOne) SetKey(v string) *UserKeyUpsertOne {
 	return u.Update(func(s *UserKeyUpsert) {
@@ -364,20 +378,6 @@ func (u *UserKeyUpsertOne) SetKey(v string) *UserKeyUpsertOne {
 func (u *UserKeyUpsertOne) UpdateKey() *UserKeyUpsertOne {
 	return u.Update(func(s *UserKeyUpsert) {
 		s.UpdateKey()
-	})
-}
-
-// SetName sets the "name" field.
-func (u *UserKeyUpsertOne) SetName(v string) *UserKeyUpsertOne {
-	return u.Update(func(s *UserKeyUpsert) {
-		s.SetName(v)
-	})
-}
-
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *UserKeyUpsertOne) UpdateName() *UserKeyUpsertOne {
-	return u.Update(func(s *UserKeyUpsert) {
-		s.UpdateName()
 	})
 }
 
@@ -606,6 +606,20 @@ func (u *UserKeyUpsertBulk) UpdateUpdateTime() *UserKeyUpsertBulk {
 	})
 }
 
+// SetProvider sets the "provider" field.
+func (u *UserKeyUpsertBulk) SetProvider(v userkey.Provider) *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.SetProvider(v)
+	})
+}
+
+// UpdateProvider sets the "provider" field to the value that was provided on create.
+func (u *UserKeyUpsertBulk) UpdateProvider() *UserKeyUpsertBulk {
+	return u.Update(func(s *UserKeyUpsert) {
+		s.UpdateProvider()
+	})
+}
+
 // SetKey sets the "key" field.
 func (u *UserKeyUpsertBulk) SetKey(v string) *UserKeyUpsertBulk {
 	return u.Update(func(s *UserKeyUpsert) {
@@ -617,20 +631,6 @@ func (u *UserKeyUpsertBulk) SetKey(v string) *UserKeyUpsertBulk {
 func (u *UserKeyUpsertBulk) UpdateKey() *UserKeyUpsertBulk {
 	return u.Update(func(s *UserKeyUpsert) {
 		s.UpdateKey()
-	})
-}
-
-// SetName sets the "name" field.
-func (u *UserKeyUpsertBulk) SetName(v string) *UserKeyUpsertBulk {
-	return u.Update(func(s *UserKeyUpsert) {
-		s.SetName(v)
-	})
-}
-
-// UpdateName sets the "name" field to the value that was provided on create.
-func (u *UserKeyUpsertBulk) UpdateName() *UserKeyUpsertBulk {
-	return u.Update(func(s *UserKeyUpsert) {
-		s.UpdateName()
 	})
 }
 
