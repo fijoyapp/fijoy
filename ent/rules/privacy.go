@@ -2,7 +2,6 @@ package rules
 
 import (
 	"context"
-	"fmt"
 
 	"entgo.io/ent/entql"
 	"fijoy.app/ent/privacy"
@@ -17,7 +16,6 @@ func FilterByHousehold() privacy.QueryMutationRule {
 	return privacy.FilterFunc(
 		func(ctx context.Context, f privacy.Filter) error {
 			hid, ok := ctx.Value("household_id").(int)
-			fmt.Println("Household ID from context:", hid)
 			if !ok || hid == 0 {
 				return privacy.Denyf("security: missing household context")
 			}
