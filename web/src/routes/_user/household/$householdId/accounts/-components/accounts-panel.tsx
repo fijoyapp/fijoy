@@ -90,9 +90,9 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
                   )}
                 </span>
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="pb-2">
                 <ItemGroup className="gap-0">
-                  {accounts.map((account, index) => {
+                  {accounts.map((account) => {
                     return (
                       <Fragment key={account.id}>
                         <ItemSeparator className="my-1" />
