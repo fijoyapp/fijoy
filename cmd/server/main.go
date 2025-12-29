@@ -14,6 +14,7 @@ import (
 	"fijoy.app/ent/investment"
 	_ "fijoy.app/ent/runtime"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"fijoy.app"
@@ -180,6 +181,8 @@ func main() {
 	gqlHandler := handler.NewDefaultServer(
 		fijoy.NewSchema(entClient, fxrateClient, marketClient),
 	)
+	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
+
 	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
