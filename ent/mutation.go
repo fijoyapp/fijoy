@@ -60,6 +60,7 @@ type AccountMutation struct {
 	_type                      *account.Type
 	balance                    *decimal.Decimal
 	addbalance                 *decimal.Decimal
+	icon_path                  *string
 	value                      *decimal.Decimal
 	addvalue                   *decimal.Decimal
 	fx_rate                    *decimal.Decimal
@@ -414,6 +415,55 @@ func (m *AccountMutation) AddedBalance() (r decimal.Decimal, exists bool) {
 func (m *AccountMutation) ResetBalance() {
 	m.balance = nil
 	m.addbalance = nil
+}
+
+// SetIconPath sets the "icon_path" field.
+func (m *AccountMutation) SetIconPath(s string) {
+	m.icon_path = &s
+}
+
+// IconPath returns the value of the "icon_path" field in the mutation.
+func (m *AccountMutation) IconPath() (r string, exists bool) {
+	v := m.icon_path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIconPath returns the old "icon_path" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldIconPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIconPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIconPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIconPath: %w", err)
+	}
+	return oldValue.IconPath, nil
+}
+
+// ClearIconPath clears the value of the "icon_path" field.
+func (m *AccountMutation) ClearIconPath() {
+	m.icon_path = nil
+	m.clearedFields[account.FieldIconPath] = struct{}{}
+}
+
+// IconPathCleared returns if the "icon_path" field was cleared in this mutation.
+func (m *AccountMutation) IconPathCleared() bool {
+	_, ok := m.clearedFields[account.FieldIconPath]
+	return ok
+}
+
+// ResetIconPath resets all changes to the "icon_path" field.
+func (m *AccountMutation) ResetIconPath() {
+	m.icon_path = nil
+	delete(m.clearedFields, account.FieldIconPath)
 }
 
 // SetValue sets the "value" field.
@@ -775,7 +825,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, account.FieldCreateTime)
 	}
@@ -793,6 +843,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.balance != nil {
 		fields = append(fields, account.FieldBalance)
+	}
+	if m.icon_path != nil {
+		fields = append(fields, account.FieldIconPath)
 	}
 	if m.value != nil {
 		fields = append(fields, account.FieldValue)
@@ -820,6 +873,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case account.FieldBalance:
 		return m.Balance()
+	case account.FieldIconPath:
+		return m.IconPath()
 	case account.FieldValue:
 		return m.Value()
 	case account.FieldFxRate:
@@ -845,6 +900,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldType(ctx)
 	case account.FieldBalance:
 		return m.OldBalance(ctx)
+	case account.FieldIconPath:
+		return m.OldIconPath(ctx)
 	case account.FieldValue:
 		return m.OldValue(ctx)
 	case account.FieldFxRate:
@@ -899,6 +956,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBalance(v)
+		return nil
+	case account.FieldIconPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIconPath(v)
 		return nil
 	case account.FieldValue:
 		v, ok := value.(decimal.Decimal)
@@ -982,7 +1046,11 @@ func (m *AccountMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *AccountMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(account.FieldIconPath) {
+		fields = append(fields, account.FieldIconPath)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -995,6 +1063,11 @@ func (m *AccountMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *AccountMutation) ClearField(name string) error {
+	switch name {
+	case account.FieldIconPath:
+		m.ClearIconPath()
+		return nil
+	}
 	return fmt.Errorf("unknown Account nullable field %s", name)
 }
 
@@ -1019,6 +1092,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldBalance:
 		m.ResetBalance()
+		return nil
+	case account.FieldIconPath:
+		m.ResetIconPath()
 		return nil
 	case account.FieldValue:
 		m.ResetValue()

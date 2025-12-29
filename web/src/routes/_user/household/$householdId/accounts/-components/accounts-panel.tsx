@@ -116,7 +116,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
                   )}
                 </span>
               </AccordionTrigger>
-              <AccordionContent className="pb-2">
+              <AccordionContent className="pb-1">
                 <ItemGroup className="gap-0">
                   {accounts.map((account) => {
                     return (

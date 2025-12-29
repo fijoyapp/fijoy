@@ -111,7 +111,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
                   )}
                 </span>
               </AccordionTrigger>
-              <AccordionContent className="pb-2">
+              <AccordionContent className="pb-1">
                 <ItemGroup className="gap-0">
                   {investments.map((investment) => {
                     return (

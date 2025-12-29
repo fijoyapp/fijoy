@@ -33,6 +33,8 @@ type Account struct {
 	Type account.Type `json:"type,omitempty"`
 	// Balance holds the value of the "balance" field.
 	Balance decimal.Decimal `json:"balance,omitempty"`
+	// IconPath holds the value of the "icon_path" field.
+	IconPath string `json:"icon_path,omitempty"`
 	// Value holds the value of the "value" field.
 	Value decimal.Decimal `json:"value,omitempty"`
 	// FxRate holds the value of the "fx_rate" field.
@@ -127,7 +129,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 			values[i] = new(decimal.Decimal)
 		case account.FieldID, account.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
-		case account.FieldName, account.FieldType:
+		case account.FieldName, account.FieldType, account.FieldIconPath:
 			values[i] = new(sql.NullString)
 		case account.FieldCreateTime, account.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -191,6 +193,12 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value != nil {
 				_m.Balance = *value
+			}
+		case account.FieldIconPath:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field icon_path", values[i])
+			} else if value.Valid {
+				_m.IconPath = value.String
 			}
 		case account.FieldValue:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
@@ -296,6 +304,9 @@ func (_m *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
+	builder.WriteString(", ")
+	builder.WriteString("icon_path=")
+	builder.WriteString(_m.IconPath)
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Value))

@@ -1,6 +1,6 @@
 services:
-  fijoy-postgres:
-    image: timescale/timescaledb-ha:pg17
+  postgres:
+    image: postgres:17
     ports:
       - 2345:5432
     environment:
@@ -10,10 +10,24 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  fijoy-redis:
+  redis:
     image: redis:8.2
     ports:
       - 6379:6379
 
+  # minio:
+  #   image: minio/minio
+  #   container_name: local_s3
+  #   ports:
+  #     - "9000:9000" # API Port
+  #     - "9001:9001" # Console Port
+  #   environment:
+  #     MINIO_ROOT_USER: "user"
+  #     MINIO_ROOT_PASSWORD: "password"
+  #   command: server /data --console-address ":9001"
+  #   volumes:
+  #     - minio_data:/data
+
 volumes:
   pgdata:
+  # minio_data:

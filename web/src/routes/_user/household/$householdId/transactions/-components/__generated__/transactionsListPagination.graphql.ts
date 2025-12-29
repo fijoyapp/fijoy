@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<22e77bd797823a1e2ac7bc0628108b9e>>
+ * @generated SignedSource<<6259c9156398dd1327b611b149ee5b10>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -291,6 +291,21 @@ export type AccountWhereInput = {
   householdIDIn?: ReadonlyArray<string> | null | undefined;
   householdIDNEQ?: string | null | undefined;
   householdIDNotIn?: ReadonlyArray<string> | null | undefined;
+  iconPath?: string | null | undefined;
+  iconPathContains?: string | null | undefined;
+  iconPathContainsFold?: string | null | undefined;
+  iconPathEqualFold?: string | null | undefined;
+  iconPathGT?: string | null | undefined;
+  iconPathGTE?: string | null | undefined;
+  iconPathHasPrefix?: string | null | undefined;
+  iconPathHasSuffix?: string | null | undefined;
+  iconPathIn?: ReadonlyArray<string> | null | undefined;
+  iconPathIsNil?: boolean | null | undefined;
+  iconPathLT?: string | null | undefined;
+  iconPathLTE?: string | null | undefined;
+  iconPathNEQ?: string | null | undefined;
+  iconPathNotIn?: ReadonlyArray<string> | null | undefined;
+  iconPathNotNil?: boolean | null | undefined;
   id?: string | null | undefined;
   idGT?: string | null | undefined;
   idGTE?: string | null | undefined;

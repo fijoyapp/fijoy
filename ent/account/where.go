@@ -81,6 +81,11 @@ func Balance(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldBalance, v))
 }
 
+// IconPath applies equality check predicate on the "icon_path" field. It's identical to IconPathEQ.
+func IconPath(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIconPath, v))
+}
+
 // Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
 func Value(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldValue, v))
@@ -314,6 +319,81 @@ func BalanceLT(v decimal.Decimal) predicate.Account {
 // BalanceLTE applies the LTE predicate on the "balance" field.
 func BalanceLTE(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldBalance, v))
+}
+
+// IconPathEQ applies the EQ predicate on the "icon_path" field.
+func IconPathEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIconPath, v))
+}
+
+// IconPathNEQ applies the NEQ predicate on the "icon_path" field.
+func IconPathNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldIconPath, v))
+}
+
+// IconPathIn applies the In predicate on the "icon_path" field.
+func IconPathIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldIconPath, vs...))
+}
+
+// IconPathNotIn applies the NotIn predicate on the "icon_path" field.
+func IconPathNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldIconPath, vs...))
+}
+
+// IconPathGT applies the GT predicate on the "icon_path" field.
+func IconPathGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldIconPath, v))
+}
+
+// IconPathGTE applies the GTE predicate on the "icon_path" field.
+func IconPathGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldIconPath, v))
+}
+
+// IconPathLT applies the LT predicate on the "icon_path" field.
+func IconPathLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldIconPath, v))
+}
+
+// IconPathLTE applies the LTE predicate on the "icon_path" field.
+func IconPathLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldIconPath, v))
+}
+
+// IconPathContains applies the Contains predicate on the "icon_path" field.
+func IconPathContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldIconPath, v))
+}
+
+// IconPathHasPrefix applies the HasPrefix predicate on the "icon_path" field.
+func IconPathHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldIconPath, v))
+}
+
+// IconPathHasSuffix applies the HasSuffix predicate on the "icon_path" field.
+func IconPathHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldIconPath, v))
+}
+
+// IconPathIsNil applies the IsNil predicate on the "icon_path" field.
+func IconPathIsNil() predicate.Account {
+	return predicate.Account(sql.FieldIsNull(FieldIconPath))
+}
+
+// IconPathNotNil applies the NotNil predicate on the "icon_path" field.
+func IconPathNotNil() predicate.Account {
+	return predicate.Account(sql.FieldNotNull(FieldIconPath))
+}
+
+// IconPathEqualFold applies the EqualFold predicate on the "icon_path" field.
+func IconPathEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldIconPath, v))
+}
+
+// IconPathContainsFold applies the ContainsFold predicate on the "icon_path" field.
+func IconPathContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldIconPath, v))
 }
 
 // ValueEQ applies the EQ predicate on the "value" field.

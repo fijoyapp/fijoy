@@ -96,6 +96,23 @@ type AccountWhereInput struct {
 	BalanceLT    *decimal.Decimal  `json:"balanceLT,omitempty"`
 	BalanceLTE   *decimal.Decimal  `json:"balanceLTE,omitempty"`
 
+	// "icon_path" field predicates.
+	IconPath             *string  `json:"iconPath,omitempty"`
+	IconPathNEQ          *string  `json:"iconPathNEQ,omitempty"`
+	IconPathIn           []string `json:"iconPathIn,omitempty"`
+	IconPathNotIn        []string `json:"iconPathNotIn,omitempty"`
+	IconPathGT           *string  `json:"iconPathGT,omitempty"`
+	IconPathGTE          *string  `json:"iconPathGTE,omitempty"`
+	IconPathLT           *string  `json:"iconPathLT,omitempty"`
+	IconPathLTE          *string  `json:"iconPathLTE,omitempty"`
+	IconPathContains     *string  `json:"iconPathContains,omitempty"`
+	IconPathHasPrefix    *string  `json:"iconPathHasPrefix,omitempty"`
+	IconPathHasSuffix    *string  `json:"iconPathHasSuffix,omitempty"`
+	IconPathIsNil        bool     `json:"iconPathIsNil,omitempty"`
+	IconPathNotNil       bool     `json:"iconPathNotNil,omitempty"`
+	IconPathEqualFold    *string  `json:"iconPathEqualFold,omitempty"`
+	IconPathContainsFold *string  `json:"iconPathContainsFold,omitempty"`
+
 	// "value" field predicates.
 	Value      *decimal.Decimal  `json:"value,omitempty"`
 	ValueNEQ   *decimal.Decimal  `json:"valueNEQ,omitempty"`
@@ -366,6 +383,51 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	}
 	if i.BalanceLTE != nil {
 		predicates = append(predicates, account.BalanceLTE(*i.BalanceLTE))
+	}
+	if i.IconPath != nil {
+		predicates = append(predicates, account.IconPathEQ(*i.IconPath))
+	}
+	if i.IconPathNEQ != nil {
+		predicates = append(predicates, account.IconPathNEQ(*i.IconPathNEQ))
+	}
+	if len(i.IconPathIn) > 0 {
+		predicates = append(predicates, account.IconPathIn(i.IconPathIn...))
+	}
+	if len(i.IconPathNotIn) > 0 {
+		predicates = append(predicates, account.IconPathNotIn(i.IconPathNotIn...))
+	}
+	if i.IconPathGT != nil {
+		predicates = append(predicates, account.IconPathGT(*i.IconPathGT))
+	}
+	if i.IconPathGTE != nil {
+		predicates = append(predicates, account.IconPathGTE(*i.IconPathGTE))
+	}
+	if i.IconPathLT != nil {
+		predicates = append(predicates, account.IconPathLT(*i.IconPathLT))
+	}
+	if i.IconPathLTE != nil {
+		predicates = append(predicates, account.IconPathLTE(*i.IconPathLTE))
+	}
+	if i.IconPathContains != nil {
+		predicates = append(predicates, account.IconPathContains(*i.IconPathContains))
+	}
+	if i.IconPathHasPrefix != nil {
+		predicates = append(predicates, account.IconPathHasPrefix(*i.IconPathHasPrefix))
+	}
+	if i.IconPathHasSuffix != nil {
+		predicates = append(predicates, account.IconPathHasSuffix(*i.IconPathHasSuffix))
+	}
+	if i.IconPathIsNil {
+		predicates = append(predicates, account.IconPathIsNil())
+	}
+	if i.IconPathNotNil {
+		predicates = append(predicates, account.IconPathNotNil())
+	}
+	if i.IconPathEqualFold != nil {
+		predicates = append(predicates, account.IconPathEqualFold(*i.IconPathEqualFold))
+	}
+	if i.IconPathContainsFold != nil {
+		predicates = append(predicates, account.IconPathContainsFold(*i.IconPathContainsFold))
 	}
 	if i.Value != nil {
 		predicates = append(predicates, account.ValueEQ(*i.Value))

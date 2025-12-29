@@ -14,12 +14,15 @@ import {
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
 import { getFormattedDate, getPrettyTime } from '@/lib/time'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getLogoDomainURL } from '@/lib/logo'
 
 const accountCardFragment = graphql`
   fragment accountCardFragment on Account {
     id
     name
     type
+    iconPath
     updateTime
     currency {
       code
@@ -53,15 +56,21 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
           {({ isActive }) => (
             <>
               <ItemMedia variant="image">
-                <PiggyBankIcon className="size-6" />
+                <Avatar className="">
+                  <AvatarImage
+                    src={getLogoDomainURL(data.iconPath || '')}
+                    alt={data.iconPath || 'unknown logo'}
+                  />
+                  <AvatarFallback>{data.name}</AvatarFallback>
+                </Avatar>
               </ItemMedia>
-              <ItemContent>
+              <ItemContent className="gap-px">
                 <ItemTitle className={cn(isActive && 'font-semibold')}>
                   {data.name}
                 </ItemTitle>
                 <ItemDescription>{data.user.name}</ItemDescription>
               </ItemContent>
-              <ItemContent className="items-end">
+              <ItemContent className="items-end gap-px">
                 <ItemTitle className="font-mono">
                   <span>
                     {formatCurrencyWithPrivacyMode(

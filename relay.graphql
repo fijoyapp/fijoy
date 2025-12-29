@@ -18,6 +18,7 @@ type Account implements Node {
   name: String!
   type: AccountType!
   balance: String!
+  iconPath: String
   value: String!
   fxRate: String!
   household: Household!
@@ -122,6 +123,24 @@ input AccountWhereInput {
   balanceGTE: String
   balanceLT: String
   balanceLTE: String
+  """
+  icon_path field predicates
+  """
+  iconPath: String
+  iconPathNEQ: String
+  iconPathIn: [String!]
+  iconPathNotIn: [String!]
+  iconPathGT: String
+  iconPathGTE: String
+  iconPathLT: String
+  iconPathLTE: String
+  iconPathContains: String
+  iconPathHasPrefix: String
+  iconPathHasSuffix: String
+  iconPathIsNil: Boolean
+  iconPathNotNil: Boolean
+  iconPathEqualFold: String
+  iconPathContainsFold: String
   """
   value field predicates
   """

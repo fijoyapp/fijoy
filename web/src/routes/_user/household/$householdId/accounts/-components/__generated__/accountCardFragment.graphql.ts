@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fbcc3daa2b6a5371c1e4a1e2f841be98>>
+ * @generated SignedSource<<634e6910dcbdacff7d73a0ec1b65dd46>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type accountCardFragment$data = {
   readonly currency: {
     readonly code: string;
   };
+  readonly iconPath: string | null | undefined;
   readonly id: string;
   readonly name: string;
   readonly type: AccountType;
@@ -57,6 +58,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "type",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "iconPath",
       "storageKey": null
     },
     {
@@ -109,6 +117,6 @@ return {
 };
 })();
 
-(node as any).hash = "8dbd65f75651024249e897c7816688cd";
+(node as any).hash = "446459555ae7d026da4d58b85c3ef560";
 
 export default node;

@@ -74,6 +74,26 @@ func (_u *AccountUpdate) AddBalance(v decimal.Decimal) *AccountUpdate {
 	return _u
 }
 
+// SetIconPath sets the "icon_path" field.
+func (_u *AccountUpdate) SetIconPath(v string) *AccountUpdate {
+	_u.mutation.SetIconPath(v)
+	return _u
+}
+
+// SetNillableIconPath sets the "icon_path" field if the given value is not nil.
+func (_u *AccountUpdate) SetNillableIconPath(v *string) *AccountUpdate {
+	if v != nil {
+		_u.SetIconPath(*v)
+	}
+	return _u
+}
+
+// ClearIconPath clears the value of the "icon_path" field.
+func (_u *AccountUpdate) ClearIconPath() *AccountUpdate {
+	_u.mutation.ClearIconPath()
+	return _u
+}
+
 // SetValue sets the "value" field.
 func (_u *AccountUpdate) SetValue(v decimal.Decimal) *AccountUpdate {
 	_u.mutation.ResetValue()
@@ -301,6 +321,12 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
 	}
+	if value, ok := _u.mutation.IconPath(); ok {
+		_spec.SetField(account.FieldIconPath, field.TypeString, value)
+	}
+	if _u.mutation.IconPathCleared() {
+		_spec.ClearField(account.FieldIconPath, field.TypeString)
+	}
 	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
 	}
@@ -492,6 +518,26 @@ func (_u *AccountUpdateOne) SetNillableBalance(v *decimal.Decimal) *AccountUpdat
 // AddBalance adds value to the "balance" field.
 func (_u *AccountUpdateOne) AddBalance(v decimal.Decimal) *AccountUpdateOne {
 	_u.mutation.AddBalance(v)
+	return _u
+}
+
+// SetIconPath sets the "icon_path" field.
+func (_u *AccountUpdateOne) SetIconPath(v string) *AccountUpdateOne {
+	_u.mutation.SetIconPath(v)
+	return _u
+}
+
+// SetNillableIconPath sets the "icon_path" field if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableIconPath(v *string) *AccountUpdateOne {
+	if v != nil {
+		_u.SetIconPath(*v)
+	}
+	return _u
+}
+
+// ClearIconPath clears the value of the "icon_path" field.
+func (_u *AccountUpdateOne) ClearIconPath() *AccountUpdateOne {
+	_u.mutation.ClearIconPath()
 	return _u
 }
 
@@ -751,6 +797,12 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.IconPath(); ok {
+		_spec.SetField(account.FieldIconPath, field.TypeString, value)
+	}
+	if _u.mutation.IconPathCleared() {
+		_spec.ClearField(account.FieldIconPath, field.TypeString)
 	}
 	if value, ok := _u.mutation.Value(); ok {
 		_spec.SetField(account.FieldValue, field.TypeFloat64, value)

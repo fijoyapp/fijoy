@@ -46,14 +46,24 @@ import (
 )
 
 type config struct {
-	PostgresURL        string `env:"POSTGRES_URL,notEmpty"`
-	WebURL             string `env:"WEB_URL,notEmpty"`
-	Port               string `env:"PORT,notEmpty"`
+	PostgresURL string `env:"POSTGRES_URL,notEmpty"`
+
+	WebURL string `env:"WEB_URL,notEmpty"`
+
+	Port string `env:"PORT,notEmpty"`
+
 	GoogleClientID     string `env:"GOOGLE_CLIENT_ID"`
 	GoogleClientSecret string `env:"GOOGLE_CLIENT_SECRET"`
 	GoogleRedirectURL  string `env:"GOOGLE_REDIRECT_URL"`
-	SessionSecret      string `env:"SESSION_SECRET,notEmpty"`
-	JWTSecret          string `env:"JWT_SECRET,notEmpty"`
+
+	SessionSecret string `env:"SESSION_SECRET,notEmpty"`
+	JWTSecret     string `env:"JWT_SECRET,notEmpty"`
+
+	// AWSAccessKeyID     string `env:"AWS_ACCESS_KEY_ID,notEmpty"`
+	// AWSSecretAccessKey string `env:"AWS_SECRET_ACCESS_KEY,notEmpty"`
+	// S3Endpoint         string `env:"S3_ENDPOINT,notEmpty"`
+	// S3Bucket           string `env:"S3_BUCKET,notEmpty"`
+	// AWSRegion          string `env:"AWS_REGION,notEmpty"`
 }
 
 func main() {
@@ -61,6 +71,7 @@ func main() {
 
 	isProd := os.Getenv("RAILWAY_PUBLIC_DOMAIN") != ""
 
+	// Load environment variables
 	if !isProd {
 		err := godotenv.Load()
 		if err != nil {
@@ -73,8 +84,10 @@ func main() {
 		panic(err)
 	}
 
+	// Setup jwtauth
 	tokenAuth := jwtauth.New("HS256", []byte(cfg.JWTSecret), nil)
 
+	// Goth setup
 	maxAge := 60 * 10 // 10 minutes
 	store := sessions.NewCookieStore([]byte(cfg.SessionSecret))
 	store.MaxAge(maxAge)
@@ -92,6 +105,7 @@ func main() {
 		),
 	)
 
+	// Setup Ent
 	db, err := sql.Open(
 		"pgx",
 		cfg.PostgresURL,
@@ -126,19 +140,19 @@ func main() {
 	entClient := ent.NewClient(ent.Driver(drv))
 	defer entClient.Close()
 
+	// Setup internal clients
 	fxrateProvider := fxrate.NewFrankfurterProvider()
 	fxrateClient := fxrate.NewClient(fxrateProvider)
 
 	marketProvider := market.NewYahooProvider()
 	marketClient := market.NewClient(marketProvider)
 
+	// Seed database
 	if err := seed(ctx, entClient, fxrateClient, marketClient); err != nil {
 		log.Fatalf("failed seeding database: %v", err)
 	}
 
-	gqlHandler := handler.NewDefaultServer(
-		fijoy.NewSchema(entClient, fxrateClient, marketClient),
-	)
+	// Setup router + CORS
 
 	r := chi.NewRouter()
 	r.Use(cors.Handler(cors.Options{
@@ -161,6 +175,11 @@ func main() {
 	}))
 
 	r.Use(middleware.Logger)
+
+	// Setup GQL
+	gqlHandler := handler.NewDefaultServer(
+		fijoy.NewSchema(entClient, fxrateClient, marketClient),
+	)
 	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
@@ -170,6 +189,7 @@ func main() {
 		r.Handle("/query", gqlHandler)
 	})
 
+	// Setup Auth routes
 	r.Get(
 		"/auth/{provider}/callback",
 		func(res http.ResponseWriter, req *http.Request) {
@@ -270,6 +290,7 @@ func main() {
 		gothic.BeginAuthHandler(res, req)
 	})
 
+	// Health check endpoint
 	r.Get(
 		"/health",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -278,6 +299,7 @@ func main() {
 		}),
 	)
 
+	// Start server
 	http.ListenAndServe(":"+cfg.Port, r)
 }
 
@@ -440,6 +462,7 @@ func seed(
 		SetName("Chase Total Checking").
 		SetCurrency(usd).
 		SetFxRate(usdToCadRate).
+		SetIconPath("chase.com").
 		SetUser(joey).
 		SetHousehold(household).
 		SetType(account.TypeLiquidity).
@@ -448,6 +471,7 @@ func seed(
 	wealthsimple := entClient.Account.Create().
 		SetName("Wealthsimple Visa Infinite").
 		SetUser(joey).
+		SetIconPath("wealthsimple.com").
 		SetFxRate(decimal.NewFromInt(1)).
 		SetCurrency(cad).
 		SetHousehold(household).
@@ -457,6 +481,7 @@ func seed(
 	webull := entClient.Account.Create().
 		SetHousehold(household).
 		SetFxRate(decimal.NewFromInt(1)).
+		SetIconPath("webull.ca").
 		SetName("Webull").
 		SetUser(joey).
 		SetCurrency(cad).

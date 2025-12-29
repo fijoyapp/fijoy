@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eb42ba548426f044a8619d77fc41d823>>
+ * @generated SignedSource<<84538977d8f74d119350add88b773ef2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -143,6 +143,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "symbol",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "updateTime",
             "storageKey": null
           },
@@ -153,12 +160,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3ed1c029b04bbc3242e470f10c6584de",
+    "cacheID": "8bfcb0e732e2cde63fa3c1d25e7da54d",
     "id": null,
     "metadata": {},
     "name": "routeInvestmentsQuery",
     "operationKind": "query",
-    "text": "query routeInvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  investments {\n    id\n    name\n    value\n    valueInHouseholdCurrency\n    amount\n    account {\n      name\n      id\n    }\n    ...investmentCardFragment\n  }\n}\n"
+    "text": "query routeInvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  type\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  investments {\n    id\n    name\n    value\n    valueInHouseholdCurrency\n    amount\n    account {\n      name\n      id\n    }\n    ...investmentCardFragment\n  }\n}\n"
   }
 };
 })();

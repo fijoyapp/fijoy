@@ -14,12 +14,15 @@ import {
 import { useCurrency } from '@/hooks/use-currency'
 import { getPrettyTime } from '@/lib/time'
 import { type investmentCardFragment$key } from './__generated__/investmentCardFragment.graphql'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getLogoStockTickerURL } from '@/lib/logo'
 
 const investmentCardFragment = graphql`
   fragment investmentCardFragment on Investment {
     id
     name
     type
+    symbol
     updateTime
     currency {
       code
@@ -50,15 +53,21 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
           {({ isActive }) => (
             <>
               <ItemMedia variant="image">
-                <PiggyBankIcon className="size-6" />
+                <Avatar className="">
+                  <AvatarImage
+                    src={getLogoStockTickerURL(data.symbol || '')}
+                    alt={data.symbol || 'unknown logo'}
+                  />
+                  <AvatarFallback>{data.symbol}</AvatarFallback>
+                </Avatar>
               </ItemMedia>
-              <ItemContent>
+              <ItemContent className="gap-px">
                 <ItemTitle className={cn(isActive && 'font-semibold')}>
                   {data.name}
                 </ItemTitle>
                 {/* <ItemDescription>{data.user.name}</ItemDescription> */}
               </ItemContent>
-              <ItemContent className="items-end">
+              <ItemContent className="items-end gap-px">
                 <ItemTitle className="font-mono">
                   <span>
                     {formatCurrencyWithPrivacyMode(

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d12395dd3805f95d33c3c3ff75a2b229>>
+ * @generated SignedSource<<6eb6a95e9f42a23e7fb424812975fa94>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -116,6 +116,13 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
+            "name": "iconPath",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
             "name": "updateTime",
             "storageKey": null
           },
@@ -146,12 +153,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5e698f78fec29d0097f52f1c5d1c9542",
+    "cacheID": "bd7937437e5048acec3c1f395e5cfcdd",
     "id": null,
     "metadata": {},
     "name": "routeAccountsQuery",
     "operationKind": "query",
-    "text": "query routeAccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts {\n    id\n    type\n    valueInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query routeAccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  iconPath\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts {\n    id\n    type\n    valueInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();
