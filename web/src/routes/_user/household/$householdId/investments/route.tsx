@@ -3,7 +3,7 @@ import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { Fragment } from 'react/jsx-runtime'
 import { InvestmentsPanel } from './-components/investments-panel'
-import type {routeInvestmentsQuery} from './__generated__/routeInvestmentsQuery.graphql';
+import type { routeInvestmentsQuery } from './__generated__/routeInvestmentsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { environment } from '@/environment'
 import { PendingComponent } from '@/components/pending-component'

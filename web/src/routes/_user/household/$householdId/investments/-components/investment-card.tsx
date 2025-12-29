@@ -2,7 +2,7 @@ import { BadgeCheckIcon, ChevronRightIcon, PiggyBankIcon } from 'lucide-react'
 import { graphql } from 'relay-runtime'
 import { useFragment } from 'react-relay'
 import { Link } from '@tanstack/react-router'
-import type {investmentCardFragment$key} from './__generated__/investmentCardFragment.graphql';
+import type { investmentCardFragment$key } from './__generated__/investmentCardFragment.graphql'
 import { cn } from '@/lib/utils'
 import {
   Item,

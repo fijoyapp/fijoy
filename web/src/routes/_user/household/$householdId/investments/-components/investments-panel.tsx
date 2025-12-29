@@ -9,7 +9,7 @@ import currency from 'currency.js'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
 import { InvestmentCard } from './investment-card'
-import type {investmentsPanelFragment$key} from './__generated__/investmentsPanelFragment.graphql';
+import type { investmentsPanelFragment$key } from './__generated__/investmentsPanelFragment.graphql'
 import {
   Accordion,
   AccordionContent,

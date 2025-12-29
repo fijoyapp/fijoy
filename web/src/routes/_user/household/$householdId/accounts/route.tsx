@@ -4,7 +4,7 @@ import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { Fragment } from 'react/jsx-runtime'
 import { AccountsPanel } from './-components/accounts-panel'
-import type {routeAccountsQuery} from './__generated__/routeAccountsQuery.graphql';
+import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
 import { Separator } from '@/components/ui/separator'
 import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'

@@ -5,11 +5,8 @@ import { toast } from 'sonner'
 import * as z from 'zod'
 import { useFragment } from 'react-relay'
 import { capitalize } from 'lodash-es'
-import {
-  newAccountFragment$data
-  
-} from './__generated__/newAccountFragment.graphql'
-import type {newAccountFragment$key} from './__generated__/newAccountFragment.graphql';
+import { newAccountFragment$data } from './__generated__/newAccountFragment.graphql'
+import type { newAccountFragment$key } from './__generated__/newAccountFragment.graphql'
 
 import { Button } from '@/components/ui/button'
 import {

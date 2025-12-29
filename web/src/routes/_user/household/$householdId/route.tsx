@@ -1,4 +1,4 @@
-import { EyeIcon, EyeOffIcon, Moon, Sun  } from 'lucide-react'
+import { EyeIcon, EyeOffIcon, Moon, Sun } from 'lucide-react'
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { AppSidebar } from '@/components/app-sidebar'
 import {
