@@ -2,6 +2,7 @@ import { BadgeCheckIcon, ChevronRightIcon, PiggyBankIcon } from 'lucide-react'
 import { graphql } from 'relay-runtime'
 import { useFragment } from 'react-relay'
 import { Link } from '@tanstack/react-router'
+import type {investmentCardFragment$key} from './__generated__/investmentCardFragment.graphql';
 import { cn } from '@/lib/utils'
 import {
   Item,
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
 import { getPrettyTime } from '@/lib/time'
-import { type investmentCardFragment$key } from './__generated__/investmentCardFragment.graphql'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoStockTickerURL } from '@/lib/logo'
 

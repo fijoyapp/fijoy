@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { NewAccount } from './-components/new-account'
 import { graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
+import { NewAccount } from './-components/new-account'
+import type {newAccountQuery} from './__generated__/newAccountQuery.graphql';
 import { environment } from '@/environment'
-import { type newAccountQuery } from './__generated__/newAccountQuery.graphql'
 import { PendingComponent } from '@/components/pending-component'
 import { Item } from '@/components/ui/item'
 

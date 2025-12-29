@@ -1,13 +1,16 @@
 import { graphql } from 'relay-runtime'
-import {
-  newAccountFragment$data,
-  type newAccountFragment$key,
-} from './__generated__/newAccountFragment.graphql'
-
 import * as React from 'react'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
+import { useFragment } from 'react-relay'
+import { capitalize } from 'lodash-es'
+import {
+  newAccountFragment$data
+  
+} from './__generated__/newAccountFragment.graphql'
+import type {newAccountFragment$key} from './__generated__/newAccountFragment.graphql';
+
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -31,7 +34,6 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from '@/components/ui/input-group'
-import { useFragment } from 'react-relay'
 import {
   Combobox,
   ComboboxContent,
@@ -41,7 +43,6 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox'
 import { ACCOUNT_TYPE_DESCRIPTION, ACCOUNT_TYPE_LIST } from '@/constant'
-import { capitalize } from 'lodash-es'
 
 const formSchema = z.object({
   name: z

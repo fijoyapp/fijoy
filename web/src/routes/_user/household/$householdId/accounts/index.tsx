@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { usePreloadedQuery } from 'react-relay'
 import { AccountsPanel } from './-components/accounts-panel'
+import { routeAccounts } from './route'
+import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { PendingComponent } from '@/components/pending-component'
-import { routeAccounts } from './route'
-import { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
 
 export const Route = createFileRoute('/_user/household/$householdId/accounts/')(
   {

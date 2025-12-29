@@ -1,10 +1,10 @@
-import { PendingComponent } from '@/components/pending-component'
 import { createFileRoute } from '@tanstack/react-router'
 import { usePreloadedQuery } from 'react-relay'
-import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { InvestmentsPanel } from './-components/investments-panel'
 import { routeInvestments } from './route'
-import { routeInvestmentsQuery } from './__generated__/routeInvestmentsQuery.graphql'
+import type { routeInvestmentsQuery } from './__generated__/routeInvestmentsQuery.graphql'
+import { useDualPaneDisplay } from '@/hooks/use-screen-size'
+import { PendingComponent } from '@/components/pending-component'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments/',

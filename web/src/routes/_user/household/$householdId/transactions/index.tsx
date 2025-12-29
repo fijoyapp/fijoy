@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { usePreloadedQuery } from 'react-relay'
 import { TransactionsPanel } from './-components/transactions-panel'
+import { routeTransactions } from './route'
+import type { routeTransactionsQuery } from './__generated__/routeTransactionsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { PendingComponent } from '@/components/pending-component'
-import { routeTransactions } from './route'
-import { routeTransactionsQuery } from './__generated__/routeTransactionsQuery.graphql'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions/',

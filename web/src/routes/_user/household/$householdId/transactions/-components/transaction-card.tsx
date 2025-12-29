@@ -1,5 +1,5 @@
 import { graphql } from 'relay-runtime'
-import { match, P } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { useFragment } from 'react-relay'
 import {
   ArrowLeftRightIcon,
@@ -9,10 +9,12 @@ import {
   PlayIcon,
 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { Fragment } from 'react/jsx-runtime'
+import currency from 'currency.js'
 import type {
+  TransactionCategoryType,
   transactionCardFragment$data,
   transactionCardFragment$key,
-  TransactionCategoryType,
 } from './__generated__/transactionCardFragment.graphql'
 import { useCurrency } from '@/hooks/use-currency'
 import {
@@ -23,8 +25,6 @@ import {
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item'
-import { Fragment } from 'react/jsx-runtime'
-import currency from 'currency.js'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoStockTickerURL } from '@/lib/logo'
 

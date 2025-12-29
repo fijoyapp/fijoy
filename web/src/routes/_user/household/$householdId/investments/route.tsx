@@ -1,12 +1,12 @@
-import { PendingComponent } from '@/components/pending-component'
-import { environment } from '@/environment'
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
-import { type routeInvestmentsQuery } from './__generated__/routeInvestmentsQuery.graphql'
-import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { Fragment } from 'react/jsx-runtime'
 import { InvestmentsPanel } from './-components/investments-panel'
+import type {routeInvestmentsQuery} from './__generated__/routeInvestmentsQuery.graphql';
+import { useDualPaneDisplay } from '@/hooks/use-screen-size'
+import { environment } from '@/environment'
+import { PendingComponent } from '@/components/pending-component'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 

@@ -8,6 +8,8 @@ import { useMemo } from 'react'
 import currency from 'currency.js'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
+import { InvestmentCard } from './investment-card'
+import type {investmentsPanelFragment$key} from './__generated__/investmentsPanelFragment.graphql';
 import {
   Accordion,
   AccordionContent,
@@ -24,8 +26,6 @@ import {
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
-import { type investmentsPanelFragment$key } from './__generated__/investmentsPanelFragment.graphql'
-import { InvestmentCard } from './investment-card'
 
 const InvestmentsPanelFragment = graphql`
   fragment investmentsPanelFragment on Query {
