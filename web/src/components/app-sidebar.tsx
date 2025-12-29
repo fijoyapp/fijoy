@@ -51,7 +51,7 @@ const navMain: Array<{
       },
       {
         title: 'New User',
-        link: { to: '/new' },
+        link: { to: '/household/new' },
       },
       {
         title: 'Household',

@@ -17,6 +17,7 @@ import {
   // SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
   // useSidebar,
 } from '@/components/ui/sidebar'
 
@@ -29,7 +30,7 @@ export function NavProjects({
     icon: LucideIcon
   }>
 }) {
-  // const { isMobile } = useSidebar()
+  const { isMobile, setOpenMobile } = useSidebar()
 
   return (
     <SidebarGroup className="">
@@ -38,6 +39,11 @@ export function NavProjects({
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
+              onClick={() => {
+                if (isMobile) {
+                  setOpenMobile(false)
+                }
+              }}
               render={
                 <Link
                   {...item.link}
