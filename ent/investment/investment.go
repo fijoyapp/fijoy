@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/shopspring/decimal"
 )
 
 const (
@@ -122,6 +123,8 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
 	SymbolValidator func(string) error
+	// DefaultAmount holds the default value on creation for the "amount" field.
+	DefaultAmount func() decimal.Decimal
 )
 
 // Type defines the type for the "type" enum field.

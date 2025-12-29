@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	"fijoy.app/ent/investment"
 	_ "fijoy.app/ent/runtime"
 
 	"entgo.io/ent/dialect"
@@ -440,6 +441,14 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		SetType(account.TypeLiability).
 		SaveX(ctx)
 
+	webull := entClient.Account.Create().
+		SetHousehold(household).
+		SetName("Webull").
+		SetUser(joey).
+		SetCurrency(cad).
+		SetType(account.TypeInvestment).
+		SaveX(ctx)
+
 	restaurant := entClient.TransactionCategory.Create().
 		SetName("Restaurant").
 		SetHousehold(household).
@@ -521,6 +530,31 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		}
 		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
 	}
+
+	xeqt := entClient.Investment.Create().
+		SetHousehold(household).
+		SetSymbol("XEQT.TO").
+		SetName("XEQT").
+		SetCurrency(cad).
+		SetType(investment.TypeStock).
+		SetAccount(webull).
+		SaveX(ctx)
+
+	entClient.Lot.Create().
+		SetInvestment(xeqt).
+		SetHousehold(household).
+		SetDatetime(time.Now().AddDate(0, -6, 0).UTC()).
+		SetAmount(decimal.NewFromInt(100)).
+		SetPrice(decimal.NewFromFloat(25.50)).
+		SaveX(ctx)
+
+	entClient.Lot.Create().
+		SetInvestment(xeqt).
+		SetHousehold(household).
+		SetDatetime(time.Now().AddDate(0, -3, 0).UTC()).
+		SetAmount(decimal.NewFromInt(50)).
+		SetPrice(decimal.NewFromFloat(27.75)).
+		SaveX(ctx)
 
 	return nil
 }

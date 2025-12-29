@@ -85,6 +85,14 @@ func (_c *InvestmentCreate) SetAmount(v decimal.Decimal) *InvestmentCreate {
 	return _c
 }
 
+// SetNillableAmount sets the "amount" field if the given value is not nil.
+func (_c *InvestmentCreate) SetNillableAmount(v *decimal.Decimal) *InvestmentCreate {
+	if v != nil {
+		_c.SetAmount(*v)
+	}
+	return _c
+}
+
 // SetAccountID sets the "account" edge to the Account entity by ID.
 func (_c *InvestmentCreate) SetAccountID(id int) *InvestmentCreate {
 	_c.mutation.SetAccountID(id)
@@ -177,6 +185,13 @@ func (_c *InvestmentCreate) defaults() error {
 		}
 		v := investment.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
+	}
+	if _, ok := _c.mutation.Amount(); !ok {
+		if investment.DefaultAmount == nil {
+			return fmt.Errorf("ent: uninitialized investment.DefaultAmount (forgotten import ent/runtime?)")
+		}
+		v := investment.DefaultAmount()
+		_c.mutation.SetAmount(v)
 	}
 	return nil
 }

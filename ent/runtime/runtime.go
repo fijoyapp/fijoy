@@ -126,6 +126,10 @@ func init() {
 	investmentDescSymbol := investmentFields[2].Descriptor()
 	// investment.SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
 	investment.SymbolValidator = investmentDescSymbol.Validators[0].(func(string) error)
+	// investmentDescAmount is the schema descriptor for amount field.
+	investmentDescAmount := investmentFields[3].Descriptor()
+	// investment.DefaultAmount holds the default value on creation for the amount field.
+	investment.DefaultAmount = investmentDescAmount.Default.(func() decimal.Decimal)
 	lotMixin := schema.Lot{}.Mixin()
 	lot.Policy = privacy.NewPolicies(lotMixin[1], schema.Lot{})
 	lot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
