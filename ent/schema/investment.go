@@ -32,6 +32,21 @@ func (Investment) Fields() []ent.Field {
 			DefaultFunc(func() decimal.Decimal {
 				return decimal.NewFromInt(0)
 			}),
+
+		field.Float("quote").GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.Postgres: "numeric(36,18)",
+			}).
+			Annotations(entgql.Type("String")),
+
+		field.Float("value").GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.Postgres: "numeric(36,18)",
+			}).
+			Annotations(entgql.Type("String")).
+			DefaultFunc(func() decimal.Decimal {
+				return decimal.NewFromInt(0)
+			}),
 	}
 }
 

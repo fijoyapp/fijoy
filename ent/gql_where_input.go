@@ -96,6 +96,16 @@ type AccountWhereInput struct {
 	BalanceLT    *decimal.Decimal  `json:"balanceLT,omitempty"`
 	BalanceLTE   *decimal.Decimal  `json:"balanceLTE,omitempty"`
 
+	// "fx_rate" field predicates.
+	FxRate      *decimal.Decimal  `json:"fxRate,omitempty"`
+	FxRateNEQ   *decimal.Decimal  `json:"fxRateNEQ,omitempty"`
+	FxRateIn    []decimal.Decimal `json:"fxRateIn,omitempty"`
+	FxRateNotIn []decimal.Decimal `json:"fxRateNotIn,omitempty"`
+	FxRateGT    *decimal.Decimal  `json:"fxRateGT,omitempty"`
+	FxRateGTE   *decimal.Decimal  `json:"fxRateGTE,omitempty"`
+	FxRateLT    *decimal.Decimal  `json:"fxRateLT,omitempty"`
+	FxRateLTE   *decimal.Decimal  `json:"fxRateLTE,omitempty"`
+
 	// "household" edge predicates.
 	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
 	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
@@ -346,6 +356,30 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	}
 	if i.BalanceLTE != nil {
 		predicates = append(predicates, account.BalanceLTE(*i.BalanceLTE))
+	}
+	if i.FxRate != nil {
+		predicates = append(predicates, account.FxRateEQ(*i.FxRate))
+	}
+	if i.FxRateNEQ != nil {
+		predicates = append(predicates, account.FxRateNEQ(*i.FxRateNEQ))
+	}
+	if len(i.FxRateIn) > 0 {
+		predicates = append(predicates, account.FxRateIn(i.FxRateIn...))
+	}
+	if len(i.FxRateNotIn) > 0 {
+		predicates = append(predicates, account.FxRateNotIn(i.FxRateNotIn...))
+	}
+	if i.FxRateGT != nil {
+		predicates = append(predicates, account.FxRateGT(*i.FxRateGT))
+	}
+	if i.FxRateGTE != nil {
+		predicates = append(predicates, account.FxRateGTE(*i.FxRateGTE))
+	}
+	if i.FxRateLT != nil {
+		predicates = append(predicates, account.FxRateLT(*i.FxRateLT))
+	}
+	if i.FxRateLTE != nil {
+		predicates = append(predicates, account.FxRateLTE(*i.FxRateLTE))
 	}
 
 	if i.HasHousehold != nil {
@@ -1301,6 +1335,26 @@ type InvestmentWhereInput struct {
 	AmountLT    *decimal.Decimal  `json:"amountLT,omitempty"`
 	AmountLTE   *decimal.Decimal  `json:"amountLTE,omitempty"`
 
+	// "quote" field predicates.
+	Quote      *decimal.Decimal  `json:"quote,omitempty"`
+	QuoteNEQ   *decimal.Decimal  `json:"quoteNEQ,omitempty"`
+	QuoteIn    []decimal.Decimal `json:"quoteIn,omitempty"`
+	QuoteNotIn []decimal.Decimal `json:"quoteNotIn,omitempty"`
+	QuoteGT    *decimal.Decimal  `json:"quoteGT,omitempty"`
+	QuoteGTE   *decimal.Decimal  `json:"quoteGTE,omitempty"`
+	QuoteLT    *decimal.Decimal  `json:"quoteLT,omitempty"`
+	QuoteLTE   *decimal.Decimal  `json:"quoteLTE,omitempty"`
+
+	// "value" field predicates.
+	Value      *decimal.Decimal  `json:"value,omitempty"`
+	ValueNEQ   *decimal.Decimal  `json:"valueNEQ,omitempty"`
+	ValueIn    []decimal.Decimal `json:"valueIn,omitempty"`
+	ValueNotIn []decimal.Decimal `json:"valueNotIn,omitempty"`
+	ValueGT    *decimal.Decimal  `json:"valueGT,omitempty"`
+	ValueGTE   *decimal.Decimal  `json:"valueGTE,omitempty"`
+	ValueLT    *decimal.Decimal  `json:"valueLT,omitempty"`
+	ValueLTE   *decimal.Decimal  `json:"valueLTE,omitempty"`
+
 	// "account" edge predicates.
 	HasAccount     *bool                `json:"hasAccount,omitempty"`
 	HasAccountWith []*AccountWhereInput `json:"hasAccountWith,omitempty"`
@@ -1586,6 +1640,54 @@ func (i *InvestmentWhereInput) P() (predicate.Investment, error) {
 	}
 	if i.AmountLTE != nil {
 		predicates = append(predicates, investment.AmountLTE(*i.AmountLTE))
+	}
+	if i.Quote != nil {
+		predicates = append(predicates, investment.QuoteEQ(*i.Quote))
+	}
+	if i.QuoteNEQ != nil {
+		predicates = append(predicates, investment.QuoteNEQ(*i.QuoteNEQ))
+	}
+	if len(i.QuoteIn) > 0 {
+		predicates = append(predicates, investment.QuoteIn(i.QuoteIn...))
+	}
+	if len(i.QuoteNotIn) > 0 {
+		predicates = append(predicates, investment.QuoteNotIn(i.QuoteNotIn...))
+	}
+	if i.QuoteGT != nil {
+		predicates = append(predicates, investment.QuoteGT(*i.QuoteGT))
+	}
+	if i.QuoteGTE != nil {
+		predicates = append(predicates, investment.QuoteGTE(*i.QuoteGTE))
+	}
+	if i.QuoteLT != nil {
+		predicates = append(predicates, investment.QuoteLT(*i.QuoteLT))
+	}
+	if i.QuoteLTE != nil {
+		predicates = append(predicates, investment.QuoteLTE(*i.QuoteLTE))
+	}
+	if i.Value != nil {
+		predicates = append(predicates, investment.ValueEQ(*i.Value))
+	}
+	if i.ValueNEQ != nil {
+		predicates = append(predicates, investment.ValueNEQ(*i.ValueNEQ))
+	}
+	if len(i.ValueIn) > 0 {
+		predicates = append(predicates, investment.ValueIn(i.ValueIn...))
+	}
+	if len(i.ValueNotIn) > 0 {
+		predicates = append(predicates, investment.ValueNotIn(i.ValueNotIn...))
+	}
+	if i.ValueGT != nil {
+		predicates = append(predicates, investment.ValueGT(*i.ValueGT))
+	}
+	if i.ValueGTE != nil {
+		predicates = append(predicates, investment.ValueGTE(*i.ValueGTE))
+	}
+	if i.ValueLT != nil {
+		predicates = append(predicates, investment.ValueLT(*i.ValueLT))
+	}
+	if i.ValueLTE != nil {
+		predicates = append(predicates, investment.ValueLTE(*i.ValueLTE))
 	}
 
 	if i.HasAccount != nil {

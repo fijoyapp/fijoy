@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f956ced2ea4d22de978af83020135042>>
+ * @generated SignedSource<<2d1ad62e751dfbde177d5ed2feb2c48f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -269,6 +269,14 @@ export type AccountWhereInput = {
   createTimeLTE?: any | null | undefined;
   createTimeNEQ?: any | null | undefined;
   createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  fxRate?: string | null | undefined;
+  fxRateGT?: string | null | undefined;
+  fxRateGTE?: string | null | undefined;
+  fxRateIn?: ReadonlyArray<string> | null | undefined;
+  fxRateLT?: string | null | undefined;
+  fxRateLTE?: string | null | undefined;
+  fxRateNEQ?: string | null | undefined;
+  fxRateNotIn?: ReadonlyArray<string> | null | undefined;
   hasCurrency?: boolean | null | undefined;
   hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
   hasHousehold?: boolean | null | undefined;
@@ -421,6 +429,14 @@ export type InvestmentWhereInput = {
   nameNotIn?: ReadonlyArray<string> | null | undefined;
   not?: InvestmentWhereInput | null | undefined;
   or?: ReadonlyArray<InvestmentWhereInput> | null | undefined;
+  quote?: string | null | undefined;
+  quoteGT?: string | null | undefined;
+  quoteGTE?: string | null | undefined;
+  quoteIn?: ReadonlyArray<string> | null | undefined;
+  quoteLT?: string | null | undefined;
+  quoteLTE?: string | null | undefined;
+  quoteNEQ?: string | null | undefined;
+  quoteNotIn?: ReadonlyArray<string> | null | undefined;
   symbol?: string | null | undefined;
   symbolContains?: string | null | undefined;
   symbolContainsFold?: string | null | undefined;
@@ -446,6 +462,14 @@ export type InvestmentWhereInput = {
   updateTimeLTE?: any | null | undefined;
   updateTimeNEQ?: any | null | undefined;
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  value?: string | null | undefined;
+  valueGT?: string | null | undefined;
+  valueGTE?: string | null | undefined;
+  valueIn?: ReadonlyArray<string> | null | undefined;
+  valueLT?: string | null | undefined;
+  valueLTE?: string | null | undefined;
+  valueNEQ?: string | null | undefined;
+  valueNotIn?: ReadonlyArray<string> | null | undefined;
 };
 export type LotWhereInput = {
   amount?: string | null | undefined;

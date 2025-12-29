@@ -18,6 +18,7 @@ type Account implements Node {
   name: String!
   type: AccountType!
   balance: String!
+  fxRate: String!
   household: Household!
   currency: Currency!
   user: User!
@@ -119,6 +120,17 @@ input AccountWhereInput {
   balanceGTE: String
   balanceLT: String
   balanceLTE: String
+  """
+  fx_rate field predicates
+  """
+  fxRate: String
+  fxRateNEQ: String
+  fxRateIn: [String!]
+  fxRateNotIn: [String!]
+  fxRateGT: String
+  fxRateGTE: String
+  fxRateLT: String
+  fxRateLTE: String
   """
   household edge predicates
   """
@@ -364,6 +376,8 @@ type Investment implements Node {
   type: InvestmentType!
   symbol: String!
   amount: String!
+  quote: String!
+  value: String!
   account: Account!
   household: Household!
   currency: Currency!
@@ -508,6 +522,28 @@ input InvestmentWhereInput {
   amountGTE: String
   amountLT: String
   amountLTE: String
+  """
+  quote field predicates
+  """
+  quote: String
+  quoteNEQ: String
+  quoteIn: [String!]
+  quoteNotIn: [String!]
+  quoteGT: String
+  quoteGTE: String
+  quoteLT: String
+  quoteLTE: String
+  """
+  value field predicates
+  """
+  value: String
+  valueNEQ: String
+  valueIn: [String!]
+  valueNotIn: [String!]
+  valueGT: String
+  valueGTE: String
+  valueLT: String
+  valueLTE: String
   """
   account edge predicates
   """

@@ -134,6 +134,11 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, account.FieldBalance)
 				fieldSeen[account.FieldBalance] = struct{}{}
 			}
+		case "fxRate":
+			if _, ok := fieldSeen[account.FieldFxRate]; !ok {
+				selectedFields = append(selectedFields, account.FieldFxRate)
+				fieldSeen[account.FieldFxRate] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -596,6 +601,16 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 			if _, ok := fieldSeen[investment.FieldAmount]; !ok {
 				selectedFields = append(selectedFields, investment.FieldAmount)
 				fieldSeen[investment.FieldAmount] = struct{}{}
+			}
+		case "quote":
+			if _, ok := fieldSeen[investment.FieldQuote]; !ok {
+				selectedFields = append(selectedFields, investment.FieldQuote)
+				fieldSeen[investment.FieldQuote] = struct{}{}
+			}
+		case "value":
+			if _, ok := fieldSeen[investment.FieldValue]; !ok {
+				selectedFields = append(selectedFields, investment.FieldValue)
+				fieldSeen[investment.FieldValue] = struct{}{}
 			}
 		case "id":
 		case "__typename":

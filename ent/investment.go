@@ -35,6 +35,10 @@ type Investment struct {
 	Symbol string `json:"symbol,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
+	// Quote holds the value of the "quote" field.
+	Quote decimal.Decimal `json:"quote,omitempty"`
+	// Value holds the value of the "value" field.
+	Value decimal.Decimal `json:"value,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvestmentQuery when eager-loading is set.
 	Edges                InvestmentEdges `json:"edges"`
@@ -109,7 +113,7 @@ func (*Investment) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case investment.FieldAmount:
+		case investment.FieldAmount, investment.FieldQuote, investment.FieldValue:
 			values[i] = new(decimal.Decimal)
 		case investment.FieldID, investment.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
@@ -184,6 +188,18 @@ func (_m *Investment) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				_m.Amount = *value
 			}
+		case investment.FieldQuote:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field quote", values[i])
+			} else if value != nil {
+				_m.Quote = *value
+			}
+		case investment.FieldValue:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field value", values[i])
+			} else if value != nil {
+				_m.Value = *value
+			}
 		case investment.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field account_investments", value)
@@ -205,9 +221,9 @@ func (_m *Investment) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Investment.
+// GetValue returns the ent.Value that was dynamically selected and assigned to the Investment.
 // This includes values selected through modifiers, order, etc.
-func (_m *Investment) Value(name string) (ent.Value, error) {
+func (_m *Investment) GetValue(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
@@ -274,6 +290,12 @@ func (_m *Investment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Amount))
+	builder.WriteString(", ")
+	builder.WriteString("quote=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Quote))
+	builder.WriteString(", ")
+	builder.WriteString("value=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Value))
 	builder.WriteByte(')')
 	return builder.String()
 }

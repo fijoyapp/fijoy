@@ -130,6 +130,10 @@ func init() {
 	investmentDescAmount := investmentFields[3].Descriptor()
 	// investment.DefaultAmount holds the default value on creation for the amount field.
 	investment.DefaultAmount = investmentDescAmount.Default.(func() decimal.Decimal)
+	// investmentDescValue is the schema descriptor for value field.
+	investmentDescValue := investmentFields[5].Descriptor()
+	// investment.DefaultValue holds the default value on creation for the value field.
+	investment.DefaultValue = investmentDescValue.Default.(func() decimal.Decimal)
 	lotMixin := schema.Lot{}.Mixin()
 	lot.Policy = privacy.NewPolicies(lotMixin[1], schema.Lot{})
 	lot.Hooks[0] = func(next ent.Mutator) ent.Mutator {

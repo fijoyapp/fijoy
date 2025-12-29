@@ -88,6 +88,12 @@ func (_c *AccountCreate) SetNillableBalance(v *decimal.Decimal) *AccountCreate {
 	return _c
 }
 
+// SetFxRate sets the "fx_rate" field.
+func (_c *AccountCreate) SetFxRate(v decimal.Decimal) *AccountCreate {
+	_c.mutation.SetFxRate(v)
+	return _c
+}
+
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *AccountCreate) SetHousehold(v *Household) *AccountCreate {
 	return _c.SetHouseholdID(v.ID)
@@ -236,6 +242,9 @@ func (_c *AccountCreate) check() error {
 	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}
 	}
+	if _, ok := _c.mutation.FxRate(); !ok {
+		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "Account.fx_rate"`)}
+	}
 	if len(_c.mutation.HouseholdIDs()) == 0 {
 		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Account.household"`)}
 	}
@@ -291,6 +300,10 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
+	}
+	if value, ok := _c.mutation.FxRate(); ok {
+		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
+		_node.FxRate = value
 	}
 	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -469,6 +482,24 @@ func (u *AccountUpsert) AddBalance(v decimal.Decimal) *AccountUpsert {
 	return u
 }
 
+// SetFxRate sets the "fx_rate" field.
+func (u *AccountUpsert) SetFxRate(v decimal.Decimal) *AccountUpsert {
+	u.Set(account.FieldFxRate, v)
+	return u
+}
+
+// UpdateFxRate sets the "fx_rate" field to the value that was provided on create.
+func (u *AccountUpsert) UpdateFxRate() *AccountUpsert {
+	u.SetExcluded(account.FieldFxRate)
+	return u
+}
+
+// AddFxRate adds v to the "fx_rate" field.
+func (u *AccountUpsert) AddFxRate(v decimal.Decimal) *AccountUpsert {
+	u.Add(account.FieldFxRate, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -566,6 +597,27 @@ func (u *AccountUpsertOne) AddBalance(v decimal.Decimal) *AccountUpsertOne {
 func (u *AccountUpsertOne) UpdateBalance() *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.UpdateBalance()
+	})
+}
+
+// SetFxRate sets the "fx_rate" field.
+func (u *AccountUpsertOne) SetFxRate(v decimal.Decimal) *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetFxRate(v)
+	})
+}
+
+// AddFxRate adds v to the "fx_rate" field.
+func (u *AccountUpsertOne) AddFxRate(v decimal.Decimal) *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.AddFxRate(v)
+	})
+}
+
+// UpdateFxRate sets the "fx_rate" field to the value that was provided on create.
+func (u *AccountUpsertOne) UpdateFxRate() *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdateFxRate()
 	})
 }
 
@@ -832,6 +884,27 @@ func (u *AccountUpsertBulk) AddBalance(v decimal.Decimal) *AccountUpsertBulk {
 func (u *AccountUpsertBulk) UpdateBalance() *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.UpdateBalance()
+	})
+}
+
+// SetFxRate sets the "fx_rate" field.
+func (u *AccountUpsertBulk) SetFxRate(v decimal.Decimal) *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetFxRate(v)
+	})
+}
+
+// AddFxRate adds v to the "fx_rate" field.
+func (u *AccountUpsertBulk) AddFxRate(v decimal.Decimal) *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.AddFxRate(v)
+	})
+}
+
+// UpdateFxRate sets the "fx_rate" field to the value that was provided on create.
+func (u *AccountUpsertBulk) UpdateFxRate() *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdateFxRate()
 	})
 }
 

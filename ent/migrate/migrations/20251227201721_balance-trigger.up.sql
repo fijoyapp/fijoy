@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION update_account_balance()
+CREATE OR REPLACE FUNCTION update_account_balance_on_transaction_entry_change()
     RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -67,7 +67,7 @@ END;
 $$;
 
 -- Create the trigger
-CREATE TRIGGER transaction_balance_trigger
+CREATE TRIGGER transaction_balance_on_transaction_entry_change_trigger
     AFTER INSERT OR UPDATE OF amount OR DELETE ON transaction_entries
     FOR EACH ROW
-    EXECUTE FUNCTION update_account_balance();
+    EXECUTE FUNCTION update_account_balance_on_transaction_entry_change();

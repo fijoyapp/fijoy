@@ -86,6 +86,16 @@ func Amount(v decimal.Decimal) predicate.Investment {
 	return predicate.Investment(sql.FieldEQ(FieldAmount, v))
 }
 
+// Quote applies equality check predicate on the "quote" field. It's identical to QuoteEQ.
+func Quote(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldQuote, v))
+}
+
+// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
+func Value(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldValue, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Investment {
 	return predicate.Investment(sql.FieldEQ(FieldCreateTime, v))
@@ -374,6 +384,86 @@ func AmountLT(v decimal.Decimal) predicate.Investment {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v decimal.Decimal) predicate.Investment {
 	return predicate.Investment(sql.FieldLTE(FieldAmount, v))
+}
+
+// QuoteEQ applies the EQ predicate on the "quote" field.
+func QuoteEQ(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldQuote, v))
+}
+
+// QuoteNEQ applies the NEQ predicate on the "quote" field.
+func QuoteNEQ(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldNEQ(FieldQuote, v))
+}
+
+// QuoteIn applies the In predicate on the "quote" field.
+func QuoteIn(vs ...decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldIn(FieldQuote, vs...))
+}
+
+// QuoteNotIn applies the NotIn predicate on the "quote" field.
+func QuoteNotIn(vs ...decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldNotIn(FieldQuote, vs...))
+}
+
+// QuoteGT applies the GT predicate on the "quote" field.
+func QuoteGT(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldGT(FieldQuote, v))
+}
+
+// QuoteGTE applies the GTE predicate on the "quote" field.
+func QuoteGTE(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldGTE(FieldQuote, v))
+}
+
+// QuoteLT applies the LT predicate on the "quote" field.
+func QuoteLT(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldLT(FieldQuote, v))
+}
+
+// QuoteLTE applies the LTE predicate on the "quote" field.
+func QuoteLTE(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldLTE(FieldQuote, v))
+}
+
+// ValueEQ applies the EQ predicate on the "value" field.
+func ValueEQ(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldValue, v))
+}
+
+// ValueNEQ applies the NEQ predicate on the "value" field.
+func ValueNEQ(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldNEQ(FieldValue, v))
+}
+
+// ValueIn applies the In predicate on the "value" field.
+func ValueIn(vs ...decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldIn(FieldValue, vs...))
+}
+
+// ValueNotIn applies the NotIn predicate on the "value" field.
+func ValueNotIn(vs ...decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldNotIn(FieldValue, vs...))
+}
+
+// ValueGT applies the GT predicate on the "value" field.
+func ValueGT(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldGT(FieldValue, v))
+}
+
+// ValueGTE applies the GTE predicate on the "value" field.
+func ValueGTE(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldGTE(FieldValue, v))
+}
+
+// ValueLT applies the LT predicate on the "value" field.
+func ValueLT(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldLT(FieldValue, v))
+}
+
+// ValueLTE applies the LTE predicate on the "value" field.
+func ValueLTE(v decimal.Decimal) predicate.Investment {
+	return predicate.Investment(sql.FieldLTE(FieldValue, v))
 }
 
 // HasAccount applies the HasEdge predicate on the "account" edge.

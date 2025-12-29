@@ -31,6 +31,8 @@ const (
 	FieldType = "type"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
+	// FieldFxRate holds the string denoting the fx_rate field in the database.
+	FieldFxRate = "fx_rate"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
 	EdgeHousehold = "household"
 	// EdgeCurrency holds the string denoting the currency edge name in mutations.
@@ -89,6 +91,7 @@ var Columns = []string{
 	FieldName,
 	FieldType,
 	FieldBalance,
+	FieldFxRate,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "accounts"
@@ -195,6 +198,11 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 // ByBalance orders the results by the balance field.
 func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
+}
+
+// ByFxRate orders the results by the fx_rate field.
+func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFxRate, opts...).ToFunc()
 }
 
 // ByHouseholdField orders the results by household field.

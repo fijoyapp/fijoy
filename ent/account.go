@@ -33,6 +33,8 @@ type Account struct {
 	Type account.Type `json:"type,omitempty"`
 	// Balance holds the value of the "balance" field.
 	Balance decimal.Decimal `json:"balance,omitempty"`
+	// FxRate holds the value of the "fx_rate" field.
+	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
 	Edges             AccountEdges `json:"edges"`
@@ -119,7 +121,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case account.FieldBalance:
+		case account.FieldBalance, account.FieldFxRate:
 			values[i] = new(decimal.Decimal)
 		case account.FieldID, account.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
@@ -187,6 +189,12 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value != nil {
 				_m.Balance = *value
+			}
+		case account.FieldFxRate:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
+			} else if value != nil {
+				_m.FxRate = *value
 			}
 		case account.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -280,6 +288,9 @@ func (_m *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
+	builder.WriteString(", ")
+	builder.WriteString("fx_rate=")
+	builder.WriteString(fmt.Sprintf("%v", _m.FxRate))
 	builder.WriteByte(')')
 	return builder.String()
 }

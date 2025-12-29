@@ -14,27 +14,7 @@ import (
 
 // BalanceInHouseholdCurrency is the resolver for the balanceInHouseholdCurrency field.
 func (r *accountResolver) BalanceInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error) {
-	accountCurrency, err := obj.QueryCurrency().Only(ctx)
-	if err != nil {
-		return "", err
-	}
-
-	householdCurrency, err := obj.QueryHousehold().QueryCurrency().Only(ctx)
-	if err != nil {
-		return "", err
-	}
-
-	fxRate, err := r.fxrateClient.GetRate(
-		ctx,
-		accountCurrency.Code,
-		householdCurrency.Code,
-		time.Now(),
-	)
-	if err != nil {
-		return "", err
-	}
-
-	return obj.Balance.Mul(fxRate).String(), nil
+	return obj.Balance.Mul(obj.FxRate).String(), nil
 }
 
 // FxRate is the resolver for the fxRate field.

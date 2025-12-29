@@ -74,6 +74,27 @@ func (_u *AccountUpdate) AddBalance(v decimal.Decimal) *AccountUpdate {
 	return _u
 }
 
+// SetFxRate sets the "fx_rate" field.
+func (_u *AccountUpdate) SetFxRate(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.ResetFxRate()
+	_u.mutation.SetFxRate(v)
+	return _u
+}
+
+// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
+func (_u *AccountUpdate) SetNillableFxRate(v *decimal.Decimal) *AccountUpdate {
+	if v != nil {
+		_u.SetFxRate(*v)
+	}
+	return _u
+}
+
+// AddFxRate adds value to the "fx_rate" field.
+func (_u *AccountUpdate) AddFxRate(v decimal.Decimal) *AccountUpdate {
+	_u.mutation.AddFxRate(v)
+	return _u
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (_u *AccountUpdate) SetUserID(id int) *AccountUpdate {
 	_u.mutation.SetUserID(id)
@@ -259,6 +280,12 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
 	}
+	if value, ok := _u.mutation.FxRate(); ok {
+		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedFxRate(); ok {
+		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
+	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -438,6 +465,27 @@ func (_u *AccountUpdateOne) SetNillableBalance(v *decimal.Decimal) *AccountUpdat
 // AddBalance adds value to the "balance" field.
 func (_u *AccountUpdateOne) AddBalance(v decimal.Decimal) *AccountUpdateOne {
 	_u.mutation.AddBalance(v)
+	return _u
+}
+
+// SetFxRate sets the "fx_rate" field.
+func (_u *AccountUpdateOne) SetFxRate(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.ResetFxRate()
+	_u.mutation.SetFxRate(v)
+	return _u
+}
+
+// SetNillableFxRate sets the "fx_rate" field if the given value is not nil.
+func (_u *AccountUpdateOne) SetNillableFxRate(v *decimal.Decimal) *AccountUpdateOne {
+	if v != nil {
+		_u.SetFxRate(*v)
+	}
+	return _u
+}
+
+// AddFxRate adds value to the "fx_rate" field.
+func (_u *AccountUpdateOne) AddFxRate(v decimal.Decimal) *AccountUpdateOne {
+	_u.mutation.AddFxRate(v)
 	return _u
 }
 
@@ -655,6 +703,12 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if value, ok := _u.mutation.AddedBalance(); ok {
 		_spec.AddField(account.FieldBalance, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.FxRate(); ok {
+		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
+	}
+	if value, ok := _u.mutation.AddedFxRate(); ok {
+		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
 	}
 	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

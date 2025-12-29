@@ -33,6 +33,10 @@ const (
 	FieldSymbol = "symbol"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
+	// FieldQuote holds the string denoting the quote field in the database.
+	FieldQuote = "quote"
+	// FieldValue holds the string denoting the value field in the database.
+	FieldValue = "value"
 	// EdgeAccount holds the string denoting the account edge name in mutations.
 	EdgeAccount = "account"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
@@ -83,6 +87,8 @@ var Columns = []string{
 	FieldType,
 	FieldSymbol,
 	FieldAmount,
+	FieldQuote,
+	FieldValue,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "investments"
@@ -125,6 +131,8 @@ var (
 	SymbolValidator func(string) error
 	// DefaultAmount holds the default value on creation for the "amount" field.
 	DefaultAmount func() decimal.Decimal
+	// DefaultValue holds the default value on creation for the "value" field.
+	DefaultValue func() decimal.Decimal
 )
 
 // Type defines the type for the "type" enum field.
@@ -191,6 +199,16 @@ func BySymbol(opts ...sql.OrderTermOption) OrderOption {
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByQuote orders the results by the quote field.
+func ByQuote(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldQuote, opts...).ToFunc()
+}
+
+// ByValue orders the results by the value field.
+func ByValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldValue, opts...).ToFunc()
 }
 
 // ByAccountField orders the results by account field.

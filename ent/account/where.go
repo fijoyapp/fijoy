@@ -81,6 +81,11 @@ func Balance(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldBalance, v))
 }
 
+// FxRate applies equality check predicate on the "fx_rate" field. It's identical to FxRateEQ.
+func FxRate(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldFxRate, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldCreateTime, v))
@@ -304,6 +309,46 @@ func BalanceLT(v decimal.Decimal) predicate.Account {
 // BalanceLTE applies the LTE predicate on the "balance" field.
 func BalanceLTE(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldBalance, v))
+}
+
+// FxRateEQ applies the EQ predicate on the "fx_rate" field.
+func FxRateEQ(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldFxRate, v))
+}
+
+// FxRateNEQ applies the NEQ predicate on the "fx_rate" field.
+func FxRateNEQ(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldFxRate, v))
+}
+
+// FxRateIn applies the In predicate on the "fx_rate" field.
+func FxRateIn(vs ...decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldFxRate, vs...))
+}
+
+// FxRateNotIn applies the NotIn predicate on the "fx_rate" field.
+func FxRateNotIn(vs ...decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldFxRate, vs...))
+}
+
+// FxRateGT applies the GT predicate on the "fx_rate" field.
+func FxRateGT(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldFxRate, v))
+}
+
+// FxRateGTE applies the GTE predicate on the "fx_rate" field.
+func FxRateGTE(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldFxRate, v))
+}
+
+// FxRateLT applies the LT predicate on the "fx_rate" field.
+func FxRateLT(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldFxRate, v))
+}
+
+// FxRateLTE applies the LTE predicate on the "fx_rate" field.
+func FxRateLTE(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldFxRate, v))
 }
 
 // HasHousehold applies the HasEdge predicate on the "household" edge.

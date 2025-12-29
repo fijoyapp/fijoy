@@ -17,6 +17,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "currency_accounts", Type: field.TypeInt},
 		{Name: "household_id", Type: field.TypeInt},
 		{Name: "user_accounts", Type: field.TypeInt},
@@ -29,19 +30,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "accounts_currencies_accounts",
-				Columns:    []*schema.Column{AccountsColumns[6]},
+				Columns:    []*schema.Column{AccountsColumns[7]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "accounts_households_accounts",
-				Columns:    []*schema.Column{AccountsColumns[7]},
+				Columns:    []*schema.Column{AccountsColumns[8]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "accounts_users_accounts",
-				Columns:    []*schema.Column{AccountsColumns[8]},
+				Columns:    []*schema.Column{AccountsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -90,6 +91,8 @@ var (
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"stock", "crypto"}},
 		{Name: "symbol", Type: field.TypeString},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "quote", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "account_investments", Type: field.TypeInt},
 		{Name: "currency_investments", Type: field.TypeInt},
 		{Name: "household_id", Type: field.TypeInt},
@@ -102,19 +105,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "investments_accounts_investments",
-				Columns:    []*schema.Column{InvestmentsColumns[7]},
+				Columns:    []*schema.Column{InvestmentsColumns[9]},
 				RefColumns: []*schema.Column{AccountsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "investments_currencies_investments",
-				Columns:    []*schema.Column{InvestmentsColumns[8]},
+				Columns:    []*schema.Column{InvestmentsColumns[10]},
 				RefColumns: []*schema.Column{CurrenciesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "investments_households_investments",
-				Columns:    []*schema.Column{InvestmentsColumns[9]},
+				Columns:    []*schema.Column{InvestmentsColumns[11]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

@@ -132,7 +132,7 @@ func main() {
 	marketProvider := market.NewYahooProvider()
 	marketClient := market.NewClient(marketProvider)
 
-	if err := seed(ctx, entClient); err != nil {
+	if err := seed(ctx, entClient, fxrateClient, marketClient); err != nil {
 		log.Fatalf("failed seeding database: %v", err)
 	}
 
@@ -358,7 +358,12 @@ func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
 	}
 }
 
-func seed(ctx context.Context, entClient *ent.Client) error {
+func seed(
+	ctx context.Context,
+	entClient *ent.Client,
+	fxrateClient *fxrate.Client,
+	marketClient *market.Client,
+) error {
 	alreadySeeded := entClient.User.Query().
 		Where(user.EmailEQ("joey@itsjoeoui.com")).
 		ExistX(contextkeys.NewPrivacyBypassContext(ctx))
@@ -368,6 +373,11 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	cad := entClient.Currency.Create().SetCode("CAD").SaveX(ctx)
 	usd := entClient.Currency.Create().SetCode("USD").SaveX(ctx)
+
+	usdToCadRate, err := fxrateClient.GetRate(ctx, "USD", "CAD", time.Now())
+	if err != nil {
+		panic(err)
+	}
 
 	joey := entClient.User.Create().
 		SetEmail("joey@itsjoeoui.com").
@@ -420,6 +430,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	entClient.Account.Create().
 		SetName("You should not see this account").
 		SetCurrency(usd).
+		SetFxRate(usdToCadRate).
 		SetUser(differentJoey).
 		SetHousehold(differentHousehold).
 		SetType(account.TypeLiquidity).
@@ -428,6 +439,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	chase := entClient.Account.Create().
 		SetName("Chase Total Checking").
 		SetCurrency(usd).
+		SetFxRate(usdToCadRate).
 		SetUser(joey).
 		SetHousehold(household).
 		SetType(account.TypeLiquidity).
@@ -436,6 +448,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 	wealthsimple := entClient.Account.Create().
 		SetName("Wealthsimple Visa Infinite").
 		SetUser(joey).
+		SetFxRate(decimal.NewFromInt(1)).
 		SetCurrency(cad).
 		SetHousehold(household).
 		SetType(account.TypeLiability).
@@ -443,6 +456,7 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 
 	webull := entClient.Account.Create().
 		SetHousehold(household).
+		SetFxRate(decimal.NewFromInt(1)).
 		SetName("Webull").
 		SetUser(joey).
 		SetCurrency(cad).
@@ -531,10 +545,16 @@ func seed(ctx context.Context, entClient *ent.Client) error {
 		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
 	}
 
+	xeqtQuote, err := marketClient.EquityQuote(ctx, "XEQT.TO")
+	if err != nil {
+		panic(err)
+	}
+
 	xeqt := entClient.Investment.Create().
 		SetHousehold(household).
 		SetSymbol("XEQT.TO").
 		SetName("XEQT").
+		SetQuote(xeqtQuote.CurrentPrice).
 		SetCurrency(cad).
 		SetType(investment.TypeStock).
 		SetAccount(webull).

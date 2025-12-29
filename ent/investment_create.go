@@ -93,6 +93,26 @@ func (_c *InvestmentCreate) SetNillableAmount(v *decimal.Decimal) *InvestmentCre
 	return _c
 }
 
+// SetQuote sets the "quote" field.
+func (_c *InvestmentCreate) SetQuote(v decimal.Decimal) *InvestmentCreate {
+	_c.mutation.SetQuote(v)
+	return _c
+}
+
+// SetValue sets the "value" field.
+func (_c *InvestmentCreate) SetValue(v decimal.Decimal) *InvestmentCreate {
+	_c.mutation.SetValue(v)
+	return _c
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (_c *InvestmentCreate) SetNillableValue(v *decimal.Decimal) *InvestmentCreate {
+	if v != nil {
+		_c.SetValue(*v)
+	}
+	return _c
+}
+
 // SetAccountID sets the "account" edge to the Account entity by ID.
 func (_c *InvestmentCreate) SetAccountID(id int) *InvestmentCreate {
 	_c.mutation.SetAccountID(id)
@@ -193,6 +213,13 @@ func (_c *InvestmentCreate) defaults() error {
 		v := investment.DefaultAmount()
 		_c.mutation.SetAmount(v)
 	}
+	if _, ok := _c.mutation.Value(); !ok {
+		if investment.DefaultValue == nil {
+			return fmt.Errorf("ent: uninitialized investment.DefaultValue (forgotten import ent/runtime?)")
+		}
+		v := investment.DefaultValue()
+		_c.mutation.SetValue(v)
+	}
 	return nil
 }
 
@@ -228,6 +255,12 @@ func (_c *InvestmentCreate) check() error {
 	}
 	if _, ok := _c.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Investment.amount"`)}
+	}
+	if _, ok := _c.mutation.Quote(); !ok {
+		return &ValidationError{Name: "quote", err: errors.New(`ent: missing required field "Investment.quote"`)}
+	}
+	if _, ok := _c.mutation.Value(); !ok {
+		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Investment.value"`)}
 	}
 	if len(_c.mutation.AccountIDs()) == 0 {
 		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "Investment.account"`)}
@@ -288,6 +321,14 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(investment.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
+	}
+	if value, ok := _c.mutation.Quote(); ok {
+		_spec.SetField(investment.FieldQuote, field.TypeFloat64, value)
+		_node.Quote = value
+	}
+	if value, ok := _c.mutation.Value(); ok {
+		_spec.SetField(investment.FieldValue, field.TypeFloat64, value)
+		_node.Value = value
 	}
 	if nodes := _c.mutation.AccountIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -474,6 +515,42 @@ func (u *InvestmentUpsert) AddAmount(v decimal.Decimal) *InvestmentUpsert {
 	return u
 }
 
+// SetQuote sets the "quote" field.
+func (u *InvestmentUpsert) SetQuote(v decimal.Decimal) *InvestmentUpsert {
+	u.Set(investment.FieldQuote, v)
+	return u
+}
+
+// UpdateQuote sets the "quote" field to the value that was provided on create.
+func (u *InvestmentUpsert) UpdateQuote() *InvestmentUpsert {
+	u.SetExcluded(investment.FieldQuote)
+	return u
+}
+
+// AddQuote adds v to the "quote" field.
+func (u *InvestmentUpsert) AddQuote(v decimal.Decimal) *InvestmentUpsert {
+	u.Add(investment.FieldQuote, v)
+	return u
+}
+
+// SetValue sets the "value" field.
+func (u *InvestmentUpsert) SetValue(v decimal.Decimal) *InvestmentUpsert {
+	u.Set(investment.FieldValue, v)
+	return u
+}
+
+// UpdateValue sets the "value" field to the value that was provided on create.
+func (u *InvestmentUpsert) UpdateValue() *InvestmentUpsert {
+	u.SetExcluded(investment.FieldValue)
+	return u
+}
+
+// AddValue adds v to the "value" field.
+func (u *InvestmentUpsert) AddValue(v decimal.Decimal) *InvestmentUpsert {
+	u.Add(investment.FieldValue, v)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -596,6 +673,48 @@ func (u *InvestmentUpsertOne) AddAmount(v decimal.Decimal) *InvestmentUpsertOne 
 func (u *InvestmentUpsertOne) UpdateAmount() *InvestmentUpsertOne {
 	return u.Update(func(s *InvestmentUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetQuote sets the "quote" field.
+func (u *InvestmentUpsertOne) SetQuote(v decimal.Decimal) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetQuote(v)
+	})
+}
+
+// AddQuote adds v to the "quote" field.
+func (u *InvestmentUpsertOne) AddQuote(v decimal.Decimal) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.AddQuote(v)
+	})
+}
+
+// UpdateQuote sets the "quote" field to the value that was provided on create.
+func (u *InvestmentUpsertOne) UpdateQuote() *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateQuote()
+	})
+}
+
+// SetValue sets the "value" field.
+func (u *InvestmentUpsertOne) SetValue(v decimal.Decimal) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetValue(v)
+	})
+}
+
+// AddValue adds v to the "value" field.
+func (u *InvestmentUpsertOne) AddValue(v decimal.Decimal) *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.AddValue(v)
+	})
+}
+
+// UpdateValue sets the "value" field to the value that was provided on create.
+func (u *InvestmentUpsertOne) UpdateValue() *InvestmentUpsertOne {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateValue()
 	})
 }
 
@@ -887,6 +1006,48 @@ func (u *InvestmentUpsertBulk) AddAmount(v decimal.Decimal) *InvestmentUpsertBul
 func (u *InvestmentUpsertBulk) UpdateAmount() *InvestmentUpsertBulk {
 	return u.Update(func(s *InvestmentUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetQuote sets the "quote" field.
+func (u *InvestmentUpsertBulk) SetQuote(v decimal.Decimal) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetQuote(v)
+	})
+}
+
+// AddQuote adds v to the "quote" field.
+func (u *InvestmentUpsertBulk) AddQuote(v decimal.Decimal) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.AddQuote(v)
+	})
+}
+
+// UpdateQuote sets the "quote" field to the value that was provided on create.
+func (u *InvestmentUpsertBulk) UpdateQuote() *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateQuote()
+	})
+}
+
+// SetValue sets the "value" field.
+func (u *InvestmentUpsertBulk) SetValue(v decimal.Decimal) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.SetValue(v)
+	})
+}
+
+// AddValue adds v to the "value" field.
+func (u *InvestmentUpsertBulk) AddValue(v decimal.Decimal) *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.AddValue(v)
+	})
+}
+
+// UpdateValue sets the "value" field to the value that was provided on create.
+func (u *InvestmentUpsertBulk) UpdateValue() *InvestmentUpsertBulk {
+	return u.Update(func(s *InvestmentUpsert) {
+		s.UpdateValue()
 	})
 }
 

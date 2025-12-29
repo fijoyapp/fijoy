@@ -42,6 +42,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			account.FieldName:        {Type: field.TypeString, Column: account.FieldName},
 			account.FieldType:        {Type: field.TypeEnum, Column: account.FieldType},
 			account.FieldBalance:     {Type: field.TypeFloat64, Column: account.FieldBalance},
+			account.FieldFxRate:      {Type: field.TypeFloat64, Column: account.FieldFxRate},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -93,6 +94,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			investment.FieldType:        {Type: field.TypeEnum, Column: investment.FieldType},
 			investment.FieldSymbol:      {Type: field.TypeString, Column: investment.FieldSymbol},
 			investment.FieldAmount:      {Type: field.TypeFloat64, Column: investment.FieldAmount},
+			investment.FieldQuote:       {Type: field.TypeFloat64, Column: investment.FieldQuote},
+			investment.FieldValue:       {Type: field.TypeFloat64, Column: investment.FieldValue},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -802,6 +805,11 @@ func (f *AccountFilter) WhereBalance(p entql.Float64P) {
 	f.Where(p.Field(account.FieldBalance))
 }
 
+// WhereFxRate applies the entql float64 predicate on the fx_rate field.
+func (f *AccountFilter) WhereFxRate(p entql.Float64P) {
+	f.Where(p.Field(account.FieldFxRate))
+}
+
 // WhereHasHousehold applies a predicate to check if query has an edge household.
 func (f *AccountFilter) WhereHasHousehold() {
 	f.Where(entql.HasEdge("household"))
@@ -1232,6 +1240,16 @@ func (f *InvestmentFilter) WhereSymbol(p entql.StringP) {
 // WhereAmount applies the entql float64 predicate on the amount field.
 func (f *InvestmentFilter) WhereAmount(p entql.Float64P) {
 	f.Where(p.Field(investment.FieldAmount))
+}
+
+// WhereQuote applies the entql float64 predicate on the quote field.
+func (f *InvestmentFilter) WhereQuote(p entql.Float64P) {
+	f.Where(p.Field(investment.FieldQuote))
+}
+
+// WhereValue applies the entql float64 predicate on the value field.
+func (f *InvestmentFilter) WhereValue(p entql.Float64P) {
+	f.Where(p.Field(investment.FieldValue))
 }
 
 // WhereHasAccount applies a predicate to check if query has an edge account.

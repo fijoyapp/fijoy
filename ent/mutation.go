@@ -60,6 +60,8 @@ type AccountMutation struct {
 	_type                      *account.Type
 	balance                    *decimal.Decimal
 	addbalance                 *decimal.Decimal
+	fx_rate                    *decimal.Decimal
+	addfx_rate                 *decimal.Decimal
 	clearedFields              map[string]struct{}
 	household                  *int
 	clearedhousehold           bool
@@ -412,6 +414,62 @@ func (m *AccountMutation) ResetBalance() {
 	m.addbalance = nil
 }
 
+// SetFxRate sets the "fx_rate" field.
+func (m *AccountMutation) SetFxRate(d decimal.Decimal) {
+	m.fx_rate = &d
+	m.addfx_rate = nil
+}
+
+// FxRate returns the value of the "fx_rate" field in the mutation.
+func (m *AccountMutation) FxRate() (r decimal.Decimal, exists bool) {
+	v := m.fx_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFxRate returns the old "fx_rate" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldFxRate(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFxRate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFxRate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFxRate: %w", err)
+	}
+	return oldValue.FxRate, nil
+}
+
+// AddFxRate adds d to the "fx_rate" field.
+func (m *AccountMutation) AddFxRate(d decimal.Decimal) {
+	if m.addfx_rate != nil {
+		*m.addfx_rate = m.addfx_rate.Add(d)
+	} else {
+		m.addfx_rate = &d
+	}
+}
+
+// AddedFxRate returns the value that was added to the "fx_rate" field in this mutation.
+func (m *AccountMutation) AddedFxRate() (r decimal.Decimal, exists bool) {
+	v := m.addfx_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFxRate resets all changes to the "fx_rate" field.
+func (m *AccountMutation) ResetFxRate() {
+	m.fx_rate = nil
+	m.addfx_rate = nil
+}
+
 // ClearHousehold clears the "household" edge to the Household entity.
 func (m *AccountMutation) ClearHousehold() {
 	m.clearedhousehold = true
@@ -659,7 +717,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.create_time != nil {
 		fields = append(fields, account.FieldCreateTime)
 	}
@@ -677,6 +735,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.balance != nil {
 		fields = append(fields, account.FieldBalance)
+	}
+	if m.fx_rate != nil {
+		fields = append(fields, account.FieldFxRate)
 	}
 	return fields
 }
@@ -698,6 +759,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case account.FieldBalance:
 		return m.Balance()
+	case account.FieldFxRate:
+		return m.FxRate()
 	}
 	return nil, false
 }
@@ -719,6 +782,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldType(ctx)
 	case account.FieldBalance:
 		return m.OldBalance(ctx)
+	case account.FieldFxRate:
+		return m.OldFxRate(ctx)
 	}
 	return nil, fmt.Errorf("unknown Account field %s", name)
 }
@@ -770,6 +835,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBalance(v)
 		return nil
+	case account.FieldFxRate:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFxRate(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Account field %s", name)
 }
@@ -781,6 +853,9 @@ func (m *AccountMutation) AddedFields() []string {
 	if m.addbalance != nil {
 		fields = append(fields, account.FieldBalance)
 	}
+	if m.addfx_rate != nil {
+		fields = append(fields, account.FieldFxRate)
+	}
 	return fields
 }
 
@@ -791,6 +866,8 @@ func (m *AccountMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case account.FieldBalance:
 		return m.AddedBalance()
+	case account.FieldFxRate:
+		return m.AddedFxRate()
 	}
 	return nil, false
 }
@@ -806,6 +883,13 @@ func (m *AccountMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBalance(v)
+		return nil
+	case account.FieldFxRate:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFxRate(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Account numeric field %s", name)
@@ -851,6 +935,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldBalance:
 		m.ResetBalance()
+		return nil
+	case account.FieldFxRate:
+		m.ResetFxRate()
 		return nil
 	}
 	return fmt.Errorf("unknown Account field %s", name)
@@ -2922,6 +3009,10 @@ type InvestmentMutation struct {
 	symbol           *string
 	amount           *decimal.Decimal
 	addamount        *decimal.Decimal
+	quote            *decimal.Decimal
+	addquote         *decimal.Decimal
+	value            *decimal.Decimal
+	addvalue         *decimal.Decimal
 	clearedFields    map[string]struct{}
 	account          *int
 	clearedaccount   bool
@@ -3307,6 +3398,118 @@ func (m *InvestmentMutation) ResetAmount() {
 	m.addamount = nil
 }
 
+// SetQuote sets the "quote" field.
+func (m *InvestmentMutation) SetQuote(d decimal.Decimal) {
+	m.quote = &d
+	m.addquote = nil
+}
+
+// Quote returns the value of the "quote" field in the mutation.
+func (m *InvestmentMutation) Quote() (r decimal.Decimal, exists bool) {
+	v := m.quote
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQuote returns the old "quote" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldQuote(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldQuote is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldQuote requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQuote: %w", err)
+	}
+	return oldValue.Quote, nil
+}
+
+// AddQuote adds d to the "quote" field.
+func (m *InvestmentMutation) AddQuote(d decimal.Decimal) {
+	if m.addquote != nil {
+		*m.addquote = m.addquote.Add(d)
+	} else {
+		m.addquote = &d
+	}
+}
+
+// AddedQuote returns the value that was added to the "quote" field in this mutation.
+func (m *InvestmentMutation) AddedQuote() (r decimal.Decimal, exists bool) {
+	v := m.addquote
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetQuote resets all changes to the "quote" field.
+func (m *InvestmentMutation) ResetQuote() {
+	m.quote = nil
+	m.addquote = nil
+}
+
+// SetValue sets the "value" field.
+func (m *InvestmentMutation) SetValue(d decimal.Decimal) {
+	m.value = &d
+	m.addvalue = nil
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *InvestmentMutation) Value() (r decimal.Decimal, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the Investment entity.
+// If the Investment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InvestmentMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// AddValue adds d to the "value" field.
+func (m *InvestmentMutation) AddValue(d decimal.Decimal) {
+	if m.addvalue != nil {
+		*m.addvalue = m.addvalue.Add(d)
+	} else {
+		m.addvalue = &d
+	}
+}
+
+// AddedValue returns the value that was added to the "value" field in this mutation.
+func (m *InvestmentMutation) AddedValue() (r decimal.Decimal, exists bool) {
+	v := m.addvalue
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *InvestmentMutation) ResetValue() {
+	m.value = nil
+	m.addvalue = nil
+}
+
 // SetAccountID sets the "account" edge to the Account entity by id.
 func (m *InvestmentMutation) SetAccountID(id int) {
 	m.account = &id
@@ -3500,7 +3703,7 @@ func (m *InvestmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *InvestmentMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.create_time != nil {
 		fields = append(fields, investment.FieldCreateTime)
 	}
@@ -3521,6 +3724,12 @@ func (m *InvestmentMutation) Fields() []string {
 	}
 	if m.amount != nil {
 		fields = append(fields, investment.FieldAmount)
+	}
+	if m.quote != nil {
+		fields = append(fields, investment.FieldQuote)
+	}
+	if m.value != nil {
+		fields = append(fields, investment.FieldValue)
 	}
 	return fields
 }
@@ -3544,6 +3753,10 @@ func (m *InvestmentMutation) Field(name string) (ent.Value, bool) {
 		return m.Symbol()
 	case investment.FieldAmount:
 		return m.Amount()
+	case investment.FieldQuote:
+		return m.Quote()
+	case investment.FieldValue:
+		return m.Value()
 	}
 	return nil, false
 }
@@ -3567,6 +3780,10 @@ func (m *InvestmentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldSymbol(ctx)
 	case investment.FieldAmount:
 		return m.OldAmount(ctx)
+	case investment.FieldQuote:
+		return m.OldQuote(ctx)
+	case investment.FieldValue:
+		return m.OldValue(ctx)
 	}
 	return nil, fmt.Errorf("unknown Investment field %s", name)
 }
@@ -3625,6 +3842,20 @@ func (m *InvestmentMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAmount(v)
 		return nil
+	case investment.FieldQuote:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQuote(v)
+		return nil
+	case investment.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Investment field %s", name)
 }
@@ -3636,6 +3867,12 @@ func (m *InvestmentMutation) AddedFields() []string {
 	if m.addamount != nil {
 		fields = append(fields, investment.FieldAmount)
 	}
+	if m.addquote != nil {
+		fields = append(fields, investment.FieldQuote)
+	}
+	if m.addvalue != nil {
+		fields = append(fields, investment.FieldValue)
+	}
 	return fields
 }
 
@@ -3646,6 +3883,10 @@ func (m *InvestmentMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case investment.FieldAmount:
 		return m.AddedAmount()
+	case investment.FieldQuote:
+		return m.AddedQuote()
+	case investment.FieldValue:
+		return m.AddedValue()
 	}
 	return nil, false
 }
@@ -3661,6 +3902,20 @@ func (m *InvestmentMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddAmount(v)
+		return nil
+	case investment.FieldQuote:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddQuote(v)
+		return nil
+	case investment.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddValue(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Investment numeric field %s", name)
@@ -3709,6 +3964,12 @@ func (m *InvestmentMutation) ResetField(name string) error {
 		return nil
 	case investment.FieldAmount:
 		m.ResetAmount()
+		return nil
+	case investment.FieldQuote:
+		m.ResetQuote()
+		return nil
+	case investment.FieldValue:
+		m.ResetValue()
 		return nil
 	}
 	return fmt.Errorf("unknown Investment field %s", name)
