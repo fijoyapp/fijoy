@@ -40,6 +40,7 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox'
 import { ACCOUNT_TYPE_DESCRIPTION, ACCOUNT_TYPE_LIST } from '@/constant'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const formSchema = z.object({
   name: z
@@ -160,13 +161,17 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                       />
                       <ComboboxContent>
                         <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
+                        <ComboboxList className="">
                           {(item) => (
-                            <ComboboxItem key={item} value={item}>
+                            <ComboboxItem
+                              key={item}
+                              value={item}
+                              className="flex flex-col items-start gap-0"
+                            >
                               <span className="font-semibold">
                                 {capitalize(item)}
                               </span>
-                              - {ACCOUNT_TYPE_DESCRIPTION[item]}
+                              <span>{ACCOUNT_TYPE_DESCRIPTION[item]}</span>
                             </ComboboxItem>
                           )}
                         </ComboboxList>
