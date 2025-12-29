@@ -79,8 +79,8 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 }
 
 // Investments is the resolver for the investments field.
-func (r *queryResolver) Investments(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) (*ent.InvestmentConnection, error) {
-	return r.entClient.Investment.Query().Paginate(ctx, after, first, before, last, ent.WithInvestmentFilter(where.Filter))
+func (r *queryResolver) Investments(ctx context.Context) ([]*ent.Investment, error) {
+	return r.entClient.Investment.Query().All(ctx)
 }
 
 // Lots is the resolver for the lots field.

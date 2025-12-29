@@ -72,7 +72,6 @@ func (Investment) Edges() []ent.Edge {
 
 func (Investment) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.RelayConnection(),
 		entgql.QueryField(),
 	}
 }

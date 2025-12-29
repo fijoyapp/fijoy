@@ -107,31 +107,21 @@ type ComplexityRoot struct {
 	}
 
 	Investment struct {
-		Account     func(childComplexity int) int
-		Amount      func(childComplexity int) int
-		CreateTime  func(childComplexity int) int
-		Currency    func(childComplexity int) int
-		Household   func(childComplexity int) int
-		HouseholdID func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Lots        func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Quote       func(childComplexity int) int
-		Symbol      func(childComplexity int) int
-		Type        func(childComplexity int) int
-		UpdateTime  func(childComplexity int) int
-		Value       func(childComplexity int) int
-	}
-
-	InvestmentConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	InvestmentEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
+		Account                  func(childComplexity int) int
+		Amount                   func(childComplexity int) int
+		CreateTime               func(childComplexity int) int
+		Currency                 func(childComplexity int) int
+		Household                func(childComplexity int) int
+		HouseholdID              func(childComplexity int) int
+		ID                       func(childComplexity int) int
+		Lots                     func(childComplexity int) int
+		Name                     func(childComplexity int) int
+		Quote                    func(childComplexity int) int
+		Symbol                   func(childComplexity int) int
+		Type                     func(childComplexity int) int
+		UpdateTime               func(childComplexity int) int
+		Value                    func(childComplexity int) int
+		ValueInHouseholdCurrency func(childComplexity int) int
 	}
 
 	Lot struct {
@@ -169,7 +159,7 @@ type ComplexityRoot struct {
 		Currencies            func(childComplexity int) int
 		FxRate                func(childComplexity int, from string, to string, datetime string) int
 		Households            func(childComplexity int) int
-		Investments           func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) int
+		Investments           func(childComplexity int) int
 		Lots                  func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) int
 		Node                  func(childComplexity int, id int) int
 		Nodes                 func(childComplexity int, ids []int) int
@@ -272,6 +262,8 @@ type InvestmentResolver interface {
 	Amount(ctx context.Context, obj *ent.Investment) (string, error)
 	Quote(ctx context.Context, obj *ent.Investment) (string, error)
 	Value(ctx context.Context, obj *ent.Investment) (string, error)
+
+	ValueInHouseholdCurrency(ctx context.Context, obj *ent.Investment) (string, error)
 }
 type LotResolver interface {
 	Amount(ctx context.Context, obj *ent.Lot) (string, error)
@@ -283,7 +275,7 @@ type QueryResolver interface {
 	Accounts(ctx context.Context) ([]*ent.Account, error)
 	Currencies(ctx context.Context) ([]*ent.Currency, error)
 	Households(ctx context.Context) ([]*ent.Household, error)
-	Investments(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) (*ent.InvestmentConnection, error)
+	Investments(ctx context.Context) ([]*ent.Investment, error)
 	Lots(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) (*ent.LotConnection, error)
 	Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error)
 	TransactionCategories(ctx context.Context) ([]*ent.TransactionCategory, error)
@@ -698,38 +690,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Investment.Value(childComplexity), true
-
-	case "InvestmentConnection.edges":
-		if e.complexity.InvestmentConnection.Edges == nil {
+	case "Investment.valueInHouseholdCurrency":
+		if e.complexity.Investment.ValueInHouseholdCurrency == nil {
 			break
 		}
 
-		return e.complexity.InvestmentConnection.Edges(childComplexity), true
-	case "InvestmentConnection.pageInfo":
-		if e.complexity.InvestmentConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.InvestmentConnection.PageInfo(childComplexity), true
-	case "InvestmentConnection.totalCount":
-		if e.complexity.InvestmentConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.InvestmentConnection.TotalCount(childComplexity), true
-
-	case "InvestmentEdge.cursor":
-		if e.complexity.InvestmentEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.InvestmentEdge.Cursor(childComplexity), true
-	case "InvestmentEdge.node":
-		if e.complexity.InvestmentEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.InvestmentEdge.Node(childComplexity), true
+		return e.complexity.Investment.ValueInHouseholdCurrency(childComplexity), true
 
 	case "Lot.amount":
 		if e.complexity.Lot.Amount == nil {
@@ -877,12 +843,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			break
 		}
 
-		args, err := ec.field_Query_investments_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Investments(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int), args["where"].(*ent.InvestmentWhereInput)), true
+		return e.complexity.Query.Investments(childComplexity), true
 	case "Query.lots":
 		if e.complexity.Query.Lots == nil {
 			break
@@ -1441,37 +1402,6 @@ func (ec *executionContext) field_Query_fxRate_args(ctx context.Context, rawArgs
 		return nil, err
 	}
 	args["datetime"] = arg2
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_investments_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "after", ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor)
-	if err != nil {
-		return nil, err
-	}
-	args["after"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "first", ec.unmarshalOInt2ᚖint)
-	if err != nil {
-		return nil, err
-	}
-	args["first"] = arg1
-	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "before", ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor)
-	if err != nil {
-		return nil, err
-	}
-	args["before"] = arg2
-	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "last", ec.unmarshalOInt2ᚖint)
-	if err != nil {
-		return nil, err
-	}
-	args["last"] = arg3
-	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "where", ec.unmarshalOInvestmentWhereInput2ᚖfijoyᚗappᚋentᚐInvestmentWhereInput)
-	if err != nil {
-		return nil, err
-	}
-	args["where"] = arg4
 	return args, nil
 }
 
@@ -2131,6 +2061,8 @@ func (ec *executionContext) fieldContext_Account_investments(_ context.Context, 
 				return ec.fieldContext_Investment_currency(ctx, field)
 			case "lots":
 				return ec.fieldContext_Investment_lots(ctx, field)
+			case "valueInHouseholdCurrency":
+				return ec.fieldContext_Investment_valueInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Investment", field.Name)
 		},
@@ -2369,6 +2301,8 @@ func (ec *executionContext) fieldContext_Currency_investments(_ context.Context,
 				return ec.fieldContext_Investment_currency(ctx, field)
 			case "lots":
 				return ec.fieldContext_Investment_lots(ctx, field)
+			case "valueInHouseholdCurrency":
+				return ec.fieldContext_Investment_valueInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Investment", field.Name)
 		},
@@ -2889,6 +2823,8 @@ func (ec *executionContext) fieldContext_Household_investments(_ context.Context
 				return ec.fieldContext_Investment_currency(ctx, field)
 			case "lots":
 				return ec.fieldContext_Investment_lots(ctx, field)
+			case "valueInHouseholdCurrency":
+				return ec.fieldContext_Investment_valueInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Investment", field.Name)
 		},
@@ -3592,192 +3528,30 @@ func (ec *executionContext) fieldContext_Investment_lots(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _InvestmentConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.InvestmentConnection) (ret graphql.Marshaler) {
+func (ec *executionContext) _Investment_valueInHouseholdCurrency(ctx context.Context, field graphql.CollectedField, obj *ent.Investment) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_InvestmentConnection_edges,
+		ec.fieldContext_Investment_valueInHouseholdCurrency,
 		func(ctx context.Context) (any, error) {
-			return obj.Edges, nil
+			return ec.resolvers.Investment().ValueInHouseholdCurrency(ctx, obj)
 		},
 		nil,
-		ec.marshalOInvestmentEdge2ᚕᚖfijoyᚗappᚋentᚐInvestmentEdge,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_InvestmentConnection_edges(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvestmentConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "node":
-				return ec.fieldContext_InvestmentEdge_node(ctx, field)
-			case "cursor":
-				return ec.fieldContext_InvestmentEdge_cursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type InvestmentEdge", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvestmentConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.InvestmentConnection) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_InvestmentConnection_pageInfo,
-		func(ctx context.Context) (any, error) {
-			return obj.PageInfo, nil
-		},
-		nil,
-		ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo,
+		ec.marshalNString2string,
 		true,
 		true,
 	)
 }
 
-func (ec *executionContext) fieldContext_InvestmentConnection_pageInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Investment_valueInHouseholdCurrency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "InvestmentConnection",
+		Object:     "Investment",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "hasNextPage":
-				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
-			case "hasPreviousPage":
-				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
-			case "startCursor":
-				return ec.fieldContext_PageInfo_startCursor(ctx, field)
-			case "endCursor":
-				return ec.fieldContext_PageInfo_endCursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvestmentConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.InvestmentConnection) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_InvestmentConnection_totalCount,
-		func(ctx context.Context) (any, error) {
-			return obj.TotalCount, nil
-		},
-		nil,
-		ec.marshalNInt2int,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_InvestmentConnection_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvestmentConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvestmentEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.InvestmentEdge) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_InvestmentEdge_node,
-		func(ctx context.Context) (any, error) {
-			return obj.Node, nil
-		},
-		nil,
-		ec.marshalOInvestment2ᚖfijoyᚗappᚋentᚐInvestment,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_InvestmentEdge_node(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvestmentEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Investment_id(ctx, field)
-			case "createTime":
-				return ec.fieldContext_Investment_createTime(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Investment_updateTime(ctx, field)
-			case "householdID":
-				return ec.fieldContext_Investment_householdID(ctx, field)
-			case "name":
-				return ec.fieldContext_Investment_name(ctx, field)
-			case "type":
-				return ec.fieldContext_Investment_type(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Investment_symbol(ctx, field)
-			case "amount":
-				return ec.fieldContext_Investment_amount(ctx, field)
-			case "quote":
-				return ec.fieldContext_Investment_quote(ctx, field)
-			case "value":
-				return ec.fieldContext_Investment_value(ctx, field)
-			case "account":
-				return ec.fieldContext_Investment_account(ctx, field)
-			case "household":
-				return ec.fieldContext_Investment_household(ctx, field)
-			case "currency":
-				return ec.fieldContext_Investment_currency(ctx, field)
-			case "lots":
-				return ec.fieldContext_Investment_lots(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Investment", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _InvestmentEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.InvestmentEdge) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_InvestmentEdge_cursor,
-		func(ctx context.Context) (any, error) {
-			return obj.Cursor, nil
-		},
-		nil,
-		ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_InvestmentEdge_cursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "InvestmentEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Cursor does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4097,6 +3871,8 @@ func (ec *executionContext) fieldContext_Lot_investment(_ context.Context, field
 				return ec.fieldContext_Investment_currency(ctx, field)
 			case "lots":
 				return ec.fieldContext_Investment_lots(ctx, field)
+			case "valueInHouseholdCurrency":
+				return ec.fieldContext_Investment_valueInHouseholdCurrency(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Investment", field.Name)
 		},
@@ -4655,17 +4431,16 @@ func (ec *executionContext) _Query_investments(ctx context.Context, field graphq
 		field,
 		ec.fieldContext_Query_investments,
 		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().Investments(ctx, fc.Args["after"].(*entgql.Cursor[int]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[int]), fc.Args["last"].(*int), fc.Args["where"].(*ent.InvestmentWhereInput))
+			return ec.resolvers.Query().Investments(ctx)
 		},
 		nil,
-		ec.marshalNInvestmentConnection2ᚖfijoyᚗappᚋentᚐInvestmentConnection,
+		ec.marshalNInvestment2ᚕᚖfijoyᚗappᚋentᚐInvestmentᚄ,
 		true,
 		true,
 	)
 }
 
-func (ec *executionContext) fieldContext_Query_investments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_investments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -4673,26 +4448,39 @@ func (ec *executionContext) fieldContext_Query_investments(ctx context.Context, 
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "edges":
-				return ec.fieldContext_InvestmentConnection_edges(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_InvestmentConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_InvestmentConnection_totalCount(ctx, field)
+			case "id":
+				return ec.fieldContext_Investment_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Investment_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Investment_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Investment_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_Investment_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Investment_type(ctx, field)
+			case "symbol":
+				return ec.fieldContext_Investment_symbol(ctx, field)
+			case "amount":
+				return ec.fieldContext_Investment_amount(ctx, field)
+			case "quote":
+				return ec.fieldContext_Investment_quote(ctx, field)
+			case "value":
+				return ec.fieldContext_Investment_value(ctx, field)
+			case "account":
+				return ec.fieldContext_Investment_account(ctx, field)
+			case "household":
+				return ec.fieldContext_Investment_household(ctx, field)
+			case "currency":
+				return ec.fieldContext_Investment_currency(ctx, field)
+			case "lots":
+				return ec.fieldContext_Investment_lots(ctx, field)
+			case "valueInHouseholdCurrency":
+				return ec.fieldContext_Investment_valueInHouseholdCurrency(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type InvestmentConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Investment", field.Name)
 		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_investments_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
 	}
 	return fc, nil
 }
@@ -14821,93 +14609,42 @@ func (ec *executionContext) _Investment(ctx context.Context, sel ast.SelectionSe
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
+		case "valueInHouseholdCurrency":
+			field := field
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var investmentConnectionImplementors = []string{"InvestmentConnection"}
-
-func (ec *executionContext) _InvestmentConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.InvestmentConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, investmentConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("InvestmentConnection")
-		case "edges":
-			out.Values[i] = ec._InvestmentConnection_edges(ctx, field, obj)
-		case "pageInfo":
-			out.Values[i] = ec._InvestmentConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Investment_valueInHouseholdCurrency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
-		case "totalCount":
-			out.Values[i] = ec._InvestmentConnection_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
 
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var investmentEdgeImplementors = []string{"InvestmentEdge"}
-
-func (ec *executionContext) _InvestmentEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.InvestmentEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, investmentEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("InvestmentEdge")
-		case "node":
-			out.Values[i] = ec._InvestmentEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._InvestmentEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -17317,6 +17054,50 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) marshalNInvestment2ᚕᚖfijoyᚗappᚋentᚐInvestmentᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Investment) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNInvestment2ᚖfijoyᚗappᚋentᚐInvestment(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNInvestment2ᚖfijoyᚗappᚋentᚐInvestment(ctx context.Context, sel ast.SelectionSet, v *ent.Investment) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -17325,20 +17106,6 @@ func (ec *executionContext) marshalNInvestment2ᚖfijoyᚗappᚋentᚐInvestment
 		return graphql.Null
 	}
 	return ec._Investment(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNInvestmentConnection2fijoyᚗappᚋentᚐInvestmentConnection(ctx context.Context, sel ast.SelectionSet, v ent.InvestmentConnection) graphql.Marshaler {
-	return ec._InvestmentConnection(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNInvestmentConnection2ᚖfijoyᚗappᚋentᚐInvestmentConnection(ctx context.Context, sel ast.SelectionSet, v *ent.InvestmentConnection) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._InvestmentConnection(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNInvestmentType2fijoyᚗappᚋentᚋinvestmentᚐType(ctx context.Context, v any) (investment.Type, error) {
@@ -18420,61 +18187,6 @@ func (ec *executionContext) marshalOInvestment2ᚕᚖfijoyᚗappᚋentᚐInvestm
 	}
 
 	return ret
-}
-
-func (ec *executionContext) marshalOInvestment2ᚖfijoyᚗappᚋentᚐInvestment(ctx context.Context, sel ast.SelectionSet, v *ent.Investment) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Investment(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOInvestmentEdge2ᚕᚖfijoyᚗappᚋentᚐInvestmentEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.InvestmentEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOInvestmentEdge2ᚖfijoyᚗappᚋentᚐInvestmentEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOInvestmentEdge2ᚖfijoyᚗappᚋentᚐInvestmentEdge(ctx context.Context, sel ast.SelectionSet, v *ent.InvestmentEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._InvestmentEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInvestmentType2ᚕfijoyᚗappᚋentᚋinvestmentᚐTypeᚄ(ctx context.Context, v any) ([]investment.Type, error) {

@@ -377,36 +377,6 @@ type Investment implements Node {
   lots: [Lot!]
 }
 """
-A connection to a list of items.
-"""
-type InvestmentConnection {
-  """
-  A list of edges.
-  """
-  edges: [InvestmentEdge]
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  """
-  Identifies the total count of items in the connection.
-  """
-  totalCount: Int!
-}
-"""
-An edge in a connection.
-"""
-type InvestmentEdge {
-  """
-  The item at the end of the edge.
-  """
-  node: Investment
-  """
-  A cursor for use in pagination.
-  """
-  cursor: Cursor!
-}
-"""
 InvestmentType is enum for the field type
 """
 enum InvestmentType @goModel(model: "fijoy.app/ent/investment.Type") {
@@ -754,32 +724,7 @@ type Query {
   accounts: [Account!]!
   currencies: [Currency!]!
   households: [Household!]!
-  investments(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-    """
-    Filtering options for Investments returned from the connection.
-    """
-    where: InvestmentWhereInput
-  ): InvestmentConnection!
+  investments: [Investment!]!
   lots(
     """
     Returns the elements in the list that come after the specified cursor.

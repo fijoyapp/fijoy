@@ -3,6 +3,10 @@ extend type Account {
   valueInHouseholdCurrency: String!
 }
 
+extend type Investment {
+  valueInHouseholdCurrency: String!
+}
+
 scalar DateTime
 
 extend type Query {

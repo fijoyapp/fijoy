@@ -22,6 +22,16 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 	return obj.Value.Mul(obj.FxRate).String(), nil
 }
 
+// ValueInHouseholdCurrency is the resolver for the valueInHouseholdCurrency field.
+func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent.Investment) (string, error) {
+	account, err := obj.Account(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return obj.Value.Mul(account.FxRate).String(), nil
+}
+
 // FxRate is the resolver for the fxRate field.
 func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime string) (string, error) {
 	datetimeParsed, err := time.Parse(time.RFC3339, datetime)
