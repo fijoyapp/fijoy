@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e080485e158d5375220885074d9442d5>>
+ * @generated SignedSource<<30b2a1d36474afb6a37ea58874299ebf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,15 @@ export type newAccountQuery = {
   variables: newAccountQuery$variables;
 };
 
-const node: ConcreteRequest = {
+const node: ConcreteRequest = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -44,32 +52,46 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
+        "concreteType": "Currency",
+        "kind": "LinkedField",
+        "name": "currencies",
+        "plural": true,
+        "selections": [
+          (v0/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "code",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
         "concreteType": "Account",
         "kind": "LinkedField",
         "name": "accounts",
         "plural": true,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
+          (v0/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "62b99106f9c95b7083ccb6b1908f796b",
+    "cacheID": "c26c3c67bfcee78df5fa962b848b5873",
     "id": null,
     "metadata": {},
     "name": "newAccountQuery",
     "operationKind": "query",
-    "text": "query newAccountQuery {\n  ...newAccountFragment\n}\n\nfragment newAccountFragment on Query {\n  accounts {\n    id\n  }\n}\n"
+    "text": "query newAccountQuery {\n  ...newAccountFragment\n}\n\nfragment newAccountFragment on Query {\n  currencies {\n    id\n    code\n  }\n  accounts {\n    id\n  }\n}\n"
   }
 };
+})();
 
 (node as any).hash = "61249ef108899fcc94a14af055f728e4";
 

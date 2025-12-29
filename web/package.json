@@ -19,6 +19,7 @@
     "@t3-oss/env-core": "^0.13.10",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "^0.7.11",
+    "@tanstack/react-form": "^1.27.7",
     "@tanstack/react-router": "^1.143.4",
     "@tanstack/react-router-devtools": "^1.143.4",
     "@tanstack/react-router-ssr-query": "^1.143.4",

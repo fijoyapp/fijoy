@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<092126b521ad7d4805419e9deb11a1b6>>
+ * @generated SignedSource<<732f0ee22c899787060b0c65e7c011ff>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,10 @@ export type newAccountFragment$data = {
   readonly accounts: ReadonlyArray<{
     readonly id: string;
   }>;
+  readonly currencies: ReadonlyArray<{
+    readonly code: string;
+    readonly id: string;
+  }>;
   readonly " $fragmentType": "newAccountFragment";
 };
 export type newAccountFragment$key = {
@@ -21,7 +25,15 @@ export type newAccountFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"newAccountFragment">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -30,18 +42,31 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
+      "concreteType": "Currency",
+      "kind": "LinkedField",
+      "name": "currencies",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "code",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "Account",
       "kind": "LinkedField",
       "name": "accounts",
       "plural": true,
       "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "id",
-          "storageKey": null
-        }
+        (v0/*: any*/)
       ],
       "storageKey": null
     }
@@ -49,7 +74,8 @@ const node: ReaderFragment = {
   "type": "Query",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "76027f6a362588b1c82f86949732bae4";
+(node as any).hash = "d9270e40d7d7d6711b1172f5bea7242c";
 
 export default node;

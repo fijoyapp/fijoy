@@ -32,6 +32,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { Button } from '@/components/ui/button'
 import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { ACCOUNT_TYPE_LIST } from '@/constant'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query {
@@ -53,14 +54,6 @@ const AccountsPanelFragment = graphql`
 type AccountsListPageProps = {
   fragmentRef: accountsPanelFragment$key
 }
-
-const categoryOrder: Array<AccountType> = [
-  'liquidity',
-  'investment',
-  'property',
-  'receivable',
-  'liability',
-]
 
 export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const data = useFragment(AccountsPanelFragment, fragmentRef)
@@ -114,12 +107,8 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         </div>
       </div>
       <div className="py-2"></div>
-      <Accordion
-        multiple
-        className="w-full"
-        defaultValue={Object.keys(groupedAccounts)}
-      >
-        {map(categoryOrder, (type) => {
+      <Accordion multiple className="w-full" defaultValue={ACCOUNT_TYPE_LIST}>
+        {map(ACCOUNT_TYPE_LIST, (type) => {
           if (type in groupedAccounts === false) {
             return null
           }

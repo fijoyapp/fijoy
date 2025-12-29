@@ -5,6 +5,7 @@ import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { environment } from '@/environment'
 import { type newAccountQuery } from './__generated__/newAccountQuery.graphql'
 import { PendingComponent } from '@/components/pending-component'
+import { Item } from '@/components/ui/item'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/accounts/new',
@@ -35,7 +36,9 @@ function RouteComponent() {
   return (
     <div className="flex h-full">
       <div className="flex-1">
-        <NewAccount fragmentRef={data} />
+        <Item className="p-0">
+          <NewAccount fragmentRef={data} />
+        </Item>
       </div>
     </div>
   )
