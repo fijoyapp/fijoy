@@ -1,11 +1,13 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { ThemeProvider } from '@/components/theme-provider'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
 import './styles.css'
+import { LOCAL_STORAGE_THEME } from './constant'
 
 // Create a new router instance
 const router = createRouter({
@@ -30,7 +32,9 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <ThemeProvider defaultTheme="dark" storageKey={LOCAL_STORAGE_THEME}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </StrictMode>,
   )
 }

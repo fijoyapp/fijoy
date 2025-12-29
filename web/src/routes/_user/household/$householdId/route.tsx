@@ -1,6 +1,13 @@
+import { Moon, Sun } from 'lucide-react'
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { AppSidebar } from '@/components/app-sidebar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,6 +26,7 @@ import { Button } from '@/components/ui/button'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
 import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
+import { useTheme } from '@/components/theme-provider'
 
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
@@ -30,6 +38,7 @@ export const Route = createFileRoute('/_user/household/$householdId')({
 function RouteComponent() {
   const { householdId } = Route.useParams()
   const { isPrivacyModeEnabled, togglePrivacyMode } = usePrivacyMode()
+  const { setTheme } = useTheme()
 
   return (
     <HouseholdProvider householdId={householdId}>
@@ -55,6 +64,26 @@ function RouteComponent() {
               </Breadcrumb>
             </div>
             <div className="grow"></div>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button variant="outline">
+                  <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+                  <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                  <span className="sr-only">Toggle theme</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setTheme('light')}>
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('system')}>
+                  System
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="outline" onClick={togglePrivacyMode}>
               {isPrivacyModeEnabled ? <EyeIcon /> : <EyeOffIcon />}
             </Button>
