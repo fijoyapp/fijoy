@@ -8,6 +8,7 @@ import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { Fragment } from 'react/jsx-runtime'
 import { InvestmentsPanel } from './-components/investments-panel'
 import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments',
@@ -44,13 +45,16 @@ function RouteComponent() {
     <Fragment>
       {duelPaneDisplay ? (
         <div className="flex h-[calc(100vh-48px)]">
-          <div className="flex-1 overflow-y-auto p-4">
+          <ScrollArea className="flex-1 overflow-y-auto p-4">
             <InvestmentsPanel fragmentRef={data} />
-          </div>
+          </ScrollArea>
           <Separator orientation="vertical" className="w-px" />
-          <div className="flex-1 overflow-y-auto p-4" key={location.pathname}>
+          <ScrollArea
+            className="flex-1 overflow-y-auto p-4"
+            key={location.pathname}
+          >
             <Outlet />
-          </div>
+          </ScrollArea>
         </div>
       ) : (
         <div className="flex-1 p-4">
