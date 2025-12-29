@@ -13,10 +13,10 @@ export const Route = createFileRoute(
   '/_user/household/$householdId/investments',
 )({
   component: RouteComponent,
-  loader: () => {
+  beforeLoad: () => {
     return loadQuery<routeInvestmentsQuery>(
       environment,
-      routeInvestmentsQuery,
+      routeInvestments,
       {},
       { fetchPolicy: 'store-or-network' },
     )
@@ -24,17 +24,17 @@ export const Route = createFileRoute(
   pendingComponent: PendingComponent,
 })
 
-const routeInvestmentsQuery = graphql`
+export const routeInvestments = graphql`
   query routeInvestmentsQuery {
     ...investmentsPanelFragment
   }
 `
 
 function RouteComponent() {
-  const queryRef = Route.useLoaderData()
+  const queryRef = Route.useRouteContext()
 
   const data = usePreloadedQuery<routeInvestmentsQuery>(
-    routeInvestmentsQuery,
+    routeInvestments,
     queryRef,
   )
 

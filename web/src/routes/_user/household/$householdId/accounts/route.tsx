@@ -4,7 +4,7 @@ import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { graphql } from 'relay-runtime'
 import { Fragment } from 'react/jsx-runtime'
 import { AccountsPanel } from './-components/accounts-panel'
-import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
+import { type routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
 import { Separator } from '@/components/ui/separator'
 import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
@@ -12,32 +12,27 @@ import { PendingComponent } from '@/components/pending-component'
 
 export const Route = createFileRoute('/_user/household/$householdId/accounts')({
   component: RouteComponent,
-
-  loader: () => {
+  beforeLoad: () => {
     return loadQuery<routeAccountsQuery>(
       environment,
-      routeAccountsQuery,
+      routeAccounts,
       {},
       { fetchPolicy: 'store-or-network' },
     )
   },
-
   pendingComponent: PendingComponent,
 })
 
-const routeAccountsQuery = graphql`
+export const routeAccounts = graphql`
   query routeAccountsQuery {
     ...accountsPanelFragment
   }
 `
 
 function RouteComponent() {
-  const queryRef = Route.useLoaderData()
+  const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<routeAccountsQuery>(
-    routeAccountsQuery,
-    queryRef,
-  )
+  const data = usePreloadedQuery<routeAccountsQuery>(routeAccounts, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
 

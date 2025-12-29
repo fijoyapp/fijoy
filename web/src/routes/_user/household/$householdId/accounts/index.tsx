@@ -1,39 +1,22 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
+import { usePreloadedQuery } from 'react-relay'
 import { AccountsPanel } from './-components/accounts-panel'
-import type { accountsQuery } from './__generated__/accountsQuery.graphql'
-import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { PendingComponent } from '@/components/pending-component'
+import { routeAccounts } from './route'
+import { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
 
 export const Route = createFileRoute('/_user/household/$householdId/accounts/')(
   {
     component: RouteComponent,
-
-    loader: () => {
-      return loadQuery<accountsQuery>(
-        environment,
-        accountsQuery,
-        {},
-        { fetchPolicy: 'store-or-network' },
-      )
-    },
-
     pendingComponent: PendingComponent,
   },
 )
 
-const accountsQuery = graphql`
-  query accountsQuery {
-    ...accountsPanelFragment
-  }
-`
-
 function RouteComponent() {
-  const queryRef = Route.useLoaderData()
+  const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<accountsQuery>(accountsQuery, queryRef)
+  const data = usePreloadedQuery<routeAccountsQuery>(routeAccounts, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
 

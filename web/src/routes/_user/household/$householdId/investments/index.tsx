@@ -1,37 +1,25 @@
 import { PendingComponent } from '@/components/pending-component'
-import { environment } from '@/environment'
 import { createFileRoute } from '@tanstack/react-router'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
-import { type investmentsQuery } from './__generated__/investmentsQuery.graphql'
+import { usePreloadedQuery } from 'react-relay'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { InvestmentsPanel } from './-components/investments-panel'
+import { routeInvestments } from './route'
+import { routeInvestmentsQuery } from './__generated__/routeInvestmentsQuery.graphql'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments/',
 )({
   component: RouteComponent,
-  loader: () => {
-    return loadQuery<investmentsQuery>(
-      environment,
-      investmentsQuery,
-      {},
-      { fetchPolicy: 'store-or-network' },
-    )
-  },
   pendingComponent: PendingComponent,
 })
 
-const investmentsQuery = graphql`
-  query investmentsQuery {
-    ...investmentsPanelFragment
-  }
-`
-
 function RouteComponent() {
-  const queryRef = Route.useLoaderData()
+  const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<investmentsQuery>(investmentsQuery, queryRef)
+  const data = usePreloadedQuery<routeInvestmentsQuery>(
+    routeInvestments,
+    queryRef,
+  )
 
   const duelPaneDisplay = useDualPaneDisplay()
 
