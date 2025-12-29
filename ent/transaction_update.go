@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactioncategory"
@@ -109,6 +110,21 @@ func (_u *TransactionUpdate) AddTransactionEntries(v ...*TransactionEntry) *Tran
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
+func (_u *TransactionUpdate) AddLotIDs(ids ...int) *TransactionUpdate {
+	_u.mutation.AddLotIDs(ids...)
+	return _u
+}
+
+// AddLots adds the "lots" edges to the Lot entity.
+func (_u *TransactionUpdate) AddLots(v ...*Lot) *TransactionUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLotIDs(ids...)
+}
+
 // Mutation returns the TransactionMutation object of the builder.
 func (_u *TransactionUpdate) Mutation() *TransactionMutation {
 	return _u.mutation
@@ -145,6 +161,27 @@ func (_u *TransactionUpdate) RemoveTransactionEntries(v ...*TransactionEntry) *T
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearLots clears all "lots" edges to the Lot entity.
+func (_u *TransactionUpdate) ClearLots() *TransactionUpdate {
+	_u.mutation.ClearLots()
+	return _u
+}
+
+// RemoveLotIDs removes the "lots" edge to Lot entities by IDs.
+func (_u *TransactionUpdate) RemoveLotIDs(ids ...int) *TransactionUpdate {
+	_u.mutation.RemoveLotIDs(ids...)
+	return _u
+}
+
+// RemoveLots removes "lots" edges to Lot entities.
+func (_u *TransactionUpdate) RemoveLots(v ...*Lot) *TransactionUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLotIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -336,6 +373,51 @@ func (_u *TransactionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.LotsTable,
+			Columns: []string{transaction.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLotsIDs(); len(nodes) > 0 && !_u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.LotsTable,
+			Columns: []string{transaction.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.LotsTable,
+			Columns: []string{transaction.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -435,6 +517,21 @@ func (_u *TransactionUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *T
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
+func (_u *TransactionUpdateOne) AddLotIDs(ids ...int) *TransactionUpdateOne {
+	_u.mutation.AddLotIDs(ids...)
+	return _u
+}
+
+// AddLots adds the "lots" edges to the Lot entity.
+func (_u *TransactionUpdateOne) AddLots(v ...*Lot) *TransactionUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLotIDs(ids...)
+}
+
 // Mutation returns the TransactionMutation object of the builder.
 func (_u *TransactionUpdateOne) Mutation() *TransactionMutation {
 	return _u.mutation
@@ -471,6 +568,27 @@ func (_u *TransactionUpdateOne) RemoveTransactionEntries(v ...*TransactionEntry)
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearLots clears all "lots" edges to the Lot entity.
+func (_u *TransactionUpdateOne) ClearLots() *TransactionUpdateOne {
+	_u.mutation.ClearLots()
+	return _u
+}
+
+// RemoveLotIDs removes the "lots" edge to Lot entities by IDs.
+func (_u *TransactionUpdateOne) RemoveLotIDs(ids ...int) *TransactionUpdateOne {
+	_u.mutation.RemoveLotIDs(ids...)
+	return _u
+}
+
+// RemoveLots removes "lots" edges to Lot entities.
+func (_u *TransactionUpdateOne) RemoveLots(v ...*Lot) *TransactionUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLotIDs(ids...)
 }
 
 // Where appends a list predicates to the TransactionUpdate builder.
@@ -685,6 +803,51 @@ func (_u *TransactionUpdateOne) sqlSave(ctx context.Context) (_node *Transaction
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.LotsTable,
+			Columns: []string{transaction.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLotsIDs(); len(nodes) > 0 && !_u.mutation.LotsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.LotsTable,
+			Columns: []string{transaction.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.LotsTable,
+			Columns: []string{transaction.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

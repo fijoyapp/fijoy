@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/ent/transactionentry"
@@ -120,6 +121,21 @@ func (_c *TransactionCreate) AddTransactionEntries(v ...*TransactionEntry) *Tran
 		ids[i] = v[i].ID
 	}
 	return _c.AddTransactionEntryIDs(ids...)
+}
+
+// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
+func (_c *TransactionCreate) AddLotIDs(ids ...int) *TransactionCreate {
+	_c.mutation.AddLotIDs(ids...)
+	return _c
+}
+
+// AddLots adds the "lots" edges to the Lot entity.
+func (_c *TransactionCreate) AddLots(v ...*Lot) *TransactionCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddLotIDs(ids...)
 }
 
 // Mutation returns the TransactionMutation object of the builder.
@@ -302,6 +318,22 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.LotsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   transaction.LotsTable,
+			Columns: []string{transaction.LotsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

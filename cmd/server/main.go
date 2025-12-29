@@ -500,6 +500,12 @@ func seed(
 		SetType(transactioncategory.TypeExpense).
 		SaveX(ctx)
 
+	investmentCategory := entClient.TransactionCategory.Create().
+		SetName("Investment").
+		SetHousehold(household).
+		SetType(transactioncategory.TypeTransfer).
+		SaveX(ctx)
+
 	salary := entClient.TransactionCategory.Create().
 		SetName("Salary").
 		SetHousehold(household).
@@ -585,21 +591,36 @@ func seed(
 		SetAccount(webull).
 		SaveX(ctx)
 
-	entClient.Lot.Create().
-		SetInvestment(xeqt).
-		SetHousehold(household).
-		SetDatetime(time.Now().AddDate(0, -6, 0).UTC()).
-		SetAmount(decimal.NewFromInt(100)).
-		SetPrice(decimal.NewFromFloat(25.50)).
-		SaveX(ctx)
+	{
+		transaction := entClient.Transaction.Create().
+			SetUser(joey).
+			SetHousehold(household).
+			SetCategory(investmentCategory).
+			SetDatetime(genRandomDatetime()).SaveX(ctx)
 
-	entClient.Lot.Create().
-		SetInvestment(xeqt).
-		SetHousehold(household).
-		SetDatetime(time.Now().AddDate(0, -3, 0).UTC()).
-		SetAmount(decimal.NewFromInt(50)).
-		SetPrice(decimal.NewFromFloat(27.75)).
-		SaveX(ctx)
+		entClient.Lot.Create().
+			SetInvestment(xeqt).
+			SetTransaction(transaction).
+			SetHousehold(household).
+			SetAmount(decimal.NewFromInt(100)).
+			SetPrice(decimal.NewFromFloat(25.50)).
+			SaveX(ctx)
+	}
+
+	{
+		transaction := entClient.Transaction.Create().
+			SetUser(joey).
+			SetHousehold(household).
+			SetCategory(investmentCategory).
+			SetDatetime(genRandomDatetime()).SaveX(ctx)
+		entClient.Lot.Create().
+			SetInvestment(xeqt).
+			SetTransaction(transaction).
+			SetHousehold(household).
+			SetAmount(decimal.NewFromInt(50)).
+			SetPrice(decimal.NewFromFloat(27.75)).
+			SaveX(ctx)
+	}
 
 	return nil
 }

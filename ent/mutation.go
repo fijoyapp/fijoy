@@ -4279,24 +4279,25 @@ func (m *InvestmentMutation) ResetEdge(name string) error {
 // LotMutation represents an operation that mutates the Lot nodes in the graph.
 type LotMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *int
-	create_time       *time.Time
-	update_time       *time.Time
-	datetime          *time.Time
-	amount            *decimal.Decimal
-	addamount         *decimal.Decimal
-	price             *decimal.Decimal
-	addprice          *decimal.Decimal
-	clearedFields     map[string]struct{}
-	household         *int
-	clearedhousehold  bool
-	investment        *int
-	clearedinvestment bool
-	done              bool
-	oldValue          func(context.Context) (*Lot, error)
-	predicates        []predicate.Lot
+	op                 Op
+	typ                string
+	id                 *int
+	create_time        *time.Time
+	update_time        *time.Time
+	amount             *decimal.Decimal
+	addamount          *decimal.Decimal
+	price              *decimal.Decimal
+	addprice           *decimal.Decimal
+	clearedFields      map[string]struct{}
+	household          *int
+	clearedhousehold   bool
+	investment         *int
+	clearedinvestment  bool
+	transaction        *int
+	clearedtransaction bool
+	done               bool
+	oldValue           func(context.Context) (*Lot, error)
+	predicates         []predicate.Lot
 }
 
 var _ ent.Mutation = (*LotMutation)(nil)
@@ -4505,42 +4506,6 @@ func (m *LotMutation) ResetHouseholdID() {
 	m.household = nil
 }
 
-// SetDatetime sets the "datetime" field.
-func (m *LotMutation) SetDatetime(t time.Time) {
-	m.datetime = &t
-}
-
-// Datetime returns the value of the "datetime" field in the mutation.
-func (m *LotMutation) Datetime() (r time.Time, exists bool) {
-	v := m.datetime
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDatetime returns the old "datetime" field's value of the Lot entity.
-// If the Lot object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *LotMutation) OldDatetime(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDatetime is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDatetime requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDatetime: %w", err)
-	}
-	return oldValue.Datetime, nil
-}
-
-// ResetDatetime resets all changes to the "datetime" field.
-func (m *LotMutation) ResetDatetime() {
-	m.datetime = nil
-}
-
 // SetAmount sets the "amount" field.
 func (m *LotMutation) SetAmount(d decimal.Decimal) {
 	m.amount = &d
@@ -4719,6 +4684,45 @@ func (m *LotMutation) ResetInvestment() {
 	m.clearedinvestment = false
 }
 
+// SetTransactionID sets the "transaction" edge to the Transaction entity by id.
+func (m *LotMutation) SetTransactionID(id int) {
+	m.transaction = &id
+}
+
+// ClearTransaction clears the "transaction" edge to the Transaction entity.
+func (m *LotMutation) ClearTransaction() {
+	m.clearedtransaction = true
+}
+
+// TransactionCleared reports if the "transaction" edge to the Transaction entity was cleared.
+func (m *LotMutation) TransactionCleared() bool {
+	return m.clearedtransaction
+}
+
+// TransactionID returns the "transaction" edge ID in the mutation.
+func (m *LotMutation) TransactionID() (id int, exists bool) {
+	if m.transaction != nil {
+		return *m.transaction, true
+	}
+	return
+}
+
+// TransactionIDs returns the "transaction" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TransactionID instead. It exists only for internal usage by the builders.
+func (m *LotMutation) TransactionIDs() (ids []int) {
+	if id := m.transaction; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTransaction resets all changes to the "transaction" edge.
+func (m *LotMutation) ResetTransaction() {
+	m.transaction = nil
+	m.clearedtransaction = false
+}
+
 // Where appends a list predicates to the LotMutation builder.
 func (m *LotMutation) Where(ps ...predicate.Lot) {
 	m.predicates = append(m.predicates, ps...)
@@ -4753,7 +4757,7 @@ func (m *LotMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *LotMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 5)
 	if m.create_time != nil {
 		fields = append(fields, lot.FieldCreateTime)
 	}
@@ -4762,9 +4766,6 @@ func (m *LotMutation) Fields() []string {
 	}
 	if m.household != nil {
 		fields = append(fields, lot.FieldHouseholdID)
-	}
-	if m.datetime != nil {
-		fields = append(fields, lot.FieldDatetime)
 	}
 	if m.amount != nil {
 		fields = append(fields, lot.FieldAmount)
@@ -4786,8 +4787,6 @@ func (m *LotMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdateTime()
 	case lot.FieldHouseholdID:
 		return m.HouseholdID()
-	case lot.FieldDatetime:
-		return m.Datetime()
 	case lot.FieldAmount:
 		return m.Amount()
 	case lot.FieldPrice:
@@ -4807,8 +4806,6 @@ func (m *LotMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldUpdateTime(ctx)
 	case lot.FieldHouseholdID:
 		return m.OldHouseholdID(ctx)
-	case lot.FieldDatetime:
-		return m.OldDatetime(ctx)
 	case lot.FieldAmount:
 		return m.OldAmount(ctx)
 	case lot.FieldPrice:
@@ -4842,13 +4839,6 @@ func (m *LotMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetHouseholdID(v)
-		return nil
-	case lot.FieldDatetime:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDatetime(v)
 		return nil
 	case lot.FieldAmount:
 		v, ok := value.(decimal.Decimal)
@@ -4949,9 +4939,6 @@ func (m *LotMutation) ResetField(name string) error {
 	case lot.FieldHouseholdID:
 		m.ResetHouseholdID()
 		return nil
-	case lot.FieldDatetime:
-		m.ResetDatetime()
-		return nil
 	case lot.FieldAmount:
 		m.ResetAmount()
 		return nil
@@ -4964,12 +4951,15 @@ func (m *LotMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *LotMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.household != nil {
 		edges = append(edges, lot.EdgeHousehold)
 	}
 	if m.investment != nil {
 		edges = append(edges, lot.EdgeInvestment)
+	}
+	if m.transaction != nil {
+		edges = append(edges, lot.EdgeTransaction)
 	}
 	return edges
 }
@@ -4986,13 +4976,17 @@ func (m *LotMutation) AddedIDs(name string) []ent.Value {
 		if id := m.investment; id != nil {
 			return []ent.Value{*id}
 		}
+	case lot.EdgeTransaction:
+		if id := m.transaction; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *LotMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	return edges
 }
 
@@ -5004,12 +4998,15 @@ func (m *LotMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *LotMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedhousehold {
 		edges = append(edges, lot.EdgeHousehold)
 	}
 	if m.clearedinvestment {
 		edges = append(edges, lot.EdgeInvestment)
+	}
+	if m.clearedtransaction {
+		edges = append(edges, lot.EdgeTransaction)
 	}
 	return edges
 }
@@ -5022,6 +5019,8 @@ func (m *LotMutation) EdgeCleared(name string) bool {
 		return m.clearedhousehold
 	case lot.EdgeInvestment:
 		return m.clearedinvestment
+	case lot.EdgeTransaction:
+		return m.clearedtransaction
 	}
 	return false
 }
@@ -5036,6 +5035,9 @@ func (m *LotMutation) ClearEdge(name string) error {
 	case lot.EdgeInvestment:
 		m.ClearInvestment()
 		return nil
+	case lot.EdgeTransaction:
+		m.ClearTransaction()
+		return nil
 	}
 	return fmt.Errorf("unknown Lot unique edge %s", name)
 }
@@ -5049,6 +5051,9 @@ func (m *LotMutation) ResetEdge(name string) error {
 		return nil
 	case lot.EdgeInvestment:
 		m.ResetInvestment()
+		return nil
+	case lot.EdgeTransaction:
+		m.ResetTransaction()
 		return nil
 	}
 	return fmt.Errorf("unknown Lot edge %s", name)
@@ -5074,6 +5079,9 @@ type TransactionMutation struct {
 	transaction_entries        map[int]struct{}
 	removedtransaction_entries map[int]struct{}
 	clearedtransaction_entries bool
+	lots                       map[int]struct{}
+	removedlots                map[int]struct{}
+	clearedlots                bool
 	done                       bool
 	oldValue                   func(context.Context) (*Transaction, error)
 	predicates                 []predicate.Transaction
@@ -5529,6 +5537,60 @@ func (m *TransactionMutation) ResetTransactionEntries() {
 	m.removedtransaction_entries = nil
 }
 
+// AddLotIDs adds the "lots" edge to the Lot entity by ids.
+func (m *TransactionMutation) AddLotIDs(ids ...int) {
+	if m.lots == nil {
+		m.lots = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.lots[ids[i]] = struct{}{}
+	}
+}
+
+// ClearLots clears the "lots" edge to the Lot entity.
+func (m *TransactionMutation) ClearLots() {
+	m.clearedlots = true
+}
+
+// LotsCleared reports if the "lots" edge to the Lot entity was cleared.
+func (m *TransactionMutation) LotsCleared() bool {
+	return m.clearedlots
+}
+
+// RemoveLotIDs removes the "lots" edge to the Lot entity by IDs.
+func (m *TransactionMutation) RemoveLotIDs(ids ...int) {
+	if m.removedlots == nil {
+		m.removedlots = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.lots, ids[i])
+		m.removedlots[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedLots returns the removed IDs of the "lots" edge to the Lot entity.
+func (m *TransactionMutation) RemovedLotsIDs() (ids []int) {
+	for id := range m.removedlots {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// LotsIDs returns the "lots" edge IDs in the mutation.
+func (m *TransactionMutation) LotsIDs() (ids []int) {
+	for id := range m.lots {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetLots resets all changes to the "lots" edge.
+func (m *TransactionMutation) ResetLots() {
+	m.lots = nil
+	m.clearedlots = false
+	m.removedlots = nil
+}
+
 // Where appends a list predicates to the TransactionMutation builder.
 func (m *TransactionMutation) Where(ps ...predicate.Transaction) {
 	m.predicates = append(m.predicates, ps...)
@@ -5742,7 +5804,7 @@ func (m *TransactionMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *TransactionMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.user != nil {
 		edges = append(edges, transaction.EdgeUser)
 	}
@@ -5754,6 +5816,9 @@ func (m *TransactionMutation) AddedEdges() []string {
 	}
 	if m.transaction_entries != nil {
 		edges = append(edges, transaction.EdgeTransactionEntries)
+	}
+	if m.lots != nil {
+		edges = append(edges, transaction.EdgeLots)
 	}
 	return edges
 }
@@ -5780,15 +5845,24 @@ func (m *TransactionMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case transaction.EdgeLots:
+		ids := make([]ent.Value, 0, len(m.lots))
+		for id := range m.lots {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *TransactionMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedtransaction_entries != nil {
 		edges = append(edges, transaction.EdgeTransactionEntries)
+	}
+	if m.removedlots != nil {
+		edges = append(edges, transaction.EdgeLots)
 	}
 	return edges
 }
@@ -5803,13 +5877,19 @@ func (m *TransactionMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case transaction.EdgeLots:
+		ids := make([]ent.Value, 0, len(m.removedlots))
+		for id := range m.removedlots {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *TransactionMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.cleareduser {
 		edges = append(edges, transaction.EdgeUser)
 	}
@@ -5821,6 +5901,9 @@ func (m *TransactionMutation) ClearedEdges() []string {
 	}
 	if m.clearedtransaction_entries {
 		edges = append(edges, transaction.EdgeTransactionEntries)
+	}
+	if m.clearedlots {
+		edges = append(edges, transaction.EdgeLots)
 	}
 	return edges
 }
@@ -5837,6 +5920,8 @@ func (m *TransactionMutation) EdgeCleared(name string) bool {
 		return m.clearedcategory
 	case transaction.EdgeTransactionEntries:
 		return m.clearedtransaction_entries
+	case transaction.EdgeLots:
+		return m.clearedlots
 	}
 	return false
 }
@@ -5873,6 +5958,9 @@ func (m *TransactionMutation) ResetEdge(name string) error {
 		return nil
 	case transaction.EdgeTransactionEntries:
 		m.ResetTransactionEntries()
+		return nil
+	case transaction.EdgeLots:
+		m.ResetLots()
 		return nil
 	}
 	return fmt.Errorf("unknown Transaction edge %s", name)

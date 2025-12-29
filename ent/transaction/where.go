@@ -387,6 +387,29 @@ func HasTransactionEntriesWith(preds ...predicate.TransactionEntry) predicate.Tr
 	})
 }
 
+// HasLots applies the HasEdge predicate on the "lots" edge.
+func HasLots() predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, LotsTable, LotsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLotsWith applies the HasEdge predicate on the "lots" edge with a given conditions (other predicates).
+func HasLotsWith(preds ...predicate.Lot) predicate.Transaction {
+	return predicate.Transaction(func(s *sql.Selector) {
+		step := newLotsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Transaction) predicate.Transaction {
 	return predicate.Transaction(sql.AndPredicates(predicates...))

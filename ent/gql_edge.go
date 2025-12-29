@@ -260,6 +260,14 @@ func (_m *Lot) Investment(ctx context.Context) (*Investment, error) {
 	return result, err
 }
 
+func (_m *Lot) Transaction(ctx context.Context) (*Transaction, error) {
+	result, err := _m.Edges.TransactionOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryTransaction().Only(ctx)
+	}
+	return result, err
+}
+
 func (_m *Transaction) User(ctx context.Context) (*User, error) {
 	result, err := _m.Edges.UserOrErr()
 	if IsNotLoaded(err) {
@@ -292,6 +300,18 @@ func (_m *Transaction) TransactionEntries(ctx context.Context) (result []*Transa
 	}
 	if IsNotLoaded(err) {
 		result, err = _m.QueryTransactionEntries().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Transaction) Lots(ctx context.Context) (result []*Lot, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedLots(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.LotsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryLots().All(ctx)
 	}
 	return result, err
 }

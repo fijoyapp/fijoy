@@ -1314,6 +1314,22 @@ func (c *LotClient) QueryInvestment(_m *Lot) *InvestmentQuery {
 	return query
 }
 
+// QueryTransaction queries the transaction edge of a Lot.
+func (c *LotClient) QueryTransaction(_m *Lot) *TransactionQuery {
+	query := (&TransactionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lot.Table, lot.FieldID, id),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lot.TransactionTable, lot.TransactionColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *LotClient) Hooks() []Hook {
 	hooks := c.hooks.Lot
@@ -1505,6 +1521,22 @@ func (c *TransactionClient) QueryTransactionEntries(_m *Transaction) *Transactio
 			sqlgraph.From(transaction.Table, transaction.FieldID, id),
 			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, transaction.TransactionEntriesTable, transaction.TransactionEntriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLots queries the lots edge of a Transaction.
+func (c *TransactionClient) QueryLots(_m *Transaction) *LotQuery {
+	query := (&LotClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transaction.Table, transaction.FieldID, id),
+			sqlgraph.To(lot.Table, lot.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, transaction.LotsTable, transaction.LotsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

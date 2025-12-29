@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<10969966c28b182ea6182b1437efefc0>>
+ * @generated SignedSource<<f64625890c04d76b5e159d83f74e2584>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type TransactionCategoryType = "expense" | "income" | "transfer" | "%future added value";
+export type TransactionCategoryType = "expense" | "income" | "setup" | "transfer" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type transactionCardFragment$data = {
   readonly category: {
@@ -18,6 +18,18 @@ export type transactionCardFragment$data = {
   };
   readonly datetime: any;
   readonly id: string;
+  readonly lots: ReadonlyArray<{
+    readonly amount: string;
+    readonly id: string;
+    readonly investment: {
+      readonly currency: {
+        readonly code: string;
+      };
+      readonly name: string;
+      readonly symbol: string;
+    };
+    readonly price: string;
+  }> | null | undefined;
   readonly transactionEntries: ReadonlyArray<{
     readonly account: {
       readonly currency: {
@@ -48,6 +60,31 @@ v1 = {
   "args": null,
   "kind": "ScalarField",
   "name": "name",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "amount",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Currency",
+  "kind": "LinkedField",
+  "name": "currency",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "code",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -86,19 +123,53 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "Lot",
+      "kind": "LinkedField",
+      "name": "lots",
+      "plural": true,
+      "selections": [
+        (v0/*: any*/),
+        (v2/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "price",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "Investment",
+          "kind": "LinkedField",
+          "name": "investment",
+          "plural": false,
+          "selections": [
+            (v1/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "symbol",
+              "storageKey": null
+            },
+            (v3/*: any*/)
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "TransactionEntry",
       "kind": "LinkedField",
       "name": "transactionEntries",
       "plural": true,
       "selections": [
         (v0/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "amount",
-          "storageKey": null
-        },
+        (v2/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -108,24 +179,7 @@ return {
           "plural": false,
           "selections": [
             (v1/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "Currency",
-              "kind": "LinkedField",
-              "name": "currency",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "code",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
+            (v3/*: any*/)
           ],
           "storageKey": null
         }
@@ -138,6 +192,6 @@ return {
 };
 })();
 
-(node as any).hash = "0ea7f60bb52838c1ac248a78fe6fa597";
+(node as any).hash = "f3c33db32871ec90e5a39acde08c18dd";
 
 export default node;

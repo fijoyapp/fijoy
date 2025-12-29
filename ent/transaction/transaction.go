@@ -33,6 +33,8 @@ const (
 	EdgeCategory = "category"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
+	// EdgeLots holds the string denoting the lots edge name in mutations.
+	EdgeLots = "lots"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
 	// UserTable is the table that holds the user relation/edge.
@@ -63,6 +65,13 @@ const (
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
 	TransactionEntriesColumn = "transaction_transaction_entries"
+	// LotsTable is the table that holds the lots relation/edge.
+	LotsTable = "lots"
+	// LotsInverseTable is the table name for the Lot entity.
+	// It exists in this package in order to avoid circular dependency with the "lot" package.
+	LotsInverseTable = "lots"
+	// LotsColumn is the table column denoting the lots relation/edge.
+	LotsColumn = "transaction_lots"
 )
 
 // Columns holds all SQL columns for transaction fields.
@@ -180,6 +189,20 @@ func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 		sqlgraph.OrderByNeighborTerms(s, newTransactionEntriesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLotsCount orders the results by lots count.
+func ByLotsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLotsStep(), opts...)
+	}
+}
+
+// ByLots orders the results by lots terms.
+func ByLots(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLotsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUserStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -206,5 +229,12 @@ func newTransactionEntriesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
+	)
+}
+func newLotsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LotsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LotsTable, LotsColumn),
 	)
 }

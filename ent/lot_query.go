@@ -16,20 +16,22 @@ import (
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
 	"fijoy.app/ent/predicate"
+	"fijoy.app/ent/transaction"
 )
 
 // LotQuery is the builder for querying Lot entities.
 type LotQuery struct {
 	config
-	ctx            *QueryContext
-	order          []lot.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.Lot
-	withHousehold  *HouseholdQuery
-	withInvestment *InvestmentQuery
-	withFKs        bool
-	loadTotal      []func(context.Context, []*Lot) error
-	modifiers      []func(*sql.Selector)
+	ctx             *QueryContext
+	order           []lot.OrderOption
+	inters          []Interceptor
+	predicates      []predicate.Lot
+	withHousehold   *HouseholdQuery
+	withInvestment  *InvestmentQuery
+	withTransaction *TransactionQuery
+	withFKs         bool
+	loadTotal       []func(context.Context, []*Lot) error
+	modifiers       []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -103,6 +105,28 @@ func (_q *LotQuery) QueryInvestment() *InvestmentQuery {
 			sqlgraph.From(lot.Table, lot.FieldID, selector),
 			sqlgraph.To(investment.Table, investment.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, lot.InvestmentTable, lot.InvestmentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTransaction chains the current query on the "transaction" edge.
+func (_q *LotQuery) QueryTransaction() *TransactionQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(lot.Table, lot.FieldID, selector),
+			sqlgraph.To(transaction.Table, transaction.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, lot.TransactionTable, lot.TransactionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -297,13 +321,14 @@ func (_q *LotQuery) Clone() *LotQuery {
 		return nil
 	}
 	return &LotQuery{
-		config:         _q.config,
-		ctx:            _q.ctx.Clone(),
-		order:          append([]lot.OrderOption{}, _q.order...),
-		inters:         append([]Interceptor{}, _q.inters...),
-		predicates:     append([]predicate.Lot{}, _q.predicates...),
-		withHousehold:  _q.withHousehold.Clone(),
-		withInvestment: _q.withInvestment.Clone(),
+		config:          _q.config,
+		ctx:             _q.ctx.Clone(),
+		order:           append([]lot.OrderOption{}, _q.order...),
+		inters:          append([]Interceptor{}, _q.inters...),
+		predicates:      append([]predicate.Lot{}, _q.predicates...),
+		withHousehold:   _q.withHousehold.Clone(),
+		withInvestment:  _q.withInvestment.Clone(),
+		withTransaction: _q.withTransaction.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -330,6 +355,17 @@ func (_q *LotQuery) WithInvestment(opts ...func(*InvestmentQuery)) *LotQuery {
 		opt(query)
 	}
 	_q.withInvestment = query
+	return _q
+}
+
+// WithTransaction tells the query-builder to eager-load the nodes that are connected to
+// the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *LotQuery) WithTransaction(opts ...func(*TransactionQuery)) *LotQuery {
+	query := (&TransactionClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withTransaction = query
 	return _q
 }
 
@@ -418,12 +454,13 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 		nodes       = []*Lot{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withHousehold != nil,
 			_q.withInvestment != nil,
+			_q.withTransaction != nil,
 		}
 	)
-	if _q.withInvestment != nil {
+	if _q.withInvestment != nil || _q.withTransaction != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -459,6 +496,12 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 	if query := _q.withInvestment; query != nil {
 		if err := _q.loadInvestment(ctx, query, nodes, nil,
 			func(n *Lot, e *Investment) { n.Edges.Investment = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withTransaction; query != nil {
+		if err := _q.loadTransaction(ctx, query, nodes, nil,
+			func(n *Lot, e *Transaction) { n.Edges.Transaction = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -524,6 +567,38 @@ func (_q *LotQuery) loadInvestment(ctx context.Context, query *InvestmentQuery, 
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "investment_lots" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *LotQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Lot, init func(*Lot), assign func(*Lot, *Transaction)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Lot)
+	for i := range nodes {
+		if nodes[i].transaction_lots == nil {
+			continue
+		}
+		fk := *nodes[i].transaction_lots
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(transaction.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "transaction_lots" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

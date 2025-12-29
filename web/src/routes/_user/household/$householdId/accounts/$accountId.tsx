@@ -16,8 +16,15 @@ export const Route = createFileRoute(
       AccountIdQuery,
       {
         where: {
-          hasTransactionEntriesWith: [
-            { hasAccountWith: [{ id: params.accountId }] },
+          or: [
+            {
+              hasTransactionEntriesWith: [
+                { hasAccountWith: [{ id: params.accountId }] },
+              ],
+            },
+            {
+              hasLots: true,
+            },
           ],
         },
       },

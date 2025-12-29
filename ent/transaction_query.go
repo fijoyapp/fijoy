@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"fijoy.app/ent/household"
+	"fijoy.app/ent/lot"
 	"fijoy.app/ent/predicate"
 	"fijoy.app/ent/transaction"
 	"fijoy.app/ent/transactioncategory"
@@ -32,10 +33,12 @@ type TransactionQuery struct {
 	withHousehold               *HouseholdQuery
 	withCategory                *TransactionCategoryQuery
 	withTransactionEntries      *TransactionEntryQuery
+	withLots                    *LotQuery
 	withFKs                     bool
 	loadTotal                   []func(context.Context, []*Transaction) error
 	modifiers                   []func(*sql.Selector)
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
+	withNamedLots               map[string]*LotQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -153,6 +156,28 @@ func (_q *TransactionQuery) QueryTransactionEntries() *TransactionEntryQuery {
 			sqlgraph.From(transaction.Table, transaction.FieldID, selector),
 			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, transaction.TransactionEntriesTable, transaction.TransactionEntriesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLots chains the current query on the "lots" edge.
+func (_q *TransactionQuery) QueryLots() *LotQuery {
+	query := (&LotClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(transaction.Table, transaction.FieldID, selector),
+			sqlgraph.To(lot.Table, lot.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, transaction.LotsTable, transaction.LotsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -356,6 +381,7 @@ func (_q *TransactionQuery) Clone() *TransactionQuery {
 		withHousehold:          _q.withHousehold.Clone(),
 		withCategory:           _q.withCategory.Clone(),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
+		withLots:               _q.withLots.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -404,6 +430,17 @@ func (_q *TransactionQuery) WithTransactionEntries(opts ...func(*TransactionEntr
 		opt(query)
 	}
 	_q.withTransactionEntries = query
+	return _q
+}
+
+// WithLots tells the query-builder to eager-load the nodes that are connected to
+// the "lots" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *TransactionQuery) WithLots(opts ...func(*LotQuery)) *TransactionQuery {
+	query := (&LotClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withLots = query
 	return _q
 }
 
@@ -492,11 +529,12 @@ func (_q *TransactionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 		nodes       = []*Transaction{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			_q.withUser != nil,
 			_q.withHousehold != nil,
 			_q.withCategory != nil,
 			_q.withTransactionEntries != nil,
+			_q.withLots != nil,
 		}
 	)
 	if _q.withUser != nil || _q.withCategory != nil {
@@ -553,10 +591,24 @@ func (_q *TransactionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 			return nil, err
 		}
 	}
+	if query := _q.withLots; query != nil {
+		if err := _q.loadLots(ctx, query, nodes,
+			func(n *Transaction) { n.Edges.Lots = []*Lot{} },
+			func(n *Transaction, e *Lot) { n.Edges.Lots = append(n.Edges.Lots, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range _q.withNamedTransactionEntries {
 		if err := _q.loadTransactionEntries(ctx, query, nodes,
 			func(n *Transaction) { n.appendNamedTransactionEntries(name) },
 			func(n *Transaction, e *TransactionEntry) { n.appendNamedTransactionEntries(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedLots {
+		if err := _q.loadLots(ctx, query, nodes,
+			func(n *Transaction) { n.appendNamedLots(name) },
+			func(n *Transaction, e *Lot) { n.appendNamedLots(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -692,6 +744,37 @@ func (_q *TransactionQuery) loadTransactionEntries(ctx context.Context, query *T
 	}
 	return nil
 }
+func (_q *TransactionQuery) loadLots(ctx context.Context, query *LotQuery, nodes []*Transaction, init func(*Transaction), assign func(*Transaction, *Lot)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Transaction)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Lot(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(transaction.LotsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.transaction_lots
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "transaction_lots" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "transaction_lots" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (_q *TransactionQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
@@ -800,6 +883,20 @@ func (_q *TransactionQuery) WithNamedTransactionEntries(name string, opts ...fun
 		_q.withNamedTransactionEntries = make(map[string]*TransactionEntryQuery)
 	}
 	_q.withNamedTransactionEntries[name] = query
+	return _q
+}
+
+// WithNamedLots tells the query-builder to eager-load the nodes that are connected to the "lots"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *TransactionQuery) WithNamedLots(name string, opts ...func(*LotQuery)) *TransactionQuery {
+	query := (&LotClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedLots == nil {
+		_q.withNamedLots = make(map[string]*LotQuery)
+	}
+	_q.withNamedLots[name] = query
 	return _q
 }
 

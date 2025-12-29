@@ -48,13 +48,16 @@ type TransactionEdges struct {
 	Category *TransactionCategory `json:"category,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
+	// Lots holds the value of the lots edge.
+	Lots []*Lot `json:"lots,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [5]map[string]int
 
 	namedTransactionEntries map[string][]*TransactionEntry
+	namedLots               map[string][]*Lot
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -97,6 +100,15 @@ func (e TransactionEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error)
 		return e.TransactionEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "transaction_entries"}
+}
+
+// LotsOrErr returns the Lots value or an error if the edge
+// was not loaded in eager-loading.
+func (e TransactionEdges) LotsOrErr() ([]*Lot, error) {
+	if e.loadedTypes[4] {
+		return e.Lots, nil
+	}
+	return nil, &NotLoadedError{edge: "lots"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -212,6 +224,11 @@ func (_m *Transaction) QueryTransactionEntries() *TransactionEntryQuery {
 	return NewTransactionClient(_m.config).QueryTransactionEntries(_m)
 }
 
+// QueryLots queries the "lots" edge of the Transaction entity.
+func (_m *Transaction) QueryLots() *LotQuery {
+	return NewTransactionClient(_m.config).QueryLots(_m)
+}
+
 // Update returns a builder for updating this Transaction.
 // Note that you need to call Transaction.Unwrap() before calling this method if this Transaction
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -274,6 +291,30 @@ func (_m *Transaction) appendNamedTransactionEntries(name string, edges ...*Tran
 		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
 	} else {
 		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
+	}
+}
+
+// NamedLots returns the Lots named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Transaction) NamedLots(name string) ([]*Lot, error) {
+	if _m.Edges.namedLots == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedLots[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Transaction) appendNamedLots(name string, edges ...*Lot) {
+	if _m.Edges.namedLots == nil {
+		_m.Edges.namedLots = make(map[string][]*Lot)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedLots[name] = []*Lot{}
+	} else {
+		_m.Edges.namedLots[name] = append(_m.Edges.namedLots[name], edges...)
 	}
 }
 

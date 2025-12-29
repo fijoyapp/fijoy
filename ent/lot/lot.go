@@ -21,8 +21,6 @@ const (
 	FieldUpdateTime = "update_time"
 	// FieldHouseholdID holds the string denoting the household_id field in the database.
 	FieldHouseholdID = "household_id"
-	// FieldDatetime holds the string denoting the datetime field in the database.
-	FieldDatetime = "datetime"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldPrice holds the string denoting the price field in the database.
@@ -31,6 +29,8 @@ const (
 	EdgeHousehold = "household"
 	// EdgeInvestment holds the string denoting the investment edge name in mutations.
 	EdgeInvestment = "investment"
+	// EdgeTransaction holds the string denoting the transaction edge name in mutations.
+	EdgeTransaction = "transaction"
 	// Table holds the table name of the lot in the database.
 	Table = "lots"
 	// HouseholdTable is the table that holds the household relation/edge.
@@ -47,6 +47,13 @@ const (
 	InvestmentInverseTable = "investments"
 	// InvestmentColumn is the table column denoting the investment relation/edge.
 	InvestmentColumn = "investment_lots"
+	// TransactionTable is the table that holds the transaction relation/edge.
+	TransactionTable = "lots"
+	// TransactionInverseTable is the table name for the Transaction entity.
+	// It exists in this package in order to avoid circular dependency with the "transaction" package.
+	TransactionInverseTable = "transactions"
+	// TransactionColumn is the table column denoting the transaction relation/edge.
+	TransactionColumn = "transaction_lots"
 )
 
 // Columns holds all SQL columns for lot fields.
@@ -55,7 +62,6 @@ var Columns = []string{
 	FieldCreateTime,
 	FieldUpdateTime,
 	FieldHouseholdID,
-	FieldDatetime,
 	FieldAmount,
 	FieldPrice,
 }
@@ -64,6 +70,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"investment_lots",
+	"transaction_lots",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -120,11 +127,6 @@ func ByHouseholdID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHouseholdID, opts...).ToFunc()
 }
 
-// ByDatetime orders the results by the datetime field.
-func ByDatetime(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDatetime, opts...).ToFunc()
-}
-
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
@@ -148,6 +150,13 @@ func ByInvestmentField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newInvestmentStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByTransactionField orders the results by transaction field.
+func ByTransactionField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTransactionStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newHouseholdStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -160,5 +169,12 @@ func newInvestmentStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(InvestmentInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, InvestmentTable, InvestmentColumn),
+	)
+}
+func newTransactionStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TransactionInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, TransactionTable, TransactionColumn),
 	)
 }

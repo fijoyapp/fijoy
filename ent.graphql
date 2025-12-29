@@ -548,11 +548,11 @@ type Lot implements Node {
   createTime: Time!
   updateTime: Time!
   householdID: ID!
-  datetime: Time!
   amount: String!
   price: String!
   household: Household!
   investment: Investment!
+  transaction: Transaction!
 }
 """
 A connection to a list of items.
@@ -633,17 +633,6 @@ input LotWhereInput {
   householdIDIn: [ID!]
   householdIDNotIn: [ID!]
   """
-  datetime field predicates
-  """
-  datetime: Time
-  datetimeNEQ: Time
-  datetimeIn: [Time!]
-  datetimeNotIn: [Time!]
-  datetimeGT: Time
-  datetimeGTE: Time
-  datetimeLT: Time
-  datetimeLTE: Time
-  """
   amount field predicates
   """
   amount: String
@@ -675,6 +664,11 @@ input LotWhereInput {
   """
   hasInvestment: Boolean
   hasInvestmentWith: [InvestmentWhereInput!]
+  """
+  transaction edge predicates
+  """
+  hasTransaction: Boolean
+  hasTransactionWith: [TransactionWhereInput!]
 }
 """
 An object with an ID.
@@ -820,6 +814,7 @@ type Transaction implements Node {
   household: Household!
   category: TransactionCategory!
   transactionEntries: [TransactionEntry!]
+  lots: [Lot!]
 }
 type TransactionCategory implements Node {
   id: ID!
@@ -838,6 +833,7 @@ enum TransactionCategoryType @goModel(model: "fijoy.app/ent/transactioncategory.
   expense
   income
   transfer
+  setup
 }
 """
 TransactionCategoryWhereInput is used for filtering TransactionCategory objects.
@@ -1158,6 +1154,11 @@ input TransactionWhereInput {
   """
   hasTransactionEntries: Boolean
   hasTransactionEntriesWith: [TransactionEntryWhereInput!]
+  """
+  lots edge predicates
+  """
+  hasLots: Boolean
+  hasLotsWith: [LotWhereInput!]
 }
 type User implements Node {
   id: ID!

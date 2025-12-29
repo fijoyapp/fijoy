@@ -14,6 +14,7 @@ import (
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/investment"
 	"fijoy.app/ent/lot"
+	"fijoy.app/ent/transaction"
 	"github.com/shopspring/decimal"
 )
 
@@ -59,12 +60,6 @@ func (_c *LotCreate) SetHouseholdID(v int) *LotCreate {
 	return _c
 }
 
-// SetDatetime sets the "datetime" field.
-func (_c *LotCreate) SetDatetime(v time.Time) *LotCreate {
-	_c.mutation.SetDatetime(v)
-	return _c
-}
-
 // SetAmount sets the "amount" field.
 func (_c *LotCreate) SetAmount(v decimal.Decimal) *LotCreate {
 	_c.mutation.SetAmount(v)
@@ -91,6 +86,17 @@ func (_c *LotCreate) SetInvestmentID(id int) *LotCreate {
 // SetInvestment sets the "investment" edge to the Investment entity.
 func (_c *LotCreate) SetInvestment(v *Investment) *LotCreate {
 	return _c.SetInvestmentID(v.ID)
+}
+
+// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
+func (_c *LotCreate) SetTransactionID(id int) *LotCreate {
+	_c.mutation.SetTransactionID(id)
+	return _c
+}
+
+// SetTransaction sets the "transaction" edge to the Transaction entity.
+func (_c *LotCreate) SetTransaction(v *Transaction) *LotCreate {
+	return _c.SetTransactionID(v.ID)
 }
 
 // Mutation returns the LotMutation object of the builder.
@@ -158,9 +164,6 @@ func (_c *LotCreate) check() error {
 	if _, ok := _c.mutation.HouseholdID(); !ok {
 		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "Lot.household_id"`)}
 	}
-	if _, ok := _c.mutation.Datetime(); !ok {
-		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Lot.datetime"`)}
-	}
 	if _, ok := _c.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Lot.amount"`)}
 	}
@@ -172,6 +175,9 @@ func (_c *LotCreate) check() error {
 	}
 	if len(_c.mutation.InvestmentIDs()) == 0 {
 		return &ValidationError{Name: "investment", err: errors.New(`ent: missing required edge "Lot.investment"`)}
+	}
+	if len(_c.mutation.TransactionIDs()) == 0 {
+		return &ValidationError{Name: "transaction", err: errors.New(`ent: missing required edge "Lot.transaction"`)}
 	}
 	return nil
 }
@@ -207,10 +213,6 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.UpdateTime(); ok {
 		_spec.SetField(lot.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
-	}
-	if value, ok := _c.mutation.Datetime(); ok {
-		_spec.SetField(lot.FieldDatetime, field.TypeTime, value)
-		_node.Datetime = value
 	}
 	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(lot.FieldAmount, field.TypeFloat64, value)
@@ -252,6 +254,23 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.investment_lots = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.TransactionIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   lot.TransactionTable,
+			Columns: []string{lot.TransactionColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.transaction_lots = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -315,18 +334,6 @@ func (u *LotUpsert) SetUpdateTime(v time.Time) *LotUpsert {
 // UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
 func (u *LotUpsert) UpdateUpdateTime() *LotUpsert {
 	u.SetExcluded(lot.FieldUpdateTime)
-	return u
-}
-
-// SetDatetime sets the "datetime" field.
-func (u *LotUpsert) SetDatetime(v time.Time) *LotUpsert {
-	u.Set(lot.FieldDatetime, v)
-	return u
-}
-
-// UpdateDatetime sets the "datetime" field to the value that was provided on create.
-func (u *LotUpsert) UpdateDatetime() *LotUpsert {
-	u.SetExcluded(lot.FieldDatetime)
 	return u
 }
 
@@ -425,20 +432,6 @@ func (u *LotUpsertOne) SetUpdateTime(v time.Time) *LotUpsertOne {
 func (u *LotUpsertOne) UpdateUpdateTime() *LotUpsertOne {
 	return u.Update(func(s *LotUpsert) {
 		s.UpdateUpdateTime()
-	})
-}
-
-// SetDatetime sets the "datetime" field.
-func (u *LotUpsertOne) SetDatetime(v time.Time) *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
-		s.SetDatetime(v)
-	})
-}
-
-// UpdateDatetime sets the "datetime" field to the value that was provided on create.
-func (u *LotUpsertOne) UpdateDatetime() *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
-		s.UpdateDatetime()
 	})
 }
 
@@ -709,20 +702,6 @@ func (u *LotUpsertBulk) SetUpdateTime(v time.Time) *LotUpsertBulk {
 func (u *LotUpsertBulk) UpdateUpdateTime() *LotUpsertBulk {
 	return u.Update(func(s *LotUpsert) {
 		s.UpdateUpdateTime()
-	})
-}
-
-// SetDatetime sets the "datetime" field.
-func (u *LotUpsertBulk) SetDatetime(v time.Time) *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
-		s.SetDatetime(v)
-	})
-}
-
-// UpdateDatetime sets the "datetime" field to the value that was provided on create.
-func (u *LotUpsertBulk) UpdateDatetime() *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
-		s.UpdateDatetime()
 	})
 }
 

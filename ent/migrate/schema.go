@@ -130,11 +130,11 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
-		{Name: "datetime", Type: field.TypeTime},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "price", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "household_id", Type: field.TypeInt},
 		{Name: "investment_lots", Type: field.TypeInt},
+		{Name: "transaction_lots", Type: field.TypeInt},
 	}
 	// LotsTable holds the schema information for the "lots" table.
 	LotsTable = &schema.Table{
@@ -144,14 +144,20 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "lots_households_lots",
-				Columns:    []*schema.Column{LotsColumns[6]},
+				Columns:    []*schema.Column{LotsColumns[5]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "lots_investments_lots",
-				Columns:    []*schema.Column{LotsColumns[7]},
+				Columns:    []*schema.Column{LotsColumns[6]},
 				RefColumns: []*schema.Column{InvestmentsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "lots_transactions_lots",
+				Columns:    []*schema.Column{LotsColumns[7]},
+				RefColumns: []*schema.Column{TransactionsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 		},
@@ -206,7 +212,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer", "setup"}},
 		{Name: "household_id", Type: field.TypeInt},
 	}
 	// TransactionCategoriesTable holds the schema information for the "transaction_categories" table.
@@ -384,6 +390,7 @@ func init() {
 	}
 	LotsTable.ForeignKeys[0].RefTable = HouseholdsTable
 	LotsTable.ForeignKeys[1].RefTable = InvestmentsTable
+	LotsTable.ForeignKeys[2].RefTable = TransactionsTable
 	LotsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(34359738368),
 	}

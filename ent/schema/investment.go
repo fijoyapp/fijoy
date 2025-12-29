@@ -91,8 +91,6 @@ type Lot struct {
 // Fields of the Lot.
 func (Lot) Fields() []ent.Field {
 	return []ent.Field{
-		field.Time("datetime"),
-
 		field.Float("amount").GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
@@ -118,6 +116,8 @@ func (Lot) Edges() []ent.Edge {
 			Required(),
 		edge.From("investment", Investment.Type).
 			Ref("lots").
+			Unique().Immutable().Required(),
+		edge.From("transaction", Transaction.Type).Ref("lots").
 			Unique().Immutable().Required(),
 	}
 }

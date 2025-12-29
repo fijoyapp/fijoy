@@ -46,6 +46,7 @@ func (Transaction) Edges() []ent.Edge {
 			Required(),
 
 		edge.To("transaction_entries", TransactionEntry.Type),
+		edge.To("lots", Lot.Type),
 	}
 }
 
@@ -78,7 +79,7 @@ type TransactionCategory struct {
 func (TransactionCategory) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty(),
-		field.Enum("type").Values("expense", "income", "transfer"),
+		field.Enum("type").Values("expense", "income", "transfer", "setup"),
 	}
 }
 

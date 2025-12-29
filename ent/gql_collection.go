@@ -710,6 +710,17 @@ func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 				return err
 			}
 			_q.withInvestment = query
+
+		case "transaction":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TransactionClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, transactionImplementors)...); err != nil {
+				return err
+			}
+			_q.withTransaction = query
 		case "createTime":
 			if _, ok := fieldSeen[lot.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, lot.FieldCreateTime)
@@ -724,11 +735,6 @@ func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 			if _, ok := fieldSeen[lot.FieldHouseholdID]; !ok {
 				selectedFields = append(selectedFields, lot.FieldHouseholdID)
 				fieldSeen[lot.FieldHouseholdID] = struct{}{}
-			}
-		case "datetime":
-			if _, ok := fieldSeen[lot.FieldDatetime]; !ok {
-				selectedFields = append(selectedFields, lot.FieldDatetime)
-				fieldSeen[lot.FieldDatetime] = struct{}{}
 			}
 		case "amount":
 			if _, ok := fieldSeen[lot.FieldAmount]; !ok {
@@ -850,6 +856,19 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+				*wq = *query
+			})
+
+		case "lots":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&LotClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, lotImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedLots(alias, func(wq *LotQuery) {
 				*wq = *query
 			})
 		case "createTime":

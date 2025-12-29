@@ -36,20 +36,6 @@ func (_u *LotUpdate) SetUpdateTime(v time.Time) *LotUpdate {
 	return _u
 }
 
-// SetDatetime sets the "datetime" field.
-func (_u *LotUpdate) SetDatetime(v time.Time) *LotUpdate {
-	_u.mutation.SetDatetime(v)
-	return _u
-}
-
-// SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (_u *LotUpdate) SetNillableDatetime(v *time.Time) *LotUpdate {
-	if v != nil {
-		_u.SetDatetime(*v)
-	}
-	return _u
-}
-
 // SetAmount sets the "amount" field.
 func (_u *LotUpdate) SetAmount(v decimal.Decimal) *LotUpdate {
 	_u.mutation.ResetAmount()
@@ -147,6 +133,9 @@ func (_u *LotUpdate) check() error {
 	if _u.mutation.InvestmentCleared() && len(_u.mutation.InvestmentIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Lot.investment"`)
 	}
+	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Lot.transaction"`)
+	}
 	return nil
 }
 
@@ -170,9 +159,6 @@ func (_u *LotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(lot.FieldUpdateTime, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.Datetime(); ok {
-		_spec.SetField(lot.FieldDatetime, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(lot.FieldAmount, field.TypeFloat64, value)
@@ -211,20 +197,6 @@ type LotUpdateOne struct {
 // SetUpdateTime sets the "update_time" field.
 func (_u *LotUpdateOne) SetUpdateTime(v time.Time) *LotUpdateOne {
 	_u.mutation.SetUpdateTime(v)
-	return _u
-}
-
-// SetDatetime sets the "datetime" field.
-func (_u *LotUpdateOne) SetDatetime(v time.Time) *LotUpdateOne {
-	_u.mutation.SetDatetime(v)
-	return _u
-}
-
-// SetNillableDatetime sets the "datetime" field if the given value is not nil.
-func (_u *LotUpdateOne) SetNillableDatetime(v *time.Time) *LotUpdateOne {
-	if v != nil {
-		_u.SetDatetime(*v)
-	}
 	return _u
 }
 
@@ -338,6 +310,9 @@ func (_u *LotUpdateOne) check() error {
 	if _u.mutation.InvestmentCleared() && len(_u.mutation.InvestmentIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Lot.investment"`)
 	}
+	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Lot.transaction"`)
+	}
 	return nil
 }
 
@@ -378,9 +353,6 @@ func (_u *LotUpdateOne) sqlSave(ctx context.Context) (_node *Lot, err error) {
 	}
 	if value, ok := _u.mutation.UpdateTime(); ok {
 		_spec.SetField(lot.FieldUpdateTime, field.TypeTime, value)
-	}
-	if value, ok := _u.mutation.Datetime(); ok {
-		_spec.SetField(lot.FieldDatetime, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(lot.FieldAmount, field.TypeFloat64, value)

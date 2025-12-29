@@ -71,11 +71,6 @@ func HouseholdID(v int) predicate.Lot {
 	return predicate.Lot(sql.FieldEQ(FieldHouseholdID, v))
 }
 
-// Datetime applies equality check predicate on the "datetime" field. It's identical to DatetimeEQ.
-func Datetime(v time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldEQ(FieldDatetime, v))
-}
-
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v decimal.Decimal) predicate.Lot {
 	return predicate.Lot(sql.FieldEQ(FieldAmount, v))
@@ -184,46 +179,6 @@ func HouseholdIDIn(vs ...int) predicate.Lot {
 // HouseholdIDNotIn applies the NotIn predicate on the "household_id" field.
 func HouseholdIDNotIn(vs ...int) predicate.Lot {
 	return predicate.Lot(sql.FieldNotIn(FieldHouseholdID, vs...))
-}
-
-// DatetimeEQ applies the EQ predicate on the "datetime" field.
-func DatetimeEQ(v time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldEQ(FieldDatetime, v))
-}
-
-// DatetimeNEQ applies the NEQ predicate on the "datetime" field.
-func DatetimeNEQ(v time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldNEQ(FieldDatetime, v))
-}
-
-// DatetimeIn applies the In predicate on the "datetime" field.
-func DatetimeIn(vs ...time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldIn(FieldDatetime, vs...))
-}
-
-// DatetimeNotIn applies the NotIn predicate on the "datetime" field.
-func DatetimeNotIn(vs ...time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldNotIn(FieldDatetime, vs...))
-}
-
-// DatetimeGT applies the GT predicate on the "datetime" field.
-func DatetimeGT(v time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldGT(FieldDatetime, v))
-}
-
-// DatetimeGTE applies the GTE predicate on the "datetime" field.
-func DatetimeGTE(v time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldGTE(FieldDatetime, v))
-}
-
-// DatetimeLT applies the LT predicate on the "datetime" field.
-func DatetimeLT(v time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldLT(FieldDatetime, v))
-}
-
-// DatetimeLTE applies the LTE predicate on the "datetime" field.
-func DatetimeLTE(v time.Time) predicate.Lot {
-	return predicate.Lot(sql.FieldLTE(FieldDatetime, v))
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.
@@ -344,6 +299,29 @@ func HasInvestment() predicate.Lot {
 func HasInvestmentWith(preds ...predicate.Investment) predicate.Lot {
 	return predicate.Lot(func(s *sql.Selector) {
 		step := newInvestmentStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasTransaction applies the HasEdge predicate on the "transaction" edge.
+func HasTransaction() predicate.Lot {
+	return predicate.Lot(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, TransactionTable, TransactionColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTransactionWith applies the HasEdge predicate on the "transaction" edge with a given conditions (other predicates).
+func HasTransactionWith(preds ...predicate.Transaction) predicate.Lot {
+	return predicate.Lot(func(s *sql.Selector) {
+		step := newTransactionStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
