@@ -29,6 +29,9 @@ import {
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
+import { Button } from '@/components/ui/button'
+import { PlusIcon, RefreshCwIcon } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query {
@@ -81,14 +84,35 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   return (
     <Fragment>
-      <Item variant="outline">
-        <ItemContent>
-          <ItemDescription>Net Worth</ItemDescription>
-          <ItemTitle className="text-2xl">
-            {formatCurrencyWithPrivacyMode(netWorth, household.currency.code)}
-          </ItemTitle>
-        </ItemContent>
-      </Item>
+      <div className="flex">
+        <Item variant="outline" className="">
+          <ItemContent>
+            <ItemDescription>Net Worth</ItemDescription>
+            <ItemTitle className="text-2xl">
+              {formatCurrencyWithPrivacyMode(netWorth, household.currency.code)}
+            </ItemTitle>
+          </ItemContent>
+        </Item>
+        <div className="px-1"></div>
+        <div className="flex flex-col items-stretch w-10">
+          <Button size="icon-lg" className="flex-1 w-full cursor-pointer">
+            <Link
+              from="/household/$householdId/accounts"
+              to="/household/$householdId/accounts/new"
+            >
+              <PlusIcon />
+            </Link>
+          </Button>
+          <div className="py-1"></div>
+          <Button
+            size="icon-lg"
+            variant="secondary"
+            className="flex-1 w-full cursor-pointer"
+          >
+            <RefreshCwIcon />
+          </Button>
+        </div>
+      </div>
       <div className="py-2"></div>
       <Accordion
         multiple
