@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { LOCAL_STORAGE_THEME } from '@/constant'
 
 type Theme = 'dark' | 'light' | 'system'
 
@@ -23,11 +24,11 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
-  storageKey = 'vite-ui-theme',
+  storageKey = LOCAL_STORAGE_THEME,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
+    () => (localStorage.getItem(storageKey) || defaultTheme) as Theme,
   )
 
   useEffect(() => {
@@ -50,9 +51,9 @@ export function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+    setTheme: (t: Theme) => {
+      localStorage.setItem(storageKey, t)
+      setTheme(t)
     },
   }
 
@@ -66,6 +67,7 @@ export function ThemeProvider({
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext)
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (context === undefined)
     throw new Error('useTheme must be used within a ThemeProvider')
 

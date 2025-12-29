@@ -103,8 +103,8 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
                 <span className="mr-3 font-mono">
                   {formatCurrencyWithPrivacyMode(
                     investments
-                      .map((account) =>
-                        currency(account.valueInHouseholdCurrency),
+                      .map((investment) =>
+                        currency(investment.valueInHouseholdCurrency),
                       )
                       .reduce((a, b) => a.add(b), currency(0)),
                     'CAD',

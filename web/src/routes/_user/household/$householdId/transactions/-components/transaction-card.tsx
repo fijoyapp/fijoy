@@ -71,11 +71,11 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
   return (
     <Fragment>
       {data.lots?.map((lot) => (
-        <LotCard key={lot?.id} data={data} lot={lot} />
+        <LotCard key={lot.id} data={data} lot={lot} />
       ))}
       {data.transactionEntries?.map((entry) => (
         <TransactionEntryCard
-          key={entry?.id}
+          key={entry.id}
           data={data}
           transactionEntry={entry}
         />

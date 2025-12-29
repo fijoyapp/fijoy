@@ -84,7 +84,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
     validators: {
       onSubmit: formSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       toast('You submitted the following values:', {
         description: (
           <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
