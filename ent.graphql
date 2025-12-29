@@ -8,6 +8,7 @@ type Account implements Node {
   name: String!
   type: AccountType!
   balance: String!
+  value: String!
   fxRate: String!
   household: Household!
   currency: Currency!
@@ -107,6 +108,17 @@ input AccountWhereInput {
   balanceGTE: String
   balanceLT: String
   balanceLTE: String
+  """
+  value field predicates
+  """
+  value: String
+  valueNEQ: String
+  valueIn: [String!]
+  valueNotIn: [String!]
+  valueGT: String
+  valueGTE: String
+  valueLT: String
+  valueLTE: String
   """
   fx_rate field predicates
   """

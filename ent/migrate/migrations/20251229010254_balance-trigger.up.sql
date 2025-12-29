@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION update_account_balance_on_investment_change()
+CREATE OR REPLACE FUNCTION update_account_value_on_investment_change()
     RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -10,11 +10,11 @@ DECLARE
 BEGIN
     CASE TG_OP
         WHEN 'INSERT' THEN UPDATE accounts
-                           SET balance = balance + NEW.value
+                           SET value = value + NEW.value
                            WHERE id = NEW.account_investments;
 
         WHEN 'DELETE' THEN UPDATE accounts
-                           SET balance = balance - OLD.value
+                           SET value = value - OLD.value
                            WHERE id = OLD.account_investments;
 
         WHEN 'UPDATE'
@@ -22,7 +22,7 @@ BEGIN
             IF NEW.account_investments = OLD.account_investments THEN
                 -- Same account: Just apply the difference
                 UPDATE accounts
-                SET balance = balance + (NEW.value - OLD.value)
+                SET value = value + (NEW.value - OLD.value)
                 WHERE id = NEW.account_investments;
 
             ELSE
@@ -42,12 +42,12 @@ BEGIN
                 IF first_account_id = OLD.account_investments THEN
                     -- This is the old account: Subtract old value
                     UPDATE accounts
-                    SET balance = balance - OLD.value
+                    SET value = value - OLD.value
                     WHERE id = first_account_id;
                 ELSE
                     -- This is the new account: Add new value
                     UPDATE accounts
-                    SET balance = balance + NEW.value
+                    SET value = value + NEW.value
                     WHERE id = first_account_id;
                 END IF;
 
@@ -55,12 +55,12 @@ BEGIN
                 IF second_account_id = OLD.account_investments THEN
                     -- This is the old account: Subtract old value
                     UPDATE accounts
-                    SET balance = balance - OLD.value
+                    SET value = value - OLD.value
                     WHERE id = second_account_id;
                 ELSE
                     -- This is the new account: Add new value
                     UPDATE accounts
-                    SET balance = balance + NEW.value
+                    SET value = value + NEW.value
                     WHERE id = second_account_id;
                 END IF;
             END IF;
@@ -73,8 +73,8 @@ $$;
 -- Create the trigger
 -- IMPORTANT: We include 'account_investments' in the UPDATE OF list
 -- If we don't, switching accounts won't fire the trigger!
-CREATE TRIGGER account_balance_on_investment_change_trigger
+CREATE TRIGGER account_value_on_investment_change_trigger
     AFTER INSERT OR UPDATE OF amount, quote, value, account_investments OR DELETE
     ON investments
     FOR EACH ROW
-EXECUTE FUNCTION update_account_balance_on_investment_change();
+EXECUTE FUNCTION update_account_value_on_investment_change();

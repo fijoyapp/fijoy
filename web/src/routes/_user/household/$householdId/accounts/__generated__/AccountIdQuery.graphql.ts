@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d1ad62e751dfbde177d5ed2feb2c48f>>
+ * @generated SignedSource<<7dfd7b3a7ec269f5042a227360295455>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -326,6 +326,14 @@ export type AccountWhereInput = {
   updateTimeLTE?: any | null | undefined;
   updateTimeNEQ?: any | null | undefined;
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  value?: string | null | undefined;
+  valueGT?: string | null | undefined;
+  valueGTE?: string | null | undefined;
+  valueIn?: ReadonlyArray<string> | null | undefined;
+  valueLT?: string | null | undefined;
+  valueLTE?: string | null | undefined;
+  valueNEQ?: string | null | undefined;
+  valueNotIn?: ReadonlyArray<string> | null | undefined;
 };
 export type TransactionEntryWhereInput = {
   amount?: string | null | undefined;

@@ -41,7 +41,7 @@ const AccountsPanelFragment = graphql`
     accounts {
       id
       type
-      balanceInHouseholdCurrency
+      valueInHouseholdCurrency
       ...accountCardFragment
     }
   }
@@ -75,7 +75,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   const netWorth = useMemo(() => {
     return data.accounts
-      .map((account) => currency(account.balanceInHouseholdCurrency))
+      .map((account) => currency(account.valueInHouseholdCurrency))
       .reduce((a, b) => a.add(b), currency(0))
   }, [data.accounts])
 
@@ -109,7 +109,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
                   {formatCurrencyWithPrivacyMode(
                     accounts
                       .map((account) =>
-                        currency(account.balanceInHouseholdCurrency),
+                        currency(account.valueInHouseholdCurrency),
                       )
                       .reduce((a, b) => a.add(b), currency(0)),
                     'CAD',

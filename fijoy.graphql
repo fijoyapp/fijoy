@@ -1,5 +1,6 @@
 extend type Account {
   balanceInHouseholdCurrency: String!
+  valueInHouseholdCurrency: String!
 }
 
 scalar DateTime

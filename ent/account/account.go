@@ -31,6 +31,8 @@ const (
 	FieldType = "type"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
+	// FieldValue holds the string denoting the value field in the database.
+	FieldValue = "value"
 	// FieldFxRate holds the string denoting the fx_rate field in the database.
 	FieldFxRate = "fx_rate"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
@@ -91,6 +93,7 @@ var Columns = []string{
 	FieldName,
 	FieldType,
 	FieldBalance,
+	FieldValue,
 	FieldFxRate,
 }
 
@@ -134,6 +137,8 @@ var (
 	NameValidator func(string) error
 	// DefaultBalance holds the default value on creation for the "balance" field.
 	DefaultBalance func() decimal.Decimal
+	// DefaultValue holds the default value on creation for the "value" field.
+	DefaultValue func() decimal.Decimal
 )
 
 // Type defines the type for the "type" enum field.
@@ -198,6 +203,11 @@ func ByType(opts ...sql.OrderTermOption) OrderOption {
 // ByBalance orders the results by the balance field.
 func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
+}
+
+// ByValue orders the results by the value field.
+func ByValue(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldValue, opts...).ToFunc()
 }
 
 // ByFxRate orders the results by the fx_rate field.

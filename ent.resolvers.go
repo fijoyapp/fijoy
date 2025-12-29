@@ -18,6 +18,11 @@ func (r *accountResolver) Balance(ctx context.Context, obj *ent.Account) (string
 	return obj.Balance.String(), nil
 }
 
+// Value is the resolver for the value field.
+func (r *accountResolver) Value(ctx context.Context, obj *ent.Account) (string, error) {
+	return obj.Value.String(), nil
+}
+
 // FxRate is the resolver for the fxRate field.
 func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (string, error) {
 	return obj.FxRate.String(), nil
@@ -146,6 +151,46 @@ func (r *accountWhereInputResolver) BalanceLt(ctx context.Context, obj *ent.Acco
 // BalanceLte is the resolver for the balanceLTE field.
 func (r *accountWhereInputResolver) BalanceLte(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
 	panic(fmt.Errorf("not implemented: BalanceLte - balanceLTE"))
+}
+
+// Value is the resolver for the value field.
+func (r *accountWhereInputResolver) Value(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+
+// ValueNeq is the resolver for the valueNEQ field.
+func (r *accountWhereInputResolver) ValueNeq(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: ValueNeq - valueNEQ"))
+}
+
+// ValueIn is the resolver for the valueIn field.
+func (r *accountWhereInputResolver) ValueIn(ctx context.Context, obj *ent.AccountWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: ValueIn - valueIn"))
+}
+
+// ValueNotIn is the resolver for the valueNotIn field.
+func (r *accountWhereInputResolver) ValueNotIn(ctx context.Context, obj *ent.AccountWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: ValueNotIn - valueNotIn"))
+}
+
+// ValueGt is the resolver for the valueGT field.
+func (r *accountWhereInputResolver) ValueGt(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: ValueGt - valueGT"))
+}
+
+// ValueGte is the resolver for the valueGTE field.
+func (r *accountWhereInputResolver) ValueGte(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: ValueGte - valueGTE"))
+}
+
+// ValueLt is the resolver for the valueLT field.
+func (r *accountWhereInputResolver) ValueLt(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: ValueLt - valueLT"))
+}
+
+// ValueLte is the resolver for the valueLTE field.
+func (r *accountWhereInputResolver) ValueLte(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: ValueLte - valueLTE"))
 }
 
 // FxRate is the resolver for the fxRate field.

@@ -81,6 +81,11 @@ func Balance(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldBalance, v))
 }
 
+// Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
+func Value(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldValue, v))
+}
+
 // FxRate applies equality check predicate on the "fx_rate" field. It's identical to FxRateEQ.
 func FxRate(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldFxRate, v))
@@ -309,6 +314,46 @@ func BalanceLT(v decimal.Decimal) predicate.Account {
 // BalanceLTE applies the LTE predicate on the "balance" field.
 func BalanceLTE(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldBalance, v))
+}
+
+// ValueEQ applies the EQ predicate on the "value" field.
+func ValueEQ(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldValue, v))
+}
+
+// ValueNEQ applies the NEQ predicate on the "value" field.
+func ValueNEQ(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldValue, v))
+}
+
+// ValueIn applies the In predicate on the "value" field.
+func ValueIn(vs ...decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldValue, vs...))
+}
+
+// ValueNotIn applies the NotIn predicate on the "value" field.
+func ValueNotIn(vs ...decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldValue, vs...))
+}
+
+// ValueGT applies the GT predicate on the "value" field.
+func ValueGT(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldValue, v))
+}
+
+// ValueGTE applies the GTE predicate on the "value" field.
+func ValueGTE(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldValue, v))
+}
+
+// ValueLT applies the LT predicate on the "value" field.
+func ValueLT(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldValue, v))
+}
+
+// ValueLTE applies the LTE predicate on the "value" field.
+func ValueLTE(v decimal.Decimal) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldValue, v))
 }
 
 // FxRateEQ applies the EQ predicate on the "fx_rate" field.

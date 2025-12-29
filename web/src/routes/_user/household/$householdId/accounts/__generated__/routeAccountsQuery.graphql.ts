@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<707aecef2fad49d4ab8aa87bfd18c1c4>>
+ * @generated SignedSource<<d12395dd3805f95d33c3c3ff75a2b229>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -108,7 +108,7 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "balanceInHouseholdCurrency",
+            "name": "valueInHouseholdCurrency",
             "storageKey": null
           },
           (v2/*: any*/),
@@ -137,7 +137,7 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "balance",
+            "name": "value",
             "storageKey": null
           }
         ],
@@ -146,12 +146,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "41c911ab003bde771a8cbf7f8001b74d",
+    "cacheID": "5e698f78fec29d0097f52f1c5d1c9542",
     "id": null,
     "metadata": {},
     "name": "routeAccountsQuery",
     "operationKind": "query",
-    "text": "query routeAccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query routeAccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts {\n    id\n    type\n    valueInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();

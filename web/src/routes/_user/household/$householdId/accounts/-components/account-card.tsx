@@ -27,8 +27,7 @@ const accountCardFragment = graphql`
     user {
       name
     }
-    balance
-    ...accountBalanceDisplayFragment_account
+    value
   }
 `
 
@@ -66,7 +65,7 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
                 <ItemTitle className="font-mono">
                   <span>
                     {formatCurrencyWithPrivacyMode(
-                      data.balance,
+                      data.value,
                       data.currency.code,
                     )}
                   </span>

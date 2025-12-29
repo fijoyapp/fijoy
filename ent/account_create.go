@@ -88,6 +88,20 @@ func (_c *AccountCreate) SetNillableBalance(v *decimal.Decimal) *AccountCreate {
 	return _c
 }
 
+// SetValue sets the "value" field.
+func (_c *AccountCreate) SetValue(v decimal.Decimal) *AccountCreate {
+	_c.mutation.SetValue(v)
+	return _c
+}
+
+// SetNillableValue sets the "value" field if the given value is not nil.
+func (_c *AccountCreate) SetNillableValue(v *decimal.Decimal) *AccountCreate {
+	if v != nil {
+		_c.SetValue(*v)
+	}
+	return _c
+}
+
 // SetFxRate sets the "fx_rate" field.
 func (_c *AccountCreate) SetFxRate(v decimal.Decimal) *AccountCreate {
 	_c.mutation.SetFxRate(v)
@@ -209,6 +223,13 @@ func (_c *AccountCreate) defaults() error {
 		v := account.DefaultBalance()
 		_c.mutation.SetBalance(v)
 	}
+	if _, ok := _c.mutation.Value(); !ok {
+		if account.DefaultValue == nil {
+			return fmt.Errorf("ent: uninitialized account.DefaultValue (forgotten import ent/runtime?)")
+		}
+		v := account.DefaultValue()
+		_c.mutation.SetValue(v)
+	}
 	return nil
 }
 
@@ -241,6 +262,9 @@ func (_c *AccountCreate) check() error {
 	}
 	if _, ok := _c.mutation.Balance(); !ok {
 		return &ValidationError{Name: "balance", err: errors.New(`ent: missing required field "Account.balance"`)}
+	}
+	if _, ok := _c.mutation.Value(); !ok {
+		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Account.value"`)}
 	}
 	if _, ok := _c.mutation.FxRate(); !ok {
 		return &ValidationError{Name: "fx_rate", err: errors.New(`ent: missing required field "Account.fx_rate"`)}
@@ -300,6 +324,10 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Balance(); ok {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
+	}
+	if value, ok := _c.mutation.Value(); ok {
+		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
+		_node.Value = value
 	}
 	if value, ok := _c.mutation.FxRate(); ok {
 		_spec.SetField(account.FieldFxRate, field.TypeFloat64, value)
@@ -482,6 +510,24 @@ func (u *AccountUpsert) AddBalance(v decimal.Decimal) *AccountUpsert {
 	return u
 }
 
+// SetValue sets the "value" field.
+func (u *AccountUpsert) SetValue(v decimal.Decimal) *AccountUpsert {
+	u.Set(account.FieldValue, v)
+	return u
+}
+
+// UpdateValue sets the "value" field to the value that was provided on create.
+func (u *AccountUpsert) UpdateValue() *AccountUpsert {
+	u.SetExcluded(account.FieldValue)
+	return u
+}
+
+// AddValue adds v to the "value" field.
+func (u *AccountUpsert) AddValue(v decimal.Decimal) *AccountUpsert {
+	u.Add(account.FieldValue, v)
+	return u
+}
+
 // SetFxRate sets the "fx_rate" field.
 func (u *AccountUpsert) SetFxRate(v decimal.Decimal) *AccountUpsert {
 	u.Set(account.FieldFxRate, v)
@@ -597,6 +643,27 @@ func (u *AccountUpsertOne) AddBalance(v decimal.Decimal) *AccountUpsertOne {
 func (u *AccountUpsertOne) UpdateBalance() *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
 		s.UpdateBalance()
+	})
+}
+
+// SetValue sets the "value" field.
+func (u *AccountUpsertOne) SetValue(v decimal.Decimal) *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetValue(v)
+	})
+}
+
+// AddValue adds v to the "value" field.
+func (u *AccountUpsertOne) AddValue(v decimal.Decimal) *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.AddValue(v)
+	})
+}
+
+// UpdateValue sets the "value" field to the value that was provided on create.
+func (u *AccountUpsertOne) UpdateValue() *AccountUpsertOne {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdateValue()
 	})
 }
 
@@ -884,6 +951,27 @@ func (u *AccountUpsertBulk) AddBalance(v decimal.Decimal) *AccountUpsertBulk {
 func (u *AccountUpsertBulk) UpdateBalance() *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
 		s.UpdateBalance()
+	})
+}
+
+// SetValue sets the "value" field.
+func (u *AccountUpsertBulk) SetValue(v decimal.Decimal) *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.SetValue(v)
+	})
+}
+
+// AddValue adds v to the "value" field.
+func (u *AccountUpsertBulk) AddValue(v decimal.Decimal) *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.AddValue(v)
+	})
+}
+
+// UpdateValue sets the "value" field to the value that was provided on create.
+func (u *AccountUpsertBulk) UpdateValue() *AccountUpsertBulk {
+	return u.Update(func(s *AccountUpsert) {
+		s.UpdateValue()
 	})
 }
 

@@ -34,6 +34,15 @@ func (Account) Fields() []ent.Field {
 				return decimal.NewFromInt(0)
 			}),
 
+		field.Float("value").GoType(decimal.Decimal{}).
+			SchemaType(map[string]string{
+				dialect.Postgres: "numeric(36,18)",
+			}).
+			Annotations(entgql.Type("String")).
+			DefaultFunc(func() decimal.Decimal {
+				return decimal.NewFromInt(0)
+			}),
+
 		field.Float("fx_rate").GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",

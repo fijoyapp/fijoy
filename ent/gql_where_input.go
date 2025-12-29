@@ -96,6 +96,16 @@ type AccountWhereInput struct {
 	BalanceLT    *decimal.Decimal  `json:"balanceLT,omitempty"`
 	BalanceLTE   *decimal.Decimal  `json:"balanceLTE,omitempty"`
 
+	// "value" field predicates.
+	Value      *decimal.Decimal  `json:"value,omitempty"`
+	ValueNEQ   *decimal.Decimal  `json:"valueNEQ,omitempty"`
+	ValueIn    []decimal.Decimal `json:"valueIn,omitempty"`
+	ValueNotIn []decimal.Decimal `json:"valueNotIn,omitempty"`
+	ValueGT    *decimal.Decimal  `json:"valueGT,omitempty"`
+	ValueGTE   *decimal.Decimal  `json:"valueGTE,omitempty"`
+	ValueLT    *decimal.Decimal  `json:"valueLT,omitempty"`
+	ValueLTE   *decimal.Decimal  `json:"valueLTE,omitempty"`
+
 	// "fx_rate" field predicates.
 	FxRate      *decimal.Decimal  `json:"fxRate,omitempty"`
 	FxRateNEQ   *decimal.Decimal  `json:"fxRateNEQ,omitempty"`
@@ -356,6 +366,30 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	}
 	if i.BalanceLTE != nil {
 		predicates = append(predicates, account.BalanceLTE(*i.BalanceLTE))
+	}
+	if i.Value != nil {
+		predicates = append(predicates, account.ValueEQ(*i.Value))
+	}
+	if i.ValueNEQ != nil {
+		predicates = append(predicates, account.ValueNEQ(*i.ValueNEQ))
+	}
+	if len(i.ValueIn) > 0 {
+		predicates = append(predicates, account.ValueIn(i.ValueIn...))
+	}
+	if len(i.ValueNotIn) > 0 {
+		predicates = append(predicates, account.ValueNotIn(i.ValueNotIn...))
+	}
+	if i.ValueGT != nil {
+		predicates = append(predicates, account.ValueGT(*i.ValueGT))
+	}
+	if i.ValueGTE != nil {
+		predicates = append(predicates, account.ValueGTE(*i.ValueGTE))
+	}
+	if i.ValueLT != nil {
+		predicates = append(predicates, account.ValueLT(*i.ValueLT))
+	}
+	if i.ValueLTE != nil {
+		predicates = append(predicates, account.ValueLTE(*i.ValueLTE))
 	}
 	if i.FxRate != nil {
 		predicates = append(predicates, account.FxRateEQ(*i.FxRate))

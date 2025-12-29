@@ -33,6 +33,8 @@ type Account struct {
 	Type account.Type `json:"type,omitempty"`
 	// Balance holds the value of the "balance" field.
 	Balance decimal.Decimal `json:"balance,omitempty"`
+	// Value holds the value of the "value" field.
+	Value decimal.Decimal `json:"value,omitempty"`
 	// FxRate holds the value of the "fx_rate" field.
 	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -121,7 +123,7 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case account.FieldBalance, account.FieldFxRate:
+		case account.FieldBalance, account.FieldValue, account.FieldFxRate:
 			values[i] = new(decimal.Decimal)
 		case account.FieldID, account.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
@@ -190,6 +192,12 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				_m.Balance = *value
 			}
+		case account.FieldValue:
+			if value, ok := values[i].(*decimal.Decimal); !ok {
+				return fmt.Errorf("unexpected type %T for field value", values[i])
+			} else if value != nil {
+				_m.Value = *value
+			}
 		case account.FieldFxRate:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field fx_rate", values[i])
@@ -217,9 +225,9 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Account.
+// GetValue returns the ent.Value that was dynamically selected and assigned to the Account.
 // This includes values selected through modifiers, order, etc.
-func (_m *Account) Value(name string) (ent.Value, error) {
+func (_m *Account) GetValue(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
@@ -288,6 +296,9 @@ func (_m *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("balance=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Balance))
+	builder.WriteString(", ")
+	builder.WriteString("value=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Value))
 	builder.WriteString(", ")
 	builder.WriteString("fx_rate=")
 	builder.WriteString(fmt.Sprintf("%v", _m.FxRate))

@@ -60,6 +60,8 @@ type AccountMutation struct {
 	_type                      *account.Type
 	balance                    *decimal.Decimal
 	addbalance                 *decimal.Decimal
+	value                      *decimal.Decimal
+	addvalue                   *decimal.Decimal
 	fx_rate                    *decimal.Decimal
 	addfx_rate                 *decimal.Decimal
 	clearedFields              map[string]struct{}
@@ -414,6 +416,62 @@ func (m *AccountMutation) ResetBalance() {
 	m.addbalance = nil
 }
 
+// SetValue sets the "value" field.
+func (m *AccountMutation) SetValue(d decimal.Decimal) {
+	m.value = &d
+	m.addvalue = nil
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *AccountMutation) Value() (r decimal.Decimal, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the Account entity.
+// If the Account object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccountMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// AddValue adds d to the "value" field.
+func (m *AccountMutation) AddValue(d decimal.Decimal) {
+	if m.addvalue != nil {
+		*m.addvalue = m.addvalue.Add(d)
+	} else {
+		m.addvalue = &d
+	}
+}
+
+// AddedValue returns the value that was added to the "value" field in this mutation.
+func (m *AccountMutation) AddedValue() (r decimal.Decimal, exists bool) {
+	v := m.addvalue
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *AccountMutation) ResetValue() {
+	m.value = nil
+	m.addvalue = nil
+}
+
 // SetFxRate sets the "fx_rate" field.
 func (m *AccountMutation) SetFxRate(d decimal.Decimal) {
 	m.fx_rate = &d
@@ -717,7 +775,7 @@ func (m *AccountMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AccountMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.create_time != nil {
 		fields = append(fields, account.FieldCreateTime)
 	}
@@ -735,6 +793,9 @@ func (m *AccountMutation) Fields() []string {
 	}
 	if m.balance != nil {
 		fields = append(fields, account.FieldBalance)
+	}
+	if m.value != nil {
+		fields = append(fields, account.FieldValue)
 	}
 	if m.fx_rate != nil {
 		fields = append(fields, account.FieldFxRate)
@@ -759,6 +820,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case account.FieldBalance:
 		return m.Balance()
+	case account.FieldValue:
+		return m.Value()
 	case account.FieldFxRate:
 		return m.FxRate()
 	}
@@ -782,6 +845,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldType(ctx)
 	case account.FieldBalance:
 		return m.OldBalance(ctx)
+	case account.FieldValue:
+		return m.OldValue(ctx)
 	case account.FieldFxRate:
 		return m.OldFxRate(ctx)
 	}
@@ -835,6 +900,13 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBalance(v)
 		return nil
+	case account.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
 	case account.FieldFxRate:
 		v, ok := value.(decimal.Decimal)
 		if !ok {
@@ -853,6 +925,9 @@ func (m *AccountMutation) AddedFields() []string {
 	if m.addbalance != nil {
 		fields = append(fields, account.FieldBalance)
 	}
+	if m.addvalue != nil {
+		fields = append(fields, account.FieldValue)
+	}
 	if m.addfx_rate != nil {
 		fields = append(fields, account.FieldFxRate)
 	}
@@ -866,6 +941,8 @@ func (m *AccountMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case account.FieldBalance:
 		return m.AddedBalance()
+	case account.FieldValue:
+		return m.AddedValue()
 	case account.FieldFxRate:
 		return m.AddedFxRate()
 	}
@@ -883,6 +960,13 @@ func (m *AccountMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBalance(v)
+		return nil
+	case account.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddValue(v)
 		return nil
 	case account.FieldFxRate:
 		v, ok := value.(decimal.Decimal)
@@ -935,6 +1019,9 @@ func (m *AccountMutation) ResetField(name string) error {
 		return nil
 	case account.FieldBalance:
 		m.ResetBalance()
+		return nil
+	case account.FieldValue:
+		m.ResetValue()
 		return nil
 	case account.FieldFxRate:
 		m.ResetFxRate()

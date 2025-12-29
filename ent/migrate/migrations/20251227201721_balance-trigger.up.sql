@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION update_account_balance_on_transaction_entry_change()
+CREATE OR REPLACE FUNCTION update_account_balance_and_value_on_transaction_entry_change()
     RETURNS TRIGGER
     LANGUAGE plpgsql
 AS
@@ -10,11 +10,13 @@ DECLARE
 BEGIN
     CASE TG_OP
         WHEN 'INSERT' THEN UPDATE accounts
-                           SET balance = balance + NEW.amount
+                           SET balance = balance + NEW.amount,
+                               value   = value + NEW.amount
                            WHERE id = NEW.account_transaction_entries;
 
         WHEN 'DELETE' THEN UPDATE accounts
-                           SET balance = balance - OLD.amount
+                           SET balance = balance - OLD.amount,
+                               value   = value - OLD.amount
                            WHERE id = OLD.account_transaction_entries;
 
         WHEN 'UPDATE'
@@ -23,7 +25,8 @@ BEGIN
                OLD.account_transaction_entries THEN
                 -- Same account: Just apply the difference in amount
                 UPDATE accounts
-                SET balance = balance + (NEW.amount - OLD.amount)
+                SET balance = balance + (NEW.amount - OLD.amount),
+                    value   = value + (NEW.amount - OLD.amount)
                 WHERE id = NEW.account_transaction_entries;
 
             ELSE -- 2. The Account ID changed. We must update TWO accounts.
@@ -41,22 +44,26 @@ BEGIN
                 -- UPDATE THE FIRST (LOWER ID) ACCOUNT
                 IF first_account_id = OLD.account_transaction_entries THEN
                     UPDATE accounts
-                    SET balance = balance - OLD.amount
+                    SET balance = balance - OLD.amount,
+                        value   = value - OLD.amount
                     WHERE id = first_account_id;
                 ELSE
                     UPDATE accounts
-                    SET balance = balance + NEW.amount
+                    SET balance = balance + NEW.amount,
+                        value   = value + NEW.amount
                     WHERE id = first_account_id;
                 END IF;
 
                 -- UPDATE THE SECOND (HIGHER ID) ACCOUNT
                 IF second_account_id = OLD.account_transaction_entries THEN
                     UPDATE accounts
-                    SET balance = balance - OLD.amount
+                    SET balance = balance - OLD.amount,
+                        value   = value - OLD.amount
                     WHERE id = second_account_id;
                 ELSE
                     UPDATE accounts
-                    SET balance = balance + NEW.amount
+                    SET balance = balance + NEW.amount,
+                        value   = value + NEW.amount
                     WHERE id = second_account_id;
                 END IF;
             END IF;
@@ -67,7 +74,8 @@ END;
 $$;
 
 -- Create the trigger
-CREATE TRIGGER transaction_balance_on_transaction_entry_change_trigger
-    AFTER INSERT OR UPDATE OF amount OR DELETE ON transaction_entries
+CREATE TRIGGER transaction_balance_and_value_on_transaction_entry_change_trigger
+    AFTER INSERT OR UPDATE OF amount OR DELETE
+    ON transaction_entries
     FOR EACH ROW
-    EXECUTE FUNCTION update_account_balance_on_transaction_entry_change();
+EXECUTE FUNCTION update_account_balance_and_value_on_transaction_entry_change();

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<468c507d3c0fb099a2fdbf1f897189b7>>
+ * @generated SignedSource<<dbbf918acba598b0cb07aa170ccae663>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -108,7 +108,7 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "balanceInHouseholdCurrency",
+            "name": "valueInHouseholdCurrency",
             "storageKey": null
           },
           (v2/*: any*/),
@@ -137,7 +137,7 @@ return {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "balance",
+            "name": "value",
             "storageKey": null
           }
         ],
@@ -146,12 +146,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b160b5a097f4219b0a4334e5a146517a",
+    "cacheID": "1ae8c091797274c9269c3d1f4d400ee9",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountBalanceDisplayFragment_account on Account {\n  balance\n  currency {\n    code\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  balance\n  ...accountBalanceDisplayFragment_account\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts {\n    id\n    type\n    balanceInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
+    "text": "query accountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts {\n    id\n    type\n    valueInHouseholdCurrency\n    ...accountCardFragment\n  }\n}\n"
   }
 };
 })();

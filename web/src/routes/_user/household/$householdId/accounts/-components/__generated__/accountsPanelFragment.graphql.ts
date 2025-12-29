@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f2f4569ecbceabcedd5c5f26a0c5f2b7>>
+ * @generated SignedSource<<2e64e993dcc0c40c02b5d125805b5acb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,9 +13,9 @@ export type AccountType = "investment" | "liability" | "liquidity" | "property" 
 import { FragmentRefs } from "relay-runtime";
 export type accountsPanelFragment$data = {
   readonly accounts: ReadonlyArray<{
-    readonly balanceInHouseholdCurrency: string;
     readonly id: string;
     readonly type: AccountType;
+    readonly valueInHouseholdCurrency: string;
     readonly " $fragmentSpreads": FragmentRefs<"accountCardFragment">;
   }>;
   readonly households: ReadonlyArray<{
@@ -95,7 +95,7 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "balanceInHouseholdCurrency",
+          "name": "valueInHouseholdCurrency",
           "storageKey": null
         },
         {
@@ -112,6 +112,6 @@ return {
 };
 })();
 
-(node as any).hash = "de00a7072af2a4e4ab54dc8cd84d2015";
+(node as any).hash = "e52ec3910f60287ad338af7edee20da6";
 
 export default node;

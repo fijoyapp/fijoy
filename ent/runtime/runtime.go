@@ -60,6 +60,10 @@ func init() {
 	accountDescBalance := accountFields[2].Descriptor()
 	// account.DefaultBalance holds the default value on creation for the balance field.
 	account.DefaultBalance = accountDescBalance.Default.(func() decimal.Decimal)
+	// accountDescValue is the schema descriptor for value field.
+	accountDescValue := accountFields[3].Descriptor()
+	// account.DefaultValue holds the default value on creation for the value field.
+	account.DefaultValue = accountDescValue.Default.(func() decimal.Decimal)
 	currencyFields := schema.Currency{}.Fields()
 	_ = currencyFields
 	// currencyDescCode is the schema descriptor for code field.
