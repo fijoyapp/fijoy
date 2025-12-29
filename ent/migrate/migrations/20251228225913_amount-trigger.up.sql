@@ -68,7 +68,7 @@ $$;
 
 -- Create the trigger
 CREATE TRIGGER investment_amount_trigger
-    AFTER INSERT OR UPDATE OR DELETE
+    AFTER INSERT OR UPDATE OF amount OR DELETE
     ON lots
     FOR EACH ROW
 EXECUTE FUNCTION update_investment_amount();

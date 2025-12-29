@@ -68,6 +68,6 @@ $$;
 
 -- Create the trigger
 CREATE TRIGGER transaction_balance_trigger
-    AFTER INSERT OR UPDATE OR DELETE ON transaction_entries
+    AFTER INSERT OR UPDATE OF amount OR DELETE ON transaction_entries
     FOR EACH ROW
     EXECUTE FUNCTION update_account_balance();
