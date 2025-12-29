@@ -24,6 +24,7 @@ import (
 	"fijoy.app/ent/userkey"
 	"fijoy.app/internal/contextkeys"
 	"fijoy.app/internal/fxrate"
+	"fijoy.app/internal/market"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/caarlos0/env/v11"
@@ -127,12 +128,15 @@ func main() {
 	fxrateProvider := fxrate.NewFrankfurterProvider()
 	fxrateClient := fxrate.NewClient(fxrateProvider)
 
+	marketProvider := market.NewYahooProvider()
+	marketClient := market.NewClient(marketProvider)
+
 	if err := seed(ctx, entClient); err != nil {
 		log.Fatalf("failed seeding database: %v", err)
 	}
 
 	gqlHandler := handler.NewDefaultServer(
-		fijoy.NewSchema(entClient, fxrateClient),
+		fijoy.NewSchema(entClient, fxrateClient, marketClient),
 	)
 
 	r := chi.NewRouter()
