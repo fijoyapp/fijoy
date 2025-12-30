@@ -1,5 +1,5 @@
 import { graphql } from 'relay-runtime'
-import { useForm } from '@tanstack/react-form'
+import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { useFragment } from 'react-relay'
@@ -32,9 +32,8 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox'
 import { ACCOUNT_TYPE_DESCRIPTION, ACCOUNT_TYPE_LIST } from '@/constant'
-import { CurrencyInput, CurrencyInputV2 } from '@/components/currency-input'
 import { useHousehold } from '@/hooks/use-household'
-import invariant from 'tiny-invariant'
+import { CurrencyInput } from '@/components/currency-input'
 
 const formSchema = z.object({
   name: z
@@ -98,6 +97,11 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
       })
     },
   })
+
+  const currencyCode = useStore(
+    form.store,
+    (state) => state.values.currencyCode,
+  )
 
   return (
     <Card className="w-full">
@@ -237,26 +241,18 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                       Balance / Value
                     </FieldLabel>
                     <FieldDescription> </FieldDescription>
-                    <form.Subscribe
-                      selector={(state) => state.values.currencyCode}
-                      children={(currencyCode) => {
-                        return (
-                          <CurrencyInput
-                            key={currencyCode}
-                            id={field.name}
-                            name={field.name}
-                            placeholder="Please enter a number"
-                            onChange={(_, value) => {
-                              field.handleChange(value)
-                            }}
-                            value={field.state.value}
-                            currency={currencyCode}
-                            onBlur={field.handleBlur}
-                            locale={household.locale}
-                            aria-invalid={isInvalid}
-                          />
-                        )
+                    <CurrencyInput
+                      id={field.name}
+                      name={field.name}
+                      placeholder="Please enter a number"
+                      onValueChange={(e) => {
+                        field.handleChange(e.floatValue!)
                       }}
+                      value={field.state.value ?? ''}
+                      locale={household.locale}
+                      currency={currencyCode}
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -273,7 +269,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
           <Button type="button" variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="bug-report-form">
+          <Button type="submit" form="new-account-form">
             Submit
           </Button>
         </Field>
