@@ -397,6 +397,7 @@ func seed(
 	}
 
 	cad := entClient.Currency.Create().SetCode("CAD").SaveX(ctx)
+	entClient.Currency.Create().SetCode("CNY").SaveX(ctx)
 	usd := entClient.Currency.Create().SetCode("USD").SaveX(ctx)
 
 	usdToCadRate, err := fxrateClient.GetRate(ctx, "USD", "CAD", time.Now())

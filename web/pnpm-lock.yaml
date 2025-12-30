@@ -14,6 +14,9 @@ importers:
       '@fontsource-variable/inter':
         specifier: ^5.2.8
         version: 5.2.8
+      '@houdiniproject/react-i18n-currency-input':
+        specifier: ^3.1.2
+        version: 3.1.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@hugeicons/core-free-icons':
         specifier: ^3.1.0
         version: 3.1.0
@@ -621,6 +624,12 @@ packages:
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
+
+  '@houdiniproject/react-i18n-currency-input@3.1.2':
+    resolution: {integrity: sha512-MS4ORSd9/PaUVfqD9d9VJa6KSYzJuck8e3OxSivdwJ1mdWqqxZb0b+oKPY2eeNNI9lStdFVruLnakmJOzTmfJw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   '@hugeicons/core-free-icons@3.1.0':
     resolution: {integrity: sha512-DVIdHcPxJ8MyaXaGe3appbaB5z4DWit5RLn8vTy3hsKTrpFEm4QftixfbcHXRqLpOMAoMa2+UXk35qNJ4ZWIsg==}
@@ -4402,6 +4411,11 @@ snapshots:
   '@hono/node-server@1.19.7(hono@4.11.1)':
     dependencies:
       hono: 4.11.1
+
+  '@houdiniproject/react-i18n-currency-input@3.1.2(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+    dependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
 
   '@hugeicons/core-free-icons@3.1.0': {}
 

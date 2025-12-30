@@ -65,9 +65,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
     [data.accounts],
   )
 
-  const { householdId } = useHousehold()
-  const household = data.households.find((h) => h.id === householdId)
-  invariant(household, 'Household not found')
+  const { household } = useHousehold()
 
   const netWorth = useMemo(() => {
     return data.accounts

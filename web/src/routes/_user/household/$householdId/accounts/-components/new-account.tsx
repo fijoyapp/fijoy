@@ -1,11 +1,9 @@
 import { graphql } from 'relay-runtime'
-import * as React from 'react'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { useFragment } from 'react-relay'
 import { capitalize } from 'lodash-es'
-import { newAccountFragment$data } from './__generated__/newAccountFragment.graphql'
 import type { newAccountFragment$key } from './__generated__/newAccountFragment.graphql'
 
 import { Button } from '@/components/ui/button'
@@ -26,12 +24,6 @@ import {
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroupTextarea,
-} from '@/components/ui/input-group'
-import {
   Combobox,
   ComboboxContent,
   ComboboxEmpty,
@@ -40,7 +32,9 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox'
 import { ACCOUNT_TYPE_DESCRIPTION, ACCOUNT_TYPE_LIST } from '@/constant'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { CurrencyInput, CurrencyInputV2 } from '@/components/currency-input'
+import { useHousehold } from '@/hooks/use-household'
+import invariant from 'tiny-invariant'
 
 const formSchema = z.object({
   name: z
@@ -55,6 +49,7 @@ const formSchema = z.object({
     'receivable',
     'liability',
   ]),
+  balance: z.number(),
 })
 
 const newAccountFragment = graphql`
@@ -63,8 +58,12 @@ const newAccountFragment = graphql`
       id
       code
     }
-    accounts {
+    households {
       id
+      currency {
+        id
+        code
+      }
     }
   }
 `
@@ -76,11 +75,14 @@ type NewAccountProps = {
 export function NewAccount({ fragmentRef }: NewAccountProps) {
   const data = useFragment(newAccountFragment, fragmentRef)
 
+  const { household } = useHousehold()
+
   const form = useForm({
     defaultValues: {
       name: '',
       type: '',
-      currencyCode: '',
+      currencyCode: household.currency.code,
+      balance: 0,
     },
     validators: {
       onSubmit: formSchema,
@@ -195,7 +197,9 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                     <Combobox
                       items={data.currencies.map((c) => c.code)}
                       value={field.state.value}
-                      onValueChange={(value) => field.handleChange(value || '')}
+                      onValueChange={(value) => {
+                        field.handleChange(value || '')
+                      }}
                     >
                       <ComboboxInput
                         id={field.name}
@@ -215,6 +219,45 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                         </ComboboxList>
                       </ComboboxContent>
                     </Combobox>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+            <form.Field
+              name="balance"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Balance / Value
+                    </FieldLabel>
+                    <FieldDescription> </FieldDescription>
+                    <form.Subscribe
+                      selector={(state) => state.values.currencyCode}
+                      children={(currencyCode) => {
+                        return (
+                          <CurrencyInput
+                            key={currencyCode}
+                            id={field.name}
+                            name={field.name}
+                            placeholder="Please enter a number"
+                            onChange={(_, value) => {
+                              field.handleChange(value)
+                            }}
+                            value={field.state.value}
+                            currency={currencyCode}
+                            onBlur={field.handleBlur}
+                            locale={household.locale}
+                            aria-invalid={isInvalid}
+                          />
+                        )
+                      }}
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}

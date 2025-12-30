@@ -64,9 +64,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
     [data.investments],
   )
 
-  const { householdId } = useHousehold()
-  const household = data.households.find((h) => h.id === householdId)
-  invariant(household, 'Household not found')
+  const { household } = useHousehold()
 
   const totalInvestment = useMemo(() => {
     return data.investments

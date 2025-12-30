@@ -1,20 +1,23 @@
+import { routeHouseholdIdQuery$data } from '@/routes/_user/household/$householdId/__generated__/routeHouseholdIdQuery.graphql'
 import { createContext, useContext } from 'react'
 
+type Household = routeHouseholdIdQuery$data['households'][number]
+
 type HouseholdContextType = {
-  householdId: string
+  household: Household
 }
 
 const HouseholdContext = createContext<HouseholdContextType | null>(null)
 
 export const HouseholdProvider = ({
   children,
-  householdId,
+  household,
 }: {
   children: React.ReactNode
-  householdId: string
+  household: Household
 }) => {
   return (
-    <HouseholdContext.Provider value={{ householdId }}>
+    <HouseholdContext.Provider value={{ household }}>
       {children}
     </HouseholdContext.Provider>
   )

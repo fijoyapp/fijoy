@@ -26,21 +26,58 @@ import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
 import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 import { useTheme } from '@/components/theme-provider'
+import { graphql } from 'relay-runtime'
+import { PendingComponent } from '@/components/pending-component'
+import { loadQuery, usePreloadedQuery } from 'react-relay'
+import { environment } from '@/environment'
+import { type routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
+import invariant from 'tiny-invariant'
+
+const routeHouseholdIdQuery = graphql`
+  query routeHouseholdIdQuery {
+    households {
+      id
+      name
+      locale
+      currency {
+        id
+        code
+      }
+    }
+  }
+`
 
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
   beforeLoad: ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
+    return loadQuery<routeHouseholdIdQuery>(
+      environment,
+      routeHouseholdIdQuery,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    )
   },
+  pendingComponent: PendingComponent,
 })
 
 function RouteComponent() {
+  const queryRef = Route.useRouteContext()
+  const data = usePreloadedQuery<routeHouseholdIdQuery>(
+    routeHouseholdIdQuery,
+    queryRef,
+  )
+
   const { householdId } = Route.useParams()
+
+  const household = data.households.find((h) => h.id === householdId)
+  invariant(household, 'Household not found')
+
   const { isPrivacyModeEnabled, togglePrivacyMode } = usePrivacyMode()
   const { setTheme } = useTheme()
 
   return (
-    <HouseholdProvider householdId={householdId}>
+    <HouseholdProvider household={household}>
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>

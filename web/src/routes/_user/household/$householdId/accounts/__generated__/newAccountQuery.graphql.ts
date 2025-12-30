@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<30b2a1d36474afb6a37ea58874299ebf>>
+ * @generated SignedSource<<74a01c3fda76e151beaf93818d9ad107>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,7 +26,17 @@ var v0 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-};
+},
+v1 = [
+  (v0/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "code",
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -56,39 +66,40 @@ return {
         "kind": "LinkedField",
         "name": "currencies",
         "plural": true,
-        "selections": [
-          (v0/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "code",
-            "storageKey": null
-          }
-        ],
+        "selections": (v1/*: any*/),
         "storageKey": null
       },
       {
         "alias": null,
         "args": null,
-        "concreteType": "Account",
+        "concreteType": "Household",
         "kind": "LinkedField",
-        "name": "accounts",
+        "name": "households",
         "plural": true,
         "selections": [
-          (v0/*: any*/)
+          (v0/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Currency",
+            "kind": "LinkedField",
+            "name": "currency",
+            "plural": false,
+            "selections": (v1/*: any*/),
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "c26c3c67bfcee78df5fa962b848b5873",
+    "cacheID": "930ddfbd0910c9981cf4a69f779cd3f8",
     "id": null,
     "metadata": {},
     "name": "newAccountQuery",
     "operationKind": "query",
-    "text": "query newAccountQuery {\n  ...newAccountFragment\n}\n\nfragment newAccountFragment on Query {\n  currencies {\n    id\n    code\n  }\n  accounts {\n    id\n  }\n}\n"
+    "text": "query newAccountQuery {\n  ...newAccountFragment\n}\n\nfragment newAccountFragment on Query {\n  currencies {\n    id\n    code\n  }\n  households {\n    id\n    currency {\n      id\n      code\n    }\n  }\n}\n"
   }
 };
 })();
