@@ -8,7 +8,7 @@ server:
   go run ./cmd/server/main.go
 
 merge-graphql:
-  watchexec -w ent.graphql -w fijoy.graphql '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
+  watchexec -w ent.graphql -w fijoy.graphql --shell=bash '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
 
 relay-watch:
   watchexec --exts tsx,ts -w web 'cd web && pnpm relay-compiler'
