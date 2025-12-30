@@ -233,6 +233,11 @@ func (r *accountWhereInputResolver) FxRateLte(ctx context.Context, obj *ent.Acco
 	panic(fmt.Errorf("not implemented: FxRateLte - fxRateLTE"))
 }
 
+// Balance is the resolver for the balance field.
+func (r *createAccountInputResolver) Balance(ctx context.Context, obj *ent.CreateAccountInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Balance - balance"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *investmentWhereInputResolver) Amount(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error {
 	panic(fmt.Errorf("not implemented: Amount - amount"))
@@ -493,6 +498,11 @@ func (r *Resolver) AccountWhereInput() AccountWhereInputResolver {
 	return &accountWhereInputResolver{r}
 }
 
+// CreateAccountInput returns CreateAccountInputResolver implementation.
+func (r *Resolver) CreateAccountInput() CreateAccountInputResolver {
+	return &createAccountInputResolver{r}
+}
+
 // InvestmentWhereInput returns InvestmentWhereInputResolver implementation.
 func (r *Resolver) InvestmentWhereInput() InvestmentWhereInputResolver {
 	return &investmentWhereInputResolver{r}
@@ -512,6 +522,7 @@ type lotResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
 type accountWhereInputResolver struct{ *Resolver }
+type createAccountInputResolver struct{ *Resolver }
 type investmentWhereInputResolver struct{ *Resolver }
 type lotWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }

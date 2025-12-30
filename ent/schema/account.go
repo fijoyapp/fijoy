@@ -29,7 +29,12 @@ func (Account) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")).
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(
+					entgql.SkipMutationUpdateInput,
+				),
+			).
 			DefaultFunc(func() decimal.Decimal {
 				return decimal.NewFromInt(0)
 			}),
@@ -40,7 +45,13 @@ func (Account) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")).
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			).
 			DefaultFunc(func() decimal.Decimal {
 				return decimal.NewFromInt(0)
 			}),
@@ -49,7 +60,13 @@ func (Account) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")),
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 	}
 }
 
@@ -59,22 +76,48 @@ func (Account) Edges() []ent.Edge {
 		edge.From("household", Household.Type).
 			Field("household_id").
 			Ref("accounts").
-			Unique().Immutable().Required(),
+			Unique().
+			Immutable().
+			Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 		edge.From("currency", Currency.Type).
 			Ref("accounts").
 			Unique().Immutable().Required(),
 		edge.From("user", User.Type).
 			Ref("accounts").
-			Unique().Required(),
+			Unique().Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 
-		edge.To("transaction_entries", TransactionEntry.Type),
-		edge.To("investments", Investment.Type),
+		edge.To("transaction_entries", TransactionEntry.Type).Annotations(
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
+		edge.To("investments", Investment.Type).Annotations(
+
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 	}
 }
 
 func (Account) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
 

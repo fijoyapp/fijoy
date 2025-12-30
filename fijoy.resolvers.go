@@ -7,6 +7,7 @@ package fijoy
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"fijoy.app/ent"
@@ -32,6 +33,11 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 	return obj.Value.Mul(account.FxRate).String(), nil
 }
 
+// CreateAccount is the resolver for the createAccount field.
+func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error) {
+	panic(fmt.Errorf("not implemented: CreateAccount - createAccount"))
+}
+
 // FxRate is the resolver for the fxRate field.
 func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime string) (string, error) {
 	datetimeParsed, err := time.Parse(time.RFC3339, datetime)
@@ -46,3 +52,8 @@ func (r *queryResolver) FxRate(ctx context.Context, from string, to string, date
 
 	return rate.String(), nil
 }
+
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
+type mutationResolver struct{ *Resolver }

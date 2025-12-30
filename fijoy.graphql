@@ -1,3 +1,13 @@
+scalar DateTime
+
+extend type Query {
+  fxRate(from: String!, to: String!, datetime: DateTime!): String!
+}
+
+type Mutation {
+  createAccount(input: CreateAccountInput!): Account!
+}
+
 extend type Account {
   balanceInHouseholdCurrency: String!
   valueInHouseholdCurrency: String!
@@ -5,10 +15,4 @@ extend type Account {
 
 extend type Investment {
   valueInHouseholdCurrency: String!
-}
-
-scalar DateTime
-
-extend type Query {
-  fxRate(from: String!, to: String!, datetime: DateTime!): String!
 }
