@@ -1,5 +1,5 @@
-import { routeHouseholdIdQuery$data } from '@/routes/_user/household/$householdId/__generated__/routeHouseholdIdQuery.graphql'
 import { createContext, useContext } from 'react'
+import type { routeHouseholdIdQuery$data } from '@/routes/_user/household/$householdId/__generated__/routeHouseholdIdQuery.graphql'
 
 type Household = routeHouseholdIdQuery$data['households'][number]
 

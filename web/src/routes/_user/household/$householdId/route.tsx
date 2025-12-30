@@ -1,5 +1,9 @@
 import { EyeIcon, EyeOffIcon, Moon, Sun } from 'lucide-react'
 import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { graphql } from 'relay-runtime'
+import { loadQuery, usePreloadedQuery } from 'react-relay'
+import invariant from 'tiny-invariant'
+import type {routeHouseholdIdQuery} from './__generated__/routeHouseholdIdQuery.graphql';
 import { AppSidebar } from '@/components/app-sidebar'
 import {
   DropdownMenu,
@@ -26,12 +30,8 @@ import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
 import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 import { useTheme } from '@/components/theme-provider'
-import { graphql } from 'relay-runtime'
 import { PendingComponent } from '@/components/pending-component'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { environment } from '@/environment'
-import { type routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
-import invariant from 'tiny-invariant'
 
 const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {

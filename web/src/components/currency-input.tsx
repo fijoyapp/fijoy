@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
 import { NumberFormatBase } from 'react-number-format'
+import { cn } from '@/lib/utils'
 
 type CurrencyInputProps = React.ComponentProps<typeof NumberFormatBase>
 
