@@ -11,6 +11,7 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"fijoy.app/ent"
+	"github.com/shopspring/decimal"
 )
 
 // Balance is the resolver for the balance field.
@@ -115,7 +116,17 @@ func (r *transactionEntryResolver) Amount(ctx context.Context, obj *ent.Transact
 
 // Balance is the resolver for the balance field.
 func (r *accountWhereInputResolver) Balance(ctx context.Context, obj *ent.AccountWhereInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
+	if data == nil || *data == "" {
+		return nil
+	}
+
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for balance: %v", err)
+	}
+
+	obj.Balance = &dec
+	return nil
 }
 
 // BalanceNeq is the resolver for the balanceNEQ field.
@@ -235,7 +246,17 @@ func (r *accountWhereInputResolver) FxRateLte(ctx context.Context, obj *ent.Acco
 
 // Balance is the resolver for the balance field.
 func (r *createAccountInputResolver) Balance(ctx context.Context, obj *ent.CreateAccountInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Balance - balance"))
+	if data == nil || *data == "" {
+		return nil
+	}
+
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for balance: %v", err)
+	}
+
+	obj.Balance = &dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.

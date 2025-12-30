@@ -3,16 +3,12 @@
 package ent
 
 import (
-	"time"
-
 	"fijoy.app/ent/account"
 	"github.com/shopspring/decimal"
 )
 
 // CreateAccountInput represents a mutation input for creating accounts.
 type CreateAccountInput struct {
-	CreateTime *time.Time
-	UpdateTime *time.Time
 	Name       string
 	Type       account.Type
 	Balance    *decimal.Decimal
@@ -22,12 +18,6 @@ type CreateAccountInput struct {
 
 // Mutate applies the CreateAccountInput on the AccountMutation builder.
 func (i *CreateAccountInput) Mutate(m *AccountMutation) {
-	if v := i.CreateTime; v != nil {
-		m.SetCreateTime(*v)
-	}
-	if v := i.UpdateTime; v != nil {
-		m.SetUpdateTime(*v)
-	}
 	m.SetName(i.Name)
 	m.SetType(i.Type)
 	if v := i.Balance; v != nil {
@@ -47,7 +37,6 @@ func (c *AccountCreate) SetInput(i CreateAccountInput) *AccountCreate {
 
 // UpdateAccountInput represents a mutation input for updating accounts.
 type UpdateAccountInput struct {
-	UpdateTime    *time.Time
 	Name          *string
 	ClearIconPath bool
 	IconPath      *string
@@ -55,9 +44,6 @@ type UpdateAccountInput struct {
 
 // Mutate applies the UpdateAccountInput on the AccountMutation builder.
 func (i *UpdateAccountInput) Mutate(m *AccountMutation) {
-	if v := i.UpdateTime; v != nil {
-		m.SetUpdateTime(*v)
-	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}

@@ -96,6 +96,12 @@ func (TransactionCategory) Edges() []ent.Edge {
 	}
 }
 
+func (TransactionCategory) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("name", "household_id").Unique(),
+	}
+}
+
 func (TransactionCategory) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),

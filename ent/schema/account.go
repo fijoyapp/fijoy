@@ -123,7 +123,12 @@ func (Account) Annotations() []schema.Annotation {
 
 func (Account) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.Time{},
+		mixin.AnnotateFields(mixin.Time{},
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 		fijoy_mixin.HouseholdMixin{},
 	}
 }

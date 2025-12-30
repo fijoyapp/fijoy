@@ -7,10 +7,15 @@ package fijoy
 
 import (
 	"context"
-	"fmt"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"fijoy.app/ent"
+	"fijoy.app/ent/currency"
+	"fijoy.app/ent/household"
+	"fijoy.app/ent/transactioncategory"
+	"fijoy.app/internal/contextkeys"
+	"github.com/shopspring/decimal"
 )
 
 // BalanceInHouseholdCurrency is the resolver for the balanceInHouseholdCurrency field.
@@ -35,7 +40,82 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 
 // CreateAccount is the resolver for the createAccount field.
 func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error) {
-	panic(fmt.Errorf("not implemented: CreateAccount - createAccount"))
+	now := time.Now()
+	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	household, err := r.entClient.Household.Query().Where(
+		household.IDEQ(householdID),
+	).WithCurrency().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	accountCurrency, err := r.entClient.Currency.Query().Where(currency.IDEQ(input.CurrencyID)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	fxRate, err := r.fxrateClient.GetRate(ctx, accountCurrency.Code, household.Edges.Currency.Code, time.Now())
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := client.Account.Create().
+		SetInput(input).
+		SetUserID(userID).
+		SetHouseholdID(householdID).
+		SetFxRate(fxRate).
+		SetBalance(decimal.NewFromInt(0)).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if input.Balance == nil || input.Balance.IsZero() {
+		return account, nil
+	}
+
+	categoryID, err := client.TransactionCategory.Create().
+		SetHousehold(household).
+		SetName("Setup").
+		SetType(transactioncategory.TypeSetup).
+		OnConflict(
+			sql.ConflictColumns(
+				transactioncategory.FieldName,
+				transactioncategory.FieldHouseholdID,
+			),
+		).
+		Ignore().
+		ID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction, err := client.Transaction.Create().
+		SetHouseholdID(householdID).
+		SetDescription("Initial Balance").
+		SetDatetime(now).
+		SetCategoryID(categoryID).
+		SetUserID(userID).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = client.TransactionEntry.Create().
+		SetHouseholdID(householdID).
+		SetAccount(account).
+		SetAmount(*input.Balance).
+		SetTransaction(transaction).
+		SetCurrency(accountCurrency).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return account, nil
 }
 
 // FxRate is the resolver for the fxRate field.

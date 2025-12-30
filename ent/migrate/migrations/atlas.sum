@@ -1,4 +1,4 @@
-h1:bbOa7sfdjj65/kuAWsTNdc5yOhxK6ymGmzcX1pbt8cU=
+h1:tBC8KF1P6hyBFUn9hmwjwcmTFVpnrWkEzkQMVdgCs2Y=
 20251227194320_init.down.sql h1:5baeWD6L/JXznOtbohI31fdS2IFv+wfC3QyoHGa+4Hc=
 20251227194320_init.up.sql h1:kRLvYOa04/U2E9Gg9Xy++Z12WeDg1lgZHkEho4fCZv4=
 20251227201720_investment-amount.down.sql h1:2gb5k26rP3509tNlakXi9qZQNBM+JHSjdA1sO5egQeM=
@@ -37,3 +37,5 @@ h1:bbOa7sfdjj65/kuAWsTNdc5yOhxK6ymGmzcX1pbt8cU=
 20251229151536_transaction-lots.up.sql h1:Lti4k72TEC3zG3QMfnM8MrzWPQSLVXLmhXHJJe4gq8I=
 20251229151814_lot-datetime.down.sql h1:W15CCuToARm7DBb+cxykq1TEEzG9u9apXtnHv6r1z14=
 20251229151814_lot-datetime.up.sql h1:ApaxsPYWC48pmAsRV/Rwu8Qnj+yhOAtnsZEZr/GEWoc=
+20251230152122_create-account-tweaks.down.sql h1:/V/Rr9PxtdCqL9BtzLVqU756nYB0g1jbSrt0y84rSMs=
+20251230152122_create-account-tweaks.up.sql h1:BnJOEdyQ1eE99hUvJiOuTFVZVT8oO+2mpan9KfYK4gQ=

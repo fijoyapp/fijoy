@@ -228,6 +228,13 @@ var (
 				OnDelete:   schema.NoAction,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "transactioncategory_name_household_id",
+				Unique:  true,
+				Columns: []*schema.Column{TransactionCategoriesColumns[3], TransactionCategoriesColumns[5]},
+			},
+		},
 	}
 	// TransactionEntriesColumns holds the columns for the "transaction_entries" table.
 	TransactionEntriesColumns = []*schema.Column{
