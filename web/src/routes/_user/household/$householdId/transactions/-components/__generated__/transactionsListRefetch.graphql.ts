@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<262b661b34b5474b58712ad20cb7203a>>
+ * @generated SignedSource<<0a7f0bec486125bf354804114f1cb213>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -686,17 +686,17 @@ export type UserKeyWhereInput = {
   updateTimeNEQ?: any | null | undefined;
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
 };
-export type transactionsListPagination$variables = {
+export type transactionsListRefetch$variables = {
   count?: number | null | undefined;
   cursor?: any | null | undefined;
   where?: TransactionWhereInput | null | undefined;
 };
-export type transactionsListPagination$data = {
+export type transactionsListRefetch$data = {
   readonly " $fragmentSpreads": FragmentRefs<"transactionsListFragment">;
 };
-export type transactionsListPagination = {
-  response: transactionsListPagination$data;
-  variables: transactionsListPagination$variables;
+export type transactionsListRefetch = {
+  response: transactionsListRefetch$data;
+  variables: transactionsListRefetch$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -788,7 +788,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "transactionsListPagination",
+    "name": "transactionsListRefetch",
     "selections": [
       {
         "args": [
@@ -815,7 +815,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "transactionsListPagination",
+    "name": "transactionsListRefetch",
     "selections": [
       {
         "alias": null,
@@ -1000,16 +1000,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "51fcaa80df004353cf5fae252f602f17",
+    "cacheID": "6613047323f2eb482db1b46ee04da350",
     "id": null,
     "metadata": {},
-    "name": "transactionsListPagination",
+    "name": "transactionsListRefetch",
     "operationKind": "query",
-    "text": "query transactionsListPagination(\n  $count: Int = 20\n  $cursor: Cursor\n  $where: TransactionWhereInput\n) {\n  ...transactionsListFragment_mjR8k\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  lots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_mjR8k on Query {\n  transactions(first: $count, after: $cursor, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query transactionsListRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n  $where: TransactionWhereInput\n) {\n  ...transactionsListFragment_mjR8k\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  lots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_mjR8k on Query {\n  transactions(first: $count, after: $cursor, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "000f25e77b6916e5dd3d709db8d77f55";
+(node as any).hash = "77764bae328c28c1bce6d5bb6b63050b";
 
 export default node;

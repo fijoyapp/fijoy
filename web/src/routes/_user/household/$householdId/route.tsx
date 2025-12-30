@@ -3,7 +3,7 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
-import type {routeHouseholdIdQuery} from './__generated__/routeHouseholdIdQuery.graphql';
+import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
 import {
   DropdownMenu,

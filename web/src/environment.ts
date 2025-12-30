@@ -22,6 +22,7 @@ const fetchGraphQL: FetchFunction = async (request, variables) => {
     body: JSON.stringify({ query: request.text, variables }),
   })
   if (!resp.ok) {
+    console.error('GraphQL Error:', await resp.text())
     throw new Error('Response failed.')
   }
   return await resp.json()

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f8062ff8a6bf544459492424facabc8d>>
+ * @generated SignedSource<<3b3e1ed46b69ee4f14d951dc23387cb7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,7 +30,7 @@ export type transactionsListFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"transactionsListFragment">;
 };
 
-import transactionsListPagination_graphql from './transactionsListPagination.graphql';
+import transactionsListRefetch_graphql from './transactionsListRefetch.graphql';
 
 const node: ReaderFragment = (function(){
 var v0 = [
@@ -74,7 +74,7 @@ return {
         "path": (v0/*: any*/)
       },
       "fragmentPathInResult": [],
-      "operation": transactionsListPagination_graphql
+      "operation": transactionsListRefetch_graphql
     }
   },
   "name": "transactionsListFragment",
@@ -183,6 +183,6 @@ return {
 };
 })();
 
-(node as any).hash = "000f25e77b6916e5dd3d709db8d77f55";
+(node as any).hash = "77764bae328c28c1bce6d5bb6b63050b";
 
 export default node;

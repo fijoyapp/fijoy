@@ -65,8 +65,8 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, erro
 }
 
 // Accounts is the resolver for the accounts field.
-func (r *queryResolver) Accounts(ctx context.Context) ([]*ent.Account, error) {
-	return r.entClient.Account.Query().All(ctx)
+func (r *queryResolver) Accounts(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AccountWhereInput) (*ent.AccountConnection, error) {
+	return r.entClient.Account.Query().Paginate(ctx, after, first, before, last, ent.WithAccountFilter(where.Filter))
 }
 
 // Currencies is the resolver for the currencies field.

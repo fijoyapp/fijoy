@@ -67,6 +67,15 @@ const newAccountFragment = graphql`
   }
 `
 
+const newAccountMutation = graphql`
+  mutation newAccountMutation($input: CreateAccountInput!) {
+    createAccount(input: $input) {
+      id
+      name
+    }
+  }
+`
+
 type NewAccountProps = {
   fragmentRef: newAccountFragment$key
 }
@@ -248,7 +257,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                       onValueChange={(e) => {
                         field.handleChange(e.floatValue!)
                       }}
-                      value={field.state.value ?? ''}
+                      value={field.state.value}
                       locale={household.locale}
                       currency={currencyCode}
                       onBlur={field.handleBlur}

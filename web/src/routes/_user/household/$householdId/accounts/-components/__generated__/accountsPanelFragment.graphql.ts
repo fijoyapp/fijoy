@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e64e993dcc0c40c02b5d125805b5acb>>
+ * @generated SignedSource<<72f9504a6945103e7dc8cf9a9114e501>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,12 +12,16 @@ import { ReaderFragment } from 'relay-runtime';
 export type AccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type accountsPanelFragment$data = {
-  readonly accounts: ReadonlyArray<{
-    readonly id: string;
-    readonly type: AccountType;
-    readonly valueInHouseholdCurrency: string;
-    readonly " $fragmentSpreads": FragmentRefs<"accountCardFragment">;
-  }>;
+  readonly accounts: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+        readonly type: AccountType;
+        readonly valueInHouseholdCurrency: string;
+        readonly " $fragmentSpreads": FragmentRefs<"accountCardFragment">;
+      } | null | undefined;
+    } | null | undefined> | null | undefined;
+  };
   readonly households: ReadonlyArray<{
     readonly currency: {
       readonly code: string;
@@ -31,8 +35,13 @@ export type accountsPanelFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"accountsPanelFragment">;
 };
 
+import accountsPanelRefetch_graphql from './accountsPanelRefetch.graphql';
+
 const node: ReaderFragment = (function(){
-var v0 = {
+var v0 = [
+  "accounts"
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -40,9 +49,41 @@ var v0 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "defaultValue": 20,
+      "kind": "LocalArgument",
+      "name": "count"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "cursor"
+    }
+  ],
   "kind": "Fragment",
-  "metadata": null,
+  "metadata": {
+    "connection": [
+      {
+        "count": "count",
+        "cursor": "cursor",
+        "direction": "forward",
+        "path": (v0/*: any*/)
+      }
+    ],
+    "refetch": {
+      "connection": {
+        "forward": {
+          "count": "count",
+          "cursor": "cursor"
+        },
+        "backward": null,
+        "path": (v0/*: any*/)
+      },
+      "fragmentPathInResult": [],
+      "operation": accountsPanelRefetch_graphql
+    }
+  },
   "name": "accountsPanelFragment",
   "selections": [
     {
@@ -53,7 +94,7 @@ return {
       "name": "households",
       "plural": true,
       "selections": [
-        (v0/*: any*/),
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -76,32 +117,93 @@ return {
       "storageKey": null
     },
     {
-      "alias": null,
+      "alias": "accounts",
       "args": null,
-      "concreteType": "Account",
+      "concreteType": "AccountConnection",
       "kind": "LinkedField",
-      "name": "accounts",
-      "plural": true,
+      "name": "__accountsPanel_accounts_connection",
+      "plural": false,
       "selections": [
-        (v0/*: any*/),
         {
           "alias": null,
           "args": null,
-          "kind": "ScalarField",
-          "name": "type",
+          "concreteType": "AccountEdge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "Account",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                (v1/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "type",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "valueInHouseholdCurrency",
+                  "storageKey": null
+                },
+                {
+                  "args": null,
+                  "kind": "FragmentSpread",
+                  "name": "accountCardFragment"
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "__typename",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "cursor",
+              "storageKey": null
+            }
+          ],
           "storageKey": null
         },
         {
           "alias": null,
           "args": null,
-          "kind": "ScalarField",
-          "name": "valueInHouseholdCurrency",
+          "concreteType": "PageInfo",
+          "kind": "LinkedField",
+          "name": "pageInfo",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "endCursor",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "hasNextPage",
+              "storageKey": null
+            }
+          ],
           "storageKey": null
-        },
-        {
-          "args": null,
-          "kind": "FragmentSpread",
-          "name": "accountCardFragment"
         }
       ],
       "storageKey": null
@@ -112,6 +214,6 @@ return {
 };
 })();
 
-(node as any).hash = "e52ec3910f60287ad338af7edee20da6";
+(node as any).hash = "af64ed70f236b095ae5de279901fa160";
 
 export default node;

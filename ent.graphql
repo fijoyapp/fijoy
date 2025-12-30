@@ -18,6 +18,36 @@ type Account implements Node {
   investments: [Investment!]
 }
 """
+A connection to a list of items.
+"""
+type AccountConnection {
+  """
+  A list of edges.
+  """
+  edges: [AccountEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type AccountEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Account
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 AccountType is enum for the field type
 """
 enum AccountType @goModel(model: "fijoy.app/ent/account.Type") {
@@ -745,7 +775,32 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]!
-  accounts: [Account!]!
+  accounts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for Accounts returned from the connection.
+    """
+    where: AccountWhereInput
+  ): AccountConnection!
   currencies: [Currency!]!
   households: [Household!]!
   investments: [Investment!]!

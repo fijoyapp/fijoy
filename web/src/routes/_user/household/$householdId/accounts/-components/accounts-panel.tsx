@@ -11,10 +11,7 @@ import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
 import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { AccountCard } from './account-card'
-import type {
-  AccountType,
-  accountsPanelFragment$key,
-} from './__generated__/accountsPanelFragment.graphql'
+import type { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
 import {
   Accordion,
   AccordionContent,
@@ -35,18 +32,28 @@ import { Button } from '@/components/ui/button'
 import { ACCOUNT_TYPE_LIST } from '@/constant'
 
 const AccountsPanelFragment = graphql`
-  fragment accountsPanelFragment on Query {
+  fragment accountsPanelFragment on Query
+  @argumentDefinitions(
+    count: { type: "Int", defaultValue: 20 }
+    cursor: { type: "Cursor" }
+  )
+  @refetchable(queryName: "accountsPanelRefetch") {
     households {
       id
       currency {
         code
       }
     }
-    accounts {
-      id
-      type
-      valueInHouseholdCurrency
-      ...accountCardFragment
+    accounts(first: $count, after: $cursor)
+      @connection(key: "accountsPanel_accounts") {
+      edges {
+        node {
+          id
+          type
+          valueInHouseholdCurrency
+          ...accountCardFragment
+        }
+      }
     }
   }
 `
@@ -61,15 +68,18 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const { formatCurrencyWithPrivacyMode } = useCurrency()
 
   const groupedAccounts = useMemo(
-    () => groupBy(data.accounts, (account) => account.type),
+    () => groupBy(data.accounts.edges, (edge) => edge?.node?.type),
     [data.accounts],
   )
 
   const { household } = useHousehold()
 
   const netWorth = useMemo(() => {
-    return data.accounts
-      .map((account) => currency(account.valueInHouseholdCurrency))
+    return (data.accounts.edges ?? [])
+      .map((edge) => {
+        invariant(edge?.node, 'Account node is null')
+        return currency(edge.node.valueInHouseholdCurrency)
+      })
       .reduce((a, b) => a.add(b), currency(0))
   }, [data.accounts])
 
@@ -119,9 +129,10 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
                 <span className="mr-3 font-mono">
                   {formatCurrencyWithPrivacyMode(
                     accounts
-                      .map((account) =>
-                        currency(account.valueInHouseholdCurrency),
-                      )
+                      .map((account) => {
+                        invariant(account?.node, 'Account node is null')
+                        return currency(account.node.valueInHouseholdCurrency)
+                      })
                       .reduce((a, b) => a.add(b), currency(0)),
                     'CAD',
                   )}
@@ -130,10 +141,11 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
               <AccordionContent className="pb-1">
                 <ItemGroup className="gap-0">
                   {accounts.map((account) => {
+                    invariant(account?.node, 'Account node is null')
                     return (
-                      <Fragment key={account.id}>
+                      <Fragment key={account.node.id}>
                         <ItemSeparator className="my-1" />
-                        <AccountCard fragmentRef={account} />
+                        <AccountCard fragmentRef={account.node} />
                       </Fragment>
                     )
                   })}

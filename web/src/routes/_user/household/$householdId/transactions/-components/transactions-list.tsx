@@ -15,7 +15,7 @@ const transactionsListFragment = graphql`
     cursor: { type: "Cursor" }
     where: { type: "TransactionWhereInput" }
   )
-  @refetchable(queryName: "transactionsListPagination") {
+  @refetchable(queryName: "transactionsListRefetch") {
     transactions(
       first: $count
       after: $cursor
