@@ -3,7 +3,7 @@ import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { useFragment, useMutation } from 'react-relay'
-import { capitalize, find } from 'lodash-es'
+import { capitalize } from 'lodash-es'
 import type { newAccountFragment$key } from './__generated__/newAccountFragment.graphql'
 
 import { Button } from '@/components/ui/button'
@@ -37,6 +37,9 @@ import { CurrencyInput } from '@/components/currency-input'
 import { type newAccountMutation } from './__generated__/newAccountMutation.graphql'
 import currency from 'currency.js'
 import invariant from 'tiny-invariant'
+import { commitMutationResult } from '@/lib/relay'
+import { match } from 'ts-pattern'
+import { useNavigate } from '@tanstack/react-router'
 
 const formSchema = z.object({
   name: z
@@ -85,6 +88,7 @@ type NewAccountProps = {
 
 export function NewAccount({ fragmentRef }: NewAccountProps) {
   const data = useFragment(newAccountFragment, fragmentRef)
+  const navigate = useNavigate()
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newAccountMutation>(newAccountMutation)
@@ -101,7 +105,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
     validators: {
       onSubmit: formSchema,
     },
-    onSubmit: ({ value }) => {
+    onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
 
       const currencyID = data.currencies.find(
@@ -109,16 +113,37 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
       )?.id
       invariant(currencyID, 'Currency not found')
 
-      commitMutation({
-        variables: {
-          input: {
-            name: formData.name,
-            type: formData.type,
-            currencyID: currencyID,
-            balance: currency(formData.balance).toString(),
+      const result = await commitMutationResult<newAccountMutation>(
+        commitMutation,
+        {
+          variables: {
+            input: {
+              name: formData.name,
+              type: formData.type,
+              currencyID: currencyID,
+              balance: currency(formData.balance).toString(),
+            },
           },
         },
-      })
+      )
+
+      // 2. Pattern match the result
+      match(result)
+        .with({ status: 'success' }, ({ data }) => {
+          form.reset()
+          navigate({
+            from: '/household/$householdId/accounts/new',
+            to: '/household/$householdId/accounts/$accountId',
+            params: {
+              accountId: data.createAccount.id,
+            },
+          })
+          toast.success(`${data.createAccount.name} is ready to go!`)
+        })
+        .with({ status: 'error' }, ({ error }) => {
+          toast.error(error.toString())
+        })
+        .exhaustive()
     },
   })
 
@@ -293,8 +318,12 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
           <Button type="button" variant="outline" onClick={() => form.reset()}>
             Reset
           </Button>
-          <Button type="submit" form="new-account-form">
-            Submit
+          <Button
+            disabled={isMutationInFlight}
+            type="submit"
+            form="new-account-form"
+          >
+            {isMutationInFlight ? 'Creating...' : 'Create'}
           </Button>
         </Field>
       </CardFooter>
