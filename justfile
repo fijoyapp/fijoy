@@ -11,7 +11,7 @@ merge-graphql:
   watchexec -w ent.graphql -w fijoy.graphql '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
 
 relay-watch:
-  cd web && pnpm relay-compiler --watch
+  watchexec --exts tsx,ts -w web 'cd web && pnpm relay-compiler'
 
 relay:
   cd web && pnpm relay-compiler
