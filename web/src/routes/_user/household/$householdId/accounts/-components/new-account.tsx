@@ -2,8 +2,8 @@ import { graphql } from 'relay-runtime'
 import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
-import { useFragment } from 'react-relay'
-import { capitalize } from 'lodash-es'
+import { useFragment, useMutation } from 'react-relay'
+import { capitalize, find } from 'lodash-es'
 import type { newAccountFragment$key } from './__generated__/newAccountFragment.graphql'
 
 import { Button } from '@/components/ui/button'
@@ -34,6 +34,9 @@ import {
 import { ACCOUNT_TYPE_DESCRIPTION, ACCOUNT_TYPE_LIST } from '@/constant'
 import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
+import { type newAccountMutation } from './__generated__/newAccountMutation.graphql'
+import currency from 'currency.js'
+import invariant from 'tiny-invariant'
 
 const formSchema = z.object({
   name: z
@@ -83,6 +86,9 @@ type NewAccountProps = {
 export function NewAccount({ fragmentRef }: NewAccountProps) {
   const data = useFragment(newAccountFragment, fragmentRef)
 
+  const [commitMutation, isMutationInFlight] =
+    useMutation<newAccountMutation>(newAccountMutation)
+
   const { household } = useHousehold()
 
   const form = useForm({
@@ -96,13 +102,22 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
       onSubmit: formSchema,
     },
     onSubmit: ({ value }) => {
-      toast('You submitted the following values:', {
-        description: (
-          <pre className="bg-code text-code-foreground mt-2 w-[320px] overflow-x-auto rounded-md p-4">
-            <code>{JSON.stringify(value, null, 2)}</code>
-          </pre>
-        ),
-        position: 'bottom-right',
+      const formData = formSchema.parse(value)
+
+      const currencyID = data.currencies.find(
+        (currency) => currency.code === formData.currencyCode,
+      )?.id
+      invariant(currencyID, 'Currency not found')
+
+      commitMutation({
+        variables: {
+          input: {
+            name: formData.name,
+            type: formData.type,
+            currencyID: currencyID,
+            balance: currency(formData.balance).toString(),
+          },
+        },
       })
     },
   })
