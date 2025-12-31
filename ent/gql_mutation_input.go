@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fijoy.app/ent/account"
+	"fijoy.app/ent/investment"
 	"github.com/shopspring/decimal"
 )
 
@@ -63,6 +64,136 @@ func (c *AccountUpdate) SetInput(i UpdateAccountInput) *AccountUpdate {
 
 // SetInput applies the change-set in the UpdateAccountInput on the AccountUpdateOne builder.
 func (c *AccountUpdateOne) SetInput(i UpdateAccountInput) *AccountUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateInvestmentInput represents a mutation input for creating investments.
+type CreateInvestmentInput struct {
+	Name       string
+	Type       investment.Type
+	Symbol     string
+	Amount     *decimal.Decimal
+	AccountID  int
+	CurrencyID int
+	LotIDs     []int
+}
+
+// Mutate applies the CreateInvestmentInput on the InvestmentMutation builder.
+func (i *CreateInvestmentInput) Mutate(m *InvestmentMutation) {
+	m.SetName(i.Name)
+	m.SetType(i.Type)
+	m.SetSymbol(i.Symbol)
+	if v := i.Amount; v != nil {
+		m.SetAmount(*v)
+	}
+	m.SetAccountID(i.AccountID)
+	m.SetCurrencyID(i.CurrencyID)
+	if v := i.LotIDs; len(v) > 0 {
+		m.AddLotIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateInvestmentInput on the InvestmentCreate builder.
+func (c *InvestmentCreate) SetInput(i CreateInvestmentInput) *InvestmentCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateInvestmentInput represents a mutation input for updating investments.
+type UpdateInvestmentInput struct {
+	Name         *string
+	Type         *investment.Type
+	Symbol       *string
+	Amount       *decimal.Decimal
+	ClearLots    bool
+	AddLotIDs    []int
+	RemoveLotIDs []int
+}
+
+// Mutate applies the UpdateInvestmentInput on the InvestmentMutation builder.
+func (i *UpdateInvestmentInput) Mutate(m *InvestmentMutation) {
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Type; v != nil {
+		m.SetType(*v)
+	}
+	if v := i.Symbol; v != nil {
+		m.SetSymbol(*v)
+	}
+	if v := i.Amount; v != nil {
+		m.SetAmount(*v)
+	}
+	if i.ClearLots {
+		m.ClearLots()
+	}
+	if v := i.AddLotIDs; len(v) > 0 {
+		m.AddLotIDs(v...)
+	}
+	if v := i.RemoveLotIDs; len(v) > 0 {
+		m.RemoveLotIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateInvestmentInput on the InvestmentUpdate builder.
+func (c *InvestmentUpdate) SetInput(i UpdateInvestmentInput) *InvestmentUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateInvestmentInput on the InvestmentUpdateOne builder.
+func (c *InvestmentUpdateOne) SetInput(i UpdateInvestmentInput) *InvestmentUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateLotInput represents a mutation input for creating lots.
+type CreateLotInput struct {
+	Amount        decimal.Decimal
+	Price         decimal.Decimal
+	InvestmentID  int
+	TransactionID int
+}
+
+// Mutate applies the CreateLotInput on the LotMutation builder.
+func (i *CreateLotInput) Mutate(m *LotMutation) {
+	m.SetAmount(i.Amount)
+	m.SetPrice(i.Price)
+	m.SetInvestmentID(i.InvestmentID)
+	m.SetTransactionID(i.TransactionID)
+}
+
+// SetInput applies the change-set in the CreateLotInput on the LotCreate builder.
+func (c *LotCreate) SetInput(i CreateLotInput) *LotCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateLotInput represents a mutation input for updating lots.
+type UpdateLotInput struct {
+	Amount *decimal.Decimal
+	Price  *decimal.Decimal
+}
+
+// Mutate applies the UpdateLotInput on the LotMutation builder.
+func (i *UpdateLotInput) Mutate(m *LotMutation) {
+	if v := i.Amount; v != nil {
+		m.SetAmount(*v)
+	}
+	if v := i.Price; v != nil {
+		m.SetPrice(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateLotInput on the LotUpdate builder.
+func (c *LotUpdate) SetInput(i UpdateLotInput) *LotUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateLotInput on the LotUpdateOne builder.
+func (c *LotUpdateOne) SetInput(i UpdateLotInput) *LotUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

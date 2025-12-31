@@ -6,6 +6,7 @@ extend type Query {
 
 type Mutation {
   createAccount(input: CreateAccountInput!): AccountEdge!
+  createInvestment(input: CreateInvestmentInput!): InvestmentEdge!
 }
 
 extend type Account {

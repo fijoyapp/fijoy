@@ -7,6 +7,7 @@ package fijoy
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -128,6 +129,11 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		Node:   account,
 		Cursor: gqlutil.EncodeCursor(account.ID),
 	}, nil
+}
+
+// CreateInvestment is the resolver for the createInvestment field.
+func (r *mutationResolver) CreateInvestment(ctx context.Context, input ent.CreateInvestmentInput) (*ent.InvestmentEdge, error) {
+	panic(fmt.Errorf("not implemented: CreateInvestment - createInvestment"))
 }
 
 // FxRate is the resolver for the fxRate field.

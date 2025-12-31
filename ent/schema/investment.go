@@ -37,13 +37,24 @@ func (Investment) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")),
-
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 		field.Float("value").GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
 			}).
-			Annotations(entgql.Type("String")).
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			).
 			DefaultFunc(func() decimal.Decimal {
 				return decimal.NewFromInt(0)
 			}),
@@ -61,6 +72,13 @@ func (Investment) Edges() []ent.Edge {
 			Field("household_id").
 			Unique().
 			Immutable().
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			).
 			Required(),
 		edge.From("currency", Currency.Type).
 			Ref("investments").
@@ -73,12 +91,19 @@ func (Investment) Edges() []ent.Edge {
 func (Investment) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
+		entgql.RelayConnection(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
 
 func (Investment) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.Time{},
+		mixin.AnnotateFields(mixin.Time{},
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 		fijoy_mixin.HouseholdMixin{},
 	}
 }
@@ -113,6 +138,13 @@ func (Lot) Edges() []ent.Edge {
 			Field("household_id").
 			Unique().
 			Immutable().
+			Annotations(
+				entgql.Type("String"),
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			).
 			Required(),
 		edge.From("investment", Investment.Type).
 			Ref("lots").
@@ -126,12 +158,18 @@ func (Lot) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
 		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
 
 func (Lot) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.Time{},
+		mixin.AnnotateFields(mixin.Time{},
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 		fijoy_mixin.HouseholdMixin{},
 	}
 }
