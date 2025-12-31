@@ -1,16 +1,6 @@
-import { useLazyLoadQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
 import currency from 'currency.js'
 import { usePrivacyMode } from './use-privacy-mode'
-import type { useCurrencyQuery } from './__generated__/useCurrencyQuery.graphql'
-
-const useCurrencyQuery = graphql`
-  query useCurrencyQuery {
-    households {
-      locale
-    }
-  }
-`
+import { useHousehold } from './use-household'
 
 type FormatCurrencyArgs = {
   value: string | currency
@@ -19,16 +9,9 @@ type FormatCurrencyArgs = {
 }
 
 export function useCurrency() {
-  const data = useLazyLoadQuery<useCurrencyQuery>(
-    useCurrencyQuery,
-    {},
-    { fetchPolicy: 'store-or-network' },
-  )
-
   const { isPrivacyModeEnabled } = usePrivacyMode()
 
-  // TODO: DO NOT HARD CODE LOCALE
-  const defaultLocale = data.households[0]?.locale || 'en-CA'
+  const { household } = useHousehold()
 
   const formatCurrency = ({
     value,
@@ -37,7 +20,7 @@ export function useCurrency() {
   }: FormatCurrencyArgs) => {
     const curr = typeof value === 'string' ? currency(value) : value
 
-    const formatted = Intl.NumberFormat(defaultLocale, {
+    const formatted = Intl.NumberFormat(household.locale, {
       currency: currencyCode,
       style: 'currency',
     }).format(liability ? -curr.value : curr.value)
