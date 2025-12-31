@@ -38,7 +38,6 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 		return "", err
 	}
 
-	// r.logger.Debug("account", "account", account)
 	return obj.Value.Mul(account.FxRate).String(), nil
 }
 

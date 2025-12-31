@@ -73,7 +73,6 @@ func (Investment) Edges() []ent.Edge {
 			Unique().
 			Immutable().
 			Annotations(
-				entgql.Type("String"),
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
 					entgql.SkipMutationUpdateInput,
@@ -139,7 +138,6 @@ func (Lot) Edges() []ent.Edge {
 			Unique().
 			Immutable().
 			Annotations(
-				entgql.Type("String"),
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
 					entgql.SkipMutationUpdateInput,
