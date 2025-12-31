@@ -111,10 +111,10 @@ function TransactionEntryCard({
       <ItemContent className="flex-none items-end">
         <ItemTitle className="line-clamp-1">
           <span className="">
-            {formatCurrency(
-              transactionEntry.amount,
-              transactionEntry.account.currency.code,
-            )}
+            {formatCurrency({
+              value: transactionEntry.amount,
+              currencyCode: transactionEntry.account.currency.code,
+            })}
           </span>
         </ItemTitle>
         <ItemDescription>{transactionEntry.account.name}</ItemDescription>
@@ -154,15 +154,18 @@ function LotCard({
       <ItemContent className="flex-none items-end">
         <ItemTitle className="line-clamp-1">
           <span className="">
-            {formatCurrency(
-              currency(lot.price).multiply(currency(lot.amount)),
-              lot.investment.currency.code,
-            )}
+            {formatCurrency({
+              value: currency(lot.price).multiply(currency(lot.amount)),
+              currencyCode: lot.investment.currency.code,
+            })}
           </span>
         </ItemTitle>
         <ItemDescription>
           {lot.amount} {lot.investment.name} @{' '}
-          {formatCurrency(currency(lot.price), lot.investment.currency.code)}
+          {formatCurrency({
+            value: currency(lot.price),
+            currencyCode: lot.investment.currency.code,
+          })}
         </ItemDescription>
       </ItemContent>
     </Item>

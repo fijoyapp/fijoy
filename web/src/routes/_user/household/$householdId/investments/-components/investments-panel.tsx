@@ -78,10 +78,10 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         <ItemContent>
           <ItemDescription>Total Investment</ItemDescription>
           <ItemTitle className="text-2xl">
-            {formatCurrencyWithPrivacyMode(
-              totalInvestment,
-              household.currency.code,
-            )}
+            {formatCurrencyWithPrivacyMode({
+              value: totalInvestment,
+              currencyCode: household.currency.code,
+            })}
           </ItemTitle>
         </ItemContent>
       </Item>
@@ -99,14 +99,14 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
                 <span>{capitalize(account.name)}</span>
                 <span className="grow"></span>
                 <span className="mr-3 font-mono">
-                  {formatCurrencyWithPrivacyMode(
-                    investments
+                  {formatCurrencyWithPrivacyMode({
+                    value: investments
                       .map((investment) =>
                         currency(investment.valueInHouseholdCurrency),
                       )
                       .reduce((a, b) => a.add(b), currency(0)),
-                    'CAD',
-                  )}
+                    currencyCode: 'CAD',
+                  })}
                 </span>
               </AccordionTrigger>
               <AccordionContent className="pb-1">

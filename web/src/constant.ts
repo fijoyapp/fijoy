@@ -9,7 +9,7 @@ export const ACCOUNT_TYPE_LIST = [
   'property',
   'receivable',
   'liability',
-]
+] as const
 
 export const ACCOUNT_TYPE_DESCRIPTION: Record<string, string> = {
   liquidity: 'Cash or cash-equivalent accounts, such as checking or savings',

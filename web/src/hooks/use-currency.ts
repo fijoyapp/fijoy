@@ -2,47 +2,38 @@ import currency from 'currency.js'
 import { usePrivacyMode } from './use-privacy-mode'
 import { useHousehold } from './use-household'
 
+type FormatCurrencyArgs = {
+  value: string | currency
+  currencyCode: string
+  liability?: boolean
+}
+
 export function useCurrency() {
   const { isPrivacyModeEnabled } = usePrivacyMode()
 
   const { household } = useHousehold()
 
-  const formatCurrency = (
-    currencyValue: string | currency,
-    currencyCode: string,
-  ) => {
-    const curr =
-      typeof currencyValue === 'string'
-        ? currency(currencyValue)
-        : currencyValue
+  const formatCurrency = ({
+    value,
+    currencyCode,
+    liability,
+  }: FormatCurrencyArgs) => {
+    const curr = typeof value === 'string' ? currency(value) : value
 
-    const value = Intl.NumberFormat(household.locale, {
+    const formatted = Intl.NumberFormat(household.locale, {
       currency: currencyCode,
       style: 'currency',
-    }).format(curr.value)
+    }).format(liability ? -curr.value : curr.value)
 
-    return value
+    return formatted
   }
 
-  const formatCurrencyWithPrivacyMode = (
-    currencyValue: string | currency,
-    currencyCode: string,
-  ) => {
+  const formatCurrencyWithPrivacyMode = (args: FormatCurrencyArgs) => {
     if (isPrivacyModeEnabled) {
       return '•••••••'
     }
 
-    const curr =
-      typeof currencyValue === 'string'
-        ? currency(currencyValue)
-        : currencyValue
-
-    const value = Intl.NumberFormat(household.locale, {
-      currency: currencyCode,
-      style: 'currency',
-    }).format(curr.value)
-
-    return value
+    return formatCurrency(args)
   }
 
   return { formatCurrency, formatCurrencyWithPrivacyMode }
