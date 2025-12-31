@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0388bc68baeb946039380b7f98b300ee>>
+ * @generated SignedSource<<4738290a4643b66c83de701f70e2c301>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,13 +15,6 @@ export type newAccountFragment$data = {
     readonly code: string;
     readonly id: string;
   }>;
-  readonly households: ReadonlyArray<{
-    readonly currency: {
-      readonly code: string;
-      readonly id: string;
-    };
-    readonly id: string;
-  }>;
   readonly " $fragmentType": "newAccountFragment";
 };
 export type newAccountFragment$key = {
@@ -29,25 +22,7 @@ export type newAccountFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"newAccountFragment">;
 };
 
-const node: ReaderFragment = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = [
-  (v0/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "code",
-    "storageKey": null
-  }
-];
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -60,26 +35,19 @@ return {
       "kind": "LinkedField",
       "name": "currencies",
       "plural": true,
-      "selections": (v1/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "Household",
-      "kind": "LinkedField",
-      "name": "households",
-      "plural": true,
       "selections": [
-        (v0/*: any*/),
         {
           "alias": null,
           "args": null,
-          "concreteType": "Currency",
-          "kind": "LinkedField",
-          "name": "currency",
-          "plural": false,
-          "selections": (v1/*: any*/),
+          "kind": "ScalarField",
+          "name": "id",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "code",
           "storageKey": null
         }
       ],
@@ -89,8 +57,7 @@ return {
   "type": "Query",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "a800a23a3dc6ef55276b6e6e98f95279";
+(node as any).hash = "9f3efb17c0f33bc3da7cdb864f4673ee";
 
 export default node;

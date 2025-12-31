@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<74a01c3fda76e151beaf93818d9ad107>>
+ * @generated SignedSource<<5c1a928dac48736b16b8fc573a74123d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,25 +19,7 @@ export type newAccountQuery = {
   variables: newAccountQuery$variables;
 };
 
-const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = [
-  (v0/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "code",
-    "storageKey": null
-  }
-];
-return {
+const node: ConcreteRequest = {
   "fragment": {
     "argumentDefinitions": [],
     "kind": "Fragment",
@@ -66,26 +48,19 @@ return {
         "kind": "LinkedField",
         "name": "currencies",
         "plural": true,
-        "selections": (v1/*: any*/),
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Household",
-        "kind": "LinkedField",
-        "name": "households",
-        "plural": true,
         "selections": [
-          (v0/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "Currency",
-            "kind": "LinkedField",
-            "name": "currency",
-            "plural": false,
-            "selections": (v1/*: any*/),
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "code",
             "storageKey": null
           }
         ],
@@ -94,15 +69,14 @@ return {
     ]
   },
   "params": {
-    "cacheID": "930ddfbd0910c9981cf4a69f779cd3f8",
+    "cacheID": "b5b669cd092a4ea4b626ec8451227c4c",
     "id": null,
     "metadata": {},
     "name": "newAccountQuery",
     "operationKind": "query",
-    "text": "query newAccountQuery {\n  ...newAccountFragment\n}\n\nfragment newAccountFragment on Query {\n  currencies {\n    id\n    code\n  }\n  households {\n    id\n    currency {\n      id\n      code\n    }\n  }\n}\n"
+    "text": "query newAccountQuery {\n  ...newAccountFragment\n}\n\nfragment newAccountFragment on Query {\n  currencies {\n    id\n    code\n  }\n}\n"
   }
 };
-})();
 
 (node as any).hash = "61249ef108899fcc94a14af055f728e4";
 

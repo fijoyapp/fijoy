@@ -63,13 +63,6 @@ const newAccountFragment = graphql`
       id
       code
     }
-    households {
-      id
-      currency {
-        id
-        code
-      }
-    }
   }
 `
 
