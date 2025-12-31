@@ -116,7 +116,10 @@ func main() {
 	}
 
 	// TODO: remove this when we go to production
-	db.ExecContext(ctx, "DROP SCHEMA public CASCADE; CREATE SCHEMA public;")
+	db.ExecContext( //nolint
+		ctx,
+		"DROP SCHEMA public CASCADE; CREATE SCHEMA public;",
+	)
 
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
@@ -139,7 +142,7 @@ func main() {
 
 	drv := entsql.OpenDB(dialect.Postgres, db)
 	entClient := ent.NewClient(ent.Driver(drv))
-	defer entClient.Close()
+	defer entClient.Close() //nolint
 
 	// Setup internal clients
 	fxrateProvider := fxrate.NewFrankfurterProvider()
@@ -219,7 +222,7 @@ func main() {
 			gothicUser, err := gothic.CompleteUserAuth(res, req)
 			if err != nil {
 				// TODO: redirect to frontend with error message
-				fmt.Fprintln(res, err)
+				fmt.Fprintln(res, err) //nolint
 				return
 			}
 
@@ -227,7 +230,7 @@ func main() {
 			case "google":
 				if verifiedEmail, ok := gothicUser.RawData["verified_email"].(bool); !ok ||
 					!verifiedEmail {
-					fmt.Fprintln(
+					fmt.Fprintln( // nolint
 						res,
 						"email not verified or could not be determined",
 					)
@@ -269,7 +272,7 @@ func main() {
 				res.WriteHeader(http.StatusTemporaryRedirect)
 
 			default:
-				fmt.Fprintf(
+				fmt.Fprintf( //nolint
 					res,
 					"provider %s not supported",
 					gothicUser.Provider,
@@ -282,7 +285,7 @@ func main() {
 	r.Get(
 		"/logout/{provider}",
 		func(res http.ResponseWriter, req *http.Request) {
-			gothic.Logout(res, req)
+			gothic.Logout(res, req) //nolint
 
 			res.Header().Set("Location", cfg.WebURL)
 			res.WriteHeader(http.StatusTemporaryRedirect)
@@ -298,12 +301,12 @@ func main() {
 		"/health",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("OK"))
+			w.Write([]byte("OK")) //nolint
 		}),
 	)
 
 	// Start server
-	http.ListenAndServe(":"+cfg.Port, r)
+	http.ListenAndServe(":"+cfg.Port, r) //nolint
 }
 
 func AuthMiddleware(client *ent.Client) func(http.Handler) http.Handler {
