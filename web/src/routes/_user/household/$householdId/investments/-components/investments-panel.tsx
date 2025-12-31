@@ -2,7 +2,7 @@ import { graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment } from 'react-relay'
-import { capitalize, groupBy, map, mapValues } from 'lodash-es'
+import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
@@ -31,16 +31,26 @@ import { Link } from '@tanstack/react-router'
 import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 
 const InvestmentsPanelFragment = graphql`
-  fragment investmentsPanelFragment on Query {
-    investments {
-      id
-      name
-      valueInHouseholdCurrency
-      account {
-        name
-        id
+  fragment investmentsPanelFragment on Query
+  @argumentDefinitions(
+    count: { type: "Int", defaultValue: 20 }
+    cursor: { type: "Cursor" }
+  )
+  @refetchable(queryName: "investmentsPanelRefetch") {
+    investments(first: $count, after: $cursor)
+      @connection(key: "investmentsPanel_investments") {
+      edges {
+        node {
+          id
+          name
+          valueInHouseholdCurrency
+          account {
+            name
+            id
+          }
+          ...investmentCardFragment
+        }
       }
-      ...investmentCardFragment
     }
   }
 `
@@ -55,15 +65,22 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
   const { formatCurrencyWithPrivacyMode } = useCurrency()
 
   const groupedInvestments = useMemo(
-    () => groupBy(data.investments, (investment) => investment.account.id),
+    () =>
+      groupBy(data.investments.edges, (investment) => {
+        invariant(investment?.node, 'Investment node is null')
+        return investment.node.account.id
+      }),
     [data.investments],
   )
 
   const { household } = useHousehold()
 
   const totalInvestment = useMemo(() => {
-    return data.investments
-      .map((investment) => currency(investment.valueInHouseholdCurrency))
+    return (data.investments.edges ?? [])
+      .map((investment) => {
+        invariant(investment?.node, 'Investment node is null')
+        return currency(investment.node.valueInHouseholdCurrency)
+      })
       .reduce((a, b) => a.add(b), currency(0))
   }, [data.investments])
 
@@ -114,7 +131,9 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         defaultValue={Object.keys(groupedInvestments)}
       >
         {map(groupedInvestments, (investments, _) => {
-          const account = investments[0].account
+          invariant(investments[0]?.node, 'Investment node is null')
+          const account = investments[0].node.account
+
           return (
             <AccordionItem value={account.id} key={account.id}>
               <AccordionTrigger className="justify-normal **:data-[slot=accordion-trigger-icon]:ml-0 gap-2 hover:no-underline cursor-pointer">
@@ -123,9 +142,12 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
                 <span className="mr-3 font-mono">
                   {formatCurrencyWithPrivacyMode({
                     value: investments
-                      .map((investment) =>
-                        currency(investment.valueInHouseholdCurrency),
-                      )
+                      .map((investment) => {
+                        invariant(investment?.node, 'Investment node is null')
+                        return currency(
+                          investment.node.valueInHouseholdCurrency,
+                        )
+                      })
                       .reduce((a, b) => a.add(b), currency(0)),
                     currencyCode: 'CAD',
                   })}
@@ -134,10 +156,11 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
               <AccordionContent className="pb-1">
                 <ItemGroup className="gap-0">
                   {investments.map((investment) => {
+                    invariant(investment?.node, 'Investment node is null')
                     return (
-                      <Fragment key={investment.id}>
+                      <Fragment key={investment.node.id}>
                         <ItemSeparator className="my-1" />
-                        <InvestmentCard fragmentRef={investment} />
+                        <InvestmentCard fragmentRef={investment.node} />
                       </Fragment>
                     )
                   })}

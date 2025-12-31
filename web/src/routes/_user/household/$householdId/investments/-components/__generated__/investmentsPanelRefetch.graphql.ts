@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e1112249d8937ec46f8aa96b41db1778>>
+ * @generated SignedSource<<eaebfdeec5433bf2ac150cdd646bc47f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,31 +10,51 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type InvestmentsQuery$variables = Record<PropertyKey, never>;
-export type InvestmentsQuery$data = {
+export type investmentsPanelRefetch$variables = {
+  count?: number | null | undefined;
+  cursor?: any | null | undefined;
+};
+export type investmentsPanelRefetch$data = {
   readonly " $fragmentSpreads": FragmentRefs<"investmentsPanelFragment">;
 };
-export type InvestmentsQuery = {
-  response: InvestmentsQuery$data;
-  variables: InvestmentsQuery$variables;
+export type investmentsPanelRefetch = {
+  response: investmentsPanelRefetch$data;
+  variables: investmentsPanelRefetch$variables;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
-    "kind": "Literal",
-    "name": "first",
-    "value": 20
+    "defaultValue": 20,
+    "kind": "LocalArgument",
+    "name": "count"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "cursor"
   }
 ],
-v1 = {
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "after",
+    "variableName": "cursor"
+  },
+  {
+    "kind": "Variable",
+    "name": "first",
+    "variableName": "count"
+  }
+],
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -43,13 +63,24 @@ v2 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "InvestmentsQuery",
+    "name": "investmentsPanelRefetch",
     "selections": [
       {
-        "args": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "count",
+            "variableName": "count"
+          },
+          {
+            "kind": "Variable",
+            "name": "cursor",
+            "variableName": "cursor"
+          }
+        ],
         "kind": "FragmentSpread",
         "name": "investmentsPanelFragment"
       }
@@ -59,13 +90,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "InvestmentsQuery",
+    "name": "investmentsPanelRefetch",
     "selections": [
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "InvestmentConnection",
         "kind": "LinkedField",
         "name": "investments",
@@ -87,8 +118,8 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
                   (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -104,8 +135,8 @@ return {
                     "name": "account",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/),
-                      (v1/*: any*/)
+                      (v3/*: any*/),
+                      (v2/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -138,7 +169,7 @@ return {
                         "name": "code",
                         "storageKey": null
                       },
-                      (v1/*: any*/)
+                      (v2/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -195,11 +226,11 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "investments(first:20)"
+        "storageKey": null
       },
       {
         "alias": null,
-        "args": (v0/*: any*/),
+        "args": (v1/*: any*/),
         "filters": null,
         "handle": "connection",
         "key": "investmentsPanel_investments",
@@ -209,16 +240,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1a961e784083f839ce02c4e0cbf111c0",
+    "cacheID": "0065dc9d52ae2d40b5e1ad2341c67058",
     "id": null,
     "metadata": {},
-    "name": "InvestmentsQuery",
+    "name": "investmentsPanelRefetch",
     "operationKind": "query",
-    "text": "query InvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  investments(first: 20) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query investmentsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...investmentsPanelFragment_1G22uz\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment_1G22uz on Query {\n  investments(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "87a3e85037c53e020aae88ec3f471906";
+(node as any).hash = "b64ab874375d638a16628b9dce4097ee";
 
 export default node;

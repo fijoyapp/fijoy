@@ -34,9 +34,11 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent.Investment) (string, error) {
 	account, err := obj.Account(ctx)
 	if err != nil {
+		r.logger.Error("failed to get account for investment", "investment_id", obj.ID, "error", err)
 		return "", err
 	}
 
+	// r.logger.Debug("account", "account", account)
 	return obj.Value.Mul(account.FxRate).String(), nil
 }
 

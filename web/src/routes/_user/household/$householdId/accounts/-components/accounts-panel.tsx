@@ -62,7 +62,11 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const { formatCurrencyWithPrivacyMode } = useCurrency()
 
   const groupedAccounts = useMemo(
-    () => groupBy(data.accounts.edges, (edge) => edge?.node?.type),
+    () =>
+      groupBy(data.accounts.edges, (edge) => {
+        invariant(edge?.node, 'Account node is null')
+        return edge.node.type
+      }),
     [data.accounts],
   )
 
