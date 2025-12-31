@@ -12,6 +12,12 @@ const useCurrencyQuery = graphql`
   }
 `
 
+type FormatCurrencyArgs = {
+  value: string | currency
+  currencyCode: string
+  liability?: boolean
+}
+
 export function useCurrency() {
   const data = useLazyLoadQuery<useCurrencyQuery>(
     useCurrencyQuery,
@@ -24,42 +30,27 @@ export function useCurrency() {
   // TODO: DO NOT HARD CODE LOCALE
   const defaultLocale = data.households[0]?.locale || 'en-CA'
 
-  const formatCurrency = (
-    currencyValue: string | currency,
-    currencyCode: string,
-  ) => {
-    const curr =
-      typeof currencyValue === 'string'
-        ? currency(currencyValue)
-        : currencyValue
+  const formatCurrency = ({
+    value,
+    currencyCode,
+    liability,
+  }: FormatCurrencyArgs) => {
+    const curr = typeof value === 'string' ? currency(value) : value
 
-    const value = Intl.NumberFormat(defaultLocale, {
+    const formatted = Intl.NumberFormat(defaultLocale, {
       currency: currencyCode,
       style: 'currency',
-    }).format(curr.value)
+    }).format(liability ? -curr.value : curr.value)
 
-    return value
+    return formatted
   }
 
-  const formatCurrencyWithPrivacyMode = (
-    currencyValue: string | currency,
-    currencyCode: string,
-  ) => {
+  const formatCurrencyWithPrivacyMode = (args: FormatCurrencyArgs) => {
     if (isPrivacyModeEnabled) {
       return '•••••••'
     }
 
-    const curr =
-      typeof currencyValue === 'string'
-        ? currency(currencyValue)
-        : currencyValue
-
-    const value = Intl.NumberFormat(defaultLocale, {
-      currency: currencyCode,
-      style: 'currency',
-    }).format(curr.value)
-
-    return value
+    return formatCurrency(args)
   }
 
   return { formatCurrency, formatCurrencyWithPrivacyMode }
