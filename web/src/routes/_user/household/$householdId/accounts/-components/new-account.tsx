@@ -1,4 +1,4 @@
-import { graphql } from 'relay-runtime'
+import { ConnectionHandler, graphql, ROOT_ID } from 'relay-runtime'
 import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -74,10 +74,18 @@ const newAccountFragment = graphql`
 `
 
 const newAccountMutation = graphql`
-  mutation newAccountMutation($input: CreateAccountInput!) {
-    createAccount(input: $input) {
-      id
-      name
+  mutation newAccountMutation(
+    $input: CreateAccountInput!
+    $connections: [ID!]!
+  ) {
+    createAccount(input: $input) @appendEdge(connections: $connections) {
+      node {
+        id
+        type
+        name
+        valueInHouseholdCurrency
+        ...accountCardFragment
+      }
     }
   }
 `
@@ -113,6 +121,11 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
       )?.id
       invariant(currencyID, 'Currency not found')
 
+      const connectionID = ConnectionHandler.getConnectionID(
+        ROOT_ID,
+        'accountsPanel_accounts',
+      )
+
       const result = await commitMutationResult<newAccountMutation>(
         commitMutation,
         {
@@ -123,6 +136,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
               currencyID: currencyID,
               balance: currency(formData.balance).toString(),
             },
+            connections: [connectionID],
           },
         },
       )
@@ -130,15 +144,17 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
       // 2. Pattern match the result
       match(result)
         .with({ status: 'success' }, ({ data }) => {
+          invariant(data.createAccount.node, 'No data returned from mutation')
+
           form.reset()
           navigate({
             from: '/household/$householdId/accounts/new',
             to: '/household/$householdId/accounts/$accountId',
             params: {
-              accountId: data.createAccount.id,
+              accountId: data.createAccount.node.id,
             },
           })
-          toast.success(`${data.createAccount.name} is ready to go!`)
+          toast.success(`${data.createAccount.node.name} is ready to go!`)
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())
@@ -207,17 +223,17 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                       onValueChange={(value) => field.handleChange(value || '')}
                     >
                       <ComboboxInput
-                        value={capitalize(field.state.value)}
                         id={field.name}
                         name={field.name}
                         placeholder="Select a type"
                         onBlur={field.handleBlur}
                         aria-invalid={isInvalid}
+                        className="*:capitalize"
                       />
                       <ComboboxContent>
                         <ComboboxEmpty>No items found.</ComboboxEmpty>
                         <ComboboxList className="">
-                          {(item) => (
+                          {(item: string) => (
                             <ComboboxItem
                               key={item}
                               value={item}
@@ -264,7 +280,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                       <ComboboxContent>
                         <ComboboxEmpty>No items found.</ComboboxEmpty>
                         <ComboboxList>
-                          {(item) => (
+                          {(item: string) => (
                             <ComboboxItem key={item} value={item}>
                               {item}
                             </ComboboxItem>
