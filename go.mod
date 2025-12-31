@@ -7,6 +7,7 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/99designs/gqlgen v0.17.85
 	github.com/caarlos0/env/v11 v11.3.1
+	github.com/charmbracelet/log v0.4.2
 	github.com/fijoyapp/finance-go v0.1.1
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-chi/cors v1.2.2
@@ -31,7 +32,6 @@ require (
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
 	github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
 	github.com/charmbracelet/lipgloss v1.1.0 // indirect
-	github.com/charmbracelet/log v0.4.2 // indirect
 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
