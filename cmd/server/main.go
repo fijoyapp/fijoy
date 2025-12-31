@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/charmbracelet/log"
+
 	"fijoy.app/ent/investment"
 	_ "fijoy.app/ent/runtime"
 
@@ -70,16 +72,27 @@ type config struct {
 func main() {
 	ctx := context.Background()
 
-	// Logger
-	opts := &slog.HandlerOptions{
-		Level: slog.LevelDebug,
-	}
-	slogHandler := slog.NewJSONHandler(os.Stdout, opts)
-	logger := slog.New(slogHandler)
-	slog.SetDefault(logger)
-
 	// isProd
 	isProd := os.Getenv("RAILWAY_PUBLIC_DOMAIN") != ""
+
+	// Logger
+	// opts := &slog.HandlerOptions{
+	// 	Level: slog.LevelDebug,
+	// }
+	logOptions := log.Options{
+		ReportCaller:    true,
+		ReportTimestamp: true,
+	}
+	if isProd {
+		logOptions.Formatter = log.JSONFormatter
+		logOptions.Level = log.InfoLevel
+	} else {
+		logOptions.TimeFormat = time.Kitchen
+	}
+
+	slogHandler := log.NewWithOptions(os.Stdout, logOptions)
+	logger := slog.New(slogHandler)
+	slog.SetDefault(logger)
 
 	// Load environment variables
 	if !isProd {
