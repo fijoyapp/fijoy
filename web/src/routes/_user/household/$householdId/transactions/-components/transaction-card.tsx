@@ -6,7 +6,7 @@ import {
   BadgeCheckIcon,
   BanknoteArrowDownIcon,
   BanknoteArrowUpIcon,
-  PlayIcon,
+  WrenchIcon,
 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { Fragment } from 'react/jsx-runtime'
@@ -175,16 +175,16 @@ function LotCard({
 function getCategoryTypeIcon({ type }: { type: TransactionCategoryType }) {
   return match(type)
     .with('income', () => (
-      <BanknoteArrowUpIcon className="size-10 text-white bg-green-500/90 p-1" />
+      <BanknoteArrowUpIcon className="size-10 text-white bg-green-500/90 p-1.5" />
     ))
     .with('expense', () => (
-      <BanknoteArrowDownIcon className="size-10 text-white bg-red-500/90 p-1" />
+      <BanknoteArrowDownIcon className="size-10 text-white bg-red-500/90 p-1.5" />
     ))
     .with('transfer', () => (
-      <ArrowLeftRightIcon className="size-10 text-white bg-orange-500/90 p-1" />
+      <ArrowLeftRightIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
     ))
     .with('setup', () => (
-      <PlayIcon className="size-10 text-white bg-orange-500/90 p-1" />
+      <WrenchIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
     ))
     .otherwise(() => null)
 }
