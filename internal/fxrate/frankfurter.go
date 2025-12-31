@@ -50,7 +50,7 @@ func (p *FrankfurterProvider) GetRate(
 			err,
 		)
 	}
-	defer resp.Body.Close() //nolint
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		return decimal.Zero, fmt.Errorf(
