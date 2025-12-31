@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { ChevronsUpDown, Plus } from 'lucide-react'
 
 import {
@@ -17,18 +16,29 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { graphql, useFragment } from 'react-relay'
+import { type householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
+import { useNavigate } from '@tanstack/react-router'
+import { useHousehold } from '@/hooks/use-household'
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: Array<{
-    name: string
-    logo: React.ElementType
-    plan: string
-  }>
-}) {
+const HouseholdSwitcherFragment = graphql`
+  fragment householdSwitcherFragment on Query {
+    households {
+      id
+      name
+    }
+  }
+`
+
+type HouseholdSwitcherProps = {
+  fragmentRef: householdSwitcherFragment$key
+}
+
+export function HouseholdSwitcher({ fragmentRef }: HouseholdSwitcherProps) {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const data = useFragment(HouseholdSwitcherFragment, fragmentRef)
+  const { household: activeHousehold } = useHousehold()
+  const navigate = useNavigate()
 
   return (
     <SidebarMenu>
@@ -41,13 +51,13 @@ export function TeamSwitcher({
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <activeTeam.logo className="size-4" />
+                  <Logo size="large" name={activeHousehold.name} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {activeTeam.name}
+                    {activeHousehold.name}
                   </span>
-                  <span className="truncate text-xs">{activeTeam.plan}</span>
+                  {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
                 </div>
                 <ChevronsUpDown className="ml-auto" />
               </SidebarMenuButton>
@@ -63,26 +73,37 @@ export function TeamSwitcher({
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Teams
               </DropdownMenuLabel>
-              {teams.map((team, index) => (
+              {data.households.map((household, index) => (
                 <DropdownMenuItem
-                  key={team.name}
-                  onClick={() => setActiveTeam(team)}
+                  key={household.id}
                   className="gap-2 p-2"
+                  onClick={() =>
+                    navigate({
+                      to: '/household/$householdId',
+                      params: {
+                        householdId: household.id,
+                      },
+                      reloadDocument: true,
+                    })
+                  }
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">
-                    <team.logo className="size-3.5 shrink-0" />
+                    <Logo size="small" name={household.name} />
                   </div>
-                  {team.name}
+                  {household.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 p-2">
+              <DropdownMenuItem
+                className="gap-2 p-2"
+                onClick={() => navigate({ to: '/household/new' })}
+              >
                 <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                   <Plus className="size-4" />
                 </div>
                 <div className="text-muted-foreground font-medium">
-                  Add team
+                  Add household
                 </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -90,5 +111,16 @@ export function TeamSwitcher({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
+  )
+}
+
+type LogoProps = {
+  name: string
+  size: 'small' | 'large'
+}
+
+function Logo({ name, size }: LogoProps) {
+  return (
+    <div className={size === 'small' ? 'text-sm' : 'text-lg'}>{name[0]}</div>
   )
 }

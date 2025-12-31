@@ -416,11 +416,25 @@ func seed(
 		SetLocale("en-CA").
 		SaveX(ctx)
 
+	household2 := entClient.Household.Create().
+		SetName("Acme Corp").
+		SetCurrency(cad).
+		SetLocale("en-CA").
+		SaveX(ctx)
+
 	ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), household.ID)
 
 	entClient.UserHousehold.Create().
 		SetUser(joey).
 		SetHousehold(household).
+		SetRole(userhousehold.RoleAdmin).
+		SaveX(ctx)
+
+	ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), household2.ID)
+
+	entClient.UserHousehold.Create().
+		SetUser(joey).
+		SetHousehold(household2).
 		SetRole(userhousehold.RoleAdmin).
 		SaveX(ctx)
 
