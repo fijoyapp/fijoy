@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { usePreloadedQuery } from 'react-relay'
 import { TransactionsPanel } from './-components/transactions-panel'
-import { routeTransactions } from './route'
-import type { routeTransactionsQuery } from './__generated__/routeTransactionsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { PendingComponent } from '@/components/pending-component'
+import { transactionsQuery } from './-transactions-query'
+import { type TransactionsQuery } from './__generated__/TransactionsQuery.graphql'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions/',
@@ -16,10 +16,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<routeTransactionsQuery>(
-    routeTransactions,
-    queryRef,
-  )
+  const data = usePreloadedQuery<TransactionsQuery>(transactionsQuery, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
 

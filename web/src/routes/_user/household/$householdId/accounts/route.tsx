@@ -1,7 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 
 import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
 import { Fragment } from 'react/jsx-runtime'
 import { AccountsPanel } from './-components/accounts-panel'
 import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
@@ -10,13 +9,15 @@ import { environment } from '@/environment'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { PendingComponent } from '@/components/pending-component'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { accountsQuery } from './-accounts-query'
+import { AccountsQuery } from './__generated__/AccountsQuery.graphql'
 
 export const Route = createFileRoute('/_user/household/$householdId/accounts')({
   component: RouteComponent,
   beforeLoad: () => {
-    return loadQuery<routeAccountsQuery>(
+    return loadQuery<AccountsQuery>(
       environment,
-      routeAccounts,
+      accountsQuery,
       {},
       { fetchPolicy: 'store-or-network' },
     )
@@ -24,16 +25,10 @@ export const Route = createFileRoute('/_user/household/$householdId/accounts')({
   pendingComponent: PendingComponent,
 })
 
-export const routeAccounts = graphql`
-  query routeAccountsQuery {
-    ...accountsPanelFragment
-  }
-`
-
 function RouteComponent() {
   const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<routeAccountsQuery>(routeAccounts, queryRef)
+  const data = usePreloadedQuery<routeAccountsQuery>(accountsQuery, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
 

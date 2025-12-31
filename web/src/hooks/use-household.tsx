@@ -23,6 +23,7 @@ export const HouseholdProvider = ({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useHousehold = () => {
   const context = useContext(HouseholdContext)
   if (context === null) {

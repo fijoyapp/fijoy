@@ -62,7 +62,9 @@ export function NavMain({
                             <Link
                               {...subItem.link}
                               className="w-full"
-                              activeProps={{ className: 'font-bold' }}
+                              activeProps={{
+                                className: 'font-bold',
+                              }}
                             >
                               <span>{subItem.title}</span>
                             </Link>

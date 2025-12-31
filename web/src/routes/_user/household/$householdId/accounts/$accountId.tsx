@@ -26,7 +26,9 @@ export const Route = createFileRoute(
               hasLotsWith: [
                 {
                   hasInvestmentWith: [
-                    { hasAccountWith: [{ id: params.accountId }] },
+                    {
+                      hasAccountWith: [{ id: params.accountId }],
+                    },
                   ],
                 },
               ],
