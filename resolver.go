@@ -1,6 +1,8 @@
 package fijoy
 
 import (
+	"log/slog"
+
 	"fijoy.app/ent"
 	"fijoy.app/internal/fxrate"
 	"fijoy.app/internal/market"
@@ -13,6 +15,7 @@ import (
 // here.
 
 type Resolver struct {
+	logger       *slog.Logger
 	entClient    *ent.Client
 	fxrateClient *fxrate.Client
 	marketClient *market.Client
@@ -20,11 +23,12 @@ type Resolver struct {
 
 // NewSchema creates a graphql executable schema.
 func NewSchema(
+	logger *slog.Logger,
 	entClient *ent.Client,
 	fxrateClient *fxrate.Client,
 	marketClient *market.Client,
 ) graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{
-		Resolvers: &Resolver{entClient, fxrateClient, marketClient},
+		Resolvers: &Resolver{logger, entClient, fxrateClient, marketClient},
 	})
 }

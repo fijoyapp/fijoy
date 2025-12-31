@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 	"math/rand"
 	"net/http"
 	"os"
@@ -70,6 +70,15 @@ type config struct {
 func main() {
 	ctx := context.Background()
 
+	// Logger
+	opts := &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}
+	slogHandler := slog.NewJSONHandler(os.Stdout, opts)
+	logger := slog.New(slogHandler)
+	slog.SetDefault(logger)
+
+	// isProd
 	isProd := os.Getenv("RAILWAY_PUBLIC_DOMAIN") != ""
 
 	// Load environment variables
@@ -134,11 +143,11 @@ func main() {
 	}
 	err = m.Up()
 	if err != nil && err != migrate.ErrNoChange {
-		log.Fatalf("migration failed: %v", err)
+		logger.Error("migration failed", slog.String("error", err.Error()))
 		panic(err)
 	}
 
-	log.Println("migration completed successfully")
+	logger.Info("database migrated successfully")
 
 	drv := entsql.OpenDB(dialect.Postgres, db)
 	entClient := ent.NewClient(ent.Driver(drv))
@@ -153,7 +162,10 @@ func main() {
 
 	// Seed database
 	if err := seed(ctx, entClient, fxrateClient, marketClient); err != nil {
-		log.Fatalf("failed seeding database: %v", err)
+		logger.Error(
+			"seeding database failed",
+			slog.String("error", err.Error()),
+		)
 	}
 
 	// Setup router + CORS
@@ -182,7 +194,7 @@ func main() {
 
 	// Setup GQL
 	gqlHandler := handler.NewDefaultServer(
-		fijoy.NewSchema(entClient, fxrateClient, marketClient),
+		fijoy.NewSchema(logger, entClient, fxrateClient, marketClient),
 	)
 	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
 
@@ -207,7 +219,7 @@ func main() {
 					OnlyIDX(contextkeys.NewPrivacyBypassContext(ctx))
 
 				_, tokenString, _ := tokenAuth.Encode(
-					map[string]interface{}{
+					map[string]any{
 						"user_id": strconv.Itoa(userID),
 					},
 				)
@@ -244,7 +256,10 @@ func main() {
 					Ignore().ID(contextkeys.NewPrivacyBypassContext(ctx))
 				if err != nil {
 					res.WriteHeader(http.StatusInternalServerError)
-					log.Printf("failed creating user: %v", err)
+					logger.Error(
+						"failed creating user",
+						slog.String("error", err.Error()),
+					)
 					return
 				}
 
@@ -256,7 +271,10 @@ func main() {
 					Ignore().Exec(contextkeys.NewPrivacyBypassContext(ctx))
 				if err != nil {
 					res.WriteHeader(http.StatusInternalServerError)
-					log.Printf("failed creating user key: %v", err)
+					logger.Error(
+						"failed creating user key",
+						slog.String("error", err.Error()),
+					)
 					return
 				}
 
