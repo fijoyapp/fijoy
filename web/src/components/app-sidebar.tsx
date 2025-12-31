@@ -19,7 +19,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
+import { type householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
 
 const navMain: Array<{
   title: string

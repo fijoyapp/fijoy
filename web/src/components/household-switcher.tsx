@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { ChevronsUpDown, Plus } from 'lucide-react'
 
 import {
@@ -18,7 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { graphql, useFragment } from 'react-relay'
-import { householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
+import { type householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
 import { useNavigate } from '@tanstack/react-router'
 import { useHousehold } from '@/hooks/use-household'
 
@@ -76,7 +75,7 @@ export function HouseholdSwitcher({ fragmentRef }: HouseholdSwitcherProps) {
               </DropdownMenuLabel>
               {data.households.map((household, index) => (
                 <DropdownMenuItem
-                  key={household.name}
+                  key={household.id}
                   className="gap-2 p-2"
                   onClick={() =>
                     navigate({
