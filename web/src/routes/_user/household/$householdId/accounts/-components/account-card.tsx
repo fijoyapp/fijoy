@@ -73,10 +73,11 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
               <ItemContent className="items-end gap-px">
                 <ItemTitle className="font-mono">
                   <span>
-                    {formatCurrencyWithPrivacyMode(
-                      data.value,
-                      data.currency.code,
-                    )}
+                    {formatCurrencyWithPrivacyMode({
+                      value: data.value,
+                      currencyCode: data.currency.code,
+                      liability: data.type === 'liability',
+                    })}
                   </span>
                 </ItemTitle>
                 <ItemDescription className="">

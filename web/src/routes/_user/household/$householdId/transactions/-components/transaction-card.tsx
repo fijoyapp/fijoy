@@ -6,7 +6,7 @@ import {
   BadgeCheckIcon,
   BanknoteArrowDownIcon,
   BanknoteArrowUpIcon,
-  PlayIcon,
+  WrenchIcon,
 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { Fragment } from 'react/jsx-runtime'
@@ -111,10 +111,10 @@ function TransactionEntryCard({
       <ItemContent className="flex-none items-end">
         <ItemTitle className="line-clamp-1">
           <span className="">
-            {formatCurrency(
-              transactionEntry.amount,
-              transactionEntry.account.currency.code,
-            )}
+            {formatCurrency({
+              value: transactionEntry.amount,
+              currencyCode: transactionEntry.account.currency.code,
+            })}
           </span>
         </ItemTitle>
         <ItemDescription>{transactionEntry.account.name}</ItemDescription>
@@ -154,15 +154,18 @@ function LotCard({
       <ItemContent className="flex-none items-end">
         <ItemTitle className="line-clamp-1">
           <span className="">
-            {formatCurrency(
-              currency(lot.price).multiply(currency(lot.amount)),
-              lot.investment.currency.code,
-            )}
+            {formatCurrency({
+              value: currency(lot.price).multiply(currency(lot.amount)),
+              currencyCode: lot.investment.currency.code,
+            })}
           </span>
         </ItemTitle>
         <ItemDescription>
           {lot.amount} {lot.investment.name} @{' '}
-          {formatCurrency(currency(lot.price), lot.investment.currency.code)}
+          {formatCurrency({
+            value: currency(lot.price),
+            currencyCode: lot.investment.currency.code,
+          })}
         </ItemDescription>
       </ItemContent>
     </Item>
@@ -172,16 +175,16 @@ function LotCard({
 function getCategoryTypeIcon({ type }: { type: TransactionCategoryType }) {
   return match(type)
     .with('income', () => (
-      <BanknoteArrowUpIcon className="size-10 text-white bg-green-500/90 p-1" />
+      <BanknoteArrowUpIcon className="size-10 text-white bg-green-500/90 p-1.5" />
     ))
     .with('expense', () => (
-      <BanknoteArrowDownIcon className="size-10 text-white bg-red-500/90 p-1" />
+      <BanknoteArrowDownIcon className="size-10 text-white bg-red-500/90 p-1.5" />
     ))
     .with('transfer', () => (
-      <ArrowLeftRightIcon className="size-10 text-white bg-orange-500/90 p-1" />
+      <ArrowLeftRightIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
     ))
     .with('setup', () => (
-      <PlayIcon className="size-10 text-white bg-orange-500/90 p-1" />
+      <WrenchIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
     ))
     .otherwise(() => null)
 }

@@ -15,6 +15,7 @@ import (
 	"fijoy.app/ent/household"
 	"fijoy.app/ent/transactioncategory"
 	"fijoy.app/internal/contextkeys"
+	"fijoy.app/internal/gqlutil"
 	"github.com/shopspring/decimal"
 )
 
@@ -39,7 +40,7 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 }
 
 // CreateAccount is the resolver for the createAccount field.
-func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error) {
+func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error) {
 	now := time.Now()
 	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
@@ -74,7 +75,10 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 	}
 
 	if input.Balance == nil || input.Balance.IsZero() {
-		return account, nil
+		return &ent.AccountEdge{
+			Node:   account,
+			Cursor: gqlutil.EncodeCursor(account.ID),
+		}, nil
 	}
 
 	categoryID, err := client.TransactionCategory.Create().
@@ -115,7 +119,15 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		return nil, err
 	}
 
-	return account, nil
+	account, err = client.Account.Get(ctx, account.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ent.AccountEdge{
+		Node:   account,
+		Cursor: gqlutil.EncodeCursor(account.ID),
+	}, nil
 }
 
 // FxRate is the resolver for the fxRate field.

@@ -1544,7 +1544,7 @@ input UserWhereInput {
 scalar DateTime
 
 type Mutation {
-  createAccount(input: CreateAccountInput!): Account!
+  createAccount(input: CreateAccountInput!): AccountEdge!
 }
 
 schema {

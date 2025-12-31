@@ -290,7 +290,7 @@ type LotResolver interface {
 	Price(ctx context.Context, obj *ent.Lot) (string, error)
 }
 type MutationResolver interface {
-	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.Account, error)
+	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error)
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
@@ -4477,7 +4477,7 @@ func (ec *executionContext) _Mutation_createAccount(ctx context.Context, field g
 			return ec.resolvers.Mutation().CreateAccount(ctx, fc.Args["input"].(ent.CreateAccountInput))
 		},
 		nil,
-		ec.marshalNAccount2ᚖfijoyᚗappᚋentᚐAccount,
+		ec.marshalNAccountEdge2ᚖfijoyᚗappᚋentᚐAccountEdge,
 		true,
 		true,
 	)
@@ -4491,42 +4491,12 @@ func (ec *executionContext) fieldContext_Mutation_createAccount(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "id":
-				return ec.fieldContext_Account_id(ctx, field)
-			case "createTime":
-				return ec.fieldContext_Account_createTime(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Account_updateTime(ctx, field)
-			case "householdID":
-				return ec.fieldContext_Account_householdID(ctx, field)
-			case "name":
-				return ec.fieldContext_Account_name(ctx, field)
-			case "type":
-				return ec.fieldContext_Account_type(ctx, field)
-			case "balance":
-				return ec.fieldContext_Account_balance(ctx, field)
-			case "iconPath":
-				return ec.fieldContext_Account_iconPath(ctx, field)
-			case "value":
-				return ec.fieldContext_Account_value(ctx, field)
-			case "fxRate":
-				return ec.fieldContext_Account_fxRate(ctx, field)
-			case "household":
-				return ec.fieldContext_Account_household(ctx, field)
-			case "currency":
-				return ec.fieldContext_Account_currency(ctx, field)
-			case "user":
-				return ec.fieldContext_Account_user(ctx, field)
-			case "transactionEntries":
-				return ec.fieldContext_Account_transactionEntries(ctx, field)
-			case "investments":
-				return ec.fieldContext_Account_investments(ctx, field)
-			case "balanceInHouseholdCurrency":
-				return ec.fieldContext_Account_balanceInHouseholdCurrency(ctx, field)
-			case "valueInHouseholdCurrency":
-				return ec.fieldContext_Account_valueInHouseholdCurrency(ctx, field)
+			case "node":
+				return ec.fieldContext_AccountEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_AccountEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AccountEdge", field.Name)
 		},
 	}
 	defer func() {
@@ -17669,10 +17639,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAccount2fijoyᚗappᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v ent.Account) graphql.Marshaler {
-	return ec._Account(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNAccount2ᚖfijoyᚗappᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v *ent.Account) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -17695,6 +17661,20 @@ func (ec *executionContext) marshalNAccountConnection2ᚖfijoyᚗappᚋentᚐAcc
 		return graphql.Null
 	}
 	return ec._AccountConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAccountEdge2fijoyᚗappᚋentᚐAccountEdge(ctx context.Context, sel ast.SelectionSet, v ent.AccountEdge) graphql.Marshaler {
+	return ec._AccountEdge(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAccountEdge2ᚖfijoyᚗappᚋentᚐAccountEdge(ctx context.Context, sel ast.SelectionSet, v *ent.AccountEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AccountEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNAccountType2fijoyᚗappᚋentᚋaccountᚐType(ctx context.Context, v any) (account.Type, error) {

@@ -90,20 +90,27 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           <ItemContent>
             <ItemDescription>Net Worth</ItemDescription>
             <ItemTitle className="text-2xl">
-              {formatCurrencyWithPrivacyMode(netWorth, household.currency.code)}
+              {formatCurrencyWithPrivacyMode({
+                value: netWorth,
+                currencyCode: household.currency.code,
+              })}
             </ItemTitle>
           </ItemContent>
         </Item>
         <div className="px-1"></div>
         <div className="flex flex-col items-stretch w-10">
-          <Button size="icon-lg" className="flex-1 w-full cursor-pointer">
-            <Link
-              from="/household/$householdId/accounts"
-              to="/household/$householdId/accounts/new"
-            >
-              <PlusIcon />
-            </Link>
-          </Button>
+          <Button
+            size="icon-lg"
+            className="flex-1 w-full cursor-pointer"
+            render={
+              <Link
+                from="/household/$householdId/accounts"
+                to="/household/$householdId/accounts/new"
+              >
+                <PlusIcon />
+              </Link>
+            }
+          ></Button>
           <div className="py-1"></div>
           <Button
             size="icon-lg"
@@ -115,7 +122,11 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         </div>
       </div>
       <div className="py-2"></div>
-      <Accordion multiple className="w-full" defaultValue={ACCOUNT_TYPE_LIST}>
+      <Accordion
+        multiple
+        className="w-full"
+        defaultValue={[...ACCOUNT_TYPE_LIST]}
+      >
         {map(ACCOUNT_TYPE_LIST, (type) => {
           if (type in groupedAccounts === false) {
             return null
@@ -127,15 +138,16 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
                 <span>{capitalize(type)}</span>
                 <span className="grow"></span>
                 <span className="mr-3 font-mono">
-                  {formatCurrencyWithPrivacyMode(
-                    accounts
+                  {formatCurrencyWithPrivacyMode({
+                    value: accounts
                       .map((account) => {
                         invariant(account?.node, 'Account node is null')
                         return currency(account.node.valueInHouseholdCurrency)
                       })
                       .reduce((a, b) => a.add(b), currency(0)),
-                    'CAD',
-                  )}
+                    currencyCode: 'CAD',
+                    liability: type === 'liability',
+                  })}
                 </span>
               </AccordionTrigger>
               <AccordionContent className="pb-1">
