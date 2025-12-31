@@ -1,5 +1,5 @@
-import { UseMutationConfig } from 'react-relay'
-import type { MutationParameters, Disposable } from 'relay-runtime'
+import type { UseMutationConfig } from 'react-relay'
+import type { Disposable, MutationParameters } from 'relay-runtime'
 
 // Define a Result type (Discriminated Union)
 type MutationResult<T> =

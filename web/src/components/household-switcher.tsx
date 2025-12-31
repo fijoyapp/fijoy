@@ -1,5 +1,8 @@
 import { ChevronsUpDown, Plus } from 'lucide-react'
 
+import { graphql, useFragment } from 'react-relay'
+import { useNavigate } from '@tanstack/react-router'
+import type { householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +19,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { graphql, useFragment } from 'react-relay'
-import { type householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
-import { useNavigate } from '@tanstack/react-router'
 import { useHousehold } from '@/hooks/use-household'
 
 const HouseholdSwitcherFragment = graphql`

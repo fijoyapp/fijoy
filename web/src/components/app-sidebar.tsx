@@ -6,6 +6,7 @@ import {
   WalletIcon,
 } from 'lucide-react'
 import { NavProjects } from './nav-projects'
+import type { householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
 import type { LucideIcon } from 'lucide-react'
 
 // import { NavMain } from '@/components/nav-main'
@@ -19,7 +20,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { type householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
 
 const navMain: Array<{
   title: string

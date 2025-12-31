@@ -1,9 +1,14 @@
-import { ConnectionHandler, graphql, ROOT_ID } from 'relay-runtime'
+import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
 import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { useFragment, useMutation } from 'react-relay'
 import { capitalize } from 'lodash-es'
+import currency from 'currency.js'
+import invariant from 'tiny-invariant'
+import { match } from 'ts-pattern'
+import { useNavigate } from '@tanstack/react-router'
+import type { newAccountMutation } from './__generated__/newAccountMutation.graphql'
 import type { newAccountFragment$key } from './__generated__/newAccountFragment.graphql'
 
 import { Button } from '@/components/ui/button'
@@ -34,12 +39,7 @@ import {
 import { ACCOUNT_TYPE_DESCRIPTION, ACCOUNT_TYPE_LIST } from '@/constant'
 import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
-import { type newAccountMutation } from './__generated__/newAccountMutation.graphql'
-import currency from 'currency.js'
-import invariant from 'tiny-invariant'
 import { commitMutationResult } from '@/lib/relay'
-import { match } from 'ts-pattern'
-import { useNavigate } from '@tanstack/react-router'
 
 const formSchema = z.object({
   name: z
@@ -117,7 +117,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
       const formData = formSchema.parse(value)
 
       const currencyID = data.currencies.find(
-        (currency) => currency.code === formData.currencyCode,
+        (curr) => curr.code === formData.currencyCode,
       )?.id
       invariant(currencyID, 'Currency not found')
 
@@ -148,18 +148,21 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
 
       // 2. Pattern match the result
       match(result)
-        .with({ status: 'success' }, ({ data }) => {
-          invariant(data.createAccount.node, 'No data returned from mutation')
+        .with({ status: 'success' }, ({ data: resultData }) => {
+          invariant(
+            resultData.createAccount.node,
+            'No data returned from mutation',
+          )
 
           form.reset()
           navigate({
             from: '/household/$householdId/accounts/new',
             to: '/household/$householdId/accounts/$accountId',
             params: {
-              accountId: data.createAccount.node.id,
+              accountId: resultData.createAccount.node.id,
             },
           })
-          toast.success(`${data.createAccount.node.name} is ready to go!`)
+          toast.success(`${resultData.createAccount.node.name} is ready to go!`)
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())
