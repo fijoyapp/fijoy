@@ -96,12 +96,15 @@ export function HouseholdSwitcher({ fragmentRef }: HouseholdSwitcherProps) {
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 p-2">
+              <DropdownMenuItem
+                className="gap-2 p-2"
+                onClick={() => navigate({ to: '/household/new' })}
+              >
                 <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                   <Plus className="size-4" />
                 </div>
                 <div className="text-muted-foreground font-medium">
-                  Add team
+                  Add household
                 </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
