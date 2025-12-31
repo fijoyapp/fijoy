@@ -75,10 +75,6 @@ func main() {
 	// isProd
 	isProd := os.Getenv("RAILWAY_PUBLIC_DOMAIN") != ""
 
-	// Logger
-	// opts := &slog.HandlerOptions{
-	// 	Level: slog.LevelDebug,
-	// }
 	logOptions := log.Options{
 		ReportCaller:    true,
 		ReportTimestamp: true,
@@ -88,9 +84,10 @@ func main() {
 		logOptions.Level = log.InfoLevel
 	} else {
 		logOptions.TimeFormat = time.Kitchen
+		logOptions.Level = log.DebugLevel
 	}
 
-	slogHandler := log.NewWithOptions(os.Stdout, logOptions)
+	slogHandler := log.NewWithOptions(os.Stderr, logOptions)
 	logger := slog.New(slogHandler)
 	slog.SetDefault(logger)
 
