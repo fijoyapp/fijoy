@@ -126,6 +126,11 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
         'accountsPanel_accounts',
       )
 
+      const balance =
+        formData.type === 'liability'
+          ? currency(formData.balance).multiply(-1)
+          : currency(formData.balance)
+
       const result = await commitMutationResult<newAccountMutation>(
         commitMutation,
         {
@@ -134,7 +139,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
               name: formData.name,
               type: formData.type,
               currencyID: currencyID,
-              balance: currency(formData.balance).toString(),
+              balance: balance.toString(),
             },
             connections: [connectionID],
           },
