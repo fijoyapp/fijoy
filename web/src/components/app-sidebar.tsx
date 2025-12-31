@@ -11,7 +11,7 @@ import type { LucideIcon } from 'lucide-react'
 // import { NavMain } from '@/components/nav-main'
 import type { ValidateLinkOptions } from '@tanstack/react-router'
 import { NavUser } from '@/components/nav-user'
-import { TeamSwitcher } from '@/components/team-switcher'
+import { HouseholdSwitcher } from '@/components/household-switcher'
 import {
   Sidebar,
   SidebarContent,
@@ -19,7 +19,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { routeHouseholdIdQuery$data } from '@/routes/_user/household/$householdId/__generated__/routeHouseholdIdQuery.graphql'
+import { householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
 
 const navMain: Array<{
   title: string
@@ -110,14 +110,14 @@ const user = {
 }
 
 type AppSidebarProps = {
-  data: routeHouseholdIdQuery$data
+  fragmentRef: householdSwitcherFragment$key
 } & React.ComponentProps<typeof Sidebar>
 
-export function AppSidebar({ data, ...props }: AppSidebarProps) {
+export function AppSidebar({ fragmentRef, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher fragmentRef={data} />
+        <HouseholdSwitcher fragmentRef={fragmentRef} />
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={projects} />

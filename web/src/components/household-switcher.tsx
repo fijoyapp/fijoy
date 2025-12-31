@@ -18,10 +18,12 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { graphql, useFragment } from 'react-relay'
-import { teamSwitcherFragment$key } from './__generated__/teamSwitcherFragment.graphql'
+import { householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
+import { useNavigate } from '@tanstack/react-router'
+import { useHousehold } from '@/hooks/use-household'
 
-const TeamSwitcherFragment = graphql`
-  fragment teamSwitcherFragment on Query {
+const HouseholdSwitcherFragment = graphql`
+  fragment householdSwitcherFragment on Query {
     households {
       id
       name
@@ -29,14 +31,15 @@ const TeamSwitcherFragment = graphql`
   }
 `
 
-type TeamSwitcherProps = {
-  fragmentRef: teamSwitcherFragment$key
+type HouseholdSwitcherProps = {
+  fragmentRef: householdSwitcherFragment$key
 }
 
-export function TeamSwitcher({ fragmentRef }: TeamSwitcherProps) {
+export function HouseholdSwitcher({ fragmentRef }: HouseholdSwitcherProps) {
   const { isMobile } = useSidebar()
-  const data = useFragment(TeamSwitcherFragment, fragmentRef)
-  const [activeTeam, setActiveTeam] = React.useState(data.households[0])
+  const data = useFragment(HouseholdSwitcherFragment, fragmentRef)
+  const { household: activeHousehold } = useHousehold()
+  const navigate = useNavigate()
 
   return (
     <SidebarMenu>
@@ -49,11 +52,11 @@ export function TeamSwitcher({ fragmentRef }: TeamSwitcherProps) {
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Logo size="large" name={activeTeam.name} />
+                  <Logo size="large" name={activeHousehold.name} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {activeTeam.name}
+                    {activeHousehold.name}
                   </span>
                   {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
                 </div>
@@ -71,16 +74,24 @@ export function TeamSwitcher({ fragmentRef }: TeamSwitcherProps) {
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Teams
               </DropdownMenuLabel>
-              {data.households.map((team, index) => (
+              {data.households.map((household, index) => (
                 <DropdownMenuItem
-                  key={team.name}
-                  onClick={() => setActiveTeam(team)}
+                  key={household.name}
                   className="gap-2 p-2"
+                  onClick={() =>
+                    navigate({
+                      to: '/household/$householdId',
+                      params: {
+                        householdId: household.id,
+                      },
+                      reloadDocument: true,
+                    })
+                  }
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">
-                    <Logo size="small" name={team.name} />
+                    <Logo size="small" name={household.name} />
                   </div>
-                  {team.name}
+                  {household.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>
               ))}

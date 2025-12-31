@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<491544d8c61252a66b888e511085a4db>>
+ * @generated SignedSource<<4c7d2c80fb255d398950488fa213cb39>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type routeHouseholdIdQuery$data = {
     readonly locale: string;
     readonly name: string;
   }>;
-  readonly " $fragmentSpreads": FragmentRefs<"teamSwitcherFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"householdSwitcherFragment">;
 };
 export type routeHouseholdIdQuery = {
   response: routeHouseholdIdQuery$data;
@@ -92,7 +92,7 @@ return {
       {
         "args": null,
         "kind": "FragmentSpread",
-        "name": "teamSwitcherFragment"
+        "name": "householdSwitcherFragment"
       }
     ],
     "type": "Query",
@@ -108,16 +108,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0a20be63d6771e0bd4034f7dc90f28c3",
+    "cacheID": "136f496e80fcb7be1bb5b3c733702246",
     "id": null,
     "metadata": {},
     "name": "routeHouseholdIdQuery",
     "operationKind": "query",
-    "text": "query routeHouseholdIdQuery {\n  households {\n    id\n    name\n    locale\n    currency {\n      id\n      code\n    }\n  }\n  ...teamSwitcherFragment\n}\n\nfragment teamSwitcherFragment on Query {\n  households {\n    id\n    name\n  }\n}\n"
+    "text": "query routeHouseholdIdQuery {\n  households {\n    id\n    name\n    locale\n    currency {\n      id\n      code\n    }\n  }\n  ...householdSwitcherFragment\n}\n\nfragment householdSwitcherFragment on Query {\n  households {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "11beba9724655e6d0c4da8742ffb7403";
+(node as any).hash = "573cddcd0e71667b26f8878db34a7a46";
 
 export default node;

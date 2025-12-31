@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f5e83720ac37988164be7fc59e682c2b>>
+ * @generated SignedSource<<6db404542b11dfba3281990208d033ee>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,23 +10,23 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type teamSwitcherFragment$data = {
+export type householdSwitcherFragment$data = {
   readonly households: ReadonlyArray<{
     readonly id: string;
     readonly name: string;
   }>;
-  readonly " $fragmentType": "teamSwitcherFragment";
+  readonly " $fragmentType": "householdSwitcherFragment";
 };
-export type teamSwitcherFragment$key = {
-  readonly " $data"?: teamSwitcherFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"teamSwitcherFragment">;
+export type householdSwitcherFragment$key = {
+  readonly " $data"?: householdSwitcherFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"householdSwitcherFragment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "teamSwitcherFragment",
+  "name": "householdSwitcherFragment",
   "selections": [
     {
       "alias": null,
@@ -58,6 +58,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "ca4a1d9bd0802b4d7736d49bae2eac44";
+(node as any).hash = "ddcf087c28ba44502302c26744877051";
 
 export default node;
