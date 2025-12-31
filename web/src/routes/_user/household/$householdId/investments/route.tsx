@@ -1,23 +1,23 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
 import { Fragment } from 'react/jsx-runtime'
 import { InvestmentsPanel } from './-components/investments-panel'
-import type { routeInvestmentsQuery } from './__generated__/routeInvestmentsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { environment } from '@/environment'
 import { PendingComponent } from '@/components/pending-component'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { InvestmentsQuery } from './__generated__/InvestmentsQuery.graphql'
+import { investmentsQuery } from './-investments-query'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments',
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return loadQuery<routeInvestmentsQuery>(
+    return loadQuery<InvestmentsQuery>(
       environment,
-      routeInvestments,
+      investmentsQuery,
       {},
       { fetchPolicy: 'store-or-network' },
     )
@@ -25,19 +25,10 @@ export const Route = createFileRoute(
   pendingComponent: PendingComponent,
 })
 
-export const routeInvestments = graphql`
-  query routeInvestmentsQuery {
-    ...investmentsPanelFragment
-  }
-`
-
 function RouteComponent() {
   const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<routeInvestmentsQuery>(
-    routeInvestments,
-    queryRef,
-  )
+  const data = usePreloadedQuery<InvestmentsQuery>(investmentsQuery, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
 

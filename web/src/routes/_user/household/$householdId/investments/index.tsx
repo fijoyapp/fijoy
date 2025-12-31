@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { usePreloadedQuery } from 'react-relay'
 import { InvestmentsPanel } from './-components/investments-panel'
-import { routeInvestments } from './route'
-import type { routeInvestmentsQuery } from './__generated__/routeInvestmentsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { PendingComponent } from '@/components/pending-component'
+import { investmentsQuery } from './-investments-query'
+import { InvestmentsQuery } from './__generated__/InvestmentsQuery.graphql'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments/',
@@ -16,10 +16,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<routeInvestmentsQuery>(
-    routeInvestments,
-    queryRef,
-  )
+  const data = usePreloadedQuery<InvestmentsQuery>(investmentsQuery, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
 

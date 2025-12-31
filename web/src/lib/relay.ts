@@ -4,7 +4,7 @@ import type { Disposable, MutationParameters } from 'relay-runtime'
 // Define a Result type (Discriminated Union)
 type MutationResult<T> =
   | { status: 'success'; data: T }
-  | { status: 'error'; error: Error | ReadonlyArray<any> }
+  | { status: 'error'; error: Error | ReadonlyArray<unknown> }
 
 export function commitMutationResult<T extends MutationParameters>(
   mutation: (config: UseMutationConfig<T>) => Disposable,

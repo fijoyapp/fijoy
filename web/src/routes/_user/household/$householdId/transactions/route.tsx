@@ -1,23 +1,23 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
 import { Fragment } from 'react/jsx-runtime'
 import { TransactionsPanel } from './-components/transactions-panel'
-import type { routeTransactionsQuery } from './__generated__/routeTransactionsQuery.graphql'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { Separator } from '@/components/ui/separator'
 import { environment } from '@/environment'
 import { PendingComponent } from '@/components/pending-component'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { transactionsQuery } from './-transactions-query'
+import { type TransactionsQuery } from './__generated__/TransactionsQuery.graphql'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions',
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    return loadQuery<routeTransactionsQuery>(
+    return loadQuery<TransactionsQuery>(
       environment,
-      routeTransactions,
+      transactionsQuery,
       {},
       { fetchPolicy: 'store-or-network' },
     )
@@ -25,19 +25,10 @@ export const Route = createFileRoute(
   pendingComponent: PendingComponent,
 })
 
-export const routeTransactions = graphql`
-  query routeTransactionsQuery {
-    ...transactionsPanelFragment
-  }
-`
-
 function RouteComponent() {
   const queryRef = Route.useRouteContext()
 
-  const data = usePreloadedQuery<routeTransactionsQuery>(
-    routeTransactions,
-    queryRef,
-  )
+  const data = usePreloadedQuery<TransactionsQuery>(transactionsQuery, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
 

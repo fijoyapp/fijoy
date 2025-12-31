@@ -57,6 +57,7 @@ export function PrivacyModeProvider({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function usePrivacyMode() {
   const context = useContext(PrivacyModeContext)
   if (context === undefined) {
