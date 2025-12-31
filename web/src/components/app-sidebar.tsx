@@ -1,15 +1,8 @@
 import * as React from 'react'
 import {
   ArrowLeftRightIcon,
-  AudioWaveform,
-  CandlestickChartIcon,
   ChartNoAxesCombinedIcon,
-  Command,
-  GalleryVerticalEnd,
-  HomeIcon,
-  PersonStandingIcon,
   SquareTerminal,
-  UsersIcon,
   WalletIcon,
 } from 'lucide-react'
 import { NavProjects } from './nav-projects'
@@ -26,6 +19,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { routeHouseholdIdQuery$data } from '@/routes/_user/household/$householdId/__generated__/routeHouseholdIdQuery.graphql'
 
 const navMain: Array<{
   title: string
@@ -109,46 +103,28 @@ const projects: Array<{
   },
 ]
 
-// This is sample data.
-const data = {
-  user: {
-    name: 'Joey',
-    email: 'joey@itsjoeoui.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  teams: [
-    {
-      name: "Joey's Household",
-      logo: UsersIcon,
-      plan: 'Free',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-    {
-      name: 'Evil Corp.',
-      logo: Command,
-      plan: 'Free',
-    },
-  ],
-  navMain,
-  projects,
+const user = {
+  name: 'Joey',
+  email: 'joey@itsjoeoui.com',
+  avatar: '/avatars/shadcn.jpg',
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSidebarProps = {
+  data: routeHouseholdIdQuery$data
+} & React.ComponentProps<typeof Sidebar>
+
+export function AppSidebar({ data, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher fragmentRef={data} />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={data.projects} />
+        <NavProjects projects={projects} />
         {/* <NavMain items={data.navMain} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -17,18 +17,26 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { graphql, useFragment } from 'react-relay'
+import { teamSwitcherFragment$key } from './__generated__/teamSwitcherFragment.graphql'
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: Array<{
-    name: string
-    logo: React.ElementType
-    plan: string
-  }>
-}) {
+const TeamSwitcherFragment = graphql`
+  fragment teamSwitcherFragment on Query {
+    households {
+      id
+      name
+    }
+  }
+`
+
+type TeamSwitcherProps = {
+  fragmentRef: teamSwitcherFragment$key
+}
+
+export function TeamSwitcher({ fragmentRef }: TeamSwitcherProps) {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const data = useFragment(TeamSwitcherFragment, fragmentRef)
+  const [activeTeam, setActiveTeam] = React.useState(data.households[0])
 
   return (
     <SidebarMenu>
@@ -41,13 +49,13 @@ export function TeamSwitcher({
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <activeTeam.logo className="size-4" />
+                  <Logo size="large" name={activeTeam.name} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
                     {activeTeam.name}
                   </span>
-                  <span className="truncate text-xs">{activeTeam.plan}</span>
+                  {/* <span className="truncate text-xs">{activeTeam.plan}</span> */}
                 </div>
                 <ChevronsUpDown className="ml-auto" />
               </SidebarMenuButton>
@@ -63,14 +71,14 @@ export function TeamSwitcher({
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Teams
               </DropdownMenuLabel>
-              {teams.map((team, index) => (
+              {data.households.map((team, index) => (
                 <DropdownMenuItem
                   key={team.name}
                   onClick={() => setActiveTeam(team)}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">
-                    <team.logo className="size-3.5 shrink-0" />
+                    <Logo size="small" name={team.name} />
                   </div>
                   {team.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
@@ -90,5 +98,16 @@ export function TeamSwitcher({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
+  )
+}
+
+type LogoProps = {
+  name: string
+  size: 'small' | 'large'
+}
+
+function Logo({ name, size }: LogoProps) {
+  return (
+    <div className={size === 'small' ? 'text-sm' : 'text-lg'}>{name[0]}</div>
   )
 }
