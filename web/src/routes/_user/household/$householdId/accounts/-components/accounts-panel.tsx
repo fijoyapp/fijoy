@@ -97,12 +97,14 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
             size="icon-lg"
             className="flex-1 w-full cursor-pointer"
             render={
-              <Link
-                from="/household/$householdId/accounts"
-                to="/household/$householdId/accounts/new"
-              >
-                <PlusIcon />
-              </Link>
+              <button>
+                <Link
+                  from="/household/$householdId/accounts"
+                  to="/household/$householdId/accounts/new"
+                >
+                  <PlusIcon />
+                </Link>
+              </button>
             }
           ></Button>
           <div className="py-1"></div>
