@@ -21,7 +21,6 @@ const investmentCardFragment = graphql`
   fragment investmentCardFragment on Investment {
     id
     name
-    type
     symbol
     updateTime
     currency {

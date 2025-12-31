@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fdfaea8cf6ffbce32c91d329ea75ebd2>>
+ * @generated SignedSource<<2e0a89e857ae679ea8405e49bf2778c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,12 +14,6 @@ export type transactionDetailFragment$data = {
   readonly node: {
     readonly datetime?: any;
     readonly description?: string | null | undefined;
-    readonly id?: string;
-    readonly transactionEntries?: ReadonlyArray<{
-      readonly account: {
-        readonly name: string;
-      };
-    }> | null | undefined;
   } | null | undefined;
   readonly " $fragmentType": "transactionDetailFragment";
 };
@@ -61,13 +55,6 @@ const node: ReaderFragment = {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
-              "name": "id",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
               "name": "datetime",
               "storageKey": null
             },
@@ -76,35 +63,6 @@ const node: ReaderFragment = {
               "args": null,
               "kind": "ScalarField",
               "name": "description",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "TransactionEntry",
-              "kind": "LinkedField",
-              "name": "transactionEntries",
-              "plural": true,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "Account",
-                  "kind": "LinkedField",
-                  "name": "account",
-                  "plural": false,
-                  "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "name",
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                }
-              ],
               "storageKey": null
             }
           ],
@@ -119,6 +77,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "50f6157f77f7acc4df7d858e593d7dde";
+(node as any).hash = "81c18372cb14363c7133b0ee99f5ab83";
 
 export default node;

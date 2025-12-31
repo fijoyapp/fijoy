@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bdb8cdb5a4ba527ed95616d60fa7d064>>
+ * @generated SignedSource<<998898fe57ab4dd6235ef42c71a84da4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,40 +20,21 @@ export type AccountsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Currency",
-  "kind": "LinkedField",
-  "name": "currency",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "code",
-      "storageKey": null
-    },
-    (v0/*: any*/)
-  ],
-  "storageKey": null
-},
-v2 = [
+var v0 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 20
   }
 ],
-v3 = {
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -84,20 +65,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "concreteType": "Household",
-        "kind": "LinkedField",
-        "name": "households",
-        "plural": true,
-        "selections": [
-          (v0/*: any*/),
-          (v1/*: any*/)
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v0/*: any*/),
         "concreteType": "AccountConnection",
         "kind": "LinkedField",
         "name": "accounts",
@@ -119,7 +87,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/),
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -134,7 +102,7 @@ return {
                     "name": "valueInHouseholdCurrency",
                     "storageKey": null
                   },
-                  (v3/*: any*/),
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -149,7 +117,25 @@ return {
                     "name": "updateTime",
                     "storageKey": null
                   },
-                  (v1/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Currency",
+                    "kind": "LinkedField",
+                    "name": "currency",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "code",
+                        "storageKey": null
+                      },
+                      (v1/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -158,8 +144,8 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v3/*: any*/),
-                      (v0/*: any*/)
+                      (v2/*: any*/),
+                      (v1/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -220,7 +206,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v0/*: any*/),
         "filters": null,
         "handle": "connection",
         "key": "accountsPanel_accounts",
@@ -230,12 +216,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6bcf7457ca6f429a4d805866ef70c289",
+    "cacheID": "e80a3e66a1c3c88d27f97ff7da491b9f",
     "id": null,
     "metadata": {},
     "name": "AccountsQuery",
     "operationKind": "query",
-    "text": "query AccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  iconPath\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  iconPath\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

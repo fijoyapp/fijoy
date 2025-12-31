@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5b3312f7a5ed846835dadd9d733a9a3b>>
+ * @generated SignedSource<<2f067adb1f61f455f40a3b1669456719>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,6 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type InvestmentType = "crypto" | "stock" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type investmentCardFragment$data = {
   readonly currency: {
@@ -18,7 +17,6 @@ export type investmentCardFragment$data = {
   readonly id: string;
   readonly name: string;
   readonly symbol: string;
-  readonly type: InvestmentType;
   readonly updateTime: any;
   readonly value: string;
   readonly " $fragmentType": "investmentCardFragment";
@@ -46,13 +44,6 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "ScalarField",
       "name": "name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "type",
       "storageKey": null
     },
     {
@@ -99,6 +90,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "9cb49591389804ccae2fd1bfc8ee3187";
+(node as any).hash = "969dde7852b61541ce2d8d30186059c7";
 
 export default node;

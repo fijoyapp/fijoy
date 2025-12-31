@@ -16,14 +16,14 @@ const transactionDetailFragment = graphql`
   @argumentDefinitions(id: { type: "ID!" }) {
     node(id: $id) {
       ... on Transaction {
-        id
+        # id
         datetime
         description
-        transactionEntries {
-          account {
-            name
-          }
-        }
+        # transactionEntries {
+        #   account {
+        #     name
+        #   }
+        # }
       }
     }
   }

@@ -38,12 +38,6 @@ const AccountsPanelFragment = graphql`
     cursor: { type: "Cursor" }
   )
   @refetchable(queryName: "accountsPanelRefetch") {
-    households {
-      id
-      currency {
-        code
-      }
-    }
     accounts(first: $count, after: $cursor)
       @connection(key: "accountsPanel_accounts") {
       edges {

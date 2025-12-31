@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<37cddfe9ce3c08c198182127586fdc5d>>
+ * @generated SignedSource<<053bbf5d43c13bd26b37634c0a729e85>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -35,33 +35,7 @@ var v0 = [
     "name": "cursor"
   }
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Currency",
-  "kind": "LinkedField",
-  "name": "currency",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "code",
-      "storageKey": null
-    },
-    (v1/*: any*/)
-  ],
-  "storageKey": null
-},
-v3 = [
+v1 = [
   {
     "kind": "Variable",
     "name": "after",
@@ -73,7 +47,14 @@ v3 = [
     "variableName": "count"
   }
 ],
-v4 = {
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -115,20 +96,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "concreteType": "Household",
-        "kind": "LinkedField",
-        "name": "households",
-        "plural": true,
-        "selections": [
-          (v1/*: any*/),
-          (v2/*: any*/)
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "AccountConnection",
         "kind": "LinkedField",
         "name": "accounts",
@@ -150,7 +118,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -165,7 +133,7 @@ return {
                     "name": "valueInHouseholdCurrency",
                     "storageKey": null
                   },
-                  (v4/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -180,7 +148,25 @@ return {
                     "name": "updateTime",
                     "storageKey": null
                   },
-                  (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Currency",
+                    "kind": "LinkedField",
+                    "name": "currency",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "code",
+                        "storageKey": null
+                      },
+                      (v2/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -189,8 +175,8 @@ return {
                     "name": "user",
                     "plural": false,
                     "selections": [
-                      (v4/*: any*/),
-                      (v1/*: any*/)
+                      (v3/*: any*/),
+                      (v2/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -251,7 +237,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v3/*: any*/),
+        "args": (v1/*: any*/),
         "filters": null,
         "handle": "connection",
         "key": "accountsPanel_accounts",
@@ -261,16 +247,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8b5ea646a233529f540e0ef7ac4e7eb9",
+    "cacheID": "45a7e88102a1c4ca0bebbc41057214ca",
     "id": null,
     "metadata": {},
     "name": "accountsPanelRefetch",
     "operationKind": "query",
-    "text": "query accountsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...accountsPanelFragment_1G22uz\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  iconPath\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment_1G22uz on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  accounts(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query accountsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...accountsPanelFragment_1G22uz\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  iconPath\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment_1G22uz on Query {\n  accounts(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "af64ed70f236b095ae5de279901fa160";
+(node as any).hash = "5f165d5bfeb96b8440a2e8889c9e48c0";
 
 export default node;

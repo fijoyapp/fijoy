@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<faf4fa4c1fadeefef9a85bdb698771d9>>
+ * @generated SignedSource<<ff8394623084e3fa6b83a64dd1e9cfc0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,25 +28,6 @@ var v0 = {
   "storageKey": null
 },
 v1 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "Currency",
-  "kind": "LinkedField",
-  "name": "currency",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "code",
-      "storageKey": null
-    },
-    (v0/*: any*/)
-  ],
-  "storageKey": null
-},
-v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -78,33 +59,13 @@ return {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Household",
-        "kind": "LinkedField",
-        "name": "households",
-        "plural": true,
-        "selections": [
-          (v0/*: any*/),
-          (v1/*: any*/)
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
         "concreteType": "Investment",
         "kind": "LinkedField",
         "name": "investments",
         "plural": true,
         "selections": [
           (v0/*: any*/),
-          (v2/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "value",
-            "storageKey": null
-          },
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -115,28 +76,14 @@ return {
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "amount",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
             "concreteType": "Account",
             "kind": "LinkedField",
             "name": "account",
             "plural": false,
             "selections": [
-              (v2/*: any*/),
+              (v1/*: any*/),
               (v0/*: any*/)
             ],
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "type",
             "storageKey": null
           },
           {
@@ -153,19 +100,44 @@ return {
             "name": "updateTime",
             "storageKey": null
           },
-          (v1/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "Currency",
+            "kind": "LinkedField",
+            "name": "currency",
+            "plural": false,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "code",
+                "storageKey": null
+              },
+              (v0/*: any*/)
+            ],
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "value",
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "febd7cf8123647a55a6ef2d005f2593b",
+    "cacheID": "f783fde69f5d26ba0e36d9d185edc16f",
     "id": null,
     "metadata": {},
     "name": "InvestmentsQuery",
     "operationKind": "query",
-    "text": "query InvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  type\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  households {\n    id\n    currency {\n      code\n      id\n    }\n  }\n  investments {\n    id\n    name\n    value\n    valueInHouseholdCurrency\n    amount\n    account {\n      name\n      id\n    }\n    ...investmentCardFragment\n  }\n}\n"
+    "text": "query InvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  investments {\n    id\n    name\n    valueInHouseholdCurrency\n    account {\n      name\n      id\n    }\n    ...investmentCardFragment\n  }\n}\n"
   }
 };
 })();

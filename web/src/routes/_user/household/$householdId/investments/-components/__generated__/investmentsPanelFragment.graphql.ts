@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a46af84f3f1c7a19297d11d91660ddd4>>
+ * @generated SignedSource<<d081612963376cc1c4a593ce0437f9a8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,21 +11,13 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type investmentsPanelFragment$data = {
-  readonly households: ReadonlyArray<{
-    readonly currency: {
-      readonly code: string;
-    };
-    readonly id: string;
-  }>;
   readonly investments: ReadonlyArray<{
     readonly account: {
       readonly id: string;
       readonly name: string;
     };
-    readonly amount: string;
     readonly id: string;
     readonly name: string;
-    readonly value: string;
     readonly valueInHouseholdCurrency: string;
     readonly " $fragmentSpreads": FragmentRefs<"investmentCardFragment">;
   }>;
@@ -60,36 +52,6 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "Household",
-      "kind": "LinkedField",
-      "name": "households",
-      "plural": true,
-      "selections": [
-        (v0/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "Currency",
-          "kind": "LinkedField",
-          "name": "currency",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "code",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
       "concreteType": "Investment",
       "kind": "LinkedField",
       "name": "investments",
@@ -101,21 +63,7 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "value",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
           "name": "valueInHouseholdCurrency",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "amount",
           "storageKey": null
         },
         {
@@ -145,6 +93,6 @@ return {
 };
 })();
 
-(node as any).hash = "34452dca1c9d9640cd58f93e2ff9a452";
+(node as any).hash = "9aa2092eee56e3a50cc9be8aafb5afcc";
 
 export default node;

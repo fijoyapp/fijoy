@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<72f9504a6945103e7dc8cf9a9114e501>>
+ * @generated SignedSource<<9a7df6426f0b4bf4a5bbc79caff4174d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,12 +22,6 @@ export type accountsPanelFragment$data = {
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
-  readonly households: ReadonlyArray<{
-    readonly currency: {
-      readonly code: string;
-    };
-    readonly id: string;
-  }>;
   readonly " $fragmentType": "accountsPanelFragment";
 };
 export type accountsPanelFragment$key = {
@@ -40,14 +34,7 @@ import accountsPanelRefetch_graphql from './accountsPanelRefetch.graphql';
 const node: ReaderFragment = (function(){
 var v0 = [
   "accounts"
-],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
+];
 return {
   "argumentDefinitions": [
     {
@@ -87,36 +74,6 @@ return {
   "name": "accountsPanelFragment",
   "selections": [
     {
-      "alias": null,
-      "args": null,
-      "concreteType": "Household",
-      "kind": "LinkedField",
-      "name": "households",
-      "plural": true,
-      "selections": [
-        (v1/*: any*/),
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "Currency",
-          "kind": "LinkedField",
-          "name": "currency",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "code",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    },
-    {
       "alias": "accounts",
       "args": null,
       "concreteType": "AccountConnection",
@@ -140,7 +97,13 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v1/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -214,6 +177,6 @@ return {
 };
 })();
 
-(node as any).hash = "af64ed70f236b095ae5de279901fa160";
+(node as any).hash = "5f165d5bfeb96b8440a2e8889c9e48c0";
 
 export default node;

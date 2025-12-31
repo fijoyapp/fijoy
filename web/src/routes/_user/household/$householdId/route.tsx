@@ -37,14 +37,17 @@ const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {
     households {
       id
+      # eslint-disable-next-line relay/unused-fields
       name
+      # eslint-disable-next-line relay/unused-fields
       locale
+      # eslint-disable-next-line relay/unused-fields
       currency {
         id
         code
       }
     }
-    ...householdSwitcherFragment
+    ...appSidebarFragment
   }
 `
 

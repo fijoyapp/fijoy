@@ -5,6 +5,7 @@ import tseslint from 'typescript-eslint'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig } from 'eslint/config'
+import eslintPluginRelay from 'eslint-plugin-relay'
 
 export default defineConfig([
   {
@@ -15,7 +16,9 @@ export default defineConfig([
       tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
+      eslintPluginRelay.configs.recommended,
     ],
+    plugins: { relay: eslintPluginRelay },
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
     },

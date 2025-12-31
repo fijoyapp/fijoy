@@ -29,18 +29,10 @@ import { useHousehold } from '@/hooks/use-household'
 
 const InvestmentsPanelFragment = graphql`
   fragment investmentsPanelFragment on Query {
-    households {
-      id
-      currency {
-        code
-      }
-    }
     investments {
       id
       name
-      value
       valueInHouseholdCurrency
-      amount
       account {
         name
         id
