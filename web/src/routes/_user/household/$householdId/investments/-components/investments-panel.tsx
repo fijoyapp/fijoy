@@ -26,6 +26,9 @@ import {
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
+import { Button } from '@/components/ui/button'
+import { Link } from '@tanstack/react-router'
+import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 
 const InvestmentsPanelFragment = graphql`
   fragment investmentsPanelFragment on Query {
@@ -66,17 +69,44 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
 
   return (
     <Fragment>
-      <Item variant="outline">
-        <ItemContent>
-          <ItemDescription>Total Investment</ItemDescription>
-          <ItemTitle className="text-2xl">
-            {formatCurrencyWithPrivacyMode({
-              value: totalInvestment,
-              currencyCode: household.currency.code,
-            })}
-          </ItemTitle>
-        </ItemContent>
-      </Item>
+      <div className="flex">
+        <Item variant="outline" className="">
+          <ItemContent>
+            <ItemDescription>Total Investment</ItemDescription>
+            <ItemTitle className="text-2xl">
+              {formatCurrencyWithPrivacyMode({
+                value: totalInvestment,
+                currencyCode: household.currency.code,
+              })}
+            </ItemTitle>
+          </ItemContent>
+        </Item>
+        <div className="px-1"></div>
+        <div className="flex flex-col items-stretch w-10">
+          <Button
+            size="icon-lg"
+            className="flex-1 w-full cursor-pointer"
+            render={
+              <button>
+                <Link
+                  from="/household/$householdId/investments"
+                  to="/household/$householdId/investments/new"
+                >
+                  <PlusIcon />
+                </Link>
+              </button>
+            }
+          ></Button>
+          <div className="py-1"></div>
+          <Button
+            size="icon-lg"
+            variant="secondary"
+            className="flex-1 w-full cursor-pointer"
+          >
+            <RefreshCwIcon />
+          </Button>
+        </div>
+      </div>
       <div className="py-2"></div>
       <Accordion
         multiple
