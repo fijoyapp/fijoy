@@ -178,7 +178,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateAccount    func(childComplexity int, input ent.CreateAccountInput) int
-		CreateInvestment func(childComplexity int, input ent.CreateInvestmentInput) int
+		CreateInvestment func(childComplexity int, input CreateInvestmentInputCustom) int
 	}
 
 	PageInfo struct {
@@ -307,7 +307,7 @@ type LotResolver interface {
 }
 type MutationResolver interface {
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error)
-	CreateInvestment(ctx context.Context, input ent.CreateInvestmentInput) (*ent.InvestmentEdge, error)
+	CreateInvestment(ctx context.Context, input CreateInvestmentInputCustom) (*ent.InvestmentEdge, error)
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
@@ -933,7 +933,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateInvestment(childComplexity, args["input"].(ent.CreateInvestmentInput)), true
+		return e.complexity.Mutation.CreateInvestment(childComplexity, args["input"].(CreateInvestmentInputCustom)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -1429,6 +1429,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputAccountWhereInput,
 		ec.unmarshalInputCreateAccountInput,
 		ec.unmarshalInputCreateInvestmentInput,
+		ec.unmarshalInputCreateInvestmentInputCustom,
 		ec.unmarshalInputCreateLotInput,
 		ec.unmarshalInputCurrencyWhereInput,
 		ec.unmarshalInputHouseholdWhereInput,
@@ -1575,7 +1576,7 @@ func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_createInvestment_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateInvestmentInput2fijoyᚗappᚋentᚐCreateInvestmentInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateInvestmentInputCustom2fijoyᚗappᚐCreateInvestmentInputCustom)
 	if err != nil {
 		return nil, err
 	}
@@ -4839,7 +4840,7 @@ func (ec *executionContext) _Mutation_createInvestment(ctx context.Context, fiel
 		ec.fieldContext_Mutation_createInvestment,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().CreateInvestment(ctx, fc.Args["input"].(ent.CreateInvestmentInput))
+			return ec.resolvers.Mutation().CreateInvestment(ctx, fc.Args["input"].(CreateInvestmentInputCustom))
 		},
 		nil,
 		ec.marshalNInvestmentEdge2ᚖfijoyᚗappᚋentᚐInvestmentEdge,
@@ -10080,7 +10081,7 @@ func (ec *executionContext) unmarshalInputCreateInvestmentInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "type", "symbol", "amount", "accountID", "currencyID", "lotIDs"}
+	fieldsInOrder := [...]string{"name", "type", "symbol", "amount", "accountID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -10124,20 +10125,40 @@ func (ec *executionContext) unmarshalInputCreateInvestmentInput(ctx context.Cont
 				return it, err
 			}
 			it.AccountID = data
-		case "currencyID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyID"))
-			data, err := ec.unmarshalNID2int(ctx, v)
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateInvestmentInputCustom(ctx context.Context, obj any) (CreateInvestmentInputCustom, error) {
+	var it CreateInvestmentInputCustom
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"input", "costBasis"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "input":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+			data, err := ec.unmarshalNCreateInvestmentInput2ᚖfijoyᚗappᚋentᚐCreateInvestmentInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.CurrencyID = data
-		case "lotIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lotIDs"))
-			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			it.Input = data
+		case "costBasis":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costBasis"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.LotIDs = data
+			it.CostBasis = data
 		}
 	}
 
@@ -13402,7 +13423,7 @@ func (ec *executionContext) unmarshalInputUpdateInvestmentInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "type", "symbol", "amount", "addLotIDs", "removeLotIDs", "clearLots"}
+	fieldsInOrder := [...]string{"name", "type", "symbol", "amount"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13439,27 +13460,6 @@ func (ec *executionContext) unmarshalInputUpdateInvestmentInput(ctx context.Cont
 			if err = ec.resolvers.UpdateInvestmentInput().Amount(ctx, &it, data); err != nil {
 				return it, err
 			}
-		case "addLotIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addLotIDs"))
-			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AddLotIDs = data
-		case "removeLotIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeLotIDs"))
-			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RemoveLotIDs = data
-		case "clearLots":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearLots"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearLots = data
 		}
 	}
 
@@ -18392,8 +18392,13 @@ func (ec *executionContext) unmarshalNCreateAccountInput2fijoyᚗappᚋentᚐCre
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateInvestmentInput2fijoyᚗappᚋentᚐCreateInvestmentInput(ctx context.Context, v any) (ent.CreateInvestmentInput, error) {
+func (ec *executionContext) unmarshalNCreateInvestmentInput2ᚖfijoyᚗappᚋentᚐCreateInvestmentInput(ctx context.Context, v any) (*ent.CreateInvestmentInput, error) {
 	res, err := ec.unmarshalInputCreateInvestmentInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreateInvestmentInputCustom2fijoyᚗappᚐCreateInvestmentInputCustom(ctx context.Context, v any) (CreateInvestmentInputCustom, error) {
+	res, err := ec.unmarshalInputCreateInvestmentInputCustom(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

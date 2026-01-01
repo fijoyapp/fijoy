@@ -70,13 +70,11 @@ func (c *AccountUpdateOne) SetInput(i UpdateAccountInput) *AccountUpdateOne {
 
 // CreateInvestmentInput represents a mutation input for creating investments.
 type CreateInvestmentInput struct {
-	Name       string
-	Type       investment.Type
-	Symbol     string
-	Amount     *decimal.Decimal
-	AccountID  int
-	CurrencyID int
-	LotIDs     []int
+	Name      string
+	Type      investment.Type
+	Symbol    string
+	Amount    *decimal.Decimal
+	AccountID int
 }
 
 // Mutate applies the CreateInvestmentInput on the InvestmentMutation builder.
@@ -88,10 +86,6 @@ func (i *CreateInvestmentInput) Mutate(m *InvestmentMutation) {
 		m.SetAmount(*v)
 	}
 	m.SetAccountID(i.AccountID)
-	m.SetCurrencyID(i.CurrencyID)
-	if v := i.LotIDs; len(v) > 0 {
-		m.AddLotIDs(v...)
-	}
 }
 
 // SetInput applies the change-set in the CreateInvestmentInput on the InvestmentCreate builder.
@@ -102,13 +96,10 @@ func (c *InvestmentCreate) SetInput(i CreateInvestmentInput) *InvestmentCreate {
 
 // UpdateInvestmentInput represents a mutation input for updating investments.
 type UpdateInvestmentInput struct {
-	Name         *string
-	Type         *investment.Type
-	Symbol       *string
-	Amount       *decimal.Decimal
-	ClearLots    bool
-	AddLotIDs    []int
-	RemoveLotIDs []int
+	Name   *string
+	Type   *investment.Type
+	Symbol *string
+	Amount *decimal.Decimal
 }
 
 // Mutate applies the UpdateInvestmentInput on the InvestmentMutation builder.
@@ -124,15 +115,6 @@ func (i *UpdateInvestmentInput) Mutate(m *InvestmentMutation) {
 	}
 	if v := i.Amount; v != nil {
 		m.SetAmount(*v)
-	}
-	if i.ClearLots {
-		m.ClearLots()
-	}
-	if v := i.AddLotIDs; len(v) > 0 {
-		m.AddLotIDs(v...)
-	}
-	if v := i.RemoveLotIDs; len(v) > 0 {
-		m.RemoveLotIDs(v...)
 	}
 }
 

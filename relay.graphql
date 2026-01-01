@@ -244,8 +244,6 @@ input CreateInvestmentInput {
   symbol: String!
   amount: String
   accountID: ID!
-  currencyID: ID!
-  lotIDs: [ID!]
 }
 
 """
@@ -1359,9 +1357,6 @@ input UpdateInvestmentInput {
   type: InvestmentType
   symbol: String
   amount: String
-  addLotIDs: [ID!]
-  removeLotIDs: [ID!]
-  clearLots: Boolean
 }
 
 """
@@ -1644,9 +1639,14 @@ input UserWhereInput {
 
 scalar DateTime
 
+input CreateInvestmentInputCustom {
+  input: CreateInvestmentInput!
+  costBasis: String!
+}
+
 type Mutation {
   createAccount(input: CreateAccountInput!): AccountEdge!
-  createInvestment(input: CreateInvestmentInput!): InvestmentEdge!
+  createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
 }
 
 schema {

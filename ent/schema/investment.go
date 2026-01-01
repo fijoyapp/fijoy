@@ -81,9 +81,23 @@ func (Investment) Edges() []ent.Edge {
 			Required(),
 		edge.From("currency", Currency.Type).
 			Ref("investments").
-			Unique().Immutable().Required(),
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			).
+			Unique().
+			Immutable().
+			Required(),
 
-		edge.To("lots", Lot.Type),
+		edge.To("lots", Lot.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 	}
 }
 

@@ -46,6 +46,7 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+	zero := decimal.NewFromInt(0)
 
 	household, err := r.entClient.Household.Query().Where(
 		household.IDEQ(householdID),
@@ -69,7 +70,7 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		SetUserID(userID).
 		SetHouseholdID(householdID).
 		SetFxRate(fxRate).
-		SetBalance(decimal.NewFromInt(0)).
+		SetBalance(zero).
 		Save(ctx)
 	if err != nil {
 		return nil, err
@@ -132,8 +133,105 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 }
 
 // CreateInvestment is the resolver for the createInvestment field.
-func (r *mutationResolver) CreateInvestment(ctx context.Context, input ent.CreateInvestmentInput) (*ent.InvestmentEdge, error) {
-	panic(fmt.Errorf("not implemented: CreateInvestment - createInvestment"))
+func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInvestmentInputCustom) (*ent.InvestmentEdge, error) {
+	now := time.Now()
+	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+	zero := decimal.NewFromInt(0)
+
+	account, err := client.Account.Get(ctx, input.Input.AccountID)
+	if err != nil {
+		return nil, err
+	}
+
+	if account.HouseholdID != householdID {
+		return nil, fmt.Errorf("account does not belong to household")
+	}
+
+	quote, err := r.marketClient.EquityQuote(ctx, input.Input.Symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	currencyID, err := client.Currency.Query().Where(currency.CodeEQ(quote.Currency)).OnlyID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	investment, err := client.Investment.
+		Create().
+		SetInput(*input.Input).
+		SetHouseholdID(householdID).
+		SetAmount(zero).
+		SetQuote(quote.CurrentPrice).
+		SetValue(zero).
+		SetCurrencyID(currencyID).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if input.Input.Amount == nil || input.Input.Amount.IsZero() {
+		return &ent.InvestmentEdge{
+			Node:   investment,
+			Cursor: gqlutil.EncodeCursor(investment.ID),
+		}, nil
+	}
+
+	categoryID, err := client.TransactionCategory.Create().
+		SetHouseholdID(householdID).
+		SetName("Setup").
+		SetType(transactioncategory.TypeSetup).
+		OnConflict(
+			sql.ConflictColumns(
+				transactioncategory.FieldName,
+				transactioncategory.FieldHouseholdID,
+			),
+		).
+		Ignore().
+		ID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	transaction, err := client.Transaction.Create().
+		SetHouseholdID(householdID).
+		SetDescription("Initial Value").
+		SetDatetime(now).
+		SetCategoryID(categoryID).
+		SetUserID(userID).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	costBasis, err := decimal.NewFromString(input.CostBasis)
+	if err != nil {
+		return nil, err
+	}
+
+	err = client.Lot.
+		Create().
+		SetAmount(*input.Input.Amount).
+		SetPrice(costBasis).
+		SetTransaction(transaction).
+		SetInvestment(investment).
+		SetHouseholdID(householdID).
+		Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	investment, err = client.Investment.Get(ctx, investment.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ent.InvestmentEdge{
+		Node:   investment,
+		Cursor: gqlutil.EncodeCursor(investment.ID),
+	}, nil
 }
 
 // FxRate is the resolver for the fxRate field.

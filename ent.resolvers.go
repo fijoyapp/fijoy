@@ -261,7 +261,17 @@ func (r *createAccountInputResolver) Balance(ctx context.Context, obj *ent.Creat
 
 // Amount is the resolver for the amount field.
 func (r *createInvestmentInputResolver) Amount(ctx context.Context, obj *ent.CreateInvestmentInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	if data == nil || *data == "" {
+		return nil
+	}
+
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for balance: %v", err)
+	}
+
+	obj.Amount = &dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.

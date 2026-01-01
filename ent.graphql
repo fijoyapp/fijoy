@@ -226,8 +226,6 @@ input CreateInvestmentInput {
   symbol: String!
   amount: String
   accountID: ID!
-  currencyID: ID!
-  lotIDs: [ID!]
 }
 """
 CreateLotInput is used for create Lot object.
@@ -1322,9 +1320,6 @@ input UpdateInvestmentInput {
   type: InvestmentType
   symbol: String
   amount: String
-  addLotIDs: [ID!]
-  removeLotIDs: [ID!]
-  clearLots: Boolean
 }
 """
 UpdateLotInput is used for update Lot object.
