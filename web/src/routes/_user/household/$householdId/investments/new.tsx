@@ -1,11 +1,47 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { NewInvestment } from './-components/new-investment'
+import { Item } from '@/components/ui/item'
+import { graphql, loadQuery, usePreloadedQuery } from 'react-relay'
+import { PendingComponent } from '@/components/pending-component'
+import { environment } from '@/environment'
+import { type newInvestmentQuery } from './__generated__/newInvestmentQuery.graphql'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments/new',
 )({
   component: RouteComponent,
+  loader: () => {
+    return loadQuery<newInvestmentQuery>(
+      environment,
+      newInvestmentQuery,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    )
+  },
+  pendingComponent: PendingComponent,
 })
 
+const newInvestmentQuery = graphql`
+  query newInvestmentQuery {
+    ...newInvestmentFragment
+  }
+`
+
 function RouteComponent() {
-  return <div>Hello "/_user/household/$householdId/investments/new"!</div>
+  const queryRef = Route.useLoaderData()
+
+  const data = usePreloadedQuery<newInvestmentQuery>(
+    newInvestmentQuery,
+    queryRef,
+  )
+
+  return (
+    <div className="flex h-full">
+      <div className="flex-1">
+        <Item className="p-0">
+          <NewInvestment fragmentRef={data} />
+        </Item>
+      </div>
+    </div>
+  )
 }
