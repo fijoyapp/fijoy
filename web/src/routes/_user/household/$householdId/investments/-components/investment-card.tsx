@@ -22,10 +22,12 @@ const investmentCardFragment = graphql`
     id
     name
     symbol
+    quote
     updateTime
     currency {
       code
     }
+    amount
     value
   }
 `
@@ -37,7 +39,7 @@ type InvestmentCardProps = {
 export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
   const data = useFragment(investmentCardFragment, fragmentRef)
 
-  const { formatCurrencyWithPrivacyMode } = useCurrency()
+  const { formatCurrencyWithPrivacyMode, formatCurrency } = useCurrency()
 
   return (
     <Item
@@ -64,7 +66,13 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
                 <ItemTitle className={cn(isActive && 'font-semibold')}>
                   {data.name}
                 </ItemTitle>
-                {/* <ItemDescription>{data.user.name}</ItemDescription> */}
+                <ItemDescription>
+                  {data.amount} @ {''}
+                  {formatCurrency({
+                    value: data.quote,
+                    currencyCode: data.currency.code,
+                  })}
+                </ItemDescription>
               </ItemContent>
               <ItemContent className="items-end gap-px">
                 <ItemTitle className="font-mono">

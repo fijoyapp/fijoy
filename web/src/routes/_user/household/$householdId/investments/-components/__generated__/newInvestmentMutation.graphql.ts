@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<df6c8c3068782a842d852541dc903440>>
+ * @generated SignedSource<<1b56d7e46169a034ad1b88fafc055604>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -182,6 +182,13 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
+                "name": "quote",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
                 "name": "updateTime",
                 "storageKey": null
               },
@@ -202,6 +209,13 @@ return {
                   },
                   (v3/*: any*/)
                 ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "amount",
                 "storageKey": null
               },
               {
@@ -236,12 +250,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "84d75b480d2d68ff690a686692329325",
+    "cacheID": "b3594289468531bebf25191a4e8dbfaf",
     "id": null,
     "metadata": {},
     "name": "newInvestmentMutation",
     "operationKind": "mutation",
-    "text": "mutation newInvestmentMutation(\n  $input: CreateInvestmentInputCustom!\n) {\n  createInvestment(input: $input) {\n    node {\n      id\n      name\n      valueInHouseholdCurrency\n      account {\n        name\n        id\n      }\n      ...investmentCardFragment\n    }\n  }\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n"
+    "text": "mutation newInvestmentMutation(\n  $input: CreateInvestmentInputCustom!\n) {\n  createInvestment(input: $input) {\n    node {\n      id\n      name\n      valueInHouseholdCurrency\n      account {\n        name\n        id\n      }\n      ...investmentCardFragment\n    }\n  }\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  currency {\n    code\n    id\n  }\n  amount\n  value\n}\n"
   }
 };
 })();

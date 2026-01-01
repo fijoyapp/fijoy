@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eaebfdeec5433bf2ac150cdd646bc47f>>
+ * @generated SignedSource<<9bde637b886095dca01ad90410ee97ed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -151,6 +151,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "quote",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "updateTime",
                     "storageKey": null
                   },
@@ -171,6 +178,13 @@ return {
                       },
                       (v2/*: any*/)
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "amount",
                     "storageKey": null
                   },
                   {
@@ -240,12 +254,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0065dc9d52ae2d40b5e1ad2341c67058",
+    "cacheID": "677c2dfe05aef26f3c37960acc76a350",
     "id": null,
     "metadata": {},
     "name": "investmentsPanelRefetch",
     "operationKind": "query",
-    "text": "query investmentsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...investmentsPanelFragment_1G22uz\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment_1G22uz on Query {\n  investments(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query investmentsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...investmentsPanelFragment_1G22uz\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  currency {\n    code\n    id\n  }\n  amount\n  value\n}\n\nfragment investmentsPanelFragment_1G22uz on Query {\n  investments(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

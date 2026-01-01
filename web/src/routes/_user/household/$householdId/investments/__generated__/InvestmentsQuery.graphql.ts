@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e1112249d8937ec46f8aa96b41db1778>>
+ * @generated SignedSource<<a62f63a415a39c6a8043843af4b42aef>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -120,6 +120,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "quote",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "updateTime",
                     "storageKey": null
                   },
@@ -140,6 +147,13 @@ return {
                       },
                       (v1/*: any*/)
                     ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "amount",
                     "storageKey": null
                   },
                   {
@@ -209,12 +223,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1a961e784083f839ce02c4e0cbf111c0",
+    "cacheID": "924771d7a780c3a76fd3e817f01b446f",
     "id": null,
     "metadata": {},
     "name": "InvestmentsQuery",
     "operationKind": "query",
-    "text": "query InvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  updateTime\n  currency {\n    code\n    id\n  }\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  investments(first: 20) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query InvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  currency {\n    code\n    id\n  }\n  amount\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  investments(first: 20) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
