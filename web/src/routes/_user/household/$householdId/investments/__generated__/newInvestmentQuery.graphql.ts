@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a509396bfec88359ce7a10a730a855f8>>
+ * @generated SignedSource<<e65cac21dfa9717fc9e2574d01b94ea1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -44,23 +44,52 @@ const node: ConcreteRequest = {
       {
         "alias": null,
         "args": null,
-        "concreteType": "Currency",
+        "concreteType": "AccountConnection",
         "kind": "LinkedField",
-        "name": "currencies",
-        "plural": true,
+        "name": "accounts",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "code",
+            "concreteType": "AccountEdge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "Account",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "name",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
         ],
@@ -69,12 +98,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "ea0e23d384d2b515f107c53067f98b6d",
+    "cacheID": "e9484c0b767b7b7fb2322beb670c8b2f",
     "id": null,
     "metadata": {},
     "name": "newInvestmentQuery",
     "operationKind": "query",
-    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n}\n\nfragment newInvestmentFragment on Query {\n  currencies {\n    id\n    code\n  }\n}\n"
+    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n}\n\nfragment newInvestmentFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        type\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 

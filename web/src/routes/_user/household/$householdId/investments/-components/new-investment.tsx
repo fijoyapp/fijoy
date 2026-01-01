@@ -57,9 +57,14 @@ const formSchema = z.object({
 
 const newInvestmentFragment = graphql`
   fragment newInvestmentFragment on Query {
-    currencies {
-      id
-      code
+    accounts {
+      edges {
+        node {
+          id
+          type
+          name
+        }
+      }
     }
   }
 `
@@ -95,6 +100,14 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
   const [commitMutation, isMutationInFlight] =
     useMutation<newInvestmentMutation>(newInvestmentMutation)
   const { household } = useHousehold()
+
+  const investmentAccounts =
+    data.accounts.edges
+      ?.map((account) => {
+        invariant(account?.node, 'Account node is null')
+        return account.node
+      })
+      .filter((account) => account.type === 'investment') ?? []
 
   const form = useForm({
     defaultValues: {
@@ -179,6 +192,47 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
           }}
         >
           <FieldGroup>
+            <form.Field
+              name="accountId"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Account</FieldLabel>
+                    <Combobox
+                      items={investmentAccounts.map((account) => account.id)}
+                      value={field.state.value}
+                      onValueChange={(value) => {
+                        field.handleChange(value || '')
+                      }}
+                    >
+                      <ComboboxInput
+                        data-1p-ignore
+                        id={field.name}
+                        name={field.name}
+                        placeholder="Select an account"
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(item: string) => (
+                            <ComboboxItem key={item} value={item}>
+                              {item}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
             <form.Field
               name="type"
               children={(field) => {
