@@ -1,12 +1,15 @@
 import { NumberFormatBase } from 'react-number-format'
 import { cn } from '@/lib/utils'
 
-type CurrencyInputProps = React.ComponentProps<typeof NumberFormatBase>
+type CurrencyInputProps = React.ComponentProps<typeof NumberFormatBase> & {
+  maximumFractionDigits?: number
+}
 
 export function CurrencyInput({
   className,
   locale,
   currency,
+  maximumFractionDigits = 2,
   ...props
 }: CurrencyInputProps & {
   locale: string
@@ -21,6 +24,7 @@ export function CurrencyInput({
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency,
+      maximumFractionDigits,
     }).format(numberValue)
   }
 

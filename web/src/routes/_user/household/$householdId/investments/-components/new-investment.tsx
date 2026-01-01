@@ -1,10 +1,9 @@
 import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
-import { useForm, useStore } from '@tanstack/react-form'
+import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { useFragment, useMutation } from 'react-relay'
 import { capitalize } from 'lodash-es'
-import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
 import { useNavigate } from '@tanstack/react-router'
@@ -34,11 +33,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '@/components/ui/combobox'
-import {
-  ACCOUNT_TYPE_DESCRIPTION,
-  ACCOUNT_TYPE_LIST,
-  INVESTMENT_TYPE_LIST,
-} from '@/constant'
+import { INVESTMENT_TYPE_LIST } from '@/constant'
 import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
@@ -167,11 +162,6 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
     },
   })
 
-  // const currencyCode = useStore(
-  //   form.store,
-  //   (state) => state.values.currencyCode,
-  // )
-
   return (
     <Card className="w-full">
       <CardHeader>
@@ -182,39 +172,13 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
       </CardHeader>
       <CardContent>
         <form
-          id="new-account-form"
+          id="new-investment-form"
           onSubmit={(e) => {
             e.preventDefault()
             form.handleSubmit()
           }}
         >
           <FieldGroup>
-            <form.Field
-              name="name"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                    <Input
-                      data-1p-ignore
-                      id={field.name}
-                      name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder="Wealthsimple Chequing"
-                      autoComplete="off"
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                )
-              }}
-            />
             <form.Field
               name="type"
               children={(field) => {
@@ -245,10 +209,7 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
                               value={item}
                               className="flex flex-col items-start gap-0"
                             >
-                              <span className="font-semibold">
-                                {capitalize(item)}
-                              </span>
-                              <span>{ACCOUNT_TYPE_DESCRIPTION[item]}</span>
+                              <span className="">{capitalize(item)}</span>
                             </ComboboxItem>
                           )}
                         </ComboboxList>
@@ -261,77 +222,122 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
                 )
               }}
             />
-            {/* <form.Field */}
-            {/*   name="currencyCode" */}
-            {/*   children={(field) => { */}
-            {/*     const isInvalid = */}
-            {/*       field.state.meta.isTouched && !field.state.meta.isValid */}
-            {/*     return ( */}
-            {/*       <Field data-invalid={isInvalid}> */}
-            {/*         <FieldLabel htmlFor={field.name}>Currency</FieldLabel> */}
-            {/*         <Combobox */}
-            {/*           items={data.currencies.map((c) => c.code)} */}
-            {/*           value={field.state.value} */}
-            {/*           onValueChange={(value) => { */}
-            {/*             field.handleChange(value || '') */}
-            {/*           }} */}
-            {/*         > */}
-            {/*           <ComboboxInput */}
-            {/*             id={field.name} */}
-            {/*             name={field.name} */}
-            {/*             placeholder="Select a currency" */}
-            {/*             onBlur={field.handleBlur} */}
-            {/*             aria-invalid={isInvalid} */}
-            {/*           /> */}
-            {/*           <ComboboxContent> */}
-            {/*             <ComboboxEmpty>No items found.</ComboboxEmpty> */}
-            {/*             <ComboboxList> */}
-            {/*               {(item: string) => ( */}
-            {/*                 <ComboboxItem key={item} value={item}> */}
-            {/*                   {item} */}
-            {/*                 </ComboboxItem> */}
-            {/*               )} */}
-            {/*             </ComboboxList> */}
-            {/*           </ComboboxContent> */}
-            {/*         </Combobox> */}
-            {/*         {isInvalid && ( */}
-            {/*           <FieldError errors={field.state.meta.errors} /> */}
-            {/*         )} */}
-            {/*       </Field> */}
-            {/*     ) */}
-            {/*   }} */}
-            {/* /> */}
-            {/* <form.Field */}
-            {/*   name="balance" */}
-            {/*   children={(field) => { */}
-            {/*     const isInvalid = */}
-            {/*       field.state.meta.isTouched && !field.state.meta.isValid */}
-            {/*     return ( */}
-            {/*       <Field data-invalid={isInvalid}> */}
-            {/*         <FieldLabel htmlFor={field.name}> */}
-            {/*           Balance / Value */}
-            {/*         </FieldLabel> */}
-            {/*         <FieldDescription> </FieldDescription> */}
-            {/*         <CurrencyInput */}
-            {/*           id={field.name} */}
-            {/*           name={field.name} */}
-            {/*           placeholder="Please enter a number" */}
-            {/*           onValueChange={(e) => { */}
-            {/*             field.handleChange(e.floatValue!) */}
-            {/*           }} */}
-            {/*           value={field.state.value} */}
-            {/*           locale={household.locale} */}
-            {/*           currency={currencyCode} */}
-            {/*           onBlur={field.handleBlur} */}
-            {/*           aria-invalid={isInvalid} */}
-            {/*         /> */}
-            {/*         {isInvalid && ( */}
-            {/*           <FieldError errors={field.state.meta.errors} /> */}
-            {/*         )} */}
-            {/*       </Field> */}
-            {/*     ) */}
-            {/*   }} */}
-            {/* /> */}
+            <form.Field
+              name="symbol"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Symbol</FieldLabel>
+                    <Input
+                      data-1p-ignore
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid}
+                      placeholder="e.g. XEQT.TO"
+                      autoComplete="off"
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+            <form.Field
+              name="name"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                    <Input
+                      data-1p-ignore
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid}
+                      placeholder="e.g. iShares Core Equity ETF Portfolio"
+                      autoComplete="off"
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+
+            <form.Field
+              name="amount"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Amount</FieldLabel>
+                    <Input
+                      type="number"
+                      data-1p-ignore
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => {
+                        if (e.target.value === '') {
+                          field.handleChange(undefined!)
+                        } else {
+                          field.handleChange(Number(e.target.value))
+                        }
+                      }}
+                      aria-invalid={isInvalid}
+                      placeholder="How many shares do you own?"
+                      autoComplete="off"
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+            <form.Field
+              name="costBasis"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Cost Basis</FieldLabel>
+                    <FieldDescription> </FieldDescription>
+                    <CurrencyInput
+                      id={field.name}
+                      name={field.name}
+                      placeholder="Please enter a number"
+                      onValueChange={(e) => {
+                        field.handleChange(e.floatValue!)
+                      }}
+                      value={field.state.value}
+                      locale={household.locale}
+                      currency={household.currency.code}
+                      maximumFractionDigits={12}
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
           </FieldGroup>
         </form>
       </CardContent>
@@ -343,7 +349,7 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
           <Button
             disabled={isMutationInFlight}
             type="submit"
-            form="new-account-form"
+            form="new-investment-form"
           >
             {isMutationInFlight ? 'Creating...' : 'Create'}
           </Button>
