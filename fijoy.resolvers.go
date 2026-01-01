@@ -249,6 +249,22 @@ func (r *queryResolver) FxRate(ctx context.Context, from string, to string, date
 	return rate.String(), nil
 }
 
+// EquityQuote is the resolver for the equityQuote field.
+func (r *queryResolver) EquityQuote(ctx context.Context, symbol string) (*EquityQuoteResult, error) {
+	equityQuote, err := r.marketClient.EquityQuote(ctx, symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	return &EquityQuoteResult{
+		Symbol:       symbol,
+		Name:         equityQuote.Name,
+		Exchange:     equityQuote.Exchange,
+		Currency:     equityQuote.Currency,
+		CurrentPrice: equityQuote.CurrentPrice.String(),
+	}, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 

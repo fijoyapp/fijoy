@@ -962,6 +962,7 @@ type Query {
   transactionEntries: [TransactionEntry!]!
   userHouseholds: [UserHousehold!]!
   fxRate(from: String!, to: String!, datetime: DateTime!): String!
+  equityQuote(symbol: String!): EquityQuoteResult!
 }
 
 """
@@ -1638,6 +1639,14 @@ input UserWhereInput {
 }
 
 scalar DateTime
+
+type EquityQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
 
 input CreateInvestmentInputCustom {
   input: CreateInvestmentInput!

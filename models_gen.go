@@ -10,3 +10,11 @@ type CreateInvestmentInputCustom struct {
 	Input     *ent.CreateInvestmentInput `json:"input"`
 	CostBasis string                     `json:"costBasis"`
 }
+
+type EquityQuoteResult struct {
+	Symbol       string `json:"symbol"`
+	Name         string `json:"name"`
+	Exchange     string `json:"exchange"`
+	Currency     string `json:"currency"`
+	CurrentPrice string `json:"currentPrice"`
+}

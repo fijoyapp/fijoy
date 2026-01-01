@@ -107,6 +107,14 @@ type ComplexityRoot struct {
 		TransactionEntries func(childComplexity int) int
 	}
 
+	EquityQuoteResult struct {
+		Currency     func(childComplexity int) int
+		CurrentPrice func(childComplexity int) int
+		Exchange     func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Symbol       func(childComplexity int) int
+	}
+
 	Household struct {
 		Accounts              func(childComplexity int) int
 		CreateTime            func(childComplexity int) int
@@ -191,6 +199,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Accounts              func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AccountWhereInput) int
 		Currencies            func(childComplexity int) int
+		EquityQuote           func(childComplexity int, symbol string) int
 		FxRate                func(childComplexity int, from string, to string, datetime string) int
 		Households            func(childComplexity int) int
 		Investments           func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) int
@@ -322,6 +331,7 @@ type QueryResolver interface {
 	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
 	UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error)
 	FxRate(ctx context.Context, from string, to string, datetime string) (string, error)
+	EquityQuote(ctx context.Context, symbol string) (*EquityQuoteResult, error)
 }
 type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
@@ -616,6 +626,37 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Currency.TransactionEntries(childComplexity), true
+
+	case "EquityQuoteResult.currency":
+		if e.complexity.EquityQuoteResult.Currency == nil {
+			break
+		}
+
+		return e.complexity.EquityQuoteResult.Currency(childComplexity), true
+	case "EquityQuoteResult.currentPrice":
+		if e.complexity.EquityQuoteResult.CurrentPrice == nil {
+			break
+		}
+
+		return e.complexity.EquityQuoteResult.CurrentPrice(childComplexity), true
+	case "EquityQuoteResult.exchange":
+		if e.complexity.EquityQuoteResult.Exchange == nil {
+			break
+		}
+
+		return e.complexity.EquityQuoteResult.Exchange(childComplexity), true
+	case "EquityQuoteResult.name":
+		if e.complexity.EquityQuoteResult.Name == nil {
+			break
+		}
+
+		return e.complexity.EquityQuoteResult.Name(childComplexity), true
+	case "EquityQuoteResult.symbol":
+		if e.complexity.EquityQuoteResult.Symbol == nil {
+			break
+		}
+
+		return e.complexity.EquityQuoteResult.Symbol(childComplexity), true
 
 	case "Household.accounts":
 		if e.complexity.Household.Accounts == nil {
@@ -977,6 +1018,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Currencies(childComplexity), true
+	case "Query.equityQuote":
+		if e.complexity.Query.EquityQuote == nil {
+			break
+		}
+
+		args, err := ec.field_Query_equityQuote_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.EquityQuote(childComplexity, args["symbol"].(string)), true
 	case "Query.fxRate":
 		if e.complexity.Query.FxRate == nil {
 			break
@@ -1623,6 +1675,17 @@ func (ec *executionContext) field_Query_accounts_args(ctx context.Context, rawAr
 		return nil, err
 	}
 	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_equityQuote_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "symbol", ec.unmarshalNString2string)
+	if err != nil {
+		return nil, err
+	}
+	args["symbol"] = arg0
 	return args, nil
 }
 
@@ -2914,6 +2977,151 @@ func (ec *executionContext) fieldContext_Currency_households(_ context.Context, 
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EquityQuoteResult_symbol(ctx context.Context, field graphql.CollectedField, obj *EquityQuoteResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_EquityQuoteResult_symbol,
+		func(ctx context.Context) (any, error) {
+			return obj.Symbol, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_EquityQuoteResult_symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EquityQuoteResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EquityQuoteResult_name(ctx context.Context, field graphql.CollectedField, obj *EquityQuoteResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_EquityQuoteResult_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_EquityQuoteResult_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EquityQuoteResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EquityQuoteResult_exchange(ctx context.Context, field graphql.CollectedField, obj *EquityQuoteResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_EquityQuoteResult_exchange,
+		func(ctx context.Context) (any, error) {
+			return obj.Exchange, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_EquityQuoteResult_exchange(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EquityQuoteResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EquityQuoteResult_currency(ctx context.Context, field graphql.CollectedField, obj *EquityQuoteResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_EquityQuoteResult_currency,
+		func(ctx context.Context) (any, error) {
+			return obj.Currency, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_EquityQuoteResult_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EquityQuoteResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EquityQuoteResult_currentPrice(ctx context.Context, field graphql.CollectedField, obj *EquityQuoteResult) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_EquityQuoteResult_currentPrice,
+		func(ctx context.Context) (any, error) {
+			return obj.CurrentPrice, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_EquityQuoteResult_currentPrice(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EquityQuoteResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5553,6 +5761,59 @@ func (ec *executionContext) fieldContext_Query_fxRate(ctx context.Context, field
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_fxRate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_equityQuote(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_equityQuote,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().EquityQuote(ctx, fc.Args["symbol"].(string))
+		},
+		nil,
+		ec.marshalNEquityQuoteResult2ᚖfijoyᚗappᚐEquityQuoteResult,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_equityQuote(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "symbol":
+				return ec.fieldContext_EquityQuoteResult_symbol(ctx, field)
+			case "name":
+				return ec.fieldContext_EquityQuoteResult_name(ctx, field)
+			case "exchange":
+				return ec.fieldContext_EquityQuoteResult_exchange(ctx, field)
+			case "currency":
+				return ec.fieldContext_EquityQuoteResult_currency(ctx, field)
+			case "currentPrice":
+				return ec.fieldContext_EquityQuoteResult_currentPrice(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type EquityQuoteResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_equityQuote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -15303,6 +15564,65 @@ func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var equityQuoteResultImplementors = []string{"EquityQuoteResult"}
+
+func (ec *executionContext) _EquityQuoteResult(ctx context.Context, sel ast.SelectionSet, obj *EquityQuoteResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, equityQuoteResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EquityQuoteResult")
+		case "symbol":
+			out.Values[i] = ec._EquityQuoteResult_symbol(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._EquityQuoteResult_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "exchange":
+			out.Values[i] = ec._EquityQuoteResult_exchange(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "currency":
+			out.Values[i] = ec._EquityQuoteResult_currency(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "currentPrice":
+			out.Values[i] = ec._EquityQuoteResult_currentPrice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var householdImplementors = []string{"Household", "Node"}
 
 func (ec *executionContext) _Household(ctx context.Context, sel ast.SelectionSet, obj *ent.Household) graphql.Marshaler {
@@ -16796,6 +17116,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fxRate(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "equityQuote":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_equityQuote(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -18485,6 +18827,20 @@ func (ec *executionContext) marshalNDateTime2string(ctx context.Context, sel ast
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNEquityQuoteResult2fijoyᚗappᚐEquityQuoteResult(ctx context.Context, sel ast.SelectionSet, v EquityQuoteResult) graphql.Marshaler {
+	return ec._EquityQuoteResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNEquityQuoteResult2ᚖfijoyᚗappᚐEquityQuoteResult(ctx context.Context, sel ast.SelectionSet, v *EquityQuoteResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._EquityQuoteResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNHousehold2ᚕᚖfijoyᚗappᚋentᚐHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Household) graphql.Marshaler {
