@@ -101,17 +101,16 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         <div className="px-1"></div>
         <div className="flex flex-col items-stretch w-10">
           <Button
+            nativeButton={false}
             size="icon-lg"
             className="flex-1 w-full cursor-pointer"
             render={
-              <button>
-                <Link
-                  from="/household/$householdId/investments"
-                  to="/household/$householdId/investments/new"
-                >
-                  <PlusIcon />
-                </Link>
-              </button>
+              <Link
+                from="/household/$householdId/investments"
+                to="/household/$householdId/investments/new"
+              >
+                <PlusIcon />
+              </Link>
             }
           ></Button>
           <div className="py-1"></div>

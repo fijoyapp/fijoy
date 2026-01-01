@@ -98,17 +98,16 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         <div className="px-1"></div>
         <div className="flex flex-col items-stretch w-10">
           <Button
+            nativeButton={false}
             size="icon-lg"
             className="flex-1 w-full cursor-pointer"
             render={
-              <button>
-                <Link
-                  from="/household/$householdId/accounts"
-                  to="/household/$householdId/accounts/new"
-                >
-                  <PlusIcon />
-                </Link>
-              </button>
+              <Link
+                from="/household/$householdId/accounts"
+                to="/household/$householdId/accounts/new"
+              >
+                <PlusIcon />
+              </Link>
             }
           ></Button>
           <div className="py-1"></div>
