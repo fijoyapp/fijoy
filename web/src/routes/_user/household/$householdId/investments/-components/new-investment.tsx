@@ -221,6 +221,12 @@ export function NewInvestment({
     form.validateField('symbol', 'change')
   }, [equityQuoteData, isPending, queriedSymbol, form])
 
+  useEffect(() => {
+    if (equityQuoteData.equityQuote) {
+      form.setFieldValue('name', equityQuoteData.equityQuote.name)
+    }
+  }, [equityQuoteData, form])
+
   return (
     <Card className="w-full">
       <CardHeader>
