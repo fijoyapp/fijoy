@@ -168,7 +168,7 @@ export function NewInvestment({
 
       const connectionID = ConnectionHandler.getConnectionID(
         ROOT_ID,
-        'accountsPanel_accounts',
+        'investmentsPanel_investments',
       )
 
       const result = await commitMutationResult<newInvestmentMutation>(
