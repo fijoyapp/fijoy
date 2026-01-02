@@ -19,7 +19,7 @@ extend type Investment {
 
 extend type Query {
   fxRate(from: String!, to: String!, datetime: DateTime!): String!
-  equityQuote(symbol: String!): EquityQuoteResult!
+  equityQuote(symbol: String!): EquityQuoteResult
 }
 
 input CreateInvestmentInputCustom {

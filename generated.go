@@ -5778,9 +5778,9 @@ func (ec *executionContext) _Query_equityQuote(ctx context.Context, field graphq
 			return ec.resolvers.Query().EquityQuote(ctx, fc.Args["symbol"].(string))
 		},
 		nil,
-		ec.marshalNEquityQuoteResult2ᚖfijoyᚗappᚐEquityQuoteResult,
+		ec.marshalOEquityQuoteResult2ᚖfijoyᚗappᚐEquityQuoteResult,
 		true,
-		true,
+		false,
 	)
 }
 
@@ -17131,16 +17131,13 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		case "equityQuote":
 			field := field
 
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
 				res = ec._Query_equityQuote(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
 				return res
 			}
 
@@ -18829,20 +18826,6 @@ func (ec *executionContext) marshalNDateTime2string(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalNEquityQuoteResult2fijoyᚗappᚐEquityQuoteResult(ctx context.Context, sel ast.SelectionSet, v EquityQuoteResult) graphql.Marshaler {
-	return ec._EquityQuoteResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNEquityQuoteResult2ᚖfijoyᚗappᚐEquityQuoteResult(ctx context.Context, sel ast.SelectionSet, v *EquityQuoteResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._EquityQuoteResult(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalNHousehold2ᚕᚖfijoyᚗappᚋentᚐHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Household) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -19944,6 +19927,13 @@ func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCu
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOEquityQuoteResult2ᚖfijoyᚗappᚐEquityQuoteResult(ctx context.Context, sel ast.SelectionSet, v *EquityQuoteResult) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._EquityQuoteResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOHousehold2ᚕᚖfijoyᚗappᚋentᚐHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Household) graphql.Marshaler {

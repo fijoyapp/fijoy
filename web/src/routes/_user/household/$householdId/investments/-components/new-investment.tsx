@@ -2,8 +2,8 @@ import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
-import { useFragment, useMutation } from 'react-relay'
-import { capitalize } from 'lodash-es'
+import { useFragment, useMutation, useRefetchableFragment } from 'react-relay'
+import { capitalize, debounce } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
 import { useNavigate } from '@tanstack/react-router'
@@ -39,6 +39,21 @@ import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { type newInvestmentMutation } from './__generated__/newInvestmentMutation.graphql'
 import { newInvestmentFragment$key } from './__generated__/newInvestmentFragment.graphql'
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getLogoStockTickerURL } from '@/lib/logo'
+import { useCurrency } from '@/hooks/use-currency'
+import { cn } from '@/lib/utils'
+import { newInvestmentEquityQuoteFragment$key } from './__generated__/newInvestmentEquityQuoteFragment.graphql'
+import { useTransition } from 'react'
+import { PendingComponent } from '@/components/pending-component'
+import { Spinner } from '@/components/ui/spinner'
 
 const formSchema = z.object({
   name: z
@@ -69,6 +84,20 @@ const newInvestmentFragment = graphql`
   }
 `
 
+const newInvestmentEquityQuoteFragment = graphql`
+  fragment newInvestmentEquityQuoteFragment on Query
+  @refetchable(queryName: "newInvestmentEquityQuoteQuery")
+  @argumentDefinitions(symbol: { type: "String", defaultValue: "" }) {
+    equityQuote(symbol: $symbol) {
+      currentPrice
+      symbol
+      exchange
+      name
+      currency
+    }
+  }
+`
+
 const newInvestmentMutation = graphql`
   mutation newInvestmentMutation(
     $input: CreateInvestmentInputCustom!
@@ -90,12 +119,24 @@ const newInvestmentMutation = graphql`
 `
 
 type NewInvestmentProps = {
-  fragmentRef: newInvestmentFragment$key
+  newInvestmentFragmentRef: newInvestmentFragment$key
+  newInvestmentEquityQuoteFragmentRef: newInvestmentEquityQuoteFragment$key
 }
 
-export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
-  const data = useFragment(newInvestmentFragment, fragmentRef)
+export function NewInvestment({
+  newInvestmentFragmentRef,
+  newInvestmentEquityQuoteFragmentRef,
+}: NewInvestmentProps) {
+  const [isPending, startTransition] = useTransition()
+  const data = useFragment(newInvestmentFragment, newInvestmentFragmentRef)
+
+  const [equityQuoteData, refetchEquityQuote] = useRefetchableFragment(
+    newInvestmentEquityQuoteFragment,
+    newInvestmentEquityQuoteFragmentRef,
+  )
   const navigate = useNavigate()
+
+  const { formatCurrency } = useCurrency()
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newInvestmentMutation>(newInvestmentMutation)
@@ -201,6 +242,7 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Account</FieldLabel>
                     <Combobox
+                      data-1p-ignore
                       items={investmentAccounts.map((account) => account.id)}
                       itemToStringLabel={(item) =>
                         investmentAccounts.find((acc) => acc.id === item)
@@ -282,6 +324,14 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
             />
             <form.Field
               name="symbol"
+              listeners={{
+                onChange: (value) => {
+                  startTransition(() => {
+                    refetchEquityQuote({ symbol: value.value })
+                  })
+                },
+                onChangeDebounceMs: 500,
+              }}
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
@@ -306,6 +356,57 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
                 )
               }}
             />
+            {equityQuoteData.equityQuote ? (
+              <Item variant={'outline'}>
+                <ItemMedia variant="image">
+                  <Avatar className="">
+                    <AvatarImage
+                      src={getLogoStockTickerURL(
+                        equityQuoteData.equityQuote.symbol || '',
+                      )}
+                      alt={equityQuoteData.equityQuote.symbol || 'unknown logo'}
+                    />
+                    <AvatarFallback>
+                      {equityQuoteData.equityQuote.symbol}
+                    </AvatarFallback>
+                  </Avatar>
+                </ItemMedia>
+                <ItemContent className="gap-px">
+                  <ItemTitle className={cn('font-semibold')}>
+                    {equityQuoteData.equityQuote.name}
+                  </ItemTitle>
+                  <ItemDescription>
+                    {formatCurrency({
+                      value: equityQuoteData.equityQuote.currentPrice,
+                      currencyCode: equityQuoteData.equityQuote.currency,
+                    })}
+                  </ItemDescription>
+                </ItemContent>
+                <ItemContent className="items-end gap-px">
+                  <ItemTitle className="">
+                    <span>{equityQuoteData.equityQuote.symbol}</span>
+                  </ItemTitle>
+                  <ItemDescription className="">
+                    <span>{equityQuoteData.equityQuote.exchange}</span>
+                  </ItemDescription>
+                </ItemContent>
+              </Item>
+            ) : (
+              <Item variant="outline">
+                <ItemContent className="gap-px">
+                  <ItemTitle className={cn('')}>
+                    Start typing the symbol to fetch quote...
+                  </ItemTitle>
+                  <ItemDescription>
+                    Symbols are formatted according to Yahoo Finance.
+                  </ItemDescription>
+                </ItemContent>
+
+                <ItemContent className="items-end gap-px">
+                  {isPending && <Spinner />}
+                </ItemContent>
+              </Item>
+            )}
             <form.Field
               name="name"
               children={(field) => {
