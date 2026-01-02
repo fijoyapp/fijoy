@@ -67,7 +67,7 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
                   {data.name}
                 </ItemTitle>
                 <ItemDescription>
-                  {data.amount} @ {''}
+                  {data.amount} @{' '}
                   {formatCurrency({
                     value: data.quote,
                     currencyCode: data.currency.code,
