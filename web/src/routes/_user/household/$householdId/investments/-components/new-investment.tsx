@@ -51,8 +51,7 @@ import { getLogoStockTickerURL } from '@/lib/logo'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { newInvestmentEquityQuoteFragment$key } from './__generated__/newInvestmentEquityQuoteFragment.graphql'
-import { useTransition } from 'react'
-import { PendingComponent } from '@/components/pending-component'
+import { useEffect, useState, useTransition } from 'react'
 import { Spinner } from '@/components/ui/spinner'
 
 const formSchema = z.object({
@@ -134,6 +133,8 @@ export function NewInvestment({
     newInvestmentEquityQuoteFragment,
     newInvestmentEquityQuoteFragmentRef,
   )
+  const [queriedSymbol, setQueriedSymbol] = useState('')
+
   const navigate = useNavigate()
 
   const { formatCurrency } = useCurrency()
@@ -215,6 +216,10 @@ export function NewInvestment({
         .exhaustive()
     },
   })
+
+  useEffect(() => {
+    form.validateField('symbol', 'change')
+  }, [equityQuoteData, isPending, queriedSymbol, form])
 
   return (
     <Card className="w-full">
@@ -324,9 +329,37 @@ export function NewInvestment({
             />
             <form.Field
               name="symbol"
+              validators={{
+                onChangeAsync: ({ value }) => {
+                  if (!value) return undefined // skip for empty value
+
+                  // zod stuff
+                  const parseResult = formSchema.shape.symbol.safeParse(value)
+                  if (!parseResult.success) {
+                    return parseResult.error.issues[0]
+                  }
+
+                  // value is different than queriedSymbol, meaning user is still typing
+                  if (value !== queriedSymbol) return undefined
+
+                  // is currently fetching
+                  if (isPending) return undefined
+
+                  // after fetch, no quote found
+                  if (!equityQuoteData.equityQuote) {
+                    return {
+                      message: 'Unable to find a quote for this symbol.',
+                    }
+                  }
+
+                  return undefined
+                },
+                onChangeAsyncDebounceMs: 500,
+              }}
               listeners={{
                 onChange: (value) => {
                   startTransition(() => {
+                    setQueriedSymbol(value.value)
                     refetchEquityQuote({ symbol: value.value })
                   })
                 },
