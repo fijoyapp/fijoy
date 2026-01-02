@@ -202,13 +202,16 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
                     <FieldLabel htmlFor={field.name}>Account</FieldLabel>
                     <Combobox
                       items={investmentAccounts.map((account) => account.id)}
+                      itemToStringLabel={(item) =>
+                        investmentAccounts.find((acc) => acc.id === item)
+                          ?.name || ''
+                      }
                       value={field.state.value}
                       onValueChange={(value) => {
                         field.handleChange(value || '')
                       }}
                     >
                       <ComboboxInput
-                        data-1p-ignore
                         id={field.name}
                         name={field.name}
                         placeholder="Select an account"
@@ -220,7 +223,8 @@ export function NewInvestment({ fragmentRef }: NewInvestmentProps) {
                         <ComboboxList>
                           {(item: string) => (
                             <ComboboxItem key={item} value={item}>
-                              {item}
+                              {investmentAccounts.find((acc) => acc.id === item)
+                                ?.name || ''}
                             </ComboboxItem>
                           )}
                         </ComboboxList>
