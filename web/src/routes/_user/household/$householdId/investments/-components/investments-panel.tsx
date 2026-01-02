@@ -148,7 +148,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
                         )
                       })
                       .reduce((a, b) => a.add(b), currency(0)),
-                    currencyCode: 'CAD',
+                    currencyCode: household.currency.code,
                   })}
                 </span>
               </AccordionTrigger>
