@@ -242,7 +242,6 @@ export function NewInvestment({
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Account</FieldLabel>
                     <Combobox
-                      data-1p-ignore
                       items={investmentAccounts.map((account) => account.id)}
                       itemToStringLabel={(item) =>
                         investmentAccounts.find((acc) => acc.id === item)
@@ -254,6 +253,7 @@ export function NewInvestment({
                       }}
                     >
                       <ComboboxInput
+                        data-1p-ignore
                         id={field.name}
                         name={field.name}
                         placeholder="Select an account"
