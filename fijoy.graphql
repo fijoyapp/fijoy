@@ -1,18 +1,33 @@
 scalar DateTime
 
-extend type Query {
-  fxRate(from: String!, to: String!, datetime: DateTime!): String!
-}
-
-type Mutation {
-  createAccount(input: CreateAccountInput!): AccountEdge!
-}
-
 extend type Account {
   balanceInHouseholdCurrency: String!
   valueInHouseholdCurrency: String!
 }
 
+type EquityQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
 extend type Investment {
   valueInHouseholdCurrency: String!
+}
+
+extend type Query {
+  fxRate(from: String!, to: String!, datetime: DateTime!): String!
+  equityQuote(symbol: String!): EquityQuoteResult
+}
+
+input CreateInvestmentInputCustom {
+  input: CreateInvestmentInput!
+  costBasis: String!
+}
+
+type Mutation {
+  createAccount(input: CreateAccountInput!): AccountEdge!
+  createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
 }

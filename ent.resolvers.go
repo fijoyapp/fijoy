@@ -80,8 +80,8 @@ func (r *queryResolver) Households(ctx context.Context) ([]*ent.Household, error
 }
 
 // Investments is the resolver for the investments field.
-func (r *queryResolver) Investments(ctx context.Context) ([]*ent.Investment, error) {
-	return r.entClient.Investment.Query().All(ctx)
+func (r *queryResolver) Investments(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) (*ent.InvestmentConnection, error) {
+	return r.entClient.Investment.Query().Paginate(ctx, after, first, before, last, ent.WithInvestmentFilter(where.Filter))
 }
 
 // Lots is the resolver for the lots field.
@@ -257,6 +257,31 @@ func (r *createAccountInputResolver) Balance(ctx context.Context, obj *ent.Creat
 
 	obj.Balance = &dec
 	return nil
+}
+
+// Amount is the resolver for the amount field.
+func (r *createInvestmentInputResolver) Amount(ctx context.Context, obj *ent.CreateInvestmentInput, data *string) error {
+	if data == nil || *data == "" {
+		return nil
+	}
+
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for balance: %v", err)
+	}
+
+	obj.Amount = &dec
+	return nil
+}
+
+// Amount is the resolver for the amount field.
+func (r *createLotInputResolver) Amount(ctx context.Context, obj *ent.CreateLotInput, data string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// Price is the resolver for the price field.
+func (r *createLotInputResolver) Price(ctx context.Context, obj *ent.CreateLotInput, data string) error {
+	panic(fmt.Errorf("not implemented: Price - price"))
 }
 
 // Amount is the resolver for the amount field.
@@ -499,6 +524,21 @@ func (r *transactionEntryWhereInputResolver) AmountLte(ctx context.Context, obj 
 	panic(fmt.Errorf("not implemented: AmountLte - amountLTE"))
 }
 
+// Amount is the resolver for the amount field.
+func (r *updateInvestmentInputResolver) Amount(ctx context.Context, obj *ent.UpdateInvestmentInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// Amount is the resolver for the amount field.
+func (r *updateLotInputResolver) Amount(ctx context.Context, obj *ent.UpdateLotInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Amount - amount"))
+}
+
+// Price is the resolver for the price field.
+func (r *updateLotInputResolver) Price(ctx context.Context, obj *ent.UpdateLotInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Price - price"))
+}
+
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
@@ -524,6 +564,14 @@ func (r *Resolver) CreateAccountInput() CreateAccountInputResolver {
 	return &createAccountInputResolver{r}
 }
 
+// CreateInvestmentInput returns CreateInvestmentInputResolver implementation.
+func (r *Resolver) CreateInvestmentInput() CreateInvestmentInputResolver {
+	return &createInvestmentInputResolver{r}
+}
+
+// CreateLotInput returns CreateLotInputResolver implementation.
+func (r *Resolver) CreateLotInput() CreateLotInputResolver { return &createLotInputResolver{r} }
+
 // InvestmentWhereInput returns InvestmentWhereInputResolver implementation.
 func (r *Resolver) InvestmentWhereInput() InvestmentWhereInputResolver {
 	return &investmentWhereInputResolver{r}
@@ -537,6 +585,14 @@ func (r *Resolver) TransactionEntryWhereInput() TransactionEntryWhereInputResolv
 	return &transactionEntryWhereInputResolver{r}
 }
 
+// UpdateInvestmentInput returns UpdateInvestmentInputResolver implementation.
+func (r *Resolver) UpdateInvestmentInput() UpdateInvestmentInputResolver {
+	return &updateInvestmentInputResolver{r}
+}
+
+// UpdateLotInput returns UpdateLotInputResolver implementation.
+func (r *Resolver) UpdateLotInput() UpdateLotInputResolver { return &updateLotInputResolver{r} }
+
 type accountResolver struct{ *Resolver }
 type investmentResolver struct{ *Resolver }
 type lotResolver struct{ *Resolver }
@@ -544,6 +600,10 @@ type queryResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
 type accountWhereInputResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
+type createInvestmentInputResolver struct{ *Resolver }
+type createLotInputResolver struct{ *Resolver }
 type investmentWhereInputResolver struct{ *Resolver }
 type lotWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }
+type updateInvestmentInputResolver struct{ *Resolver }
+type updateLotInputResolver struct{ *Resolver }

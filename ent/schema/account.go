@@ -98,19 +98,21 @@ func (Account) Edges() []ent.Edge {
 				),
 			),
 
-		edge.To("transaction_entries", TransactionEntry.Type).Annotations(
-			entgql.Skip(
-				entgql.SkipMutationCreateInput,
-				entgql.SkipMutationUpdateInput,
+		edge.To("transaction_entries", TransactionEntry.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
 			),
-		),
-		edge.To("investments", Investment.Type).Annotations(
+		edge.To("investments", Investment.Type).
+			Annotations(
 
-			entgql.Skip(
-				entgql.SkipMutationCreateInput,
-				entgql.SkipMutationUpdateInput,
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
 			),
-		),
 	}
 }
 
