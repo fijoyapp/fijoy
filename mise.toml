@@ -1,3 +1,7 @@
 [tools]
+atlas = "latest"
+docker-compose = "latest"
 go = "1.25.5"
 node = "24"
+pnpm = "latest"
+watchexec = "latest"
