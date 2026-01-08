@@ -27,3 +27,7 @@ migrate-hash:
 
 migrate name:
   go run -mod=mod ent/migrate/main.go {{name}}
+
+[parallel]
+dev: merge-graphql relay-watch
+
