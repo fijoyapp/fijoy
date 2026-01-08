@@ -9,6 +9,9 @@ Here are some **very important** tutorials to get you started with the technolog
 
 ## Commands
 
+We use ![mise](https://mise.jdx.dev/) to manage the development environment.
+Activating mise will give you all the tools you need to work on this project.
+
 ### Database
 
 ```bash
