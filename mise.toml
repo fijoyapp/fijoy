@@ -2,7 +2,7 @@
 atlas = "latest"
 docker-compose = "latest"
 go = "1.25.5"
-just = "latest"
+# just = "latest"
 node = "24"
 pnpm = "latest"
 watchexec = "latest"
