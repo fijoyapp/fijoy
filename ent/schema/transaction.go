@@ -79,7 +79,8 @@ type TransactionCategory struct {
 func (TransactionCategory) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty(),
-		field.Enum("type").Values("expense", "income", "transfer", "setup"),
+		field.Enum("type").
+			Values("expense", "income", "transfer", "investment", "setup"),
 	}
 }
 

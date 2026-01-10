@@ -93,10 +93,11 @@ type Type string
 
 // Type values.
 const (
-	TypeExpense  Type = "expense"
-	TypeIncome   Type = "income"
-	TypeTransfer Type = "transfer"
-	TypeSetup    Type = "setup"
+	TypeExpense    Type = "expense"
+	TypeIncome     Type = "income"
+	TypeTransfer   Type = "transfer"
+	TypeInvestment Type = "investment"
+	TypeSetup      Type = "setup"
 )
 
 func (_type Type) String() string {
@@ -106,7 +107,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeExpense, TypeIncome, TypeTransfer, TypeSetup:
+	case TypeExpense, TypeIncome, TypeTransfer, TypeInvestment, TypeSetup:
 		return nil
 	default:
 		return fmt.Errorf("transactioncategory: invalid enum value for type field: %q", _type)

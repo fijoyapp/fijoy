@@ -212,7 +212,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer", "setup"}},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer", "investment", "setup"}},
 		{Name: "household_id", Type: field.TypeInt},
 	}
 	// TransactionCategoriesTable holds the schema information for the "transaction_categories" table.

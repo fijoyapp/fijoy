@@ -975,6 +975,7 @@ enum TransactionCategoryType @goModel(model: "fijoy.app/ent/transactioncategory.
   expense
   income
   transfer
+  investment
   setup
 }
 """
