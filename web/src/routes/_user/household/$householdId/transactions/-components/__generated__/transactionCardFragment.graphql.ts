@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f64625890c04d76b5e159d83f74e2584>>
+ * @generated SignedSource<<f4c76d54bd106c737d7614e154f660bd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type TransactionCategoryType = "expense" | "income" | "setup" | "transfer" | "%future added value";
+export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type transactionCardFragment$data = {
   readonly category: {

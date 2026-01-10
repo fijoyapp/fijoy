@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0a7f0bec486125bf354804114f1cb213>>
+ * @generated SignedSource<<dcc8d70c8392dfe28f476eb1283fcfb4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 export type InvestmentType = "crypto" | "stock" | "%future added value";
-export type TransactionCategoryType = "expense" | "income" | "setup" | "transfer" | "%future added value";
+export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
 export type UserHouseholdRole = "admin" | "member" | "%future added value";
 export type UserKeyProvider = "google" | "%future added value";
 export type TransactionWhereInput = {
