@@ -2,6 +2,7 @@ import * as React from 'react'
 import {
   ArrowLeftRightIcon,
   ChartNoAxesCombinedIcon,
+  LayoutGridIcon,
   SquareTerminal,
   WalletIcon,
 } from 'lucide-react'
@@ -103,6 +104,17 @@ const projects: Array<{
       },
     },
     icon: ChartNoAxesCombinedIcon,
+  },
+  {
+    name: 'Categories',
+    link: {
+      to: '/household/$householdId/categories',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+    },
+    icon: LayoutGridIcon,
   },
 ]
 
