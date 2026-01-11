@@ -1,0 +1,62 @@
+[[tools.atlas]]
+version = "0.32.0"
+backend = "aqua:ariga/atlas"
+"platforms.linux-arm64" = { checksum = "sha256:15eda758084b52358a477bf7f8b8093ef811ec6e31f635095d0c41a8ebe6aa52", url = "https://release.ariga.io/atlas/atlas-linux-arm64-v0.32.0"}
+"platforms.linux-x64" = { checksum = "sha256:8160a357160142239b84b8ebdf70f7af70df8ccefe297299f43cc67470532004", url = "https://release.ariga.io/atlas/atlas-linux-amd64-v0.32.0"}
+"platforms.macos-arm64" = { checksum = "sha256:a8fb30231d80e2962b121dcbb073fff063a2104b11bb6c1d0f67477db3b728c8", url = "https://release.ariga.io/atlas/atlas-darwin-arm64-v0.32.0"}
+"platforms.macos-x64" = { checksum = "sha256:ba8f6c148328adc774cdc87316eb05c0d0461bb2a763d4c220686dd35a41df0f", url = "https://release.ariga.io/atlas/atlas-darwin-amd64-v0.32.0"}
+"platforms.windows-x64" = { checksum = "sha256:53bcef1bb201eec85406025472f6d86626f360b05dacfea808e595a85d8ce632", url = "https://release.ariga.io/atlas/atlas-windows-amd64-v0.32.0.exe"}
+
+[[tools.docker-compose]]
+version = "5.0.1"
+backend = "aqua:docker/compose"
+"platforms.linux-arm64" = { checksum = "sha256:e3b36491a75f92c35ebfbbe6e4741bd2429664edf3971427983d67c0b21e7d1d", url = "https://github.com/docker/compose/releases/download/v5.0.1/docker-compose-linux-aarch64"}
+"platforms.linux-x64" = { checksum = "sha256:cdc1df64412ed009312afbc044b3625144d06c07736e2f7a77fb0460531b9327", url = "https://github.com/docker/compose/releases/download/v5.0.1/docker-compose-linux-x86_64"}
+"platforms.macos-arm64" = { checksum = "sha256:74ddfae9ca673e11babe45b0945fe825c0fb1f16e56f9772b4ee7a2a9d00bf19", url = "https://github.com/docker/compose/releases/download/v5.0.1/docker-compose-darwin-aarch64"}
+"platforms.macos-x64" = { checksum = "sha256:dc94eecbe55c2d3c32aecc1fefc63b6ee63086f18bbbf5f4dac91b80f8f6b51b", url = "https://github.com/docker/compose/releases/download/v5.0.1/docker-compose-darwin-x86_64"}
+"platforms.windows-x64" = { checksum = "sha256:2ae341f9152b4d90f561f84b8f2e263d5b60e1613c6841c804447819290c4119", url = "https://github.com/docker/compose/releases/download/v5.0.1/docker-compose-windows-x86_64.exe"}
+
+[[tools."github:casey/just"]]
+version = "1.46.0"
+backend = "github:casey/just"
+"platforms.linux-arm64" = { checksum = "sha256:b81970c8247fa64cfb30d2a3da0e487e4253f9f2d01865ed5e7d53cdc7b02188", url = "https://github.com/casey/just/releases/download/1.46.0/just-1.46.0-aarch64-unknown-linux-musl.tar.gz", url_api = "https://api.github.com/repos/casey/just/releases/assets/335433617"}
+"platforms.linux-x64" = { checksum = "sha256:79966e6e353f535ee7d1c6221641bcc8e3381c55b0d0a6dc6e54b34f9db36eaa", url = "https://github.com/casey/just/releases/download/1.46.0/just-1.46.0-x86_64-unknown-linux-musl.tar.gz", url_api = "https://api.github.com/repos/casey/just/releases/assets/335433546"}
+"platforms.macos-arm64" = { checksum = "sha256:438eaf6468a115aa7db93e501cc7e3272f453f6b7083be3863adfab546b23358", url = "https://github.com/casey/just/releases/download/1.46.0/just-1.46.0-aarch64-apple-darwin.tar.gz", url_api = "https://api.github.com/repos/casey/just/releases/assets/335433784"}
+"platforms.macos-x64" = { checksum = "sha256:ec54dd60ac876261b7318f1852ef9c0319fede1e5a73c14f56d908a8edf595b8", url = "https://github.com/casey/just/releases/download/1.46.0/just-1.46.0-x86_64-apple-darwin.tar.gz", url_api = "https://api.github.com/repos/casey/just/releases/assets/335433529"}
+"platforms.windows-x64" = { checksum = "sha256:f0acf3f8ccbcf360b481baae9cae4c921774c89d5d932012481d3e0bda78ab39", url = "https://github.com/casey/just/releases/download/1.46.0/just-1.46.0-x86_64-pc-windows-msvc.zip", url_api = "https://api.github.com/repos/casey/just/releases/assets/335433854"}
+
+[[tools.go]]
+version = "1.25.5"
+backend = "core:go"
+"platforms.linux-arm64" = { checksum = "sha256:b00b694903d126c588c378e72d3545549935d3982635ba3f7a964c9fa23fe3b9", url = "https://dl.google.com/go/go1.25.5.linux-arm64.tar.gz"}
+"platforms.linux-x64" = { checksum = "sha256:9e9b755d63b36acf30c12a9a3fc379243714c1c6d3dd72861da637f336ebb35b", url = "https://dl.google.com/go/go1.25.5.linux-amd64.tar.gz"}
+"platforms.macos-arm64" = { checksum = "sha256:bed8ebe824e3d3b27e8471d1307f803fc6ab8e1d0eb7a4ae196979bd9b801dd3", url = "https://dl.google.com/go/go1.25.5.darwin-arm64.tar.gz"}
+"platforms.macos-x64" = { checksum = "sha256:b69d51bce599e5381a94ce15263ae644ec84667a5ce23d58dc2e63e2c12a9f56", url = "https://dl.google.com/go/go1.25.5.darwin-amd64.tar.gz"}
+"platforms.windows-x64" = { checksum = "sha256:ae756cce1cb80c819b4fe01b0353807178f532211b47f72d7fa77949de054ebb", url = "https://dl.google.com/go/go1.25.5.windows-amd64.zip"}
+
+[[tools.node]]
+version = "24.12.0"
+backend = "core:node"
+"platforms.linux-arm64" = { checksum = "sha256:9b2a2eeb98a8eb37361224e2a1d060300ad2dd143af58dfdb16de785df0f1228", url = "https://nodejs.org/dist/v24.12.0/node-v24.12.0-linux-arm64.tar.gz"}
+"platforms.linux-x64" = { checksum = "sha256:6159227e0af7d7c3c6bb2fa900452b04a6cb8841a702a79acc613209d70b04d0", url = "https://nodejs.org/dist/v24.12.0/node-v24.12.0-linux-x64.tar.gz"}
+"platforms.macos-arm64" = { checksum = "sha256:319f221adc5e44ff0ed57e8a441b2284f02b8dc6fc87b8eb92a6a93643fd8080", url = "https://nodejs.org/dist/v24.12.0/node-v24.12.0-darwin-arm64.tar.gz"}
+"platforms.macos-x64" = { checksum = "sha256:b82ea4c62fd08e250cab59d625e75d77cc5b0a3d60c6698ebee4545c88a169c5", url = "https://nodejs.org/dist/v24.12.0/node-v24.12.0-darwin-x64.tar.gz"}
+"platforms.windows-x64" = { checksum = "sha256:9c125f61ae947b52e779095830f9cac267846a043ef7192183c84016aaad2812", url = "https://nodejs.org/dist/v24.12.0/node-v24.12.0-win-x64.zip"}
+
+[[tools.pnpm]]
+version = "10.27.0"
+backend = "aqua:pnpm/pnpm"
+"platforms.linux-arm64" = { checksum = "sha256:61bdf073cd95154c0fbab6349dcf8a77e5e4c159854363f21722756e3ba08a9f", url = "https://github.com/pnpm/pnpm/releases/download/v10.27.0/pnpm-linux-arm64"}
+"platforms.linux-x64" = { checksum = "sha256:0bbea51c4fe9dc0b5b94f147a2b7441fba3a75fe54f03a317149d738408e0496", url = "https://github.com/pnpm/pnpm/releases/download/v10.27.0/pnpm-linux-x64"}
+"platforms.macos-arm64" = { checksum = "sha256:60a6e7b61a5ce34ce8c34e65bdcc0979a254362ff4ab73254fbcd3982de49da1", url = "https://github.com/pnpm/pnpm/releases/download/v10.27.0/pnpm-macos-arm64"}
+"platforms.macos-x64" = { checksum = "sha256:4e44fd0a841ab98f76ee73c9953cffc5ca560b2651dc9c4ebef4ecbe43a605cc", url = "https://github.com/pnpm/pnpm/releases/download/v10.27.0/pnpm-macos-x64"}
+"platforms.windows-x64" = { checksum = "sha256:921af6e7fce0cf67d2b035c2d81bfa4d9ed774780aa32dd63162fa726fecd859", url = "https://github.com/pnpm/pnpm/releases/download/v10.27.0/pnpm-win-x64.exe"}
+
+[[tools.watchexec]]
+version = "2.3.2"
+backend = "aqua:watchexec/watchexec"
+"platforms.linux-arm64" = { checksum = "sha512:ddbd811740b3ce144b5c7cef1ef817bd497631466c4df48aafd473ec24b10ff85d8f31c2d4a4825ac10165bfa529df806ee3f53519493ae9c62fcbe44a316bfc", url = "https://github.com/watchexec/watchexec/releases/download/v2.3.2/watchexec-2.3.2-aarch64-unknown-linux-gnu.tar.xz"}
+"platforms.linux-x64" = { checksum = "sha512:ec2dadefbbfad9ba738a6f27ead78214e90db4d5bbf7eb2f4d8dac3cf18f468f900fe51d4ba107b3f2c0733c412c28e8c977f158968515c8b7f03f3c8391982a", url = "https://github.com/watchexec/watchexec/releases/download/v2.3.2/watchexec-2.3.2-x86_64-unknown-linux-gnu.tar.xz"}
+"platforms.macos-arm64" = { checksum = "sha512:88ea43af48597f7dbfceb1783e131d53aabe920c2b253a1538cc4efeee686f01c1282821ddca5dd56cb490fc7105e4e1be2d55e523f873a980b9a19ea157d523", url = "https://github.com/watchexec/watchexec/releases/download/v2.3.2/watchexec-2.3.2-aarch64-apple-darwin.tar.xz"}
+"platforms.macos-x64" = { checksum = "sha512:80899b26b9a8cf0fd751368d38ba33e79e2fddddf0208e73ddc207f5a199466667113a62d495359e366b0ae90e3e7733cb238ad0450d5ac4653f281cb377b21d", url = "https://github.com/watchexec/watchexec/releases/download/v2.3.2/watchexec-2.3.2-x86_64-apple-darwin.tar.xz"}
+"platforms.windows-x64" = { checksum = "sha512:427b96192a49614ef4a70c298ad3f0ba601578f35352823cbeb62519823fcd40b4734d6651163c6cf9b34e481fbb53305ceb20795dc27b4062c51340a5c79351", url = "https://github.com/watchexec/watchexec/releases/download/v2.3.2/watchexec-2.3.2-x86_64-pc-windows-msvc.zip"}
