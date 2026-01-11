@@ -1,8 +1,8 @@
 [tools]
 atlas = "latest"
 docker-compose = "latest"
+"github:casey/just" = "latest"
 go = "1.25.5"
-# just = "latest"
 node = "24"
 pnpm = "latest"
 watchexec = "latest"
