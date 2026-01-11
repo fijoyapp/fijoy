@@ -232,7 +232,7 @@ export function NewInvestment({
       <CardHeader>
         <CardTitle>New Investment</CardTitle>
         <CardDescription>
-          Start tracking your investment in Fijoy
+          Start tracking your investment in Beaver Money
         </CardDescription>
       </CardHeader>
       <CardContent>

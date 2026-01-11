@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transactionentry"
 )
 
 // TransactionEntryDelete is the builder for deleting a TransactionEntry entity.

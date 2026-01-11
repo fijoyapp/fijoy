@@ -110,7 +110,7 @@ func ValidColumn(column string) bool {
 // package on the initialization of the application. Therefore,
 // it should be imported in the main as follows:
 //
-//	import _ "fijoy.app/ent/runtime"
+//	import _ "beavermoney.app/ent/runtime"
 var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy

@@ -1,4 +1,4 @@
-package fijoy
+package beavermoney
 
 // This file will be automatically regenerated based on the schema, any resolver
 // implementations
@@ -9,8 +9,8 @@ import (
 	"context"
 	"fmt"
 
+	"beavermoney.app/ent"
 	"entgo.io/contrib/entgql"
-	"fijoy.app/ent"
 	"github.com/shopspring/decimal"
 )
 

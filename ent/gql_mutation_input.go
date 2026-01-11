@@ -3,8 +3,8 @@
 package ent
 
 import (
-	"fijoy.app/ent/account"
-	"fijoy.app/ent/investment"
+	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/investment"
 	"github.com/shopspring/decimal"
 )
 

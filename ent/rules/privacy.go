@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"entgo.io/ent/entql"
-	"fijoy.app/ent"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/privacy"
-	"fijoy.app/ent/user"
-	"fijoy.app/internal/contextkeys"
+	"beavermoney.app/ent"
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/privacy"
+	"beavermoney.app/ent/user"
+	"beavermoney.app/internal/contextkeys"
 )
 
 func AllowPrivacyBypass() privacy.QueryMutationRule {

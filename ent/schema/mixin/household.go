@@ -4,8 +4,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	"fijoy.app/ent/privacy"
-	"fijoy.app/ent/rules"
+	"beavermoney.app/ent/privacy"
+	"beavermoney.app/ent/rules"
 )
 
 type HouseholdMixin struct {

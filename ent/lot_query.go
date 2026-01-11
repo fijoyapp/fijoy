@@ -8,15 +8,15 @@ import (
 	"fmt"
 	"math"
 
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/transaction"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/investment"
-	"fijoy.app/ent/lot"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transaction"
 )
 
 // LotQuery is the builder for querying Lot entities.

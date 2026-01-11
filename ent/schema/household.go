@@ -7,8 +7,8 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	"fijoy.app/ent/privacy"
-	"fijoy.app/ent/rules"
+	"beavermoney.app/ent/privacy"
+	"beavermoney.app/ent/rules"
 )
 
 // Household holds the schema definition for the Household entity.

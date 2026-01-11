@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/lot"
-	"fijoy.app/ent/predicate"
 	"github.com/shopspring/decimal"
 )
 

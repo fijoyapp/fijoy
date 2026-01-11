@@ -2,4 +2,4 @@
 
 package ent
 
-// The schema-stitching logic is generated in fijoy.app/ent/runtime/runtime.go
+// The schema-stitching logic is generated in beavermoney.app/ent/runtime/runtime.go

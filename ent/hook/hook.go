@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"fijoy.app/ent"
+	"beavermoney.app/ent"
 )
 
 // The AccountFunc type is an adapter to allow the use of ordinary

@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/investment"
-	"fijoy.app/ent/predicate"
 )
 
 // InvestmentDelete is the builder for deleting a Investment entity.

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fijoyapp/finance-go/equity"
+	"github.com/beavermoney/finance-go/equity"
 	"github.com/shopspring/decimal"
 )
 

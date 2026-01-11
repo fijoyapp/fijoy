@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/predicate"
 )
 
 // HouseholdDelete is the builder for deleting a Household entity.

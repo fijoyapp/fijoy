@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/transaction"
+	"beavermoney.app/ent/transactioncategory"
+	"beavermoney.app/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/transaction"
-	"fijoy.app/ent/transactioncategory"
-	"fijoy.app/ent/user"
 )
 
 // Transaction is the model entity for the Transaction schema.

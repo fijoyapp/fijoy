@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
+	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/transaction"
+	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent/account"
-	"fijoy.app/ent/currency"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/transaction"
-	"fijoy.app/ent/transactionentry"
 	"github.com/shopspring/decimal"
 )
 

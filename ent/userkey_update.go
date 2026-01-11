@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/userkey"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/userkey"
 )
 
 // UserKeyUpdate is the builder for updating UserKey entities.

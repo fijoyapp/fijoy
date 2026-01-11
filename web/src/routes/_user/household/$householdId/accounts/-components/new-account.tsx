@@ -173,7 +173,9 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>New Account</CardTitle>
-        <CardDescription>Start tracking your account in Fijoy</CardDescription>
+        <CardDescription>
+          Start tracking your account in Beaver Money
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form

@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/account"
-	"fijoy.app/ent/predicate"
 )
 
 // AccountDelete is the builder for deleting a Account entity.

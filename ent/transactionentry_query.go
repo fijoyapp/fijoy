@@ -8,16 +8,16 @@ import (
 	"fmt"
 	"math"
 
+	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/transaction"
+	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/account"
-	"fijoy.app/ent/currency"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transaction"
-	"fijoy.app/ent/transactionentry"
 )
 
 // TransactionEntryQuery is the builder for querying TransactionEntry entities.

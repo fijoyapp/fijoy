@@ -5,7 +5,7 @@ package privacy
 import (
 	"context"
 
-	"fijoy.app/ent"
+	"beavermoney.app/ent"
 
 	"entgo.io/ent/entql"
 	"entgo.io/ent/privacy"

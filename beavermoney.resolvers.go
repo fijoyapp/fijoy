@@ -1,4 +1,4 @@
-package fijoy
+package beavermoney
 
 // This file will be automatically regenerated based on the schema, any resolver
 // implementations
@@ -10,13 +10,13 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent"
+	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/transactioncategory"
+	"beavermoney.app/internal/contextkeys"
+	"beavermoney.app/internal/gqlutil"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent"
-	"fijoy.app/ent/currency"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/transactioncategory"
-	"fijoy.app/internal/contextkeys"
-	"fijoy.app/internal/gqlutil"
 	"github.com/shopspring/decimal"
 )
 

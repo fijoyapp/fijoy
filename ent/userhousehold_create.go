@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/user"
+	"beavermoney.app/ent/userhousehold"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/user"
-	"fijoy.app/ent/userhousehold"
 )
 
 // UserHouseholdCreate is the builder for creating a UserHousehold entity.

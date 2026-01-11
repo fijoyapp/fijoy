@@ -8,15 +8,15 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/transaction"
+	"beavermoney.app/ent/transactioncategory"
+	"beavermoney.app/ent/transactionentry"
+	"beavermoney.app/ent/user"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/lot"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transaction"
-	"fijoy.app/ent/transactioncategory"
-	"fijoy.app/ent/transactionentry"
-	"fijoy.app/ent/user"
 )
 
 // TransactionUpdate is the builder for updating Transaction entities.

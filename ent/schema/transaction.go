@@ -9,7 +9,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
-	fijoy_mixin "fijoy.app/ent/schema/mixin"
+	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
 
@@ -66,7 +66,7 @@ func (Transaction) Annotations() []schema.Annotation {
 func (Transaction) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
-		fijoy_mixin.HouseholdMixin{},
+		beavermoney_mixin.HouseholdMixin{},
 	}
 }
 
@@ -112,7 +112,7 @@ func (TransactionCategory) Annotations() []schema.Annotation {
 func (TransactionCategory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
-		fijoy_mixin.HouseholdMixin{},
+		beavermoney_mixin.HouseholdMixin{},
 	}
 }
 
@@ -159,6 +159,6 @@ func (TransactionEntry) Annotations() []schema.Annotation {
 func (TransactionEntry) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.Time{},
-		fijoy_mixin.HouseholdMixin{},
+		beavermoney_mixin.HouseholdMixin{},
 	}
 }

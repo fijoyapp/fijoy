@@ -5,11 +5,11 @@ package ent
 import (
 	"context"
 
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/userkey"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/userkey"
 )
 
 // UserKeyDelete is the builder for deleting a UserKey entity.

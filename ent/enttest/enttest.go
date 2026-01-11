@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"fijoy.app/ent"
+	"beavermoney.app/ent"
 	// required by schema hooks.
-	_ "fijoy.app/ent/runtime"
+	_ "beavermoney.app/ent/runtime"
 
+	"beavermoney.app/ent/migrate"
 	"entgo.io/ent/dialect/sql/schema"
-	"fijoy.app/ent/migrate"
 )
 
 type (

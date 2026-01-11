@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"fijoy.app/ent"
+	"beavermoney.app/ent"
 )
 
 func EncodeCursor(id int) ent.Cursor {

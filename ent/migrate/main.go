@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"fijoy.app/ent/migrate"
+	"beavermoney.app/ent/migrate"
 
 	"ariga.io/atlas/sql/sqltool"
 	"entgo.io/ent/dialect"
@@ -42,7 +42,7 @@ func main() {
 	err = migrate.NamedDiff(
 		ctx,
 		// TODO: DO NOT HARDCODE
-		"postgresql://user:password@localhost:2345/fijoy-migration?sslmode=disable",
+		"postgresql://user:password@localhost:2345/beavermoney-migration?sslmode=disable",
 		os.Args[1],
 		opts...)
 	if err != nil {

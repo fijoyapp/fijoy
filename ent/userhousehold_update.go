@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/userhousehold"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/userhousehold"
 )
 
 // UserHouseholdUpdate is the builder for updating UserHousehold entities.

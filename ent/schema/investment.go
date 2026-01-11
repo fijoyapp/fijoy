@@ -8,7 +8,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	fijoy_mixin "fijoy.app/ent/schema/mixin"
+	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
 
@@ -117,7 +117,7 @@ func (Investment) Mixin() []ent.Mixin {
 				entgql.SkipMutationUpdateInput,
 			),
 		),
-		fijoy_mixin.HouseholdMixin{},
+		beavermoney_mixin.HouseholdMixin{},
 	}
 }
 
@@ -182,6 +182,6 @@ func (Lot) Mixin() []ent.Mixin {
 				entgql.SkipMutationUpdateInput,
 			),
 		),
-		fijoy_mixin.HouseholdMixin{},
+		beavermoney_mixin.HouseholdMixin{},
 	}
 }

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"beavermoney.app/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent/user"
 )
 
 // User is the model entity for the User schema.

@@ -8,14 +8,14 @@ import (
 	"fmt"
 	"math"
 
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/user"
+	"beavermoney.app/ent/userhousehold"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/user"
-	"fijoy.app/ent/userhousehold"
 )
 
 // UserHouseholdQuery is the builder for querying UserHousehold entities.

@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent/user"
+	"beavermoney.app/ent/userkey"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/user"
-	"fijoy.app/ent/userkey"
 )
 
 // UserKeyCreate is the builder for creating a UserKey entity.

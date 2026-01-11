@@ -1,4 +1,4 @@
-module fijoy.app
+module beavermoney.app
 
 go 1.25.5
 
@@ -6,9 +6,9 @@ require (
 	entgo.io/contrib v0.7.0
 	entgo.io/ent v0.14.5
 	github.com/99designs/gqlgen v0.17.85
+	github.com/beavermoney/finance-go v0.1.2
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/charmbracelet/log v0.4.2
-	github.com/fijoyapp/finance-go v0.1.1
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-chi/cors v1.2.2
 	github.com/go-chi/jwtauth/v5 v5.3.3

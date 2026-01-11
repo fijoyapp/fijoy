@@ -10,7 +10,11 @@ directive @goModel(
   forceGenerate: Boolean
 ) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
+scalar DateTime
+
 type Account implements Node {
+  balanceInHouseholdCurrency: String!
+  valueInHouseholdCurrency: String!
   id: ID!
   createTime: Time!
   updateTime: Time!
@@ -26,8 +30,162 @@ type Account implements Node {
   user: User!
   transactionEntries: [TransactionEntry!]
   investments: [Investment!]
-  balanceInHouseholdCurrency: String!
+}
+
+type EquityQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
+type Investment implements Node {
   valueInHouseholdCurrency: String!
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  householdID: ID!
+  name: String!
+  type: InvestmentType!
+  symbol: String!
+  amount: String!
+  quote: String!
+  value: String!
+  account: Account!
+  household: Household!
+  currency: Currency!
+  lots: [Lot!]
+}
+
+type Query {
+  fxRate(from: String!, to: String!, datetime: DateTime!): String!
+  equityQuote(symbol: String!): EquityQuoteResult
+  """
+  Fetches an object given its ID.
+  """
+  node(
+    """
+    ID of the object.
+    """
+    id: ID!
+  ): Node
+  """
+  Lookup nodes by a list of IDs.
+  """
+  nodes(
+    """
+    The list of node IDs.
+    """
+    ids: [ID!]!
+  ): [Node]!
+  accounts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for Accounts returned from the connection.
+    """
+    where: AccountWhereInput
+  ): AccountConnection!
+  currencies: [Currency!]!
+  households: [Household!]!
+  investments(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for Investments returned from the connection.
+    """
+    where: InvestmentWhereInput
+  ): InvestmentConnection!
+  lots(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for Lots returned from the connection.
+    """
+    where: LotWhereInput
+  ): LotConnection!
+  transactions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Ordering options for Transactions returned from the connection.
+    """
+    orderBy: TransactionOrder
+    """
+    Filtering options for Transactions returned from the connection.
+    """
+    where: TransactionWhereInput
+  ): TransactionConnection!
+  transactionCategories: [TransactionCategory!]!
+  transactionEntries: [TransactionEntry!]!
+  userHouseholds: [UserHousehold!]!
+}
+
+input CreateInvestmentInputCustom {
+  input: CreateInvestmentInput!
+  costBasis: String!
+}
+
+type Mutation {
+  createAccount(input: CreateAccountInput!): AccountEdge!
+  createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
 }
 
 """
@@ -65,7 +223,7 @@ type AccountEdge {
 """
 AccountType is enum for the field type
 """
-enum AccountType @goModel(model: "fijoy.app/ent/account.Type") {
+enum AccountType @goModel(model: "beavermoney.app/ent/account.Type") {
   liquidity
   investment
   property
@@ -466,24 +624,6 @@ input HouseholdWhereInput {
   hasUserHouseholdsWith: [UserHouseholdWhereInput!]
 }
 
-type Investment implements Node {
-  id: ID!
-  createTime: Time!
-  updateTime: Time!
-  householdID: ID!
-  name: String!
-  type: InvestmentType!
-  symbol: String!
-  amount: String!
-  quote: String!
-  value: String!
-  account: Account!
-  household: Household!
-  currency: Currency!
-  lots: [Lot!]
-  valueInHouseholdCurrency: String!
-}
-
 """
 A connection to a list of items.
 """
@@ -519,7 +659,7 @@ type InvestmentEdge {
 """
 InvestmentType is enum for the field type
 """
-enum InvestmentType @goModel(model: "fijoy.app/ent/investment.Type") {
+enum InvestmentType @goModel(model: "beavermoney.app/ent/investment.Type") {
   stock
   crypto
 }
@@ -801,7 +941,7 @@ input LotWhereInput {
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
 """
-interface Node @goModel(model: "fijoy.app/ent.Noder") {
+interface Node @goModel(model: "beavermoney.app/ent.Noder") {
   """
   The id of the object.
   """
@@ -845,126 +985,6 @@ type PageInfo {
   endCursor: Cursor
 }
 
-type Query {
-  """
-  Fetches an object given its ID.
-  """
-  node(
-    """
-    ID of the object.
-    """
-    id: ID!
-  ): Node
-  """
-  Lookup nodes by a list of IDs.
-  """
-  nodes(
-    """
-    The list of node IDs.
-    """
-    ids: [ID!]!
-  ): [Node]!
-  accounts(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for Accounts returned from the connection.
-    """
-    where: AccountWhereInput
-  ): AccountConnection!
-  currencies: [Currency!]!
-  households: [Household!]!
-  investments(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for Investments returned from the connection.
-    """
-    where: InvestmentWhereInput
-  ): InvestmentConnection!
-  lots(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for Lots returned from the connection.
-    """
-    where: LotWhereInput
-  ): LotConnection!
-  transactions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Ordering options for Transactions returned from the connection.
-    """
-    orderBy: TransactionOrder
-    """
-    Filtering options for Transactions returned from the connection.
-    """
-    where: TransactionWhereInput
-  ): TransactionConnection!
-  transactionCategories: [TransactionCategory!]!
-  transactionEntries: [TransactionEntry!]!
-  userHouseholds: [UserHousehold!]!
-  fxRate(from: String!, to: String!, datetime: DateTime!): String!
-  equityQuote(symbol: String!): EquityQuoteResult
-}
-
 """
 The builtin Time type
 """
@@ -999,7 +1019,7 @@ type TransactionCategory implements Node {
 TransactionCategoryType is enum for the field type
 """
 enum TransactionCategoryType
-  @goModel(model: "fijoy.app/ent/transactioncategory.Type") {
+  @goModel(model: "beavermoney.app/ent/transactioncategory.Type") {
   expense
   income
   transfer
@@ -1397,7 +1417,8 @@ type UserHousehold implements Node {
 """
 UserHouseholdRole is enum for the field role
 """
-enum UserHouseholdRole @goModel(model: "fijoy.app/ent/userhousehold.Role") {
+enum UserHouseholdRole
+  @goModel(model: "beavermoney.app/ent/userhousehold.Role") {
   admin
   member
 }
@@ -1464,7 +1485,7 @@ type UserKey implements Node {
 """
 UserKeyProvider is enum for the field provider
 """
-enum UserKeyProvider @goModel(model: "fijoy.app/ent/userkey.Provider") {
+enum UserKeyProvider @goModel(model: "beavermoney.app/ent/userkey.Provider") {
   google
 }
 
@@ -1637,26 +1658,6 @@ input UserWhereInput {
   """
   hasUserHouseholds: Boolean
   hasUserHouseholdsWith: [UserHouseholdWhereInput!]
-}
-
-scalar DateTime
-
-type EquityQuoteResult {
-  symbol: String!
-  name: String!
-  exchange: String!
-  currency: String!
-  currentPrice: String!
-}
-
-input CreateInvestmentInputCustom {
-  input: CreateInvestmentInput!
-  costBasis: String!
-}
-
-type Mutation {
-  createAccount(input: CreateAccountInput!): AccountEdge!
-  createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
 }
 
 schema {

@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"time"
 
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/transaction"
+	"beavermoney.app/ent/transactioncategory"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transaction"
-	"fijoy.app/ent/transactioncategory"
 )
 
 // TransactionCategoryUpdate is the builder for updating TransactionCategory entities.

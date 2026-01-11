@@ -5,9 +5,9 @@ package lot
 import (
 	"time"
 
+	"beavermoney.app/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"fijoy.app/ent/predicate"
 	"github.com/shopspring/decimal"
 )
 

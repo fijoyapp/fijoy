@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"beavermoney.app/ent/user"
+	"beavermoney.app/ent/userkey"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent/user"
-	"fijoy.app/ent/userkey"
 )
 
 // UserKey is the model entity for the UserKey schema.

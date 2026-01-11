@@ -9,17 +9,17 @@ import (
 	"fmt"
 	"math"
 
+	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/transactionentry"
+	"beavermoney.app/ent/user"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/account"
-	"fijoy.app/ent/currency"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/investment"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transactionentry"
-	"fijoy.app/ent/user"
 )
 
 // AccountQuery is the builder for querying Account entities.

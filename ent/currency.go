@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"beavermoney.app/ent/currency"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent/currency"
 )
 
 // Currency is the model entity for the Currency schema.

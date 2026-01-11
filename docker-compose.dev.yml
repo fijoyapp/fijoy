@@ -6,7 +6,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=user
-      - POSTGRES_DB=fijoy
+      - POSTGRES_DB=beavermoney
     volumes:
       - pgdata:/var/lib/postgresql/data
 

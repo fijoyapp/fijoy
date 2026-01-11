@@ -7,15 +7,15 @@ import (
 	"errors"
 	"fmt"
 
+	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/account"
-	"fijoy.app/ent/currency"
-	"fijoy.app/ent/household"
-	"fijoy.app/ent/investment"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/transactionentry"
 )
 
 // CurrencyUpdate is the builder for updating Currency entities.

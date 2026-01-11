@@ -1,7 +1,7 @@
 # schema tells gqlgen where the GraphQL schema is located.
 schema:
   - ent.graphql
-  - fijoy.graphql
+  - beavermoney.graphql
 
 # resolver reports where the resolver implementations go.
 resolver:
@@ -14,7 +14,7 @@ resolver:
 # autobind tells gqngen to search for any type names in the GraphQL schema in the
 # provided package. If they match it will use them, otherwise it will generate new.
 autobind:
-  - fijoy.app/ent
+  - beavermoney.app/ent
 
 # This section declares type mapping between the GraphQL and Go type systems.
 models:
@@ -24,4 +24,4 @@ models:
       - github.com/99designs/gqlgen/graphql.IntID
   Node:
     model:
-      - fijoy.app/ent.Noder
+      - beavermoney.app/ent.Noder

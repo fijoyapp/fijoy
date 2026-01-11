@@ -8,13 +8,13 @@ import (
 	"fmt"
 	"math"
 
+	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/user"
+	"beavermoney.app/ent/userkey"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"fijoy.app/ent/predicate"
-	"fijoy.app/ent/user"
-	"fijoy.app/ent/userkey"
 )
 
 // UserKeyQuery is the builder for querying UserKey entities.

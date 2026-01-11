@@ -50,7 +50,7 @@ type AccountEdge {
 """
 AccountType is enum for the field type
 """
-enum AccountType @goModel(model: "fijoy.app/ent/account.Type") {
+enum AccountType @goModel(model: "beavermoney.app/ent/account.Type") {
   liquidity
   investment
   property
@@ -490,7 +490,7 @@ type InvestmentEdge {
 """
 InvestmentType is enum for the field type
 """
-enum InvestmentType @goModel(model: "fijoy.app/ent/investment.Type") {
+enum InvestmentType @goModel(model: "beavermoney.app/ent/investment.Type") {
   stock
   crypto
 }
@@ -766,7 +766,7 @@ input LotWhereInput {
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
 """
-interface Node @goModel(model: "fijoy.app/ent.Noder") {
+interface Node @goModel(model: "beavermoney.app/ent.Noder") {
   """
   The id of the object.
   """
@@ -971,7 +971,7 @@ type TransactionCategory implements Node {
 """
 TransactionCategoryType is enum for the field type
 """
-enum TransactionCategoryType @goModel(model: "fijoy.app/ent/transactioncategory.Type") {
+enum TransactionCategoryType @goModel(model: "beavermoney.app/ent/transactioncategory.Type") {
   expense
   income
   transfer
@@ -1355,7 +1355,7 @@ type UserHousehold implements Node {
 """
 UserHouseholdRole is enum for the field role
 """
-enum UserHouseholdRole @goModel(model: "fijoy.app/ent/userhousehold.Role") {
+enum UserHouseholdRole @goModel(model: "beavermoney.app/ent/userhousehold.Role") {
   admin
   member
 }
@@ -1419,7 +1419,7 @@ type UserKey implements Node {
 """
 UserKeyProvider is enum for the field provider
 """
-enum UserKeyProvider @goModel(model: "fijoy.app/ent/userkey.Provider") {
+enum UserKeyProvider @goModel(model: "beavermoney.app/ent/userkey.Provider") {
   google
 }
 """

@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/household"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"fijoy.app/ent/currency"
-	"fijoy.app/ent/household"
 )
 
 // Household is the model entity for the Household schema.

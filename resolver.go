@@ -1,11 +1,11 @@
-package fijoy
+package beavermoney
 
 import (
 	"log/slog"
 
-	"fijoy.app/ent"
-	"fijoy.app/internal/fxrate"
-	"fijoy.app/internal/market"
+	"beavermoney.app/ent"
+	"beavermoney.app/internal/fxrate"
+	"beavermoney.app/internal/market"
 	"github.com/99designs/gqlgen/graphql"
 )
 

@@ -34,7 +34,7 @@ export function NavProjects({
 
   return (
     <SidebarGroup className="">
-      <SidebarGroupLabel>Fijoy</SidebarGroupLabel>
+      <SidebarGroupLabel>Beaver Money</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>

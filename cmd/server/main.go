@@ -13,22 +13,22 @@ import (
 
 	"github.com/charmbracelet/log"
 
-	"fijoy.app/ent/investment"
-	_ "fijoy.app/ent/runtime"
+	"beavermoney.app/ent/investment"
+	_ "beavermoney.app/ent/runtime"
 
+	"beavermoney.app"
+	"beavermoney.app/ent"
+	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/transactioncategory"
+	"beavermoney.app/ent/user"
+	"beavermoney.app/ent/userhousehold"
+	"beavermoney.app/ent/userkey"
+	"beavermoney.app/internal/contextkeys"
+	"beavermoney.app/internal/fxrate"
+	"beavermoney.app/internal/market"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
-	"fijoy.app"
-	"fijoy.app/ent"
-	"fijoy.app/ent/account"
-	"fijoy.app/ent/transactioncategory"
-	"fijoy.app/ent/user"
-	"fijoy.app/ent/userhousehold"
-	"fijoy.app/ent/userkey"
-	"fijoy.app/internal/contextkeys"
-	"fijoy.app/internal/fxrate"
-	"fijoy.app/internal/market"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/caarlos0/env/v11"
@@ -204,7 +204,7 @@ func main() {
 
 	// Setup GQL
 	gqlHandler := handler.NewDefaultServer(
-		fijoy.NewSchema(logger, entClient, fxrateClient, marketClient),
+		beavermoney.NewSchema(logger, entClient, fxrateClient, marketClient),
 	)
 	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
 
