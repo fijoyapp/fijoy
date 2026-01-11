@@ -1,7 +1,11 @@
 [[tools.atlas]]
 version = "1.0.0"
 backend = "aqua:ariga/atlas"
+"platforms.linux-arm64" = { checksum = "sha256:69a463cf6d51a93abeffbdc906b69f969c12e7a706a6d0a4e388b4ebd713c5f9", url = "https://release.ariga.io/atlas/atlas-linux-arm64-v1.0.0"}
+"platforms.linux-x64" = { checksum = "sha256:7147245d95af96cd1e90ef5cfd57aa9e9df2a9e7ca5a735ddf0a1230f325cee2", url = "https://release.ariga.io/atlas/atlas-linux-amd64-v1.0.0"}
 "platforms.macos-arm64" = { checksum = "sha256:e7fb3098cc46cf8c2a84f5ed57f371f0ed80986d37f0f606ec464518c20518b5", url = "https://release.ariga.io/atlas/atlas-darwin-arm64-v1.0.0"}
+"platforms.macos-x64" = { checksum = "sha256:29c140e14d7b359af9cb36a91661a882fd806d4de16867b08b8b948aeba7a507", url = "https://release.ariga.io/atlas/atlas-darwin-amd64-v1.0.0"}
+"platforms.windows-x64" = { checksum = "sha256:abf36ade639454afe25f646a09eb5c46629b0b06c640b565496fc5d45e56f8ec", url = "https://release.ariga.io/atlas/atlas-windows-amd64-v1.0.0.exe"}
 
 [[tools.docker-compose]]
 version = "5.0.1"
@@ -42,7 +46,11 @@ backend = "core:node"
 [[tools.pnpm]]
 version = "10.28.0"
 backend = "aqua:pnpm/pnpm"
+"platforms.linux-arm64" = { checksum = "sha256:5bf35f1927d5ea0aa76408504f834e3089679d9e18342ab19502a28fb0116391", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.0/pnpm-linux-arm64"}
+"platforms.linux-x64" = { checksum = "sha256:348e863d17a62411a65f900e8d91395acabae9e9237653ccc3c36cb385965f28", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.0/pnpm-linux-x64"}
 "platforms.macos-arm64" = { checksum = "sha256:b6cfee40fcb09e68a874ffbf300eb1ef9dec11302fd03637a4bc605f3f9405cb", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.0/pnpm-macos-arm64"}
+"platforms.macos-x64" = { checksum = "sha256:99431e91d721169c2050d5e46abefc6f0d23c49e635a5964dcb573d9fe89975a", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.0/pnpm-macos-x64"}
+"platforms.windows-x64" = { checksum = "sha256:daed0979c3754cdc2e467ca6a298d48fedbc0fad92f14f4396f44a0a3dd2b730", url = "https://github.com/pnpm/pnpm/releases/download/v10.28.0/pnpm-win-x64.exe"}
 
 [[tools.watchexec]]
 version = "2.3.2"
