@@ -95,8 +95,8 @@ func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[i
 }
 
 // TransactionCategories is the resolver for the transactionCategories field.
-func (r *queryResolver) TransactionCategories(ctx context.Context) ([]*ent.TransactionCategory, error) {
-	return r.entClient.TransactionCategory.Query().All(ctx)
+func (r *queryResolver) TransactionCategories(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.TransactionCategoryWhereInput) (*ent.TransactionCategoryConnection, error) {
+	return r.entClient.TransactionCategory.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionCategoryFilter(where.Filter))
 }
 
 // TransactionEntries is the resolver for the transactionEntries field.
