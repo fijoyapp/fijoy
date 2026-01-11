@@ -12,12 +12,10 @@ function RouteComponent() {
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
           to="/"
-          className="flex items-center gap-2 self-center font-medium"
+          className="flex flex-col gap-2 font-medium justify-center items-center w-auto"
         >
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <Logo size={24} className="rounded-xl" />
-          </div>
-          Beaver Money
+          <Logo size={128} className="rounded-xl" />
+          <span>Beaver Money</span>
         </Link>
         <LoginForm />
       </div>
