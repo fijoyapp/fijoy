@@ -40,6 +40,7 @@ export function LoginForm({
                 {/* TODO: hide this when we actually go into prod */}
                 <Button
                   variant="outline"
+                  className="cursor-pointer"
                   type="button"
                   onClick={() => {
                     navigate({
@@ -54,6 +55,7 @@ export function LoginForm({
               <Field>
                 <Button
                   variant="outline"
+                  className="cursor-pointer"
                   type="button"
                   onClick={() => {
                     navigate({
