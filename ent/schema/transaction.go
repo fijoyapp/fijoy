@@ -1,6 +1,7 @@
 package schema
 
 import (
+	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -9,7 +10,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
-	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
 
@@ -105,6 +105,7 @@ func (TransactionCategory) Indexes() []ent.Index {
 
 func (TransactionCategory) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		entgql.RelayConnection(),
 		entgql.QueryField(),
 	}
 }
