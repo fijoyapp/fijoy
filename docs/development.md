@@ -15,8 +15,8 @@ Activating mise will give you all the tools you need to work on this project.
 ### Database
 
 ```bash
-just db-up
-just db-down
+just compose up
+just compose down
 ```
 
 ### Server
@@ -35,7 +35,6 @@ just web
 ### GraphQL / Relay
 
 ```bash
-just relay-watch
-just merge-graphql
+just dev
 
 ```
