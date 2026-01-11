@@ -1,11 +1,11 @@
 import { cn } from '@/lib/utils'
 
-interface FijoyLogoProps {
+interface LogoProps {
   size?: number
   className?: string
 }
 
-export function FijoyLogo({ size = 100, className = '' }: FijoyLogoProps) {
+export function Logo({ size = 100, className = '' }: LogoProps) {
   return (
     <svg
       width={size}

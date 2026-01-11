@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { LoginForm } from '@/components/login-form'
-import { FijoyLogo } from '@/components/fijoy-logo'
+import { Logo } from '@/components/logo'
 
 export const Route = createFileRoute('/login/')({
   component: RouteComponent,
@@ -15,7 +15,7 @@ function RouteComponent() {
           className="flex items-center gap-2 self-center font-medium"
         >
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <FijoyLogo size={24} className="rounded-xl" />
+            <Logo size={24} className="rounded-xl" />
           </div>
           Beaver Money
         </Link>
