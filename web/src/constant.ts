@@ -13,6 +13,14 @@ export const ACCOUNT_TYPE_LIST = [
 
 export const INVESTMENT_TYPE_LIST = ['stock', 'crypto'] as const
 
+export const CATEGORY_TYPE_LIST = [
+  'expense',
+  'income',
+  'transfer',
+  'investment',
+  'setup',
+] as const
+
 export const ACCOUNT_TYPE_DESCRIPTION: Record<string, string> = {
   liquidity: 'Cash or cash-equivalent accounts, such as checking or savings',
   investment: 'Accounts that hold investments, such as brokerage accounts',
