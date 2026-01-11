@@ -1,4 +1,4 @@
-import BeaverMoneyLogo from 'public/favicon.svg'
+import BeaverMoneyLogo from 'public/assets/logo.png'
 import { cn } from '@/lib/utils'
 
 interface LogoProps {
