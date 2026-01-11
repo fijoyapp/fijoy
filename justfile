@@ -1,8 +1,9 @@
 codegen:
   go generate .
 
+[working-directory: 'web']
 web:
-  cd web && pnpm dev
+  pnpm dev
 
 server:
   go run ./cmd/server/main.go
@@ -13,8 +14,9 @@ merge-graphql:
 relay-watch:
   watchexec --exts tsx,ts -w web 'cd web && pnpm relay-compiler'
 
+[working-directory: 'web']
 relay:
-  cd web && pnpm relay-compiler
+  pnpm relay-compiler
 
 db-up:
   docker-compose -f docker-compose.dev.yml up
