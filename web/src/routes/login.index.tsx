@@ -17,7 +17,7 @@ function RouteComponent() {
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <FijoyLogo size={24} className="rounded-xl" />
           </div>
-          Fijoy
+          Beaver Money
         </Link>
         <LoginForm />
       </div>
