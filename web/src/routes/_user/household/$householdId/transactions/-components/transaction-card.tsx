@@ -6,6 +6,7 @@ import {
   BadgeCheckIcon,
   BanknoteArrowDownIcon,
   BanknoteArrowUpIcon,
+  TrendingUpIcon,
   WrenchIcon,
 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
@@ -185,6 +186,9 @@ function getCategoryTypeIcon({ type }: { type: TransactionCategoryType }) {
     ))
     .with('setup', () => (
       <WrenchIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
+    ))
+    .with('investment', () => (
+      <TrendingUpIcon className="size-10 text-white bg-blue-500/90 p-1.5" />
     ))
     .otherwise(() => null)
 }

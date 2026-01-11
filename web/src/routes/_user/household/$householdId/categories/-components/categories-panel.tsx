@@ -1,0 +1,227 @@
+import { graphql } from 'relay-runtime'
+import invariant from 'tiny-invariant'
+import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
+import { useFragment } from 'react-relay'
+import { capitalize, groupBy, map } from 'lodash-es'
+import { Fragment } from 'react/jsx-runtime'
+import { useMemo } from 'react'
+import currency from 'currency.js'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
+import { CategoryCard } from './category-card'
+import type { categoriesPanelFragment$key } from './__generated__/categoriesPanelFragment.graphql'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+} from '@/components/ui/accordion'
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemSeparator,
+  ItemTitle,
+} from '@/components/ui/item'
+import { useCurrency } from '@/hooks/use-currency'
+import { cn } from '@/lib/utils'
+import { useHousehold } from '@/hooks/use-household'
+import { CATEGORY_TYPE_LIST } from '@/constant'
+
+const CategoriesPanelFragment = graphql`
+  fragment categoriesPanelFragment on Query
+  @argumentDefinitions(
+    count: { type: "Int", defaultValue: 20 }
+    cursor: { type: "Cursor" }
+  )
+  @refetchable(queryName: "categoriesPanelRefetch") {
+    transactionCategories(first: $count, after: $cursor)
+      @connection(key: "categoriesPanel_transactionCategories") {
+      edges {
+        node {
+          id
+          type
+          ...categoryCardFragment
+        }
+      }
+    }
+    transactions {
+      edges {
+        node {
+          id
+          category {
+            type
+          }
+          transactionEntries {
+            amount
+          }
+        }
+      }
+    }
+  }
+`
+
+type CategoriesListPageProps = {
+  fragmentRef: categoriesPanelFragment$key
+}
+
+export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
+  const data = useFragment(CategoriesPanelFragment, fragmentRef)
+
+  const { formatCurrencyWithPrivacyMode } = useCurrency()
+
+  const groupedCategories = useMemo(
+    () =>
+      groupBy(data.transactionCategories.edges, (edge) => {
+        invariant(edge?.node, 'Category node is null')
+        return edge.node.type
+      }),
+    [data.transactionCategories],
+  )
+
+  const { household } = useHousehold()
+
+  const { totalIncome, totalExpenses, net } = useMemo(() => {
+    let income = currency(0)
+    let expenses = currency(0)
+
+    data.transactions.edges?.forEach((edge) => {
+      invariant(edge?.node, 'Transaction node is null')
+      const transaction = edge.node
+
+      const categoryType = transaction.category.type
+
+      transaction.transactionEntries?.forEach((entry) => {
+        const amount = currency(entry.amount)
+
+        if (categoryType === 'income') {
+          income = income.add(amount)
+        } else if (categoryType === 'expense') {
+          expenses = expenses.add(amount.multiply(-1))
+        }
+      })
+    })
+
+    return {
+      totalIncome: income,
+      totalExpenses: expenses,
+      net: income.subtract(expenses),
+    }
+  }, [data.transactions])
+
+  return (
+    <Fragment>
+      <div className="grid grid-cols-2 gap-4">
+        <Item variant="outline" className="flex-1">
+          <ItemContent>
+            <ItemDescription>Total Income</ItemDescription>
+            <ItemTitle className="text-2xl">
+              {formatCurrencyWithPrivacyMode({
+                value: totalIncome,
+                currencyCode: household.currency.code,
+              })}
+            </ItemTitle>
+          </ItemContent>
+        </Item>
+        <Item variant="outline" className="flex-1">
+          <ItemContent>
+            <ItemDescription>Total Expenses</ItemDescription>
+            <ItemTitle className="text-2xl">
+              {formatCurrencyWithPrivacyMode({
+                value: totalExpenses,
+                currencyCode: household.currency.code,
+              })}
+            </ItemTitle>
+          </ItemContent>
+        </Item>
+        <Item variant="outline" className="flex-1">
+          <ItemContent>
+            <ItemDescription>Net</ItemDescription>
+            <ItemTitle className="text-2xl">
+              {formatCurrencyWithPrivacyMode({
+                value: net,
+                currencyCode: household.currency.code,
+              })}
+            </ItemTitle>
+          </ItemContent>
+        </Item>
+        <Item variant="outline" className="flex-1">
+          <ItemContent>
+            <ItemDescription>Saving Rate</ItemDescription>
+            <ItemTitle className="text-2xl">
+              {totalIncome.value === 0
+                ? '0%'
+                : `${Math.round((net.value / totalIncome.value) * 100)}%`}
+            </ItemTitle>
+          </ItemContent>
+        </Item>
+      </div>
+      <div className="py-2"></div>
+      <Accordion
+        multiple
+        className="w-full"
+        defaultValue={[...CATEGORY_TYPE_LIST]}
+      >
+        {map(CATEGORY_TYPE_LIST, (type) => {
+          if (type in groupedCategories === false) {
+            return null
+          }
+          const categories = groupedCategories[type]
+          return (
+            <AccordionItem value={type} key={type}>
+              <AccordionTrigger className="justify-normal **:data-[slot=accordion-trigger-icon]:ml-0 gap-2 hover:no-underline cursor-pointer">
+                <span>{capitalize(type)}</span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-1">
+                <ItemGroup className="gap-0">
+                  {categories.map((category) => {
+                    invariant(category?.node, 'Category node is null')
+                    return (
+                      <Fragment key={category.node.id}>
+                        <ItemSeparator className="my-1" />
+                        <CategoryCard fragmentRef={category.node} />
+                      </Fragment>
+                    )
+                  })}
+                </ItemGroup>
+              </AccordionContent>
+            </AccordionItem>
+          )
+        })}
+      </Accordion>
+    </Fragment>
+  )
+}
+
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: AccordionPrimitive.Trigger.Props) {
+  return (
+    <AccordionPrimitive.Header className="flex">
+      <AccordionPrimitive.Trigger
+        data-slot="accordion-trigger"
+        className={cn(
+          '**:data-[slot=accordion-trigger-icon]:text-muted-foreground gap-6 p-2 text-left text-xs/relaxed font-medium hover:underline **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 group/accordion-trigger relative flex flex-1 items-start justify-between border border-transparent transition-all outline-none disabled:pointer-events-none disabled:opacity-50',
+          className,
+        )}
+        {...props}
+      >
+        <HugeiconsIcon
+          icon={ArrowDown01Icon}
+          strokeWidth={2}
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
+        />
+        <HugeiconsIcon
+          icon={ArrowUp01Icon}
+          strokeWidth={2}
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
+        />
+        {children}
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
+  )
+}
