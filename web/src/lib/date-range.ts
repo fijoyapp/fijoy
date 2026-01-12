@@ -20,45 +20,47 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
   endDate: Date
 } | null {
   const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const firstDayOfNextYear = new Date(now.getFullYear() + 1, 0, 1)
 
   switch (preset) {
     case DATE_RANGE_PRESETS.LAST_7_DAYS: {
-      const start = new Date(now)
-      start.setDate(now.getDate() - 7)
-      return { startDate: start, endDate: now }
+      const start = new Date(today)
+      start.setDate(today.getDate() - 7)
+      return { startDate: start, endDate: firstDayOfNextYear }
     }
 
     case DATE_RANGE_PRESETS.LAST_30_DAYS: {
-      const start = new Date(now)
-      start.setDate(now.getDate() - 30)
-      return { startDate: start, endDate: now }
+      const start = new Date(today)
+      start.setDate(today.getDate() - 30)
+      return { startDate: start, endDate: firstDayOfNextYear }
     }
 
     case DATE_RANGE_PRESETS.LAST_90_DAYS: {
-      const start = new Date(now)
-      start.setDate(now.getDate() - 90)
-      return { startDate: start, endDate: now }
+      const start = new Date(today)
+      start.setDate(today.getDate() - 90)
+      return { startDate: start, endDate: firstDayOfNextYear }
     }
 
     case DATE_RANGE_PRESETS.THIS_MONTH: {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1)
-      return { startDate: start, endDate: now }
+      const start = new Date(today.getFullYear(), today.getMonth(), 1)
+      return { startDate: start, endDate: firstDayOfNextYear }
     }
 
     case DATE_RANGE_PRESETS.LAST_MONTH: {
-      const start = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-      const end = new Date(now.getFullYear(), now.getMonth(), 1)
+      const start = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+      const end = new Date(today.getFullYear(), today.getMonth(), 1)
       return { startDate: start, endDate: end }
     }
 
     case DATE_RANGE_PRESETS.THIS_YEAR: {
-      const start = new Date(now.getFullYear(), 0, 1)
-      return { startDate: start, endDate: now }
+      const start = new Date(today.getFullYear(), 0, 1)
+      return { startDate: start, endDate: firstDayOfNextYear }
     }
 
     case DATE_RANGE_PRESETS.LAST_YEAR: {
-      const start = new Date(now.getFullYear() - 1, 0, 1)
-      const end = new Date(now.getFullYear(), 0, 1)
+      const start = new Date(today.getFullYear() - 1, 0, 1)
+      const end = new Date(today.getFullYear(), 0, 1)
       return { startDate: start, endDate: end }
     }
 
