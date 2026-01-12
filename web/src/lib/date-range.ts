@@ -17,7 +17,7 @@ export type DateRangePreset =
 export function getDateRangeForPreset(preset: DateRangePreset): {
   startDate: Date
   endDate: Date
-} | null {
+} {
   const now = new Date()
 
   const startOfToday = new Date(
@@ -95,21 +95,17 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
     }
 
     default:
-      return null
+      throw new Error(`Unsupported date range preset: ${preset}`)
   }
 }
 
 /**
  * Convert date range to ISO strings for GraphQL
  */
-export function dateRangeToISO(
-  range: {
-    startDate: Date
-    endDate: Date
-  } | null,
-): { startDate: string; endDate: string } | null {
-  if (!range) return null
-
+export function dateRangeToISO(range: { startDate: Date; endDate: Date }): {
+  startDate: string
+  endDate: string
+} {
   return {
     startDate: range.startDate.toISOString(),
     endDate: range.endDate.toISOString(),
