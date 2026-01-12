@@ -31,6 +31,8 @@ import { Button } from '@/components/ui/button'
 import { Link } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { DateRangeFilter } from './date-range-filter'
+import { useSearch } from '@tanstack/react-router'
+import { parseISO } from 'date-fns'
 
 const CategoriesPanelFragment = graphql`
   fragment categoriesPanelFragment on Query
@@ -71,15 +73,12 @@ const CategoriesPanelFragment = graphql`
 
 type CategoriesListPageProps = {
   fragmentRef: categoriesPanelFragment$key
-  startDate: string
-  endDate: string
 }
 
-export function CategoriesPanel({
-  fragmentRef,
-  startDate,
-  endDate,
-}: CategoriesListPageProps) {
+export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
+  const search = useSearch({ from: '/_user/household/$householdId/categories' })
+  const startDate = parseISO(search.start).toISOString()
+  const endDate = parseISO(search.end).toISOString()
   const data = useFragment(CategoriesPanelFragment, fragmentRef)
 
   const { formatCurrencyWithPrivacyMode } = useCurrency()

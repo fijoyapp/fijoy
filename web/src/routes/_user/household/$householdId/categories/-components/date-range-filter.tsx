@@ -26,6 +26,7 @@ import {
 import { environment } from '@/environment'
 import { categoriesQuery } from '../-categories-query'
 import type { CategoriesQuery } from '../__generated__/CategoriesQuery.graphql'
+import { Spinner } from '@/components/ui/spinner'
 
 const PRESET_LABELS: Record<DateRangePreset, string> = {
   [DATE_RANGE_PRESETS.LAST_7_DAYS]: 'Last 7 Days',
@@ -199,9 +200,7 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {isPending && (
-          <div className="text-xs text-muted-foreground">Loading...</div>
-        )}
+        {isPending && <Spinner />}
       </div>
 
       <Select value={getCurrentPreset()} onValueChange={handlePresetChange}>
