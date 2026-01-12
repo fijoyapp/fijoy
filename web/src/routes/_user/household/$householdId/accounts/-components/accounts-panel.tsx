@@ -109,7 +109,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
                 <PlusIcon />
               </Link>
             }
-          ></Button>
+          />
           <div className="py-1"></div>
           <Button
             size="icon-lg"

@@ -156,8 +156,20 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
   return (
     <Fragment>
+      <div className="absolute bottom-4 right-4">
+        <Link
+          from={'/household/$householdId/categories'}
+          to={'/household/$householdId/categories/new'}
+        >
+          <Button
+            nativeButton={false}
+            className="size-10 rounded-full"
+            render={<PlusIcon />}
+          />
+        </Link>
+      </div>
       <div className="grid grid-cols-2 gap-4">
-        <Item variant="outline" className="flex-1">
+        <Item variant="outline" className="">
           <ItemContent>
             <ItemDescription>Total Income</ItemDescription>
             <ItemTitle className="text-xl">
@@ -168,7 +180,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
             </ItemTitle>
           </ItemContent>
         </Item>
-        <Item variant="outline" className="flex-1">
+        <Item variant="outline" className="">
           <ItemContent>
             <ItemDescription>Total Expenses</ItemDescription>
             <ItemTitle className="text-xl">
@@ -179,7 +191,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
             </ItemTitle>
           </ItemContent>
         </Item>
-        <Item variant="outline" className="flex-1">
+        <Item variant="outline" className="">
           <ItemContent>
             <ItemDescription>Net</ItemDescription>
             <ItemTitle className="text-xl">
@@ -190,30 +202,12 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
             </ItemTitle>
           </ItemContent>
         </Item>
-        <div className="flex">
-          <Item variant="outline" className="flex-1">
-            <ItemContent>
-              <ItemDescription>Saving Rate</ItemDescription>
-              <ItemTitle className="text-xl">{savingRate}</ItemTitle>
-            </ItemContent>
-          </Item>
-          <div className="px-1"></div>
-          <div className="flex flex-col items-stretch w-10">
-            <Button
-              nativeButton={false}
-              size="icon-lg"
-              className="flex-1 w-full cursor-pointer"
-              render={
-                <Link
-                  from="/household/$householdId/categories"
-                  to="/household/$householdId/categories/new"
-                >
-                  <PlusIcon />
-                </Link>
-              }
-            ></Button>
-          </div>
-        </div>
+        <Item variant="outline" className="">
+          <ItemContent>
+            <ItemDescription>Saving Rate</ItemDescription>
+            <ItemTitle className="text-xl">{savingRate}</ItemTitle>
+          </ItemContent>
+        </Item>
       </div>
       <div className="py-2"></div>
       <DateRangeFilter
