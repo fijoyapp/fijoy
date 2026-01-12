@@ -60,12 +60,9 @@ export const Route = createFileRoute(
       }
     }
 
-    return loadQuery<CategoriesQuery>(
-      environment,
-      categoriesQuery,
-      period,
-      { fetchPolicy: 'store-or-network' },
-    )
+    return loadQuery<CategoriesQuery>(environment, categoriesQuery, period, {
+      fetchPolicy: 'store-or-network',
+    })
   },
   pendingComponent: PendingComponent,
 })
