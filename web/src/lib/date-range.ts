@@ -1,3 +1,5 @@
+import { parseISO } from 'date-fns'
+
 export const DATE_RANGE_PRESETS = {
   LAST_7_DAYS: 'LAST_7_DAYS',
   LAST_30_DAYS: 'LAST_30_DAYS',
@@ -109,5 +111,38 @@ export function dateRangeToISO(range: { startDate: Date; endDate: Date }): {
   return {
     startDate: range.startDate.toISOString(),
     endDate: range.endDate.toISOString(),
+  }
+}
+
+/**
+ * Parse date strings from URL and convert to ISO strings for GraphQL
+ * Falls back to default preset if parsing fails
+ */
+export function parseDateRangeFromURL(
+  start: string,
+  end: string,
+  fallbackPreset: DateRangePreset = DATE_RANGE_PRESETS.THIS_MONTH,
+): {
+  startDate: string
+  endDate: string
+} {
+  try {
+    // Import parseISO dynamically to avoid circular dependency
+    const startDate = parseISO(start)
+    const endDate = parseISO(end)
+
+    // Check if dates are valid
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      throw new Error('Invalid date values')
+    }
+
+    return {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+    }
+  } catch (error) {
+    console.error('Failed to parse date range from URL:', { start, end, error })
+    const range = getDateRangeForPreset(fallbackPreset)
+    return dateRangeToISO(range)
   }
 }
