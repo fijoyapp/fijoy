@@ -6,7 +6,6 @@ export const DATE_RANGE_PRESETS = {
   LAST_MONTH: 'LAST_MONTH',
   THIS_YEAR: 'THIS_YEAR',
   LAST_YEAR: 'LAST_YEAR',
-  ALL_TIME: 'ALL_TIME',
 } as const
 
 export type DateRangePreset =
@@ -94,10 +93,6 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
       const end = new Date(startOfToday.getFullYear(), 0, 1)
       return { startDate: start, endDate: end }
     }
-
-    case DATE_RANGE_PRESETS.ALL_TIME:
-      // Return null to indicate no date filtering (all time)
-      return null
 
     default:
       return null
