@@ -11,16 +11,15 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { categoriesQuery } from './-categories-query'
 import { type CategoriesQuery } from './__generated__/CategoriesQuery.graphql'
 import {
-  dateRangeToISO,
   getDateRangeForPreset,
   DATE_RANGE_PRESETS,
+  parseDateRangeFromURL,
 } from '@/lib/date-range'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
 
 // Get default "This Month" dates
 const getDefaultDates = () => {
   const range = getDateRangeForPreset(DATE_RANGE_PRESETS.THIS_MONTH)
-  if (!range) return { start: '', end: '' }
   return {
     start: format(range.startDate, 'yyyy-MM-dd'),
     end: format(range.endDate, 'yyyy-MM-dd'),
@@ -30,8 +29,8 @@ const getDefaultDates = () => {
 const defaults = getDefaultDates()
 
 const SearchSchema = z.object({
-  start: z.string().default(defaults.start),
-  end: z.string().default(defaults.end),
+  start: z.string().optional().default(defaults.start),
+  end: z.string().optional().default(defaults.end),
 })
 
 export const Route = createFileRoute(
@@ -40,25 +39,7 @@ export const Route = createFileRoute(
   component: RouteComponent,
   validateSearch: (search) => SearchSchema.parse(search),
   beforeLoad: ({ search }) => {
-    const start = search.start
-    const end = search.end
-
-    // Parse dates and convert to ISO for GraphQL
-    let period = {}
-    try {
-      const startDate = parseISO(start)
-      const endDate = parseISO(end)
-      period = {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-      }
-    } catch {
-      // If parsing fails, use defaults
-      const range = getDateRangeForPreset(DATE_RANGE_PRESETS.THIS_MONTH)
-      if (range) {
-        period = dateRangeToISO(range) || {}
-      }
-    }
+    const period = parseDateRangeFromURL(search.start, search.end)
 
     return loadQuery<CategoriesQuery>(environment, categoriesQuery, period, {
       fetchPolicy: 'store-or-network',
