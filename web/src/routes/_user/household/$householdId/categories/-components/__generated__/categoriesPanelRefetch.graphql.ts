@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c97108a51c3c11677c0e19e3b869a49a>>
+ * @generated SignedSource<<cf3c0688ddb51a812c01772c97296ad8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ import { FragmentRefs } from "relay-runtime";
 export type categoriesPanelRefetch$variables = {
   count?: number | null | undefined;
   cursor?: any | null | undefined;
+  timezone: string;
 };
 export type categoriesPanelRefetch$data = {
   readonly " $fragmentSpreads": FragmentRefs<"categoriesPanelFragment">;
@@ -33,9 +34,19 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "cursor"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "timezone"
   }
 ],
-v1 = [
+v1 = {
+  "kind": "Variable",
+  "name": "timezone",
+  "variableName": "timezone"
+},
+v2 = [
   {
     "kind": "Variable",
     "name": "after",
@@ -47,28 +58,28 @@ v1 = [
     "variableName": "count"
   }
 ],
-v2 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "total",
   "storageKey": null
 },
-v4 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "transactionCount",
   "storageKey": null
 },
-v5 = [
+v6 = [
   {
     "alias": null,
     "args": null,
@@ -76,8 +87,8 @@ v5 = [
     "name": "categoryType",
     "storageKey": null
   },
-  (v3/*: any*/),
   (v4/*: any*/),
+  (v5/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -94,12 +105,12 @@ v5 = [
         "name": "category",
         "plural": false,
         "selections": [
-          (v2/*: any*/)
+          (v3/*: any*/)
         ],
         "storageKey": null
       },
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "storageKey": null
   }
@@ -122,7 +133,8 @@ return {
             "kind": "Variable",
             "name": "cursor",
             "variableName": "cursor"
-          }
+          },
+          (v1/*: any*/)
         ],
         "kind": "FragmentSpread",
         "name": "categoriesPanelFragment"
@@ -139,7 +151,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "TransactionCategoryConnection",
         "kind": "LinkedField",
         "name": "transactionCategories",
@@ -161,7 +173,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -226,7 +238,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "filters": null,
         "handle": "connection",
         "key": "categoriesPanel_transactionCategories",
@@ -237,11 +249,16 @@ return {
         "alias": null,
         "args": [
           {
-            "kind": "Literal",
-            "name": "period",
-            "value": {
-              "preset": "ALL_TIME"
-            }
+            "fields": [
+              {
+                "kind": "Literal",
+                "name": "preset",
+                "value": "ALL_TIME"
+              },
+              (v1/*: any*/)
+            ],
+            "kind": "ObjectValue",
+            "name": "period"
           }
         ],
         "concreteType": "FinancialReport",
@@ -270,7 +287,7 @@ return {
             "kind": "LinkedField",
             "name": "incomeByCategoryType",
             "plural": true,
-            "selections": (v5/*: any*/),
+            "selections": (v6/*: any*/),
             "storageKey": null
           },
           {
@@ -280,25 +297,25 @@ return {
             "kind": "LinkedField",
             "name": "expensesByCategoryType",
             "plural": true,
-            "selections": (v5/*: any*/),
+            "selections": (v6/*: any*/),
             "storageKey": null
           }
         ],
-        "storageKey": "financialReport(period:{\"preset\":\"ALL_TIME\"})"
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "328f33b57cb05924e40389083df167d0",
+    "cacheID": "143d5c1086def7f5aeb1c60af282b062",
     "id": null,
     "metadata": {},
     "name": "categoriesPanelRefetch",
     "operationKind": "query",
-    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...categoriesPanelFragment_1G22uz\n}\n\nfragment categoriesPanelFragment_1G22uz on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n"
+    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n  $timezone: String!\n) {\n  ...categoriesPanelFragment_3QwQk9\n}\n\nfragment categoriesPanelFragment_3QwQk9 on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME, timezone: $timezone}) {\n    totalIncome\n    totalExpenses\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d7e8f09627bb180f9317eb0361910e9c";
+(node as any).hash = "206f6a70a45d0a14238a47387d668f92";
 
 export default node;

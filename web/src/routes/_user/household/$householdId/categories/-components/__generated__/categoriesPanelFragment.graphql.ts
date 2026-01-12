@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f85b4e05e04ddec40b16224d529192c9>>
+ * @generated SignedSource<<2d582bb4fda2d03fea1c227671187763>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -83,6 +83,11 @@ return {
       "defaultValue": null,
       "kind": "LocalArgument",
       "name": "cursor"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "timezone"
     }
   ],
   "kind": "Fragment",
@@ -205,11 +210,20 @@ return {
       "alias": null,
       "args": [
         {
-          "kind": "Literal",
-          "name": "period",
-          "value": {
-            "preset": "ALL_TIME"
-          }
+          "fields": [
+            {
+              "kind": "Literal",
+              "name": "preset",
+              "value": "ALL_TIME"
+            },
+            {
+              "kind": "Variable",
+              "name": "timezone",
+              "variableName": "timezone"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "period"
         }
       ],
       "concreteType": "FinancialReport",
@@ -257,7 +271,7 @@ return {
           "name": "categoryCardFinancialReportFragment"
         }
       ],
-      "storageKey": "financialReport(period:{\"preset\":\"ALL_TIME\"})"
+      "storageKey": null
     }
   ],
   "type": "Query",
@@ -265,6 +279,6 @@ return {
 };
 })();
 
-(node as any).hash = "d7e8f09627bb180f9317eb0361910e9c";
+(node as any).hash = "206f6a70a45d0a14238a47387d668f92";
 
 export default node;

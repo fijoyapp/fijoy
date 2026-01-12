@@ -235,6 +235,7 @@ input TimePeriodInput {
   startDate: Time
   endDate: Time
   preset: TimePeriodPreset
+  timezone: String!
 }
 
 enum TimePeriodPreset {

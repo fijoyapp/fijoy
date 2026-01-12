@@ -1,8 +1,8 @@
 import { graphql } from 'relay-runtime'
 
 export const categoriesQuery = graphql`
-  query CategoriesQuery {
+  query CategoriesQuery($timezone: String!) {
     # eslint-disable-next-line relay/must-colocate-fragment-spreads
-    ...categoriesPanelFragment
+    ...categoriesPanelFragment @arguments(timezone: $timezone)
   }
 `

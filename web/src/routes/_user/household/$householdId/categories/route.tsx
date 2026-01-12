@@ -16,10 +16,11 @@ export const Route = createFileRoute(
 )({
   component: RouteComponent,
   beforeLoad: () => {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
     return loadQuery<CategoriesQuery>(
       environment,
       categoriesQuery,
-      {},
+      { timezone },
       { fetchPolicy: 'store-or-network' },
     )
   },

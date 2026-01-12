@@ -13300,7 +13300,7 @@ func (ec *executionContext) unmarshalInputTimePeriodInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"startDate", "endDate", "preset"}
+	fieldsInOrder := [...]string{"startDate", "endDate", "preset", "timezone"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13328,6 +13328,13 @@ func (ec *executionContext) unmarshalInputTimePeriodInput(ctx context.Context, o
 				return it, err
 			}
 			it.Preset = data
+		case "timezone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timezone"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Timezone = data
 		}
 	}
 

@@ -53,6 +53,7 @@ type TimePeriodInput struct {
 	StartDate *time.Time        `json:"startDate,omitempty"`
 	EndDate   *time.Time        `json:"endDate,omitempty"`
 	Preset    *TimePeriodPreset `json:"preset,omitempty"`
+	Timezone  string            `json:"timezone"`
 }
 
 type TimePeriodPreset string
