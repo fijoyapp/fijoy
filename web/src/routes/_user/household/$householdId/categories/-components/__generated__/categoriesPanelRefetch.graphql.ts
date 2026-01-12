@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aca748661b238cc9ff6ccb00f35c6b35>>
+ * @generated SignedSource<<0f60f486352c4a0d896c9045dbe8e0f1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -46,21 +46,7 @@ v1 = [
     "name": "first",
     "variableName": "count"
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "type",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -118,8 +104,20 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
-                  (v3/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -186,83 +184,50 @@ return {
       },
       {
         "alias": null,
-        "args": null,
-        "concreteType": "TransactionConnection",
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "period",
+            "value": {
+              "preset": "ALL_TIME"
+            }
+          }
+        ],
+        "concreteType": "FinancialReport",
         "kind": "LinkedField",
-        "name": "transactions",
+        "name": "financialReport",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TransactionEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Transaction",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v2/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "TransactionCategory",
-                    "kind": "LinkedField",
-                    "name": "category",
-                    "plural": false,
-                    "selections": [
-                      (v3/*: any*/),
-                      (v2/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "TransactionEntry",
-                    "kind": "LinkedField",
-                    "name": "transactionEntries",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "amount",
-                        "storageKey": null
-                      },
-                      (v2/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "totalIncome",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "totalExpenses",
             "storageKey": null
           }
         ],
-        "storageKey": null
+        "storageKey": "financialReport(period:{\"preset\":\"ALL_TIME\"})"
       }
     ]
   },
   "params": {
-    "cacheID": "5384469ca30e64c9c2e13a0c0c3d8758",
+    "cacheID": "2ff105a8886ad1251ac54fb2177157a6",
     "id": null,
     "metadata": {},
     "name": "categoriesPanelRefetch",
     "operationKind": "query",
-    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...categoriesPanelFragment_1G22uz\n}\n\nfragment categoriesPanelFragment_1G22uz on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  transactions {\n    edges {\n      node {\n        id\n        category {\n          type\n          id\n        }\n        transactionEntries {\n          amount\n          id\n        }\n      }\n    }\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
+    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...categoriesPanelFragment_1G22uz\n}\n\nfragment categoriesPanelFragment_1G22uz on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
   }
 };
 })();
 
-(node as any).hash = "07b6b5bda1f09ee1eaa7b61ccf230f8a";
+(node as any).hash = "dc4890e1975f5d2e6da09f1627c63957";
 
 export default node;

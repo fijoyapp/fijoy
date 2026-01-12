@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<64cee068366a7c7431980b0e1ce6f258>>
+ * @generated SignedSource<<92fdca7f874ff6ff3650bf86772dba98>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,25 +12,16 @@ import { ReaderFragment } from 'relay-runtime';
 export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type categoriesPanelFragment$data = {
+  readonly financialReport: {
+    readonly totalExpenses: string;
+    readonly totalIncome: string;
+  };
   readonly transactionCategories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
         readonly type: TransactionCategoryType;
         readonly " $fragmentSpreads": FragmentRefs<"categoryCardFragment">;
-      } | null | undefined;
-    } | null | undefined> | null | undefined;
-  };
-  readonly transactions: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly category: {
-          readonly type: TransactionCategoryType;
-        };
-        readonly id: string;
-        readonly transactionEntries: ReadonlyArray<{
-          readonly amount: string;
-        }> | null | undefined;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -46,21 +37,7 @@ import categoriesPanelRefetch_graphql from './categoriesPanelRefetch.graphql';
 const node: ReaderFragment = (function(){
 var v0 = [
   "transactionCategories"
-],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "type",
-  "storageKey": null
-};
+];
 return {
   "argumentDefinitions": [
     {
@@ -123,8 +100,20 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v1/*: any*/),
-                (v2/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "type",
+                  "storageKey": null
+                },
                 {
                   "args": null,
                   "kind": "FragmentSpread",
@@ -180,67 +169,36 @@ return {
     },
     {
       "alias": null,
-      "args": null,
-      "concreteType": "TransactionConnection",
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "period",
+          "value": {
+            "preset": "ALL_TIME"
+          }
+        }
+      ],
+      "concreteType": "FinancialReport",
       "kind": "LinkedField",
-      "name": "transactions",
+      "name": "financialReport",
       "plural": false,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "concreteType": "TransactionEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "Transaction",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v1/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "TransactionCategory",
-                  "kind": "LinkedField",
-                  "name": "category",
-                  "plural": false,
-                  "selections": [
-                    (v2/*: any*/)
-                  ],
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "TransactionEntry",
-                  "kind": "LinkedField",
-                  "name": "transactionEntries",
-                  "plural": true,
-                  "selections": [
-                    {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "amount",
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
+          "kind": "ScalarField",
+          "name": "totalIncome",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "totalExpenses",
           "storageKey": null
         }
       ],
-      "storageKey": null
+      "storageKey": "financialReport(period:{\"preset\":\"ALL_TIME\"})"
     }
   ],
   "type": "Query",
@@ -248,6 +206,6 @@ return {
 };
 })();
 
-(node as any).hash = "07b6b5bda1f09ee1eaa7b61ccf230f8a";
+(node as any).hash = "dc4890e1975f5d2e6da09f1627c63957";
 
 export default node;

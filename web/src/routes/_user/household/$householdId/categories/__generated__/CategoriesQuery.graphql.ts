@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<306b6f713eb579d1dacc10dd5b63bfba>>
+ * @generated SignedSource<<9407248324b6da62d641e9f660277bb9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,21 +26,7 @@ var v0 = [
     "name": "first",
     "value": 20
   }
-],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "type",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -87,8 +73,20 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v1/*: any*/),
-                  (v2/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "id",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -155,79 +153,46 @@ return {
       },
       {
         "alias": null,
-        "args": null,
-        "concreteType": "TransactionConnection",
+        "args": [
+          {
+            "kind": "Literal",
+            "name": "period",
+            "value": {
+              "preset": "ALL_TIME"
+            }
+          }
+        ],
+        "concreteType": "FinancialReport",
         "kind": "LinkedField",
-        "name": "transactions",
+        "name": "financialReport",
         "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "TransactionEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "Transaction",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v1/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "TransactionCategory",
-                    "kind": "LinkedField",
-                    "name": "category",
-                    "plural": false,
-                    "selections": [
-                      (v2/*: any*/),
-                      (v1/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "TransactionEntry",
-                    "kind": "LinkedField",
-                    "name": "transactionEntries",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "amount",
-                        "storageKey": null
-                      },
-                      (v1/*: any*/)
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "totalIncome",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "totalExpenses",
             "storageKey": null
           }
         ],
-        "storageKey": null
+        "storageKey": "financialReport(period:{\"preset\":\"ALL_TIME\"})"
       }
     ]
   },
   "params": {
-    "cacheID": "030c9db8c6315d50358a37d3c78c43bc",
+    "cacheID": "07ca1078fec30c5e89a24d18060a3baf",
     "id": null,
     "metadata": {},
     "name": "CategoriesQuery",
     "operationKind": "query",
-    "text": "query CategoriesQuery {\n  ...categoriesPanelFragment\n}\n\nfragment categoriesPanelFragment on Query {\n  transactionCategories(first: 20) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  transactions {\n    edges {\n      node {\n        id\n        category {\n          type\n          id\n        }\n        transactionEntries {\n          amount\n          id\n        }\n      }\n    }\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
+    "text": "query CategoriesQuery {\n  ...categoriesPanelFragment\n}\n\nfragment categoriesPanelFragment on Query {\n  transactionCategories(first: 20) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
   }
 };
 })();
