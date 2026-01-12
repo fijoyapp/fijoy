@@ -30,6 +30,7 @@ import { CATEGORY_TYPE_LIST } from '@/constant'
 import { Button } from '@/components/ui/button'
 import { Link } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
+import { DateRangeFilter } from './date-range-filter'
 
 const CategoriesPanelFragment = graphql`
   fragment categoriesPanelFragment on Query
@@ -70,9 +71,15 @@ const CategoriesPanelFragment = graphql`
 
 type CategoriesListPageProps = {
   fragmentRef: categoriesPanelFragment$key
+  startDate: string
+  endDate: string
 }
 
-export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
+export function CategoriesPanel({
+  fragmentRef,
+  startDate,
+  endDate,
+}: CategoriesListPageProps) {
   const data = useFragment(CategoriesPanelFragment, fragmentRef)
 
   const { formatCurrencyWithPrivacyMode } = useCurrency()
@@ -188,6 +195,8 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
           </div>
         </div>
       </div>
+      <div className="py-2"></div>
+      <DateRangeFilter startDate={startDate} endDate={endDate} />
       <div className="py-2"></div>
       <Accordion
         multiple
