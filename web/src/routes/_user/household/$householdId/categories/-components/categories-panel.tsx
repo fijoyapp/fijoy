@@ -109,7 +109,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
       net: netAmount,
       savingRate:
         income.value === 0
-          ? 'Unavailable'
+          ? ':('
           : `${((netAmount.value / income.value) * 100).toFixed(2)}%`,
     }
   }, [data.financialReport])
