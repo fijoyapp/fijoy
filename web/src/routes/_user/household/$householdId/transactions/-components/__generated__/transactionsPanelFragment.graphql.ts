@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e977c90ab9a4f095bbe5cfc67060a254>>
+ * @generated SignedSource<<b6772a64a2a3ae19e232d46d60313835>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,13 +20,25 @@ export type transactionsPanelFragment$key = {
 };
 
 const node: ReaderFragment = {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "where"
+    }
+  ],
   "kind": "Fragment",
   "metadata": null,
   "name": "transactionsPanelFragment",
   "selections": [
     {
-      "args": null,
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "where",
+          "variableName": "where"
+        }
+      ],
       "kind": "FragmentSpread",
       "name": "transactionsListFragment"
     }
@@ -35,6 +47,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "f583b187862d0cadd5d9e01df3fc53c3";
+(node as any).hash = "72f01b62d5d41b7a5f7703c738289004";
 
 export default node;

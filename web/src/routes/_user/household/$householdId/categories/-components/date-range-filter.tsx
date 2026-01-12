@@ -23,9 +23,6 @@ import {
   getDateRangeForPreset,
   type DateRangePreset,
 } from '@/lib/date-range'
-import { environment } from '@/environment'
-import { categoriesQuery } from '../-categories-query'
-import type { CategoriesQuery } from '../__generated__/CategoriesQuery.graphql'
 import { Spinner } from '@/components/ui/spinner'
 
 const PRESET_LABELS: Record<DateRangePreset, string> = {
@@ -41,10 +38,14 @@ const PRESET_LABELS: Record<DateRangePreset, string> = {
 type DateRangeFilterProps = {
   startDate: string
   endDate: string
+  onDateRangeChange: (startDate: string, endDate: string) => void
 }
 
-export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
-  const navigate = useNavigate()
+export function DateRangeFilter({
+  startDate,
+  endDate,
+  onDateRangeChange,
+}: DateRangeFilterProps) {
   const [isPending, startTransition] = useTransition()
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
@@ -74,21 +75,7 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
     const end = formatDateForURL(range.endDate)
 
     startTransition(async () => {
-      // Fetch the query and wait for it to complete (populates Relay store)
-      await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
-        startDate: parseISO(start).toISOString(),
-        endDate: parseISO(end).toISOString(),
-      }).toPromise()
-
-      // Now navigate - the route loader will read from Relay store cache
-      navigate({
-        from: '/household/$householdId/categories',
-        to: '/household/$householdId/categories',
-        search: {
-          start,
-          end,
-        },
-      })
+      onDateRangeChange(start, end)
     })
   }
 
@@ -98,21 +85,7 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
       const end = formatDateForURL(tempDateRange.to)
 
       startTransition(async () => {
-        // Fetch the query and wait for it to complete (populates Relay store)
-        await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
-          startDate: parseISO(start).toISOString(),
-          endDate: parseISO(end).toISOString(),
-        }).toPromise()
-
-        // Now navigate - the route loader will read from Relay store cache
-        navigate({
-          from: '/household/$householdId/categories',
-          to: '/household/$householdId/categories',
-          search: {
-            start,
-            end,
-          },
-        })
+        onDateRangeChange(start, end)
       })
       setIsCalendarOpen(false)
     }

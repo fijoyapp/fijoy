@@ -1,4 +1,4 @@
-import { graphql } from 'relay-runtime'
+import { fetchQuery, graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment } from 'react-relay'
@@ -28,11 +28,14 @@ import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
 import { CATEGORY_TYPE_LIST } from '@/constant'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { DateRangeFilter } from './date-range-filter'
 import { useSearch } from '@tanstack/react-router'
 import { parseISO } from 'date-fns'
+import { CategoriesQuery } from '../__generated__/CategoriesQuery.graphql'
+import { environment } from '@/environment'
+import { categoriesQuery } from '../-categories-query'
 
 const CategoriesPanelFragment = graphql`
   fragment categoriesPanelFragment on Query
@@ -94,6 +97,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
   const { household } = useHousehold()
 
+  const navigate = useNavigate()
   const { totalIncome, totalExpenses, net, savingRate } = useMemo(() => {
     const income = currency(data.financialReport.totalIncome)
     const expenses = currency(data.financialReport.totalExpenses)
@@ -132,6 +136,23 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
     return typeMap
   }, [data.financialReport])
+
+  const onDateRangeChange = async (start: string, end: string) => {
+    await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
+      startDate: parseISO(start).toISOString(),
+      endDate: parseISO(end).toISOString(),
+    }).toPromise()
+
+    // Now navigate - the route loader will read from Relay store cache
+    navigate({
+      from: '/household/$householdId/categories',
+      to: '/household/$householdId/categories',
+      search: {
+        start,
+        end,
+      },
+    })
+  }
 
   return (
     <Fragment>
@@ -195,7 +216,11 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         </div>
       </div>
       <div className="py-2"></div>
-      <DateRangeFilter startDate={startDate} endDate={endDate} />
+      <DateRangeFilter
+        startDate={startDate}
+        endDate={endDate}
+        onDateRangeChange={onDateRangeChange}
+      />
       <div className="py-2"></div>
       <Accordion
         multiple
