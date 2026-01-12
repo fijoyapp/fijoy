@@ -30,6 +30,31 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 	return obj.Value.Mul(obj.FxRate).String(), nil
 }
 
+// TotalIncome is the resolver for the totalIncome field.
+func (r *financialReportResolver) TotalIncome(ctx context.Context, obj *FinancialReport) (string, error) {
+	panic(fmt.Errorf("not implemented: TotalIncome - totalIncome"))
+}
+
+// TotalExpenses is the resolver for the totalExpenses field.
+func (r *financialReportResolver) TotalExpenses(ctx context.Context, obj *FinancialReport) (string, error) {
+	panic(fmt.Errorf("not implemented: TotalExpenses - totalExpenses"))
+}
+
+// IncomeByCategoryType is the resolver for the incomeByCategoryType field.
+func (r *financialReportResolver) IncomeByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
+	panic(fmt.Errorf("not implemented: IncomeByCategoryType - incomeByCategoryType"))
+}
+
+// ExpensesByCategoryType is the resolver for the expensesByCategoryType field.
+func (r *financialReportResolver) ExpensesByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
+	panic(fmt.Errorf("not implemented: ExpensesByCategoryType - expensesByCategoryType"))
+}
+
+// TransactionCount is the resolver for the transactionCount field.
+func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *FinancialReport) (int, error) {
+	panic(fmt.Errorf("not implemented: TransactionCount - transactionCount"))
+}
+
 // ValueInHouseholdCurrency is the resolver for the valueInHouseholdCurrency field.
 func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent.Investment) (string, error) {
 	account, err := obj.QueryAccount().Only(ctx)
@@ -235,13 +260,8 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 }
 
 // FxRate is the resolver for the fxRate field.
-func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime string) (string, error) {
-	datetimeParsed, err := time.Parse(time.RFC3339, datetime)
-	if err != nil {
-		return "", err
-	}
-
-	rate, err := r.fxrateClient.GetRate(ctx, from, to, datetimeParsed)
+func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error) {
+	rate, err := r.fxrateClient.GetRate(ctx, from, to, datetime)
 	if err != nil {
 		return "", err
 	}
@@ -265,7 +285,16 @@ func (r *queryResolver) EquityQuote(ctx context.Context, symbol string) (*Equity
 	}, nil
 }
 
+// FinancialReport is the resolver for the financialReport field.
+func (r *queryResolver) FinancialReport(ctx context.Context, period TimePeriodInput) (*FinancialReport, error) {
+	panic(fmt.Errorf("not implemented: FinancialReport - financialReport"))
+}
+
+// FinancialReport returns FinancialReportResolver implementation.
+func (r *Resolver) FinancialReport() FinancialReportResolver { return &financialReportResolver{r} }
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+type financialReportResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }

@@ -1,5 +1,3 @@
-scalar DateTime
-
 extend type Account {
   balanceInHouseholdCurrency: String!
   valueInHouseholdCurrency: String!
@@ -18,8 +16,10 @@ extend type Investment {
 }
 
 extend type Query {
-  fxRate(from: String!, to: String!, datetime: DateTime!): String!
+  fxRate(from: String!, to: String!, datetime: Time!): String!
   equityQuote(symbol: String!): EquityQuoteResult
+
+  financialReport(period: TimePeriodInput!): FinancialReport!
 }
 
 input CreateInvestmentInputCustom {
@@ -30,4 +30,47 @@ input CreateInvestmentInputCustom {
 type Mutation {
   createAccount(input: CreateAccountInput!): AccountEdge!
   createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
+}
+
+type FinancialReport {
+  totalIncome: String!
+  totalExpenses: String!
+
+  incomeByCategoryType: [CategoryTypeAggregate!]!
+  expensesByCategoryType: [CategoryTypeAggregate!]!
+
+  transactionCount: Int!
+
+  startDate: Time!
+  entDate: Time!
+}
+
+type CategoryTypeAggregate {
+  categoryType: TransactionCategoryType!
+  total: String!
+  transactionCount: Int!
+  categories: [CategoryAggregate!]!
+}
+
+type CategoryAggregate {
+  category: TransactionCategory!
+  total: String!
+  transactionCount: Int!
+}
+
+input TimePeriodInput {
+  startDate: Time
+  endDate: Time
+  preset: TimePeriodPreset
+}
+
+enum TimePeriodPreset {
+  LAST_7_DAYS
+  LAST_30_DAYS
+  LAST_90_DAYS
+  THIS_MONTH
+  LAST_MONTH
+  THIS_YEAR
+  LAST_YEAR
+  ALL_TIME
 }

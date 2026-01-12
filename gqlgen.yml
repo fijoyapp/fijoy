@@ -25,3 +25,15 @@ models:
   Node:
     model:
       - beavermoney.app/ent.Noder
+  FinancialReport:
+    fields:
+      totalIncome:
+        resolver: true
+      totalExpenses:
+        resolver: true
+      incomeByCategoryType:
+        resolver: true
+      expensesByCategoryType:
+        resolver: true
+      transactionCount:
+        resolver: true
