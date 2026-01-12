@@ -3,10 +3,6 @@
 package beavermoney
 
 import (
-	"bytes"
-	"fmt"
-	"io"
-	"strconv"
 	"time"
 
 	"beavermoney.app/ent"
@@ -50,75 +46,6 @@ type FinancialReport struct {
 }
 
 type TimePeriodInput struct {
-	StartDate *time.Time        `json:"startDate,omitempty"`
-	EndDate   *time.Time        `json:"endDate,omitempty"`
-	Preset    *TimePeriodPreset `json:"preset,omitempty"`
-	Timezone  string            `json:"timezone"`
-}
-
-type TimePeriodPreset string
-
-const (
-	TimePeriodPresetLast7Days  TimePeriodPreset = "LAST_7_DAYS"
-	TimePeriodPresetLast30Days TimePeriodPreset = "LAST_30_DAYS"
-	TimePeriodPresetLast90Days TimePeriodPreset = "LAST_90_DAYS"
-	TimePeriodPresetThisMonth  TimePeriodPreset = "THIS_MONTH"
-	TimePeriodPresetLastMonth  TimePeriodPreset = "LAST_MONTH"
-	TimePeriodPresetThisYear   TimePeriodPreset = "THIS_YEAR"
-	TimePeriodPresetLastYear   TimePeriodPreset = "LAST_YEAR"
-	TimePeriodPresetAllTime    TimePeriodPreset = "ALL_TIME"
-)
-
-var AllTimePeriodPreset = []TimePeriodPreset{
-	TimePeriodPresetLast7Days,
-	TimePeriodPresetLast30Days,
-	TimePeriodPresetLast90Days,
-	TimePeriodPresetThisMonth,
-	TimePeriodPresetLastMonth,
-	TimePeriodPresetThisYear,
-	TimePeriodPresetLastYear,
-	TimePeriodPresetAllTime,
-}
-
-func (e TimePeriodPreset) IsValid() bool {
-	switch e {
-	case TimePeriodPresetLast7Days, TimePeriodPresetLast30Days, TimePeriodPresetLast90Days, TimePeriodPresetThisMonth, TimePeriodPresetLastMonth, TimePeriodPresetThisYear, TimePeriodPresetLastYear, TimePeriodPresetAllTime:
-		return true
-	}
-	return false
-}
-
-func (e TimePeriodPreset) String() string {
-	return string(e)
-}
-
-func (e *TimePeriodPreset) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = TimePeriodPreset(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid TimePeriodPreset", str)
-	}
-	return nil
-}
-
-func (e TimePeriodPreset) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-func (e *TimePeriodPreset) UnmarshalJSON(b []byte) error {
-	s, err := strconv.Unquote(string(b))
-	if err != nil {
-		return err
-	}
-	return e.UnmarshalGQL(s)
-}
-
-func (e TimePeriodPreset) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	e.MarshalGQL(&buf)
-	return buf.Bytes(), nil
+	StartDate *time.Time `json:"startDate,omitempty"`
+	EndDate   *time.Time `json:"endDate,omitempty"`
 }

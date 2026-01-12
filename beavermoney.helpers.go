@@ -186,54 +186,21 @@ func (r *financialReportResolver) aggregateByCategoryType(
 }
 
 func parseTimePeriod(period TimePeriodInput) (time.Time, time.Time) {
-	// Load user's timezone
-	location, err := time.LoadLocation(period.Timezone)
-	if err != nil {
-		// Fallback to UTC if invalid timezone
-		location = time.UTC
-	}
-
-	now := time.Now().In(location)
-
-	// If explicit dates provided, use those
+	// If dates provided, use them directly (client sends UTC)
 	if period.StartDate != nil && period.EndDate != nil {
 		return *period.StartDate, *period.EndDate
 	}
 
-	// Otherwise use preset
-	if period.Preset == nil {
-		// Default to all time
-		return time.Time{}, now
+	// If only startDate, use it to now
+	if period.StartDate != nil {
+		return *period.StartDate, time.Now()
 	}
 
-	switch *period.Preset {
-	case TimePeriodPresetLast7Days:
-		return now.AddDate(0, 0, -7), now
-	case TimePeriodPresetLast30Days:
-		return now.AddDate(0, 0, -30), now
-	case TimePeriodPresetLast90Days:
-		return now.AddDate(0, 0, -90), now
-	case TimePeriodPresetThisMonth:
-		year, month, _ := now.Date()
-		start := time.Date(year, month, 1, 0, 0, 0, 0, location)
-		return start, now
-	case TimePeriodPresetLastMonth:
-		year, month, _ := now.Date()
-		start := time.Date(year, month-1, 1, 0, 0, 0, 0, location)
-		end := time.Date(year, month, 1, 0, 0, 0, 0, location)
-		return start, end
-	case TimePeriodPresetThisYear:
-		year, _, _ := now.Date()
-		start := time.Date(year, 1, 1, 0, 0, 0, 0, location)
-		return start, now
-	case TimePeriodPresetLastYear:
-		year, _, _ := now.Date()
-		start := time.Date(year-1, 1, 1, 0, 0, 0, 0, location)
-		end := time.Date(year, 1, 1, 0, 0, 0, 0, location)
-		return start, end
-	case TimePeriodPresetAllTime:
-		return time.Time{}, now
-	default:
-		return time.Time{}, now
+	// If only endDate, use zero time (all time) to endDate
+	if period.EndDate != nil {
+		return time.Time{}, *period.EndDate
 	}
+
+	// Default: all time
+	return time.Time{}, time.Now()
 }

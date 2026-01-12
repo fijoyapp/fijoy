@@ -13300,7 +13300,7 @@ func (ec *executionContext) unmarshalInputTimePeriodInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"startDate", "endDate", "preset", "timezone"}
+	fieldsInOrder := [...]string{"startDate", "endDate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13321,20 +13321,6 @@ func (ec *executionContext) unmarshalInputTimePeriodInput(ctx context.Context, o
 				return it, err
 			}
 			it.EndDate = data
-		case "preset":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("preset"))
-			data, err := ec.unmarshalOTimePeriodPreset2ᚖbeavermoneyᚗappᚐTimePeriodPreset(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Preset = data
-		case "timezone":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("timezone"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Timezone = data
 		}
 	}
 
@@ -22020,22 +22006,6 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 	_ = ctx
 	res := graphql.MarshalTime(*v)
 	return res
-}
-
-func (ec *executionContext) unmarshalOTimePeriodPreset2ᚖbeavermoneyᚗappᚐTimePeriodPreset(ctx context.Context, v any) (*TimePeriodPreset, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(TimePeriodPreset)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOTimePeriodPreset2ᚖbeavermoneyᚗappᚐTimePeriodPreset(ctx context.Context, sel ast.SelectionSet, v *TimePeriodPreset) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) marshalOTransaction2ᚕᚖbeavermoneyᚗappᚋentᚐTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Transaction) graphql.Marshaler {

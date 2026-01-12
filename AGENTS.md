@@ -81,6 +81,46 @@ just migrate-hash          # Hash migrations for Atlas
 
 ## Architecture Patterns
 
+### Date Range Handling
+
+**Philosophy**: Client calculates all date ranges and sends UTC timestamps. Server is timezone-agnostic.
+
+**Frontend** (`lib/date-range.ts`):
+```typescript
+import { getDateRangeForPreset, dateRangeToISO } from '@/lib/date-range'
+
+// User selects "THIS_MONTH" preset in their local timezone
+const dateRange = getDateRangeForPreset('THIS_MONTH')
+// Returns: { startDate: Date, endDate: Date } in local time
+
+// Convert to ISO UTC strings for GraphQL
+const period = dateRangeToISO(dateRange)
+// Returns: { startDate: "2024-01-01T05:00:00Z", endDate: "2024-01-15T20:00:00Z" }
+
+// Query with UTC timestamps
+query({ startDate: period.startDate, endDate: period.endDate })
+```
+
+**Backend** (`beavermoney.helpers.go`):
+```go
+func parseTimePeriod(period TimePeriodInput) (time.Time, time.Time) {
+    // Just use the provided UTC dates directly
+    if period.StartDate != nil && period.EndDate != nil {
+        return *period.StartDate, *period.EndDate
+    }
+    return time.Time{}, time.Now()  // Default: all time
+}
+```
+
+**Why this approach:**
+- ✅ Server doesn't need timezone parsing or preset logic
+- ✅ Client has full context (user's timezone, current time)
+- ✅ Simpler GraphQL schema - no `TimePeriodPreset` enum
+- ✅ Easier to test - server just filters by timestamps
+- ✅ Better separation of concerns - UI logic stays in UI layer
+
+**Important**: Always send ISO 8601 UTC timestamps from client to server. Never send timezone strings or let server calculate semantic periods like "this month".
+
 ### Backend: Multi-Currency Financial Aggregations
 
 When implementing financial aggregations (income, expenses, etc.):

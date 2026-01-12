@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d582bb4fda2d03fea1c227671187763>>
+ * @generated SignedSource<<e15d8dc10f6c16d3e511f7fff0b4232e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -87,7 +87,12 @@ return {
     {
       "defaultValue": null,
       "kind": "LocalArgument",
-      "name": "timezone"
+      "name": "endDate"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "startDate"
     }
   ],
   "kind": "Fragment",
@@ -212,14 +217,14 @@ return {
         {
           "fields": [
             {
-              "kind": "Literal",
-              "name": "preset",
-              "value": "ALL_TIME"
+              "kind": "Variable",
+              "name": "endDate",
+              "variableName": "endDate"
             },
             {
               "kind": "Variable",
-              "name": "timezone",
-              "variableName": "timezone"
+              "name": "startDate",
+              "variableName": "startDate"
             }
           ],
           "kind": "ObjectValue",
@@ -279,6 +284,6 @@ return {
 };
 })();
 
-(node as any).hash = "206f6a70a45d0a14238a47387d668f92";
+(node as any).hash = "ae112eb7b106211b5fa357d319886f3a";
 
 export default node;
