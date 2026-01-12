@@ -47,6 +47,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Account() AccountResolver
+	FinancialReport() FinancialReportResolver
 	Investment() InvestmentResolver
 	Lot() LotResolver
 	Mutation() MutationResolver
@@ -98,6 +99,19 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	CategoryAggregate struct {
+		Category         func(childComplexity int) int
+		Total            func(childComplexity int) int
+		TransactionCount func(childComplexity int) int
+	}
+
+	CategoryTypeAggregate struct {
+		Categories       func(childComplexity int) int
+		CategoryType     func(childComplexity int) int
+		Total            func(childComplexity int) int
+		TransactionCount func(childComplexity int) int
+	}
+
 	Currency struct {
 		Accounts           func(childComplexity int) int
 		Code               func(childComplexity int) int
@@ -113,6 +127,16 @@ type ComplexityRoot struct {
 		Exchange     func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Symbol       func(childComplexity int) int
+	}
+
+	FinancialReport struct {
+		EntDate                func(childComplexity int) int
+		ExpensesByCategoryType func(childComplexity int) int
+		IncomeByCategoryType   func(childComplexity int) int
+		StartDate              func(childComplexity int) int
+		TotalExpenses          func(childComplexity int) int
+		TotalIncome            func(childComplexity int) int
+		TransactionCount       func(childComplexity int) int
 	}
 
 	Household struct {
@@ -200,7 +224,8 @@ type ComplexityRoot struct {
 		Accounts              func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AccountWhereInput) int
 		Currencies            func(childComplexity int) int
 		EquityQuote           func(childComplexity int, symbol string) int
-		FxRate                func(childComplexity int, from string, to string, datetime string) int
+		FinancialReport       func(childComplexity int, period TimePeriodInput) int
+		FxRate                func(childComplexity int, from string, to string, datetime time.Time) int
 		Households            func(childComplexity int) int
 		Investments           func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) int
 		Lots                  func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.LotWhereInput) int
@@ -314,6 +339,13 @@ type AccountResolver interface {
 	BalanceInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error)
 	ValueInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error)
 }
+type FinancialReportResolver interface {
+	TotalIncome(ctx context.Context, obj *FinancialReport) (string, error)
+	TotalExpenses(ctx context.Context, obj *FinancialReport) (string, error)
+	IncomeByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error)
+	ExpensesByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error)
+	TransactionCount(ctx context.Context, obj *FinancialReport) (int, error)
+}
 type InvestmentResolver interface {
 	Amount(ctx context.Context, obj *ent.Investment) (string, error)
 	Quote(ctx context.Context, obj *ent.Investment) (string, error)
@@ -341,8 +373,9 @@ type QueryResolver interface {
 	TransactionCategories(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.TransactionCategoryWhereInput) (*ent.TransactionCategoryConnection, error)
 	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
 	UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error)
-	FxRate(ctx context.Context, from string, to string, datetime string) (string, error)
+	FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error)
 	EquityQuote(ctx context.Context, symbol string) (*EquityQuoteResult, error)
+	FinancialReport(ctx context.Context, period TimePeriodInput) (*FinancialReport, error)
 }
 type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
@@ -601,6 +634,50 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.AccountEdge.Node(childComplexity), true
 
+	case "CategoryAggregate.category":
+		if e.complexity.CategoryAggregate.Category == nil {
+			break
+		}
+
+		return e.complexity.CategoryAggregate.Category(childComplexity), true
+	case "CategoryAggregate.total":
+		if e.complexity.CategoryAggregate.Total == nil {
+			break
+		}
+
+		return e.complexity.CategoryAggregate.Total(childComplexity), true
+	case "CategoryAggregate.transactionCount":
+		if e.complexity.CategoryAggregate.TransactionCount == nil {
+			break
+		}
+
+		return e.complexity.CategoryAggregate.TransactionCount(childComplexity), true
+
+	case "CategoryTypeAggregate.categories":
+		if e.complexity.CategoryTypeAggregate.Categories == nil {
+			break
+		}
+
+		return e.complexity.CategoryTypeAggregate.Categories(childComplexity), true
+	case "CategoryTypeAggregate.categoryType":
+		if e.complexity.CategoryTypeAggregate.CategoryType == nil {
+			break
+		}
+
+		return e.complexity.CategoryTypeAggregate.CategoryType(childComplexity), true
+	case "CategoryTypeAggregate.total":
+		if e.complexity.CategoryTypeAggregate.Total == nil {
+			break
+		}
+
+		return e.complexity.CategoryTypeAggregate.Total(childComplexity), true
+	case "CategoryTypeAggregate.transactionCount":
+		if e.complexity.CategoryTypeAggregate.TransactionCount == nil {
+			break
+		}
+
+		return e.complexity.CategoryTypeAggregate.TransactionCount(childComplexity), true
+
 	case "Currency.accounts":
 		if e.complexity.Currency.Accounts == nil {
 			break
@@ -668,6 +745,49 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.EquityQuoteResult.Symbol(childComplexity), true
+
+	case "FinancialReport.entDate":
+		if e.complexity.FinancialReport.EntDate == nil {
+			break
+		}
+
+		return e.complexity.FinancialReport.EntDate(childComplexity), true
+	case "FinancialReport.expensesByCategoryType":
+		if e.complexity.FinancialReport.ExpensesByCategoryType == nil {
+			break
+		}
+
+		return e.complexity.FinancialReport.ExpensesByCategoryType(childComplexity), true
+	case "FinancialReport.incomeByCategoryType":
+		if e.complexity.FinancialReport.IncomeByCategoryType == nil {
+			break
+		}
+
+		return e.complexity.FinancialReport.IncomeByCategoryType(childComplexity), true
+	case "FinancialReport.startDate":
+		if e.complexity.FinancialReport.StartDate == nil {
+			break
+		}
+
+		return e.complexity.FinancialReport.StartDate(childComplexity), true
+	case "FinancialReport.totalExpenses":
+		if e.complexity.FinancialReport.TotalExpenses == nil {
+			break
+		}
+
+		return e.complexity.FinancialReport.TotalExpenses(childComplexity), true
+	case "FinancialReport.totalIncome":
+		if e.complexity.FinancialReport.TotalIncome == nil {
+			break
+		}
+
+		return e.complexity.FinancialReport.TotalIncome(childComplexity), true
+	case "FinancialReport.transactionCount":
+		if e.complexity.FinancialReport.TransactionCount == nil {
+			break
+		}
+
+		return e.complexity.FinancialReport.TransactionCount(childComplexity), true
 
 	case "Household.accounts":
 		if e.complexity.Household.Accounts == nil {
@@ -1040,6 +1160,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.EquityQuote(childComplexity, args["symbol"].(string)), true
+	case "Query.financialReport":
+		if e.complexity.Query.FinancialReport == nil {
+			break
+		}
+
+		args, err := ec.field_Query_financialReport_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FinancialReport(childComplexity, args["period"].(TimePeriodInput)), true
 	case "Query.fxRate":
 		if e.complexity.Query.FxRate == nil {
 			break
@@ -1050,7 +1181,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.FxRate(childComplexity, args["from"].(string), args["to"].(string), args["datetime"].(string)), true
+		return e.complexity.Query.FxRate(childComplexity, args["from"].(string), args["to"].(string), args["datetime"].(time.Time)), true
 	case "Query.households":
 		if e.complexity.Query.Households == nil {
 			break
@@ -1535,6 +1666,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputHouseholdWhereInput,
 		ec.unmarshalInputInvestmentWhereInput,
 		ec.unmarshalInputLotWhereInput,
+		ec.unmarshalInputTimePeriodInput,
 		ec.unmarshalInputTransactionCategoryWhereInput,
 		ec.unmarshalInputTransactionEntryWhereInput,
 		ec.unmarshalInputTransactionOrder,
@@ -1737,6 +1869,17 @@ func (ec *executionContext) field_Query_equityQuote_args(ctx context.Context, ra
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_financialReport_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "period", ec.unmarshalNTimePeriodInput2beavermoneyᚗappᚐTimePeriodInput)
+	if err != nil {
+		return nil, err
+	}
+	args["period"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_fxRate_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -1750,7 +1893,7 @@ func (ec *executionContext) field_Query_fxRate_args(ctx context.Context, rawArgs
 		return nil, err
 	}
 	args["to"] = arg1
-	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "datetime", ec.unmarshalNDateTime2string)
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "datetime", ec.unmarshalNTime2timeᚐTime)
 	if err != nil {
 		return nil, err
 	}
@@ -2769,6 +2912,235 @@ func (ec *executionContext) fieldContext_AccountEdge_cursor(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _CategoryAggregate_category(ctx context.Context, field graphql.CollectedField, obj *CategoryAggregate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryAggregate_category,
+		func(ctx context.Context) (any, error) {
+			return obj.Category, nil
+		},
+		nil,
+		ec.marshalNTransactionCategory2ᚖbeavermoneyᚗappᚋentᚐTransactionCategory,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryAggregate_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryAggregate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_TransactionCategory_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_TransactionCategory_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_TransactionCategory_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_TransactionCategory_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_TransactionCategory_name(ctx, field)
+			case "type":
+				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "household":
+				return ec.fieldContext_TransactionCategory_household(ctx, field)
+			case "transactions":
+				return ec.fieldContext_TransactionCategory_transactions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionCategory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryAggregate_total(ctx context.Context, field graphql.CollectedField, obj *CategoryAggregate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryAggregate_total,
+		func(ctx context.Context) (any, error) {
+			return obj.Total, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryAggregate_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryAggregate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryAggregate_transactionCount(ctx context.Context, field graphql.CollectedField, obj *CategoryAggregate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryAggregate_transactionCount,
+		func(ctx context.Context) (any, error) {
+			return obj.TransactionCount, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryAggregate_transactionCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryAggregate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryTypeAggregate_categoryType(ctx context.Context, field graphql.CollectedField, obj *CategoryTypeAggregate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryTypeAggregate_categoryType,
+		func(ctx context.Context) (any, error) {
+			return obj.CategoryType, nil
+		},
+		nil,
+		ec.marshalNTransactionCategoryType2beavermoneyᚗappᚋentᚋtransactioncategoryᚐType,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryTypeAggregate_categoryType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryTypeAggregate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type TransactionCategoryType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryTypeAggregate_total(ctx context.Context, field graphql.CollectedField, obj *CategoryTypeAggregate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryTypeAggregate_total,
+		func(ctx context.Context) (any, error) {
+			return obj.Total, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryTypeAggregate_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryTypeAggregate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryTypeAggregate_transactionCount(ctx context.Context, field graphql.CollectedField, obj *CategoryTypeAggregate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryTypeAggregate_transactionCount,
+		func(ctx context.Context) (any, error) {
+			return obj.TransactionCount, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryTypeAggregate_transactionCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryTypeAggregate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CategoryTypeAggregate_categories(ctx context.Context, field graphql.CollectedField, obj *CategoryTypeAggregate) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CategoryTypeAggregate_categories,
+		func(ctx context.Context) (any, error) {
+			return obj.Categories, nil
+		},
+		nil,
+		ec.marshalNCategoryAggregate2ᚕᚖbeavermoneyᚗappᚐCategoryAggregateᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CategoryTypeAggregate_categories(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CategoryTypeAggregate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "category":
+				return ec.fieldContext_CategoryAggregate_category(ctx, field)
+			case "total":
+				return ec.fieldContext_CategoryAggregate_total(ctx, field)
+			case "transactionCount":
+				return ec.fieldContext_CategoryAggregate_transactionCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CategoryAggregate", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Currency_id(ctx context.Context, field graphql.CollectedField, obj *ent.Currency) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3201,6 +3573,229 @@ func (ec *executionContext) fieldContext_EquityQuoteResult_currentPrice(_ contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FinancialReport_totalIncome(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FinancialReport_totalIncome,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.FinancialReport().TotalIncome(ctx, obj)
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FinancialReport_totalIncome(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FinancialReport",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FinancialReport_totalExpenses(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FinancialReport_totalExpenses,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.FinancialReport().TotalExpenses(ctx, obj)
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FinancialReport_totalExpenses(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FinancialReport",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FinancialReport_incomeByCategoryType(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FinancialReport_incomeByCategoryType,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.FinancialReport().IncomeByCategoryType(ctx, obj)
+		},
+		nil,
+		ec.marshalNCategoryTypeAggregate2ᚕᚖbeavermoneyᚗappᚐCategoryTypeAggregateᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FinancialReport_incomeByCategoryType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FinancialReport",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "categoryType":
+				return ec.fieldContext_CategoryTypeAggregate_categoryType(ctx, field)
+			case "total":
+				return ec.fieldContext_CategoryTypeAggregate_total(ctx, field)
+			case "transactionCount":
+				return ec.fieldContext_CategoryTypeAggregate_transactionCount(ctx, field)
+			case "categories":
+				return ec.fieldContext_CategoryTypeAggregate_categories(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CategoryTypeAggregate", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FinancialReport_expensesByCategoryType(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FinancialReport_expensesByCategoryType,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.FinancialReport().ExpensesByCategoryType(ctx, obj)
+		},
+		nil,
+		ec.marshalNCategoryTypeAggregate2ᚕᚖbeavermoneyᚗappᚐCategoryTypeAggregateᚄ,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FinancialReport_expensesByCategoryType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FinancialReport",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "categoryType":
+				return ec.fieldContext_CategoryTypeAggregate_categoryType(ctx, field)
+			case "total":
+				return ec.fieldContext_CategoryTypeAggregate_total(ctx, field)
+			case "transactionCount":
+				return ec.fieldContext_CategoryTypeAggregate_transactionCount(ctx, field)
+			case "categories":
+				return ec.fieldContext_CategoryTypeAggregate_categories(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CategoryTypeAggregate", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FinancialReport_transactionCount(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FinancialReport_transactionCount,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.FinancialReport().TransactionCount(ctx, obj)
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FinancialReport_transactionCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FinancialReport",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FinancialReport_startDate(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FinancialReport_startDate,
+		func(ctx context.Context) (any, error) {
+			return obj.StartDate, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FinancialReport_startDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FinancialReport",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FinancialReport_entDate(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FinancialReport_entDate,
+		func(ctx context.Context) (any, error) {
+			return obj.EntDate, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FinancialReport_entDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FinancialReport",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5815,7 +6410,7 @@ func (ec *executionContext) _Query_fxRate(ctx context.Context, field graphql.Col
 		ec.fieldContext_Query_fxRate,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Query().FxRate(ctx, fc.Args["from"].(string), fc.Args["to"].(string), fc.Args["datetime"].(string))
+			return ec.resolvers.Query().FxRate(ctx, fc.Args["from"].(string), fc.Args["to"].(string), fc.Args["datetime"].(time.Time))
 		},
 		nil,
 		ec.marshalNString2string,
@@ -5895,6 +6490,63 @@ func (ec *executionContext) fieldContext_Query_equityQuote(ctx context.Context, 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_equityQuote_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_financialReport(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_financialReport,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().FinancialReport(ctx, fc.Args["period"].(TimePeriodInput))
+		},
+		nil,
+		ec.marshalNFinancialReport2ᚖbeavermoneyᚗappᚐFinancialReport,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_financialReport(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "totalIncome":
+				return ec.fieldContext_FinancialReport_totalIncome(ctx, field)
+			case "totalExpenses":
+				return ec.fieldContext_FinancialReport_totalExpenses(ctx, field)
+			case "incomeByCategoryType":
+				return ec.fieldContext_FinancialReport_incomeByCategoryType(ctx, field)
+			case "expensesByCategoryType":
+				return ec.fieldContext_FinancialReport_expensesByCategoryType(ctx, field)
+			case "transactionCount":
+				return ec.fieldContext_FinancialReport_transactionCount(ctx, field)
+			case "startDate":
+				return ec.fieldContext_FinancialReport_startDate(ctx, field)
+			case "entDate":
+				return ec.fieldContext_FinancialReport_entDate(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FinancialReport", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_financialReport_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -12641,6 +13293,47 @@ func (ec *executionContext) unmarshalInputLotWhereInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTimePeriodInput(ctx context.Context, obj any) (TimePeriodInput, error) {
+	var it TimePeriodInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"startDate", "endDate", "preset"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "startDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDate = data
+		case "endDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("endDate"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EndDate = data
+		case "preset":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("preset"))
+			data, err := ec.unmarshalOTimePeriodPreset2ᚖbeavermoneyᚗappᚐTimePeriodPreset(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Preset = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx context.Context, obj any) (ent.TransactionCategoryWhereInput, error) {
 	var it ent.TransactionCategoryWhereInput
 	asMap := map[string]any{}
@@ -15648,6 +16341,109 @@ func (ec *executionContext) _AccountEdge(ctx context.Context, sel ast.SelectionS
 	return out
 }
 
+var categoryAggregateImplementors = []string{"CategoryAggregate"}
+
+func (ec *executionContext) _CategoryAggregate(ctx context.Context, sel ast.SelectionSet, obj *CategoryAggregate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, categoryAggregateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CategoryAggregate")
+		case "category":
+			out.Values[i] = ec._CategoryAggregate_category(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._CategoryAggregate_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "transactionCount":
+			out.Values[i] = ec._CategoryAggregate_transactionCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var categoryTypeAggregateImplementors = []string{"CategoryTypeAggregate"}
+
+func (ec *executionContext) _CategoryTypeAggregate(ctx context.Context, sel ast.SelectionSet, obj *CategoryTypeAggregate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, categoryTypeAggregateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CategoryTypeAggregate")
+		case "categoryType":
+			out.Values[i] = ec._CategoryTypeAggregate_categoryType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._CategoryTypeAggregate_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "transactionCount":
+			out.Values[i] = ec._CategoryTypeAggregate_transactionCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "categories":
+			out.Values[i] = ec._CategoryTypeAggregate_categories(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var currencyImplementors = []string{"Currency", "Node"}
 
 func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet, obj *ent.Currency) graphql.Marshaler {
@@ -15859,6 +16655,230 @@ func (ec *executionContext) _EquityQuoteResult(ctx context.Context, sel ast.Sele
 			out.Values[i] = ec._EquityQuoteResult_currentPrice(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var financialReportImplementors = []string{"FinancialReport"}
+
+func (ec *executionContext) _FinancialReport(ctx context.Context, sel ast.SelectionSet, obj *FinancialReport) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, financialReportImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FinancialReport")
+		case "totalIncome":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FinancialReport_totalIncome(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "totalExpenses":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FinancialReport_totalExpenses(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "incomeByCategoryType":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FinancialReport_incomeByCategoryType(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "expensesByCategoryType":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FinancialReport_expensesByCategoryType(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "transactionCount":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FinancialReport_transactionCount(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "startDate":
+			out.Values[i] = ec._FinancialReport_startDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "entDate":
+			out.Values[i] = ec._FinancialReport_entDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -17398,6 +18418,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_equityQuote(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "financialReport":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_financialReport(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -19073,6 +20115,114 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalNCategoryAggregate2ᚕᚖbeavermoneyᚗappᚐCategoryAggregateᚄ(ctx context.Context, sel ast.SelectionSet, v []*CategoryAggregate) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCategoryAggregate2ᚖbeavermoneyᚗappᚐCategoryAggregate(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCategoryAggregate2ᚖbeavermoneyᚗappᚐCategoryAggregate(ctx context.Context, sel ast.SelectionSet, v *CategoryAggregate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CategoryAggregate(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCategoryTypeAggregate2ᚕᚖbeavermoneyᚗappᚐCategoryTypeAggregateᚄ(ctx context.Context, sel ast.SelectionSet, v []*CategoryTypeAggregate) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCategoryTypeAggregate2ᚖbeavermoneyᚗappᚐCategoryTypeAggregate(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCategoryTypeAggregate2ᚖbeavermoneyᚗappᚐCategoryTypeAggregate(ctx context.Context, sel ast.SelectionSet, v *CategoryTypeAggregate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._CategoryTypeAggregate(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNCreateAccountInput2beavermoneyᚗappᚋentᚐCreateAccountInput(ctx context.Context, v any) (ent.CreateAccountInput, error) {
 	res, err := ec.unmarshalInputCreateAccountInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -19157,20 +20307,18 @@ func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCurso
 	return v
 }
 
-func (ec *executionContext) unmarshalNDateTime2string(ctx context.Context, v any) (string, error) {
-	res, err := graphql.UnmarshalString(v)
-	return res, graphql.ErrorOnPath(ctx, err)
+func (ec *executionContext) marshalNFinancialReport2beavermoneyᚗappᚐFinancialReport(ctx context.Context, sel ast.SelectionSet, v FinancialReport) graphql.Marshaler {
+	return ec._FinancialReport(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDateTime2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	_ = sel
-	res := graphql.MarshalString(v)
-	if res == graphql.Null {
+func (ec *executionContext) marshalNFinancialReport2ᚖbeavermoneyᚗappᚐFinancialReport(ctx context.Context, sel ast.SelectionSet, v *FinancialReport) graphql.Marshaler {
+	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
 		}
+		return graphql.Null
 	}
-	return res
+	return ec._FinancialReport(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNHousehold2ᚕᚖbeavermoneyᚗappᚋentᚐHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Household) graphql.Marshaler {
@@ -19458,6 +20606,11 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNTimePeriodInput2beavermoneyᚗappᚐTimePeriodInput(ctx context.Context, v any) (TimePeriodInput, error) {
+	res, err := ec.unmarshalInputTimePeriodInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNTransaction2ᚖbeavermoneyᚗappᚋentᚐTransaction(ctx context.Context, sel ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {
@@ -20860,6 +22013,22 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 	_ = ctx
 	res := graphql.MarshalTime(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOTimePeriodPreset2ᚖbeavermoneyᚗappᚐTimePeriodPreset(ctx context.Context, v any) (*TimePeriodPreset, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(TimePeriodPreset)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOTimePeriodPreset2ᚖbeavermoneyᚗappᚐTimePeriodPreset(ctx context.Context, sel ast.SelectionSet, v *TimePeriodPreset) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOTransaction2ᚕᚖbeavermoneyᚗappᚋentᚐTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Transaction) graphql.Marshaler {
