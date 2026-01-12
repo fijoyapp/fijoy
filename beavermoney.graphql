@@ -61,17 +61,4 @@ type CategoryAggregate {
 input TimePeriodInput {
   startDate: Time
   endDate: Time
-  preset: TimePeriodPreset
-  timezone: String!
-}
-
-enum TimePeriodPreset {
-  LAST_7_DAYS
-  LAST_30_DAYS
-  LAST_90_DAYS
-  THIS_MONTH
-  LAST_MONTH
-  THIS_YEAR
-  LAST_YEAR
-  ALL_TIME
 }

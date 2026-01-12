@@ -10,17 +10,21 @@ import { PendingComponent } from '@/components/pending-component'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { categoriesQuery } from './-categories-query'
 import { type CategoriesQuery } from './__generated__/CategoriesQuery.graphql'
+import { dateRangeToISO, getDateRangeForPreset } from '@/lib/date-range'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/categories',
 )({
   component: RouteComponent,
   beforeLoad: () => {
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    // Calculate date range for ALL_TIME preset (no filtering)
+    const dateRange = getDateRangeForPreset('ALL_TIME')
+    const period = dateRangeToISO(dateRange)
+
     return loadQuery<CategoriesQuery>(
       environment,
       categoriesQuery,
-      { timezone },
+      period || {},
       { fetchPolicy: 'store-or-network' },
     )
   },

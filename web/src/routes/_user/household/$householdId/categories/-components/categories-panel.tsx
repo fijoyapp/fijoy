@@ -36,7 +36,8 @@ const CategoriesPanelFragment = graphql`
   @argumentDefinitions(
     count: { type: "Int", defaultValue: 20 }
     cursor: { type: "Cursor" }
-    timezone: { type: "String!" }
+    startDate: { type: "Time" }
+    endDate: { type: "Time" }
   )
   @refetchable(queryName: "categoriesPanelRefetch") {
     transactionCategories(first: $count, after: $cursor)
@@ -49,7 +50,7 @@ const CategoriesPanelFragment = graphql`
         }
       }
     }
-    financialReport(period: { preset: ALL_TIME, timezone: $timezone }) {
+    financialReport(period: { startDate: $startDate, endDate: $endDate }) {
       totalIncome
       totalExpenses
       incomeByCategoryType {
