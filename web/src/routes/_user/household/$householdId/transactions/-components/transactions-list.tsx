@@ -41,8 +41,10 @@ type TransactionsListProps = {
 }
 
 export function TransactionsList({ fragmentRef }: TransactionsListProps) {
-  const { data, loadNext, hasNext, isLoadingNext, refetch } =
-    usePaginationFragment(transactionsListFragment, fragmentRef)
+  const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(
+    transactionsListFragment,
+    fragmentRef,
+  )
 
   const [ref, inView] = useInView()
 

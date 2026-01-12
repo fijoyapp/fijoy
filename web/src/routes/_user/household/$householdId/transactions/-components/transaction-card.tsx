@@ -1,15 +1,13 @@
 import { graphql } from 'relay-runtime'
-import { P, match } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { useFragment } from 'react-relay'
 import {
   ArrowLeftRightIcon,
-  BadgeCheckIcon,
   BanknoteArrowDownIcon,
   BanknoteArrowUpIcon,
   TrendingUpIcon,
   WrenchIcon,
 } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 import { Fragment } from 'react/jsx-runtime'
 import currency from 'currency.js'
 import type {
@@ -22,7 +20,6 @@ import {
   Item,
   ItemContent,
   ItemDescription,
-  ItemGroup,
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item'

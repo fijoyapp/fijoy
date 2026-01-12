@@ -3,11 +3,9 @@ import {
   ArrowLeftRightIcon,
   ChartNoAxesCombinedIcon,
   LayoutGridIcon,
-  SquareTerminal,
   WalletIcon,
 } from 'lucide-react'
 import { NavProjects } from './nav-projects'
-import type { householdSwitcherFragment$key } from './__generated__/householdSwitcherFragment.graphql'
 import type { LucideIcon } from 'lucide-react'
 
 // import { NavMain } from '@/components/nav-main'
@@ -24,48 +22,6 @@ import {
 import { graphql } from 'relay-runtime'
 import { appSidebarFragment$key } from './__generated__/appSidebarFragment.graphql'
 import { useFragment } from 'react-relay'
-
-const navMain: Array<{
-  title: string
-  link: ValidateLinkOptions
-  icon?: LucideIcon
-  isActive?: boolean
-  items?: Array<{
-    title: string
-    link: ValidateLinkOptions
-  }>
-}> = [
-  {
-    title: 'Main',
-    link: {
-      to: '/',
-    },
-    icon: SquareTerminal,
-    isActive: true,
-    items: [
-      {
-        title: 'Home',
-        link: { to: '/' },
-      },
-      {
-        title: 'New User',
-        link: { to: '/household/new' },
-      },
-      {
-        title: 'Household',
-        link: { to: '/household' },
-      },
-      {
-        title: 'Accounts',
-        link: { to: '/household/$householdId/accounts' },
-      },
-      {
-        title: 'Investments',
-        link: { to: '/household/$householdId/investments' },
-      },
-    ],
-  },
-]
 
 const projects: Array<{
   name: string

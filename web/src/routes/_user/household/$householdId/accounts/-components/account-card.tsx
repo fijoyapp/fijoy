@@ -1,4 +1,3 @@
-import { BadgeCheckIcon, ChevronRightIcon, PiggyBankIcon } from 'lucide-react'
 import { graphql } from 'relay-runtime'
 import { useFragment } from 'react-relay'
 import { Link } from '@tanstack/react-router'
@@ -6,14 +5,13 @@ import type { accountCardFragment$key } from './__generated__/accountCardFragmen
 import { cn } from '@/lib/utils'
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
   ItemMedia,
   ItemTitle,
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
-import { getFormattedDate, getPrettyTime } from '@/lib/time'
+import { getPrettyTime } from '@/lib/time'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoDomainURL } from '@/lib/logo'
 
