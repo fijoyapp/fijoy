@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f60f486352c4a0d896c9045dbe8e0f1>>
+ * @generated SignedSource<<5407817f4d8e36bb89d26e0e948f79c9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,6 +45,63 @@ v1 = [
     "kind": "Variable",
     "name": "first",
     "variableName": "count"
+  }
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "total",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "transactionCount",
+  "storageKey": null
+},
+v5 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "categoryType",
+    "storageKey": null
+  },
+  (v3/*: any*/),
+  (v4/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "CategoryAggregate",
+    "kind": "LinkedField",
+    "name": "categories",
+    "plural": true,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "TransactionCategory",
+        "kind": "LinkedField",
+        "name": "category",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/)
+        ],
+        "storageKey": null
+      },
+      (v3/*: any*/),
+      (v4/*: any*/)
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -104,13 +161,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -211,6 +262,26 @@ return {
             "kind": "ScalarField",
             "name": "totalExpenses",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "CategoryTypeAggregate",
+            "kind": "LinkedField",
+            "name": "incomeByCategoryType",
+            "plural": true,
+            "selections": (v5/*: any*/),
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "CategoryTypeAggregate",
+            "kind": "LinkedField",
+            "name": "expensesByCategoryType",
+            "plural": true,
+            "selections": (v5/*: any*/),
+            "storageKey": null
           }
         ],
         "storageKey": "financialReport(period:{\"preset\":\"ALL_TIME\"})"
@@ -218,16 +289,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2ff105a8886ad1251ac54fb2177157a6",
+    "cacheID": "f29a918482dd89deda72cbd331c7fd2f",
     "id": null,
     "metadata": {},
     "name": "categoriesPanelRefetch",
     "operationKind": "query",
-    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...categoriesPanelFragment_1G22uz\n}\n\nfragment categoriesPanelFragment_1G22uz on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
+    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...categoriesPanelFragment_1G22uz\n}\n\nfragment categoriesPanelFragment_1G22uz on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n      categories {\n        category {\n          id\n        }\n        total\n        transactionCount\n      }\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n      categories {\n        category {\n          id\n        }\n        total\n        transactionCount\n      }\n    }\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dc4890e1975f5d2e6da09f1627c63957";
+(node as any).hash = "524391f467768a074b39397060efb2ae";
 
 export default node;

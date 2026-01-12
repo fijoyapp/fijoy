@@ -48,6 +48,30 @@ const CategoriesPanelFragment = graphql`
     financialReport(period: { preset: ALL_TIME }) {
       totalIncome
       totalExpenses
+      incomeByCategoryType {
+        categoryType
+        total
+        transactionCount
+        categories {
+          category {
+            id
+          }
+          total
+          transactionCount
+        }
+      }
+      expensesByCategoryType {
+        categoryType
+        total
+        transactionCount
+        categories {
+          category {
+            id
+          }
+          total
+          transactionCount
+        }
+      }
     }
   }
 `
@@ -86,6 +110,45 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
           ? 'Unavailable'
           : `${((netAmount.value / income.value) * 100).toFixed(2)}%`,
     }
+  }, [data.financialReport])
+
+  // Build maps for category type and individual category aggregates
+  const { categoryTypeMap, categoryAggregateMap } = useMemo(() => {
+    const typeMap = new Map<string, { total: string; count: number }>()
+    const aggMap = new Map<
+      string,
+      { total: string; count: number }
+    >()
+
+    // Process income categories
+    data.financialReport.incomeByCategoryType.forEach((agg) => {
+      typeMap.set(agg.categoryType, {
+        total: agg.total,
+        count: agg.transactionCount,
+      })
+      agg.categories.forEach((cat) => {
+        aggMap.set(cat.category.id, {
+          total: cat.total,
+          count: cat.transactionCount,
+        })
+      })
+    })
+
+    // Process expense categories
+    data.financialReport.expensesByCategoryType.forEach((agg) => {
+      typeMap.set(agg.categoryType, {
+        total: agg.total,
+        count: agg.transactionCount,
+      })
+      agg.categories.forEach((cat) => {
+        aggMap.set(cat.category.id, {
+          total: cat.total,
+          count: cat.transactionCount,
+        })
+      })
+    })
+
+    return { categoryTypeMap: typeMap, categoryAggregateMap: aggMap }
   }, [data.financialReport])
 
   return (
@@ -142,19 +205,36 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
             return null
           }
           const categories = groupedCategories[type]
+          const typeAggregate = categoryTypeMap.get(type)
           return (
             <AccordionItem value={type} key={type}>
               <AccordionTrigger className="justify-normal **:data-[slot=accordion-trigger-icon]:ml-0 gap-2 hover:no-underline cursor-pointer">
                 <span>{capitalize(type)}</span>
+                <span className="grow"></span>
+                {typeAggregate && (
+                  <span className="mr-3 font-mono">
+                    {formatCurrencyWithPrivacyMode({
+                      value: currency(typeAggregate.total),
+                      currencyCode: household.currency.code,
+                    })}
+                  </span>
+                )}
               </AccordionTrigger>
               <AccordionContent className="pb-1">
                 <ItemGroup className="gap-0">
                   {categories.map((category) => {
                     invariant(category?.node, 'Category node is null')
+                    const categoryAggregate = categoryAggregateMap.get(
+                      category.node.id,
+                    )
                     return (
                       <Fragment key={category.node.id}>
                         <ItemSeparator className="my-1" />
-                        <CategoryCard fragmentRef={category.node} />
+                        <CategoryCard
+                          fragmentRef={category.node}
+                          total={categoryAggregate?.total}
+                          transactionCount={categoryAggregate?.count}
+                        />
                       </Fragment>
                     )
                   })}

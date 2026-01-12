@@ -9,12 +9,21 @@ import {
   WrenchIcon,
 } from 'lucide-react'
 import { match } from 'ts-pattern'
+import currency from 'currency.js'
 import type {
   TransactionCategoryType,
   categoryCardFragment$key,
 } from './__generated__/categoryCardFragment.graphql'
 import { cn } from '@/lib/utils'
-import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/item'
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item'
+import { useCurrency } from '@/hooks/use-currency'
+import { useHousehold } from '@/hooks/use-household'
 
 const categoryCardFragment = graphql`
   fragment categoryCardFragment on TransactionCategory {
@@ -26,10 +35,18 @@ const categoryCardFragment = graphql`
 
 type CategoryCardProps = {
   fragmentRef: categoryCardFragment$key
+  total?: string
+  transactionCount?: number
 }
 
-export function CategoryCard({ fragmentRef }: CategoryCardProps) {
+export function CategoryCard({
+  fragmentRef,
+  total,
+  transactionCount,
+}: CategoryCardProps) {
   const data = useFragment(categoryCardFragment, fragmentRef)
+  const { formatCurrencyWithPrivacyMode } = useCurrency()
+  const { household } = useHousehold()
 
   return (
     <Item
@@ -51,6 +68,28 @@ export function CategoryCard({ fragmentRef }: CategoryCardProps) {
                   {data.name}
                 </ItemTitle>
               </ItemContent>
+              {total && (
+                <ItemContent className="items-end gap-px">
+                  <ItemTitle className="font-mono">
+                    <span>
+                      {formatCurrencyWithPrivacyMode({
+                        value: currency(total),
+                        currencyCode: household.currency.code,
+                      })}
+                    </span>
+                  </ItemTitle>
+                  {transactionCount !== undefined && (
+                    <ItemDescription>
+                      <span>
+                        {transactionCount}{' '}
+                        {transactionCount === 1
+                          ? 'transaction'
+                          : 'transactions'}
+                      </span>
+                    </ItemDescription>
+                  )}
+                </ItemContent>
+              )}
             </>
           )}
         </Link>
