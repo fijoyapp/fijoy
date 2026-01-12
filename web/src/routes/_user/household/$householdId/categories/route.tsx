@@ -69,44 +69,17 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const queryRef = Route.useRouteContext()
-  const search = Route.useSearch()
 
   const data = usePreloadedQuery<CategoriesQuery>(categoriesQuery, queryRef)
 
   const duelPaneDisplay = useDualPaneDisplay()
-
-  // Get dates from URL (already has defaults from schema)
-  const start = search.start
-  const end = search.end
-
-  // Convert to ISO for display
-  let startISO = ''
-  let endISO = ''
-  try {
-    startISO = parseISO(start).toISOString()
-    endISO = parseISO(end).toISOString()
-  } catch {
-    // Fallback to defaults if parsing fails
-    const range = getDateRangeForPreset(DATE_RANGE_PRESETS.THIS_MONTH)
-    if (range) {
-      const isoRange = dateRangeToISO(range)
-      if (isoRange) {
-        startISO = isoRange.startDate
-        endISO = isoRange.endDate
-      }
-    }
-  }
 
   return (
     <Fragment>
       {duelPaneDisplay ? (
         <div className="flex h-[calc(100vh-48px)]">
           <ScrollArea className="flex-1 overflow-y-auto p-4">
-            <CategoriesPanel
-              fragmentRef={data}
-              startDate={startISO}
-              endDate={endISO}
-            />
+            <CategoriesPanel fragmentRef={data} />
           </ScrollArea>
           <Separator orientation="vertical" className="w-px" />
           <ScrollArea
