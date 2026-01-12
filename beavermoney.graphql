@@ -30,6 +30,12 @@ input CreateInvestmentInputCustom {
 type Mutation {
   createAccount(input: CreateAccountInput!): AccountEdge!
   createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
+  createCategory(input: CreateCategoryInput!): TransactionCategoryEdge!
+}
+
+input CreateCategoryInput {
+  name: String!
+  type: TransactionCategoryType!
 }
 
 type FinancialReport {
