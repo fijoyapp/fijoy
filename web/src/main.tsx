@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+import PullToRefresh from 'pulltorefreshjs'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
@@ -24,6 +25,16 @@ declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router
   }
+}
+
+const standalone = window.matchMedia('(display-mode: standalone)').matches
+
+if (standalone) {
+  PullToRefresh.init({
+    onRefresh() {
+      window.location.reload()
+    },
+  })
 }
 
 // Render the app
