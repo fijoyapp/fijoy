@@ -86,43 +86,35 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
 
   return (
     <Fragment>
-      <div className="flex">
-        <Item variant="outline" className="">
-          <ItemContent>
-            <ItemDescription>Total Investment</ItemDescription>
-            <ItemTitle className="text-2xl">
-              {formatCurrencyWithPrivacyMode({
-                value: totalInvestment,
-                currencyCode: household.currency.code,
-              })}
-            </ItemTitle>
-          </ItemContent>
-        </Item>
-        <div className="px-1"></div>
-        <div className="flex flex-col items-stretch w-10">
+      <div className="flex flex-col absolute bottom-4 right-4 gap-2">
+        <Button
+          variant="outline"
+          nativeButton={false}
+          className="size-10 rounded-full"
+          render={<RefreshCwIcon />}
+        />
+        <Link
+          from={'/household/$householdId/investments'}
+          to={'/household/$householdId/investments/new'}
+        >
           <Button
             nativeButton={false}
-            size="icon-lg"
-            className="flex-1 w-full cursor-pointer"
-            render={
-              <Link
-                from="/household/$householdId/investments"
-                to="/household/$householdId/investments/new"
-              >
-                <PlusIcon />
-              </Link>
-            }
-          ></Button>
-          <div className="py-1"></div>
-          <Button
-            size="icon-lg"
-            variant="secondary"
-            className="flex-1 w-full cursor-pointer"
-          >
-            <RefreshCwIcon />
-          </Button>
-        </div>
+            className="size-10 rounded-full"
+            render={<PlusIcon />}
+          />
+        </Link>
       </div>
+      <Item variant="outline" className="">
+        <ItemContent>
+          <ItemDescription>Total Investment</ItemDescription>
+          <ItemTitle className="text-2xl">
+            {formatCurrencyWithPrivacyMode({
+              value: totalInvestment,
+              currencyCode: household.currency.code,
+            })}
+          </ItemTitle>
+        </ItemContent>
+      </Item>
       <div className="py-2"></div>
       <Accordion
         multiple
