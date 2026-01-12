@@ -34,171 +34,40 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 
 // TotalIncome is the resolver for the totalIncome field.
 func (r *financialReportResolver) TotalIncome(ctx context.Context, obj *FinancialReport) (string, error) {
-	householdID := contextkeys.GetHouseholdID(ctx)
-	client := r.entClient
-
-	// Get household currency
-	hh, err := client.Household.Query().
-		Where(household.IDEQ(householdID)).
-		WithCurrency().
-		Only(ctx)
+	aggregates, err := r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeIncome)
 	if err != nil {
-		r.logger.Error("Failed to get household", "error", err)
 		return "0", err
 	}
 
-	// Query grouped by currency
-	var res []struct {
-		CurrencyCode string          `sql:"currency_code"`
-		Total        decimal.Decimal `sql:"total"`
-	}
-
-	err = client.Transaction.Query().
-		Modify(func(s *sql.Selector) {
-			te := sql.Table(transactionentry.Table)
-			tc := sql.Table(transactioncategory.Table)
-			cu := sql.Table(currency.Table)
-
-			// Join tables
-			s.Join(te).On(s.C(transaction.FieldID), te.C(transactionentry.TransactionColumn))
-			s.Join(tc).On(s.C(transaction.CategoryColumn), tc.C(transactioncategory.FieldID))
-			s.Join(cu).On(te.C(transactionentry.CurrencyColumn), cu.C(currency.FieldID))
-
-			// Filter by household
-			s.Where(sql.EQ(s.C(transaction.FieldHouseholdID), householdID))
-
-			// Apply time filters
-			if !obj.StartDate.IsZero() {
-				s.Where(sql.GTE(s.C(transaction.FieldDatetime), obj.StartDate))
-			}
-			if !obj.EndDate.IsZero() {
-				s.Where(sql.LT(s.C(transaction.FieldDatetime), obj.EndDate))
-			}
-
-			// Filter for income category type
-			s.Where(sql.EQ(tc.C(transactioncategory.FieldType), transactioncategory.TypeIncome))
-
-			// Group by currency and sum
-			s.Select(
-				sql.As(cu.C(currency.FieldCode), "currency_code"),
-				sql.As(sql.Sum(te.C(transactionentry.FieldAmount)), "total"),
-			)
-			s.GroupBy(cu.C(currency.FieldCode))
-		}).
-		Scan(ctx, &res)
-
-	if err != nil {
-		r.logger.Error("Failed to calculate total income", "error", err)
-		return "0", err
-	}
-
-	if len(res) == 0 {
+	if len(aggregates) == 0 {
 		return "0", nil
 	}
 
-	// Convert each currency sum to household currency and sum them up
-	total := decimal.NewFromInt(0)
-	for _, currencySum := range res {
-		rate, err := r.fxrateClient.GetRate(ctx, currencySum.CurrencyCode, hh.Edges.Currency.Code, time.Now())
-		if err != nil {
-			r.logger.Error("Failed to get FX rate", "error", err, "from", currencySum.CurrencyCode, "to", hh.Edges.Currency.Code)
-			return "0", err
-		}
-		total = total.Add(currencySum.Total.Mul(rate))
-	}
-
-	return total.String(), nil
+	return aggregates[0].Total, nil
 }
 
 // TotalExpenses is the resolver for the totalExpenses field.
 func (r *financialReportResolver) TotalExpenses(ctx context.Context, obj *FinancialReport) (string, error) {
-	householdID := contextkeys.GetHouseholdID(ctx)
-	client := r.entClient
-
-	// Get household currency
-	hh, err := client.Household.Query().
-		Where(household.IDEQ(householdID)).
-		WithCurrency().
-		Only(ctx)
+	aggregates, err := r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeExpense)
 	if err != nil {
-		r.logger.Error("Failed to get household", "error", err)
 		return "0", err
 	}
 
-	// Query grouped by currency
-	var res []struct {
-		CurrencyCode string          `sql:"currency_code"`
-		Total        decimal.Decimal `sql:"total"`
-	}
-
-	err = client.Transaction.Query().
-		Modify(func(s *sql.Selector) {
-			te := sql.Table(transactionentry.Table)
-			tc := sql.Table(transactioncategory.Table)
-			cu := sql.Table(currency.Table)
-
-			// Join tables
-			s.Join(te).On(s.C(transaction.FieldID), te.C(transactionentry.TransactionColumn))
-			s.Join(tc).On(s.C(transaction.CategoryColumn), tc.C(transactioncategory.FieldID))
-			s.Join(cu).On(te.C(transactionentry.CurrencyColumn), cu.C(currency.FieldID))
-
-			// Filter by household
-			s.Where(sql.EQ(s.C(transaction.FieldHouseholdID), householdID))
-
-			// Apply time filters
-			if !obj.StartDate.IsZero() {
-				s.Where(sql.GTE(s.C(transaction.FieldDatetime), obj.StartDate))
-			}
-			if !obj.EndDate.IsZero() {
-				s.Where(sql.LT(s.C(transaction.FieldDatetime), obj.EndDate))
-			}
-
-			// Filter for expense category type
-			s.Where(sql.EQ(tc.C(transactioncategory.FieldType), transactioncategory.TypeExpense))
-
-			// Group by currency and sum
-			s.Select(
-				sql.As(cu.C(currency.FieldCode), "currency_code"),
-				sql.As(sql.Sum(te.C(transactionentry.FieldAmount)), "total"),
-			)
-			s.GroupBy(cu.C(currency.FieldCode))
-		}).
-		Scan(ctx, &res)
-
-	if err != nil {
-		r.logger.Error("Failed to calculate total expenses", "error", err)
-		return "0", err
-	}
-
-	if len(res) == 0 {
+	if len(aggregates) == 0 {
 		return "0", nil
 	}
 
-	// Convert each currency sum to household currency and sum them up
-	// Take absolute value since expenses are stored as negative
-	total := decimal.NewFromInt(0)
-	for _, currencySum := range res {
-		rate, err := r.fxrateClient.GetRate(ctx, currencySum.CurrencyCode, hh.Edges.Currency.Code, time.Now())
-		if err != nil {
-			r.logger.Error("Failed to get FX rate", "error", err, "from", currencySum.CurrencyCode, "to", hh.Edges.Currency.Code)
-			return "0", err
-		}
-		total = total.Add(currencySum.Total.Mul(rate))
-	}
-
-	return total.Abs().String(), nil
+	return aggregates[0].Total, nil
 }
 
 // IncomeByCategoryType is the resolver for the incomeByCategoryType field.
 func (r *financialReportResolver) IncomeByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
-	// TODO: Implement detailed breakdown by category
-	return []*CategoryTypeAggregate{}, nil
+	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeIncome)
 }
 
 // ExpensesByCategoryType is the resolver for the expensesByCategoryType field.
 func (r *financialReportResolver) ExpensesByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
-	// TODO: Implement detailed breakdown by category
-	return []*CategoryTypeAggregate{}, nil
+	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeExpense)
 }
 
 // TransactionCount is the resolver for the transactionCount field.
@@ -227,6 +96,147 @@ func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *Fin
 	}
 
 	return count, nil
+}
+
+// aggregateByCategoryType is a helper function that aggregates transactions by category
+func (r *financialReportResolver) aggregateByCategoryType(ctx context.Context, obj *FinancialReport, categoryType transactioncategory.Type) ([]*CategoryTypeAggregate, error) {
+	householdID := contextkeys.GetHouseholdID(ctx)
+	client := r.entClient
+
+	// Get household currency
+	hh, err := client.Household.Query().
+		Where(household.IDEQ(householdID)).
+		WithCurrency().
+		Only(ctx)
+	if err != nil {
+		r.logger.Error("Failed to get household", "error", err)
+		return nil, err
+	}
+
+	// Query grouped by category and currency
+	var res []struct {
+		CategoryID   int             `sql:"category_id"`
+		CurrencyCode string          `sql:"currency_code"`
+		Total        decimal.Decimal `sql:"total"`
+		Count        int             `sql:"count"`
+	}
+
+	err = client.Transaction.Query().
+		Modify(func(s *sql.Selector) {
+			te := sql.Table(transactionentry.Table)
+			tc := sql.Table(transactioncategory.Table)
+			cu := sql.Table(currency.Table)
+
+			// Join tables
+			s.Join(te).On(s.C(transaction.FieldID), te.C(transactionentry.TransactionColumn))
+			s.Join(tc).On(s.C(transaction.CategoryColumn), tc.C(transactioncategory.FieldID))
+			s.Join(cu).On(te.C(transactionentry.CurrencyColumn), cu.C(currency.FieldID))
+
+			// Filter by household
+			s.Where(sql.EQ(s.C(transaction.FieldHouseholdID), householdID))
+
+			// Apply time filters
+			if !obj.StartDate.IsZero() {
+				s.Where(sql.GTE(s.C(transaction.FieldDatetime), obj.StartDate))
+			}
+			if !obj.EndDate.IsZero() {
+				s.Where(sql.LT(s.C(transaction.FieldDatetime), obj.EndDate))
+			}
+
+			// Filter for category type
+			s.Where(sql.EQ(tc.C(transactioncategory.FieldType), categoryType))
+
+			// Group by category and currency and sum
+			s.Select(
+				sql.As(tc.C(transactioncategory.FieldID), "category_id"),
+				sql.As(cu.C(currency.FieldCode), "currency_code"),
+				sql.As(sql.Sum(te.C(transactionentry.FieldAmount)), "total"),
+				sql.As(sql.Count(sql.Distinct(s.C(transaction.FieldID))), "count"),
+			)
+			s.GroupBy(tc.C(transactioncategory.FieldID), cu.C(currency.FieldCode))
+		}).
+		Scan(ctx, &res)
+
+	if err != nil {
+		r.logger.Error("Failed to aggregate by category", "error", err, "categoryType", categoryType)
+		return nil, err
+	}
+
+	if len(res) == 0 {
+		return []*CategoryTypeAggregate{}, nil
+	}
+
+	// Aggregate by category (converting currencies)
+	type categoryData struct {
+		total decimal.Decimal
+		count int
+	}
+	categoryMap := make(map[int]*categoryData)
+
+	for _, row := range res {
+		rate, err := r.fxrateClient.GetRate(ctx, row.CurrencyCode, hh.Edges.Currency.Code, time.Now())
+		if err != nil {
+			r.logger.Error("Failed to get FX rate", "error", err, "from", row.CurrencyCode, "to", hh.Edges.Currency.Code)
+			return nil, err
+		}
+
+		convertedTotal := row.Total.Mul(rate)
+
+		if existing, ok := categoryMap[row.CategoryID]; ok {
+			existing.total = existing.total.Add(convertedTotal)
+			existing.count += row.Count
+		} else {
+			categoryMap[row.CategoryID] = &categoryData{
+				total: convertedTotal,
+				count: row.Count,
+			}
+		}
+	}
+
+	// Load category entities and build CategoryAggregate objects
+	categoryIDs := make([]int, 0, len(categoryMap))
+	for catID := range categoryMap {
+		categoryIDs = append(categoryIDs, catID)
+	}
+
+	categories, err := client.TransactionCategory.Query().
+		Where(transactioncategory.IDIn(categoryIDs...)).
+		All(ctx)
+	if err != nil {
+		r.logger.Error("Failed to load categories", "error", err)
+		return nil, err
+	}
+
+	// Build CategoryAggregate list
+	categoryAggregates := make([]*CategoryAggregate, 0, len(categories))
+	grandTotal := decimal.NewFromInt(0)
+	grandCount := 0
+
+	for _, cat := range categories {
+		data := categoryMap[cat.ID]
+		total := data.total
+		if categoryType == transactioncategory.TypeExpense {
+			total = total.Abs()
+		}
+
+		categoryAggregates = append(categoryAggregates, &CategoryAggregate{
+			Category:         cat,
+			Total:            total.String(),
+			TransactionCount: data.count,
+		})
+
+		grandTotal = grandTotal.Add(total)
+		grandCount += data.count
+	}
+
+	return []*CategoryTypeAggregate{
+		{
+			CategoryType:     categoryType,
+			Total:            grandTotal.String(),
+			TransactionCount: grandCount,
+			Categories:       categoryAggregates,
+		},
+	}, nil
 }
 
 // ValueInHouseholdCurrency is the resolver for the valueInHouseholdCurrency field.
