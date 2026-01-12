@@ -13,7 +13,9 @@ import (
 	"beavermoney.app/ent"
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
+	"beavermoney.app/ent/transactionentry"
 	"beavermoney.app/internal/contextkeys"
 	"beavermoney.app/internal/gqlutil"
 	"entgo.io/ent/dialect/sql"
@@ -32,27 +34,199 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 
 // TotalIncome is the resolver for the totalIncome field.
 func (r *financialReportResolver) TotalIncome(ctx context.Context, obj *FinancialReport) (string, error) {
-	panic(fmt.Errorf("not implemented: TotalIncome - totalIncome"))
+	householdID := contextkeys.GetHouseholdID(ctx)
+	client := r.entClient
+
+	// Get household currency
+	hh, err := client.Household.Query().
+		Where(household.IDEQ(householdID)).
+		WithCurrency().
+		Only(ctx)
+	if err != nil {
+		r.logger.Error("Failed to get household", "error", err)
+		return "0", err
+	}
+
+	// Query grouped by currency
+	var res []struct {
+		CurrencyCode string          `sql:"currency_code"`
+		Total        decimal.Decimal `sql:"total"`
+	}
+
+	err = client.Transaction.Query().
+		Modify(func(s *sql.Selector) {
+			te := sql.Table(transactionentry.Table)
+			tc := sql.Table(transactioncategory.Table)
+			cu := sql.Table(currency.Table)
+
+			// Join tables
+			s.Join(te).On(s.C(transaction.FieldID), te.C(transactionentry.TransactionColumn))
+			s.Join(tc).On(s.C(transaction.CategoryColumn), tc.C(transactioncategory.FieldID))
+			s.Join(cu).On(te.C(transactionentry.CurrencyColumn), cu.C(currency.FieldID))
+
+			// Filter by household
+			s.Where(sql.EQ(s.C(transaction.FieldHouseholdID), householdID))
+
+			// Apply time filters
+			if !obj.StartDate.IsZero() {
+				s.Where(sql.GTE(s.C(transaction.FieldDatetime), obj.StartDate))
+			}
+			if !obj.EndDate.IsZero() {
+				s.Where(sql.LT(s.C(transaction.FieldDatetime), obj.EndDate))
+			}
+
+			// Filter for income category type
+			s.Where(sql.EQ(tc.C(transactioncategory.FieldType), transactioncategory.TypeIncome))
+
+			// Group by currency and sum
+			s.Select(
+				sql.As(cu.C(currency.FieldCode), "currency_code"),
+				sql.As(sql.Sum(te.C(transactionentry.FieldAmount)), "total"),
+			)
+			s.GroupBy(cu.C(currency.FieldCode))
+		}).
+		Scan(ctx, &res)
+
+	if err != nil {
+		r.logger.Error("Failed to calculate total income", "error", err)
+		return "0", err
+	}
+
+	if len(res) == 0 {
+		return "0", nil
+	}
+
+	// Convert each currency sum to household currency and sum them up
+	total := decimal.NewFromInt(0)
+	for _, currencySum := range res {
+		rate, err := r.fxrateClient.GetRate(ctx, currencySum.CurrencyCode, hh.Edges.Currency.Code, time.Now())
+		if err != nil {
+			r.logger.Error("Failed to get FX rate", "error", err, "from", currencySum.CurrencyCode, "to", hh.Edges.Currency.Code)
+			return "0", err
+		}
+		total = total.Add(currencySum.Total.Mul(rate))
+	}
+
+	return total.String(), nil
 }
 
 // TotalExpenses is the resolver for the totalExpenses field.
 func (r *financialReportResolver) TotalExpenses(ctx context.Context, obj *FinancialReport) (string, error) {
-	panic(fmt.Errorf("not implemented: TotalExpenses - totalExpenses"))
+	householdID := contextkeys.GetHouseholdID(ctx)
+	client := r.entClient
+
+	// Get household currency
+	hh, err := client.Household.Query().
+		Where(household.IDEQ(householdID)).
+		WithCurrency().
+		Only(ctx)
+	if err != nil {
+		r.logger.Error("Failed to get household", "error", err)
+		return "0", err
+	}
+
+	// Query grouped by currency
+	var res []struct {
+		CurrencyCode string          `sql:"currency_code"`
+		Total        decimal.Decimal `sql:"total"`
+	}
+
+	err = client.Transaction.Query().
+		Modify(func(s *sql.Selector) {
+			te := sql.Table(transactionentry.Table)
+			tc := sql.Table(transactioncategory.Table)
+			cu := sql.Table(currency.Table)
+
+			// Join tables
+			s.Join(te).On(s.C(transaction.FieldID), te.C(transactionentry.TransactionColumn))
+			s.Join(tc).On(s.C(transaction.CategoryColumn), tc.C(transactioncategory.FieldID))
+			s.Join(cu).On(te.C(transactionentry.CurrencyColumn), cu.C(currency.FieldID))
+
+			// Filter by household
+			s.Where(sql.EQ(s.C(transaction.FieldHouseholdID), householdID))
+
+			// Apply time filters
+			if !obj.StartDate.IsZero() {
+				s.Where(sql.GTE(s.C(transaction.FieldDatetime), obj.StartDate))
+			}
+			if !obj.EndDate.IsZero() {
+				s.Where(sql.LT(s.C(transaction.FieldDatetime), obj.EndDate))
+			}
+
+			// Filter for expense category type
+			s.Where(sql.EQ(tc.C(transactioncategory.FieldType), transactioncategory.TypeExpense))
+
+			// Group by currency and sum
+			s.Select(
+				sql.As(cu.C(currency.FieldCode), "currency_code"),
+				sql.As(sql.Sum(te.C(transactionentry.FieldAmount)), "total"),
+			)
+			s.GroupBy(cu.C(currency.FieldCode))
+		}).
+		Scan(ctx, &res)
+
+	if err != nil {
+		r.logger.Error("Failed to calculate total expenses", "error", err)
+		return "0", err
+	}
+
+	if len(res) == 0 {
+		return "0", nil
+	}
+
+	// Convert each currency sum to household currency and sum them up
+	// Take absolute value since expenses are stored as negative
+	total := decimal.NewFromInt(0)
+	for _, currencySum := range res {
+		rate, err := r.fxrateClient.GetRate(ctx, currencySum.CurrencyCode, hh.Edges.Currency.Code, time.Now())
+		if err != nil {
+			r.logger.Error("Failed to get FX rate", "error", err, "from", currencySum.CurrencyCode, "to", hh.Edges.Currency.Code)
+			return "0", err
+		}
+		total = total.Add(currencySum.Total.Mul(rate))
+	}
+
+	return total.Abs().String(), nil
 }
 
 // IncomeByCategoryType is the resolver for the incomeByCategoryType field.
 func (r *financialReportResolver) IncomeByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
-	panic(fmt.Errorf("not implemented: IncomeByCategoryType - incomeByCategoryType"))
+	// TODO: Implement detailed breakdown by category
+	return []*CategoryTypeAggregate{}, nil
 }
 
 // ExpensesByCategoryType is the resolver for the expensesByCategoryType field.
 func (r *financialReportResolver) ExpensesByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
-	panic(fmt.Errorf("not implemented: ExpensesByCategoryType - expensesByCategoryType"))
+	// TODO: Implement detailed breakdown by category
+	return []*CategoryTypeAggregate{}, nil
 }
 
 // TransactionCount is the resolver for the transactionCount field.
 func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *FinancialReport) (int, error) {
-	panic(fmt.Errorf("not implemented: TransactionCount - transactionCount"))
+	householdID := contextkeys.GetHouseholdID(ctx)
+	client := r.entClient
+
+	query := client.Transaction.Query().
+		Modify(func(s *sql.Selector) {
+			// Filter by household
+			s.Where(sql.EQ(s.C(transaction.FieldHouseholdID), householdID))
+
+			// Apply time filters
+			if !obj.StartDate.IsZero() {
+				s.Where(sql.GTE(s.C(transaction.FieldDatetime), obj.StartDate))
+			}
+			if !obj.EndDate.IsZero() {
+				s.Where(sql.LT(s.C(transaction.FieldDatetime), obj.EndDate))
+			}
+		})
+
+	count, err := query.Count(ctx)
+	if err != nil {
+		r.logger.Error("Failed to count transactions", "error", err)
+		return 0, err
+	}
+
+	return count, nil
 }
 
 // ValueInHouseholdCurrency is the resolver for the valueInHouseholdCurrency field.
@@ -287,7 +461,60 @@ func (r *queryResolver) EquityQuote(ctx context.Context, symbol string) (*Equity
 
 // FinancialReport is the resolver for the financialReport field.
 func (r *queryResolver) FinancialReport(ctx context.Context, period TimePeriodInput) (*FinancialReport, error) {
-	panic(fmt.Errorf("not implemented: FinancialReport - financialReport"))
+	// Parse time period
+	start, end := parseTimePeriod(period)
+
+	return &FinancialReport{
+		StartDate:   start,
+		EndDate:     end,
+	}, nil
+}
+
+// parseTimePeriod converts TimePeriodInput to start and end times
+func parseTimePeriod(period TimePeriodInput) (time.Time, time.Time) {
+	now := time.Now()
+
+	// If explicit dates provided, use those
+	if period.StartDate != nil && period.EndDate != nil {
+		return *period.StartDate, *period.EndDate
+	}
+
+	// Otherwise use preset
+	if period.Preset == nil {
+		// Default to all time
+		return time.Time{}, now
+	}
+
+	switch *period.Preset {
+	case TimePeriodPresetLast7Days:
+		return now.AddDate(0, 0, -7), now
+	case TimePeriodPresetLast30Days:
+		return now.AddDate(0, 0, -30), now
+	case TimePeriodPresetLast90Days:
+		return now.AddDate(0, 0, -90), now
+	case TimePeriodPresetThisMonth:
+		year, month, _ := now.Date()
+		start := time.Date(year, month, 1, 0, 0, 0, 0, now.Location())
+		return start, now
+	case TimePeriodPresetLastMonth:
+		year, month, _ := now.Date()
+		start := time.Date(year, month-1, 1, 0, 0, 0, 0, now.Location())
+		end := time.Date(year, month, 1, 0, 0, 0, 0, now.Location())
+		return start, end
+	case TimePeriodPresetThisYear:
+		year, _, _ := now.Date()
+		start := time.Date(year, 1, 1, 0, 0, 0, 0, now.Location())
+		return start, now
+	case TimePeriodPresetLastYear:
+		year, _, _ := now.Date()
+		start := time.Date(year-1, 1, 1, 0, 0, 0, 0, now.Location())
+		end := time.Date(year, 1, 1, 0, 0, 0, 0, now.Location())
+		return start, end
+	case TimePeriodPresetAllTime:
+		return time.Time{}, now
+	default:
+		return time.Time{}, now
+	}
 }
 
 // FinancialReport returns FinancialReportResolver implementation.
