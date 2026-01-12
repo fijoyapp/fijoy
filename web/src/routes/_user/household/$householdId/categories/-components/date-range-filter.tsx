@@ -65,30 +65,31 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
     return format(date, 'yyyy-MM-dd')
   }
 
-  const handlePresetChange = (preset: DateRangePreset) => {
+  const handlePresetChange = (value: string | null) => {
+    if (!value) return
+
+    const preset = value as DateRangePreset
     const range = getDateRangeForPreset(preset)
-    if (range) {
-      const start = formatDateForURL(range.startDate)
-      const end = formatDateForURL(range.endDate)
+    const start = formatDateForURL(range.startDate)
+    const end = formatDateForURL(range.endDate)
 
-      startTransition(async () => {
-        // Fetch the query and wait for it to complete (populates Relay store)
-        await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
-          startDate: parseISO(start).toISOString(),
-          endDate: parseISO(end).toISOString(),
-        }).toPromise()
+    startTransition(async () => {
+      // Fetch the query and wait for it to complete (populates Relay store)
+      await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
+        startDate: parseISO(start).toISOString(),
+        endDate: parseISO(end).toISOString(),
+      }).toPromise()
 
-        // Now navigate - the route loader will read from Relay store cache
-        navigate({
-          from: '/household/$householdId/categories',
-          to: '/household/$householdId/categories',
-          search: {
-            start,
-            end,
-          },
-        })
+      // Now navigate - the route loader will read from Relay store cache
+      navigate({
+        from: '/household/$householdId/categories',
+        to: '/household/$householdId/categories',
+        search: {
+          start,
+          end,
+        },
       })
-    }
+    })
   }
 
   const handleApply = () => {
@@ -111,7 +112,6 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
             start,
             end,
           },
-          replace: true,
         })
       })
       setIsCalendarOpen(false)
@@ -145,21 +145,19 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
       const currentStartStr = format(currentStart, 'yyyy-MM-dd')
       const currentEndStr = format(currentEnd, 'yyyy-MM-dd')
 
-      for (const [preset, label] of Object.entries(PRESET_LABELS)) {
-        const range = getDateRangeForPreset(preset as DateRangePreset)
-        if (range) {
+      const matchedPreset = Object.entries(PRESET_LABELS).find(
+        ([preset, _label]) => {
+          const range = getDateRangeForPreset(preset as DateRangePreset)
           const presetStart = formatDateForURL(range.startDate)
           const presetEnd = formatDateForURL(range.endDate)
-          if (currentStartStr === presetStart && currentEndStr === presetEnd) {
-            return label
-          }
-        }
-      }
+          return currentStartStr === presetStart && currentEndStr === presetEnd
+        },
+      )
+
+      return matchedPreset ? matchedPreset[1] : 'Custom'
     } catch {
       return 'Custom'
     }
-
-    return 'Custom'
   }
 
   return (
@@ -170,15 +168,13 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
             {formatDate(startDate)} - {formatDate(endDate)}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-auto p-0">
-            <div className="p-3">
-              <Calendar
-                mode="range"
-                selected={tempDateRange}
-                onSelect={setTempDateRange}
-                numberOfMonths={2}
-                disabled={(date) => date > new Date()}
-              />
-            </div>
+            <Calendar
+              mode="range"
+              selected={tempDateRange}
+              onSelect={setTempDateRange}
+              numberOfMonths={2}
+              disabled={(date) => date > new Date()}
+            />
             <div className="flex gap-2 p-3 pt-0">
               <Button
                 variant="outline"
@@ -204,7 +200,7 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
       </div>
 
       <Select value={getCurrentPreset()} onValueChange={handlePresetChange}>
-        <SelectTrigger className="w-36">
+        <SelectTrigger className="w-28">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
