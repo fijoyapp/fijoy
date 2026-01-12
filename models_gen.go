@@ -22,6 +22,11 @@ type CategoryTypeAggregate struct {
 	Categories       []*CategoryAggregate     `json:"categories"`
 }
 
+type CreateCategoryInput struct {
+	Name string                   `json:"name"`
+	Type transactioncategory.Type `json:"type"`
+}
+
 type CreateInvestmentInputCustom struct {
 	Input     *ent.CreateInvestmentInput `json:"input"`
 	CostBasis string                     `json:"costBasis"`

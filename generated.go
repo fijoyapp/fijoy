@@ -210,6 +210,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateAccount    func(childComplexity int, input ent.CreateAccountInput) int
+		CreateCategory   func(childComplexity int, input CreateCategoryInput) int
 		CreateInvestment func(childComplexity int, input CreateInvestmentInputCustom) int
 	}
 
@@ -360,6 +361,7 @@ type LotResolver interface {
 type MutationResolver interface {
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error)
 	CreateInvestment(ctx context.Context, input CreateInvestmentInputCustom) (*ent.InvestmentEdge, error)
+	CreateCategory(ctx context.Context, input CreateCategoryInput) (*ent.TransactionCategoryEdge, error)
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
@@ -1095,6 +1097,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateAccount(childComplexity, args["input"].(ent.CreateAccountInput)), true
+	case "Mutation.createCategory":
+		if e.complexity.Mutation.CreateCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createCategory_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateCategory(childComplexity, args["input"].(CreateCategoryInput)), true
 	case "Mutation.createInvestment":
 		if e.complexity.Mutation.CreateInvestment == nil {
 			break
@@ -1659,6 +1672,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAccountWhereInput,
 		ec.unmarshalInputCreateAccountInput,
+		ec.unmarshalInputCreateCategoryInput,
 		ec.unmarshalInputCreateInvestmentInput,
 		ec.unmarshalInputCreateInvestmentInputCustom,
 		ec.unmarshalInputCreateLotInput,
@@ -1798,6 +1812,17 @@ func (ec *executionContext) field_Mutation_createAccount_args(ctx context.Contex
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateAccountInput2beavermoneyᚗappᚋentᚐCreateAccountInput)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createCategory_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateCategoryInput2beavermoneyᚗappᚐCreateCategoryInput)
 	if err != nil {
 		return nil, err
 	}
@@ -5755,6 +5780,53 @@ func (ec *executionContext) fieldContext_Mutation_createInvestment(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createInvestment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createCategory,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateCategory(ctx, fc.Args["input"].(CreateCategoryInput))
+		},
+		nil,
+		ec.marshalNTransactionCategoryEdge2ᚖbeavermoneyᚗappᚋentᚐTransactionCategoryEdge,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createCategory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_TransactionCategoryEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_TransactionCategoryEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type TransactionCategoryEdge", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createCategory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -11241,6 +11313,40 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.CurrencyID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateCategoryInput(ctx context.Context, obj any) (CreateCategoryInput, error) {
+	var it CreateCategoryInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "type"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNTransactionCategoryType2beavermoneyᚗappᚋentᚋtransactioncategoryᚐType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		}
 	}
 
@@ -18050,6 +18156,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createCategory":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createCategory(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20221,6 +20334,11 @@ func (ec *executionContext) unmarshalNCreateAccountInput2beavermoneyᚗappᚋent
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateCategoryInput2beavermoneyᚗappᚐCreateCategoryInput(ctx context.Context, v any) (CreateCategoryInput, error) {
+	res, err := ec.unmarshalInputCreateCategoryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateInvestmentInput2ᚖbeavermoneyᚗappᚋentᚐCreateInvestmentInput(ctx context.Context, v any) (*ent.CreateInvestmentInput, error) {
 	res, err := ec.unmarshalInputCreateInvestmentInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
@@ -20638,6 +20756,20 @@ func (ec *executionContext) marshalNTransactionCategoryConnection2ᚖbeavermoney
 		return graphql.Null
 	}
 	return ec._TransactionCategoryConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNTransactionCategoryEdge2beavermoneyᚗappᚋentᚐTransactionCategoryEdge(ctx context.Context, sel ast.SelectionSet, v ent.TransactionCategoryEdge) graphql.Marshaler {
+	return ec._TransactionCategoryEdge(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTransactionCategoryEdge2ᚖbeavermoneyᚗappᚋentᚐTransactionCategoryEdge(ctx context.Context, sel ast.SelectionSet, v *ent.TransactionCategoryEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._TransactionCategoryEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNTransactionCategoryType2beavermoneyᚗappᚋentᚋtransactioncategoryᚐType(ctx context.Context, v any) (transactioncategory.Type, error) {

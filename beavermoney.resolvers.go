@@ -301,6 +301,26 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 	}, nil
 }
 
+// CreateCategory is the resolver for the createCategory field.
+func (r *mutationResolver) CreateCategory(ctx context.Context, input CreateCategoryInput) (*ent.TransactionCategoryEdge, error) {
+	client := ent.FromContext(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	category, err := client.TransactionCategory.Create().
+		SetHouseholdID(householdID).
+		SetName(input.Name).
+		SetType(transactioncategory.Type(input.Type)).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ent.TransactionCategoryEdge{
+		Node:   category,
+		Cursor: gqlutil.EncodeCursor(category.ID),
+	}, nil
+}
+
 // FxRate is the resolver for the fxRate field.
 func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error) {
 	rate, err := r.fxrateClient.GetRate(ctx, from, to, datetime)
