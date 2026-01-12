@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5407817f4d8e36bb89d26e0e948f79c9>>
+ * @generated SignedSource<<c97108a51c3c11677c0e19e3b869a49a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -289,16 +289,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f29a918482dd89deda72cbd331c7fd2f",
+    "cacheID": "328f33b57cb05924e40389083df167d0",
     "id": null,
     "metadata": {},
     "name": "categoriesPanelRefetch",
     "operationKind": "query",
-    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...categoriesPanelFragment_1G22uz\n}\n\nfragment categoriesPanelFragment_1G22uz on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n      categories {\n        category {\n          id\n        }\n        total\n        transactionCount\n      }\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n      categories {\n        category {\n          id\n        }\n        total\n        transactionCount\n      }\n    }\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
+    "text": "query categoriesPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...categoriesPanelFragment_1G22uz\n}\n\nfragment categoriesPanelFragment_1G22uz on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "524391f467768a074b39397060efb2ae";
+(node as any).hash = "d7e8f09627bb180f9317eb0361910e9c";
 
 export default node;

@@ -10,10 +10,8 @@ import {
 } from 'lucide-react'
 import { match } from 'ts-pattern'
 import currency from 'currency.js'
-import type {
-  TransactionCategoryType,
-  categoryCardFragment$key,
-} from './__generated__/categoryCardFragment.graphql'
+import { useMemo } from 'react'
+import type { TransactionCategoryType } from './__generated__/categoryCardFragment.graphql'
 import { cn } from '@/lib/utils'
 import {
   Item,
@@ -24,29 +22,71 @@ import {
 } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
 import { useHousehold } from '@/hooks/use-household'
+import { categoryCardCategoryFragment$key } from './__generated__/categoryCardCategoryFragment.graphql'
+import { categoryCardFinancialReportFragment$key } from './__generated__/categoryCardFinancialReportFragment.graphql'
 
-const categoryCardFragment = graphql`
-  fragment categoryCardFragment on TransactionCategory {
+const categoryCardCategoryFragment = graphql`
+  fragment categoryCardCategoryFragment on TransactionCategory {
     id
     name
     type
   }
 `
 
+const categoryCardFinancialReportFragment = graphql`
+  fragment categoryCardFinancialReportFragment on FinancialReport {
+    incomeByCategoryType {
+      categories {
+        category {
+          id
+        }
+        total
+        transactionCount
+      }
+    }
+    expensesByCategoryType {
+      categories {
+        category {
+          id
+        }
+        total
+        transactionCount
+      }
+    }
+  }
+`
+
 type CategoryCardProps = {
-  fragmentRef: categoryCardFragment$key
-  total?: string
-  transactionCount?: number
+  categoryRef: categoryCardCategoryFragment$key
+  financialReportRef: categoryCardFinancialReportFragment$key
 }
 
 export function CategoryCard({
-  fragmentRef,
-  total,
-  transactionCount,
+  categoryRef,
+  financialReportRef,
 }: CategoryCardProps) {
-  const data = useFragment(categoryCardFragment, fragmentRef)
+  const category = useFragment(categoryCardCategoryFragment, categoryRef)
+  const financialReport = useFragment(
+    categoryCardFinancialReportFragment,
+    financialReportRef,
+  )
   const { formatCurrencyWithPrivacyMode } = useCurrency()
   const { household } = useHousehold()
+
+  // Look up this category's aggregate data
+  const { total, transactionCount } = useMemo(() => {
+    const categoryAgg = financialReport.incomeByCategoryType
+      .concat(financialReport.expensesByCategoryType)
+      .flatMap((typeAgg) => typeAgg.categories)
+      .find((c) => c.category.id === category.id)
+
+    return categoryAgg
+      ? {
+          total: categoryAgg.total,
+          transactionCount: categoryAgg.transactionCount,
+        }
+      : { total: undefined, transactionCount: undefined }
+  }, [financialReport, category.id])
 
   return (
     <Item
@@ -56,16 +96,16 @@ export function CategoryCard({
           from="/household/$householdId/"
           to="/household/$householdId/categories/$categoryId"
           activeOptions={{ exact: true }}
-          params={{ categoryId: data.id }}
+          params={{ categoryId: category.id }}
         >
           {({ isActive }) => (
             <>
               <ItemMedia variant="image" className="rounded-full">
-                {getCategoryTypeIcon({ type: data.type })}
+                {getCategoryTypeIcon({ type: category.type })}
               </ItemMedia>
               <ItemContent className="gap-px">
                 <ItemTitle className={cn(isActive && 'font-semibold')}>
-                  {data.name}
+                  {category.name}
                 </ItemTitle>
               </ItemContent>
               {total && (
