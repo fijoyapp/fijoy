@@ -128,7 +128,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         <Item variant="outline" className="flex-1">
           <ItemContent>
             <ItemDescription>Total Income</ItemDescription>
-            <ItemTitle className="text-2xl">
+            <ItemTitle className="text-xl">
               {formatCurrencyWithPrivacyMode({
                 value: totalIncome,
                 currencyCode: household.currency.code,
@@ -139,7 +139,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         <Item variant="outline" className="flex-1">
           <ItemContent>
             <ItemDescription>Total Expenses</ItemDescription>
-            <ItemTitle className="text-2xl">
+            <ItemTitle className="text-xl">
               {formatCurrencyWithPrivacyMode({
                 value: totalExpenses,
                 currencyCode: household.currency.code,
@@ -150,7 +150,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         <Item variant="outline" className="flex-1">
           <ItemContent>
             <ItemDescription>Net</ItemDescription>
-            <ItemTitle className="text-2xl">
+            <ItemTitle className="text-xl">
               {formatCurrencyWithPrivacyMode({
                 value: net,
                 currencyCode: household.currency.code,
@@ -161,7 +161,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         <Item variant="outline" className="flex-1">
           <ItemContent>
             <ItemDescription>Saving Rate</ItemDescription>
-            <ItemTitle className="text-2xl">{savingRate}</ItemTitle>
+            <ItemTitle className="text-xl">{savingRate}</ItemTitle>
           </ItemContent>
         </Item>
       </div>
