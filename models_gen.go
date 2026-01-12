@@ -46,7 +46,7 @@ type FinancialReport struct {
 	ExpensesByCategoryType []*CategoryTypeAggregate `json:"expensesByCategoryType"`
 	TransactionCount       int                      `json:"transactionCount"`
 	StartDate              time.Time                `json:"startDate"`
-	EntDate                time.Time                `json:"entDate"`
+	EndDate                time.Time                `json:"endDate"`
 }
 
 type TimePeriodInput struct {

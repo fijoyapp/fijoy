@@ -215,7 +215,7 @@ type FinancialReport {
   expensesByCategoryType: [CategoryTypeAggregate!]!
   transactionCount: Int!
   startDate: Time!
-  entDate: Time!
+  endDate: Time!
 }
 
 type CategoryTypeAggregate {

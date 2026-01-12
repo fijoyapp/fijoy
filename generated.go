@@ -130,7 +130,7 @@ type ComplexityRoot struct {
 	}
 
 	FinancialReport struct {
-		EntDate                func(childComplexity int) int
+		EndDate                func(childComplexity int) int
 		ExpensesByCategoryType func(childComplexity int) int
 		IncomeByCategoryType   func(childComplexity int) int
 		StartDate              func(childComplexity int) int
@@ -746,12 +746,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.EquityQuoteResult.Symbol(childComplexity), true
 
-	case "FinancialReport.entDate":
-		if e.complexity.FinancialReport.EntDate == nil {
+	case "FinancialReport.endDate":
+		if e.complexity.FinancialReport.EndDate == nil {
 			break
 		}
 
-		return e.complexity.FinancialReport.EntDate(childComplexity), true
+		return e.complexity.FinancialReport.EndDate(childComplexity), true
 	case "FinancialReport.expensesByCategoryType":
 		if e.complexity.FinancialReport.ExpensesByCategoryType == nil {
 			break
@@ -3772,14 +3772,14 @@ func (ec *executionContext) fieldContext_FinancialReport_startDate(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _FinancialReport_entDate(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
+func (ec *executionContext) _FinancialReport_endDate(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_FinancialReport_entDate,
+		ec.fieldContext_FinancialReport_endDate,
 		func(ctx context.Context) (any, error) {
-			return obj.EntDate, nil
+			return obj.EndDate, nil
 		},
 		nil,
 		ec.marshalNTime2timeᚐTime,
@@ -3788,7 +3788,7 @@ func (ec *executionContext) _FinancialReport_entDate(ctx context.Context, field 
 	)
 }
 
-func (ec *executionContext) fieldContext_FinancialReport_entDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_FinancialReport_endDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FinancialReport",
 		Field:      field,
@@ -6533,8 +6533,8 @@ func (ec *executionContext) fieldContext_Query_financialReport(ctx context.Conte
 				return ec.fieldContext_FinancialReport_transactionCount(ctx, field)
 			case "startDate":
 				return ec.fieldContext_FinancialReport_startDate(ctx, field)
-			case "entDate":
-				return ec.fieldContext_FinancialReport_entDate(ctx, field)
+			case "endDate":
+				return ec.fieldContext_FinancialReport_endDate(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type FinancialReport", field.Name)
 		},
@@ -16875,8 +16875,8 @@ func (ec *executionContext) _FinancialReport(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "entDate":
-			out.Values[i] = ec._FinancialReport_entDate(ctx, field, obj)
+		case "endDate":
+			out.Values[i] = ec._FinancialReport_endDate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
