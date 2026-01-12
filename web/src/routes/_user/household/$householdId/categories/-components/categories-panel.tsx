@@ -45,18 +45,9 @@ const CategoriesPanelFragment = graphql`
         }
       }
     }
-    transactions {
-      edges {
-        node {
-          id
-          category {
-            type
-          }
-          transactionEntries {
-            amount
-          }
-        }
-      }
+    financialReport(period: { preset: ALL_TIME }) {
+      totalIncome
+      totalExpenses
     }
   }
 `
@@ -81,33 +72,21 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
   const { household } = useHousehold()
 
-  const { totalIncome, totalExpenses, net } = useMemo(() => {
-    let income = currency(0)
-    let expenses = currency(0)
-
-    data.transactions.edges?.forEach((edge) => {
-      invariant(edge?.node, 'Transaction node is null')
-      const transaction = edge.node
-
-      const categoryType = transaction.category.type
-
-      transaction.transactionEntries?.forEach((entry) => {
-        const amount = currency(entry.amount)
-
-        if (categoryType === 'income') {
-          income = income.add(amount)
-        } else if (categoryType === 'expense') {
-          expenses = expenses.add(amount.multiply(-1))
-        }
-      })
-    })
+  const { totalIncome, totalExpenses, net, savingRate } = useMemo(() => {
+    const income = currency(data.financialReport.totalIncome)
+    const expenses = currency(data.financialReport.totalExpenses)
+    const netAmount = income.subtract(expenses)
 
     return {
       totalIncome: income,
       totalExpenses: expenses,
-      net: income.subtract(expenses),
+      net: netAmount,
+      savingRate:
+        income.value === 0
+          ? 'Unavailable'
+          : `${((netAmount.value / income.value) * 100).toFixed(2)}%`,
     }
-  }, [data.transactions])
+  }, [data.financialReport])
 
   return (
     <Fragment>
@@ -148,11 +127,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         <Item variant="outline" className="flex-1">
           <ItemContent>
             <ItemDescription>Saving Rate</ItemDescription>
-            <ItemTitle className="text-2xl">
-              {totalIncome.value === 0
-                ? '0%'
-                : `${Math.round((net.value / totalIncome.value) * 100)}%`}
-            </ItemTitle>
+            <ItemTitle className="text-2xl">{savingRate}</ItemTitle>
           </ItemContent>
         </Item>
       </div>
