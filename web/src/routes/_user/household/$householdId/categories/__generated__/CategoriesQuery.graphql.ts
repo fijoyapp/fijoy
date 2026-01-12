@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6218c09f279dbb7610258a1be2e12917>>
+ * @generated SignedSource<<abbbde63844f6a465a03b0b0eb4026d6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -258,12 +258,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9f8230eec2bbacc5c093fdb446218a09",
+    "cacheID": "3b66c476f45bdf041058486b935b12a2",
     "id": null,
     "metadata": {},
     "name": "CategoriesQuery",
     "operationKind": "query",
-    "text": "query CategoriesQuery {\n  ...categoriesPanelFragment\n}\n\nfragment categoriesPanelFragment on Query {\n  transactionCategories(first: 20) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n      categories {\n        category {\n          id\n        }\n        total\n        transactionCount\n      }\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n      categories {\n        category {\n          id\n        }\n        total\n        transactionCount\n      }\n    }\n  }\n}\n\nfragment categoryCardFragment on TransactionCategory {\n  id\n  name\n  type\n}\n"
+    "text": "query CategoriesQuery {\n  ...categoriesPanelFragment\n}\n\nfragment categoriesPanelFragment on Query {\n  transactionCategories(first: 20) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {preset: ALL_TIME}) {\n    totalIncome\n    totalExpenses\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n"
   }
 };
 })();

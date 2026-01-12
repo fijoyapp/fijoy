@@ -41,7 +41,7 @@ const CategoriesPanelFragment = graphql`
         node {
           id
           type
-          ...categoryCardFragment
+          ...categoryCardCategoryFragment
         }
       }
     }
@@ -52,26 +52,13 @@ const CategoriesPanelFragment = graphql`
         categoryType
         total
         transactionCount
-        categories {
-          category {
-            id
-          }
-          total
-          transactionCount
-        }
       }
       expensesByCategoryType {
         categoryType
         total
         transactionCount
-        categories {
-          category {
-            id
-          }
-          total
-          transactionCount
-        }
       }
+      ...categoryCardFinancialReportFragment
     }
   }
 `
@@ -112,25 +99,15 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
     }
   }, [data.financialReport])
 
-  // Build maps for category type and individual category aggregates
-  const { categoryTypeMap, categoryAggregateMap } = useMemo(() => {
+  // Build map for category type aggregates
+  const categoryTypeMap = useMemo(() => {
     const typeMap = new Map<string, { total: string; count: number }>()
-    const aggMap = new Map<
-      string,
-      { total: string; count: number }
-    >()
 
     // Process income categories
     data.financialReport.incomeByCategoryType.forEach((agg) => {
       typeMap.set(agg.categoryType, {
         total: agg.total,
         count: agg.transactionCount,
-      })
-      agg.categories.forEach((cat) => {
-        aggMap.set(cat.category.id, {
-          total: cat.total,
-          count: cat.transactionCount,
-        })
       })
     })
 
@@ -140,15 +117,9 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         total: agg.total,
         count: agg.transactionCount,
       })
-      agg.categories.forEach((cat) => {
-        aggMap.set(cat.category.id, {
-          total: cat.total,
-          count: cat.transactionCount,
-        })
-      })
     })
 
-    return { categoryTypeMap: typeMap, categoryAggregateMap: aggMap }
+    return typeMap
   }, [data.financialReport])
 
   return (
@@ -224,16 +195,12 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
                 <ItemGroup className="gap-0">
                   {categories.map((category) => {
                     invariant(category?.node, 'Category node is null')
-                    const categoryAggregate = categoryAggregateMap.get(
-                      category.node.id,
-                    )
                     return (
                       <Fragment key={category.node.id}>
                         <ItemSeparator className="my-1" />
                         <CategoryCard
-                          fragmentRef={category.node}
-                          total={categoryAggregate?.total}
-                          transactionCount={categoryAggregate?.count}
+                          categoryRef={category.node}
+                          financialReportRef={data.financialReport}
                         />
                       </Fragment>
                     )

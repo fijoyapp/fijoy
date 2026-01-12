@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<854d38f2100f65f614634cea19edabcd>>
+ * @generated SignedSource<<f85b4e05e04ddec40b16224d529192c9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,38 +14,25 @@ import { FragmentRefs } from "relay-runtime";
 export type categoriesPanelFragment$data = {
   readonly financialReport: {
     readonly expensesByCategoryType: ReadonlyArray<{
-      readonly categories: ReadonlyArray<{
-        readonly category: {
-          readonly id: string;
-        };
-        readonly total: string;
-        readonly transactionCount: number;
-      }>;
       readonly categoryType: TransactionCategoryType;
       readonly total: string;
       readonly transactionCount: number;
     }>;
     readonly incomeByCategoryType: ReadonlyArray<{
-      readonly categories: ReadonlyArray<{
-        readonly category: {
-          readonly id: string;
-        };
-        readonly total: string;
-        readonly transactionCount: number;
-      }>;
       readonly categoryType: TransactionCategoryType;
       readonly total: string;
       readonly transactionCount: number;
     }>;
     readonly totalExpenses: string;
     readonly totalIncome: string;
+    readonly " $fragmentSpreads": FragmentRefs<"categoryCardFinancialReportFragment">;
   };
   readonly transactionCategories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
         readonly type: TransactionCategoryType;
-        readonly " $fragmentSpreads": FragmentRefs<"categoryCardFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"categoryCardCategoryFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -62,28 +49,7 @@ const node: ReaderFragment = (function(){
 var v0 = [
   "transactionCategories"
 ],
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "total",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "transactionCount",
-  "storageKey": null
-},
-v4 = [
+v1 = [
   {
     "alias": null,
     "args": null,
@@ -91,31 +57,18 @@ v4 = [
     "name": "categoryType",
     "storageKey": null
   },
-  (v2/*: any*/),
-  (v3/*: any*/),
   {
     "alias": null,
     "args": null,
-    "concreteType": "CategoryAggregate",
-    "kind": "LinkedField",
-    "name": "categories",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "TransactionCategory",
-        "kind": "LinkedField",
-        "name": "category",
-        "plural": false,
-        "selections": [
-          (v1/*: any*/)
-        ],
-        "storageKey": null
-      },
-      (v2/*: any*/),
-      (v3/*: any*/)
-    ],
+    "kind": "ScalarField",
+    "name": "total",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "transactionCount",
     "storageKey": null
   }
 ];
@@ -181,7 +134,13 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v1/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "id",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -192,7 +151,7 @@ return {
                 {
                   "args": null,
                   "kind": "FragmentSpread",
-                  "name": "categoryCardFragment"
+                  "name": "categoryCardCategoryFragment"
                 },
                 {
                   "alias": null,
@@ -279,7 +238,7 @@ return {
           "kind": "LinkedField",
           "name": "incomeByCategoryType",
           "plural": true,
-          "selections": (v4/*: any*/),
+          "selections": (v1/*: any*/),
           "storageKey": null
         },
         {
@@ -289,8 +248,13 @@ return {
           "kind": "LinkedField",
           "name": "expensesByCategoryType",
           "plural": true,
-          "selections": (v4/*: any*/),
+          "selections": (v1/*: any*/),
           "storageKey": null
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "categoryCardFinancialReportFragment"
         }
       ],
       "storageKey": "financialReport(period:{\"preset\":\"ALL_TIME\"})"
@@ -301,6 +265,6 @@ return {
 };
 })();
 
-(node as any).hash = "524391f467768a074b39397060efb2ae";
+(node as any).hash = "d7e8f09627bb180f9317eb0361910e9c";
 
 export default node;
