@@ -27,6 +27,9 @@ import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
 import { CATEGORY_TYPE_LIST } from '@/constant'
+import { Button } from '@/components/ui/button'
+import { Link } from '@tanstack/react-router'
+import { PlusIcon } from 'lucide-react'
 
 const CategoriesPanelFragment = graphql`
   fragment categoriesPanelFragment on Query
@@ -158,12 +161,30 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
             </ItemTitle>
           </ItemContent>
         </Item>
-        <Item variant="outline" className="flex-1">
-          <ItemContent>
-            <ItemDescription>Saving Rate</ItemDescription>
-            <ItemTitle className="text-xl">{savingRate}</ItemTitle>
-          </ItemContent>
-        </Item>
+        <div className="flex">
+          <Item variant="outline" className="flex-1">
+            <ItemContent>
+              <ItemDescription>Saving Rate</ItemDescription>
+              <ItemTitle className="text-xl">{savingRate}</ItemTitle>
+            </ItemContent>
+          </Item>
+          <div className="px-1"></div>
+          <div className="flex flex-col items-stretch w-10">
+            <Button
+              nativeButton={false}
+              size="icon-lg"
+              className="flex-1 w-full cursor-pointer"
+              render={
+                <Link
+                  from="/household/$householdId/categories"
+                  to="/household/$householdId/categories/new"
+                >
+                  <PlusIcon />
+                </Link>
+              }
+            ></Button>
+          </div>
+        </div>
       </div>
       <div className="py-2"></div>
       <Accordion
