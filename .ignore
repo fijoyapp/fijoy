@@ -10,3 +10,5 @@ web/src/routeTree.gen.ts
 web/pnpm-lock.yaml
 
 go.sum
+
+**/__generated__/**
