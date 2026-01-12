@@ -1,7 +1,8 @@
 import { useNavigate } from '@tanstack/react-router'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { useState, useTransition } from 'react'
 import type { DateRange } from 'react-day-picker'
+import { fetchQuery } from 'react-relay'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -22,6 +23,9 @@ import {
   getDateRangeForPreset,
   type DateRangePreset,
 } from '@/lib/date-range'
+import { environment } from '@/environment'
+import { categoriesQuery } from '../-categories-query'
+import type { CategoriesQuery } from '../__generated__/CategoriesQuery.graphql'
 
 const PRESET_LABELS: Record<DateRangePreset, string> = {
   [DATE_RANGE_PRESETS.LAST_7_DAYS]: 'Last 7 Days',
@@ -63,13 +67,23 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
   const handlePresetChange = (preset: DateRangePreset) => {
     const range = getDateRangeForPreset(preset)
     if (range) {
-      startTransition(() => {
+      const start = formatDateForURL(range.startDate)
+      const end = formatDateForURL(range.endDate)
+
+      startTransition(async () => {
+        // Fetch the query and wait for it to complete (populates Relay store)
+        await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
+          startDate: parseISO(start).toISOString(),
+          endDate: parseISO(end).toISOString(),
+        }).toPromise()
+
+        // Now navigate - the route loader will read from Relay store cache
         navigate({
           from: '/household/$householdId/categories',
           to: '/household/$householdId/categories',
           search: {
-            start: formatDateForURL(range.startDate),
-            end: formatDateForURL(range.endDate),
+            start,
+            end,
           },
         })
       })
@@ -78,13 +92,23 @@ export function DateRangeFilter({ startDate, endDate }: DateRangeFilterProps) {
 
   const handleApply = () => {
     if (tempDateRange?.from && tempDateRange?.to) {
-      startTransition(() => {
+      const start = formatDateForURL(tempDateRange.from)
+      const end = formatDateForURL(tempDateRange.to)
+
+      startTransition(async () => {
+        // Fetch the query and wait for it to complete (populates Relay store)
+        await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
+          startDate: parseISO(start).toISOString(),
+          endDate: parseISO(end).toISOString(),
+        }).toPromise()
+
+        // Now navigate - the route loader will read from Relay store cache
         navigate({
           from: '/household/$householdId/categories',
           to: '/household/$householdId/categories',
           search: {
-            start: formatDateForURL(tempDateRange.from),
-            end: formatDateForURL(tempDateRange.to),
+            start,
+            end,
           },
           replace: true,
         })
