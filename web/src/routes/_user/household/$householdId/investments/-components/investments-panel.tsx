@@ -90,7 +90,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         <Button
           variant="outline"
           nativeButton={false}
-          className="size-10 rounded-full"
+          className="size-12 rounded-full"
           render={<RefreshCwIcon />}
         />
         <Link
@@ -99,7 +99,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         >
           <Button
             nativeButton={false}
-            className="size-10 rounded-full"
+            className="size-12 rounded-full"
             render={<PlusIcon />}
           />
         </Link>

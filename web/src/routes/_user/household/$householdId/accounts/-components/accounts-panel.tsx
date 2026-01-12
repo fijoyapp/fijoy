@@ -87,7 +87,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         <Button
           variant="outline"
           nativeButton={false}
-          className="size-10 rounded-full"
+          className="size-12 rounded-full"
           render={<RefreshCwIcon />}
         />
         <Link

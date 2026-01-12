@@ -163,7 +163,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         >
           <Button
             nativeButton={false}
-            className="size-10 rounded-full"
+            className="size-12 rounded-full"
             render={<PlusIcon />}
           />
         </Link>
