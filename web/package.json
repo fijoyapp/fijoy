@@ -9,7 +9,7 @@
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier",
-    "check": "prettier --write . && eslint --fix"
+    "check": "prettier --write . && eslint --fix && tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -23,6 +23,7 @@
     "@tanstack/react-router": "^1.143.4",
     "@tanstack/react-router-devtools": "^1.143.4",
     "@tanstack/router-plugin": "^1.143.4",
+    "@tanstack/zod-adapter": "^1.147.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "currency.js": "^2.0.4",

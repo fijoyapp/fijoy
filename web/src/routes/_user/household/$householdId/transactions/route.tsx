@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import { Fragment } from 'react/jsx-runtime'
+import * as z from 'zod'
 import { TransactionsPanel } from './-components/transactions-panel'
 import { useDualPaneDisplay } from '@/hooks/use-screen-size'
 import { Separator } from '@/components/ui/separator'
@@ -9,16 +10,47 @@ import { PendingComponent } from '@/components/pending-component'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { transactionsQuery } from './-transactions-query'
 import { type TransactionsQuery } from './__generated__/TransactionsQuery.graphql'
+import {
+  getDateRangeForPreset,
+  DATE_RANGE_PRESETS,
+  parseDateRangeFromURL,
+} from '@/lib/date-range'
+import { format } from 'date-fns'
+import { zodValidator } from '@tanstack/zod-adapter'
+
+// Get default "This Month" dates
+const getDefaultDates = () => {
+  const range = getDateRangeForPreset(DATE_RANGE_PRESETS.THIS_MONTH)
+  return {
+    start: format(range.startDate, 'yyyy-MM-dd'),
+    end: format(range.endDate, 'yyyy-MM-dd'),
+  }
+}
+
+const defaults = getDefaultDates()
+
+const SearchSchema = z.object({
+  start: z.string().optional().default(defaults.start),
+  end: z.string().optional().default(defaults.end),
+})
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions',
 )({
   component: RouteComponent,
-  beforeLoad: () => {
+  validateSearch: zodValidator(SearchSchema),
+  beforeLoad: ({ search }) => {
+    const period = parseDateRangeFromURL(search.start, search.end)
+
     return loadQuery<TransactionsQuery>(
       environment,
       transactionsQuery,
-      {},
+      {
+        where: {
+          datetimeGTE: period.startDate,
+          datetimeLT: period.endDate,
+        },
+      },
       { fetchPolicy: 'store-or-network' },
     )
   },

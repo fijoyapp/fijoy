@@ -16,6 +16,7 @@ import {
   parseDateRangeFromURL,
 } from '@/lib/date-range'
 import { format } from 'date-fns'
+import { zodValidator } from '@tanstack/zod-adapter'
 
 // Get default "This Month" dates
 const getDefaultDates = () => {
@@ -37,7 +38,7 @@ export const Route = createFileRoute(
   '/_user/household/$householdId/categories',
 )({
   component: RouteComponent,
-  validateSearch: (search) => SearchSchema.parse(search),
+  validateSearch: zodValidator(SearchSchema),
   beforeLoad: ({ search }) => {
     const period = parseDateRangeFromURL(search.start, search.end)
 
