@@ -42,7 +42,7 @@ type FinancialReport {
   transactionCount: Int!
 
   startDate: Time!
-  entDate: Time!
+  endDate: Time!
 }
 
 type CategoryTypeAggregate {
