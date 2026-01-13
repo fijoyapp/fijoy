@@ -30,6 +30,7 @@ import { parseISO } from 'date-fns'
 import { CategoriesQuery } from '../__generated__/CategoriesQuery.graphql'
 import { environment } from '@/environment'
 import { categoriesQuery } from '../-categories-query'
+import { parseDateRangeFromURL } from '@/lib/date-range'
 
 const CategoriesPanelFragment = graphql`
   fragment categoriesPanelFragment on Query
@@ -116,9 +117,10 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
   }, [data.financialReport])
 
   const onDateRangeChange = async (start: string, end: string) => {
+    const period = parseDateRangeFromURL(start, end)
     await fetchQuery<CategoriesQuery>(environment, categoriesQuery, {
-      startDate: parseISO(start).toISOString(),
-      endDate: parseISO(end).toISOString(),
+      startDate: period.startDate,
+      endDate: period.endDate,
     }).toPromise()
 
     // Now navigate - the route loader will read from Relay store cache

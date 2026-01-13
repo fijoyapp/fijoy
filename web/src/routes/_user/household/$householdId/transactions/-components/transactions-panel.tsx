@@ -9,6 +9,7 @@ import { FinancialSummaryCards } from '@/components/financial-summary-cards'
 import { environment } from '@/environment'
 import { TransactionsQuery } from '../__generated__/TransactionsQuery.graphql'
 import { transactionsQuery } from '../-transactions-query'
+import { parseDateRangeFromURL } from '@/lib/date-range'
 
 const transactionsPanelFragment = graphql`
   fragment transactionsPanelFragment on Query
@@ -39,13 +40,14 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
   const data = useFragment(transactionsPanelFragment, fragmentRef)
 
   const onDateRangeChange = async (start: string, end: string) => {
+    const period = parseDateRangeFromURL(start, end)
     await fetchQuery<TransactionsQuery>(environment, transactionsQuery, {
       where: {
-        datetimeGTE: parseISO(start).toISOString(),
-        datetimeLT: parseISO(end).toISOString(),
+        datetimeGTE: period.startDate,
+        datetimeLT: period.endDate,
       },
-      startDate: parseISO(start).toISOString(),
-      endDate: parseISO(end).toISOString(),
+      startDate: period.startDate,
+      endDate: period.endDate,
     }).toPromise()
 
     // Now navigate - the route loader will read from Relay store cache
