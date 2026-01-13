@@ -87,18 +87,18 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         <Button
           variant="outline"
           nativeButton={false}
-          className="size-12 rounded-full"
-          render={<RefreshCwIcon />}
-        />
+          size="icon-xl"
+          className="rounded-full"
+        >
+          <RefreshCwIcon />
+        </Button>
         <Link
           from={'/household/$householdId/accounts'}
           to={'/household/$householdId/accounts/new'}
         >
-          <Button
-            nativeButton={false}
-            className="size-10 rounded-full"
-            render={<PlusIcon />}
-          />
+          <Button nativeButton={false} size="icon-xl" className="rounded-full">
+            <PlusIcon />
+          </Button>
         </Link>
       </div>
       <Item variant="outline" className="">

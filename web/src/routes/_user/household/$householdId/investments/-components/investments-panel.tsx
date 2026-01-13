@@ -90,18 +90,18 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         <Button
           variant="outline"
           nativeButton={false}
-          className="size-12 rounded-full"
-          render={<RefreshCwIcon />}
-        />
+          size="icon-xl"
+          className="rounded-full"
+        >
+          <RefreshCwIcon />
+        </Button>
         <Link
           from={'/household/$householdId/investments'}
           to={'/household/$householdId/investments/new'}
         >
-          <Button
-            nativeButton={false}
-            className="size-12 rounded-full"
-            render={<PlusIcon />}
-          />
+          <Button nativeButton={false} className="rounded-full" size="icon-xl">
+            <PlusIcon />
+          </Button>
         </Link>
       </div>
       <Item variant="outline" className="">
