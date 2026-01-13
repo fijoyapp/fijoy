@@ -5,14 +5,22 @@ import { parseISO } from 'date-fns'
 import { TransactionsList } from './transactions-list'
 import type { transactionsPanelFragment$key } from './__generated__/transactionsPanelFragment.graphql'
 import { DateRangeFilter } from '../../categories/-components/date-range-filter'
+import { FinancialSummaryCards } from '@/components/financial-summary-cards'
 import { environment } from '@/environment'
 import { TransactionsQuery } from '../__generated__/TransactionsQuery.graphql'
 import { transactionsQuery } from '../-transactions-query'
 
 const transactionsPanelFragment = graphql`
   fragment transactionsPanelFragment on Query
-  @argumentDefinitions(where: { type: "TransactionWhereInput" }) {
+  @argumentDefinitions(
+    where: { type: "TransactionWhereInput" }
+    startDate: { type: "Time" }
+    endDate: { type: "Time" }
+  ) {
     ...transactionsListFragment @arguments(where: $where)
+    financialReport(period: { startDate: $startDate, endDate: $endDate }) {
+      ...financialSummaryCardsFragment
+    }
   }
 `
 
@@ -36,6 +44,8 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
         datetimeGTE: parseISO(start).toISOString(),
         datetimeLT: parseISO(end).toISOString(),
       },
+      startDate: parseISO(start).toISOString(),
+      endDate: parseISO(end).toISOString(),
     }).toPromise()
 
     // Now navigate - the route loader will read from Relay store cache
@@ -51,6 +61,8 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
 
   return (
     <div>
+      <FinancialSummaryCards fragmentRef={data.financialReport} />
+      <div className="py-2"></div>
       <DateRangeFilter
         startDate={startDate}
         endDate={endDate}

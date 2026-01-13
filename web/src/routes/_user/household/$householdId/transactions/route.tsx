@@ -50,6 +50,8 @@ export const Route = createFileRoute(
           datetimeGTE: period.startDate,
           datetimeLT: period.endDate,
         },
+        startDate: period.startDate,
+        endDate: period.endDate,
       },
       { fetchPolicy: 'store-or-network' },
     )
