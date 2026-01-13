@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d3eff90f0080ea56c5fd06e58cb34284>>
+ * @generated SignedSource<<9b1a93d6d025eaf587abc0ff3650b999>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -687,6 +687,8 @@ export type UserKeyWhereInput = {
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
 };
 export type TransactionsQuery$variables = {
+  endDate?: any | null | undefined;
+  startDate?: any | null | undefined;
   where?: TransactionWhereInput | null | undefined;
 };
 export type TransactionsQuery$data = {
@@ -698,19 +700,37 @@ export type TransactionsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "where"
-  }
-],
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "endDate"
+},
 v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "startDate"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "where"
+},
+v3 = {
+  "kind": "Variable",
+  "name": "endDate",
+  "variableName": "endDate"
+},
+v4 = {
+  "kind": "Variable",
+  "name": "startDate",
+  "variableName": "startDate"
+},
+v5 = {
   "kind": "Variable",
   "name": "where",
   "variableName": "where"
 },
-v2 = [
+v6 = [
   {
     "kind": "Literal",
     "name": "first",
@@ -724,30 +744,30 @@ v2 = [
       "field": "DATETIME"
     }
   },
-  (v1/*: any*/)
+  (v5/*: any*/)
 ],
-v3 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v5 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "amount",
   "storageKey": null
 },
-v6 = {
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "Currency",
@@ -762,20 +782,26 @@ v6 = {
       "name": "code",
       "storageKey": null
     },
-    (v3/*: any*/)
+    (v7/*: any*/)
   ],
   "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "TransactionsQuery",
     "selections": [
       {
         "args": [
-          (v1/*: any*/)
+          (v3/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/)
         ],
         "kind": "FragmentSpread",
         "name": "transactionsPanelFragment"
@@ -786,13 +812,17 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v2/*: any*/),
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "TransactionsQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "TransactionConnection",
         "kind": "LinkedField",
         "name": "transactions",
@@ -814,7 +844,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v3/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -830,7 +860,7 @@ return {
                     "name": "category",
                     "plural": false,
                     "selections": [
-                      (v4/*: any*/),
+                      (v8/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -838,7 +868,7 @@ return {
                         "name": "type",
                         "storageKey": null
                       },
-                      (v3/*: any*/)
+                      (v7/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -850,8 +880,8 @@ return {
                     "name": "lots",
                     "plural": true,
                     "selections": [
-                      (v3/*: any*/),
-                      (v5/*: any*/),
+                      (v7/*: any*/),
+                      (v9/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -867,7 +897,7 @@ return {
                         "name": "investment",
                         "plural": false,
                         "selections": [
-                          (v4/*: any*/),
+                          (v8/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -875,8 +905,8 @@ return {
                             "name": "symbol",
                             "storageKey": null
                           },
-                          (v6/*: any*/),
-                          (v3/*: any*/)
+                          (v10/*: any*/),
+                          (v7/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -891,8 +921,8 @@ return {
                     "name": "transactionEntries",
                     "plural": true,
                     "selections": [
-                      (v3/*: any*/),
-                      (v5/*: any*/),
+                      (v7/*: any*/),
+                      (v9/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -901,9 +931,9 @@ return {
                         "name": "account",
                         "plural": false,
                         "selections": [
-                          (v4/*: any*/),
-                          (v6/*: any*/),
-                          (v3/*: any*/)
+                          (v8/*: any*/),
+                          (v10/*: any*/),
+                          (v7/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -960,7 +990,7 @@ return {
       },
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v6/*: any*/),
         "filters": [
           "where",
           "orderBy"
@@ -969,20 +999,54 @@ return {
         "key": "transactionsList_transactions",
         "kind": "LinkedHandle",
         "name": "transactions"
+      },
+      {
+        "alias": null,
+        "args": [
+          {
+            "fields": [
+              (v3/*: any*/),
+              (v4/*: any*/)
+            ],
+            "kind": "ObjectValue",
+            "name": "period"
+          }
+        ],
+        "concreteType": "FinancialReport",
+        "kind": "LinkedField",
+        "name": "financialReport",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "totalIncome",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "totalExpenses",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "de1ea75f50a8ac61b3b2e008a925ca0b",
+    "cacheID": "d495143f2adafab7c5968f18f43c32bc",
     "id": null,
     "metadata": {},
     "name": "TransactionsQuery",
     "operationKind": "query",
-    "text": "query TransactionsQuery(\n  $where: TransactionWhereInput\n) {\n  ...transactionsPanelFragment_3FC4Qo\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  lots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment_3FC4Qo on Query {\n  ...transactionsListFragment_3FC4Qo\n}\n"
+    "text": "query TransactionsQuery(\n  $where: TransactionWhereInput\n  $startDate: Time\n  $endDate: Time\n) {\n  ...transactionsPanelFragment_7P6yy\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  lots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment_7P6yy on Query {\n  ...transactionsListFragment_3FC4Qo\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    ...financialSummaryCardsFragment\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f2b28770dace5e5781b44a2f1f1ae384";
+(node as any).hash = "cd431c275ebabf76205ebb6bfe9c4181";
 
 export default node;

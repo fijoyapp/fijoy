@@ -15,14 +15,7 @@ import {
   AccordionContent,
   AccordionItem,
 } from '@/components/ui/accordion'
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemSeparator,
-  ItemTitle,
-} from '@/components/ui/item'
+import { ItemGroup, ItemSeparator } from '@/components/ui/item'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
@@ -32,6 +25,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { DateRangeFilter } from './date-range-filter'
 import { useSearch } from '@tanstack/react-router'
+import { FinancialSummaryCards } from '@/components/financial-summary-cards'
 import { parseISO } from 'date-fns'
 import { CategoriesQuery } from '../__generated__/CategoriesQuery.graphql'
 import { environment } from '@/environment'
@@ -57,8 +51,6 @@ const CategoriesPanelFragment = graphql`
       }
     }
     financialReport(period: { startDate: $startDate, endDate: $endDate }) {
-      totalIncome
-      totalExpenses
       incomeByCategoryType {
         categoryType
         total
@@ -70,6 +62,7 @@ const CategoriesPanelFragment = graphql`
         transactionCount
       }
       ...categoryCardFinancialReportFragment
+      ...financialSummaryCardsFragment
     }
   }
 `
@@ -98,21 +91,6 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
   const { household } = useHousehold()
 
   const navigate = useNavigate()
-  const { totalIncome, totalExpenses, net, savingRate } = useMemo(() => {
-    const income = currency(data.financialReport.totalIncome)
-    const expenses = currency(data.financialReport.totalExpenses)
-    const netAmount = income.subtract(expenses)
-
-    return {
-      totalIncome: income,
-      totalExpenses: expenses,
-      net: netAmount,
-      savingRate:
-        income.value === 0
-          ? ':('
-          : `${((netAmount.value / income.value) * 100).toFixed(2)}%`,
-    }
-  }, [data.financialReport])
 
   // Build map for category type aggregates
   const categoryTypeMap = useMemo(() => {
@@ -166,47 +144,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
           </Button>
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <Item variant="outline" className="">
-          <ItemContent>
-            <ItemDescription>Total Income</ItemDescription>
-            <ItemTitle className="text-xl">
-              {formatCurrencyWithPrivacyMode({
-                value: totalIncome,
-                currencyCode: household.currency.code,
-              })}
-            </ItemTitle>
-          </ItemContent>
-        </Item>
-        <Item variant="outline" className="">
-          <ItemContent>
-            <ItemDescription>Total Expenses</ItemDescription>
-            <ItemTitle className="text-xl">
-              {formatCurrencyWithPrivacyMode({
-                value: totalExpenses,
-                currencyCode: household.currency.code,
-              })}
-            </ItemTitle>
-          </ItemContent>
-        </Item>
-        <Item variant="outline" className="">
-          <ItemContent>
-            <ItemDescription>Net</ItemDescription>
-            <ItemTitle className="text-xl">
-              {formatCurrencyWithPrivacyMode({
-                value: net,
-                currencyCode: household.currency.code,
-              })}
-            </ItemTitle>
-          </ItemContent>
-        </Item>
-        <Item variant="outline" className="">
-          <ItemContent>
-            <ItemDescription>Saving Rate</ItemDescription>
-            <ItemTitle className="text-xl">{savingRate}</ItemTitle>
-          </ItemContent>
-        </Item>
-      </div>
+      <FinancialSummaryCards fragmentRef={data.financialReport} />
       <div className="py-2"></div>
       <DateRangeFilter
         startDate={startDate}

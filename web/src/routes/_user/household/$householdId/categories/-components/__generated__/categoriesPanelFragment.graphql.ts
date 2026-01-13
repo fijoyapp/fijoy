@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e15d8dc10f6c16d3e511f7fff0b4232e>>
+ * @generated SignedSource<<6a4590199cdaa75646853eba7d85e030>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,9 +23,7 @@ export type categoriesPanelFragment$data = {
       readonly total: string;
       readonly transactionCount: number;
     }>;
-    readonly totalExpenses: string;
-    readonly totalIncome: string;
-    readonly " $fragmentSpreads": FragmentRefs<"categoryCardFinancialReportFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"categoryCardFinancialReportFragment" | "financialSummaryCardsFragment">;
   };
   readonly transactionCategories: {
     readonly edges: ReadonlyArray<{
@@ -239,20 +237,6 @@ return {
         {
           "alias": null,
           "args": null,
-          "kind": "ScalarField",
-          "name": "totalIncome",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "totalExpenses",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
           "concreteType": "CategoryTypeAggregate",
           "kind": "LinkedField",
           "name": "incomeByCategoryType",
@@ -274,6 +258,11 @@ return {
           "args": null,
           "kind": "FragmentSpread",
           "name": "categoryCardFinancialReportFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "financialSummaryCardsFragment"
         }
       ],
       "storageKey": null
@@ -284,6 +273,6 @@ return {
 };
 })();
 
-(node as any).hash = "ae112eb7b106211b5fa357d319886f3a";
+(node as any).hash = "0aa918f4ad83cc1ae4d8deeee9336e72";
 
 export default node;
