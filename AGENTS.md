@@ -195,6 +195,79 @@ Multiple fragments per component:
 - Props should be named `categoryRef`, `financialReportRef` etc. for clarity
 - Use `useMemo` for lookups to avoid recomputation
 
+**Best Practice: Fragment References, Not Prop Drilling**
+
+Components should ONLY accept fragment references - never prop drill computed data or context values:
+
+```typescript
+// ❌ BAD: Prop drilling data and context
+interface BadProps {
+  totalIncome: currency
+  totalExpenses: currency
+  net: currency
+  savingRate: string
+  currencyCode: string  // Context value being drilled
+}
+
+// ✅ GOOD: Fragment reference only
+const FinancialSummaryCardsFragment = graphql`
+  fragment financialSummaryCardsFragment on FinancialReport {
+    totalIncome
+    totalExpenses
+  }
+`
+
+interface GoodProps {
+  fragmentRef: financialSummaryCardsFragment$key
+  // No currencyCode prop - use useHousehold() hook instead!
+}
+
+export function FinancialSummaryCards({ fragmentRef }: GoodProps) {
+  // Get data from fragment
+  const data = useFragment(FinancialSummaryCardsFragment, fragmentRef)
+
+  // Get context via hooks, not props
+  const { household } = useHousehold()
+  const { formatCurrencyWithPrivacyMode } = useCurrency()
+
+  // Compute derived values internally
+  const { totalIncome, totalExpenses, net, savingRate } = useMemo(() => {
+    const income = currency(data.totalIncome)
+    const expenses = currency(data.totalExpenses)
+    const netAmount = income.subtract(expenses)
+
+    return {
+      totalIncome: income,
+      totalExpenses: expenses,
+      net: netAmount,
+      savingRate: income.value === 0 ? ':(' :
+        `${((netAmount.value / income.value) * 100).toFixed(2)}%`,
+    }
+  }, [data.totalIncome, data.totalExpenses])
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {/* Use household.currency.code from hook */}
+      {formatCurrencyWithPrivacyMode({
+        value: totalIncome,
+        currencyCode: household.currency.code,
+      })}
+    </div>
+  )
+}
+
+// Parent usage - clean and simple
+<FinancialSummaryCards fragmentRef={data.financialReport} />
+```
+
+**Why this pattern:**
+- ✅ Component declares its own data requirements via fragments
+- ✅ Uses React hooks for context (useHousehold, useCurrency) instead of prop drilling
+- ✅ Computes all derived values internally - no prop drilling computed data
+- ✅ Self-contained and easy to refactor
+- ✅ Relay optimizes data fetching automatically
+- ✅ Component API is clean - only fragment references as props
+
 ### Frontend: Component Patterns
 
 Follow the accounts panel/card pattern for list views:
