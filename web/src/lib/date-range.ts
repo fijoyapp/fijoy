@@ -42,7 +42,7 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
       const start = new Date(
         startOfToday.getFullYear(),
         startOfToday.getMonth(),
-        startOfToday.getDate() - 30,
+        startOfToday.getDate() - 29,
       )
       return { startDate: start, endDate: startOfToday }
     }
@@ -51,7 +51,7 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
       const start = new Date(
         startOfToday.getFullYear(),
         startOfToday.getMonth(),
-        startOfToday.getDate() - 90,
+        startOfToday.getDate() - 89,
       )
       return { startDate: start, endDate: startOfToday }
     }
