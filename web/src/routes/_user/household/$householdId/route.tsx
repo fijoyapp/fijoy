@@ -5,6 +5,7 @@ import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
+import { MobileFabNav } from '@/components/mobile-fab-nav'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -132,6 +133,7 @@ function RouteComponent() {
             <Outlet />
           </div>
         </SidebarInset>
+        <MobileFabNav />
       </SidebarProvider>
     </HouseholdProvider>
   )
