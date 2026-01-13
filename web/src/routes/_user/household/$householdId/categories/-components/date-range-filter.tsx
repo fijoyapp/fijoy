@@ -139,6 +139,7 @@ export function DateRangeFilter({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-auto p-0">
             <Calendar
+              className="bg-card"
               mode="range"
               selected={tempDateRange}
               onSelect={setTempDateRange}
