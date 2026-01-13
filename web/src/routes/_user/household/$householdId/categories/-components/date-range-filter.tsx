@@ -170,7 +170,7 @@ export function DateRangeFilter({
       </div>
 
       <Select value={getCurrentPreset()} onValueChange={handlePresetChange}>
-        <SelectTrigger className="w-28">
+        <SelectTrigger className="w-32">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

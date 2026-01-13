@@ -28,20 +28,14 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
     now.getDate(),
   )
 
-  const startOfTomorrow = new Date(
-    startOfToday.getFullYear(),
-    startOfToday.getMonth(),
-    startOfToday.getDate() + 1,
-  )
-
   switch (preset) {
     case DATE_RANGE_PRESETS.LAST_7_DAYS: {
       const start = new Date(
         startOfToday.getFullYear(),
         startOfToday.getMonth(),
-        startOfToday.getDate() - 7,
+        startOfToday.getDate() - 6,
       )
-      return { startDate: start, endDate: startOfTomorrow }
+      return { startDate: start, endDate: startOfToday }
     }
 
     case DATE_RANGE_PRESETS.LAST_30_DAYS: {
@@ -50,7 +44,7 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
         startOfToday.getMonth(),
         startOfToday.getDate() - 30,
       )
-      return { startDate: start, endDate: startOfTomorrow }
+      return { startDate: start, endDate: startOfToday }
     }
 
     case DATE_RANGE_PRESETS.LAST_90_DAYS: {
@@ -59,7 +53,7 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
         startOfToday.getMonth(),
         startOfToday.getDate() - 90,
       )
-      return { startDate: start, endDate: startOfTomorrow }
+      return { startDate: start, endDate: startOfToday }
     }
 
     case DATE_RANGE_PRESETS.THIS_MONTH: {
@@ -68,7 +62,7 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
         startOfToday.getMonth(),
         1,
       )
-      return { startDate: start, endDate: startOfTomorrow }
+      return { startDate: start, endDate: startOfToday }
     }
 
     case DATE_RANGE_PRESETS.LAST_MONTH: {
@@ -80,19 +74,19 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
       const end = new Date(
         startOfToday.getFullYear(),
         startOfToday.getMonth(),
-        1,
+        0,
       )
       return { startDate: start, endDate: end }
     }
 
     case DATE_RANGE_PRESETS.THIS_YEAR: {
       const start = new Date(startOfToday.getFullYear(), 0, 1)
-      return { startDate: start, endDate: startOfTomorrow }
+      return { startDate: start, endDate: startOfToday }
     }
 
     case DATE_RANGE_PRESETS.LAST_YEAR: {
       const start = new Date(startOfToday.getFullYear() - 1, 0, 1)
-      const end = new Date(startOfToday.getFullYear(), 0, 1)
+      const end = new Date(startOfToday.getFullYear(), 0, 0)
       return { startDate: start, endDate: end }
     }
 
@@ -138,7 +132,11 @@ export function parseDateRangeFromURL(
 
     return {
       startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
+      endDate: new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        endDate.getDate() + 1,
+      ).toISOString(),
     }
   } catch (error) {
     console.error('Failed to parse date range from URL:', { start, end, error })
