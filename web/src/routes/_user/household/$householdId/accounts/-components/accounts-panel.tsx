@@ -86,7 +86,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
       <div className="flex flex-col absolute bottom-4 right-4 gap-2">
         <Button
           variant="outline"
-          nativeButton={false}
+          nativeButton={true}
           size="icon-xl"
           className="rounded-full"
         >
@@ -96,7 +96,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           from={'/household/$householdId/accounts'}
           to={'/household/$householdId/accounts/new'}
         >
-          <Button nativeButton={false} size="icon-xl" className="rounded-full">
+          <Button nativeButton={true} size="icon-xl" className="rounded-full">
             <PlusIcon />
           </Button>
         </Link>

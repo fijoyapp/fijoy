@@ -139,7 +139,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
           from={'/household/$householdId/categories'}
           to={'/household/$householdId/categories/new'}
         >
-          <Button nativeButton={false} size="icon-xl" className="rounded-full">
+          <Button nativeButton={true} size="icon-xl" className="rounded-full">
             <PlusIcon />
           </Button>
         </Link>

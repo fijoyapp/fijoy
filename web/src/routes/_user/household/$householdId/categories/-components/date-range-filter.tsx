@@ -35,7 +35,7 @@ const PRESET_LABELS: Record<DateRangePreset, string> = {
 type DateRangeFilterProps = {
   startDate: string
   endDate: string
-  onDateRangeChange: (startDate: string, endDate: string) => void
+  onDateRangeChange: (startDate: string, endDate: string) => Promise<void>
 }
 
 export function DateRangeFilter({
@@ -72,7 +72,7 @@ export function DateRangeFilter({
     const end = formatDateForURL(range.endDate)
 
     startTransition(async () => {
-      onDateRangeChange(start, end)
+      await onDateRangeChange(start, end)
     })
   }
 
@@ -82,7 +82,7 @@ export function DateRangeFilter({
       const end = formatDateForURL(tempDateRange.to)
 
       startTransition(async () => {
-        onDateRangeChange(start, end)
+        await onDateRangeChange(start, end)
       })
       setIsCalendarOpen(false)
     }

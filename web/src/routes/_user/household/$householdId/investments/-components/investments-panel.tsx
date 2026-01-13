@@ -89,7 +89,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
       <div className="flex flex-col absolute bottom-4 right-4 gap-2">
         <Button
           variant="outline"
-          nativeButton={false}
+          nativeButton={true}
           size="icon-xl"
           className="rounded-full"
         >
@@ -99,7 +99,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
           from={'/household/$householdId/investments'}
           to={'/household/$householdId/investments/new'}
         >
-          <Button nativeButton={false} className="rounded-full" size="icon-xl">
+          <Button nativeButton={true} className="rounded-full" size="icon-xl">
             <PlusIcon />
           </Button>
         </Link>
