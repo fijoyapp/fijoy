@@ -6,8 +6,8 @@ export const LOCAL_STORAGE_THEME = 'theme'
 export const ACCOUNT_TYPE_LIST = [
   'liquidity',
   'investment',
-  'property',
-  'receivable',
+  // 'property',
+  // 'receivable',
   'liability',
 ] as const
 
