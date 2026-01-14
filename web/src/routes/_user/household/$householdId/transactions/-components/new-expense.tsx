@@ -6,7 +6,7 @@ import { useFragment, useMutation } from 'react-relay'
 import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useNavigate } from '@tanstack/react-router'
+// import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { newExpenseMutation } from './__generated__/newExpenseMutation.graphql'
 import type { newExpenseFragment$key } from './__generated__/newExpenseFragment.graphql'
@@ -102,7 +102,7 @@ type NewExpenseProps = {
 
 export function NewExpense({ fragmentRef }: NewExpenseProps) {
   const data = useFragment(newExpenseFragment, fragmentRef)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [showCalendar, setShowCalendar] = useState(false)
 
   const [commitMutation, isMutationInFlight] =
@@ -180,10 +180,10 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
           )
 
           form.reset()
-          navigate({
-            from: '/household/$householdId/transactions/new',
-            to: '/household/$householdId/transactions',
-          })
+          // navigate({
+          //   from: '/household/$householdId/transactions/new',
+          //   to: '/household/$householdId/transactions',
+          // })
           toast.success('Expense created successfully!')
         })
         .with({ status: 'error' }, ({ error }) => {

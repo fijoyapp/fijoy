@@ -1,14 +1,14 @@
 import { graphql, useFragment } from 'react-relay'
 import { useState } from 'react'
-import type { newTransactionFragment$key } from './__generated__/newTransactionFragment.graphql'
 import { NewExpense } from './new-expense'
 import { NewIncome } from './new-income'
 import { NewTransfer } from './new-transfer'
 import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
+import { logTransactionFragment$key } from './__generated__/logTransactionFragment.graphql'
 
-const newTransactionFragment = graphql`
-  fragment newTransactionFragment on Query {
+const logTransactionFragment = graphql`
+  fragment logTransactionFragment on Query {
     ...newExpenseFragment
     ...newIncomeFragment
     ...newTransferFragment
@@ -18,11 +18,11 @@ const newTransactionFragment = graphql`
 type TransactionType = 'expense' | 'income' | 'transfer'
 
 type NewTransactionProps = {
-  fragmentRef: newTransactionFragment$key
+  fragmentRef: logTransactionFragment$key
 }
 
 export function LogTransaction({ fragmentRef }: NewTransactionProps) {
-  const data = useFragment(newTransactionFragment, fragmentRef)
+  const data = useFragment(logTransactionFragment, fragmentRef)
   const [selectedType, setSelectedType] = useState<TransactionType>('expense')
 
   return (

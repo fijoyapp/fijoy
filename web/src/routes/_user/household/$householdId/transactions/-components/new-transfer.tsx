@@ -6,7 +6,7 @@ import { useFragment, useMutation } from 'react-relay'
 import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useNavigate } from '@tanstack/react-router'
+// import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { newTransferMutation } from './__generated__/newTransferMutation.graphql'
 import type { newTransferFragment$key } from './__generated__/newTransferFragment.graphql'
@@ -103,7 +103,7 @@ type NewTransferProps = {
 
 export function NewTransfer({ fragmentRef }: NewTransferProps) {
   const data = useFragment(newTransferFragment, fragmentRef)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [showCalendar, setShowCalendar] = useState(false)
 
   const [commitMutation, isMutationInFlight] =
@@ -191,10 +191,10 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
           )
 
           form.reset()
-          navigate({
-            from: '/household/$householdId/transactions/new',
-            to: '/household/$householdId/transactions',
-          })
+          // navigate({
+          //   from: '/household/$householdId/transactions/new',
+          //   to: '/household/$householdId/transactions',
+          // })
           toast.success('Transfer created successfully!')
         })
         .with({ status: 'error' }, ({ error }) => {

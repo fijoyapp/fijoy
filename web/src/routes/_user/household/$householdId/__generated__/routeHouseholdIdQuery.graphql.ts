@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<eea284ea1147dc8eeb34ed5d19bb3c9f>>
+ * @generated SignedSource<<45e368ed98e6432dd99a2d268af16dba>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type routeHouseholdIdQuery$data = {
     readonly locale: string;
     readonly name: string;
   }>;
-  readonly " $fragmentSpreads": FragmentRefs<"appSidebarFragment" | "newTransactionFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"appSidebarFragment" | "logTransactionFragment">;
 };
 export type routeHouseholdIdQuery = {
   response: routeHouseholdIdQuery$data;
@@ -106,7 +106,7 @@ return {
       {
         "args": null,
         "kind": "FragmentSpread",
-        "name": "newTransactionFragment"
+        "name": "logTransactionFragment"
       }
     ],
     "type": "Query",
@@ -207,16 +207,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e44b91c1896ecb3ddeef25e9a9f8e49c",
+    "cacheID": "0b594b0c4a5ff100ad24b345a1667018",
     "id": null,
     "metadata": {},
     "name": "routeHouseholdIdQuery",
     "operationKind": "query",
-    "text": "query routeHouseholdIdQuery {\n  households {\n    id\n    name\n    locale\n    currency {\n      id\n      code\n    }\n  }\n  ...appSidebarFragment\n  ...newTransactionFragment\n}\n\nfragment appSidebarFragment on Query {\n  ...householdSwitcherFragment\n}\n\nfragment householdSwitcherFragment on Query {\n  households {\n    id\n    name\n  }\n}\n\nfragment newExpenseFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransactionFragment on Query {\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n\nfragment newTransferFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n"
+    "text": "query routeHouseholdIdQuery {\n  households {\n    id\n    name\n    locale\n    currency {\n      id\n      code\n    }\n  }\n  ...appSidebarFragment\n  ...logTransactionFragment\n}\n\nfragment appSidebarFragment on Query {\n  ...householdSwitcherFragment\n}\n\nfragment householdSwitcherFragment on Query {\n  households {\n    id\n    name\n  }\n}\n\nfragment logTransactionFragment on Query {\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n\nfragment newExpenseFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransferFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0fc5efc3b4d04ef98dc76aed28ea562e";
+(node as any).hash = "879dcb581c9c7aeb1d69be61aee92549";
 
 export default node;
