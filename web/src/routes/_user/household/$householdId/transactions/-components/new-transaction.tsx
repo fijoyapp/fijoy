@@ -30,6 +30,7 @@ export function NewTransaction({ fragmentRef }: NewTransactionProps) {
 
   const handleClose = () => {
     navigate({
+      to: '.',
       search: (prev) => ({ ...prev, showNewTransaction: false }),
     })
   }
