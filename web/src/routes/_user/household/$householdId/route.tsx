@@ -26,6 +26,7 @@ import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 import { useTheme } from '@/components/theme-provider'
 import { PendingComponent } from '@/components/pending-component'
 import { environment } from '@/environment'
+import { CommandMenu } from '@/components/command-menu'
 
 const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {
@@ -76,6 +77,7 @@ function RouteComponent() {
 
   return (
     <HouseholdProvider household={household}>
+      <CommandMenu />
       <SidebarProvider>
         <AppSidebar fragmentRef={data} />
         <SidebarInset>
