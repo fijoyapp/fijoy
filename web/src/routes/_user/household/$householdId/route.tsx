@@ -9,6 +9,7 @@ import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
 import { Rnd } from 'react-rnd'
 import { z } from 'zod'
+import { useState, useEffect } from 'react'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
 import { MobileFabNav } from '@/components/mobile-fab-nav'
@@ -59,6 +60,38 @@ const searchSchema = z.object({
   showNewTransaction: z.boolean().optional().default(false),
 })
 
+const LOCAL_STORAGE_RND_POSITION_KEY = 'new-transaction-rnd-position'
+
+interface RndPosition {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+const getDefaultRndPosition = (): RndPosition => ({
+  x: window.innerWidth - 700,
+  y: 80,
+  width: 650,
+  height: 600,
+})
+
+const getRndPositionFromStorage = (): RndPosition => {
+  const stored = localStorage.getItem(LOCAL_STORAGE_RND_POSITION_KEY)
+  if (stored) {
+    try {
+      return JSON.parse(stored) as RndPosition
+    } catch {
+      return getDefaultRndPosition()
+    }
+  }
+  return getDefaultRndPosition()
+}
+
+const saveRndPositionToStorage = (position: RndPosition) => {
+  localStorage.setItem(LOCAL_STORAGE_RND_POSITION_KEY, JSON.stringify(position))
+}
+
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
   validateSearch: zodValidator(searchSchema),
@@ -92,6 +125,16 @@ function RouteComponent() {
 
   const { isPrivacyModeEnabled, togglePrivacyMode } = usePrivacyMode()
   const { setTheme } = useTheme()
+
+  // State for Rnd position
+  const [rndPosition, setRndPosition] = useState<RndPosition>(
+    getRndPositionFromStorage,
+  )
+
+  // Update localStorage when position changes
+  useEffect(() => {
+    saveRndPositionToStorage(rndPosition)
+  }, [rndPosition])
 
   return (
     <HouseholdProvider household={household}>
@@ -158,11 +201,22 @@ function RouteComponent() {
         {/* Resizable & Draggable New Transaction Form */}
         {search.showNewTransaction && (
           <Rnd
-            default={{
-              x: window.innerWidth - 700,
-              y: 80,
-              width: 650,
-              height: 600,
+            position={{ x: rndPosition.x, y: rndPosition.y }}
+            size={{ width: rndPosition.width, height: rndPosition.height }}
+            onDragStop={(_e, d) => {
+              setRndPosition((prev) => ({
+                ...prev,
+                x: d.x,
+                y: d.y,
+              }))
+            }}
+            onResizeStop={(_e, _direction, ref, _delta, position) => {
+              setRndPosition({
+                x: position.x,
+                y: position.y,
+                width: parseInt(ref.style.width),
+                height: parseInt(ref.style.height),
+              })
             }}
             minWidth={400}
             minHeight={400}
