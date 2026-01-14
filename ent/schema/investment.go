@@ -58,6 +58,9 @@ func (Investment) Fields() []ent.Field {
 			DefaultFunc(func() decimal.Decimal {
 				return decimal.NewFromInt(0)
 			}),
+
+		field.Int("account_id").Positive().Immutable(),
+		field.Int("currency_id").Positive().Immutable(),
 	}
 }
 
@@ -65,6 +68,7 @@ func (Investment) Fields() []ent.Field {
 func (Investment) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("account", Account.Type).
+			Field("account_id").
 			Ref("investments").
 			Unique().Immutable().Required(),
 		edge.From("household", Household.Type).
@@ -81,6 +85,7 @@ func (Investment) Edges() []ent.Edge {
 			Required(),
 		edge.From("currency", Currency.Type).
 			Ref("investments").
+			Field("currency_id").
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
@@ -140,6 +145,9 @@ func (InvestmentLot) Fields() []ent.Field {
 				dialect.Postgres: "numeric(36,18)",
 			}).
 			Annotations(entgql.Type("String")),
+
+		field.Int("investment_id").Positive().Immutable(),
+		field.Int("transaction_id").Positive().Immutable(),
 	}
 }
 
@@ -160,10 +168,13 @@ func (InvestmentLot) Edges() []ent.Edge {
 			Required(),
 		edge.From("investment", Investment.Type).
 			Ref("investment_lots").
+			Field("investment_id").
 			Unique().
 			Immutable().
 			Required(),
-		edge.From("transaction", Transaction.Type).Ref("investment_lots").
+		edge.From("transaction", Transaction.Type).
+			Ref("investment_lots").
+			Field("transaction_id").
 			Unique().
 			Immutable().
 			Required().

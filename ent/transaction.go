@@ -30,12 +30,14 @@ type Transaction struct {
 	Description string `json:"description,omitempty"`
 	// Datetime holds the value of the "datetime" field.
 	Datetime time.Time `json:"datetime,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID int `json:"user_id,omitempty"`
+	// CategoryID holds the value of the "category_id" field.
+	CategoryID int `json:"category_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionQuery when eager-loading is set.
-	Edges                             TransactionEdges `json:"edges"`
-	transaction_category_transactions *int
-	user_transactions                 *int
-	selectValues                      sql.SelectValues
+	Edges        TransactionEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // TransactionEdges holds the relations/edges for other nodes in the graph.
@@ -116,16 +118,12 @@ func (*Transaction) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case transaction.FieldID, transaction.FieldHouseholdID:
+		case transaction.FieldID, transaction.FieldHouseholdID, transaction.FieldUserID, transaction.FieldCategoryID:
 			values[i] = new(sql.NullInt64)
 		case transaction.FieldDescription:
 			values[i] = new(sql.NullString)
 		case transaction.FieldCreateTime, transaction.FieldUpdateTime, transaction.FieldDatetime:
 			values[i] = new(sql.NullTime)
-		case transaction.ForeignKeys[0]: // transaction_category_transactions
-			values[i] = new(sql.NullInt64)
-		case transaction.ForeignKeys[1]: // user_transactions
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -177,19 +175,17 @@ func (_m *Transaction) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Datetime = value.Time
 			}
-		case transaction.ForeignKeys[0]:
+		case transaction.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field transaction_category_transactions", value)
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.transaction_category_transactions = new(int)
-				*_m.transaction_category_transactions = int(value.Int64)
+				_m.UserID = int(value.Int64)
 			}
-		case transaction.ForeignKeys[1]:
+		case transaction.FieldCategoryID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_transactions", value)
+				return fmt.Errorf("unexpected type %T for field category_id", values[i])
 			} else if value.Valid {
-				_m.user_transactions = new(int)
-				*_m.user_transactions = int(value.Int64)
+				_m.CategoryID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -266,6 +262,12 @@ func (_m *Transaction) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("datetime=")
 	builder.WriteString(_m.Datetime.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
+	builder.WriteString(", ")
+	builder.WriteString("category_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CategoryID))
 	builder.WriteByte(')')
 	return builder.String()
 }

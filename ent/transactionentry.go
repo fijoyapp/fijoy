@@ -30,13 +30,16 @@ type TransactionEntry struct {
 	HouseholdID int `json:"household_id,omitempty"`
 	// Amount holds the value of the "amount" field.
 	Amount decimal.Decimal `json:"amount,omitempty"`
+	// AccountID holds the value of the "account_id" field.
+	AccountID int `json:"account_id,omitempty"`
+	// CurrencyID holds the value of the "currency_id" field.
+	CurrencyID int `json:"currency_id,omitempty"`
+	// TransactionID holds the value of the "transaction_id" field.
+	TransactionID int `json:"transaction_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionEntryQuery when eager-loading is set.
-	Edges                           TransactionEntryEdges `json:"edges"`
-	account_transaction_entries     *int
-	currency_transaction_entries    *int
-	transaction_transaction_entries *int
-	selectValues                    sql.SelectValues
+	Edges        TransactionEntryEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // TransactionEntryEdges holds the relations/edges for other nodes in the graph.
@@ -107,16 +110,10 @@ func (*TransactionEntry) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case transactionentry.FieldAmount:
 			values[i] = new(decimal.Decimal)
-		case transactionentry.FieldID, transactionentry.FieldHouseholdID:
+		case transactionentry.FieldID, transactionentry.FieldHouseholdID, transactionentry.FieldAccountID, transactionentry.FieldCurrencyID, transactionentry.FieldTransactionID:
 			values[i] = new(sql.NullInt64)
 		case transactionentry.FieldCreateTime, transactionentry.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case transactionentry.ForeignKeys[0]: // account_transaction_entries
-			values[i] = new(sql.NullInt64)
-		case transactionentry.ForeignKeys[1]: // currency_transaction_entries
-			values[i] = new(sql.NullInt64)
-		case transactionentry.ForeignKeys[2]: // transaction_transaction_entries
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -162,26 +159,23 @@ func (_m *TransactionEntry) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				_m.Amount = *value
 			}
-		case transactionentry.ForeignKeys[0]:
+		case transactionentry.FieldAccountID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field account_transaction_entries", value)
+				return fmt.Errorf("unexpected type %T for field account_id", values[i])
 			} else if value.Valid {
-				_m.account_transaction_entries = new(int)
-				*_m.account_transaction_entries = int(value.Int64)
+				_m.AccountID = int(value.Int64)
 			}
-		case transactionentry.ForeignKeys[1]:
+		case transactionentry.FieldCurrencyID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field currency_transaction_entries", value)
+				return fmt.Errorf("unexpected type %T for field currency_id", values[i])
 			} else if value.Valid {
-				_m.currency_transaction_entries = new(int)
-				*_m.currency_transaction_entries = int(value.Int64)
+				_m.CurrencyID = int(value.Int64)
 			}
-		case transactionentry.ForeignKeys[2]:
+		case transactionentry.FieldTransactionID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field transaction_transaction_entries", value)
+				return fmt.Errorf("unexpected type %T for field transaction_id", values[i])
 			} else if value.Valid {
-				_m.transaction_transaction_entries = new(int)
-				*_m.transaction_transaction_entries = int(value.Int64)
+				_m.TransactionID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -250,6 +244,15 @@ func (_m *TransactionEntry) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("amount=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Amount))
+	builder.WriteString(", ")
+	builder.WriteString("account_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.AccountID))
+	builder.WriteString(", ")
+	builder.WriteString("currency_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurrencyID))
+	builder.WriteString(", ")
+	builder.WriteString("transaction_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TransactionID))
 	builder.WriteByte(')')
 	return builder.String()
 }

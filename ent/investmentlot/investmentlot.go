@@ -25,6 +25,10 @@ const (
 	FieldAmount = "amount"
 	// FieldPrice holds the string denoting the price field in the database.
 	FieldPrice = "price"
+	// FieldInvestmentID holds the string denoting the investment_id field in the database.
+	FieldInvestmentID = "investment_id"
+	// FieldTransactionID holds the string denoting the transaction_id field in the database.
+	FieldTransactionID = "transaction_id"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
 	EdgeHousehold = "household"
 	// EdgeInvestment holds the string denoting the investment edge name in mutations.
@@ -46,14 +50,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "investment" package.
 	InvestmentInverseTable = "investments"
 	// InvestmentColumn is the table column denoting the investment relation/edge.
-	InvestmentColumn = "investment_investment_lots"
+	InvestmentColumn = "investment_id"
 	// TransactionTable is the table that holds the transaction relation/edge.
 	TransactionTable = "investment_lots"
 	// TransactionInverseTable is the table name for the Transaction entity.
 	// It exists in this package in order to avoid circular dependency with the "transaction" package.
 	TransactionInverseTable = "transactions"
 	// TransactionColumn is the table column denoting the transaction relation/edge.
-	TransactionColumn = "transaction_investment_lots"
+	TransactionColumn = "transaction_id"
 )
 
 // Columns holds all SQL columns for investmentlot fields.
@@ -64,24 +68,14 @@ var Columns = []string{
 	FieldHouseholdID,
 	FieldAmount,
 	FieldPrice,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "investment_lots"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"investment_investment_lots",
-	"transaction_investment_lots",
+	FieldInvestmentID,
+	FieldTransactionID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -102,6 +96,10 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
 	UpdateDefaultUpdateTime func() time.Time
+	// InvestmentIDValidator is a validator for the "investment_id" field. It is called by the builders before save.
+	InvestmentIDValidator func(int) error
+	// TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
+	TransactionIDValidator func(int) error
 )
 
 // OrderOption defines the ordering options for the InvestmentLot queries.
@@ -135,6 +133,16 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByPrice orders the results by the price field.
 func ByPrice(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPrice, opts...).ToFunc()
+}
+
+// ByInvestmentID orders the results by the investment_id field.
+func ByInvestmentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInvestmentID, opts...).ToFunc()
+}
+
+// ByTransactionID orders the results by the transaction_id field.
+func ByTransactionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTransactionID, opts...).ToFunc()
 }
 
 // ByHouseholdField orders the results by household field.

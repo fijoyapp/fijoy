@@ -1,6 +1,7 @@
 package schema
 
 import (
+	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -8,7 +9,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
 
@@ -67,6 +67,8 @@ func (Account) Fields() []ent.Field {
 					entgql.SkipMutationUpdateInput,
 				),
 			),
+		field.Int("currency_id").Positive().Immutable(),
+		field.Int("user_id").Positive().Immutable(),
 	}
 }
 
@@ -86,11 +88,17 @@ func (Account) Edges() []ent.Edge {
 				),
 			),
 		edge.From("currency", Currency.Type).
+			Field("currency_id").
 			Ref("accounts").
-			Unique().Immutable().Required(),
+			Unique().
+			Immutable().
+			Required(),
 		edge.From("user", User.Type).
 			Ref("accounts").
-			Unique().Required().
+			Field("user_id").
+			Unique().
+			Required().
+			Immutable().
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,

@@ -46,21 +46,21 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountsInverseTable = "accounts"
 	// AccountsColumn is the table column denoting the accounts relation/edge.
-	AccountsColumn = "user_accounts"
+	AccountsColumn = "user_id"
 	// TransactionsTable is the table that holds the transactions relation/edge.
 	TransactionsTable = "transactions"
 	// TransactionsInverseTable is the table name for the Transaction entity.
 	// It exists in this package in order to avoid circular dependency with the "transaction" package.
 	TransactionsInverseTable = "transactions"
 	// TransactionsColumn is the table column denoting the transactions relation/edge.
-	TransactionsColumn = "user_transactions"
+	TransactionsColumn = "user_id"
 	// UserKeysTable is the table that holds the user_keys relation/edge.
 	UserKeysTable = "user_keys"
 	// UserKeysInverseTable is the table name for the UserKey entity.
 	// It exists in this package in order to avoid circular dependency with the "userkey" package.
 	UserKeysInverseTable = "user_keys"
 	// UserKeysColumn is the table column denoting the user_keys relation/edge.
-	UserKeysColumn = "user_user_keys"
+	UserKeysColumn = "user_id"
 	// UserHouseholdsTable is the table that holds the user_households relation/edge.
 	UserHouseholdsTable = "user_households"
 	// UserHouseholdsInverseTable is the table name for the UserHousehold entity.

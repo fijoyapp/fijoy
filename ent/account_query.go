@@ -34,7 +34,6 @@ type AccountQuery struct {
 	withUser                    *UserQuery
 	withTransactionEntries      *TransactionEntryQuery
 	withInvestments             *InvestmentQuery
-	withFKs                     bool
 	loadTotal                   []func(context.Context, []*Account) error
 	modifiers                   []func(*sql.Selector)
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
@@ -527,7 +526,6 @@ func (_q *AccountQuery) prepareQuery(ctx context.Context) error {
 func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Account, error) {
 	var (
 		nodes       = []*Account{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [5]bool{
 			_q.withHousehold != nil,
@@ -537,12 +535,6 @@ func (_q *AccountQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Acco
 			_q.withInvestments != nil,
 		}
 	)
-	if _q.withCurrency != nil || _q.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, account.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Account).scanValues(nil, columns)
 	}
@@ -653,10 +645,7 @@ func (_q *AccountQuery) loadCurrency(ctx context.Context, query *CurrencyQuery, 
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Account)
 	for i := range nodes {
-		if nodes[i].currency_accounts == nil {
-			continue
-		}
-		fk := *nodes[i].currency_accounts
+		fk := nodes[i].CurrencyID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -673,7 +662,7 @@ func (_q *AccountQuery) loadCurrency(ctx context.Context, query *CurrencyQuery, 
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "currency_accounts" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -685,10 +674,7 @@ func (_q *AccountQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Account)
 	for i := range nodes {
-		if nodes[i].user_accounts == nil {
-			continue
-		}
-		fk := *nodes[i].user_accounts
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -705,7 +691,7 @@ func (_q *AccountQuery) loadUser(ctx context.Context, query *UserQuery, nodes []
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_accounts" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -723,7 +709,9 @@ func (_q *AccountQuery) loadTransactionEntries(ctx context.Context, query *Trans
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(transactionentry.FieldAccountID)
+	}
 	query.Where(predicate.TransactionEntry(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(account.TransactionEntriesColumn), fks...))
 	}))
@@ -732,13 +720,10 @@ func (_q *AccountQuery) loadTransactionEntries(ctx context.Context, query *Trans
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.account_transaction_entries
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "account_transaction_entries" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.AccountID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "account_transaction_entries" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "account_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -754,7 +739,9 @@ func (_q *AccountQuery) loadInvestments(ctx context.Context, query *InvestmentQu
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(investment.FieldAccountID)
+	}
 	query.Where(predicate.Investment(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(account.InvestmentsColumn), fks...))
 	}))
@@ -763,13 +750,10 @@ func (_q *AccountQuery) loadInvestments(ctx context.Context, query *InvestmentQu
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.account_investments
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "account_investments" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.AccountID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "account_investments" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "account_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -806,6 +790,12 @@ func (_q *AccountQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if _q.withHousehold != nil {
 			_spec.Node.AddColumnOnce(account.FieldHouseholdID)
+		}
+		if _q.withCurrency != nil {
+			_spec.Node.AddColumnOnce(account.FieldCurrencyID)
+		}
+		if _q.withUser != nil {
+			_spec.Node.AddColumnOnce(account.FieldUserID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

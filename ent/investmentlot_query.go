@@ -29,7 +29,6 @@ type InvestmentLotQuery struct {
 	withHousehold   *HouseholdQuery
 	withInvestment  *InvestmentQuery
 	withTransaction *TransactionQuery
-	withFKs         bool
 	loadTotal       []func(context.Context, []*InvestmentLot) error
 	modifiers       []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -452,7 +451,6 @@ func (_q *InvestmentLotQuery) prepareQuery(ctx context.Context) error {
 func (_q *InvestmentLotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*InvestmentLot, error) {
 	var (
 		nodes       = []*InvestmentLot{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [3]bool{
 			_q.withHousehold != nil,
@@ -460,12 +458,6 @@ func (_q *InvestmentLotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 			_q.withTransaction != nil,
 		}
 	)
-	if _q.withInvestment != nil || _q.withTransaction != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, investmentlot.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*InvestmentLot).scanValues(nil, columns)
 	}
@@ -546,10 +538,7 @@ func (_q *InvestmentLotQuery) loadInvestment(ctx context.Context, query *Investm
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*InvestmentLot)
 	for i := range nodes {
-		if nodes[i].investment_investment_lots == nil {
-			continue
-		}
-		fk := *nodes[i].investment_investment_lots
+		fk := nodes[i].InvestmentID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -566,7 +555,7 @@ func (_q *InvestmentLotQuery) loadInvestment(ctx context.Context, query *Investm
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "investment_investment_lots" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "investment_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -578,10 +567,7 @@ func (_q *InvestmentLotQuery) loadTransaction(ctx context.Context, query *Transa
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*InvestmentLot)
 	for i := range nodes {
-		if nodes[i].transaction_investment_lots == nil {
-			continue
-		}
-		fk := *nodes[i].transaction_investment_lots
+		fk := nodes[i].TransactionID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -598,7 +584,7 @@ func (_q *InvestmentLotQuery) loadTransaction(ctx context.Context, query *Transa
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "transaction_investment_lots" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "transaction_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -637,6 +623,12 @@ func (_q *InvestmentLotQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if _q.withHousehold != nil {
 			_spec.Node.AddColumnOnce(investmentlot.FieldHouseholdID)
+		}
+		if _q.withInvestment != nil {
+			_spec.Node.AddColumnOnce(investmentlot.FieldInvestmentID)
+		}
+		if _q.withTransaction != nil {
+			_spec.Node.AddColumnOnce(investmentlot.FieldTransactionID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

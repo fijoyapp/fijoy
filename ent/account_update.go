@@ -12,7 +12,6 @@ import (
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/predicate"
 	"beavermoney.app/ent/transactionentry"
-	"beavermoney.app/ent/user"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -136,17 +135,6 @@ func (_u *AccountUpdate) AddFxRate(v decimal.Decimal) *AccountUpdate {
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *AccountUpdate) SetUserID(id int) *AccountUpdate {
-	_u.mutation.SetUserID(id)
-	return _u
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (_u *AccountUpdate) SetUser(v *User) *AccountUpdate {
-	return _u.SetUserID(v.ID)
-}
-
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (_u *AccountUpdate) AddTransactionEntryIDs(ids ...int) *AccountUpdate {
 	_u.mutation.AddTransactionEntryIDs(ids...)
@@ -180,12 +168,6 @@ func (_u *AccountUpdate) AddInvestments(v ...*Investment) *AccountUpdate {
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdate) Mutation() *AccountMutation {
 	return _u.mutation
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (_u *AccountUpdate) ClearUser() *AccountUpdate {
-	_u.mutation.ClearUser()
-	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
@@ -338,35 +320,6 @@ func (_u *AccountUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedFxRate(); ok {
 		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
-	}
-	if _u.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   account.UserTable,
-			Columns: []string{account.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   account.UserTable,
-			Columns: []string{account.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -583,17 +536,6 @@ func (_u *AccountUpdateOne) AddFxRate(v decimal.Decimal) *AccountUpdateOne {
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *AccountUpdateOne) SetUserID(id int) *AccountUpdateOne {
-	_u.mutation.SetUserID(id)
-	return _u
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (_u *AccountUpdateOne) SetUser(v *User) *AccountUpdateOne {
-	return _u.SetUserID(v.ID)
-}
-
 // AddTransactionEntryIDs adds the "transaction_entries" edge to the TransactionEntry entity by IDs.
 func (_u *AccountUpdateOne) AddTransactionEntryIDs(ids ...int) *AccountUpdateOne {
 	_u.mutation.AddTransactionEntryIDs(ids...)
@@ -627,12 +569,6 @@ func (_u *AccountUpdateOne) AddInvestments(v ...*Investment) *AccountUpdateOne {
 // Mutation returns the AccountMutation object of the builder.
 func (_u *AccountUpdateOne) Mutation() *AccountMutation {
 	return _u.mutation
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (_u *AccountUpdateOne) ClearUser() *AccountUpdateOne {
-	_u.mutation.ClearUser()
-	return _u
 }
 
 // ClearTransactionEntries clears all "transaction_entries" edges to the TransactionEntry entity.
@@ -815,35 +751,6 @@ func (_u *AccountUpdateOne) sqlSave(ctx context.Context) (_node *Account, err er
 	}
 	if value, ok := _u.mutation.AddedFxRate(); ok {
 		_spec.AddField(account.FieldFxRate, field.TypeFloat64, value)
-	}
-	if _u.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   account.UserTable,
-			Columns: []string{account.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   account.UserTable,
-			Columns: []string{account.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if _u.mutation.TransactionEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{

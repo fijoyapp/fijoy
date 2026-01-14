@@ -26,6 +26,9 @@ func (Transaction) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("DATETIME"),
 			),
+
+		field.Int("user_id").Positive(),
+		field.Int("category_id").Positive(),
 	}
 }
 
@@ -33,6 +36,7 @@ func (Transaction) Fields() []ent.Field {
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
+			Field("user_id").
 			Ref("transactions").
 			Unique().
 			Required(),
@@ -48,6 +52,7 @@ func (Transaction) Edges() []ent.Edge {
 				),
 			),
 		edge.From("category", TransactionCategory.Type).
+			Field("category_id").
 			Ref("transactions").
 			Unique().
 			Required(),
@@ -169,6 +174,10 @@ func (TransactionEntry) Fields() []ent.Field {
 				dialect.Postgres: "numeric(36,18)",
 			}).
 			Annotations(entgql.Type("String")),
+
+		field.Int("account_id").Positive(),
+		field.Int("currency_id").Positive().Immutable(),
+		field.Int("transaction_id").Positive().Immutable(),
 	}
 }
 
@@ -187,16 +196,27 @@ func (TransactionEntry) Edges() []ent.Edge {
 				),
 			),
 		edge.From("account", Account.Type).
-			Ref("transaction_entries").Unique().Required(),
+			Field("account_id").
+			Ref("transaction_entries").
+			Unique().
+			Required(),
 		edge.From("currency", Currency.Type).
-			Ref("transaction_entries").Unique().Required().
+			Field("currency_id").
+			Ref("transaction_entries").
+			Unique().
+			Required().
+			Immutable().
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
 				),
 			),
 		edge.From("transaction", Transaction.Type).
-			Ref("transaction_entries").Unique().Required().
+			Field("transaction_id").
+			Ref("transaction_entries").
+			Unique().
+			Required().
+			Immutable().
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,

@@ -45,6 +45,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			account.FieldIconPath:    {Type: field.TypeString, Column: account.FieldIconPath},
 			account.FieldValue:       {Type: field.TypeFloat64, Column: account.FieldValue},
 			account.FieldFxRate:      {Type: field.TypeFloat64, Column: account.FieldFxRate},
+			account.FieldCurrencyID:  {Type: field.TypeInt, Column: account.FieldCurrencyID},
+			account.FieldUserID:      {Type: field.TypeInt, Column: account.FieldUserID},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -76,6 +78,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			household.FieldUpdateTime: {Type: field.TypeTime, Column: household.FieldUpdateTime},
 			household.FieldName:       {Type: field.TypeString, Column: household.FieldName},
 			household.FieldLocale:     {Type: field.TypeString, Column: household.FieldLocale},
+			household.FieldCurrencyID: {Type: field.TypeInt, Column: household.FieldCurrencyID},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -98,6 +101,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			investment.FieldAmount:      {Type: field.TypeFloat64, Column: investment.FieldAmount},
 			investment.FieldQuote:       {Type: field.TypeFloat64, Column: investment.FieldQuote},
 			investment.FieldValue:       {Type: field.TypeFloat64, Column: investment.FieldValue},
+			investment.FieldAccountID:   {Type: field.TypeInt, Column: investment.FieldAccountID},
+			investment.FieldCurrencyID:  {Type: field.TypeInt, Column: investment.FieldCurrencyID},
 		},
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
@@ -111,11 +116,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "InvestmentLot",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			investmentlot.FieldCreateTime:  {Type: field.TypeTime, Column: investmentlot.FieldCreateTime},
-			investmentlot.FieldUpdateTime:  {Type: field.TypeTime, Column: investmentlot.FieldUpdateTime},
-			investmentlot.FieldHouseholdID: {Type: field.TypeInt, Column: investmentlot.FieldHouseholdID},
-			investmentlot.FieldAmount:      {Type: field.TypeFloat64, Column: investmentlot.FieldAmount},
-			investmentlot.FieldPrice:       {Type: field.TypeFloat64, Column: investmentlot.FieldPrice},
+			investmentlot.FieldCreateTime:    {Type: field.TypeTime, Column: investmentlot.FieldCreateTime},
+			investmentlot.FieldUpdateTime:    {Type: field.TypeTime, Column: investmentlot.FieldUpdateTime},
+			investmentlot.FieldHouseholdID:   {Type: field.TypeInt, Column: investmentlot.FieldHouseholdID},
+			investmentlot.FieldAmount:        {Type: field.TypeFloat64, Column: investmentlot.FieldAmount},
+			investmentlot.FieldPrice:         {Type: field.TypeFloat64, Column: investmentlot.FieldPrice},
+			investmentlot.FieldInvestmentID:  {Type: field.TypeInt, Column: investmentlot.FieldInvestmentID},
+			investmentlot.FieldTransactionID: {Type: field.TypeInt, Column: investmentlot.FieldTransactionID},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -134,6 +141,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transaction.FieldHouseholdID: {Type: field.TypeInt, Column: transaction.FieldHouseholdID},
 			transaction.FieldDescription: {Type: field.TypeString, Column: transaction.FieldDescription},
 			transaction.FieldDatetime:    {Type: field.TypeTime, Column: transaction.FieldDatetime},
+			transaction.FieldUserID:      {Type: field.TypeInt, Column: transaction.FieldUserID},
+			transaction.FieldCategoryID:  {Type: field.TypeInt, Column: transaction.FieldCategoryID},
 		},
 	}
 	graph.Nodes[6] = &sqlgraph.Node{
@@ -165,10 +174,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "TransactionEntry",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			transactionentry.FieldCreateTime:  {Type: field.TypeTime, Column: transactionentry.FieldCreateTime},
-			transactionentry.FieldUpdateTime:  {Type: field.TypeTime, Column: transactionentry.FieldUpdateTime},
-			transactionentry.FieldHouseholdID: {Type: field.TypeInt, Column: transactionentry.FieldHouseholdID},
-			transactionentry.FieldAmount:      {Type: field.TypeFloat64, Column: transactionentry.FieldAmount},
+			transactionentry.FieldCreateTime:    {Type: field.TypeTime, Column: transactionentry.FieldCreateTime},
+			transactionentry.FieldUpdateTime:    {Type: field.TypeTime, Column: transactionentry.FieldUpdateTime},
+			transactionentry.FieldHouseholdID:   {Type: field.TypeInt, Column: transactionentry.FieldHouseholdID},
+			transactionentry.FieldAmount:        {Type: field.TypeFloat64, Column: transactionentry.FieldAmount},
+			transactionentry.FieldAccountID:     {Type: field.TypeInt, Column: transactionentry.FieldAccountID},
+			transactionentry.FieldCurrencyID:    {Type: field.TypeInt, Column: transactionentry.FieldCurrencyID},
+			transactionentry.FieldTransactionID: {Type: field.TypeInt, Column: transactionentry.FieldTransactionID},
 		},
 	}
 	graph.Nodes[8] = &sqlgraph.Node{
@@ -221,6 +233,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userkey.FieldUpdateTime: {Type: field.TypeTime, Column: userkey.FieldUpdateTime},
 			userkey.FieldProvider:   {Type: field.TypeEnum, Column: userkey.FieldProvider},
 			userkey.FieldKey:        {Type: field.TypeString, Column: userkey.FieldKey},
+			userkey.FieldUserID:     {Type: field.TypeInt, Column: userkey.FieldUserID},
 		},
 	}
 	graph.MustAddE(
@@ -845,6 +858,16 @@ func (f *AccountFilter) WhereFxRate(p entql.Float64P) {
 	f.Where(p.Field(account.FieldFxRate))
 }
 
+// WhereCurrencyID applies the entql int predicate on the currency_id field.
+func (f *AccountFilter) WhereCurrencyID(p entql.IntP) {
+	f.Where(p.Field(account.FieldCurrencyID))
+}
+
+// WhereUserID applies the entql int predicate on the user_id field.
+func (f *AccountFilter) WhereUserID(p entql.IntP) {
+	f.Where(p.Field(account.FieldUserID))
+}
+
 // WhereHasHousehold applies a predicate to check if query has an edge household.
 func (f *AccountFilter) WhereHasHousehold() {
 	f.Where(entql.HasEdge("household"))
@@ -1076,6 +1099,11 @@ func (f *HouseholdFilter) WhereLocale(p entql.StringP) {
 	f.Where(p.Field(household.FieldLocale))
 }
 
+// WhereCurrencyID applies the entql int predicate on the currency_id field.
+func (f *HouseholdFilter) WhereCurrencyID(p entql.IntP) {
+	f.Where(p.Field(household.FieldCurrencyID))
+}
+
 // WhereHasCurrency applies a predicate to check if query has an edge currency.
 func (f *HouseholdFilter) WhereHasCurrency() {
 	f.Where(entql.HasEdge("currency"))
@@ -1287,6 +1315,16 @@ func (f *InvestmentFilter) WhereValue(p entql.Float64P) {
 	f.Where(p.Field(investment.FieldValue))
 }
 
+// WhereAccountID applies the entql int predicate on the account_id field.
+func (f *InvestmentFilter) WhereAccountID(p entql.IntP) {
+	f.Where(p.Field(investment.FieldAccountID))
+}
+
+// WhereCurrencyID applies the entql int predicate on the currency_id field.
+func (f *InvestmentFilter) WhereCurrencyID(p entql.IntP) {
+	f.Where(p.Field(investment.FieldCurrencyID))
+}
+
 // WhereHasAccount applies a predicate to check if query has an edge account.
 func (f *InvestmentFilter) WhereHasAccount() {
 	f.Where(entql.HasEdge("account"))
@@ -1408,6 +1446,16 @@ func (f *InvestmentLotFilter) WherePrice(p entql.Float64P) {
 	f.Where(p.Field(investmentlot.FieldPrice))
 }
 
+// WhereInvestmentID applies the entql int predicate on the investment_id field.
+func (f *InvestmentLotFilter) WhereInvestmentID(p entql.IntP) {
+	f.Where(p.Field(investmentlot.FieldInvestmentID))
+}
+
+// WhereTransactionID applies the entql int predicate on the transaction_id field.
+func (f *InvestmentLotFilter) WhereTransactionID(p entql.IntP) {
+	f.Where(p.Field(investmentlot.FieldTransactionID))
+}
+
 // WhereHasHousehold applies a predicate to check if query has an edge household.
 func (f *InvestmentLotFilter) WhereHasHousehold() {
 	f.Where(entql.HasEdge("household"))
@@ -1513,6 +1561,16 @@ func (f *TransactionFilter) WhereDescription(p entql.StringP) {
 // WhereDatetime applies the entql time.Time predicate on the datetime field.
 func (f *TransactionFilter) WhereDatetime(p entql.TimeP) {
 	f.Where(p.Field(transaction.FieldDatetime))
+}
+
+// WhereUserID applies the entql int predicate on the user_id field.
+func (f *TransactionFilter) WhereUserID(p entql.IntP) {
+	f.Where(p.Field(transaction.FieldUserID))
+}
+
+// WhereCategoryID applies the entql int predicate on the category_id field.
+func (f *TransactionFilter) WhereCategoryID(p entql.IntP) {
+	f.Where(p.Field(transaction.FieldCategoryID))
 }
 
 // WhereHasUser applies a predicate to check if query has an edge user.
@@ -1736,6 +1794,21 @@ func (f *TransactionEntryFilter) WhereHouseholdID(p entql.IntP) {
 // WhereAmount applies the entql float64 predicate on the amount field.
 func (f *TransactionEntryFilter) WhereAmount(p entql.Float64P) {
 	f.Where(p.Field(transactionentry.FieldAmount))
+}
+
+// WhereAccountID applies the entql int predicate on the account_id field.
+func (f *TransactionEntryFilter) WhereAccountID(p entql.IntP) {
+	f.Where(p.Field(transactionentry.FieldAccountID))
+}
+
+// WhereCurrencyID applies the entql int predicate on the currency_id field.
+func (f *TransactionEntryFilter) WhereCurrencyID(p entql.IntP) {
+	f.Where(p.Field(transactionentry.FieldCurrencyID))
+}
+
+// WhereTransactionID applies the entql int predicate on the transaction_id field.
+func (f *TransactionEntryFilter) WhereTransactionID(p entql.IntP) {
+	f.Where(p.Field(transactionentry.FieldTransactionID))
 }
 
 // WhereHasHousehold applies a predicate to check if query has an edge household.
@@ -2075,6 +2148,11 @@ func (f *UserKeyFilter) WhereProvider(p entql.StringP) {
 // WhereKey applies the entql string predicate on the key field.
 func (f *UserKeyFilter) WhereKey(p entql.StringP) {
 	f.Where(p.Field(userkey.FieldKey))
+}
+
+// WhereUserID applies the entql int predicate on the user_id field.
+func (f *UserKeyFilter) WhereUserID(p entql.IntP) {
+	f.Where(p.Field(userkey.FieldUserID))
 }
 
 // WhereHasUser applies a predicate to check if query has an edge user.

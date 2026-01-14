@@ -37,6 +37,10 @@ const (
 	FieldValue = "value"
 	// FieldFxRate holds the string denoting the fx_rate field in the database.
 	FieldFxRate = "fx_rate"
+	// FieldCurrencyID holds the string denoting the currency_id field in the database.
+	FieldCurrencyID = "currency_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
 	EdgeHousehold = "household"
 	// EdgeCurrency holds the string denoting the currency edge name in mutations.
@@ -62,28 +66,28 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "currency" package.
 	CurrencyInverseTable = "currencies"
 	// CurrencyColumn is the table column denoting the currency relation/edge.
-	CurrencyColumn = "currency_accounts"
+	CurrencyColumn = "currency_id"
 	// UserTable is the table that holds the user relation/edge.
 	UserTable = "accounts"
 	// UserInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_accounts"
+	UserColumn = "user_id"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
 	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
-	TransactionEntriesColumn = "account_transaction_entries"
+	TransactionEntriesColumn = "account_id"
 	// InvestmentsTable is the table that holds the investments relation/edge.
 	InvestmentsTable = "investments"
 	// InvestmentsInverseTable is the table name for the Investment entity.
 	// It exists in this package in order to avoid circular dependency with the "investment" package.
 	InvestmentsInverseTable = "investments"
 	// InvestmentsColumn is the table column denoting the investments relation/edge.
-	InvestmentsColumn = "account_investments"
+	InvestmentsColumn = "account_id"
 )
 
 // Columns holds all SQL columns for account fields.
@@ -98,24 +102,14 @@ var Columns = []string{
 	FieldIconPath,
 	FieldValue,
 	FieldFxRate,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "accounts"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"currency_accounts",
-	"user_accounts",
+	FieldCurrencyID,
+	FieldUserID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -142,6 +136,10 @@ var (
 	DefaultBalance func() decimal.Decimal
 	// DefaultValue holds the default value on creation for the "value" field.
 	DefaultValue func() decimal.Decimal
+	// CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	CurrencyIDValidator func(int) error
+	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	UserIDValidator func(int) error
 )
 
 // Type defines the type for the "type" enum field.
@@ -221,6 +219,16 @@ func ByValue(opts ...sql.OrderTermOption) OrderOption {
 // ByFxRate orders the results by the fx_rate field.
 func ByFxRate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldFxRate, opts...).ToFunc()
+}
+
+// ByCurrencyID orders the results by the currency_id field.
+func ByCurrencyID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencyID, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
 // ByHouseholdField orders the results by household field.

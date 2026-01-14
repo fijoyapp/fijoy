@@ -511,7 +511,9 @@ func (_q *TransactionCategoryQuery) loadTransactions(ctx context.Context, query 
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(transaction.FieldCategoryID)
+	}
 	query.Where(predicate.Transaction(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(transactioncategory.TransactionsColumn), fks...))
 	}))
@@ -520,13 +522,10 @@ func (_q *TransactionCategoryQuery) loadTransactions(ctx context.Context, query 
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.transaction_category_transactions
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "transaction_category_transactions" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.CategoryID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "transaction_category_transactions" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "category_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

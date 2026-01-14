@@ -11,35 +11,35 @@ BEGIN
     CASE TG_OP
         WHEN 'INSERT' THEN UPDATE accounts
                            SET value = value + NEW.value
-                           WHERE id = NEW.account_investments;
+                           WHERE id = NEW.account_id;
 
         WHEN 'DELETE' THEN UPDATE accounts
                            SET value = value - OLD.value
-                           WHERE id = OLD.account_investments;
+                           WHERE id = OLD.account_id;
 
         WHEN 'UPDATE'
             THEN -- 1. Check if the Account ID is the same (Optimization)
-            IF NEW.account_investments = OLD.account_investments THEN
+            IF NEW.account_id = OLD.account_id THEN
                 -- Same account: Just apply the difference
                 UPDATE accounts
                 SET value = value + (NEW.value - OLD.value)
-                WHERE id = NEW.account_investments;
+                WHERE id = NEW.account_id;
 
             ELSE
                 -- 2. The Account ID changed. We must update TWO accounts.
                 -- We must enforce Locking Order (Low ID -> High ID) to avoid deadlocks.
 
                 -- A. Determine Order
-                IF OLD.account_investments < NEW.account_investments THEN
-                    first_account_id := OLD.account_investments;
-                    second_account_id := NEW.account_investments;
+                IF OLD.account_id < NEW.account_id THEN
+                    first_account_id := OLD.account_id;
+                    second_account_id := NEW.account_id;
                 ELSE
-                    first_account_id := NEW.account_investments;
-                    second_account_id := OLD.account_investments;
+                    first_account_id := NEW.account_id;
+                    second_account_id := OLD.account_id;
                 END IF;
 
                 -- B. UPDATE THE FIRST (LOWER ID) ACCOUNT
-                IF first_account_id = OLD.account_investments THEN
+                IF first_account_id = OLD.account_id THEN
                     -- This is the old account: Subtract old value
                     UPDATE accounts
                     SET value = value - OLD.value
@@ -52,7 +52,7 @@ BEGIN
                 END IF;
 
                 -- C. UPDATE THE SECOND (HIGHER ID) ACCOUNT
-                IF second_account_id = OLD.account_investments THEN
+                IF second_account_id = OLD.account_id THEN
                     -- This is the old account: Subtract old value
                     UPDATE accounts
                     SET value = value - OLD.value
@@ -71,10 +71,10 @@ END;
 $$;
 
 -- Create the trigger
--- IMPORTANT: We include 'account_investments' in the UPDATE OF list
+-- IMPORTANT: We include 'account_id' in the UPDATE OF list
 -- If we don't, switching accounts won't fire the trigger!
 CREATE TRIGGER account_value_on_investment_change_trigger
-    AFTER INSERT OR UPDATE OF amount, quote, value, account_investments OR DELETE
+    AFTER INSERT OR UPDATE OF amount, quote, value, account_id OR DELETE
     ON investments
     FOR EACH ROW
 EXECUTE FUNCTION update_account_value_on_investment_change();

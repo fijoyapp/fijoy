@@ -39,12 +39,14 @@ type Investment struct {
 	Quote decimal.Decimal `json:"quote,omitempty"`
 	// Value holds the value of the "value" field.
 	Value decimal.Decimal `json:"value,omitempty"`
+	// AccountID holds the value of the "account_id" field.
+	AccountID int `json:"account_id,omitempty"`
+	// CurrencyID holds the value of the "currency_id" field.
+	CurrencyID int `json:"currency_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvestmentQuery when eager-loading is set.
-	Edges                InvestmentEdges `json:"edges"`
-	account_investments  *int
-	currency_investments *int
-	selectValues         sql.SelectValues
+	Edges        InvestmentEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // InvestmentEdges holds the relations/edges for other nodes in the graph.
@@ -115,16 +117,12 @@ func (*Investment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case investment.FieldAmount, investment.FieldQuote, investment.FieldValue:
 			values[i] = new(decimal.Decimal)
-		case investment.FieldID, investment.FieldHouseholdID:
+		case investment.FieldID, investment.FieldHouseholdID, investment.FieldAccountID, investment.FieldCurrencyID:
 			values[i] = new(sql.NullInt64)
 		case investment.FieldName, investment.FieldType, investment.FieldSymbol:
 			values[i] = new(sql.NullString)
 		case investment.FieldCreateTime, investment.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case investment.ForeignKeys[0]: // account_investments
-			values[i] = new(sql.NullInt64)
-		case investment.ForeignKeys[1]: // currency_investments
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -200,19 +198,17 @@ func (_m *Investment) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				_m.Value = *value
 			}
-		case investment.ForeignKeys[0]:
+		case investment.FieldAccountID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field account_investments", value)
+				return fmt.Errorf("unexpected type %T for field account_id", values[i])
 			} else if value.Valid {
-				_m.account_investments = new(int)
-				*_m.account_investments = int(value.Int64)
+				_m.AccountID = int(value.Int64)
 			}
-		case investment.ForeignKeys[1]:
+		case investment.FieldCurrencyID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field currency_investments", value)
+				return fmt.Errorf("unexpected type %T for field currency_id", values[i])
 			} else if value.Valid {
-				_m.currency_investments = new(int)
-				*_m.currency_investments = int(value.Int64)
+				_m.CurrencyID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -296,6 +292,12 @@ func (_m *Investment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("value=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Value))
+	builder.WriteString(", ")
+	builder.WriteString("account_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.AccountID))
+	builder.WriteString(", ")
+	builder.WriteString("currency_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurrencyID))
 	builder.WriteByte(')')
 	return builder.String()
 }

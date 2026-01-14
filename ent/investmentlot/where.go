@@ -81,6 +81,16 @@ func Price(v decimal.Decimal) predicate.InvestmentLot {
 	return predicate.InvestmentLot(sql.FieldEQ(FieldPrice, v))
 }
 
+// InvestmentID applies equality check predicate on the "investment_id" field. It's identical to InvestmentIDEQ.
+func InvestmentID(v int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldEQ(FieldInvestmentID, v))
+}
+
+// TransactionID applies equality check predicate on the "transaction_id" field. It's identical to TransactionIDEQ.
+func TransactionID(v int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldEQ(FieldTransactionID, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.InvestmentLot {
 	return predicate.InvestmentLot(sql.FieldEQ(FieldCreateTime, v))
@@ -259,6 +269,46 @@ func PriceLT(v decimal.Decimal) predicate.InvestmentLot {
 // PriceLTE applies the LTE predicate on the "price" field.
 func PriceLTE(v decimal.Decimal) predicate.InvestmentLot {
 	return predicate.InvestmentLot(sql.FieldLTE(FieldPrice, v))
+}
+
+// InvestmentIDEQ applies the EQ predicate on the "investment_id" field.
+func InvestmentIDEQ(v int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldEQ(FieldInvestmentID, v))
+}
+
+// InvestmentIDNEQ applies the NEQ predicate on the "investment_id" field.
+func InvestmentIDNEQ(v int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldNEQ(FieldInvestmentID, v))
+}
+
+// InvestmentIDIn applies the In predicate on the "investment_id" field.
+func InvestmentIDIn(vs ...int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldIn(FieldInvestmentID, vs...))
+}
+
+// InvestmentIDNotIn applies the NotIn predicate on the "investment_id" field.
+func InvestmentIDNotIn(vs ...int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldNotIn(FieldInvestmentID, vs...))
+}
+
+// TransactionIDEQ applies the EQ predicate on the "transaction_id" field.
+func TransactionIDEQ(v int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldEQ(FieldTransactionID, v))
+}
+
+// TransactionIDNEQ applies the NEQ predicate on the "transaction_id" field.
+func TransactionIDNEQ(v int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldNEQ(FieldTransactionID, v))
+}
+
+// TransactionIDIn applies the In predicate on the "transaction_id" field.
+func TransactionIDIn(vs ...int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldIn(FieldTransactionID, vs...))
+}
+
+// TransactionIDNotIn applies the NotIn predicate on the "transaction_id" field.
+func TransactionIDNotIn(vs ...int) predicate.InvestmentLot {
+	return predicate.InvestmentLot(sql.FieldNotIn(FieldTransactionID, vs...))
 }
 
 // HasHousehold applies the HasEdge predicate on the "household" edge.

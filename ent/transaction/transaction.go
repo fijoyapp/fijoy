@@ -25,6 +25,10 @@ const (
 	FieldDescription = "description"
 	// FieldDatetime holds the string denoting the datetime field in the database.
 	FieldDatetime = "datetime"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
+	// FieldCategoryID holds the string denoting the category_id field in the database.
+	FieldCategoryID = "category_id"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
@@ -43,7 +47,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
-	UserColumn = "user_transactions"
+	UserColumn = "user_id"
 	// HouseholdTable is the table that holds the household relation/edge.
 	HouseholdTable = "transactions"
 	// HouseholdInverseTable is the table name for the Household entity.
@@ -57,21 +61,21 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "transactioncategory" package.
 	CategoryInverseTable = "transaction_categories"
 	// CategoryColumn is the table column denoting the category relation/edge.
-	CategoryColumn = "transaction_category_transactions"
+	CategoryColumn = "category_id"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
 	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
-	TransactionEntriesColumn = "transaction_transaction_entries"
+	TransactionEntriesColumn = "transaction_id"
 	// InvestmentLotsTable is the table that holds the investment_lots relation/edge.
 	InvestmentLotsTable = "investment_lots"
 	// InvestmentLotsInverseTable is the table name for the InvestmentLot entity.
 	// It exists in this package in order to avoid circular dependency with the "investmentlot" package.
 	InvestmentLotsInverseTable = "investment_lots"
 	// InvestmentLotsColumn is the table column denoting the investment_lots relation/edge.
-	InvestmentLotsColumn = "transaction_investment_lots"
+	InvestmentLotsColumn = "transaction_id"
 )
 
 // Columns holds all SQL columns for transaction fields.
@@ -82,24 +86,14 @@ var Columns = []string{
 	FieldHouseholdID,
 	FieldDescription,
 	FieldDatetime,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "transactions"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"transaction_category_transactions",
-	"user_transactions",
+	FieldUserID,
+	FieldCategoryID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -120,6 +114,10 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
 	UpdateDefaultUpdateTime func() time.Time
+	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	UserIDValidator func(int) error
+	// CategoryIDValidator is a validator for the "category_id" field. It is called by the builders before save.
+	CategoryIDValidator func(int) error
 )
 
 // OrderOption defines the ordering options for the Transaction queries.
@@ -153,6 +151,16 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByDatetime orders the results by the datetime field.
 func ByDatetime(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDatetime, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
+}
+
+// ByCategoryID orders the results by the category_id field.
+func ByCategoryID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCategoryID, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

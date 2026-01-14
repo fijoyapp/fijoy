@@ -75,6 +75,11 @@ func Locale(v string) predicate.Household {
 	return predicate.Household(sql.FieldEQ(FieldLocale, v))
 }
 
+// CurrencyID applies equality check predicate on the "currency_id" field. It's identical to CurrencyIDEQ.
+func CurrencyID(v int) predicate.Household {
+	return predicate.Household(sql.FieldEQ(FieldCurrencyID, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Household {
 	return predicate.Household(sql.FieldEQ(FieldCreateTime, v))
@@ -283,6 +288,26 @@ func LocaleEqualFold(v string) predicate.Household {
 // LocaleContainsFold applies the ContainsFold predicate on the "locale" field.
 func LocaleContainsFold(v string) predicate.Household {
 	return predicate.Household(sql.FieldContainsFold(FieldLocale, v))
+}
+
+// CurrencyIDEQ applies the EQ predicate on the "currency_id" field.
+func CurrencyIDEQ(v int) predicate.Household {
+	return predicate.Household(sql.FieldEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDNEQ applies the NEQ predicate on the "currency_id" field.
+func CurrencyIDNEQ(v int) predicate.Household {
+	return predicate.Household(sql.FieldNEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDIn applies the In predicate on the "currency_id" field.
+func CurrencyIDIn(vs ...int) predicate.Household {
+	return predicate.Household(sql.FieldIn(FieldCurrencyID, vs...))
+}
+
+// CurrencyIDNotIn applies the NotIn predicate on the "currency_id" field.
+func CurrencyIDNotIn(vs ...int) predicate.Household {
+	return predicate.Household(sql.FieldNotIn(FieldCurrencyID, vs...))
 }
 
 // HasCurrency applies the HasEdge predicate on the "currency" edge.

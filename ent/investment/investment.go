@@ -37,6 +37,10 @@ const (
 	FieldQuote = "quote"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
+	// FieldAccountID holds the string denoting the account_id field in the database.
+	FieldAccountID = "account_id"
+	// FieldCurrencyID holds the string denoting the currency_id field in the database.
+	FieldCurrencyID = "currency_id"
 	// EdgeAccount holds the string denoting the account edge name in mutations.
 	EdgeAccount = "account"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
@@ -53,7 +57,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
 	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "account_investments"
+	AccountColumn = "account_id"
 	// HouseholdTable is the table that holds the household relation/edge.
 	HouseholdTable = "investments"
 	// HouseholdInverseTable is the table name for the Household entity.
@@ -67,14 +71,14 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "currency" package.
 	CurrencyInverseTable = "currencies"
 	// CurrencyColumn is the table column denoting the currency relation/edge.
-	CurrencyColumn = "currency_investments"
+	CurrencyColumn = "currency_id"
 	// InvestmentLotsTable is the table that holds the investment_lots relation/edge.
 	InvestmentLotsTable = "investment_lots"
 	// InvestmentLotsInverseTable is the table name for the InvestmentLot entity.
 	// It exists in this package in order to avoid circular dependency with the "investmentlot" package.
 	InvestmentLotsInverseTable = "investment_lots"
 	// InvestmentLotsColumn is the table column denoting the investment_lots relation/edge.
-	InvestmentLotsColumn = "investment_investment_lots"
+	InvestmentLotsColumn = "investment_id"
 )
 
 // Columns holds all SQL columns for investment fields.
@@ -89,24 +93,14 @@ var Columns = []string{
 	FieldAmount,
 	FieldQuote,
 	FieldValue,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "investments"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"account_investments",
-	"currency_investments",
+	FieldAccountID,
+	FieldCurrencyID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -133,6 +127,10 @@ var (
 	DefaultAmount func() decimal.Decimal
 	// DefaultValue holds the default value on creation for the "value" field.
 	DefaultValue func() decimal.Decimal
+	// AccountIDValidator is a validator for the "account_id" field. It is called by the builders before save.
+	AccountIDValidator func(int) error
+	// CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	CurrencyIDValidator func(int) error
 )
 
 // Type defines the type for the "type" enum field.
@@ -209,6 +207,16 @@ func ByQuote(opts ...sql.OrderTermOption) OrderOption {
 // ByValue orders the results by the value field.
 func ByValue(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldValue, opts...).ToFunc()
+}
+
+// ByAccountID orders the results by the account_id field.
+func ByAccountID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccountID, opts...).ToFunc()
+}
+
+// ByCurrencyID orders the results by the currency_id field.
+func ByCurrencyID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencyID, opts...).ToFunc()
 }
 
 // ByAccountField orders the results by account field.

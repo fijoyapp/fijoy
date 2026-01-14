@@ -72,26 +72,26 @@ func (_c *InvestmentLotCreate) SetPrice(v decimal.Decimal) *InvestmentLotCreate 
 	return _c
 }
 
+// SetInvestmentID sets the "investment_id" field.
+func (_c *InvestmentLotCreate) SetInvestmentID(v int) *InvestmentLotCreate {
+	_c.mutation.SetInvestmentID(v)
+	return _c
+}
+
+// SetTransactionID sets the "transaction_id" field.
+func (_c *InvestmentLotCreate) SetTransactionID(v int) *InvestmentLotCreate {
+	_c.mutation.SetTransactionID(v)
+	return _c
+}
+
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *InvestmentLotCreate) SetHousehold(v *Household) *InvestmentLotCreate {
 	return _c.SetHouseholdID(v.ID)
 }
 
-// SetInvestmentID sets the "investment" edge to the Investment entity by ID.
-func (_c *InvestmentLotCreate) SetInvestmentID(id int) *InvestmentLotCreate {
-	_c.mutation.SetInvestmentID(id)
-	return _c
-}
-
 // SetInvestment sets the "investment" edge to the Investment entity.
 func (_c *InvestmentLotCreate) SetInvestment(v *Investment) *InvestmentLotCreate {
 	return _c.SetInvestmentID(v.ID)
-}
-
-// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (_c *InvestmentLotCreate) SetTransactionID(id int) *InvestmentLotCreate {
-	_c.mutation.SetTransactionID(id)
-	return _c
 }
 
 // SetTransaction sets the "transaction" edge to the Transaction entity.
@@ -169,6 +169,22 @@ func (_c *InvestmentLotCreate) check() error {
 	}
 	if _, ok := _c.mutation.Price(); !ok {
 		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "InvestmentLot.price"`)}
+	}
+	if _, ok := _c.mutation.InvestmentID(); !ok {
+		return &ValidationError{Name: "investment_id", err: errors.New(`ent: missing required field "InvestmentLot.investment_id"`)}
+	}
+	if v, ok := _c.mutation.InvestmentID(); ok {
+		if err := investmentlot.InvestmentIDValidator(v); err != nil {
+			return &ValidationError{Name: "investment_id", err: fmt.Errorf(`ent: validator failed for field "InvestmentLot.investment_id": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.TransactionID(); !ok {
+		return &ValidationError{Name: "transaction_id", err: errors.New(`ent: missing required field "InvestmentLot.transaction_id"`)}
+	}
+	if v, ok := _c.mutation.TransactionID(); ok {
+		if err := investmentlot.TransactionIDValidator(v); err != nil {
+			return &ValidationError{Name: "transaction_id", err: fmt.Errorf(`ent: validator failed for field "InvestmentLot.transaction_id": %w`, err)}
+		}
 	}
 	if len(_c.mutation.HouseholdIDs()) == 0 {
 		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "InvestmentLot.household"`)}
@@ -253,7 +269,7 @@ func (_c *InvestmentLotCreate) createSpec() (*InvestmentLot, *sqlgraph.CreateSpe
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.investment_investment_lots = &nodes[0]
+		_node.InvestmentID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionIDs(); len(nodes) > 0 {
@@ -270,7 +286,7 @@ func (_c *InvestmentLotCreate) createSpec() (*InvestmentLot, *sqlgraph.CreateSpe
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.transaction_investment_lots = &nodes[0]
+		_node.TransactionID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -389,6 +405,12 @@ func (u *InvestmentLotUpsertOne) UpdateNewValues() *InvestmentLotUpsertOne {
 		}
 		if _, exists := u.create.mutation.HouseholdID(); exists {
 			s.SetIgnore(investmentlot.FieldHouseholdID)
+		}
+		if _, exists := u.create.mutation.InvestmentID(); exists {
+			s.SetIgnore(investmentlot.FieldInvestmentID)
+		}
+		if _, exists := u.create.mutation.TransactionID(); exists {
+			s.SetIgnore(investmentlot.FieldTransactionID)
 		}
 	}))
 	return u
@@ -658,6 +680,12 @@ func (u *InvestmentLotUpsertBulk) UpdateNewValues() *InvestmentLotUpsertBulk {
 			}
 			if _, exists := b.mutation.HouseholdID(); exists {
 				s.SetIgnore(investmentlot.FieldHouseholdID)
+			}
+			if _, exists := b.mutation.InvestmentID(); exists {
+				s.SetIgnore(investmentlot.FieldInvestmentID)
+			}
+			if _, exists := b.mutation.TransactionID(); exists {
+				s.SetIgnore(investmentlot.FieldTransactionID)
 			}
 		}
 	}))

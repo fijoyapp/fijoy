@@ -26,11 +26,12 @@ type UserKey struct {
 	Provider userkey.Provider `json:"provider,omitempty"`
 	// Key holds the value of the "key" field.
 	Key string `json:"key,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID int `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserKeyQuery when eager-loading is set.
-	Edges          UserKeyEdges `json:"edges"`
-	user_user_keys *int
-	selectValues   sql.SelectValues
+	Edges        UserKeyEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserKeyEdges holds the relations/edges for other nodes in the graph.
@@ -60,14 +61,12 @@ func (*UserKey) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case userkey.FieldID:
+		case userkey.FieldID, userkey.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case userkey.FieldProvider, userkey.FieldKey:
 			values[i] = new(sql.NullString)
 		case userkey.FieldCreateTime, userkey.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case userkey.ForeignKeys[0]: // user_user_keys
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -113,12 +112,11 @@ func (_m *UserKey) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Key = value.String
 			}
-		case userkey.ForeignKeys[0]:
+		case userkey.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_user_keys", value)
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.user_user_keys = new(int)
-				*_m.user_user_keys = int(value.Int64)
+				_m.UserID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -172,6 +170,9 @@ func (_m *UserKey) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("key=")
 	builder.WriteString(_m.Key)
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteByte(')')
 	return builder.String()
 }

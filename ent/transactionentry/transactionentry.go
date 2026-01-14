@@ -23,6 +23,12 @@ const (
 	FieldHouseholdID = "household_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
+	// FieldAccountID holds the string denoting the account_id field in the database.
+	FieldAccountID = "account_id"
+	// FieldCurrencyID holds the string denoting the currency_id field in the database.
+	FieldCurrencyID = "currency_id"
+	// FieldTransactionID holds the string denoting the transaction_id field in the database.
+	FieldTransactionID = "transaction_id"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
 	EdgeHousehold = "household"
 	// EdgeAccount holds the string denoting the account edge name in mutations.
@@ -46,21 +52,21 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountInverseTable = "accounts"
 	// AccountColumn is the table column denoting the account relation/edge.
-	AccountColumn = "account_transaction_entries"
+	AccountColumn = "account_id"
 	// CurrencyTable is the table that holds the currency relation/edge.
 	CurrencyTable = "transaction_entries"
 	// CurrencyInverseTable is the table name for the Currency entity.
 	// It exists in this package in order to avoid circular dependency with the "currency" package.
 	CurrencyInverseTable = "currencies"
 	// CurrencyColumn is the table column denoting the currency relation/edge.
-	CurrencyColumn = "currency_transaction_entries"
+	CurrencyColumn = "currency_id"
 	// TransactionTable is the table that holds the transaction relation/edge.
 	TransactionTable = "transaction_entries"
 	// TransactionInverseTable is the table name for the Transaction entity.
 	// It exists in this package in order to avoid circular dependency with the "transaction" package.
 	TransactionInverseTable = "transactions"
 	// TransactionColumn is the table column denoting the transaction relation/edge.
-	TransactionColumn = "transaction_transaction_entries"
+	TransactionColumn = "transaction_id"
 )
 
 // Columns holds all SQL columns for transactionentry fields.
@@ -70,25 +76,15 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldHouseholdID,
 	FieldAmount,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "transaction_entries"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"account_transaction_entries",
-	"currency_transaction_entries",
-	"transaction_transaction_entries",
+	FieldAccountID,
+	FieldCurrencyID,
+	FieldTransactionID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -109,6 +105,12 @@ var (
 	DefaultUpdateTime func() time.Time
 	// UpdateDefaultUpdateTime holds the default value on update for the "update_time" field.
 	UpdateDefaultUpdateTime func() time.Time
+	// AccountIDValidator is a validator for the "account_id" field. It is called by the builders before save.
+	AccountIDValidator func(int) error
+	// CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	CurrencyIDValidator func(int) error
+	// TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
+	TransactionIDValidator func(int) error
 )
 
 // OrderOption defines the ordering options for the TransactionEntry queries.
@@ -137,6 +139,21 @@ func ByHouseholdID(opts ...sql.OrderTermOption) OrderOption {
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByAccountID orders the results by the account_id field.
+func ByAccountID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccountID, opts...).ToFunc()
+}
+
+// ByCurrencyID orders the results by the currency_id field.
+func ByCurrencyID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencyID, opts...).ToFunc()
+}
+
+// ByTransactionID orders the results by the transaction_id field.
+func ByTransactionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTransactionID, opts...).ToFunc()
 }
 
 // ByHouseholdField orders the results by household field.

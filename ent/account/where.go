@@ -96,6 +96,16 @@ func FxRate(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldFxRate, v))
 }
 
+// CurrencyID applies equality check predicate on the "currency_id" field. It's identical to CurrencyIDEQ.
+func CurrencyID(v int) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldCurrencyID, v))
+}
+
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldUserID, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldCreateTime, v))
@@ -474,6 +484,46 @@ func FxRateLT(v decimal.Decimal) predicate.Account {
 // FxRateLTE applies the LTE predicate on the "fx_rate" field.
 func FxRateLTE(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldFxRate, v))
+}
+
+// CurrencyIDEQ applies the EQ predicate on the "currency_id" field.
+func CurrencyIDEQ(v int) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDNEQ applies the NEQ predicate on the "currency_id" field.
+func CurrencyIDNEQ(v int) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDIn applies the In predicate on the "currency_id" field.
+func CurrencyIDIn(vs ...int) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldCurrencyID, vs...))
+}
+
+// CurrencyIDNotIn applies the NotIn predicate on the "currency_id" field.
+func CurrencyIDNotIn(vs ...int) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldCurrencyID, vs...))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // HasHousehold applies the HasEdge predicate on the "household" edge.

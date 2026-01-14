@@ -23,6 +23,8 @@ type Account implements Node {
   iconPath: String
   value: String!
   fxRate: String!
+  currencyID: ID!
+  userID: ID!
   household: Household!
   currency: Currency!
   user: User!
@@ -50,6 +52,8 @@ type Investment implements Node {
   amount: String!
   quote: String!
   value: String!
+  accountID: ID!
+  currencyID: ID!
   account: Account!
   household: Household!
   currency: Currency!
@@ -449,6 +453,20 @@ input AccountWhereInput {
   fxRateLT: String
   fxRateLTE: String
   """
+  currency_id field predicates
+  """
+  currencyID: ID
+  currencyIDNEQ: ID
+  currencyIDIn: [ID!]
+  currencyIDNotIn: [ID!]
+  """
+  user_id field predicates
+  """
+  userID: ID
+  userIDNEQ: ID
+  userIDIn: [ID!]
+  userIDNotIn: [ID!]
+  """
   household edge predicates
   """
   hasHousehold: Boolean
@@ -616,6 +634,7 @@ type Household implements Node {
   updateTime: Time!
   name: String!
   locale: String!
+  currencyID: ID!
   currency: Currency!
   users: [User!]
   accounts: [Account!]
@@ -700,6 +719,13 @@ input HouseholdWhereInput {
   localeHasSuffix: String
   localeEqualFold: String
   localeContainsFold: String
+  """
+  currency_id field predicates
+  """
+  currencyID: ID
+  currencyIDNEQ: ID
+  currencyIDIn: [ID!]
+  currencyIDNotIn: [ID!]
   """
   currency edge predicates
   """
@@ -786,6 +812,8 @@ type InvestmentLot implements Node {
   householdID: ID!
   amount: String!
   price: String!
+  investmentID: ID!
+  transactionID: ID!
   household: Household!
   investment: Investment!
   transaction: Transaction!
@@ -893,6 +921,20 @@ input InvestmentLotWhereInput {
   priceGTE: String
   priceLT: String
   priceLTE: String
+  """
+  investment_id field predicates
+  """
+  investmentID: ID
+  investmentIDNEQ: ID
+  investmentIDIn: [ID!]
+  investmentIDNotIn: [ID!]
+  """
+  transaction_id field predicates
+  """
+  transactionID: ID
+  transactionIDNEQ: ID
+  transactionIDIn: [ID!]
+  transactionIDNotIn: [ID!]
   """
   household edge predicates
   """
@@ -1039,6 +1081,20 @@ input InvestmentWhereInput {
   valueLT: String
   valueLTE: String
   """
+  account_id field predicates
+  """
+  accountID: ID
+  accountIDNEQ: ID
+  accountIDIn: [ID!]
+  accountIDNotIn: [ID!]
+  """
+  currency_id field predicates
+  """
+  currencyID: ID
+  currencyIDNEQ: ID
+  currencyIDIn: [ID!]
+  currencyIDNotIn: [ID!]
+  """
   account edge predicates
   """
   hasAccount: Boolean
@@ -1120,6 +1176,8 @@ type Transaction implements Node {
   householdID: ID!
   description: String
   datetime: Time!
+  userID: ID!
+  categoryID: ID!
   user: User!
   household: Household!
   category: TransactionCategory!
@@ -1303,6 +1361,9 @@ type TransactionEntry implements Node {
   updateTime: Time!
   householdID: ID!
   amount: String!
+  accountID: ID!
+  currencyID: ID!
+  transactionID: ID!
   household: Household!
   account: Account!
   currency: Currency!
@@ -1368,6 +1429,27 @@ input TransactionEntryWhereInput {
   amountGTE: String
   amountLT: String
   amountLTE: String
+  """
+  account_id field predicates
+  """
+  accountID: ID
+  accountIDNEQ: ID
+  accountIDIn: [ID!]
+  accountIDNotIn: [ID!]
+  """
+  currency_id field predicates
+  """
+  currencyID: ID
+  currencyIDNEQ: ID
+  currencyIDIn: [ID!]
+  currencyIDNotIn: [ID!]
+  """
+  transaction_id field predicates
+  """
+  transactionID: ID
+  transactionIDNEQ: ID
+  transactionIDIn: [ID!]
+  transactionIDNotIn: [ID!]
   """
   household edge predicates
   """
@@ -1488,6 +1570,20 @@ input TransactionWhereInput {
   datetimeGTE: Time
   datetimeLT: Time
   datetimeLTE: Time
+  """
+  user_id field predicates
+  """
+  userID: ID
+  userIDNEQ: ID
+  userIDIn: [ID!]
+  userIDNotIn: [ID!]
+  """
+  category_id field predicates
+  """
+  categoryID: ID
+  categoryIDNEQ: ID
+  categoryIDIn: [ID!]
+  categoryIDNotIn: [ID!]
   """
   user edge predicates
   """
@@ -1634,6 +1730,7 @@ type UserKey implements Node {
   updateTime: Time!
   provider: UserKeyProvider!
   key: String!
+  userID: ID!
   user: User!
 }
 
@@ -1708,6 +1805,13 @@ input UserKeyWhereInput {
   keyHasSuffix: String
   keyEqualFold: String
   keyContainsFold: String
+  """
+  user_id field predicates
+  """
+  userID: ID
+  userIDNEQ: ID
+  userIDIn: [ID!]
+  userIDNotIn: [ID!]
   """
   user edge predicates
   """

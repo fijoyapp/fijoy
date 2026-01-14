@@ -42,7 +42,6 @@ type HouseholdQuery struct {
 	withTransactionCategories      *TransactionCategoryQuery
 	withTransactionEntries         *TransactionEntryQuery
 	withUserHouseholds             *UserHouseholdQuery
-	withFKs                        bool
 	loadTotal                      []func(context.Context, []*Household) error
 	modifiers                      []func(*sql.Selector)
 	withNamedUsers                 map[string]*UserQuery
@@ -677,7 +676,6 @@ func (_q *HouseholdQuery) prepareQuery(ctx context.Context) error {
 func (_q *HouseholdQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Household, error) {
 	var (
 		nodes       = []*Household{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [9]bool{
 			_q.withCurrency != nil,
@@ -691,12 +689,6 @@ func (_q *HouseholdQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ho
 			_q.withUserHouseholds != nil,
 		}
 	)
-	if _q.withCurrency != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, household.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Household).scanValues(nil, columns)
 	}
@@ -852,10 +844,7 @@ func (_q *HouseholdQuery) loadCurrency(ctx context.Context, query *CurrencyQuery
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Household)
 	for i := range nodes {
-		if nodes[i].currency_households == nil {
-			continue
-		}
-		fk := *nodes[i].currency_households
+		fk := nodes[i].CurrencyID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -872,7 +861,7 @@ func (_q *HouseholdQuery) loadCurrency(ctx context.Context, query *CurrencyQuery
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "currency_households" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -951,7 +940,6 @@ func (_q *HouseholdQuery) loadAccounts(ctx context.Context, query *AccountQuery,
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(account.FieldHouseholdID)
 	}
@@ -982,7 +970,6 @@ func (_q *HouseholdQuery) loadTransactions(ctx context.Context, query *Transacti
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(transaction.FieldHouseholdID)
 	}
@@ -1013,7 +1000,6 @@ func (_q *HouseholdQuery) loadInvestments(ctx context.Context, query *Investment
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(investment.FieldHouseholdID)
 	}
@@ -1044,7 +1030,6 @@ func (_q *HouseholdQuery) loadInvestmentLots(ctx context.Context, query *Investm
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(investmentlot.FieldHouseholdID)
 	}
@@ -1105,7 +1090,6 @@ func (_q *HouseholdQuery) loadTransactionEntries(ctx context.Context, query *Tra
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(transactionentry.FieldHouseholdID)
 	}
@@ -1184,6 +1168,9 @@ func (_q *HouseholdQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != household.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withCurrency != nil {
+			_spec.Node.AddColumnOnce(household.FieldCurrencyID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

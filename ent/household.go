@@ -26,11 +26,12 @@ type Household struct {
 	Name string `json:"name,omitempty"`
 	// Locale holds the value of the "locale" field.
 	Locale string `json:"locale,omitempty"`
+	// CurrencyID holds the value of the "currency_id" field.
+	CurrencyID int `json:"currency_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the HouseholdQuery when eager-loading is set.
-	Edges               HouseholdEdges `json:"edges"`
-	currency_households *int
-	selectValues        sql.SelectValues
+	Edges        HouseholdEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // HouseholdEdges holds the relations/edges for other nodes in the graph.
@@ -157,14 +158,12 @@ func (*Household) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case household.FieldID:
+		case household.FieldID, household.FieldCurrencyID:
 			values[i] = new(sql.NullInt64)
 		case household.FieldName, household.FieldLocale:
 			values[i] = new(sql.NullString)
 		case household.FieldCreateTime, household.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case household.ForeignKeys[0]: // currency_households
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -210,12 +209,11 @@ func (_m *Household) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Locale = value.String
 			}
-		case household.ForeignKeys[0]:
+		case household.FieldCurrencyID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field currency_households", value)
+				return fmt.Errorf("unexpected type %T for field currency_id", values[i])
 			} else if value.Valid {
-				_m.currency_households = new(int)
-				*_m.currency_households = int(value.Int64)
+				_m.CurrencyID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -309,6 +307,9 @@ func (_m *Household) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("locale=")
 	builder.WriteString(_m.Locale)
+	builder.WriteString(", ")
+	builder.WriteString("currency_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurrencyID))
 	builder.WriteByte(')')
 	return builder.String()
 }
