@@ -77,9 +77,6 @@ importers:
       react-dom:
         specifier: ^19.2.3
         version: 19.2.3(react@19.2.3)
-      react-draggable:
-        specifier: ^4.5.0
-        version: 4.5.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       react-intersection-observer:
         specifier: ^10.0.0
         version: 10.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -3370,12 +3367,6 @@ packages:
 
   react-draggable@4.4.6:
     resolution: {integrity: sha512-LtY5Xw1zTPqHkVmtM3X8MUOxNDOUhv/khTgBgrUvwaS064bwVvxT+q5El0uUFNx5IEPKXuRejr7UqLwBIg5pdw==}
-    peerDependencies:
-      react: '>= 16.3.0'
-      react-dom: '>= 16.3.0'
-
-  react-draggable@4.5.0:
-    resolution: {integrity: sha512-VC+HBLEZ0XJxnOxVAZsdRi8rD04Iz3SiiKOoYzamjylUcju/hP9np/aZdLHf/7WOD268WMoNJMvYfB5yAK45cw==}
     peerDependencies:
       react: '>= 16.3.0'
       react-dom: '>= 16.3.0'
@@ -7511,13 +7502,6 @@ snapshots:
   react-draggable@4.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       clsx: 1.2.1
-      prop-types: 15.8.1
-      react: 19.2.3
-      react-dom: 19.2.3(react@19.2.3)
-
-  react-draggable@4.5.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
-    dependencies:
-      clsx: 2.1.1
       prop-types: 15.8.1
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)

@@ -35,7 +35,6 @@
     "react": "^19.2.3",
     "react-day-picker": "^9.13.0",
     "react-dom": "^19.2.3",
-    "react-draggable": "^4.5.0",
     "react-intersection-observer": "^10.0.0",
     "react-number-format": "^5.4.4",
     "react-relay": "^20.1.1",
