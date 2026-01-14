@@ -8,7 +8,7 @@ import { NavProjects } from './nav-projects'
 import type { LucideIcon } from 'lucide-react'
 
 // import { NavMain } from '@/components/nav-main'
-import type { LinkOptions, ValidateLinkOptions } from '@tanstack/react-router'
+import type { LinkOptions } from '@tanstack/react-router'
 import { NavUser } from '@/components/nav-user'
 import { HouseholdSwitcher } from '@/components/household-switcher'
 import {

@@ -61,7 +61,7 @@ const routeHouseholdIdQuery = graphql`
       }
     }
     ...appSidebarFragment
-    ...newTransactionFragment
+    ...logTransactionFragment
   }
 `
 

@@ -1,6 +1,6 @@
 // import { Folder, Forward, MoreHorizontal, Trash2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import type { ValidateLinkOptions } from '@tanstack/react-router'
+import type { LinkOptions } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
 
 // import {
@@ -26,7 +26,7 @@ export function NavProjects({
 }: {
   projects: Array<{
     name: string
-    link: ValidateLinkOptions
+    link: LinkOptions
     icon: LucideIcon
   }>
 }) {
