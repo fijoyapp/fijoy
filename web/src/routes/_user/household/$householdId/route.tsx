@@ -3,6 +3,9 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
+import { useRef } from 'react'
+import Draggable from 'react-draggable'
+import { z } from 'zod'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
 import { MobileFabNav } from '@/components/mobile-fab-nav'
@@ -27,6 +30,7 @@ import { useTheme } from '@/components/theme-provider'
 import { PendingComponent } from '@/components/pending-component'
 import { environment } from '@/environment'
 import { CommandMenu } from '@/components/command-menu'
+import { NewTransaction } from './transactions/-components/new-transaction'
 
 const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {
@@ -43,11 +47,17 @@ const routeHouseholdIdQuery = graphql`
       }
     }
     ...appSidebarFragment
+    ...newTransactionFragment
   }
 `
 
+const searchSchema = z.object({
+  showNewTransaction: z.boolean().optional().default(false),
+})
+
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
+  validateSearch: searchSchema,
   beforeLoad: ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
     return loadQuery<routeHouseholdIdQuery>(
@@ -66,6 +76,8 @@ function RouteComponent() {
     routeHouseholdIdQuery,
     queryRef,
   )
+  const search = Route.useSearch()
+  const nodeRef = useRef(null)
 
   const { householdId } = Route.useParams()
 
@@ -136,6 +148,18 @@ function RouteComponent() {
           </div>
         </SidebarInset>
         <MobileFabNav />
+
+        {/* Draggable New Transaction Form */}
+        {search.showNewTransaction && (
+          <Draggable nodeRef={nodeRef} bounds="parent" handle=".drag-handle">
+            <div
+              ref={nodeRef}
+              className="fixed top-20 right-8 z-50 w-full max-w-2xl shadow-2xl"
+            >
+              <NewTransaction fragmentRef={data} />
+            </div>
+          </Draggable>
+        )}
       </SidebarProvider>
     </HouseholdProvider>
   )
