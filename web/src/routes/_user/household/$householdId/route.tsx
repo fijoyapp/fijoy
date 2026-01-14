@@ -3,6 +3,7 @@ import {
   Outlet,
   createFileRoute,
   retainSearchParams,
+  useNavigate,
 } from '@tanstack/react-router'
 import { graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
@@ -27,6 +28,12 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
 import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
@@ -36,6 +43,7 @@ import { environment } from '@/environment'
 import { CommandMenu } from '@/components/command-menu'
 import { NewTransaction } from './transactions/-components/new-transaction'
 import { zodValidator } from '@tanstack/zod-adapter'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {
@@ -117,6 +125,8 @@ function RouteComponent() {
     queryRef,
   )
   const search = Route.useSearch()
+  const navigate = useNavigate()
+  const isMobile = useIsMobile()
 
   const { householdId } = Route.useParams()
 
@@ -126,7 +136,7 @@ function RouteComponent() {
   const { isPrivacyModeEnabled, togglePrivacyMode } = usePrivacyMode()
   const { setTheme } = useTheme()
 
-  // State for Rnd position
+  // State for Rnd position (desktop only)
   const [rndPosition, setRndPosition] = useState<RndPosition>(
     getRndPositionFromStorage,
   )
@@ -135,6 +145,14 @@ function RouteComponent() {
   useEffect(() => {
     saveRndPositionToStorage(rndPosition)
   }, [rndPosition])
+
+  // Close drawer handler
+  const handleCloseNewTransaction = () => {
+    navigate({
+      to: '.',
+      search: (prev) => ({ ...prev, showNewTransaction: false }),
+    })
+  }
 
   return (
     <HouseholdProvider household={household}>
@@ -198,8 +216,27 @@ function RouteComponent() {
         </SidebarInset>
         <MobileFabNav />
 
-        {/* Resizable & Draggable New Transaction Form */}
-        {search.showNewTransaction && (
+        {/* Mobile: Drawer for New Transaction Form */}
+        {isMobile && (
+          <Drawer
+            open={search.showNewTransaction}
+            onOpenChange={(open) => {
+              if (!open) handleCloseNewTransaction()
+            }}
+          >
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>New Transaction</DrawerTitle>
+              </DrawerHeader>
+              <div className="overflow-y-auto px-4 pb-4">
+                <NewTransaction fragmentRef={data} />
+              </div>
+            </DrawerContent>
+          </Drawer>
+        )}
+
+        {/* Desktop: Resizable & Draggable New Transaction Form */}
+        {!isMobile && search.showNewTransaction && (
           <Rnd
             position={{ x: rndPosition.x, y: rndPosition.y }}
             size={{ width: rndPosition.width, height: rndPosition.height }}

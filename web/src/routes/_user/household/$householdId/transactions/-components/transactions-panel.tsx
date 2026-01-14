@@ -66,7 +66,7 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
 
   return (
     <Fragment>
-      <div className="absolute bottom-4 right-4">
+      <div className="fixed lg:absolute bottom-4 right-4">
         <Link
           from={'/household/$householdId/transactions'}
           to={'/household/$householdId/transactions'}
