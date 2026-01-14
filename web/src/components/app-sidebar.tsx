@@ -1,12 +1,8 @@
 import {
-  ArrowLeftRightIcon,
-  ChartNoAxesCombinedIcon,
   CreditCardIcon,
-  LayoutGridIcon,
   ReceiptIcon,
   TagIcon,
   TrendingUpIcon,
-  WalletIcon,
 } from 'lucide-react'
 import { NavProjects } from './nav-projects'
 import type { LucideIcon } from 'lucide-react'
