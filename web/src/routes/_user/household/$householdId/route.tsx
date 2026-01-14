@@ -1,10 +1,13 @@
 import { EyeIcon, EyeOffIcon, Moon, Sun } from 'lucide-react'
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import {
+  Outlet,
+  createFileRoute,
+  retainSearchParams,
+} from '@tanstack/react-router'
 import { graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
-import { useRef } from 'react'
-import Draggable from 'react-draggable'
+import { Rnd } from 'react-rnd'
 import { z } from 'zod'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
@@ -31,6 +34,7 @@ import { PendingComponent } from '@/components/pending-component'
 import { environment } from '@/environment'
 import { CommandMenu } from '@/components/command-menu'
 import { NewTransaction } from './transactions/-components/new-transaction'
+import { zodValidator } from '@tanstack/zod-adapter'
 
 const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {
@@ -57,7 +61,10 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
-  validateSearch: searchSchema,
+  validateSearch: zodValidator(searchSchema),
+  search: {
+    middlewares: [retainSearchParams(['showNewTransaction'])],
+  },
   beforeLoad: ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
     return loadQuery<routeHouseholdIdQuery>(
@@ -77,7 +84,6 @@ function RouteComponent() {
     queryRef,
   )
   const search = Route.useSearch()
-  const nodeRef = useRef(null)
 
   const { householdId } = Route.useParams()
 
@@ -149,16 +155,25 @@ function RouteComponent() {
         </SidebarInset>
         <MobileFabNav />
 
-        {/* Draggable New Transaction Form */}
+        {/* Resizable & Draggable New Transaction Form */}
         {search.showNewTransaction && (
-          <Draggable nodeRef={nodeRef} bounds="parent" handle=".drag-handle">
-            <div
-              ref={nodeRef}
-              className="fixed top-20 right-8 z-50 w-full max-w-2xl shadow-2xl"
-            >
-              <NewTransaction fragmentRef={data} />
-            </div>
-          </Draggable>
+          <Rnd
+            default={{
+              x: window.innerWidth - 700,
+              y: 80,
+              width: 650,
+              height: 600,
+            }}
+            minWidth={400}
+            minHeight={400}
+            maxWidth={1200}
+            maxHeight={900}
+            bounds="window"
+            dragHandleClassName="drag-handle"
+            style={{ zIndex: 50 }}
+          >
+            <NewTransaction fragmentRef={data} />
+          </Rnd>
         )}
       </SidebarProvider>
     </HouseholdProvider>

@@ -39,6 +39,7 @@
     "react-intersection-observer": "^10.0.0",
     "react-number-format": "^5.4.4",
     "react-relay": "^20.1.1",
+    "react-rnd": "^10.5.2",
     "recharts": "2.15.4",
     "relay-runtime": "^20.1.1",
     "shadcn": "^3.6.2",

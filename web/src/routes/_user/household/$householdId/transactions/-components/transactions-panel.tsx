@@ -69,7 +69,8 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
       <div className="absolute bottom-4 right-4">
         <Link
           from={'/household/$householdId/transactions'}
-          to={'/household/$householdId/transactions/new'}
+          to={'/household/$householdId/transactions'}
+          search={{ ...search, showNewTransaction: true }}
         >
           <Button nativeButton={true} size="icon-xl" className="rounded-full">
             <PlusIcon />

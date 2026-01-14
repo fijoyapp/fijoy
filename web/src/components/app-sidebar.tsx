@@ -8,7 +8,7 @@ import { NavProjects } from './nav-projects'
 import type { LucideIcon } from 'lucide-react'
 
 // import { NavMain } from '@/components/nav-main'
-import type { ValidateLinkOptions } from '@tanstack/react-router'
+import type { LinkOptions, ValidateLinkOptions } from '@tanstack/react-router'
 import { NavUser } from '@/components/nav-user'
 import { HouseholdSwitcher } from '@/components/household-switcher'
 import {
@@ -24,7 +24,7 @@ import { useFragment } from 'react-relay'
 
 const projects: Array<{
   name: string
-  link: ValidateLinkOptions
+  link: LinkOptions
   icon: LucideIcon
 }> = [
   {
@@ -35,6 +35,10 @@ const projects: Array<{
         exact: false,
         includeSearch: false,
       },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
     },
     icon: ReceiptIcon,
   },
@@ -46,6 +50,10 @@ const projects: Array<{
         exact: false,
         includeSearch: false,
       },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
     },
     icon: CreditCardIcon,
   },
@@ -57,6 +65,10 @@ const projects: Array<{
         exact: false,
         includeSearch: false,
       },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
     },
     icon: TrendingUpIcon,
   },
@@ -68,6 +80,10 @@ const projects: Array<{
         exact: false,
         includeSearch: false,
       },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
     },
     icon: TagIcon,
   },
