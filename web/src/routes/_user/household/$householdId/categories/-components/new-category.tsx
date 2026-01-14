@@ -105,7 +105,7 @@ export function NewCategory() {
       match(result)
         .with({ status: 'success' }, ({ data: resultData }) => {
           invariant(
-            resultData.createCategory.node,
+            resultData.createTransactionCategory.node,
             'No data returned from mutation',
           )
 
@@ -115,7 +115,7 @@ export function NewCategory() {
             to: '/household/$householdId/categories',
           })
           toast.success(
-            `${resultData.createCategory.node.name} is ready to go!`,
+            `${resultData.createTransactionCategory.node.name} is ready to go!`,
           )
         })
         .with({ status: 'error' }, ({ error }) => {
