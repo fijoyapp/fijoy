@@ -7,7 +7,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
@@ -102,20 +102,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   lot.Table,
-			Columns: lot.Columns,
+			Table:   investmentlot.Table,
+			Columns: investmentlot.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeInt,
-				Column: lot.FieldID,
+				Column: investmentlot.FieldID,
 			},
 		},
-		Type: "Lot",
+		Type: "InvestmentLot",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			lot.FieldCreateTime:  {Type: field.TypeTime, Column: lot.FieldCreateTime},
-			lot.FieldUpdateTime:  {Type: field.TypeTime, Column: lot.FieldUpdateTime},
-			lot.FieldHouseholdID: {Type: field.TypeInt, Column: lot.FieldHouseholdID},
-			lot.FieldAmount:      {Type: field.TypeFloat64, Column: lot.FieldAmount},
-			lot.FieldPrice:       {Type: field.TypeFloat64, Column: lot.FieldPrice},
+			investmentlot.FieldCreateTime:  {Type: field.TypeTime, Column: investmentlot.FieldCreateTime},
+			investmentlot.FieldUpdateTime:  {Type: field.TypeTime, Column: investmentlot.FieldUpdateTime},
+			investmentlot.FieldHouseholdID: {Type: field.TypeInt, Column: investmentlot.FieldHouseholdID},
+			investmentlot.FieldAmount:      {Type: field.TypeFloat64, Column: investmentlot.FieldAmount},
+			investmentlot.FieldPrice:       {Type: field.TypeFloat64, Column: investmentlot.FieldPrice},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -392,16 +392,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Investment",
 	)
 	graph.MustAddE(
-		"lots",
+		"investment_lots",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   household.LotsTable,
-			Columns: []string{household.LotsColumn},
+			Table:   household.InvestmentLotsTable,
+			Columns: []string{household.InvestmentLotsColumn},
 			Bidi:    false,
 		},
 		"Household",
-		"Lot",
+		"InvestmentLot",
 	)
 	graph.MustAddE(
 		"transaction_categories",
@@ -476,27 +476,27 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Currency",
 	)
 	graph.MustAddE(
-		"lots",
+		"investment_lots",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   investment.LotsTable,
-			Columns: []string{investment.LotsColumn},
+			Table:   investment.InvestmentLotsTable,
+			Columns: []string{investment.InvestmentLotsColumn},
 			Bidi:    false,
 		},
 		"Investment",
-		"Lot",
+		"InvestmentLot",
 	)
 	graph.MustAddE(
 		"household",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   lot.HouseholdTable,
-			Columns: []string{lot.HouseholdColumn},
+			Table:   investmentlot.HouseholdTable,
+			Columns: []string{investmentlot.HouseholdColumn},
 			Bidi:    false,
 		},
-		"Lot",
+		"InvestmentLot",
 		"Household",
 	)
 	graph.MustAddE(
@@ -504,11 +504,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   lot.InvestmentTable,
-			Columns: []string{lot.InvestmentColumn},
+			Table:   investmentlot.InvestmentTable,
+			Columns: []string{investmentlot.InvestmentColumn},
 			Bidi:    false,
 		},
-		"Lot",
+		"InvestmentLot",
 		"Investment",
 	)
 	graph.MustAddE(
@@ -516,11 +516,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   lot.TransactionTable,
-			Columns: []string{lot.TransactionColumn},
+			Table:   investmentlot.TransactionTable,
+			Columns: []string{investmentlot.TransactionColumn},
 			Bidi:    false,
 		},
-		"Lot",
+		"InvestmentLot",
 		"Transaction",
 	)
 	graph.MustAddE(
@@ -572,16 +572,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"TransactionEntry",
 	)
 	graph.MustAddE(
-		"lots",
+		"investment_lots",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   transaction.LotsTable,
-			Columns: []string{transaction.LotsColumn},
+			Table:   transaction.InvestmentLotsTable,
+			Columns: []string{transaction.InvestmentLotsColumn},
 			Bidi:    false,
 		},
 		"Transaction",
-		"Lot",
+		"InvestmentLot",
 	)
 	graph.MustAddE(
 		"household",
@@ -1146,14 +1146,14 @@ func (f *HouseholdFilter) WhereHasInvestmentsWith(preds ...predicate.Investment)
 	})))
 }
 
-// WhereHasLots applies a predicate to check if query has an edge lots.
-func (f *HouseholdFilter) WhereHasLots() {
-	f.Where(entql.HasEdge("lots"))
+// WhereHasInvestmentLots applies a predicate to check if query has an edge investment_lots.
+func (f *HouseholdFilter) WhereHasInvestmentLots() {
+	f.Where(entql.HasEdge("investment_lots"))
 }
 
-// WhereHasLotsWith applies a predicate to check if query has an edge lots with a given conditions (other predicates).
-func (f *HouseholdFilter) WhereHasLotsWith(preds ...predicate.Lot) {
-	f.Where(entql.HasEdgeWith("lots", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasInvestmentLotsWith applies a predicate to check if query has an edge investment_lots with a given conditions (other predicates).
+func (f *HouseholdFilter) WhereHasInvestmentLotsWith(preds ...predicate.InvestmentLot) {
+	f.Where(entql.HasEdgeWith("investment_lots", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1329,14 +1329,14 @@ func (f *InvestmentFilter) WhereHasCurrencyWith(preds ...predicate.Currency) {
 	})))
 }
 
-// WhereHasLots applies a predicate to check if query has an edge lots.
-func (f *InvestmentFilter) WhereHasLots() {
-	f.Where(entql.HasEdge("lots"))
+// WhereHasInvestmentLots applies a predicate to check if query has an edge investment_lots.
+func (f *InvestmentFilter) WhereHasInvestmentLots() {
+	f.Where(entql.HasEdge("investment_lots"))
 }
 
-// WhereHasLotsWith applies a predicate to check if query has an edge lots with a given conditions (other predicates).
-func (f *InvestmentFilter) WhereHasLotsWith(preds ...predicate.Lot) {
-	f.Where(entql.HasEdgeWith("lots", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasInvestmentLotsWith applies a predicate to check if query has an edge investment_lots with a given conditions (other predicates).
+func (f *InvestmentFilter) WhereHasInvestmentLotsWith(preds ...predicate.InvestmentLot) {
+	f.Where(entql.HasEdgeWith("investment_lots", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1344,33 +1344,33 @@ func (f *InvestmentFilter) WhereHasLotsWith(preds ...predicate.Lot) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (_q *LotQuery) addPredicate(pred func(s *sql.Selector)) {
+func (_q *InvestmentLotQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the LotQuery builder.
-func (_q *LotQuery) Filter() *LotFilter {
-	return &LotFilter{config: _q.config, predicateAdder: _q}
+// Filter returns a Filter implementation to apply filters on the InvestmentLotQuery builder.
+func (_q *InvestmentLotQuery) Filter() *InvestmentLotFilter {
+	return &InvestmentLotFilter{config: _q.config, predicateAdder: _q}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *LotMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *InvestmentLotMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the LotMutation builder.
-func (m *LotMutation) Filter() *LotFilter {
-	return &LotFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the InvestmentLotMutation builder.
+func (m *InvestmentLotMutation) Filter() *InvestmentLotFilter {
+	return &InvestmentLotFilter{config: m.config, predicateAdder: m}
 }
 
-// LotFilter provides a generic filtering capability at runtime for LotQuery.
-type LotFilter struct {
+// InvestmentLotFilter provides a generic filtering capability at runtime for InvestmentLotQuery.
+type InvestmentLotFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *LotFilter) Where(p entql.P) {
+func (f *InvestmentLotFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
@@ -1379,42 +1379,42 @@ func (f *LotFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql int predicate on the id field.
-func (f *LotFilter) WhereID(p entql.IntP) {
-	f.Where(p.Field(lot.FieldID))
+func (f *InvestmentLotFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(investmentlot.FieldID))
 }
 
 // WhereCreateTime applies the entql time.Time predicate on the create_time field.
-func (f *LotFilter) WhereCreateTime(p entql.TimeP) {
-	f.Where(p.Field(lot.FieldCreateTime))
+func (f *InvestmentLotFilter) WhereCreateTime(p entql.TimeP) {
+	f.Where(p.Field(investmentlot.FieldCreateTime))
 }
 
 // WhereUpdateTime applies the entql time.Time predicate on the update_time field.
-func (f *LotFilter) WhereUpdateTime(p entql.TimeP) {
-	f.Where(p.Field(lot.FieldUpdateTime))
+func (f *InvestmentLotFilter) WhereUpdateTime(p entql.TimeP) {
+	f.Where(p.Field(investmentlot.FieldUpdateTime))
 }
 
 // WhereHouseholdID applies the entql int predicate on the household_id field.
-func (f *LotFilter) WhereHouseholdID(p entql.IntP) {
-	f.Where(p.Field(lot.FieldHouseholdID))
+func (f *InvestmentLotFilter) WhereHouseholdID(p entql.IntP) {
+	f.Where(p.Field(investmentlot.FieldHouseholdID))
 }
 
 // WhereAmount applies the entql float64 predicate on the amount field.
-func (f *LotFilter) WhereAmount(p entql.Float64P) {
-	f.Where(p.Field(lot.FieldAmount))
+func (f *InvestmentLotFilter) WhereAmount(p entql.Float64P) {
+	f.Where(p.Field(investmentlot.FieldAmount))
 }
 
 // WherePrice applies the entql float64 predicate on the price field.
-func (f *LotFilter) WherePrice(p entql.Float64P) {
-	f.Where(p.Field(lot.FieldPrice))
+func (f *InvestmentLotFilter) WherePrice(p entql.Float64P) {
+	f.Where(p.Field(investmentlot.FieldPrice))
 }
 
 // WhereHasHousehold applies a predicate to check if query has an edge household.
-func (f *LotFilter) WhereHasHousehold() {
+func (f *InvestmentLotFilter) WhereHasHousehold() {
 	f.Where(entql.HasEdge("household"))
 }
 
 // WhereHasHouseholdWith applies a predicate to check if query has an edge household with a given conditions (other predicates).
-func (f *LotFilter) WhereHasHouseholdWith(preds ...predicate.Household) {
+func (f *InvestmentLotFilter) WhereHasHouseholdWith(preds ...predicate.Household) {
 	f.Where(entql.HasEdgeWith("household", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -1423,12 +1423,12 @@ func (f *LotFilter) WhereHasHouseholdWith(preds ...predicate.Household) {
 }
 
 // WhereHasInvestment applies a predicate to check if query has an edge investment.
-func (f *LotFilter) WhereHasInvestment() {
+func (f *InvestmentLotFilter) WhereHasInvestment() {
 	f.Where(entql.HasEdge("investment"))
 }
 
 // WhereHasInvestmentWith applies a predicate to check if query has an edge investment with a given conditions (other predicates).
-func (f *LotFilter) WhereHasInvestmentWith(preds ...predicate.Investment) {
+func (f *InvestmentLotFilter) WhereHasInvestmentWith(preds ...predicate.Investment) {
 	f.Where(entql.HasEdgeWith("investment", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -1437,12 +1437,12 @@ func (f *LotFilter) WhereHasInvestmentWith(preds ...predicate.Investment) {
 }
 
 // WhereHasTransaction applies a predicate to check if query has an edge transaction.
-func (f *LotFilter) WhereHasTransaction() {
+func (f *InvestmentLotFilter) WhereHasTransaction() {
 	f.Where(entql.HasEdge("transaction"))
 }
 
 // WhereHasTransactionWith applies a predicate to check if query has an edge transaction with a given conditions (other predicates).
-func (f *LotFilter) WhereHasTransactionWith(preds ...predicate.Transaction) {
+func (f *InvestmentLotFilter) WhereHasTransactionWith(preds ...predicate.Transaction) {
 	f.Where(entql.HasEdgeWith("transaction", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -1571,14 +1571,14 @@ func (f *TransactionFilter) WhereHasTransactionEntriesWith(preds ...predicate.Tr
 	})))
 }
 
-// WhereHasLots applies a predicate to check if query has an edge lots.
-func (f *TransactionFilter) WhereHasLots() {
-	f.Where(entql.HasEdge("lots"))
+// WhereHasInvestmentLots applies a predicate to check if query has an edge investment_lots.
+func (f *TransactionFilter) WhereHasInvestmentLots() {
+	f.Where(entql.HasEdge("investment_lots"))
 }
 
-// WhereHasLotsWith applies a predicate to check if query has an edge lots with a given conditions (other predicates).
-func (f *TransactionFilter) WhereHasLotsWith(preds ...predicate.Lot) {
-	f.Where(entql.HasEdgeWith("lots", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasInvestmentLotsWith applies a predicate to check if query has an edge investment_lots with a given conditions (other predicates).
+func (f *TransactionFilter) WhereHasInvestmentLotsWith(preds ...predicate.InvestmentLot) {
+	f.Where(entql.HasEdgeWith("investment_lots", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

@@ -9,7 +9,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -394,16 +394,16 @@ func (_q *HouseholdQuery) collectField(ctx context.Context, oneNode bool, opCtx 
 				*wq = *query
 			})
 
-		case "lots":
+		case "investmentLots":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&LotClient{config: _q.config}).Query()
+				query = (&InvestmentLotClient{config: _q.config}).Query()
 			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, lotImplementors)...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, investmentlotImplementors)...); err != nil {
 				return err
 			}
-			_q.WithNamedLots(alias, func(wq *LotQuery) {
+			_q.WithNamedInvestmentLots(alias, func(wq *InvestmentLotQuery) {
 				*wq = *query
 			})
 
@@ -565,16 +565,16 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 			}
 			_q.withCurrency = query
 
-		case "lots":
+		case "investmentLots":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&LotClient{config: _q.config}).Query()
+				query = (&InvestmentLotClient{config: _q.config}).Query()
 			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, lotImplementors)...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, investmentlotImplementors)...); err != nil {
 				return err
 			}
-			_q.WithNamedLots(alias, func(wq *LotQuery) {
+			_q.WithNamedInvestmentLots(alias, func(wq *InvestmentLotQuery) {
 				*wq = *query
 			})
 		case "createTime":
@@ -664,7 +664,7 @@ func newInvestmentPaginateArgs(rv map[string]any) *investmentPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
-func (_q *LotQuery) CollectFields(ctx context.Context, satisfies ...string) (*LotQuery, error) {
+func (_q *InvestmentLotQuery) CollectFields(ctx context.Context, satisfies ...string) (*InvestmentLotQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
 		return _q, nil
@@ -675,12 +675,12 @@ func (_q *LotQuery) CollectFields(ctx context.Context, satisfies ...string) (*Lo
 	return _q, nil
 }
 
-func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (_q *InvestmentLotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
 	var (
 		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(lot.Columns))
-		selectedFields = []string{lot.FieldID}
+		fieldSeen      = make(map[string]struct{}, len(investmentlot.Columns))
+		selectedFields = []string{investmentlot.FieldID}
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
@@ -695,9 +695,9 @@ func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 				return err
 			}
 			_q.withHousehold = query
-			if _, ok := fieldSeen[lot.FieldHouseholdID]; !ok {
-				selectedFields = append(selectedFields, lot.FieldHouseholdID)
-				fieldSeen[lot.FieldHouseholdID] = struct{}{}
+			if _, ok := fieldSeen[investmentlot.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldHouseholdID)
+				fieldSeen[investmentlot.FieldHouseholdID] = struct{}{}
 			}
 
 		case "investment":
@@ -722,29 +722,29 @@ func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 			}
 			_q.withTransaction = query
 		case "createTime":
-			if _, ok := fieldSeen[lot.FieldCreateTime]; !ok {
-				selectedFields = append(selectedFields, lot.FieldCreateTime)
-				fieldSeen[lot.FieldCreateTime] = struct{}{}
+			if _, ok := fieldSeen[investmentlot.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldCreateTime)
+				fieldSeen[investmentlot.FieldCreateTime] = struct{}{}
 			}
 		case "updateTime":
-			if _, ok := fieldSeen[lot.FieldUpdateTime]; !ok {
-				selectedFields = append(selectedFields, lot.FieldUpdateTime)
-				fieldSeen[lot.FieldUpdateTime] = struct{}{}
+			if _, ok := fieldSeen[investmentlot.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldUpdateTime)
+				fieldSeen[investmentlot.FieldUpdateTime] = struct{}{}
 			}
 		case "householdID":
-			if _, ok := fieldSeen[lot.FieldHouseholdID]; !ok {
-				selectedFields = append(selectedFields, lot.FieldHouseholdID)
-				fieldSeen[lot.FieldHouseholdID] = struct{}{}
+			if _, ok := fieldSeen[investmentlot.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldHouseholdID)
+				fieldSeen[investmentlot.FieldHouseholdID] = struct{}{}
 			}
 		case "amount":
-			if _, ok := fieldSeen[lot.FieldAmount]; !ok {
-				selectedFields = append(selectedFields, lot.FieldAmount)
-				fieldSeen[lot.FieldAmount] = struct{}{}
+			if _, ok := fieldSeen[investmentlot.FieldAmount]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldAmount)
+				fieldSeen[investmentlot.FieldAmount] = struct{}{}
 			}
 		case "price":
-			if _, ok := fieldSeen[lot.FieldPrice]; !ok {
-				selectedFields = append(selectedFields, lot.FieldPrice)
-				fieldSeen[lot.FieldPrice] = struct{}{}
+			if _, ok := fieldSeen[investmentlot.FieldPrice]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldPrice)
+				fieldSeen[investmentlot.FieldPrice] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -758,14 +758,14 @@ func (_q *LotQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 	return nil
 }
 
-type lotPaginateArgs struct {
+type investmentlotPaginateArgs struct {
 	first, last   *int
 	after, before *Cursor
-	opts          []LotPaginateOption
+	opts          []InvestmentLotPaginateOption
 }
 
-func newLotPaginateArgs(rv map[string]any) *lotPaginateArgs {
-	args := &lotPaginateArgs{}
+func newInvestmentLotPaginateArgs(rv map[string]any) *investmentlotPaginateArgs {
+	args := &investmentlotPaginateArgs{}
 	if rv == nil {
 		return args
 	}
@@ -781,8 +781,8 @@ func newLotPaginateArgs(rv map[string]any) *lotPaginateArgs {
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
 	}
-	if v, ok := rv[whereField].(*LotWhereInput); ok {
-		args.opts = append(args.opts, WithLotFilter(v.Filter))
+	if v, ok := rv[whereField].(*InvestmentLotWhereInput); ok {
+		args.opts = append(args.opts, WithInvestmentLotFilter(v.Filter))
 	}
 	return args
 }
@@ -859,16 +859,16 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				*wq = *query
 			})
 
-		case "lots":
+		case "investmentLots":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&LotClient{config: _q.config}).Query()
+				query = (&InvestmentLotClient{config: _q.config}).Query()
 			)
-			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, lotImplementors)...); err != nil {
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, investmentlotImplementors)...); err != nil {
 				return err
 			}
-			_q.WithNamedLots(alias, func(wq *LotQuery) {
+			_q.WithNamedInvestmentLots(alias, func(wq *InvestmentLotQuery) {
 				*wq = *query
 			})
 		case "createTime":

@@ -13,7 +13,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -24,18 +24,18 @@ import (
 // InvestmentQuery is the builder for querying Investment entities.
 type InvestmentQuery struct {
 	config
-	ctx           *QueryContext
-	order         []investment.OrderOption
-	inters        []Interceptor
-	predicates    []predicate.Investment
-	withAccount   *AccountQuery
-	withHousehold *HouseholdQuery
-	withCurrency  *CurrencyQuery
-	withLots      *LotQuery
-	withFKs       bool
-	loadTotal     []func(context.Context, []*Investment) error
-	modifiers     []func(*sql.Selector)
-	withNamedLots map[string]*LotQuery
+	ctx                     *QueryContext
+	order                   []investment.OrderOption
+	inters                  []Interceptor
+	predicates              []predicate.Investment
+	withAccount             *AccountQuery
+	withHousehold           *HouseholdQuery
+	withCurrency            *CurrencyQuery
+	withInvestmentLots      *InvestmentLotQuery
+	withFKs                 bool
+	loadTotal               []func(context.Context, []*Investment) error
+	modifiers               []func(*sql.Selector)
+	withNamedInvestmentLots map[string]*InvestmentLotQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -138,9 +138,9 @@ func (_q *InvestmentQuery) QueryCurrency() *CurrencyQuery {
 	return query
 }
 
-// QueryLots chains the current query on the "lots" edge.
-func (_q *InvestmentQuery) QueryLots() *LotQuery {
-	query := (&LotClient{config: _q.config}).Query()
+// QueryInvestmentLots chains the current query on the "investment_lots" edge.
+func (_q *InvestmentQuery) QueryInvestmentLots() *InvestmentLotQuery {
+	query := (&InvestmentLotClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -151,8 +151,8 @@ func (_q *InvestmentQuery) QueryLots() *LotQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(investment.Table, investment.FieldID, selector),
-			sqlgraph.To(lot.Table, lot.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, investment.LotsTable, investment.LotsColumn),
+			sqlgraph.To(investmentlot.Table, investmentlot.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, investment.InvestmentLotsTable, investment.InvestmentLotsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -347,15 +347,15 @@ func (_q *InvestmentQuery) Clone() *InvestmentQuery {
 		return nil
 	}
 	return &InvestmentQuery{
-		config:        _q.config,
-		ctx:           _q.ctx.Clone(),
-		order:         append([]investment.OrderOption{}, _q.order...),
-		inters:        append([]Interceptor{}, _q.inters...),
-		predicates:    append([]predicate.Investment{}, _q.predicates...),
-		withAccount:   _q.withAccount.Clone(),
-		withHousehold: _q.withHousehold.Clone(),
-		withCurrency:  _q.withCurrency.Clone(),
-		withLots:      _q.withLots.Clone(),
+		config:             _q.config,
+		ctx:                _q.ctx.Clone(),
+		order:              append([]investment.OrderOption{}, _q.order...),
+		inters:             append([]Interceptor{}, _q.inters...),
+		predicates:         append([]predicate.Investment{}, _q.predicates...),
+		withAccount:        _q.withAccount.Clone(),
+		withHousehold:      _q.withHousehold.Clone(),
+		withCurrency:       _q.withCurrency.Clone(),
+		withInvestmentLots: _q.withInvestmentLots.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -396,14 +396,14 @@ func (_q *InvestmentQuery) WithCurrency(opts ...func(*CurrencyQuery)) *Investmen
 	return _q
 }
 
-// WithLots tells the query-builder to eager-load the nodes that are connected to
-// the "lots" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *InvestmentQuery) WithLots(opts ...func(*LotQuery)) *InvestmentQuery {
-	query := (&LotClient{config: _q.config}).Query()
+// WithInvestmentLots tells the query-builder to eager-load the nodes that are connected to
+// the "investment_lots" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *InvestmentQuery) WithInvestmentLots(opts ...func(*InvestmentLotQuery)) *InvestmentQuery {
+	query := (&InvestmentLotClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withLots = query
+	_q.withInvestmentLots = query
 	return _q
 }
 
@@ -496,7 +496,7 @@ func (_q *InvestmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 			_q.withAccount != nil,
 			_q.withHousehold != nil,
 			_q.withCurrency != nil,
-			_q.withLots != nil,
+			_q.withInvestmentLots != nil,
 		}
 	)
 	if _q.withAccount != nil || _q.withCurrency != nil {
@@ -544,17 +544,17 @@ func (_q *InvestmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 			return nil, err
 		}
 	}
-	if query := _q.withLots; query != nil {
-		if err := _q.loadLots(ctx, query, nodes,
-			func(n *Investment) { n.Edges.Lots = []*Lot{} },
-			func(n *Investment, e *Lot) { n.Edges.Lots = append(n.Edges.Lots, e) }); err != nil {
+	if query := _q.withInvestmentLots; query != nil {
+		if err := _q.loadInvestmentLots(ctx, query, nodes,
+			func(n *Investment) { n.Edges.InvestmentLots = []*InvestmentLot{} },
+			func(n *Investment, e *InvestmentLot) { n.Edges.InvestmentLots = append(n.Edges.InvestmentLots, e) }); err != nil {
 			return nil, err
 		}
 	}
-	for name, query := range _q.withNamedLots {
-		if err := _q.loadLots(ctx, query, nodes,
-			func(n *Investment) { n.appendNamedLots(name) },
-			func(n *Investment, e *Lot) { n.appendNamedLots(name, e) }); err != nil {
+	for name, query := range _q.withNamedInvestmentLots {
+		if err := _q.loadInvestmentLots(ctx, query, nodes,
+			func(n *Investment) { n.appendNamedInvestmentLots(name) },
+			func(n *Investment, e *InvestmentLot) { n.appendNamedInvestmentLots(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -659,7 +659,7 @@ func (_q *InvestmentQuery) loadCurrency(ctx context.Context, query *CurrencyQuer
 	}
 	return nil
 }
-func (_q *InvestmentQuery) loadLots(ctx context.Context, query *LotQuery, nodes []*Investment, init func(*Investment), assign func(*Investment, *Lot)) error {
+func (_q *InvestmentQuery) loadInvestmentLots(ctx context.Context, query *InvestmentLotQuery, nodes []*Investment, init func(*Investment), assign func(*Investment, *InvestmentLot)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[int]*Investment)
 	for i := range nodes {
@@ -670,21 +670,21 @@ func (_q *InvestmentQuery) loadLots(ctx context.Context, query *LotQuery, nodes 
 		}
 	}
 	query.withFKs = true
-	query.Where(predicate.Lot(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(investment.LotsColumn), fks...))
+	query.Where(predicate.InvestmentLot(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(investment.InvestmentLotsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.investment_lots
+		fk := n.investment_investment_lots
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "investment_lots" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "investment_investment_lots" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "investment_lots" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "investment_investment_lots" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -787,17 +787,17 @@ func (_q *InvestmentQuery) Modify(modifiers ...func(s *sql.Selector)) *Investmen
 	return _q.Select()
 }
 
-// WithNamedLots tells the query-builder to eager-load the nodes that are connected to the "lots"
+// WithNamedInvestmentLots tells the query-builder to eager-load the nodes that are connected to the "investment_lots"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (_q *InvestmentQuery) WithNamedLots(name string, opts ...func(*LotQuery)) *InvestmentQuery {
-	query := (&LotClient{config: _q.config}).Query()
+func (_q *InvestmentQuery) WithNamedInvestmentLots(name string, opts ...func(*InvestmentLotQuery)) *InvestmentQuery {
+	query := (&InvestmentLotClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if _q.withNamedLots == nil {
-		_q.withNamedLots = make(map[string]*LotQuery)
+	if _q.withNamedInvestmentLots == nil {
+		_q.withNamedInvestmentLots = make(map[string]*InvestmentLotQuery)
 	}
-	_q.withNamedLots[name] = query
+	_q.withNamedInvestmentLots[name] = query
 	return _q
 }
 

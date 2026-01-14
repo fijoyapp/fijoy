@@ -1,6 +1,7 @@
 package schema
 
 import (
+	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -8,7 +9,6 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	beavermoney_mixin "beavermoney.app/ent/schema/mixin"
 	"github.com/shopspring/decimal"
 )
 
@@ -91,7 +91,7 @@ func (Investment) Edges() []ent.Edge {
 			Immutable().
 			Required(),
 
-		edge.To("lots", Lot.Type).
+		edge.To("investment_lots", InvestmentLot.Type).
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
@@ -121,13 +121,13 @@ func (Investment) Mixin() []ent.Mixin {
 	}
 }
 
-// Lot holds the schema definition for the Lot entity.
-type Lot struct {
+// InvestmentLot holds the schema definition for the Lot entity.
+type InvestmentLot struct {
 	ent.Schema
 }
 
-// Fields of the Lot.
-func (Lot) Fields() []ent.Field {
+// Fields of the InvestmentLot.
+func (InvestmentLot) Fields() []ent.Field {
 	return []ent.Field{
 		field.Float("amount").GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{
@@ -143,11 +143,11 @@ func (Lot) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Lot.
-func (Lot) Edges() []ent.Edge {
+// Edges of the InvestmentLot.
+func (InvestmentLot) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("household", Household.Type).
-			Ref("lots").
+			Ref("investment_lots").
 			Field("household_id").
 			Unique().
 			Immutable().
@@ -159,14 +159,23 @@ func (Lot) Edges() []ent.Edge {
 			).
 			Required(),
 		edge.From("investment", Investment.Type).
-			Ref("lots").
-			Unique().Immutable().Required(),
-		edge.From("transaction", Transaction.Type).Ref("lots").
-			Unique().Immutable().Required(),
+			Ref("investment_lots").
+			Unique().
+			Immutable().
+			Required(),
+		edge.From("transaction", Transaction.Type).Ref("investment_lots").
+			Unique().
+			Immutable().
+			Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 	}
 }
 
-func (Lot) Annotations() []schema.Annotation {
+func (InvestmentLot) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
 		entgql.QueryField(),
@@ -174,7 +183,7 @@ func (Lot) Annotations() []schema.Annotation {
 	}
 }
 
-func (Lot) Mixin() []ent.Mixin {
+func (InvestmentLot) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AnnotateFields(mixin.Time{},
 			entgql.Skip(

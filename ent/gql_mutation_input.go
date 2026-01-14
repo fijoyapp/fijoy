@@ -3,8 +3,11 @@
 package ent
 
 import (
+	"time"
+
 	"beavermoney.app/ent/account"
 	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/transactioncategory"
 	"github.com/shopspring/decimal"
 )
 
@@ -130,36 +133,34 @@ func (c *InvestmentUpdateOne) SetInput(i UpdateInvestmentInput) *InvestmentUpdat
 	return c
 }
 
-// CreateLotInput represents a mutation input for creating lots.
-type CreateLotInput struct {
-	Amount        decimal.Decimal
-	Price         decimal.Decimal
-	InvestmentID  int
-	TransactionID int
+// CreateInvestmentLotInput represents a mutation input for creating investmentlots.
+type CreateInvestmentLotInput struct {
+	Amount       decimal.Decimal
+	Price        decimal.Decimal
+	InvestmentID int
 }
 
-// Mutate applies the CreateLotInput on the LotMutation builder.
-func (i *CreateLotInput) Mutate(m *LotMutation) {
+// Mutate applies the CreateInvestmentLotInput on the InvestmentLotMutation builder.
+func (i *CreateInvestmentLotInput) Mutate(m *InvestmentLotMutation) {
 	m.SetAmount(i.Amount)
 	m.SetPrice(i.Price)
 	m.SetInvestmentID(i.InvestmentID)
-	m.SetTransactionID(i.TransactionID)
 }
 
-// SetInput applies the change-set in the CreateLotInput on the LotCreate builder.
-func (c *LotCreate) SetInput(i CreateLotInput) *LotCreate {
+// SetInput applies the change-set in the CreateInvestmentLotInput on the InvestmentLotCreate builder.
+func (c *InvestmentLotCreate) SetInput(i CreateInvestmentLotInput) *InvestmentLotCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateLotInput represents a mutation input for updating lots.
-type UpdateLotInput struct {
+// UpdateInvestmentLotInput represents a mutation input for updating investmentlots.
+type UpdateInvestmentLotInput struct {
 	Amount *decimal.Decimal
 	Price  *decimal.Decimal
 }
 
-// Mutate applies the UpdateLotInput on the LotMutation builder.
-func (i *UpdateLotInput) Mutate(m *LotMutation) {
+// Mutate applies the UpdateInvestmentLotInput on the InvestmentLotMutation builder.
+func (i *UpdateInvestmentLotInput) Mutate(m *InvestmentLotMutation) {
 	if v := i.Amount; v != nil {
 		m.SetAmount(*v)
 	}
@@ -168,14 +169,74 @@ func (i *UpdateLotInput) Mutate(m *LotMutation) {
 	}
 }
 
-// SetInput applies the change-set in the UpdateLotInput on the LotUpdate builder.
-func (c *LotUpdate) SetInput(i UpdateLotInput) *LotUpdate {
+// SetInput applies the change-set in the UpdateInvestmentLotInput on the InvestmentLotUpdate builder.
+func (c *InvestmentLotUpdate) SetInput(i UpdateInvestmentLotInput) *InvestmentLotUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateLotInput on the LotUpdateOne builder.
-func (c *LotUpdateOne) SetInput(i UpdateLotInput) *LotUpdateOne {
+// SetInput applies the change-set in the UpdateInvestmentLotInput on the InvestmentLotUpdateOne builder.
+func (c *InvestmentLotUpdateOne) SetInput(i UpdateInvestmentLotInput) *InvestmentLotUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateTransactionInput represents a mutation input for creating transactions.
+type CreateTransactionInput struct {
+	Description *string
+	Datetime    time.Time
+	UserID      int
+	CategoryID  int
+}
+
+// Mutate applies the CreateTransactionInput on the TransactionMutation builder.
+func (i *CreateTransactionInput) Mutate(m *TransactionMutation) {
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	m.SetDatetime(i.Datetime)
+	m.SetUserID(i.UserID)
+	m.SetCategoryID(i.CategoryID)
+}
+
+// SetInput applies the change-set in the CreateTransactionInput on the TransactionCreate builder.
+func (c *TransactionCreate) SetInput(i CreateTransactionInput) *TransactionCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateTransactionCategoryInput represents a mutation input for creating transactioncategories.
+type CreateTransactionCategoryInput struct {
+	Name string
+	Type transactioncategory.Type
+}
+
+// Mutate applies the CreateTransactionCategoryInput on the TransactionCategoryMutation builder.
+func (i *CreateTransactionCategoryInput) Mutate(m *TransactionCategoryMutation) {
+	m.SetName(i.Name)
+	m.SetType(i.Type)
+}
+
+// SetInput applies the change-set in the CreateTransactionCategoryInput on the TransactionCategoryCreate builder.
+func (c *TransactionCategoryCreate) SetInput(i CreateTransactionCategoryInput) *TransactionCategoryCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateTransactionEntryInput represents a mutation input for creating transactionentries.
+type CreateTransactionEntryInput struct {
+	Amount    decimal.Decimal
+	AccountID int
+}
+
+// Mutate applies the CreateTransactionEntryInput on the TransactionEntryMutation builder.
+func (i *CreateTransactionEntryInput) Mutate(m *TransactionEntryMutation) {
+	m.SetAmount(i.Amount)
+	m.SetAccountID(i.AccountID)
+}
+
+// SetInput applies the change-set in the CreateTransactionEntryInput on the TransactionEntryCreate builder.
+func (c *TransactionEntryCreate) SetInput(i CreateTransactionEntryInput) *TransactionEntryCreate {
 	i.Mutate(c.Mutation())
 	return c
 }

@@ -45,8 +45,8 @@ type HouseholdEdges struct {
 	Transactions []*Transaction `json:"transactions,omitempty"`
 	// Investments holds the value of the investments edge.
 	Investments []*Investment `json:"investments,omitempty"`
-	// Lots holds the value of the lots edge.
-	Lots []*Lot `json:"lots,omitempty"`
+	// InvestmentLots holds the value of the investment_lots edge.
+	InvestmentLots []*InvestmentLot `json:"investment_lots,omitempty"`
 	// TransactionCategories holds the value of the transaction_categories edge.
 	TransactionCategories []*TransactionCategory `json:"transaction_categories,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
@@ -63,7 +63,7 @@ type HouseholdEdges struct {
 	namedAccounts              map[string][]*Account
 	namedTransactions          map[string][]*Transaction
 	namedInvestments           map[string][]*Investment
-	namedLots                  map[string][]*Lot
+	namedInvestmentLots        map[string][]*InvestmentLot
 	namedTransactionCategories map[string][]*TransactionCategory
 	namedTransactionEntries    map[string][]*TransactionEntry
 	namedUserHouseholds        map[string][]*UserHousehold
@@ -116,13 +116,13 @@ func (e HouseholdEdges) InvestmentsOrErr() ([]*Investment, error) {
 	return nil, &NotLoadedError{edge: "investments"}
 }
 
-// LotsOrErr returns the Lots value or an error if the edge
+// InvestmentLotsOrErr returns the InvestmentLots value or an error if the edge
 // was not loaded in eager-loading.
-func (e HouseholdEdges) LotsOrErr() ([]*Lot, error) {
+func (e HouseholdEdges) InvestmentLotsOrErr() ([]*InvestmentLot, error) {
 	if e.loadedTypes[5] {
-		return e.Lots, nil
+		return e.InvestmentLots, nil
 	}
-	return nil, &NotLoadedError{edge: "lots"}
+	return nil, &NotLoadedError{edge: "investment_lots"}
 }
 
 // TransactionCategoriesOrErr returns the TransactionCategories value or an error if the edge
@@ -255,9 +255,9 @@ func (_m *Household) QueryInvestments() *InvestmentQuery {
 	return NewHouseholdClient(_m.config).QueryInvestments(_m)
 }
 
-// QueryLots queries the "lots" edge of the Household entity.
-func (_m *Household) QueryLots() *LotQuery {
-	return NewHouseholdClient(_m.config).QueryLots(_m)
+// QueryInvestmentLots queries the "investment_lots" edge of the Household entity.
+func (_m *Household) QueryInvestmentLots() *InvestmentLotQuery {
+	return NewHouseholdClient(_m.config).QueryInvestmentLots(_m)
 }
 
 // QueryTransactionCategories queries the "transaction_categories" edge of the Household entity.
@@ -409,27 +409,27 @@ func (_m *Household) appendNamedInvestments(name string, edges ...*Investment) {
 	}
 }
 
-// NamedLots returns the Lots named value or an error if the edge was not
+// NamedInvestmentLots returns the InvestmentLots named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (_m *Household) NamedLots(name string) ([]*Lot, error) {
-	if _m.Edges.namedLots == nil {
+func (_m *Household) NamedInvestmentLots(name string) ([]*InvestmentLot, error) {
+	if _m.Edges.namedInvestmentLots == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := _m.Edges.namedLots[name]
+	nodes, ok := _m.Edges.namedInvestmentLots[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (_m *Household) appendNamedLots(name string, edges ...*Lot) {
-	if _m.Edges.namedLots == nil {
-		_m.Edges.namedLots = make(map[string][]*Lot)
+func (_m *Household) appendNamedInvestmentLots(name string, edges ...*InvestmentLot) {
+	if _m.Edges.namedInvestmentLots == nil {
+		_m.Edges.namedInvestmentLots = make(map[string][]*InvestmentLot)
 	}
 	if len(edges) == 0 {
-		_m.Edges.namedLots[name] = []*Lot{}
+		_m.Edges.namedInvestmentLots[name] = []*InvestmentLot{}
 	} else {
-		_m.Edges.namedLots[name] = append(_m.Edges.namedLots[name], edges...)
+		_m.Edges.namedInvestmentLots[name] = append(_m.Edges.namedInvestmentLots[name], edges...)
 	}
 }
 

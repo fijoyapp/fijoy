@@ -12,7 +12,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/internal"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -49,10 +49,10 @@ var investmentImplementors = []string{"Investment", "Node"}
 // IsNode implements the Node interface check for GQLGen.
 func (*Investment) IsNode() {}
 
-var lotImplementors = []string{"Lot", "Node"}
+var investmentlotImplementors = []string{"InvestmentLot", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (*Lot) IsNode() {}
+func (*InvestmentLot) IsNode() {}
 
 var transactionImplementors = []string{"Transaction", "Node"}
 
@@ -197,11 +197,11 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			}
 		}
 		return query.Only(ctx)
-	case lot.Table:
-		query := c.Lot.Query().
-			Where(lot.ID(id))
+	case investmentlot.Table:
+		query := c.InvestmentLot.Query().
+			Where(investmentlot.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, lotImplementors...); err != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, investmentlotImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -397,10 +397,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 				*noder = node
 			}
 		}
-	case lot.Table:
-		query := c.Lot.Query().
-			Where(lot.IDIn(ids...))
-		query, err := query.CollectFields(ctx, lotImplementors...)
+	case investmentlot.Table:
+		query := c.InvestmentLot.Query().
+			Where(investmentlot.IDIn(ids...))
+		query, err := query.CollectFields(ctx, investmentlotImplementors...)
 		if err != nil {
 			return nil, err
 		}

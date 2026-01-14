@@ -647,7 +647,7 @@ func seed(
 			SetCategory(investmentCategory).
 			SetDatetime(genRandomDatetime()).SaveX(ctx)
 
-		entClient.Lot.Create().
+		entClient.InvestmentLot.Create().
 			SetInvestment(xeqt).
 			SetTransaction(transaction).
 			SetHousehold(household).
@@ -662,7 +662,7 @@ func seed(
 			SetHousehold(household).
 			SetCategory(investmentCategory).
 			SetDatetime(genRandomDatetime()).SaveX(ctx)
-		entClient.Lot.Create().
+		entClient.InvestmentLot.Create().
 			SetInvestment(xeqt).
 			SetTransaction(transaction).
 			SetHousehold(household).

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f4c76d54bd106c737d7614e154f660bd>>
+ * @generated SignedSource<<7d74941f94236644a80f50dc1397430b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,7 @@ export type transactionCardFragment$data = {
   };
   readonly datetime: any;
   readonly id: string;
-  readonly lots: ReadonlyArray<{
+  readonly investmentLots: ReadonlyArray<{
     readonly amount: string;
     readonly id: string;
     readonly investment: {
@@ -123,9 +123,9 @@ return {
     {
       "alias": null,
       "args": null,
-      "concreteType": "Lot",
+      "concreteType": "InvestmentLot",
       "kind": "LinkedField",
-      "name": "lots",
+      "name": "investmentLots",
       "plural": true,
       "selections": [
         (v0/*: any*/),
@@ -192,6 +192,6 @@ return {
 };
 })();
 
-(node as any).hash = "f3c33db32871ec90e5a39acde08c18dd";
+(node as any).hash = "2ddda5a90335a72ce2ae58add34868e5";
 
 export default node;

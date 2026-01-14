@@ -12,7 +12,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -142,19 +142,19 @@ func (_c *HouseholdCreate) AddInvestments(v ...*Investment) *HouseholdCreate {
 	return _c.AddInvestmentIDs(ids...)
 }
 
-// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
-func (_c *HouseholdCreate) AddLotIDs(ids ...int) *HouseholdCreate {
-	_c.mutation.AddLotIDs(ids...)
+// AddInvestmentLotIDs adds the "investment_lots" edge to the InvestmentLot entity by IDs.
+func (_c *HouseholdCreate) AddInvestmentLotIDs(ids ...int) *HouseholdCreate {
+	_c.mutation.AddInvestmentLotIDs(ids...)
 	return _c
 }
 
-// AddLots adds the "lots" edges to the Lot entity.
-func (_c *HouseholdCreate) AddLots(v ...*Lot) *HouseholdCreate {
+// AddInvestmentLots adds the "investment_lots" edges to the InvestmentLot entity.
+func (_c *HouseholdCreate) AddInvestmentLots(v ...*InvestmentLot) *HouseholdCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddLotIDs(ids...)
+	return _c.AddInvestmentLotIDs(ids...)
 }
 
 // AddTransactionCategoryIDs adds the "transaction_categories" edge to the TransactionCategory entity by IDs.
@@ -411,15 +411,15 @@ func (_c *HouseholdCreate) createSpec() (*Household, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.LotsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.InvestmentLotsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   household.LotsTable,
-			Columns: []string{household.LotsColumn},
+			Table:   household.InvestmentLotsTable,
+			Columns: []string{household.InvestmentLotsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(investmentlot.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

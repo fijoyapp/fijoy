@@ -13,7 +13,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -1104,20 +1104,20 @@ func (_m *Investment) ToEdge(order *InvestmentOrder) *InvestmentEdge {
 	}
 }
 
-// LotEdge is the edge representation of Lot.
-type LotEdge struct {
-	Node   *Lot   `json:"node"`
-	Cursor Cursor `json:"cursor"`
+// InvestmentLotEdge is the edge representation of InvestmentLot.
+type InvestmentLotEdge struct {
+	Node   *InvestmentLot `json:"node"`
+	Cursor Cursor         `json:"cursor"`
 }
 
-// LotConnection is the connection containing edges to Lot.
-type LotConnection struct {
-	Edges      []*LotEdge `json:"edges"`
-	PageInfo   PageInfo   `json:"pageInfo"`
-	TotalCount int        `json:"totalCount"`
+// InvestmentLotConnection is the connection containing edges to InvestmentLot.
+type InvestmentLotConnection struct {
+	Edges      []*InvestmentLotEdge `json:"edges"`
+	PageInfo   PageInfo             `json:"pageInfo"`
+	TotalCount int                  `json:"totalCount"`
 }
 
-func (c *LotConnection) build(nodes []*Lot, pager *lotPager, after *Cursor, first *int, before *Cursor, last *int) {
+func (c *InvestmentLotConnection) build(nodes []*InvestmentLot, pager *investmentlotPager, after *Cursor, first *int, before *Cursor, last *int) {
 	c.PageInfo.HasNextPage = before != nil
 	c.PageInfo.HasPreviousPage = after != nil
 	if first != nil && *first+1 == len(nodes) {
@@ -1127,21 +1127,21 @@ func (c *LotConnection) build(nodes []*Lot, pager *lotPager, after *Cursor, firs
 		c.PageInfo.HasPreviousPage = true
 		nodes = nodes[:len(nodes)-1]
 	}
-	var nodeAt func(int) *Lot
+	var nodeAt func(int) *InvestmentLot
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *Lot {
+		nodeAt = func(i int) *InvestmentLot {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *Lot {
+		nodeAt = func(i int) *InvestmentLot {
 			return nodes[i]
 		}
 	}
-	c.Edges = make([]*LotEdge, len(nodes))
+	c.Edges = make([]*InvestmentLotEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		c.Edges[i] = &LotEdge{
+		c.Edges[i] = &InvestmentLotEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -1155,87 +1155,87 @@ func (c *LotConnection) build(nodes []*Lot, pager *lotPager, after *Cursor, firs
 	}
 }
 
-// LotPaginateOption enables pagination customization.
-type LotPaginateOption func(*lotPager) error
+// InvestmentLotPaginateOption enables pagination customization.
+type InvestmentLotPaginateOption func(*investmentlotPager) error
 
-// WithLotOrder configures pagination ordering.
-func WithLotOrder(order *LotOrder) LotPaginateOption {
+// WithInvestmentLotOrder configures pagination ordering.
+func WithInvestmentLotOrder(order *InvestmentLotOrder) InvestmentLotPaginateOption {
 	if order == nil {
-		order = DefaultLotOrder
+		order = DefaultInvestmentLotOrder
 	}
 	o := *order
-	return func(pager *lotPager) error {
+	return func(pager *investmentlotPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultLotOrder.Field
+			o.Field = DefaultInvestmentLotOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithLotFilter configures pagination filter.
-func WithLotFilter(filter func(*LotQuery) (*LotQuery, error)) LotPaginateOption {
-	return func(pager *lotPager) error {
+// WithInvestmentLotFilter configures pagination filter.
+func WithInvestmentLotFilter(filter func(*InvestmentLotQuery) (*InvestmentLotQuery, error)) InvestmentLotPaginateOption {
+	return func(pager *investmentlotPager) error {
 		if filter == nil {
-			return errors.New("LotQuery filter cannot be nil")
+			return errors.New("InvestmentLotQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type lotPager struct {
+type investmentlotPager struct {
 	reverse bool
-	order   *LotOrder
-	filter  func(*LotQuery) (*LotQuery, error)
+	order   *InvestmentLotOrder
+	filter  func(*InvestmentLotQuery) (*InvestmentLotQuery, error)
 }
 
-func newLotPager(opts []LotPaginateOption, reverse bool) (*lotPager, error) {
-	pager := &lotPager{reverse: reverse}
+func newInvestmentLotPager(opts []InvestmentLotPaginateOption, reverse bool) (*investmentlotPager, error) {
+	pager := &investmentlotPager{reverse: reverse}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultLotOrder
+		pager.order = DefaultInvestmentLotOrder
 	}
 	return pager, nil
 }
 
-func (p *lotPager) applyFilter(query *LotQuery) (*LotQuery, error) {
+func (p *investmentlotPager) applyFilter(query *InvestmentLotQuery) (*InvestmentLotQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *lotPager) toCursor(_m *Lot) Cursor {
+func (p *investmentlotPager) toCursor(_m *InvestmentLot) Cursor {
 	return p.order.Field.toCursor(_m)
 }
 
-func (p *lotPager) applyCursors(query *LotQuery, after, before *Cursor) (*LotQuery, error) {
+func (p *investmentlotPager) applyCursors(query *InvestmentLotQuery, after, before *Cursor) (*InvestmentLotQuery, error) {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
-	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultLotOrder.Field.column, p.order.Field.column, direction) {
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultInvestmentLotOrder.Field.column, p.order.Field.column, direction) {
 		query = query.Where(predicate)
 	}
 	return query, nil
 }
 
-func (p *lotPager) applyOrder(query *LotQuery) *LotQuery {
+func (p *investmentlotPager) applyOrder(query *InvestmentLotQuery) *InvestmentLotQuery {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
 	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
-	if p.order.Field != DefaultLotOrder.Field {
-		query = query.Order(DefaultLotOrder.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultInvestmentLotOrder.Field {
+		query = query.Order(DefaultInvestmentLotOrder.Field.toTerm(direction.OrderTermOption()))
 	}
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(p.order.Field.column)
@@ -1243,7 +1243,7 @@ func (p *lotPager) applyOrder(query *LotQuery) *LotQuery {
 	return query
 }
 
-func (p *lotPager) orderExpr(query *LotQuery) sql.Querier {
+func (p *investmentlotPager) orderExpr(query *InvestmentLotQuery) sql.Querier {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
@@ -1253,28 +1253,28 @@ func (p *lotPager) orderExpr(query *LotQuery) sql.Querier {
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
 		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultLotOrder.Field {
-			b.Comma().Ident(DefaultLotOrder.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultInvestmentLotOrder.Field {
+			b.Comma().Ident(DefaultInvestmentLotOrder.Field.column).Pad().WriteString(string(direction))
 		}
 	})
 }
 
-// Paginate executes the query and returns a relay based cursor connection to Lot.
-func (_m *LotQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to InvestmentLot.
+func (_m *InvestmentLotQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...LotPaginateOption,
-) (*LotConnection, error) {
+	before *Cursor, last *int, opts ...InvestmentLotPaginateOption,
+) (*InvestmentLotConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newLotPager(opts, last != nil)
+	pager, err := newInvestmentLotPager(opts, last != nil)
 	if err != nil {
 		return nil, err
 	}
 	if _m, err = pager.applyFilter(_m); err != nil {
 		return nil, err
 	}
-	conn := &LotConnection{Edges: []*LotEdge{}}
+	conn := &InvestmentLotConnection{Edges: []*InvestmentLotEdge{}}
 	ignoredEdges := !hasCollectedField(ctx, edgesField)
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
@@ -1312,42 +1312,42 @@ func (_m *LotQuery) Paginate(
 	return conn, nil
 }
 
-// LotOrderField defines the ordering field of Lot.
-type LotOrderField struct {
-	// Value extracts the ordering value from the given Lot.
-	Value    func(*Lot) (ent.Value, error)
+// InvestmentLotOrderField defines the ordering field of InvestmentLot.
+type InvestmentLotOrderField struct {
+	// Value extracts the ordering value from the given InvestmentLot.
+	Value    func(*InvestmentLot) (ent.Value, error)
 	column   string // field or computed.
-	toTerm   func(...sql.OrderTermOption) lot.OrderOption
-	toCursor func(*Lot) Cursor
+	toTerm   func(...sql.OrderTermOption) investmentlot.OrderOption
+	toCursor func(*InvestmentLot) Cursor
 }
 
-// LotOrder defines the ordering of Lot.
-type LotOrder struct {
-	Direction OrderDirection `json:"direction"`
-	Field     *LotOrderField `json:"field"`
+// InvestmentLotOrder defines the ordering of InvestmentLot.
+type InvestmentLotOrder struct {
+	Direction OrderDirection           `json:"direction"`
+	Field     *InvestmentLotOrderField `json:"field"`
 }
 
-// DefaultLotOrder is the default ordering of Lot.
-var DefaultLotOrder = &LotOrder{
+// DefaultInvestmentLotOrder is the default ordering of InvestmentLot.
+var DefaultInvestmentLotOrder = &InvestmentLotOrder{
 	Direction: entgql.OrderDirectionAsc,
-	Field: &LotOrderField{
-		Value: func(_m *Lot) (ent.Value, error) {
+	Field: &InvestmentLotOrderField{
+		Value: func(_m *InvestmentLot) (ent.Value, error) {
 			return _m.ID, nil
 		},
-		column: lot.FieldID,
-		toTerm: lot.ByID,
-		toCursor: func(_m *Lot) Cursor {
+		column: investmentlot.FieldID,
+		toTerm: investmentlot.ByID,
+		toCursor: func(_m *InvestmentLot) Cursor {
 			return Cursor{ID: _m.ID}
 		},
 	},
 }
 
-// ToEdge converts Lot into LotEdge.
-func (_m *Lot) ToEdge(order *LotOrder) *LotEdge {
+// ToEdge converts InvestmentLot into InvestmentLotEdge.
+func (_m *InvestmentLot) ToEdge(order *InvestmentLotOrder) *InvestmentLotEdge {
 	if order == nil {
-		order = DefaultLotOrder
+		order = DefaultInvestmentLotOrder
 	}
-	return &LotEdge{
+	return &InvestmentLotEdge{
 		Node:   _m,
 		Cursor: order.Field.toCursor(_m),
 	}

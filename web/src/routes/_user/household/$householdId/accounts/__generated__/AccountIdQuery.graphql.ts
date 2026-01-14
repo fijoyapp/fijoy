@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<86f13b3b48e1dac6c020cb75850b0604>>
+ * @generated SignedSource<<882e4aefe0ee6cbd817a8b61aad88e10>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -52,8 +52,8 @@ export type TransactionWhereInput = {
   hasCategoryWith?: ReadonlyArray<TransactionCategoryWhereInput> | null | undefined;
   hasHousehold?: boolean | null | undefined;
   hasHouseholdWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
-  hasLots?: boolean | null | undefined;
-  hasLotsWith?: ReadonlyArray<LotWhereInput> | null | undefined;
+  hasInvestmentLots?: boolean | null | undefined;
+  hasInvestmentLotsWith?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   hasTransactionEntries?: boolean | null | undefined;
   hasTransactionEntriesWith?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
   hasUser?: boolean | null | undefined;
@@ -160,10 +160,10 @@ export type HouseholdWhereInput = {
   hasAccountsWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
   hasCurrency?: boolean | null | undefined;
   hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
+  hasInvestmentLots?: boolean | null | undefined;
+  hasInvestmentLotsWith?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   hasInvestments?: boolean | null | undefined;
   hasInvestmentsWith?: ReadonlyArray<InvestmentWhereInput> | null | undefined;
-  hasLots?: boolean | null | undefined;
-  hasLotsWith?: ReadonlyArray<LotWhereInput> | null | undefined;
   hasTransactionCategories?: boolean | null | undefined;
   hasTransactionCategoriesWith?: ReadonlyArray<TransactionCategoryWhereInput> | null | undefined;
   hasTransactionEntries?: boolean | null | undefined;
@@ -425,8 +425,8 @@ export type InvestmentWhereInput = {
   hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
   hasHousehold?: boolean | null | undefined;
   hasHouseholdWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
-  hasLots?: boolean | null | undefined;
-  hasLotsWith?: ReadonlyArray<LotWhereInput> | null | undefined;
+  hasInvestmentLots?: boolean | null | undefined;
+  hasInvestmentLotsWith?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   householdID?: string | null | undefined;
   householdIDIn?: ReadonlyArray<string> | null | undefined;
   householdIDNEQ?: string | null | undefined;
@@ -496,7 +496,7 @@ export type InvestmentWhereInput = {
   valueNEQ?: string | null | undefined;
   valueNotIn?: ReadonlyArray<string> | null | undefined;
 };
-export type LotWhereInput = {
+export type InvestmentLotWhereInput = {
   amount?: string | null | undefined;
   amountGT?: string | null | undefined;
   amountGTE?: string | null | undefined;
@@ -505,7 +505,7 @@ export type LotWhereInput = {
   amountLTE?: string | null | undefined;
   amountNEQ?: string | null | undefined;
   amountNotIn?: ReadonlyArray<string> | null | undefined;
-  and?: ReadonlyArray<LotWhereInput> | null | undefined;
+  and?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   createTime?: any | null | undefined;
   createTimeGT?: any | null | undefined;
   createTimeGTE?: any | null | undefined;
@@ -532,8 +532,8 @@ export type LotWhereInput = {
   idLTE?: string | null | undefined;
   idNEQ?: string | null | undefined;
   idNotIn?: ReadonlyArray<string> | null | undefined;
-  not?: LotWhereInput | null | undefined;
-  or?: ReadonlyArray<LotWhereInput> | null | undefined;
+  not?: InvestmentLotWhereInput | null | undefined;
+  or?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   price?: string | null | undefined;
   priceGT?: string | null | undefined;
   priceGTE?: string | null | undefined;
@@ -845,9 +845,9 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Lot",
+                    "concreteType": "InvestmentLot",
                     "kind": "LinkedField",
-                    "name": "lots",
+                    "name": "investmentLots",
                     "plural": true,
                     "selections": [
                       (v3/*: any*/),
@@ -973,12 +973,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "18a48e0e560234d0df1fac98a06e4165",
+    "cacheID": "d551ad1a9273e9cb170bd1e0ee70926a",
     "id": null,
     "metadata": {},
     "name": "AccountIdQuery",
     "operationKind": "query",
-    "text": "query AccountIdQuery(\n  $where: TransactionWhereInput\n) {\n  ...transactionsListFragment_3FC4Qo\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  lots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query AccountIdQuery(\n  $where: TransactionWhereInput\n) {\n  ...transactionsListFragment_3FC4Qo\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
