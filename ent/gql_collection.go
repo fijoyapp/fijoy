@@ -67,6 +67,10 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				return err
 			}
 			_q.withCurrency = query
+			if _, ok := fieldSeen[account.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, account.FieldCurrencyID)
+				fieldSeen[account.FieldCurrencyID] = struct{}{}
+			}
 
 		case "user":
 			var (
@@ -78,6 +82,10 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				return err
 			}
 			_q.withUser = query
+			if _, ok := fieldSeen[account.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, account.FieldUserID)
+				fieldSeen[account.FieldUserID] = struct{}{}
+			}
 
 		case "transactionEntries":
 			var (
@@ -148,6 +156,16 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[account.FieldFxRate]; !ok {
 				selectedFields = append(selectedFields, account.FieldFxRate)
 				fieldSeen[account.FieldFxRate] = struct{}{}
+			}
+		case "currencyID":
+			if _, ok := fieldSeen[account.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, account.FieldCurrencyID)
+				fieldSeen[account.FieldCurrencyID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[account.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, account.FieldUserID)
+				fieldSeen[account.FieldUserID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -341,6 +359,10 @@ func (_q *HouseholdQuery) collectField(ctx context.Context, oneNode bool, opCtx 
 				return err
 			}
 			_q.withCurrency = query
+			if _, ok := fieldSeen[household.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, household.FieldCurrencyID)
+				fieldSeen[household.FieldCurrencyID] = struct{}{}
+			}
 
 		case "users":
 			var (
@@ -465,6 +487,11 @@ func (_q *HouseholdQuery) collectField(ctx context.Context, oneNode bool, opCtx 
 				selectedFields = append(selectedFields, household.FieldLocale)
 				fieldSeen[household.FieldLocale] = struct{}{}
 			}
+		case "currencyID":
+			if _, ok := fieldSeen[household.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, household.FieldCurrencyID)
+				fieldSeen[household.FieldCurrencyID] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -538,6 +565,10 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				return err
 			}
 			_q.withAccount = query
+			if _, ok := fieldSeen[investment.FieldAccountID]; !ok {
+				selectedFields = append(selectedFields, investment.FieldAccountID)
+				fieldSeen[investment.FieldAccountID] = struct{}{}
+			}
 
 		case "household":
 			var (
@@ -564,6 +595,10 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				return err
 			}
 			_q.withCurrency = query
+			if _, ok := fieldSeen[investment.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, investment.FieldCurrencyID)
+				fieldSeen[investment.FieldCurrencyID] = struct{}{}
+			}
 
 		case "investmentLots":
 			var (
@@ -621,6 +656,16 @@ func (_q *InvestmentQuery) collectField(ctx context.Context, oneNode bool, opCtx
 			if _, ok := fieldSeen[investment.FieldValue]; !ok {
 				selectedFields = append(selectedFields, investment.FieldValue)
 				fieldSeen[investment.FieldValue] = struct{}{}
+			}
+		case "accountID":
+			if _, ok := fieldSeen[investment.FieldAccountID]; !ok {
+				selectedFields = append(selectedFields, investment.FieldAccountID)
+				fieldSeen[investment.FieldAccountID] = struct{}{}
+			}
+		case "currencyID":
+			if _, ok := fieldSeen[investment.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, investment.FieldCurrencyID)
+				fieldSeen[investment.FieldCurrencyID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -710,6 +755,10 @@ func (_q *InvestmentLotQuery) collectField(ctx context.Context, oneNode bool, op
 				return err
 			}
 			_q.withInvestment = query
+			if _, ok := fieldSeen[investmentlot.FieldInvestmentID]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldInvestmentID)
+				fieldSeen[investmentlot.FieldInvestmentID] = struct{}{}
+			}
 
 		case "transaction":
 			var (
@@ -721,6 +770,10 @@ func (_q *InvestmentLotQuery) collectField(ctx context.Context, oneNode bool, op
 				return err
 			}
 			_q.withTransaction = query
+			if _, ok := fieldSeen[investmentlot.FieldTransactionID]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldTransactionID)
+				fieldSeen[investmentlot.FieldTransactionID] = struct{}{}
+			}
 		case "createTime":
 			if _, ok := fieldSeen[investmentlot.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, investmentlot.FieldCreateTime)
@@ -745,6 +798,16 @@ func (_q *InvestmentLotQuery) collectField(ctx context.Context, oneNode bool, op
 			if _, ok := fieldSeen[investmentlot.FieldPrice]; !ok {
 				selectedFields = append(selectedFields, investmentlot.FieldPrice)
 				fieldSeen[investmentlot.FieldPrice] = struct{}{}
+			}
+		case "investmentID":
+			if _, ok := fieldSeen[investmentlot.FieldInvestmentID]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldInvestmentID)
+				fieldSeen[investmentlot.FieldInvestmentID] = struct{}{}
+			}
+		case "transactionID":
+			if _, ok := fieldSeen[investmentlot.FieldTransactionID]; !ok {
+				selectedFields = append(selectedFields, investmentlot.FieldTransactionID)
+				fieldSeen[investmentlot.FieldTransactionID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -819,6 +882,10 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			_q.withUser = query
+			if _, ok := fieldSeen[transaction.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldUserID)
+				fieldSeen[transaction.FieldUserID] = struct{}{}
+			}
 
 		case "household":
 			var (
@@ -845,6 +912,10 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 				return err
 			}
 			_q.withCategory = query
+			if _, ok := fieldSeen[transaction.FieldCategoryID]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldCategoryID)
+				fieldSeen[transaction.FieldCategoryID] = struct{}{}
+			}
 
 		case "transactionEntries":
 			var (
@@ -895,6 +966,16 @@ func (_q *TransactionQuery) collectField(ctx context.Context, oneNode bool, opCt
 			if _, ok := fieldSeen[transaction.FieldDatetime]; !ok {
 				selectedFields = append(selectedFields, transaction.FieldDatetime)
 				fieldSeen[transaction.FieldDatetime] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[transaction.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldUserID)
+				fieldSeen[transaction.FieldUserID] = struct{}{}
+			}
+		case "categoryID":
+			if _, ok := fieldSeen[transaction.FieldCategoryID]; !ok {
+				selectedFields = append(selectedFields, transaction.FieldCategoryID)
+				fieldSeen[transaction.FieldCategoryID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1121,6 +1202,10 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 				return err
 			}
 			_q.withAccount = query
+			if _, ok := fieldSeen[transactionentry.FieldAccountID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldAccountID)
+				fieldSeen[transactionentry.FieldAccountID] = struct{}{}
+			}
 
 		case "currency":
 			var (
@@ -1132,6 +1217,10 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 				return err
 			}
 			_q.withCurrency = query
+			if _, ok := fieldSeen[transactionentry.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldCurrencyID)
+				fieldSeen[transactionentry.FieldCurrencyID] = struct{}{}
+			}
 
 		case "transaction":
 			var (
@@ -1143,6 +1232,10 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 				return err
 			}
 			_q.withTransaction = query
+			if _, ok := fieldSeen[transactionentry.FieldTransactionID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldTransactionID)
+				fieldSeen[transactionentry.FieldTransactionID] = struct{}{}
+			}
 		case "createTime":
 			if _, ok := fieldSeen[transactionentry.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldCreateTime)
@@ -1162,6 +1255,21 @@ func (_q *TransactionEntryQuery) collectField(ctx context.Context, oneNode bool,
 			if _, ok := fieldSeen[transactionentry.FieldAmount]; !ok {
 				selectedFields = append(selectedFields, transactionentry.FieldAmount)
 				fieldSeen[transactionentry.FieldAmount] = struct{}{}
+			}
+		case "accountID":
+			if _, ok := fieldSeen[transactionentry.FieldAccountID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldAccountID)
+				fieldSeen[transactionentry.FieldAccountID] = struct{}{}
+			}
+		case "currencyID":
+			if _, ok := fieldSeen[transactionentry.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldCurrencyID)
+				fieldSeen[transactionentry.FieldCurrencyID] = struct{}{}
+			}
+		case "transactionID":
+			if _, ok := fieldSeen[transactionentry.FieldTransactionID]; !ok {
+				selectedFields = append(selectedFields, transactionentry.FieldTransactionID)
+				fieldSeen[transactionentry.FieldTransactionID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1500,6 +1608,10 @@ func (_q *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				return err
 			}
 			_q.withUser = query
+			if _, ok := fieldSeen[userkey.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldUserID)
+				fieldSeen[userkey.FieldUserID] = struct{}{}
+			}
 		case "createTime":
 			if _, ok := fieldSeen[userkey.FieldCreateTime]; !ok {
 				selectedFields = append(selectedFields, userkey.FieldCreateTime)
@@ -1519,6 +1631,11 @@ func (_q *UserKeyQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[userkey.FieldKey]; !ok {
 				selectedFields = append(selectedFields, userkey.FieldKey)
 				fieldSeen[userkey.FieldKey] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[userkey.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userkey.FieldUserID)
+				fieldSeen[userkey.FieldUserID] = struct{}{}
 			}
 		case "id":
 		case "__typename":

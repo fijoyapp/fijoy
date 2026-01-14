@@ -73,21 +73,37 @@ func (_u *TransactionUpdate) SetNillableDatetime(v *time.Time) *TransactionUpdat
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *TransactionUpdate) SetUserID(id int) *TransactionUpdate {
-	_u.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (_u *TransactionUpdate) SetUserID(v int) *TransactionUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *TransactionUpdate) SetNillableUserID(v *int) *TransactionUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetCategoryID sets the "category_id" field.
+func (_u *TransactionUpdate) SetCategoryID(v int) *TransactionUpdate {
+	_u.mutation.SetCategoryID(v)
+	return _u
+}
+
+// SetNillableCategoryID sets the "category_id" field if the given value is not nil.
+func (_u *TransactionUpdate) SetNillableCategoryID(v *int) *TransactionUpdate {
+	if v != nil {
+		_u.SetCategoryID(*v)
+	}
 	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
 func (_u *TransactionUpdate) SetUser(v *User) *TransactionUpdate {
 	return _u.SetUserID(v.ID)
-}
-
-// SetCategoryID sets the "category" edge to the TransactionCategory entity by ID.
-func (_u *TransactionUpdate) SetCategoryID(id int) *TransactionUpdate {
-	_u.mutation.SetCategoryID(id)
-	return _u
 }
 
 // SetCategory sets the "category" edge to the TransactionCategory entity.
@@ -228,6 +244,16 @@ func (_u *TransactionUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TransactionUpdate) check() error {
+	if v, ok := _u.mutation.UserID(); ok {
+		if err := transaction.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Transaction.user_id": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.CategoryID(); ok {
+		if err := transaction.CategoryIDValidator(v); err != nil {
+			return &ValidationError{Name: "category_id", err: fmt.Errorf(`ent: validator failed for field "Transaction.category_id": %w`, err)}
+		}
+	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.user"`)
 	}
@@ -480,21 +506,37 @@ func (_u *TransactionUpdateOne) SetNillableDatetime(v *time.Time) *TransactionUp
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *TransactionUpdateOne) SetUserID(id int) *TransactionUpdateOne {
-	_u.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (_u *TransactionUpdateOne) SetUserID(v int) *TransactionUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *TransactionUpdateOne) SetNillableUserID(v *int) *TransactionUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// SetCategoryID sets the "category_id" field.
+func (_u *TransactionUpdateOne) SetCategoryID(v int) *TransactionUpdateOne {
+	_u.mutation.SetCategoryID(v)
+	return _u
+}
+
+// SetNillableCategoryID sets the "category_id" field if the given value is not nil.
+func (_u *TransactionUpdateOne) SetNillableCategoryID(v *int) *TransactionUpdateOne {
+	if v != nil {
+		_u.SetCategoryID(*v)
+	}
 	return _u
 }
 
 // SetUser sets the "user" edge to the User entity.
 func (_u *TransactionUpdateOne) SetUser(v *User) *TransactionUpdateOne {
 	return _u.SetUserID(v.ID)
-}
-
-// SetCategoryID sets the "category" edge to the TransactionCategory entity by ID.
-func (_u *TransactionUpdateOne) SetCategoryID(id int) *TransactionUpdateOne {
-	_u.mutation.SetCategoryID(id)
-	return _u
 }
 
 // SetCategory sets the "category" edge to the TransactionCategory entity.
@@ -648,6 +690,16 @@ func (_u *TransactionUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TransactionUpdateOne) check() error {
+	if v, ok := _u.mutation.UserID(); ok {
+		if err := transaction.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Transaction.user_id": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.CategoryID(); ok {
+		if err := transaction.CategoryIDValidator(v); err != nil {
+			return &ValidationError{Name: "category_id", err: fmt.Errorf(`ent: validator failed for field "Transaction.category_id": %w`, err)}
+		}
+	}
 	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Transaction.user"`)
 	}

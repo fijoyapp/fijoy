@@ -133,6 +133,18 @@ type AccountWhereInput struct {
 	FxRateLT    *decimal.Decimal  `json:"fxRateLT,omitempty"`
 	FxRateLTE   *decimal.Decimal  `json:"fxRateLTE,omitempty"`
 
+	// "currency_id" field predicates.
+	CurrencyID      *int  `json:"currencyID,omitempty"`
+	CurrencyIDNEQ   *int  `json:"currencyIDNEQ,omitempty"`
+	CurrencyIDIn    []int `json:"currencyIDIn,omitempty"`
+	CurrencyIDNotIn []int `json:"currencyIDNotIn,omitempty"`
+
+	// "user_id" field predicates.
+	UserID      *int  `json:"userID,omitempty"`
+	UserIDNEQ   *int  `json:"userIDNEQ,omitempty"`
+	UserIDIn    []int `json:"userIDIn,omitempty"`
+	UserIDNotIn []int `json:"userIDNotIn,omitempty"`
+
 	// "household" edge predicates.
 	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
 	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
@@ -476,6 +488,30 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	}
 	if i.FxRateLTE != nil {
 		predicates = append(predicates, account.FxRateLTE(*i.FxRateLTE))
+	}
+	if i.CurrencyID != nil {
+		predicates = append(predicates, account.CurrencyIDEQ(*i.CurrencyID))
+	}
+	if i.CurrencyIDNEQ != nil {
+		predicates = append(predicates, account.CurrencyIDNEQ(*i.CurrencyIDNEQ))
+	}
+	if len(i.CurrencyIDIn) > 0 {
+		predicates = append(predicates, account.CurrencyIDIn(i.CurrencyIDIn...))
+	}
+	if len(i.CurrencyIDNotIn) > 0 {
+		predicates = append(predicates, account.CurrencyIDNotIn(i.CurrencyIDNotIn...))
+	}
+	if i.UserID != nil {
+		predicates = append(predicates, account.UserIDEQ(*i.UserID))
+	}
+	if i.UserIDNEQ != nil {
+		predicates = append(predicates, account.UserIDNEQ(*i.UserIDNEQ))
+	}
+	if len(i.UserIDIn) > 0 {
+		predicates = append(predicates, account.UserIDIn(i.UserIDIn...))
+	}
+	if len(i.UserIDNotIn) > 0 {
+		predicates = append(predicates, account.UserIDNotIn(i.UserIDNotIn...))
 	}
 
 	if i.HasHousehold != nil {
@@ -911,6 +947,12 @@ type HouseholdWhereInput struct {
 	LocaleEqualFold    *string  `json:"localeEqualFold,omitempty"`
 	LocaleContainsFold *string  `json:"localeContainsFold,omitempty"`
 
+	// "currency_id" field predicates.
+	CurrencyID      *int  `json:"currencyID,omitempty"`
+	CurrencyIDNEQ   *int  `json:"currencyIDNEQ,omitempty"`
+	CurrencyIDIn    []int `json:"currencyIDIn,omitempty"`
+	CurrencyIDNotIn []int `json:"currencyIDNotIn,omitempty"`
+
 	// "currency" edge predicates.
 	HasCurrency     *bool                 `json:"hasCurrency,omitempty"`
 	HasCurrencyWith []*CurrencyWhereInput `json:"hasCurrencyWith,omitempty"`
@@ -1168,6 +1210,18 @@ func (i *HouseholdWhereInput) P() (predicate.Household, error) {
 	}
 	if i.LocaleContainsFold != nil {
 		predicates = append(predicates, household.LocaleContainsFold(*i.LocaleContainsFold))
+	}
+	if i.CurrencyID != nil {
+		predicates = append(predicates, household.CurrencyIDEQ(*i.CurrencyID))
+	}
+	if i.CurrencyIDNEQ != nil {
+		predicates = append(predicates, household.CurrencyIDNEQ(*i.CurrencyIDNEQ))
+	}
+	if len(i.CurrencyIDIn) > 0 {
+		predicates = append(predicates, household.CurrencyIDIn(i.CurrencyIDIn...))
+	}
+	if len(i.CurrencyIDNotIn) > 0 {
+		predicates = append(predicates, household.CurrencyIDNotIn(i.CurrencyIDNotIn...))
 	}
 
 	if i.HasCurrency != nil {
@@ -1450,6 +1504,18 @@ type InvestmentWhereInput struct {
 	ValueGTE   *decimal.Decimal  `json:"valueGTE,omitempty"`
 	ValueLT    *decimal.Decimal  `json:"valueLT,omitempty"`
 	ValueLTE   *decimal.Decimal  `json:"valueLTE,omitempty"`
+
+	// "account_id" field predicates.
+	AccountID      *int  `json:"accountID,omitempty"`
+	AccountIDNEQ   *int  `json:"accountIDNEQ,omitempty"`
+	AccountIDIn    []int `json:"accountIDIn,omitempty"`
+	AccountIDNotIn []int `json:"accountIDNotIn,omitempty"`
+
+	// "currency_id" field predicates.
+	CurrencyID      *int  `json:"currencyID,omitempty"`
+	CurrencyIDNEQ   *int  `json:"currencyIDNEQ,omitempty"`
+	CurrencyIDIn    []int `json:"currencyIDIn,omitempty"`
+	CurrencyIDNotIn []int `json:"currencyIDNotIn,omitempty"`
 
 	// "account" edge predicates.
 	HasAccount     *bool                `json:"hasAccount,omitempty"`
@@ -1785,6 +1851,30 @@ func (i *InvestmentWhereInput) P() (predicate.Investment, error) {
 	if i.ValueLTE != nil {
 		predicates = append(predicates, investment.ValueLTE(*i.ValueLTE))
 	}
+	if i.AccountID != nil {
+		predicates = append(predicates, investment.AccountIDEQ(*i.AccountID))
+	}
+	if i.AccountIDNEQ != nil {
+		predicates = append(predicates, investment.AccountIDNEQ(*i.AccountIDNEQ))
+	}
+	if len(i.AccountIDIn) > 0 {
+		predicates = append(predicates, investment.AccountIDIn(i.AccountIDIn...))
+	}
+	if len(i.AccountIDNotIn) > 0 {
+		predicates = append(predicates, investment.AccountIDNotIn(i.AccountIDNotIn...))
+	}
+	if i.CurrencyID != nil {
+		predicates = append(predicates, investment.CurrencyIDEQ(*i.CurrencyID))
+	}
+	if i.CurrencyIDNEQ != nil {
+		predicates = append(predicates, investment.CurrencyIDNEQ(*i.CurrencyIDNEQ))
+	}
+	if len(i.CurrencyIDIn) > 0 {
+		predicates = append(predicates, investment.CurrencyIDIn(i.CurrencyIDIn...))
+	}
+	if len(i.CurrencyIDNotIn) > 0 {
+		predicates = append(predicates, investment.CurrencyIDNotIn(i.CurrencyIDNotIn...))
+	}
 
 	if i.HasAccount != nil {
 		p := investment.HasAccount()
@@ -1930,6 +2020,18 @@ type InvestmentLotWhereInput struct {
 	PriceGTE   *decimal.Decimal  `json:"priceGTE,omitempty"`
 	PriceLT    *decimal.Decimal  `json:"priceLT,omitempty"`
 	PriceLTE   *decimal.Decimal  `json:"priceLTE,omitempty"`
+
+	// "investment_id" field predicates.
+	InvestmentID      *int  `json:"investmentID,omitempty"`
+	InvestmentIDNEQ   *int  `json:"investmentIDNEQ,omitempty"`
+	InvestmentIDIn    []int `json:"investmentIDIn,omitempty"`
+	InvestmentIDNotIn []int `json:"investmentIDNotIn,omitempty"`
+
+	// "transaction_id" field predicates.
+	TransactionID      *int  `json:"transactionID,omitempty"`
+	TransactionIDNEQ   *int  `json:"transactionIDNEQ,omitempty"`
+	TransactionIDIn    []int `json:"transactionIDIn,omitempty"`
+	TransactionIDNotIn []int `json:"transactionIDNotIn,omitempty"`
 
 	// "household" edge predicates.
 	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
@@ -2147,6 +2249,30 @@ func (i *InvestmentLotWhereInput) P() (predicate.InvestmentLot, error) {
 	if i.PriceLTE != nil {
 		predicates = append(predicates, investmentlot.PriceLTE(*i.PriceLTE))
 	}
+	if i.InvestmentID != nil {
+		predicates = append(predicates, investmentlot.InvestmentIDEQ(*i.InvestmentID))
+	}
+	if i.InvestmentIDNEQ != nil {
+		predicates = append(predicates, investmentlot.InvestmentIDNEQ(*i.InvestmentIDNEQ))
+	}
+	if len(i.InvestmentIDIn) > 0 {
+		predicates = append(predicates, investmentlot.InvestmentIDIn(i.InvestmentIDIn...))
+	}
+	if len(i.InvestmentIDNotIn) > 0 {
+		predicates = append(predicates, investmentlot.InvestmentIDNotIn(i.InvestmentIDNotIn...))
+	}
+	if i.TransactionID != nil {
+		predicates = append(predicates, investmentlot.TransactionIDEQ(*i.TransactionID))
+	}
+	if i.TransactionIDNEQ != nil {
+		predicates = append(predicates, investmentlot.TransactionIDNEQ(*i.TransactionIDNEQ))
+	}
+	if len(i.TransactionIDIn) > 0 {
+		predicates = append(predicates, investmentlot.TransactionIDIn(i.TransactionIDIn...))
+	}
+	if len(i.TransactionIDNotIn) > 0 {
+		predicates = append(predicates, investmentlot.TransactionIDNotIn(i.TransactionIDNotIn...))
+	}
 
 	if i.HasHousehold != nil {
 		p := investmentlot.HasHousehold()
@@ -2281,6 +2407,18 @@ type TransactionWhereInput struct {
 	DatetimeGTE   *time.Time  `json:"datetimeGTE,omitempty"`
 	DatetimeLT    *time.Time  `json:"datetimeLT,omitempty"`
 	DatetimeLTE   *time.Time  `json:"datetimeLTE,omitempty"`
+
+	// "user_id" field predicates.
+	UserID      *int  `json:"userID,omitempty"`
+	UserIDNEQ   *int  `json:"userIDNEQ,omitempty"`
+	UserIDIn    []int `json:"userIDIn,omitempty"`
+	UserIDNotIn []int `json:"userIDNotIn,omitempty"`
+
+	// "category_id" field predicates.
+	CategoryID      *int  `json:"categoryID,omitempty"`
+	CategoryIDNEQ   *int  `json:"categoryIDNEQ,omitempty"`
+	CategoryIDIn    []int `json:"categoryIDIn,omitempty"`
+	CategoryIDNotIn []int `json:"categoryIDNotIn,omitempty"`
 
 	// "user" edge predicates.
 	HasUser     *bool             `json:"hasUser,omitempty"`
@@ -2526,6 +2664,30 @@ func (i *TransactionWhereInput) P() (predicate.Transaction, error) {
 	}
 	if i.DatetimeLTE != nil {
 		predicates = append(predicates, transaction.DatetimeLTE(*i.DatetimeLTE))
+	}
+	if i.UserID != nil {
+		predicates = append(predicates, transaction.UserIDEQ(*i.UserID))
+	}
+	if i.UserIDNEQ != nil {
+		predicates = append(predicates, transaction.UserIDNEQ(*i.UserIDNEQ))
+	}
+	if len(i.UserIDIn) > 0 {
+		predicates = append(predicates, transaction.UserIDIn(i.UserIDIn...))
+	}
+	if len(i.UserIDNotIn) > 0 {
+		predicates = append(predicates, transaction.UserIDNotIn(i.UserIDNotIn...))
+	}
+	if i.CategoryID != nil {
+		predicates = append(predicates, transaction.CategoryIDEQ(*i.CategoryID))
+	}
+	if i.CategoryIDNEQ != nil {
+		predicates = append(predicates, transaction.CategoryIDNEQ(*i.CategoryIDNEQ))
+	}
+	if len(i.CategoryIDIn) > 0 {
+		predicates = append(predicates, transaction.CategoryIDIn(i.CategoryIDIn...))
+	}
+	if len(i.CategoryIDNotIn) > 0 {
+		predicates = append(predicates, transaction.CategoryIDNotIn(i.CategoryIDNotIn...))
 	}
 
 	if i.HasUser != nil {
@@ -3007,6 +3169,24 @@ type TransactionEntryWhereInput struct {
 	AmountLT    *decimal.Decimal  `json:"amountLT,omitempty"`
 	AmountLTE   *decimal.Decimal  `json:"amountLTE,omitempty"`
 
+	// "account_id" field predicates.
+	AccountID      *int  `json:"accountID,omitempty"`
+	AccountIDNEQ   *int  `json:"accountIDNEQ,omitempty"`
+	AccountIDIn    []int `json:"accountIDIn,omitempty"`
+	AccountIDNotIn []int `json:"accountIDNotIn,omitempty"`
+
+	// "currency_id" field predicates.
+	CurrencyID      *int  `json:"currencyID,omitempty"`
+	CurrencyIDNEQ   *int  `json:"currencyIDNEQ,omitempty"`
+	CurrencyIDIn    []int `json:"currencyIDIn,omitempty"`
+	CurrencyIDNotIn []int `json:"currencyIDNotIn,omitempty"`
+
+	// "transaction_id" field predicates.
+	TransactionID      *int  `json:"transactionID,omitempty"`
+	TransactionIDNEQ   *int  `json:"transactionIDNEQ,omitempty"`
+	TransactionIDIn    []int `json:"transactionIDIn,omitempty"`
+	TransactionIDNotIn []int `json:"transactionIDNotIn,omitempty"`
+
 	// "household" edge predicates.
 	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
 	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
@@ -3202,6 +3382,42 @@ func (i *TransactionEntryWhereInput) P() (predicate.TransactionEntry, error) {
 	}
 	if i.AmountLTE != nil {
 		predicates = append(predicates, transactionentry.AmountLTE(*i.AmountLTE))
+	}
+	if i.AccountID != nil {
+		predicates = append(predicates, transactionentry.AccountIDEQ(*i.AccountID))
+	}
+	if i.AccountIDNEQ != nil {
+		predicates = append(predicates, transactionentry.AccountIDNEQ(*i.AccountIDNEQ))
+	}
+	if len(i.AccountIDIn) > 0 {
+		predicates = append(predicates, transactionentry.AccountIDIn(i.AccountIDIn...))
+	}
+	if len(i.AccountIDNotIn) > 0 {
+		predicates = append(predicates, transactionentry.AccountIDNotIn(i.AccountIDNotIn...))
+	}
+	if i.CurrencyID != nil {
+		predicates = append(predicates, transactionentry.CurrencyIDEQ(*i.CurrencyID))
+	}
+	if i.CurrencyIDNEQ != nil {
+		predicates = append(predicates, transactionentry.CurrencyIDNEQ(*i.CurrencyIDNEQ))
+	}
+	if len(i.CurrencyIDIn) > 0 {
+		predicates = append(predicates, transactionentry.CurrencyIDIn(i.CurrencyIDIn...))
+	}
+	if len(i.CurrencyIDNotIn) > 0 {
+		predicates = append(predicates, transactionentry.CurrencyIDNotIn(i.CurrencyIDNotIn...))
+	}
+	if i.TransactionID != nil {
+		predicates = append(predicates, transactionentry.TransactionIDEQ(*i.TransactionID))
+	}
+	if i.TransactionIDNEQ != nil {
+		predicates = append(predicates, transactionentry.TransactionIDNEQ(*i.TransactionIDNEQ))
+	}
+	if len(i.TransactionIDIn) > 0 {
+		predicates = append(predicates, transactionentry.TransactionIDIn(i.TransactionIDIn...))
+	}
+	if len(i.TransactionIDNotIn) > 0 {
+		predicates = append(predicates, transactionentry.TransactionIDNotIn(i.TransactionIDNotIn...))
 	}
 
 	if i.HasHousehold != nil {
@@ -4044,6 +4260,12 @@ type UserKeyWhereInput struct {
 	KeyEqualFold    *string  `json:"keyEqualFold,omitempty"`
 	KeyContainsFold *string  `json:"keyContainsFold,omitempty"`
 
+	// "user_id" field predicates.
+	UserID      *int  `json:"userID,omitempty"`
+	UserIDNEQ   *int  `json:"userIDNEQ,omitempty"`
+	UserIDIn    []int `json:"userIDIn,omitempty"`
+	UserIDNotIn []int `json:"userIDNotIn,omitempty"`
+
 	// "user" edge predicates.
 	HasUser     *bool             `json:"hasUser,omitempty"`
 	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
@@ -4242,6 +4464,18 @@ func (i *UserKeyWhereInput) P() (predicate.UserKey, error) {
 	}
 	if i.KeyContainsFold != nil {
 		predicates = append(predicates, userkey.KeyContainsFold(*i.KeyContainsFold))
+	}
+	if i.UserID != nil {
+		predicates = append(predicates, userkey.UserIDEQ(*i.UserID))
+	}
+	if i.UserIDNEQ != nil {
+		predicates = append(predicates, userkey.UserIDNEQ(*i.UserIDNEQ))
+	}
+	if len(i.UserIDIn) > 0 {
+		predicates = append(predicates, userkey.UserIDIn(i.UserIDIn...))
+	}
+	if len(i.UserIDNotIn) > 0 {
+		predicates = append(predicates, userkey.UserIDNotIn(i.UserIDNotIn...))
 	}
 
 	if i.HasUser != nil {

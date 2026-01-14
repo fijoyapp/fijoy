@@ -72,9 +72,17 @@ func (_u *HouseholdUpdate) SetNillableLocale(v *string) *HouseholdUpdate {
 	return _u
 }
 
-// SetCurrencyID sets the "currency" edge to the Currency entity by ID.
-func (_u *HouseholdUpdate) SetCurrencyID(id int) *HouseholdUpdate {
-	_u.mutation.SetCurrencyID(id)
+// SetCurrencyID sets the "currency_id" field.
+func (_u *HouseholdUpdate) SetCurrencyID(v int) *HouseholdUpdate {
+	_u.mutation.SetCurrencyID(v)
+	return _u
+}
+
+// SetNillableCurrencyID sets the "currency_id" field if the given value is not nil.
+func (_u *HouseholdUpdate) SetNillableCurrencyID(v *int) *HouseholdUpdate {
+	if v != nil {
+		_u.SetCurrencyID(*v)
+	}
 	return _u
 }
 
@@ -434,6 +442,11 @@ func (_u *HouseholdUpdate) check() error {
 	if v, ok := _u.mutation.Locale(); ok {
 		if err := household.LocaleValidator(v); err != nil {
 			return &ValidationError{Name: "locale", err: fmt.Errorf(`ent: validator failed for field "Household.locale": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.CurrencyID(); ok {
+		if err := household.CurrencyIDValidator(v); err != nil {
+			return &ValidationError{Name: "currency_id", err: fmt.Errorf(`ent: validator failed for field "Household.currency_id": %w`, err)}
 		}
 	}
 	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {
@@ -926,9 +939,17 @@ func (_u *HouseholdUpdateOne) SetNillableLocale(v *string) *HouseholdUpdateOne {
 	return _u
 }
 
-// SetCurrencyID sets the "currency" edge to the Currency entity by ID.
-func (_u *HouseholdUpdateOne) SetCurrencyID(id int) *HouseholdUpdateOne {
-	_u.mutation.SetCurrencyID(id)
+// SetCurrencyID sets the "currency_id" field.
+func (_u *HouseholdUpdateOne) SetCurrencyID(v int) *HouseholdUpdateOne {
+	_u.mutation.SetCurrencyID(v)
+	return _u
+}
+
+// SetNillableCurrencyID sets the "currency_id" field if the given value is not nil.
+func (_u *HouseholdUpdateOne) SetNillableCurrencyID(v *int) *HouseholdUpdateOne {
+	if v != nil {
+		_u.SetCurrencyID(*v)
+	}
 	return _u
 }
 
@@ -1301,6 +1322,11 @@ func (_u *HouseholdUpdateOne) check() error {
 	if v, ok := _u.mutation.Locale(); ok {
 		if err := household.LocaleValidator(v); err != nil {
 			return &ValidationError{Name: "locale", err: fmt.Errorf(`ent: validator failed for field "Household.locale": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.CurrencyID(); ok {
+		if err := household.CurrencyIDValidator(v); err != nil {
+			return &ValidationError{Name: "currency_id", err: fmt.Errorf(`ent: validator failed for field "Household.currency_id": %w`, err)}
 		}
 	}
 	if _u.mutation.CurrencyCleared() && len(_u.mutation.CurrencyIDs()) > 0 {

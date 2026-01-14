@@ -590,7 +590,9 @@ func (_q *CurrencyQuery) loadAccounts(ctx context.Context, query *AccountQuery, 
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(account.FieldCurrencyID)
+	}
 	query.Where(predicate.Account(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(currency.AccountsColumn), fks...))
 	}))
@@ -599,13 +601,10 @@ func (_q *CurrencyQuery) loadAccounts(ctx context.Context, query *AccountQuery, 
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.currency_accounts
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "currency_accounts" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.CurrencyID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "currency_accounts" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "currency_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -621,7 +620,9 @@ func (_q *CurrencyQuery) loadInvestments(ctx context.Context, query *InvestmentQ
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(investment.FieldCurrencyID)
+	}
 	query.Where(predicate.Investment(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(currency.InvestmentsColumn), fks...))
 	}))
@@ -630,13 +631,10 @@ func (_q *CurrencyQuery) loadInvestments(ctx context.Context, query *InvestmentQ
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.currency_investments
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "currency_investments" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.CurrencyID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "currency_investments" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "currency_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -652,7 +650,9 @@ func (_q *CurrencyQuery) loadTransactionEntries(ctx context.Context, query *Tran
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(transactionentry.FieldCurrencyID)
+	}
 	query.Where(predicate.TransactionEntry(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(currency.TransactionEntriesColumn), fks...))
 	}))
@@ -661,13 +661,10 @@ func (_q *CurrencyQuery) loadTransactionEntries(ctx context.Context, query *Tran
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.currency_transaction_entries
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "currency_transaction_entries" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.CurrencyID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "currency_transaction_entries" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "currency_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -683,7 +680,9 @@ func (_q *CurrencyQuery) loadHouseholds(ctx context.Context, query *HouseholdQue
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(household.FieldCurrencyID)
+	}
 	query.Where(predicate.Household(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(currency.HouseholdsColumn), fks...))
 	}))
@@ -692,13 +691,10 @@ func (_q *CurrencyQuery) loadHouseholds(ctx context.Context, query *HouseholdQue
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.currency_households
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "currency_households" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.CurrencyID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "currency_households" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "currency_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

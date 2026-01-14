@@ -21,6 +21,7 @@ func (Household) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").NotEmpty(),
 		field.String("locale").NotEmpty(),
+		field.Int("currency_id").Positive(),
 	}
 }
 
@@ -29,7 +30,9 @@ func (Household) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("currency", Currency.Type).
 			Ref("households").
-			Unique().Required(),
+			Field("currency_id").
+			Unique().
+			Required(),
 		edge.From("users", User.Type).
 			Ref("households").
 			Through("user_households", UserHousehold.Type),

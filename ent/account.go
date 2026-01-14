@@ -39,12 +39,14 @@ type Account struct {
 	Value decimal.Decimal `json:"value,omitempty"`
 	// FxRate holds the value of the "fx_rate" field.
 	FxRate decimal.Decimal `json:"fx_rate,omitempty"`
+	// CurrencyID holds the value of the "currency_id" field.
+	CurrencyID int `json:"currency_id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID int `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AccountQuery when eager-loading is set.
-	Edges             AccountEdges `json:"edges"`
-	currency_accounts *int
-	user_accounts     *int
-	selectValues      sql.SelectValues
+	Edges        AccountEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // AccountEdges holds the relations/edges for other nodes in the graph.
@@ -127,16 +129,12 @@ func (*Account) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case account.FieldBalance, account.FieldValue, account.FieldFxRate:
 			values[i] = new(decimal.Decimal)
-		case account.FieldID, account.FieldHouseholdID:
+		case account.FieldID, account.FieldHouseholdID, account.FieldCurrencyID, account.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case account.FieldName, account.FieldType, account.FieldIconPath:
 			values[i] = new(sql.NullString)
 		case account.FieldCreateTime, account.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case account.ForeignKeys[0]: // currency_accounts
-			values[i] = new(sql.NullInt64)
-		case account.ForeignKeys[1]: // user_accounts
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -212,19 +210,17 @@ func (_m *Account) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				_m.FxRate = *value
 			}
-		case account.ForeignKeys[0]:
+		case account.FieldCurrencyID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field currency_accounts", value)
+				return fmt.Errorf("unexpected type %T for field currency_id", values[i])
 			} else if value.Valid {
-				_m.currency_accounts = new(int)
-				*_m.currency_accounts = int(value.Int64)
+				_m.CurrencyID = int(value.Int64)
 			}
-		case account.ForeignKeys[1]:
+		case account.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_accounts", value)
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.user_accounts = new(int)
-				*_m.user_accounts = int(value.Int64)
+				_m.UserID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -313,6 +309,12 @@ func (_m *Account) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("fx_rate=")
 	builder.WriteString(fmt.Sprintf("%v", _m.FxRate))
+	builder.WriteString(", ")
+	builder.WriteString("currency_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurrencyID))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteByte(')')
 	return builder.String()
 }

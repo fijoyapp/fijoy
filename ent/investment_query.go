@@ -32,7 +32,6 @@ type InvestmentQuery struct {
 	withHousehold           *HouseholdQuery
 	withCurrency            *CurrencyQuery
 	withInvestmentLots      *InvestmentLotQuery
-	withFKs                 bool
 	loadTotal               []func(context.Context, []*Investment) error
 	modifiers               []func(*sql.Selector)
 	withNamedInvestmentLots map[string]*InvestmentLotQuery
@@ -490,7 +489,6 @@ func (_q *InvestmentQuery) prepareQuery(ctx context.Context) error {
 func (_q *InvestmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Investment, error) {
 	var (
 		nodes       = []*Investment{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [4]bool{
 			_q.withAccount != nil,
@@ -499,12 +497,6 @@ func (_q *InvestmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*I
 			_q.withInvestmentLots != nil,
 		}
 	)
-	if _q.withAccount != nil || _q.withCurrency != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, investment.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Investment).scanValues(nil, columns)
 	}
@@ -570,10 +562,7 @@ func (_q *InvestmentQuery) loadAccount(ctx context.Context, query *AccountQuery,
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Investment)
 	for i := range nodes {
-		if nodes[i].account_investments == nil {
-			continue
-		}
-		fk := *nodes[i].account_investments
+		fk := nodes[i].AccountID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -590,7 +579,7 @@ func (_q *InvestmentQuery) loadAccount(ctx context.Context, query *AccountQuery,
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "account_investments" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "account_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -631,10 +620,7 @@ func (_q *InvestmentQuery) loadCurrency(ctx context.Context, query *CurrencyQuer
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Investment)
 	for i := range nodes {
-		if nodes[i].currency_investments == nil {
-			continue
-		}
-		fk := *nodes[i].currency_investments
+		fk := nodes[i].CurrencyID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -651,7 +637,7 @@ func (_q *InvestmentQuery) loadCurrency(ctx context.Context, query *CurrencyQuer
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "currency_investments" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -669,7 +655,9 @@ func (_q *InvestmentQuery) loadInvestmentLots(ctx context.Context, query *Invest
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(investmentlot.FieldInvestmentID)
+	}
 	query.Where(predicate.InvestmentLot(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(investment.InvestmentLotsColumn), fks...))
 	}))
@@ -678,13 +666,10 @@ func (_q *InvestmentQuery) loadInvestmentLots(ctx context.Context, query *Invest
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.investment_investment_lots
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "investment_investment_lots" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.InvestmentID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "investment_investment_lots" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "investment_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -719,8 +704,14 @@ func (_q *InvestmentQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
+		if _q.withAccount != nil {
+			_spec.Node.AddColumnOnce(investment.FieldAccountID)
+		}
 		if _q.withHousehold != nil {
 			_spec.Node.AddColumnOnce(investment.FieldHouseholdID)
+		}
+		if _q.withCurrency != nil {
+			_spec.Node.AddColumnOnce(investment.FieldCurrencyID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

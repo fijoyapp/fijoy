@@ -64,6 +64,14 @@ func init() {
 	accountDescValue := accountFields[4].Descriptor()
 	// account.DefaultValue holds the default value on creation for the value field.
 	account.DefaultValue = accountDescValue.Default.(func() decimal.Decimal)
+	// accountDescCurrencyID is the schema descriptor for currency_id field.
+	accountDescCurrencyID := accountFields[6].Descriptor()
+	// account.CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	account.CurrencyIDValidator = accountDescCurrencyID.Validators[0].(func(int) error)
+	// accountDescUserID is the schema descriptor for user_id field.
+	accountDescUserID := accountFields[7].Descriptor()
+	// account.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	account.UserIDValidator = accountDescUserID.Validators[0].(func(int) error)
 	currencyFields := schema.Currency{}.Fields()
 	_ = currencyFields
 	// currencyDescCode is the schema descriptor for code field.
@@ -102,6 +110,10 @@ func init() {
 	householdDescLocale := householdFields[1].Descriptor()
 	// household.LocaleValidator is a validator for the "locale" field. It is called by the builders before save.
 	household.LocaleValidator = householdDescLocale.Validators[0].(func(string) error)
+	// householdDescCurrencyID is the schema descriptor for currency_id field.
+	householdDescCurrencyID := householdFields[2].Descriptor()
+	// household.CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	household.CurrencyIDValidator = householdDescCurrencyID.Validators[0].(func(int) error)
 	investmentMixin := schema.Investment{}.Mixin()
 	investment.Policy = privacy.NewPolicies(investmentMixin[1], schema.Investment{})
 	investment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -138,6 +150,14 @@ func init() {
 	investmentDescValue := investmentFields[5].Descriptor()
 	// investment.DefaultValue holds the default value on creation for the value field.
 	investment.DefaultValue = investmentDescValue.Default.(func() decimal.Decimal)
+	// investmentDescAccountID is the schema descriptor for account_id field.
+	investmentDescAccountID := investmentFields[6].Descriptor()
+	// investment.AccountIDValidator is a validator for the "account_id" field. It is called by the builders before save.
+	investment.AccountIDValidator = investmentDescAccountID.Validators[0].(func(int) error)
+	// investmentDescCurrencyID is the schema descriptor for currency_id field.
+	investmentDescCurrencyID := investmentFields[7].Descriptor()
+	// investment.CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	investment.CurrencyIDValidator = investmentDescCurrencyID.Validators[0].(func(int) error)
 	investmentlotMixin := schema.InvestmentLot{}.Mixin()
 	investmentlot.Policy = privacy.NewPolicies(investmentlotMixin[1], schema.InvestmentLot{})
 	investmentlot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -162,6 +182,14 @@ func init() {
 	investmentlot.DefaultUpdateTime = investmentlotDescUpdateTime.Default.(func() time.Time)
 	// investmentlot.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	investmentlot.UpdateDefaultUpdateTime = investmentlotDescUpdateTime.UpdateDefault.(func() time.Time)
+	// investmentlotDescInvestmentID is the schema descriptor for investment_id field.
+	investmentlotDescInvestmentID := investmentlotFields[2].Descriptor()
+	// investmentlot.InvestmentIDValidator is a validator for the "investment_id" field. It is called by the builders before save.
+	investmentlot.InvestmentIDValidator = investmentlotDescInvestmentID.Validators[0].(func(int) error)
+	// investmentlotDescTransactionID is the schema descriptor for transaction_id field.
+	investmentlotDescTransactionID := investmentlotFields[3].Descriptor()
+	// investmentlot.TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
+	investmentlot.TransactionIDValidator = investmentlotDescTransactionID.Validators[0].(func(int) error)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transaction.Policy = privacy.NewPolicies(transactionMixin[1], schema.Transaction{})
 	transaction.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -186,6 +214,14 @@ func init() {
 	transaction.DefaultUpdateTime = transactionDescUpdateTime.Default.(func() time.Time)
 	// transaction.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	transaction.UpdateDefaultUpdateTime = transactionDescUpdateTime.UpdateDefault.(func() time.Time)
+	// transactionDescUserID is the schema descriptor for user_id field.
+	transactionDescUserID := transactionFields[2].Descriptor()
+	// transaction.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	transaction.UserIDValidator = transactionDescUserID.Validators[0].(func(int) error)
+	// transactionDescCategoryID is the schema descriptor for category_id field.
+	transactionDescCategoryID := transactionFields[3].Descriptor()
+	// transaction.CategoryIDValidator is a validator for the "category_id" field. It is called by the builders before save.
+	transaction.CategoryIDValidator = transactionDescCategoryID.Validators[0].(func(int) error)
 	transactioncategoryMixin := schema.TransactionCategory{}.Mixin()
 	transactioncategory.Policy = privacy.NewPolicies(transactioncategoryMixin[1], schema.TransactionCategory{})
 	transactioncategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -238,6 +274,18 @@ func init() {
 	transactionentry.DefaultUpdateTime = transactionentryDescUpdateTime.Default.(func() time.Time)
 	// transactionentry.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
 	transactionentry.UpdateDefaultUpdateTime = transactionentryDescUpdateTime.UpdateDefault.(func() time.Time)
+	// transactionentryDescAccountID is the schema descriptor for account_id field.
+	transactionentryDescAccountID := transactionentryFields[1].Descriptor()
+	// transactionentry.AccountIDValidator is a validator for the "account_id" field. It is called by the builders before save.
+	transactionentry.AccountIDValidator = transactionentryDescAccountID.Validators[0].(func(int) error)
+	// transactionentryDescCurrencyID is the schema descriptor for currency_id field.
+	transactionentryDescCurrencyID := transactionentryFields[2].Descriptor()
+	// transactionentry.CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	transactionentry.CurrencyIDValidator = transactionentryDescCurrencyID.Validators[0].(func(int) error)
+	// transactionentryDescTransactionID is the schema descriptor for transaction_id field.
+	transactionentryDescTransactionID := transactionentryFields[3].Descriptor()
+	// transactionentry.TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
+	transactionentry.TransactionIDValidator = transactionentryDescTransactionID.Validators[0].(func(int) error)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -322,6 +370,10 @@ func init() {
 	userkeyDescKey := userkeyFields[1].Descriptor()
 	// userkey.KeyValidator is a validator for the "key" field. It is called by the builders before save.
 	userkey.KeyValidator = userkeyDescKey.Validators[0].(func(string) error)
+	// userkeyDescUserID is the schema descriptor for user_id field.
+	userkeyDescUserID := userkeyFields[2].Descriptor()
+	// userkey.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	userkey.UserIDValidator = userkeyDescUserID.Validators[0].(func(int) error)
 }
 
 const (

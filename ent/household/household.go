@@ -23,6 +23,8 @@ const (
 	FieldName = "name"
 	// FieldLocale holds the string denoting the locale field in the database.
 	FieldLocale = "locale"
+	// FieldCurrencyID holds the string denoting the currency_id field in the database.
+	FieldCurrencyID = "currency_id"
 	// EdgeCurrency holds the string denoting the currency edge name in mutations.
 	EdgeCurrency = "currency"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -49,7 +51,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "currency" package.
 	CurrencyInverseTable = "currencies"
 	// CurrencyColumn is the table column denoting the currency relation/edge.
-	CurrencyColumn = "currency_households"
+	CurrencyColumn = "currency_id"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
 	UsersTable = "user_households"
 	// UsersInverseTable is the table name for the User entity.
@@ -113,12 +115,7 @@ var Columns = []string{
 	FieldUpdateTime,
 	FieldName,
 	FieldLocale,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "households"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"currency_households",
+	FieldCurrencyID,
 }
 
 var (
@@ -131,11 +128,6 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -160,6 +152,8 @@ var (
 	NameValidator func(string) error
 	// LocaleValidator is a validator for the "locale" field. It is called by the builders before save.
 	LocaleValidator func(string) error
+	// CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	CurrencyIDValidator func(int) error
 )
 
 // OrderOption defines the ordering options for the Household queries.
@@ -188,6 +182,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByLocale orders the results by the locale field.
 func ByLocale(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLocale, opts...).ToFunc()
+}
+
+// ByCurrencyID orders the results by the currency_id field.
+func ByCurrencyID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrencyID, opts...).ToFunc()
 }
 
 // ByCurrencyField orders the results by currency field.

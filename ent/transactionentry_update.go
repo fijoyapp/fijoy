@@ -9,9 +9,7 @@ import (
 	"time"
 
 	"beavermoney.app/ent/account"
-	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/predicate"
-	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -60,37 +58,23 @@ func (_u *TransactionEntryUpdate) AddAmount(v decimal.Decimal) *TransactionEntry
 	return _u
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_u *TransactionEntryUpdate) SetAccountID(id int) *TransactionEntryUpdate {
-	_u.mutation.SetAccountID(id)
+// SetAccountID sets the "account_id" field.
+func (_u *TransactionEntryUpdate) SetAccountID(v int) *TransactionEntryUpdate {
+	_u.mutation.SetAccountID(v)
+	return _u
+}
+
+// SetNillableAccountID sets the "account_id" field if the given value is not nil.
+func (_u *TransactionEntryUpdate) SetNillableAccountID(v *int) *TransactionEntryUpdate {
+	if v != nil {
+		_u.SetAccountID(*v)
+	}
 	return _u
 }
 
 // SetAccount sets the "account" edge to the Account entity.
 func (_u *TransactionEntryUpdate) SetAccount(v *Account) *TransactionEntryUpdate {
 	return _u.SetAccountID(v.ID)
-}
-
-// SetCurrencyID sets the "currency" edge to the Currency entity by ID.
-func (_u *TransactionEntryUpdate) SetCurrencyID(id int) *TransactionEntryUpdate {
-	_u.mutation.SetCurrencyID(id)
-	return _u
-}
-
-// SetCurrency sets the "currency" edge to the Currency entity.
-func (_u *TransactionEntryUpdate) SetCurrency(v *Currency) *TransactionEntryUpdate {
-	return _u.SetCurrencyID(v.ID)
-}
-
-// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (_u *TransactionEntryUpdate) SetTransactionID(id int) *TransactionEntryUpdate {
-	_u.mutation.SetTransactionID(id)
-	return _u
-}
-
-// SetTransaction sets the "transaction" edge to the Transaction entity.
-func (_u *TransactionEntryUpdate) SetTransaction(v *Transaction) *TransactionEntryUpdate {
-	return _u.SetTransactionID(v.ID)
 }
 
 // Mutation returns the TransactionEntryMutation object of the builder.
@@ -101,18 +85,6 @@ func (_u *TransactionEntryUpdate) Mutation() *TransactionEntryMutation {
 // ClearAccount clears the "account" edge to the Account entity.
 func (_u *TransactionEntryUpdate) ClearAccount() *TransactionEntryUpdate {
 	_u.mutation.ClearAccount()
-	return _u
-}
-
-// ClearCurrency clears the "currency" edge to the Currency entity.
-func (_u *TransactionEntryUpdate) ClearCurrency() *TransactionEntryUpdate {
-	_u.mutation.ClearCurrency()
-	return _u
-}
-
-// ClearTransaction clears the "transaction" edge to the Transaction entity.
-func (_u *TransactionEntryUpdate) ClearTransaction() *TransactionEntryUpdate {
-	_u.mutation.ClearTransaction()
 	return _u
 }
 
@@ -160,6 +132,11 @@ func (_u *TransactionEntryUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TransactionEntryUpdate) check() error {
+	if v, ok := _u.mutation.AccountID(); ok {
+		if err := transactionentry.AccountIDValidator(v); err != nil {
+			return &ValidationError{Name: "account_id", err: fmt.Errorf(`ent: validator failed for field "TransactionEntry.account_id": %w`, err)}
+		}
+	}
 	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.household"`)
 	}
@@ -231,64 +208,6 @@ func (_u *TransactionEntryUpdate) sqlSave(ctx context.Context) (_node int, err e
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.CurrencyCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.CurrencyTable,
-			Columns: []string{transactionentry.CurrencyColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(currency.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.CurrencyIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.CurrencyTable,
-			Columns: []string{transactionentry.CurrencyColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(currency.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.TransactionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.TransactionTable,
-			Columns: []string{transactionentry.TransactionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.TransactionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.TransactionTable,
-			Columns: []string{transactionentry.TransactionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -338,37 +257,23 @@ func (_u *TransactionEntryUpdateOne) AddAmount(v decimal.Decimal) *TransactionEn
 	return _u
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_u *TransactionEntryUpdateOne) SetAccountID(id int) *TransactionEntryUpdateOne {
-	_u.mutation.SetAccountID(id)
+// SetAccountID sets the "account_id" field.
+func (_u *TransactionEntryUpdateOne) SetAccountID(v int) *TransactionEntryUpdateOne {
+	_u.mutation.SetAccountID(v)
+	return _u
+}
+
+// SetNillableAccountID sets the "account_id" field if the given value is not nil.
+func (_u *TransactionEntryUpdateOne) SetNillableAccountID(v *int) *TransactionEntryUpdateOne {
+	if v != nil {
+		_u.SetAccountID(*v)
+	}
 	return _u
 }
 
 // SetAccount sets the "account" edge to the Account entity.
 func (_u *TransactionEntryUpdateOne) SetAccount(v *Account) *TransactionEntryUpdateOne {
 	return _u.SetAccountID(v.ID)
-}
-
-// SetCurrencyID sets the "currency" edge to the Currency entity by ID.
-func (_u *TransactionEntryUpdateOne) SetCurrencyID(id int) *TransactionEntryUpdateOne {
-	_u.mutation.SetCurrencyID(id)
-	return _u
-}
-
-// SetCurrency sets the "currency" edge to the Currency entity.
-func (_u *TransactionEntryUpdateOne) SetCurrency(v *Currency) *TransactionEntryUpdateOne {
-	return _u.SetCurrencyID(v.ID)
-}
-
-// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (_u *TransactionEntryUpdateOne) SetTransactionID(id int) *TransactionEntryUpdateOne {
-	_u.mutation.SetTransactionID(id)
-	return _u
-}
-
-// SetTransaction sets the "transaction" edge to the Transaction entity.
-func (_u *TransactionEntryUpdateOne) SetTransaction(v *Transaction) *TransactionEntryUpdateOne {
-	return _u.SetTransactionID(v.ID)
 }
 
 // Mutation returns the TransactionEntryMutation object of the builder.
@@ -379,18 +284,6 @@ func (_u *TransactionEntryUpdateOne) Mutation() *TransactionEntryMutation {
 // ClearAccount clears the "account" edge to the Account entity.
 func (_u *TransactionEntryUpdateOne) ClearAccount() *TransactionEntryUpdateOne {
 	_u.mutation.ClearAccount()
-	return _u
-}
-
-// ClearCurrency clears the "currency" edge to the Currency entity.
-func (_u *TransactionEntryUpdateOne) ClearCurrency() *TransactionEntryUpdateOne {
-	_u.mutation.ClearCurrency()
-	return _u
-}
-
-// ClearTransaction clears the "transaction" edge to the Transaction entity.
-func (_u *TransactionEntryUpdateOne) ClearTransaction() *TransactionEntryUpdateOne {
-	_u.mutation.ClearTransaction()
 	return _u
 }
 
@@ -451,6 +344,11 @@ func (_u *TransactionEntryUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *TransactionEntryUpdateOne) check() error {
+	if v, ok := _u.mutation.AccountID(); ok {
+		if err := transactionentry.AccountIDValidator(v); err != nil {
+			return &ValidationError{Name: "account_id", err: fmt.Errorf(`ent: validator failed for field "TransactionEntry.account_id": %w`, err)}
+		}
+	}
 	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "TransactionEntry.household"`)
 	}
@@ -532,64 +430,6 @@ func (_u *TransactionEntryUpdateOne) sqlSave(ctx context.Context) (_node *Transa
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(account.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.CurrencyCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.CurrencyTable,
-			Columns: []string{transactionentry.CurrencyColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(currency.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.CurrencyIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.CurrencyTable,
-			Columns: []string{transactionentry.CurrencyColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(currency.FieldID, field.TypeInt),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if _u.mutation.TransactionCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.TransactionTable,
-			Columns: []string{transactionentry.TransactionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.TransactionIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   transactionentry.TransactionTable,
-			Columns: []string{transactionentry.TransactionColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -70,6 +70,11 @@ func Key(v string) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldKey, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEQ(FieldUserID, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.UserKey {
 	return predicate.UserKey(sql.FieldEQ(FieldCreateTime, v))
@@ -233,6 +238,26 @@ func KeyEqualFold(v string) predicate.UserKey {
 // KeyContainsFold applies the ContainsFold predicate on the "key" field.
 func KeyContainsFold(v string) predicate.UserKey {
 	return predicate.UserKey(sql.FieldContainsFold(FieldKey, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.UserKey {
+	return predicate.UserKey(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.UserKey {
+	return predicate.UserKey(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.UserKey {
+	return predicate.UserKey(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

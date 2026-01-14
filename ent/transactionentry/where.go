@@ -76,6 +76,21 @@ func Amount(v decimal.Decimal) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldEQ(FieldAmount, v))
 }
 
+// AccountID applies equality check predicate on the "account_id" field. It's identical to AccountIDEQ.
+func AccountID(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldEQ(FieldAccountID, v))
+}
+
+// CurrencyID applies equality check predicate on the "currency_id" field. It's identical to CurrencyIDEQ.
+func CurrencyID(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldEQ(FieldCurrencyID, v))
+}
+
+// TransactionID applies equality check predicate on the "transaction_id" field. It's identical to TransactionIDEQ.
+func TransactionID(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldEQ(FieldTransactionID, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldEQ(FieldCreateTime, v))
@@ -214,6 +229,66 @@ func AmountLT(v decimal.Decimal) predicate.TransactionEntry {
 // AmountLTE applies the LTE predicate on the "amount" field.
 func AmountLTE(v decimal.Decimal) predicate.TransactionEntry {
 	return predicate.TransactionEntry(sql.FieldLTE(FieldAmount, v))
+}
+
+// AccountIDEQ applies the EQ predicate on the "account_id" field.
+func AccountIDEQ(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldEQ(FieldAccountID, v))
+}
+
+// AccountIDNEQ applies the NEQ predicate on the "account_id" field.
+func AccountIDNEQ(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldNEQ(FieldAccountID, v))
+}
+
+// AccountIDIn applies the In predicate on the "account_id" field.
+func AccountIDIn(vs ...int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldIn(FieldAccountID, vs...))
+}
+
+// AccountIDNotIn applies the NotIn predicate on the "account_id" field.
+func AccountIDNotIn(vs ...int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldNotIn(FieldAccountID, vs...))
+}
+
+// CurrencyIDEQ applies the EQ predicate on the "currency_id" field.
+func CurrencyIDEQ(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDNEQ applies the NEQ predicate on the "currency_id" field.
+func CurrencyIDNEQ(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldNEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDIn applies the In predicate on the "currency_id" field.
+func CurrencyIDIn(vs ...int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldIn(FieldCurrencyID, vs...))
+}
+
+// CurrencyIDNotIn applies the NotIn predicate on the "currency_id" field.
+func CurrencyIDNotIn(vs ...int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldNotIn(FieldCurrencyID, vs...))
+}
+
+// TransactionIDEQ applies the EQ predicate on the "transaction_id" field.
+func TransactionIDEQ(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldEQ(FieldTransactionID, v))
+}
+
+// TransactionIDNEQ applies the NEQ predicate on the "transaction_id" field.
+func TransactionIDNEQ(v int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldNEQ(FieldTransactionID, v))
+}
+
+// TransactionIDIn applies the In predicate on the "transaction_id" field.
+func TransactionIDIn(vs ...int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldIn(FieldTransactionID, vs...))
+}
+
+// TransactionIDNotIn applies the NotIn predicate on the "transaction_id" field.
+func TransactionIDNotIn(vs ...int) predicate.TransactionEntry {
+	return predicate.TransactionEntry(sql.FieldNotIn(FieldTransactionID, vs...))
 }
 
 // HasHousehold applies the HasEdge predicate on the "household" edge.

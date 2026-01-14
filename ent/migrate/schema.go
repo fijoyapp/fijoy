@@ -20,9 +20,9 @@ var (
 		{Name: "icon_path", Type: field.TypeString, Nullable: true},
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
-		{Name: "currency_accounts", Type: field.TypeInt},
+		{Name: "currency_id", Type: field.TypeInt},
 		{Name: "household_id", Type: field.TypeInt},
-		{Name: "user_accounts", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// AccountsTable holds the schema information for the "accounts" table.
 	AccountsTable = &schema.Table{
@@ -68,7 +68,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "locale", Type: field.TypeString},
-		{Name: "currency_households", Type: field.TypeInt},
+		{Name: "currency_id", Type: field.TypeInt},
 	}
 	// HouseholdsTable holds the schema information for the "households" table.
 	HouseholdsTable = &schema.Table{
@@ -95,8 +95,8 @@ var (
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "quote", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
-		{Name: "account_investments", Type: field.TypeInt},
-		{Name: "currency_investments", Type: field.TypeInt},
+		{Name: "account_id", Type: field.TypeInt},
+		{Name: "currency_id", Type: field.TypeInt},
 		{Name: "household_id", Type: field.TypeInt},
 	}
 	// InvestmentsTable holds the schema information for the "investments" table.
@@ -133,8 +133,8 @@ var (
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "price", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "household_id", Type: field.TypeInt},
-		{Name: "investment_investment_lots", Type: field.TypeInt},
-		{Name: "transaction_investment_lots", Type: field.TypeInt},
+		{Name: "investment_id", Type: field.TypeInt},
+		{Name: "transaction_id", Type: field.TypeInt},
 	}
 	// InvestmentLotsTable holds the schema information for the "investment_lots" table.
 	InvestmentLotsTable = &schema.Table{
@@ -170,8 +170,8 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "datetime", Type: field.TypeTime},
 		{Name: "household_id", Type: field.TypeInt},
-		{Name: "transaction_category_transactions", Type: field.TypeInt},
-		{Name: "user_transactions", Type: field.TypeInt},
+		{Name: "category_id", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// TransactionsTable holds the schema information for the "transactions" table.
 	TransactionsTable = &schema.Table{
@@ -242,10 +242,10 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "amount", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
-		{Name: "account_transaction_entries", Type: field.TypeInt},
-		{Name: "currency_transaction_entries", Type: field.TypeInt},
+		{Name: "account_id", Type: field.TypeInt},
+		{Name: "currency_id", Type: field.TypeInt},
 		{Name: "household_id", Type: field.TypeInt},
-		{Name: "transaction_transaction_entries", Type: field.TypeInt},
+		{Name: "transaction_id", Type: field.TypeInt},
 	}
 	// TransactionEntriesTable holds the schema information for the "transaction_entries" table.
 	TransactionEntriesTable = &schema.Table{
@@ -336,7 +336,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "provider", Type: field.TypeEnum, Enums: []string{"google"}},
 		{Name: "key", Type: field.TypeString},
-		{Name: "user_user_keys", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// UserKeysTable holds the schema information for the "user_keys" table.
 	UserKeysTable = &schema.Table{

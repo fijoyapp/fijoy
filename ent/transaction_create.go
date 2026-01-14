@@ -81,9 +81,15 @@ func (_c *TransactionCreate) SetDatetime(v time.Time) *TransactionCreate {
 	return _c
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_c *TransactionCreate) SetUserID(id int) *TransactionCreate {
-	_c.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (_c *TransactionCreate) SetUserID(v int) *TransactionCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetCategoryID sets the "category_id" field.
+func (_c *TransactionCreate) SetCategoryID(v int) *TransactionCreate {
+	_c.mutation.SetCategoryID(v)
 	return _c
 }
 
@@ -95,12 +101,6 @@ func (_c *TransactionCreate) SetUser(v *User) *TransactionCreate {
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *TransactionCreate) SetHousehold(v *Household) *TransactionCreate {
 	return _c.SetHouseholdID(v.ID)
-}
-
-// SetCategoryID sets the "category" edge to the TransactionCategory entity by ID.
-func (_c *TransactionCreate) SetCategoryID(id int) *TransactionCreate {
-	_c.mutation.SetCategoryID(id)
-	return _c
 }
 
 // SetCategory sets the "category" edge to the TransactionCategory entity.
@@ -206,6 +206,22 @@ func (_c *TransactionCreate) check() error {
 	if _, ok := _c.mutation.Datetime(); !ok {
 		return &ValidationError{Name: "datetime", err: errors.New(`ent: missing required field "Transaction.datetime"`)}
 	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Transaction.user_id"`)}
+	}
+	if v, ok := _c.mutation.UserID(); ok {
+		if err := transaction.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "Transaction.user_id": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.CategoryID(); !ok {
+		return &ValidationError{Name: "category_id", err: errors.New(`ent: missing required field "Transaction.category_id"`)}
+	}
+	if v, ok := _c.mutation.CategoryID(); ok {
+		if err := transaction.CategoryIDValidator(v); err != nil {
+			return &ValidationError{Name: "category_id", err: fmt.Errorf(`ent: validator failed for field "Transaction.category_id": %w`, err)}
+		}
+	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Transaction.user"`)}
 	}
@@ -272,7 +288,7 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_transactions = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
@@ -306,7 +322,7 @@ func (_c *TransactionCreate) createSpec() (*Transaction, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.transaction_category_transactions = &nodes[0]
+		_node.CategoryID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionEntriesIDs(); len(nodes) > 0 {
@@ -435,6 +451,30 @@ func (u *TransactionUpsert) UpdateDatetime() *TransactionUpsert {
 	return u
 }
 
+// SetUserID sets the "user_id" field.
+func (u *TransactionUpsert) SetUserID(v int) *TransactionUpsert {
+	u.Set(transaction.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *TransactionUpsert) UpdateUserID() *TransactionUpsert {
+	u.SetExcluded(transaction.FieldUserID)
+	return u
+}
+
+// SetCategoryID sets the "category_id" field.
+func (u *TransactionUpsert) SetCategoryID(v int) *TransactionUpsert {
+	u.Set(transaction.FieldCategoryID, v)
+	return u
+}
+
+// UpdateCategoryID sets the "category_id" field to the value that was provided on create.
+func (u *TransactionUpsert) UpdateCategoryID() *TransactionUpsert {
+	u.SetExcluded(transaction.FieldCategoryID)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -529,6 +569,34 @@ func (u *TransactionUpsertOne) SetDatetime(v time.Time) *TransactionUpsertOne {
 func (u *TransactionUpsertOne) UpdateDatetime() *TransactionUpsertOne {
 	return u.Update(func(s *TransactionUpsert) {
 		s.UpdateDatetime()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *TransactionUpsertOne) SetUserID(v int) *TransactionUpsertOne {
+	return u.Update(func(s *TransactionUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *TransactionUpsertOne) UpdateUserID() *TransactionUpsertOne {
+	return u.Update(func(s *TransactionUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetCategoryID sets the "category_id" field.
+func (u *TransactionUpsertOne) SetCategoryID(v int) *TransactionUpsertOne {
+	return u.Update(func(s *TransactionUpsert) {
+		s.SetCategoryID(v)
+	})
+}
+
+// UpdateCategoryID sets the "category_id" field to the value that was provided on create.
+func (u *TransactionUpsertOne) UpdateCategoryID() *TransactionUpsertOne {
+	return u.Update(func(s *TransactionUpsert) {
+		s.UpdateCategoryID()
 	})
 }
 
@@ -792,6 +860,34 @@ func (u *TransactionUpsertBulk) SetDatetime(v time.Time) *TransactionUpsertBulk 
 func (u *TransactionUpsertBulk) UpdateDatetime() *TransactionUpsertBulk {
 	return u.Update(func(s *TransactionUpsert) {
 		s.UpdateDatetime()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *TransactionUpsertBulk) SetUserID(v int) *TransactionUpsertBulk {
+	return u.Update(func(s *TransactionUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *TransactionUpsertBulk) UpdateUserID() *TransactionUpsertBulk {
+	return u.Update(func(s *TransactionUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// SetCategoryID sets the "category_id" field.
+func (u *TransactionUpsertBulk) SetCategoryID(v int) *TransactionUpsertBulk {
+	return u.Update(func(s *TransactionUpsert) {
+		s.SetCategoryID(v)
+	})
+}
+
+// UpdateCategoryID sets the "category_id" field to the value that was provided on create.
+func (u *TransactionUpsertBulk) UpdateCategoryID() *TransactionUpsertBulk {
+	return u.Update(func(s *TransactionUpsert) {
+		s.UpdateCategoryID()
 	})
 }
 

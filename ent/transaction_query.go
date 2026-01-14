@@ -34,7 +34,6 @@ type TransactionQuery struct {
 	withCategory                *TransactionCategoryQuery
 	withTransactionEntries      *TransactionEntryQuery
 	withInvestmentLots          *InvestmentLotQuery
-	withFKs                     bool
 	loadTotal                   []func(context.Context, []*Transaction) error
 	modifiers                   []func(*sql.Selector)
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
@@ -527,7 +526,6 @@ func (_q *TransactionQuery) prepareQuery(ctx context.Context) error {
 func (_q *TransactionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Transaction, error) {
 	var (
 		nodes       = []*Transaction{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [5]bool{
 			_q.withUser != nil,
@@ -537,12 +535,6 @@ func (_q *TransactionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 			_q.withInvestmentLots != nil,
 		}
 	)
-	if _q.withUser != nil || _q.withCategory != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, transaction.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Transaction).scanValues(nil, columns)
 	}
@@ -624,10 +616,7 @@ func (_q *TransactionQuery) loadUser(ctx context.Context, query *UserQuery, node
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Transaction)
 	for i := range nodes {
-		if nodes[i].user_transactions == nil {
-			continue
-		}
-		fk := *nodes[i].user_transactions
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -644,7 +633,7 @@ func (_q *TransactionQuery) loadUser(ctx context.Context, query *UserQuery, node
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_transactions" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -685,10 +674,7 @@ func (_q *TransactionQuery) loadCategory(ctx context.Context, query *Transaction
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Transaction)
 	for i := range nodes {
-		if nodes[i].transaction_category_transactions == nil {
-			continue
-		}
-		fk := *nodes[i].transaction_category_transactions
+		fk := nodes[i].CategoryID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -705,7 +691,7 @@ func (_q *TransactionQuery) loadCategory(ctx context.Context, query *Transaction
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "transaction_category_transactions" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "category_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -723,7 +709,9 @@ func (_q *TransactionQuery) loadTransactionEntries(ctx context.Context, query *T
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(transactionentry.FieldTransactionID)
+	}
 	query.Where(predicate.TransactionEntry(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(transaction.TransactionEntriesColumn), fks...))
 	}))
@@ -732,13 +720,10 @@ func (_q *TransactionQuery) loadTransactionEntries(ctx context.Context, query *T
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.transaction_transaction_entries
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "transaction_transaction_entries" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.TransactionID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "transaction_transaction_entries" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "transaction_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -754,7 +739,9 @@ func (_q *TransactionQuery) loadInvestmentLots(ctx context.Context, query *Inves
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(investmentlot.FieldTransactionID)
+	}
 	query.Where(predicate.InvestmentLot(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(transaction.InvestmentLotsColumn), fks...))
 	}))
@@ -763,13 +750,10 @@ func (_q *TransactionQuery) loadInvestmentLots(ctx context.Context, query *Inves
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.transaction_investment_lots
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "transaction_investment_lots" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.TransactionID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "transaction_investment_lots" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "transaction_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -804,8 +788,14 @@ func (_q *TransactionQuery) querySpec() *sqlgraph.QuerySpec {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
+		if _q.withUser != nil {
+			_spec.Node.AddColumnOnce(transaction.FieldUserID)
+		}
 		if _q.withHousehold != nil {
 			_spec.Node.AddColumnOnce(transaction.FieldHouseholdID)
+		}
+		if _q.withCategory != nil {
+			_spec.Node.AddColumnOnce(transaction.FieldCategoryID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

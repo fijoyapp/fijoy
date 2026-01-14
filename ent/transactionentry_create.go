@@ -67,15 +67,27 @@ func (_c *TransactionEntryCreate) SetAmount(v decimal.Decimal) *TransactionEntry
 	return _c
 }
 
+// SetAccountID sets the "account_id" field.
+func (_c *TransactionEntryCreate) SetAccountID(v int) *TransactionEntryCreate {
+	_c.mutation.SetAccountID(v)
+	return _c
+}
+
+// SetCurrencyID sets the "currency_id" field.
+func (_c *TransactionEntryCreate) SetCurrencyID(v int) *TransactionEntryCreate {
+	_c.mutation.SetCurrencyID(v)
+	return _c
+}
+
+// SetTransactionID sets the "transaction_id" field.
+func (_c *TransactionEntryCreate) SetTransactionID(v int) *TransactionEntryCreate {
+	_c.mutation.SetTransactionID(v)
+	return _c
+}
+
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *TransactionEntryCreate) SetHousehold(v *Household) *TransactionEntryCreate {
 	return _c.SetHouseholdID(v.ID)
-}
-
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_c *TransactionEntryCreate) SetAccountID(id int) *TransactionEntryCreate {
-	_c.mutation.SetAccountID(id)
-	return _c
 }
 
 // SetAccount sets the "account" edge to the Account entity.
@@ -83,21 +95,9 @@ func (_c *TransactionEntryCreate) SetAccount(v *Account) *TransactionEntryCreate
 	return _c.SetAccountID(v.ID)
 }
 
-// SetCurrencyID sets the "currency" edge to the Currency entity by ID.
-func (_c *TransactionEntryCreate) SetCurrencyID(id int) *TransactionEntryCreate {
-	_c.mutation.SetCurrencyID(id)
-	return _c
-}
-
 // SetCurrency sets the "currency" edge to the Currency entity.
 func (_c *TransactionEntryCreate) SetCurrency(v *Currency) *TransactionEntryCreate {
 	return _c.SetCurrencyID(v.ID)
-}
-
-// SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (_c *TransactionEntryCreate) SetTransactionID(id int) *TransactionEntryCreate {
-	_c.mutation.SetTransactionID(id)
-	return _c
 }
 
 // SetTransaction sets the "transaction" edge to the Transaction entity.
@@ -172,6 +172,30 @@ func (_c *TransactionEntryCreate) check() error {
 	}
 	if _, ok := _c.mutation.Amount(); !ok {
 		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "TransactionEntry.amount"`)}
+	}
+	if _, ok := _c.mutation.AccountID(); !ok {
+		return &ValidationError{Name: "account_id", err: errors.New(`ent: missing required field "TransactionEntry.account_id"`)}
+	}
+	if v, ok := _c.mutation.AccountID(); ok {
+		if err := transactionentry.AccountIDValidator(v); err != nil {
+			return &ValidationError{Name: "account_id", err: fmt.Errorf(`ent: validator failed for field "TransactionEntry.account_id": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.CurrencyID(); !ok {
+		return &ValidationError{Name: "currency_id", err: errors.New(`ent: missing required field "TransactionEntry.currency_id"`)}
+	}
+	if v, ok := _c.mutation.CurrencyID(); ok {
+		if err := transactionentry.CurrencyIDValidator(v); err != nil {
+			return &ValidationError{Name: "currency_id", err: fmt.Errorf(`ent: validator failed for field "TransactionEntry.currency_id": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.TransactionID(); !ok {
+		return &ValidationError{Name: "transaction_id", err: errors.New(`ent: missing required field "TransactionEntry.transaction_id"`)}
+	}
+	if v, ok := _c.mutation.TransactionID(); ok {
+		if err := transactionentry.TransactionIDValidator(v); err != nil {
+			return &ValidationError{Name: "transaction_id", err: fmt.Errorf(`ent: validator failed for field "TransactionEntry.transaction_id": %w`, err)}
+		}
 	}
 	if len(_c.mutation.HouseholdIDs()) == 0 {
 		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "TransactionEntry.household"`)}
@@ -255,7 +279,7 @@ func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cre
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.account_transaction_entries = &nodes[0]
+		_node.AccountID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.CurrencyIDs(); len(nodes) > 0 {
@@ -272,7 +296,7 @@ func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cre
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.currency_transaction_entries = &nodes[0]
+		_node.CurrencyID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionIDs(); len(nodes) > 0 {
@@ -289,7 +313,7 @@ func (_c *TransactionEntryCreate) createSpec() (*TransactionEntry, *sqlgraph.Cre
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.transaction_transaction_entries = &nodes[0]
+		_node.TransactionID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -374,6 +398,18 @@ func (u *TransactionEntryUpsert) AddAmount(v decimal.Decimal) *TransactionEntryU
 	return u
 }
 
+// SetAccountID sets the "account_id" field.
+func (u *TransactionEntryUpsert) SetAccountID(v int) *TransactionEntryUpsert {
+	u.Set(transactionentry.FieldAccountID, v)
+	return u
+}
+
+// UpdateAccountID sets the "account_id" field to the value that was provided on create.
+func (u *TransactionEntryUpsert) UpdateAccountID() *TransactionEntryUpsert {
+	u.SetExcluded(transactionentry.FieldAccountID)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -390,6 +426,12 @@ func (u *TransactionEntryUpsertOne) UpdateNewValues() *TransactionEntryUpsertOne
 		}
 		if _, exists := u.create.mutation.HouseholdID(); exists {
 			s.SetIgnore(transactionentry.FieldHouseholdID)
+		}
+		if _, exists := u.create.mutation.CurrencyID(); exists {
+			s.SetIgnore(transactionentry.FieldCurrencyID)
+		}
+		if _, exists := u.create.mutation.TransactionID(); exists {
+			s.SetIgnore(transactionentry.FieldTransactionID)
 		}
 	}))
 	return u
@@ -454,6 +496,20 @@ func (u *TransactionEntryUpsertOne) AddAmount(v decimal.Decimal) *TransactionEnt
 func (u *TransactionEntryUpsertOne) UpdateAmount() *TransactionEntryUpsertOne {
 	return u.Update(func(s *TransactionEntryUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetAccountID sets the "account_id" field.
+func (u *TransactionEntryUpsertOne) SetAccountID(v int) *TransactionEntryUpsertOne {
+	return u.Update(func(s *TransactionEntryUpsert) {
+		s.SetAccountID(v)
+	})
+}
+
+// UpdateAccountID sets the "account_id" field to the value that was provided on create.
+func (u *TransactionEntryUpsertOne) UpdateAccountID() *TransactionEntryUpsertOne {
+	return u.Update(func(s *TransactionEntryUpsert) {
+		s.UpdateAccountID()
 	})
 }
 
@@ -639,6 +695,12 @@ func (u *TransactionEntryUpsertBulk) UpdateNewValues() *TransactionEntryUpsertBu
 			if _, exists := b.mutation.HouseholdID(); exists {
 				s.SetIgnore(transactionentry.FieldHouseholdID)
 			}
+			if _, exists := b.mutation.CurrencyID(); exists {
+				s.SetIgnore(transactionentry.FieldCurrencyID)
+			}
+			if _, exists := b.mutation.TransactionID(); exists {
+				s.SetIgnore(transactionentry.FieldTransactionID)
+			}
 		}
 	}))
 	return u
@@ -703,6 +765,20 @@ func (u *TransactionEntryUpsertBulk) AddAmount(v decimal.Decimal) *TransactionEn
 func (u *TransactionEntryUpsertBulk) UpdateAmount() *TransactionEntryUpsertBulk {
 	return u.Update(func(s *TransactionEntryUpsert) {
 		s.UpdateAmount()
+	})
+}
+
+// SetAccountID sets the "account_id" field.
+func (u *TransactionEntryUpsertBulk) SetAccountID(v int) *TransactionEntryUpsertBulk {
+	return u.Update(func(s *TransactionEntryUpsert) {
+		s.SetAccountID(v)
+	})
+}
+
+// UpdateAccountID sets the "account_id" field to the value that was provided on create.
+func (u *TransactionEntryUpsertBulk) UpdateAccountID() *TransactionEntryUpsertBulk {
+	return u.Update(func(s *TransactionEntryUpsert) {
+		s.UpdateAccountID()
 	})
 }
 

@@ -113,9 +113,15 @@ func (_c *InvestmentCreate) SetNillableValue(v *decimal.Decimal) *InvestmentCrea
 	return _c
 }
 
-// SetAccountID sets the "account" edge to the Account entity by ID.
-func (_c *InvestmentCreate) SetAccountID(id int) *InvestmentCreate {
-	_c.mutation.SetAccountID(id)
+// SetAccountID sets the "account_id" field.
+func (_c *InvestmentCreate) SetAccountID(v int) *InvestmentCreate {
+	_c.mutation.SetAccountID(v)
+	return _c
+}
+
+// SetCurrencyID sets the "currency_id" field.
+func (_c *InvestmentCreate) SetCurrencyID(v int) *InvestmentCreate {
+	_c.mutation.SetCurrencyID(v)
 	return _c
 }
 
@@ -127,12 +133,6 @@ func (_c *InvestmentCreate) SetAccount(v *Account) *InvestmentCreate {
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *InvestmentCreate) SetHousehold(v *Household) *InvestmentCreate {
 	return _c.SetHouseholdID(v.ID)
-}
-
-// SetCurrencyID sets the "currency" edge to the Currency entity by ID.
-func (_c *InvestmentCreate) SetCurrencyID(id int) *InvestmentCreate {
-	_c.mutation.SetCurrencyID(id)
-	return _c
 }
 
 // SetCurrency sets the "currency" edge to the Currency entity.
@@ -262,6 +262,22 @@ func (_c *InvestmentCreate) check() error {
 	if _, ok := _c.mutation.Value(); !ok {
 		return &ValidationError{Name: "value", err: errors.New(`ent: missing required field "Investment.value"`)}
 	}
+	if _, ok := _c.mutation.AccountID(); !ok {
+		return &ValidationError{Name: "account_id", err: errors.New(`ent: missing required field "Investment.account_id"`)}
+	}
+	if v, ok := _c.mutation.AccountID(); ok {
+		if err := investment.AccountIDValidator(v); err != nil {
+			return &ValidationError{Name: "account_id", err: fmt.Errorf(`ent: validator failed for field "Investment.account_id": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.CurrencyID(); !ok {
+		return &ValidationError{Name: "currency_id", err: errors.New(`ent: missing required field "Investment.currency_id"`)}
+	}
+	if v, ok := _c.mutation.CurrencyID(); ok {
+		if err := investment.CurrencyIDValidator(v); err != nil {
+			return &ValidationError{Name: "currency_id", err: fmt.Errorf(`ent: validator failed for field "Investment.currency_id": %w`, err)}
+		}
+	}
 	if len(_c.mutation.AccountIDs()) == 0 {
 		return &ValidationError{Name: "account", err: errors.New(`ent: missing required edge "Investment.account"`)}
 	}
@@ -344,7 +360,7 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.account_investments = &nodes[0]
+		_node.AccountID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
@@ -378,7 +394,7 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.currency_investments = &nodes[0]
+		_node.CurrencyID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.InvestmentLotsIDs(); len(nodes) > 0 {
@@ -567,6 +583,12 @@ func (u *InvestmentUpsertOne) UpdateNewValues() *InvestmentUpsertOne {
 		}
 		if _, exists := u.create.mutation.HouseholdID(); exists {
 			s.SetIgnore(investment.FieldHouseholdID)
+		}
+		if _, exists := u.create.mutation.AccountID(); exists {
+			s.SetIgnore(investment.FieldAccountID)
+		}
+		if _, exists := u.create.mutation.CurrencyID(); exists {
+			s.SetIgnore(investment.FieldCurrencyID)
 		}
 	}))
 	return u
@@ -899,6 +921,12 @@ func (u *InvestmentUpsertBulk) UpdateNewValues() *InvestmentUpsertBulk {
 			}
 			if _, exists := b.mutation.HouseholdID(); exists {
 				s.SetIgnore(investment.FieldHouseholdID)
+			}
+			if _, exists := b.mutation.AccountID(); exists {
+				s.SetIgnore(investment.FieldAccountID)
+			}
+			if _, exists := b.mutation.CurrencyID(); exists {
+				s.SetIgnore(investment.FieldCurrencyID)
 			}
 		}
 	}))

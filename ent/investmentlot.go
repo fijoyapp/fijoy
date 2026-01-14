@@ -31,12 +31,14 @@ type InvestmentLot struct {
 	Amount decimal.Decimal `json:"amount,omitempty"`
 	// Price holds the value of the "price" field.
 	Price decimal.Decimal `json:"price,omitempty"`
+	// InvestmentID holds the value of the "investment_id" field.
+	InvestmentID int `json:"investment_id,omitempty"`
+	// TransactionID holds the value of the "transaction_id" field.
+	TransactionID int `json:"transaction_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the InvestmentLotQuery when eager-loading is set.
-	Edges                       InvestmentLotEdges `json:"edges"`
-	investment_investment_lots  *int
-	transaction_investment_lots *int
-	selectValues                sql.SelectValues
+	Edges        InvestmentLotEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // InvestmentLotEdges holds the relations/edges for other nodes in the graph.
@@ -94,14 +96,10 @@ func (*InvestmentLot) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case investmentlot.FieldAmount, investmentlot.FieldPrice:
 			values[i] = new(decimal.Decimal)
-		case investmentlot.FieldID, investmentlot.FieldHouseholdID:
+		case investmentlot.FieldID, investmentlot.FieldHouseholdID, investmentlot.FieldInvestmentID, investmentlot.FieldTransactionID:
 			values[i] = new(sql.NullInt64)
 		case investmentlot.FieldCreateTime, investmentlot.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case investmentlot.ForeignKeys[0]: // investment_investment_lots
-			values[i] = new(sql.NullInt64)
-		case investmentlot.ForeignKeys[1]: // transaction_investment_lots
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -153,19 +151,17 @@ func (_m *InvestmentLot) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				_m.Price = *value
 			}
-		case investmentlot.ForeignKeys[0]:
+		case investmentlot.FieldInvestmentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field investment_investment_lots", value)
+				return fmt.Errorf("unexpected type %T for field investment_id", values[i])
 			} else if value.Valid {
-				_m.investment_investment_lots = new(int)
-				*_m.investment_investment_lots = int(value.Int64)
+				_m.InvestmentID = int(value.Int64)
 			}
-		case investmentlot.ForeignKeys[1]:
+		case investmentlot.FieldTransactionID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field transaction_investment_lots", value)
+				return fmt.Errorf("unexpected type %T for field transaction_id", values[i])
 			} else if value.Valid {
-				_m.transaction_investment_lots = new(int)
-				*_m.transaction_investment_lots = int(value.Int64)
+				_m.TransactionID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -232,6 +228,12 @@ func (_m *InvestmentLot) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("price=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Price))
+	builder.WriteString(", ")
+	builder.WriteString("investment_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.InvestmentID))
+	builder.WriteString(", ")
+	builder.WriteString("transaction_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TransactionID))
 	builder.WriteByte(')')
 	return builder.String()
 }

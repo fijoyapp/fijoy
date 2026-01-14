@@ -80,6 +80,16 @@ func Datetime(v time.Time) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldDatetime, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldUserID, v))
+}
+
+// CategoryID applies equality check predicate on the "category_id" field. It's identical to CategoryIDEQ.
+func CategoryID(v int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldCategoryID, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Transaction {
 	return predicate.Transaction(sql.FieldEQ(FieldCreateTime, v))
@@ -293,6 +303,46 @@ func DatetimeLT(v time.Time) predicate.Transaction {
 // DatetimeLTE applies the LTE predicate on the "datetime" field.
 func DatetimeLTE(v time.Time) predicate.Transaction {
 	return predicate.Transaction(sql.FieldLTE(FieldDatetime, v))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// CategoryIDEQ applies the EQ predicate on the "category_id" field.
+func CategoryIDEQ(v int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldEQ(FieldCategoryID, v))
+}
+
+// CategoryIDNEQ applies the NEQ predicate on the "category_id" field.
+func CategoryIDNEQ(v int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNEQ(FieldCategoryID, v))
+}
+
+// CategoryIDIn applies the In predicate on the "category_id" field.
+func CategoryIDIn(vs ...int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldIn(FieldCategoryID, vs...))
+}
+
+// CategoryIDNotIn applies the NotIn predicate on the "category_id" field.
+func CategoryIDNotIn(vs ...int) predicate.Transaction {
+	return predicate.Transaction(sql.FieldNotIn(FieldCategoryID, vs...))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

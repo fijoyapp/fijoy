@@ -31,7 +31,6 @@ type TransactionEntryQuery struct {
 	withAccount     *AccountQuery
 	withCurrency    *CurrencyQuery
 	withTransaction *TransactionQuery
-	withFKs         bool
 	loadTotal       []func(context.Context, []*TransactionEntry) error
 	modifiers       []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
@@ -488,7 +487,6 @@ func (_q *TransactionEntryQuery) prepareQuery(ctx context.Context) error {
 func (_q *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TransactionEntry, error) {
 	var (
 		nodes       = []*TransactionEntry{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [4]bool{
 			_q.withHousehold != nil,
@@ -497,12 +495,6 @@ func (_q *TransactionEntryQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 			_q.withTransaction != nil,
 		}
 	)
-	if _q.withAccount != nil || _q.withCurrency != nil || _q.withTransaction != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, transactionentry.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*TransactionEntry).scanValues(nil, columns)
 	}
@@ -589,10 +581,7 @@ func (_q *TransactionEntryQuery) loadAccount(ctx context.Context, query *Account
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TransactionEntry)
 	for i := range nodes {
-		if nodes[i].account_transaction_entries == nil {
-			continue
-		}
-		fk := *nodes[i].account_transaction_entries
+		fk := nodes[i].AccountID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -609,7 +598,7 @@ func (_q *TransactionEntryQuery) loadAccount(ctx context.Context, query *Account
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "account_transaction_entries" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "account_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -621,10 +610,7 @@ func (_q *TransactionEntryQuery) loadCurrency(ctx context.Context, query *Curren
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TransactionEntry)
 	for i := range nodes {
-		if nodes[i].currency_transaction_entries == nil {
-			continue
-		}
-		fk := *nodes[i].currency_transaction_entries
+		fk := nodes[i].CurrencyID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -641,7 +627,7 @@ func (_q *TransactionEntryQuery) loadCurrency(ctx context.Context, query *Curren
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "currency_transaction_entries" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "currency_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -653,10 +639,7 @@ func (_q *TransactionEntryQuery) loadTransaction(ctx context.Context, query *Tra
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*TransactionEntry)
 	for i := range nodes {
-		if nodes[i].transaction_transaction_entries == nil {
-			continue
-		}
-		fk := *nodes[i].transaction_transaction_entries
+		fk := nodes[i].TransactionID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -673,7 +656,7 @@ func (_q *TransactionEntryQuery) loadTransaction(ctx context.Context, query *Tra
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "transaction_transaction_entries" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "transaction_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -712,6 +695,15 @@ func (_q *TransactionEntryQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if _q.withHousehold != nil {
 			_spec.Node.AddColumnOnce(transactionentry.FieldHouseholdID)
+		}
+		if _q.withAccount != nil {
+			_spec.Node.AddColumnOnce(transactionentry.FieldAccountID)
+		}
+		if _q.withCurrency != nil {
+			_spec.Node.AddColumnOnce(transactionentry.FieldCurrencyID)
+		}
+		if _q.withTransaction != nil {
+			_spec.Node.AddColumnOnce(transactionentry.FieldTransactionID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

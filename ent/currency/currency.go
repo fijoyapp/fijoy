@@ -30,28 +30,28 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "account" package.
 	AccountsInverseTable = "accounts"
 	// AccountsColumn is the table column denoting the accounts relation/edge.
-	AccountsColumn = "currency_accounts"
+	AccountsColumn = "currency_id"
 	// InvestmentsTable is the table that holds the investments relation/edge.
 	InvestmentsTable = "investments"
 	// InvestmentsInverseTable is the table name for the Investment entity.
 	// It exists in this package in order to avoid circular dependency with the "investment" package.
 	InvestmentsInverseTable = "investments"
 	// InvestmentsColumn is the table column denoting the investments relation/edge.
-	InvestmentsColumn = "currency_investments"
+	InvestmentsColumn = "currency_id"
 	// TransactionEntriesTable is the table that holds the transaction_entries relation/edge.
 	TransactionEntriesTable = "transaction_entries"
 	// TransactionEntriesInverseTable is the table name for the TransactionEntry entity.
 	// It exists in this package in order to avoid circular dependency with the "transactionentry" package.
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
-	TransactionEntriesColumn = "currency_transaction_entries"
+	TransactionEntriesColumn = "currency_id"
 	// HouseholdsTable is the table that holds the households relation/edge.
 	HouseholdsTable = "households"
 	// HouseholdsInverseTable is the table name for the Household entity.
 	// It exists in this package in order to avoid circular dependency with the "household" package.
 	HouseholdsInverseTable = "households"
 	// HouseholdsColumn is the table column denoting the households relation/edge.
-	HouseholdsColumn = "currency_households"
+	HouseholdsColumn = "currency_id"
 )
 
 // Columns holds all SQL columns for currency fields.

@@ -96,6 +96,16 @@ func Value(v decimal.Decimal) predicate.Investment {
 	return predicate.Investment(sql.FieldEQ(FieldValue, v))
 }
 
+// AccountID applies equality check predicate on the "account_id" field. It's identical to AccountIDEQ.
+func AccountID(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldAccountID, v))
+}
+
+// CurrencyID applies equality check predicate on the "currency_id" field. It's identical to CurrencyIDEQ.
+func CurrencyID(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldCurrencyID, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.Investment {
 	return predicate.Investment(sql.FieldEQ(FieldCreateTime, v))
@@ -464,6 +474,46 @@ func ValueLT(v decimal.Decimal) predicate.Investment {
 // ValueLTE applies the LTE predicate on the "value" field.
 func ValueLTE(v decimal.Decimal) predicate.Investment {
 	return predicate.Investment(sql.FieldLTE(FieldValue, v))
+}
+
+// AccountIDEQ applies the EQ predicate on the "account_id" field.
+func AccountIDEQ(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldAccountID, v))
+}
+
+// AccountIDNEQ applies the NEQ predicate on the "account_id" field.
+func AccountIDNEQ(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldNEQ(FieldAccountID, v))
+}
+
+// AccountIDIn applies the In predicate on the "account_id" field.
+func AccountIDIn(vs ...int) predicate.Investment {
+	return predicate.Investment(sql.FieldIn(FieldAccountID, vs...))
+}
+
+// AccountIDNotIn applies the NotIn predicate on the "account_id" field.
+func AccountIDNotIn(vs ...int) predicate.Investment {
+	return predicate.Investment(sql.FieldNotIn(FieldAccountID, vs...))
+}
+
+// CurrencyIDEQ applies the EQ predicate on the "currency_id" field.
+func CurrencyIDEQ(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDNEQ applies the NEQ predicate on the "currency_id" field.
+func CurrencyIDNEQ(v int) predicate.Investment {
+	return predicate.Investment(sql.FieldNEQ(FieldCurrencyID, v))
+}
+
+// CurrencyIDIn applies the In predicate on the "currency_id" field.
+func CurrencyIDIn(vs ...int) predicate.Investment {
+	return predicate.Investment(sql.FieldIn(FieldCurrencyID, vs...))
+}
+
+// CurrencyIDNotIn applies the NotIn predicate on the "currency_id" field.
+func CurrencyIDNotIn(vs ...int) predicate.Investment {
+	return predicate.Investment(sql.FieldNotIn(FieldCurrencyID, vs...))
 }
 
 // HasAccount applies the HasEdge predicate on the "account" edge.

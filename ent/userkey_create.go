@@ -63,9 +63,9 @@ func (_c *UserKeyCreate) SetKey(v string) *UserKeyCreate {
 	return _c
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_c *UserKeyCreate) SetUserID(id int) *UserKeyCreate {
-	_c.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (_c *UserKeyCreate) SetUserID(v int) *UserKeyCreate {
+	_c.mutation.SetUserID(v)
 	return _c
 }
 
@@ -152,6 +152,14 @@ func (_c *UserKeyCreate) check() error {
 			return &ValidationError{Name: "key", err: fmt.Errorf(`ent: validator failed for field "UserKey.key": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "UserKey.user_id"`)}
+	}
+	if v, ok := _c.mutation.UserID(); ok {
+		if err := userkey.UserIDValidator(v); err != nil {
+			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "UserKey.user_id": %w`, err)}
+		}
+	}
 	if len(_c.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "UserKey.user"`)}
 	}
@@ -212,7 +220,7 @@ func (_c *UserKeyCreate) createSpec() (*UserKey, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_user_keys = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -316,6 +324,9 @@ func (u *UserKeyUpsertOne) UpdateNewValues() *UserKeyUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.CreateTime(); exists {
 			s.SetIgnore(userkey.FieldCreateTime)
+		}
+		if _, exists := u.create.mutation.UserID(); exists {
+			s.SetIgnore(userkey.FieldUserID)
 		}
 	}))
 	return u
@@ -568,6 +579,9 @@ func (u *UserKeyUpsertBulk) UpdateNewValues() *UserKeyUpsertBulk {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.CreateTime(); exists {
 				s.SetIgnore(userkey.FieldCreateTime)
+			}
+			if _, exists := b.mutation.UserID(); exists {
+				s.SetIgnore(userkey.FieldUserID)
 			}
 		}
 	}))

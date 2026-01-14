@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"beavermoney.app/ent/privacy"
+	"beavermoney.app/ent/rules"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -8,8 +10,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
-	"beavermoney.app/ent/privacy"
-	"beavermoney.app/ent/rules"
 )
 
 // User holds the schema definition for the User entity.
@@ -72,6 +72,7 @@ func (UserKey) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("provider").Values("google"),
 		field.String("key").NotEmpty(),
+		field.Int("user_id").Positive().Immutable(),
 	}
 }
 
@@ -85,6 +86,7 @@ func (UserKey) Indexes() []ent.Index {
 func (UserKey) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
+			Field("user_id").
 			Ref("user_keys").
 			Unique().
 			Immutable().

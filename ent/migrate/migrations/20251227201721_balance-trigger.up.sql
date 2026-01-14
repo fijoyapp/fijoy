@@ -12,37 +12,37 @@ BEGIN
         WHEN 'INSERT' THEN UPDATE accounts
                            SET balance = balance + NEW.amount,
                                value   = value + NEW.amount
-                           WHERE id = NEW.account_transaction_entries;
+                           WHERE id = NEW.account_id;
 
         WHEN 'DELETE' THEN UPDATE accounts
                            SET balance = balance - OLD.amount,
                                value   = value - OLD.amount
-                           WHERE id = OLD.account_transaction_entries;
+                           WHERE id = OLD.account_id;
 
         WHEN 'UPDATE'
             THEN -- 1. Check if the Account ID (Foreign Key) is the same
-            IF NEW.account_transaction_entries =
-               OLD.account_transaction_entries THEN
+            IF NEW.account_id =
+               OLD.account_id THEN
                 -- Same account: Just apply the difference in amount
                 UPDATE accounts
                 SET balance = balance + (NEW.amount - OLD.amount),
                     value   = value + (NEW.amount - OLD.amount)
-                WHERE id = NEW.account_transaction_entries;
+                WHERE id = NEW.account_id;
 
             ELSE -- 2. The Account ID changed. We must update TWO accounts.
             -- We must enforce Locking Order (Low ID -> High ID) to avoid deadlocks.
 
-                IF OLD.account_transaction_entries <
-                   NEW.account_transaction_entries THEN
-                    first_account_id := OLD.account_transaction_entries;
-                    second_account_id := NEW.account_transaction_entries;
+                IF OLD.account_id <
+                   NEW.account_id THEN
+                    first_account_id := OLD.account_id;
+                    second_account_id := NEW.account_id;
                 ELSE
-                    first_account_id := NEW.account_transaction_entries;
-                    second_account_id := OLD.account_transaction_entries;
+                    first_account_id := NEW.account_id;
+                    second_account_id := OLD.account_id;
                 END IF;
 
                 -- UPDATE THE FIRST (LOWER ID) ACCOUNT
-                IF first_account_id = OLD.account_transaction_entries THEN
+                IF first_account_id = OLD.account_id THEN
                     UPDATE accounts
                     SET balance = balance - OLD.amount,
                         value   = value - OLD.amount
@@ -55,7 +55,7 @@ BEGIN
                 END IF;
 
                 -- UPDATE THE SECOND (HIGHER ID) ACCOUNT
-                IF second_account_id = OLD.account_transaction_entries THEN
+                IF second_account_id = OLD.account_id THEN
                     UPDATE accounts
                     SET balance = balance - OLD.amount,
                         value   = value - OLD.amount
