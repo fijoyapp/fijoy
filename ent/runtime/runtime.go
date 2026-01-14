@@ -10,7 +10,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/schema"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
@@ -138,30 +138,30 @@ func init() {
 	investmentDescValue := investmentFields[5].Descriptor()
 	// investment.DefaultValue holds the default value on creation for the value field.
 	investment.DefaultValue = investmentDescValue.Default.(func() decimal.Decimal)
-	lotMixin := schema.Lot{}.Mixin()
-	lot.Policy = privacy.NewPolicies(lotMixin[1], schema.Lot{})
-	lot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+	investmentlotMixin := schema.InvestmentLot{}.Mixin()
+	investmentlot.Policy = privacy.NewPolicies(investmentlotMixin[1], schema.InvestmentLot{})
+	investmentlot.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := lot.Policy.EvalMutation(ctx, m); err != nil {
+			if err := investmentlot.Policy.EvalMutation(ctx, m); err != nil {
 				return nil, err
 			}
 			return next.Mutate(ctx, m)
 		})
 	}
-	lotMixinFields0 := lotMixin[0].Fields()
-	_ = lotMixinFields0
-	lotFields := schema.Lot{}.Fields()
-	_ = lotFields
-	// lotDescCreateTime is the schema descriptor for create_time field.
-	lotDescCreateTime := lotMixinFields0[0].Descriptor()
-	// lot.DefaultCreateTime holds the default value on creation for the create_time field.
-	lot.DefaultCreateTime = lotDescCreateTime.Default.(func() time.Time)
-	// lotDescUpdateTime is the schema descriptor for update_time field.
-	lotDescUpdateTime := lotMixinFields0[1].Descriptor()
-	// lot.DefaultUpdateTime holds the default value on creation for the update_time field.
-	lot.DefaultUpdateTime = lotDescUpdateTime.Default.(func() time.Time)
-	// lot.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
-	lot.UpdateDefaultUpdateTime = lotDescUpdateTime.UpdateDefault.(func() time.Time)
+	investmentlotMixinFields0 := investmentlotMixin[0].Fields()
+	_ = investmentlotMixinFields0
+	investmentlotFields := schema.InvestmentLot{}.Fields()
+	_ = investmentlotFields
+	// investmentlotDescCreateTime is the schema descriptor for create_time field.
+	investmentlotDescCreateTime := investmentlotMixinFields0[0].Descriptor()
+	// investmentlot.DefaultCreateTime holds the default value on creation for the create_time field.
+	investmentlot.DefaultCreateTime = investmentlotDescCreateTime.Default.(func() time.Time)
+	// investmentlotDescUpdateTime is the schema descriptor for update_time field.
+	investmentlotDescUpdateTime := investmentlotMixinFields0[1].Descriptor()
+	// investmentlot.DefaultUpdateTime holds the default value on creation for the update_time field.
+	investmentlot.DefaultUpdateTime = investmentlotDescUpdateTime.Default.(func() time.Time)
+	// investmentlot.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	investmentlot.UpdateDefaultUpdateTime = investmentlotDescUpdateTime.UpdateDefault.(func() time.Time)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transaction.Policy = privacy.NewPolicies(transactionMixin[1], schema.Transaction{})
 	transaction.Hooks[0] = func(next ent.Mutator) ent.Mutator {

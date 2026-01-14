@@ -33,20 +33,37 @@ func (Transaction) Fields() []ent.Field {
 func (Transaction) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
-			Ref("transactions").Unique().Required(),
+			Ref("transactions").
+			Unique().
+			Required(),
 		edge.From("household", Household.Type).
 			Field("household_id").
 			Ref("transactions").
 			Unique().
 			Immutable().
-			Required(),
+			Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 		edge.From("category", TransactionCategory.Type).
 			Ref("transactions").
 			Unique().
 			Required(),
 
-		edge.To("transaction_entries", TransactionEntry.Type),
-		edge.To("lots", Lot.Type),
+		edge.To("transaction_entries", TransactionEntry.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
+		edge.To("investment_lots", InvestmentLot.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 	}
 }
 
@@ -59,13 +76,19 @@ func (Transaction) Indexes() []ent.Index {
 func (Transaction) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
+		entgql.Mutations(entgql.MutationCreate()),
 		entgql.QueryField(),
 	}
 }
 
 func (Transaction) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.Time{},
+		mixin.AnnotateFields(mixin.Time{},
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 		beavermoney_mixin.HouseholdMixin{},
 	}
 }
@@ -92,8 +115,18 @@ func (TransactionCategory) Edges() []ent.Edge {
 			Field("household_id").
 			Unique().
 			Immutable().
-			Required(),
-		edge.To("transactions", Transaction.Type),
+			Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
+		edge.To("transactions", Transaction.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 	}
 }
 
@@ -106,13 +139,19 @@ func (TransactionCategory) Indexes() []ent.Index {
 func (TransactionCategory) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
+		entgql.Mutations(entgql.MutationCreate()),
 		entgql.QueryField(),
 	}
 }
 
 func (TransactionCategory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.Time{},
+		mixin.AnnotateFields(mixin.Time{},
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 		beavermoney_mixin.HouseholdMixin{},
 	}
 }
@@ -141,25 +180,46 @@ func (TransactionEntry) Edges() []ent.Edge {
 			Field("household_id").
 			Unique().
 			Immutable().
-			Required(),
+			Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 		edge.From("account", Account.Type).
 			Ref("transaction_entries").Unique().Required(),
 		edge.From("currency", Currency.Type).
-			Ref("transaction_entries").Unique().Required(),
+			Ref("transaction_entries").Unique().Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 		edge.From("transaction", Transaction.Type).
-			Ref("transaction_entries").Unique().Required(),
+			Ref("transaction_entries").Unique().Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 	}
 }
 
 func (TransactionEntry) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		entgql.Mutations(entgql.MutationCreate()),
 		entgql.QueryField(),
 	}
 }
 
 func (TransactionEntry) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.Time{},
+		mixin.AnnotateFields(mixin.Time{},
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 		beavermoney_mixin.HouseholdMixin{},
 	}
 }

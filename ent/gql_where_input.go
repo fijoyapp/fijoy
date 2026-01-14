@@ -11,7 +11,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
@@ -931,9 +931,9 @@ type HouseholdWhereInput struct {
 	HasInvestments     *bool                   `json:"hasInvestments,omitempty"`
 	HasInvestmentsWith []*InvestmentWhereInput `json:"hasInvestmentsWith,omitempty"`
 
-	// "lots" edge predicates.
-	HasLots     *bool            `json:"hasLots,omitempty"`
-	HasLotsWith []*LotWhereInput `json:"hasLotsWith,omitempty"`
+	// "investment_lots" edge predicates.
+	HasInvestmentLots     *bool                      `json:"hasInvestmentLots,omitempty"`
+	HasInvestmentLotsWith []*InvestmentLotWhereInput `json:"hasInvestmentLotsWith,omitempty"`
 
 	// "transaction_categories" edge predicates.
 	HasTransactionCategories     *bool                            `json:"hasTransactionCategories,omitempty"`
@@ -1260,23 +1260,23 @@ func (i *HouseholdWhereInput) P() (predicate.Household, error) {
 		}
 		predicates = append(predicates, household.HasInvestmentsWith(with...))
 	}
-	if i.HasLots != nil {
-		p := household.HasLots()
-		if !*i.HasLots {
+	if i.HasInvestmentLots != nil {
+		p := household.HasInvestmentLots()
+		if !*i.HasInvestmentLots {
 			p = household.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasLotsWith) > 0 {
-		with := make([]predicate.Lot, 0, len(i.HasLotsWith))
-		for _, w := range i.HasLotsWith {
+	if len(i.HasInvestmentLotsWith) > 0 {
+		with := make([]predicate.InvestmentLot, 0, len(i.HasInvestmentLotsWith))
+		for _, w := range i.HasInvestmentLotsWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasLotsWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasInvestmentLotsWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, household.HasLotsWith(with...))
+		predicates = append(predicates, household.HasInvestmentLotsWith(with...))
 	}
 	if i.HasTransactionCategories != nil {
 		p := household.HasTransactionCategories()
@@ -1463,9 +1463,9 @@ type InvestmentWhereInput struct {
 	HasCurrency     *bool                 `json:"hasCurrency,omitempty"`
 	HasCurrencyWith []*CurrencyWhereInput `json:"hasCurrencyWith,omitempty"`
 
-	// "lots" edge predicates.
-	HasLots     *bool            `json:"hasLots,omitempty"`
-	HasLotsWith []*LotWhereInput `json:"hasLotsWith,omitempty"`
+	// "investment_lots" edge predicates.
+	HasInvestmentLots     *bool                      `json:"hasInvestmentLots,omitempty"`
+	HasInvestmentLotsWith []*InvestmentLotWhereInput `json:"hasInvestmentLotsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -1840,23 +1840,23 @@ func (i *InvestmentWhereInput) P() (predicate.Investment, error) {
 		}
 		predicates = append(predicates, investment.HasCurrencyWith(with...))
 	}
-	if i.HasLots != nil {
-		p := investment.HasLots()
-		if !*i.HasLots {
+	if i.HasInvestmentLots != nil {
+		p := investment.HasInvestmentLots()
+		if !*i.HasInvestmentLots {
 			p = investment.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasLotsWith) > 0 {
-		with := make([]predicate.Lot, 0, len(i.HasLotsWith))
-		for _, w := range i.HasLotsWith {
+	if len(i.HasInvestmentLotsWith) > 0 {
+		with := make([]predicate.InvestmentLot, 0, len(i.HasInvestmentLotsWith))
+		for _, w := range i.HasInvestmentLotsWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasLotsWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasInvestmentLotsWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, investment.HasLotsWith(with...))
+		predicates = append(predicates, investment.HasInvestmentLotsWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -1868,12 +1868,12 @@ func (i *InvestmentWhereInput) P() (predicate.Investment, error) {
 	}
 }
 
-// LotWhereInput represents a where input for filtering Lot queries.
-type LotWhereInput struct {
-	Predicates []predicate.Lot  `json:"-"`
-	Not        *LotWhereInput   `json:"not,omitempty"`
-	Or         []*LotWhereInput `json:"or,omitempty"`
-	And        []*LotWhereInput `json:"and,omitempty"`
+// InvestmentLotWhereInput represents a where input for filtering InvestmentLot queries.
+type InvestmentLotWhereInput struct {
+	Predicates []predicate.InvestmentLot  `json:"-"`
+	Not        *InvestmentLotWhereInput   `json:"not,omitempty"`
+	Or         []*InvestmentLotWhereInput `json:"or,omitempty"`
+	And        []*InvestmentLotWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID      *int  `json:"id,omitempty"`
@@ -1945,18 +1945,18 @@ type LotWhereInput struct {
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *LotWhereInput) AddPredicates(predicates ...predicate.Lot) {
+func (i *InvestmentLotWhereInput) AddPredicates(predicates ...predicate.InvestmentLot) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the LotWhereInput filter on the LotQuery builder.
-func (i *LotWhereInput) Filter(q *LotQuery) (*LotQuery, error) {
+// Filter applies the InvestmentLotWhereInput filter on the InvestmentLotQuery builder.
+func (i *InvestmentLotWhereInput) Filter(q *InvestmentLotQuery) (*InvestmentLotQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyLotWhereInput {
+		if err == ErrEmptyInvestmentLotWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -1964,19 +1964,19 @@ func (i *LotWhereInput) Filter(q *LotQuery) (*LotQuery, error) {
 	return q.Where(p), nil
 }
 
-// ErrEmptyLotWhereInput is returned in case the LotWhereInput is empty.
-var ErrEmptyLotWhereInput = errors.New("ent: empty predicate LotWhereInput")
+// ErrEmptyInvestmentLotWhereInput is returned in case the InvestmentLotWhereInput is empty.
+var ErrEmptyInvestmentLotWhereInput = errors.New("ent: empty predicate InvestmentLotWhereInput")
 
-// P returns a predicate for filtering lots.
+// P returns a predicate for filtering investmentlots.
 // An error is returned if the input is empty or invalid.
-func (i *LotWhereInput) P() (predicate.Lot, error) {
-	var predicates []predicate.Lot
+func (i *InvestmentLotWhereInput) P() (predicate.InvestmentLot, error) {
+	var predicates []predicate.InvestmentLot
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, lot.Not(p))
+		predicates = append(predicates, investmentlot.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -1986,7 +1986,7 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.Lot, 0, n)
+		or := make([]predicate.InvestmentLot, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -1994,7 +1994,7 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, lot.Or(or...))
+		predicates = append(predicates, investmentlot.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -2004,7 +2004,7 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.Lot, 0, n)
+		and := make([]predicate.InvestmentLot, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -2012,146 +2012,146 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, lot.And(and...))
+		predicates = append(predicates, investmentlot.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, lot.IDEQ(*i.ID))
+		predicates = append(predicates, investmentlot.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, lot.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, investmentlot.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, lot.IDIn(i.IDIn...))
+		predicates = append(predicates, investmentlot.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, lot.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, investmentlot.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, lot.IDGT(*i.IDGT))
+		predicates = append(predicates, investmentlot.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, lot.IDGTE(*i.IDGTE))
+		predicates = append(predicates, investmentlot.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, lot.IDLT(*i.IDLT))
+		predicates = append(predicates, investmentlot.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, lot.IDLTE(*i.IDLTE))
+		predicates = append(predicates, investmentlot.IDLTE(*i.IDLTE))
 	}
 	if i.CreateTime != nil {
-		predicates = append(predicates, lot.CreateTimeEQ(*i.CreateTime))
+		predicates = append(predicates, investmentlot.CreateTimeEQ(*i.CreateTime))
 	}
 	if i.CreateTimeNEQ != nil {
-		predicates = append(predicates, lot.CreateTimeNEQ(*i.CreateTimeNEQ))
+		predicates = append(predicates, investmentlot.CreateTimeNEQ(*i.CreateTimeNEQ))
 	}
 	if len(i.CreateTimeIn) > 0 {
-		predicates = append(predicates, lot.CreateTimeIn(i.CreateTimeIn...))
+		predicates = append(predicates, investmentlot.CreateTimeIn(i.CreateTimeIn...))
 	}
 	if len(i.CreateTimeNotIn) > 0 {
-		predicates = append(predicates, lot.CreateTimeNotIn(i.CreateTimeNotIn...))
+		predicates = append(predicates, investmentlot.CreateTimeNotIn(i.CreateTimeNotIn...))
 	}
 	if i.CreateTimeGT != nil {
-		predicates = append(predicates, lot.CreateTimeGT(*i.CreateTimeGT))
+		predicates = append(predicates, investmentlot.CreateTimeGT(*i.CreateTimeGT))
 	}
 	if i.CreateTimeGTE != nil {
-		predicates = append(predicates, lot.CreateTimeGTE(*i.CreateTimeGTE))
+		predicates = append(predicates, investmentlot.CreateTimeGTE(*i.CreateTimeGTE))
 	}
 	if i.CreateTimeLT != nil {
-		predicates = append(predicates, lot.CreateTimeLT(*i.CreateTimeLT))
+		predicates = append(predicates, investmentlot.CreateTimeLT(*i.CreateTimeLT))
 	}
 	if i.CreateTimeLTE != nil {
-		predicates = append(predicates, lot.CreateTimeLTE(*i.CreateTimeLTE))
+		predicates = append(predicates, investmentlot.CreateTimeLTE(*i.CreateTimeLTE))
 	}
 	if i.UpdateTime != nil {
-		predicates = append(predicates, lot.UpdateTimeEQ(*i.UpdateTime))
+		predicates = append(predicates, investmentlot.UpdateTimeEQ(*i.UpdateTime))
 	}
 	if i.UpdateTimeNEQ != nil {
-		predicates = append(predicates, lot.UpdateTimeNEQ(*i.UpdateTimeNEQ))
+		predicates = append(predicates, investmentlot.UpdateTimeNEQ(*i.UpdateTimeNEQ))
 	}
 	if len(i.UpdateTimeIn) > 0 {
-		predicates = append(predicates, lot.UpdateTimeIn(i.UpdateTimeIn...))
+		predicates = append(predicates, investmentlot.UpdateTimeIn(i.UpdateTimeIn...))
 	}
 	if len(i.UpdateTimeNotIn) > 0 {
-		predicates = append(predicates, lot.UpdateTimeNotIn(i.UpdateTimeNotIn...))
+		predicates = append(predicates, investmentlot.UpdateTimeNotIn(i.UpdateTimeNotIn...))
 	}
 	if i.UpdateTimeGT != nil {
-		predicates = append(predicates, lot.UpdateTimeGT(*i.UpdateTimeGT))
+		predicates = append(predicates, investmentlot.UpdateTimeGT(*i.UpdateTimeGT))
 	}
 	if i.UpdateTimeGTE != nil {
-		predicates = append(predicates, lot.UpdateTimeGTE(*i.UpdateTimeGTE))
+		predicates = append(predicates, investmentlot.UpdateTimeGTE(*i.UpdateTimeGTE))
 	}
 	if i.UpdateTimeLT != nil {
-		predicates = append(predicates, lot.UpdateTimeLT(*i.UpdateTimeLT))
+		predicates = append(predicates, investmentlot.UpdateTimeLT(*i.UpdateTimeLT))
 	}
 	if i.UpdateTimeLTE != nil {
-		predicates = append(predicates, lot.UpdateTimeLTE(*i.UpdateTimeLTE))
+		predicates = append(predicates, investmentlot.UpdateTimeLTE(*i.UpdateTimeLTE))
 	}
 	if i.HouseholdID != nil {
-		predicates = append(predicates, lot.HouseholdIDEQ(*i.HouseholdID))
+		predicates = append(predicates, investmentlot.HouseholdIDEQ(*i.HouseholdID))
 	}
 	if i.HouseholdIDNEQ != nil {
-		predicates = append(predicates, lot.HouseholdIDNEQ(*i.HouseholdIDNEQ))
+		predicates = append(predicates, investmentlot.HouseholdIDNEQ(*i.HouseholdIDNEQ))
 	}
 	if len(i.HouseholdIDIn) > 0 {
-		predicates = append(predicates, lot.HouseholdIDIn(i.HouseholdIDIn...))
+		predicates = append(predicates, investmentlot.HouseholdIDIn(i.HouseholdIDIn...))
 	}
 	if len(i.HouseholdIDNotIn) > 0 {
-		predicates = append(predicates, lot.HouseholdIDNotIn(i.HouseholdIDNotIn...))
+		predicates = append(predicates, investmentlot.HouseholdIDNotIn(i.HouseholdIDNotIn...))
 	}
 	if i.Amount != nil {
-		predicates = append(predicates, lot.AmountEQ(*i.Amount))
+		predicates = append(predicates, investmentlot.AmountEQ(*i.Amount))
 	}
 	if i.AmountNEQ != nil {
-		predicates = append(predicates, lot.AmountNEQ(*i.AmountNEQ))
+		predicates = append(predicates, investmentlot.AmountNEQ(*i.AmountNEQ))
 	}
 	if len(i.AmountIn) > 0 {
-		predicates = append(predicates, lot.AmountIn(i.AmountIn...))
+		predicates = append(predicates, investmentlot.AmountIn(i.AmountIn...))
 	}
 	if len(i.AmountNotIn) > 0 {
-		predicates = append(predicates, lot.AmountNotIn(i.AmountNotIn...))
+		predicates = append(predicates, investmentlot.AmountNotIn(i.AmountNotIn...))
 	}
 	if i.AmountGT != nil {
-		predicates = append(predicates, lot.AmountGT(*i.AmountGT))
+		predicates = append(predicates, investmentlot.AmountGT(*i.AmountGT))
 	}
 	if i.AmountGTE != nil {
-		predicates = append(predicates, lot.AmountGTE(*i.AmountGTE))
+		predicates = append(predicates, investmentlot.AmountGTE(*i.AmountGTE))
 	}
 	if i.AmountLT != nil {
-		predicates = append(predicates, lot.AmountLT(*i.AmountLT))
+		predicates = append(predicates, investmentlot.AmountLT(*i.AmountLT))
 	}
 	if i.AmountLTE != nil {
-		predicates = append(predicates, lot.AmountLTE(*i.AmountLTE))
+		predicates = append(predicates, investmentlot.AmountLTE(*i.AmountLTE))
 	}
 	if i.Price != nil {
-		predicates = append(predicates, lot.PriceEQ(*i.Price))
+		predicates = append(predicates, investmentlot.PriceEQ(*i.Price))
 	}
 	if i.PriceNEQ != nil {
-		predicates = append(predicates, lot.PriceNEQ(*i.PriceNEQ))
+		predicates = append(predicates, investmentlot.PriceNEQ(*i.PriceNEQ))
 	}
 	if len(i.PriceIn) > 0 {
-		predicates = append(predicates, lot.PriceIn(i.PriceIn...))
+		predicates = append(predicates, investmentlot.PriceIn(i.PriceIn...))
 	}
 	if len(i.PriceNotIn) > 0 {
-		predicates = append(predicates, lot.PriceNotIn(i.PriceNotIn...))
+		predicates = append(predicates, investmentlot.PriceNotIn(i.PriceNotIn...))
 	}
 	if i.PriceGT != nil {
-		predicates = append(predicates, lot.PriceGT(*i.PriceGT))
+		predicates = append(predicates, investmentlot.PriceGT(*i.PriceGT))
 	}
 	if i.PriceGTE != nil {
-		predicates = append(predicates, lot.PriceGTE(*i.PriceGTE))
+		predicates = append(predicates, investmentlot.PriceGTE(*i.PriceGTE))
 	}
 	if i.PriceLT != nil {
-		predicates = append(predicates, lot.PriceLT(*i.PriceLT))
+		predicates = append(predicates, investmentlot.PriceLT(*i.PriceLT))
 	}
 	if i.PriceLTE != nil {
-		predicates = append(predicates, lot.PriceLTE(*i.PriceLTE))
+		predicates = append(predicates, investmentlot.PriceLTE(*i.PriceLTE))
 	}
 
 	if i.HasHousehold != nil {
-		p := lot.HasHousehold()
+		p := investmentlot.HasHousehold()
 		if !*i.HasHousehold {
-			p = lot.Not(p)
+			p = investmentlot.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
@@ -2164,12 +2164,12 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, lot.HasHouseholdWith(with...))
+		predicates = append(predicates, investmentlot.HasHouseholdWith(with...))
 	}
 	if i.HasInvestment != nil {
-		p := lot.HasInvestment()
+		p := investmentlot.HasInvestment()
 		if !*i.HasInvestment {
-			p = lot.Not(p)
+			p = investmentlot.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
@@ -2182,12 +2182,12 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, lot.HasInvestmentWith(with...))
+		predicates = append(predicates, investmentlot.HasInvestmentWith(with...))
 	}
 	if i.HasTransaction != nil {
-		p := lot.HasTransaction()
+		p := investmentlot.HasTransaction()
 		if !*i.HasTransaction {
-			p = lot.Not(p)
+			p = investmentlot.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
@@ -2200,15 +2200,15 @@ func (i *LotWhereInput) P() (predicate.Lot, error) {
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, lot.HasTransactionWith(with...))
+		predicates = append(predicates, investmentlot.HasTransactionWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyLotWhereInput
+		return nil, ErrEmptyInvestmentLotWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return lot.And(predicates...), nil
+		return investmentlot.And(predicates...), nil
 	}
 }
 
@@ -2298,9 +2298,9 @@ type TransactionWhereInput struct {
 	HasTransactionEntries     *bool                         `json:"hasTransactionEntries,omitempty"`
 	HasTransactionEntriesWith []*TransactionEntryWhereInput `json:"hasTransactionEntriesWith,omitempty"`
 
-	// "lots" edge predicates.
-	HasLots     *bool            `json:"hasLots,omitempty"`
-	HasLotsWith []*LotWhereInput `json:"hasLotsWith,omitempty"`
+	// "investment_lots" edge predicates.
+	HasInvestmentLots     *bool                      `json:"hasInvestmentLots,omitempty"`
+	HasInvestmentLotsWith []*InvestmentLotWhereInput `json:"hasInvestmentLotsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -2600,23 +2600,23 @@ func (i *TransactionWhereInput) P() (predicate.Transaction, error) {
 		}
 		predicates = append(predicates, transaction.HasTransactionEntriesWith(with...))
 	}
-	if i.HasLots != nil {
-		p := transaction.HasLots()
-		if !*i.HasLots {
+	if i.HasInvestmentLots != nil {
+		p := transaction.HasInvestmentLots()
+		if !*i.HasInvestmentLots {
 			p = transaction.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasLotsWith) > 0 {
-		with := make([]predicate.Lot, 0, len(i.HasLotsWith))
-		for _, w := range i.HasLotsWith {
+	if len(i.HasInvestmentLotsWith) > 0 {
+		with := make([]predicate.InvestmentLot, 0, len(i.HasInvestmentLotsWith))
+		for _, w := range i.HasInvestmentLotsWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasLotsWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasInvestmentLotsWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, transaction.HasLotsWith(with...))
+		predicates = append(predicates, transaction.HasInvestmentLotsWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

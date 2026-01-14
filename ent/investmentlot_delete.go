@@ -5,33 +5,33 @@ package ent
 import (
 	"context"
 
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
 
-// LotDelete is the builder for deleting a Lot entity.
-type LotDelete struct {
+// InvestmentLotDelete is the builder for deleting a InvestmentLot entity.
+type InvestmentLotDelete struct {
 	config
 	hooks    []Hook
-	mutation *LotMutation
+	mutation *InvestmentLotMutation
 }
 
-// Where appends a list predicates to the LotDelete builder.
-func (_d *LotDelete) Where(ps ...predicate.Lot) *LotDelete {
+// Where appends a list predicates to the InvestmentLotDelete builder.
+func (_d *InvestmentLotDelete) Where(ps ...predicate.InvestmentLot) *InvestmentLotDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *LotDelete) Exec(ctx context.Context) (int, error) {
+func (_d *InvestmentLotDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *LotDelete) ExecX(ctx context.Context) int {
+func (_d *InvestmentLotDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *LotDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *LotDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(lot.Table, sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt))
+func (_d *InvestmentLotDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(investmentlot.Table, sqlgraph.NewFieldSpec(investmentlot.FieldID, field.TypeInt))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *LotDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// LotDeleteOne is the builder for deleting a single Lot entity.
-type LotDeleteOne struct {
-	_d *LotDelete
+// InvestmentLotDeleteOne is the builder for deleting a single InvestmentLot entity.
+type InvestmentLotDeleteOne struct {
+	_d *InvestmentLotDelete
 }
 
-// Where appends a list predicates to the LotDelete builder.
-func (_d *LotDeleteOne) Where(ps ...predicate.Lot) *LotDeleteOne {
+// Where appends a list predicates to the InvestmentLotDelete builder.
+func (_d *InvestmentLotDeleteOne) Where(ps ...predicate.InvestmentLot) *InvestmentLotDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *LotDeleteOne) Exec(ctx context.Context) error {
+func (_d *InvestmentLotDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{lot.Label}
+		return &NotFoundError{investmentlot.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *LotDeleteOne) ExecX(ctx context.Context) {
+func (_d *InvestmentLotDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

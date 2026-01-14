@@ -9,15 +9,15 @@ import (
 
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/shopspring/decimal"
 )
 
-// Lot is the model entity for the Lot schema.
-type Lot struct {
+// InvestmentLot is the model entity for the InvestmentLot schema.
+type InvestmentLot struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
@@ -32,15 +32,15 @@ type Lot struct {
 	// Price holds the value of the "price" field.
 	Price decimal.Decimal `json:"price,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the LotQuery when eager-loading is set.
-	Edges            LotEdges `json:"edges"`
-	investment_lots  *int
-	transaction_lots *int
-	selectValues     sql.SelectValues
+	// The values are being populated by the InvestmentLotQuery when eager-loading is set.
+	Edges                       InvestmentLotEdges `json:"edges"`
+	investment_investment_lots  *int
+	transaction_investment_lots *int
+	selectValues                sql.SelectValues
 }
 
-// LotEdges holds the relations/edges for other nodes in the graph.
-type LotEdges struct {
+// InvestmentLotEdges holds the relations/edges for other nodes in the graph.
+type InvestmentLotEdges struct {
 	// Household holds the value of the household edge.
 	Household *Household `json:"household,omitempty"`
 	// Investment holds the value of the investment edge.
@@ -56,7 +56,7 @@ type LotEdges struct {
 
 // HouseholdOrErr returns the Household value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e LotEdges) HouseholdOrErr() (*Household, error) {
+func (e InvestmentLotEdges) HouseholdOrErr() (*Household, error) {
 	if e.Household != nil {
 		return e.Household, nil
 	} else if e.loadedTypes[0] {
@@ -67,7 +67,7 @@ func (e LotEdges) HouseholdOrErr() (*Household, error) {
 
 // InvestmentOrErr returns the Investment value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e LotEdges) InvestmentOrErr() (*Investment, error) {
+func (e InvestmentLotEdges) InvestmentOrErr() (*Investment, error) {
 	if e.Investment != nil {
 		return e.Investment, nil
 	} else if e.loadedTypes[1] {
@@ -78,7 +78,7 @@ func (e LotEdges) InvestmentOrErr() (*Investment, error) {
 
 // TransactionOrErr returns the Transaction value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e LotEdges) TransactionOrErr() (*Transaction, error) {
+func (e InvestmentLotEdges) TransactionOrErr() (*Transaction, error) {
 	if e.Transaction != nil {
 		return e.Transaction, nil
 	} else if e.loadedTypes[2] {
@@ -88,19 +88,19 @@ func (e LotEdges) TransactionOrErr() (*Transaction, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Lot) scanValues(columns []string) ([]any, error) {
+func (*InvestmentLot) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case lot.FieldAmount, lot.FieldPrice:
+		case investmentlot.FieldAmount, investmentlot.FieldPrice:
 			values[i] = new(decimal.Decimal)
-		case lot.FieldID, lot.FieldHouseholdID:
+		case investmentlot.FieldID, investmentlot.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
-		case lot.FieldCreateTime, lot.FieldUpdateTime:
+		case investmentlot.FieldCreateTime, investmentlot.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
-		case lot.ForeignKeys[0]: // investment_lots
+		case investmentlot.ForeignKeys[0]: // investment_investment_lots
 			values[i] = new(sql.NullInt64)
-		case lot.ForeignKeys[1]: // transaction_lots
+		case investmentlot.ForeignKeys[1]: // transaction_investment_lots
 			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -110,62 +110,62 @@ func (*Lot) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Lot fields.
-func (_m *Lot) assignValues(columns []string, values []any) error {
+// to the InvestmentLot fields.
+func (_m *InvestmentLot) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case lot.FieldID:
+		case investmentlot.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
-		case lot.FieldCreateTime:
+		case investmentlot.FieldCreateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field create_time", values[i])
 			} else if value.Valid {
 				_m.CreateTime = value.Time
 			}
-		case lot.FieldUpdateTime:
+		case investmentlot.FieldUpdateTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field update_time", values[i])
 			} else if value.Valid {
 				_m.UpdateTime = value.Time
 			}
-		case lot.FieldHouseholdID:
+		case investmentlot.FieldHouseholdID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field household_id", values[i])
 			} else if value.Valid {
 				_m.HouseholdID = int(value.Int64)
 			}
-		case lot.FieldAmount:
+		case investmentlot.FieldAmount:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
 			} else if value != nil {
 				_m.Amount = *value
 			}
-		case lot.FieldPrice:
+		case investmentlot.FieldPrice:
 			if value, ok := values[i].(*decimal.Decimal); !ok {
 				return fmt.Errorf("unexpected type %T for field price", values[i])
 			} else if value != nil {
 				_m.Price = *value
 			}
-		case lot.ForeignKeys[0]:
+		case investmentlot.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field investment_lots", value)
+				return fmt.Errorf("unexpected type %T for edge-field investment_investment_lots", value)
 			} else if value.Valid {
-				_m.investment_lots = new(int)
-				*_m.investment_lots = int(value.Int64)
+				_m.investment_investment_lots = new(int)
+				*_m.investment_investment_lots = int(value.Int64)
 			}
-		case lot.ForeignKeys[1]:
+		case investmentlot.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field transaction_lots", value)
+				return fmt.Errorf("unexpected type %T for edge-field transaction_investment_lots", value)
 			} else if value.Valid {
-				_m.transaction_lots = new(int)
-				*_m.transaction_lots = int(value.Int64)
+				_m.transaction_investment_lots = new(int)
+				*_m.transaction_investment_lots = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -174,49 +174,49 @@ func (_m *Lot) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Lot.
+// Value returns the ent.Value that was dynamically selected and assigned to the InvestmentLot.
 // This includes values selected through modifiers, order, etc.
-func (_m *Lot) Value(name string) (ent.Value, error) {
+func (_m *InvestmentLot) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryHousehold queries the "household" edge of the Lot entity.
-func (_m *Lot) QueryHousehold() *HouseholdQuery {
-	return NewLotClient(_m.config).QueryHousehold(_m)
+// QueryHousehold queries the "household" edge of the InvestmentLot entity.
+func (_m *InvestmentLot) QueryHousehold() *HouseholdQuery {
+	return NewInvestmentLotClient(_m.config).QueryHousehold(_m)
 }
 
-// QueryInvestment queries the "investment" edge of the Lot entity.
-func (_m *Lot) QueryInvestment() *InvestmentQuery {
-	return NewLotClient(_m.config).QueryInvestment(_m)
+// QueryInvestment queries the "investment" edge of the InvestmentLot entity.
+func (_m *InvestmentLot) QueryInvestment() *InvestmentQuery {
+	return NewInvestmentLotClient(_m.config).QueryInvestment(_m)
 }
 
-// QueryTransaction queries the "transaction" edge of the Lot entity.
-func (_m *Lot) QueryTransaction() *TransactionQuery {
-	return NewLotClient(_m.config).QueryTransaction(_m)
+// QueryTransaction queries the "transaction" edge of the InvestmentLot entity.
+func (_m *InvestmentLot) QueryTransaction() *TransactionQuery {
+	return NewInvestmentLotClient(_m.config).QueryTransaction(_m)
 }
 
-// Update returns a builder for updating this Lot.
-// Note that you need to call Lot.Unwrap() before calling this method if this Lot
+// Update returns a builder for updating this InvestmentLot.
+// Note that you need to call InvestmentLot.Unwrap() before calling this method if this InvestmentLot
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *Lot) Update() *LotUpdateOne {
-	return NewLotClient(_m.config).UpdateOne(_m)
+func (_m *InvestmentLot) Update() *InvestmentLotUpdateOne {
+	return NewInvestmentLotClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the Lot entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the InvestmentLot entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *Lot) Unwrap() *Lot {
+func (_m *InvestmentLot) Unwrap() *InvestmentLot {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Lot is not a transactional entity")
+		panic("ent: InvestmentLot is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *Lot) String() string {
+func (_m *InvestmentLot) String() string {
 	var builder strings.Builder
-	builder.WriteString("Lot(")
+	builder.WriteString("InvestmentLot(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("create_time=")
 	builder.WriteString(_m.CreateTime.Format(time.ANSIC))
@@ -236,5 +236,5 @@ func (_m *Lot) String() string {
 	return builder.String()
 }
 
-// Lots is a parsable slice of Lot.
-type Lots []*Lot
+// InvestmentLots is a parsable slice of InvestmentLot.
+type InvestmentLots []*InvestmentLot

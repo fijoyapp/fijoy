@@ -10,7 +10,7 @@ import (
 
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -18,22 +18,22 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// LotCreate is the builder for creating a Lot entity.
-type LotCreate struct {
+// InvestmentLotCreate is the builder for creating a InvestmentLot entity.
+type InvestmentLotCreate struct {
 	config
-	mutation *LotMutation
+	mutation *InvestmentLotMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
 }
 
 // SetCreateTime sets the "create_time" field.
-func (_c *LotCreate) SetCreateTime(v time.Time) *LotCreate {
+func (_c *InvestmentLotCreate) SetCreateTime(v time.Time) *InvestmentLotCreate {
 	_c.mutation.SetCreateTime(v)
 	return _c
 }
 
 // SetNillableCreateTime sets the "create_time" field if the given value is not nil.
-func (_c *LotCreate) SetNillableCreateTime(v *time.Time) *LotCreate {
+func (_c *InvestmentLotCreate) SetNillableCreateTime(v *time.Time) *InvestmentLotCreate {
 	if v != nil {
 		_c.SetCreateTime(*v)
 	}
@@ -41,13 +41,13 @@ func (_c *LotCreate) SetNillableCreateTime(v *time.Time) *LotCreate {
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (_c *LotCreate) SetUpdateTime(v time.Time) *LotCreate {
+func (_c *InvestmentLotCreate) SetUpdateTime(v time.Time) *InvestmentLotCreate {
 	_c.mutation.SetUpdateTime(v)
 	return _c
 }
 
 // SetNillableUpdateTime sets the "update_time" field if the given value is not nil.
-func (_c *LotCreate) SetNillableUpdateTime(v *time.Time) *LotCreate {
+func (_c *InvestmentLotCreate) SetNillableUpdateTime(v *time.Time) *InvestmentLotCreate {
 	if v != nil {
 		_c.SetUpdateTime(*v)
 	}
@@ -55,57 +55,57 @@ func (_c *LotCreate) SetNillableUpdateTime(v *time.Time) *LotCreate {
 }
 
 // SetHouseholdID sets the "household_id" field.
-func (_c *LotCreate) SetHouseholdID(v int) *LotCreate {
+func (_c *InvestmentLotCreate) SetHouseholdID(v int) *InvestmentLotCreate {
 	_c.mutation.SetHouseholdID(v)
 	return _c
 }
 
 // SetAmount sets the "amount" field.
-func (_c *LotCreate) SetAmount(v decimal.Decimal) *LotCreate {
+func (_c *InvestmentLotCreate) SetAmount(v decimal.Decimal) *InvestmentLotCreate {
 	_c.mutation.SetAmount(v)
 	return _c
 }
 
 // SetPrice sets the "price" field.
-func (_c *LotCreate) SetPrice(v decimal.Decimal) *LotCreate {
+func (_c *InvestmentLotCreate) SetPrice(v decimal.Decimal) *InvestmentLotCreate {
 	_c.mutation.SetPrice(v)
 	return _c
 }
 
 // SetHousehold sets the "household" edge to the Household entity.
-func (_c *LotCreate) SetHousehold(v *Household) *LotCreate {
+func (_c *InvestmentLotCreate) SetHousehold(v *Household) *InvestmentLotCreate {
 	return _c.SetHouseholdID(v.ID)
 }
 
 // SetInvestmentID sets the "investment" edge to the Investment entity by ID.
-func (_c *LotCreate) SetInvestmentID(id int) *LotCreate {
+func (_c *InvestmentLotCreate) SetInvestmentID(id int) *InvestmentLotCreate {
 	_c.mutation.SetInvestmentID(id)
 	return _c
 }
 
 // SetInvestment sets the "investment" edge to the Investment entity.
-func (_c *LotCreate) SetInvestment(v *Investment) *LotCreate {
+func (_c *InvestmentLotCreate) SetInvestment(v *Investment) *InvestmentLotCreate {
 	return _c.SetInvestmentID(v.ID)
 }
 
 // SetTransactionID sets the "transaction" edge to the Transaction entity by ID.
-func (_c *LotCreate) SetTransactionID(id int) *LotCreate {
+func (_c *InvestmentLotCreate) SetTransactionID(id int) *InvestmentLotCreate {
 	_c.mutation.SetTransactionID(id)
 	return _c
 }
 
 // SetTransaction sets the "transaction" edge to the Transaction entity.
-func (_c *LotCreate) SetTransaction(v *Transaction) *LotCreate {
+func (_c *InvestmentLotCreate) SetTransaction(v *Transaction) *InvestmentLotCreate {
 	return _c.SetTransactionID(v.ID)
 }
 
-// Mutation returns the LotMutation object of the builder.
-func (_c *LotCreate) Mutation() *LotMutation {
+// Mutation returns the InvestmentLotMutation object of the builder.
+func (_c *InvestmentLotCreate) Mutation() *InvestmentLotMutation {
 	return _c.mutation
 }
 
-// Save creates the Lot in the database.
-func (_c *LotCreate) Save(ctx context.Context) (*Lot, error) {
+// Save creates the InvestmentLot in the database.
+func (_c *InvestmentLotCreate) Save(ctx context.Context) (*InvestmentLot, error) {
 	if err := _c.defaults(); err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func (_c *LotCreate) Save(ctx context.Context) (*Lot, error) {
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (_c *LotCreate) SaveX(ctx context.Context) *Lot {
+func (_c *InvestmentLotCreate) SaveX(ctx context.Context) *InvestmentLot {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -122,67 +122,67 @@ func (_c *LotCreate) SaveX(ctx context.Context) *Lot {
 }
 
 // Exec executes the query.
-func (_c *LotCreate) Exec(ctx context.Context) error {
+func (_c *InvestmentLotCreate) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *LotCreate) ExecX(ctx context.Context) {
+func (_c *InvestmentLotCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *LotCreate) defaults() error {
+func (_c *InvestmentLotCreate) defaults() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
-		if lot.DefaultCreateTime == nil {
-			return fmt.Errorf("ent: uninitialized lot.DefaultCreateTime (forgotten import ent/runtime?)")
+		if investmentlot.DefaultCreateTime == nil {
+			return fmt.Errorf("ent: uninitialized investmentlot.DefaultCreateTime (forgotten import ent/runtime?)")
 		}
-		v := lot.DefaultCreateTime()
+		v := investmentlot.DefaultCreateTime()
 		_c.mutation.SetCreateTime(v)
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
-		if lot.DefaultUpdateTime == nil {
-			return fmt.Errorf("ent: uninitialized lot.DefaultUpdateTime (forgotten import ent/runtime?)")
+		if investmentlot.DefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized investmentlot.DefaultUpdateTime (forgotten import ent/runtime?)")
 		}
-		v := lot.DefaultUpdateTime()
+		v := investmentlot.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_c *LotCreate) check() error {
+func (_c *InvestmentLotCreate) check() error {
 	if _, ok := _c.mutation.CreateTime(); !ok {
-		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "Lot.create_time"`)}
+		return &ValidationError{Name: "create_time", err: errors.New(`ent: missing required field "InvestmentLot.create_time"`)}
 	}
 	if _, ok := _c.mutation.UpdateTime(); !ok {
-		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "Lot.update_time"`)}
+		return &ValidationError{Name: "update_time", err: errors.New(`ent: missing required field "InvestmentLot.update_time"`)}
 	}
 	if _, ok := _c.mutation.HouseholdID(); !ok {
-		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "Lot.household_id"`)}
+		return &ValidationError{Name: "household_id", err: errors.New(`ent: missing required field "InvestmentLot.household_id"`)}
 	}
 	if _, ok := _c.mutation.Amount(); !ok {
-		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "Lot.amount"`)}
+		return &ValidationError{Name: "amount", err: errors.New(`ent: missing required field "InvestmentLot.amount"`)}
 	}
 	if _, ok := _c.mutation.Price(); !ok {
-		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "Lot.price"`)}
+		return &ValidationError{Name: "price", err: errors.New(`ent: missing required field "InvestmentLot.price"`)}
 	}
 	if len(_c.mutation.HouseholdIDs()) == 0 {
-		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "Lot.household"`)}
+		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "InvestmentLot.household"`)}
 	}
 	if len(_c.mutation.InvestmentIDs()) == 0 {
-		return &ValidationError{Name: "investment", err: errors.New(`ent: missing required edge "Lot.investment"`)}
+		return &ValidationError{Name: "investment", err: errors.New(`ent: missing required edge "InvestmentLot.investment"`)}
 	}
 	if len(_c.mutation.TransactionIDs()) == 0 {
-		return &ValidationError{Name: "transaction", err: errors.New(`ent: missing required edge "Lot.transaction"`)}
+		return &ValidationError{Name: "transaction", err: errors.New(`ent: missing required edge "InvestmentLot.transaction"`)}
 	}
 	return nil
 }
 
-func (_c *LotCreate) sqlSave(ctx context.Context) (*Lot, error) {
+func (_c *InvestmentLotCreate) sqlSave(ctx context.Context) (*InvestmentLot, error) {
 	if err := _c.check(); err != nil {
 		return nil, err
 	}
@@ -200,34 +200,34 @@ func (_c *LotCreate) sqlSave(ctx context.Context) (*Lot, error) {
 	return _node, nil
 }
 
-func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
+func (_c *InvestmentLotCreate) createSpec() (*InvestmentLot, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Lot{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(lot.Table, sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt))
+		_node = &InvestmentLot{config: _c.config}
+		_spec = sqlgraph.NewCreateSpec(investmentlot.Table, sqlgraph.NewFieldSpec(investmentlot.FieldID, field.TypeInt))
 	)
 	_spec.OnConflict = _c.conflict
 	if value, ok := _c.mutation.CreateTime(); ok {
-		_spec.SetField(lot.FieldCreateTime, field.TypeTime, value)
+		_spec.SetField(investmentlot.FieldCreateTime, field.TypeTime, value)
 		_node.CreateTime = value
 	}
 	if value, ok := _c.mutation.UpdateTime(); ok {
-		_spec.SetField(lot.FieldUpdateTime, field.TypeTime, value)
+		_spec.SetField(investmentlot.FieldUpdateTime, field.TypeTime, value)
 		_node.UpdateTime = value
 	}
 	if value, ok := _c.mutation.Amount(); ok {
-		_spec.SetField(lot.FieldAmount, field.TypeFloat64, value)
+		_spec.SetField(investmentlot.FieldAmount, field.TypeFloat64, value)
 		_node.Amount = value
 	}
 	if value, ok := _c.mutation.Price(); ok {
-		_spec.SetField(lot.FieldPrice, field.TypeFloat64, value)
+		_spec.SetField(investmentlot.FieldPrice, field.TypeFloat64, value)
 		_node.Price = value
 	}
 	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   lot.HouseholdTable,
-			Columns: []string{lot.HouseholdColumn},
+			Table:   investmentlot.HouseholdTable,
+			Columns: []string{investmentlot.HouseholdColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
@@ -243,8 +243,8 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   lot.InvestmentTable,
-			Columns: []string{lot.InvestmentColumn},
+			Table:   investmentlot.InvestmentTable,
+			Columns: []string{investmentlot.InvestmentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(investment.FieldID, field.TypeInt),
@@ -253,15 +253,15 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.investment_lots = &nodes[0]
+		_node.investment_investment_lots = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.TransactionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   lot.TransactionTable,
-			Columns: []string{lot.TransactionColumn},
+			Table:   investmentlot.TransactionTable,
+			Columns: []string{investmentlot.TransactionColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transaction.FieldID, field.TypeInt),
@@ -270,7 +270,7 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.transaction_lots = &nodes[0]
+		_node.transaction_investment_lots = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -279,7 +279,7 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Lot.Create().
+//	client.InvestmentLot.Create().
 //		SetCreateTime(v).
 //		OnConflict(
 //			// Update the row with the new values
@@ -288,13 +288,13 @@ func (_c *LotCreate) createSpec() (*Lot, *sqlgraph.CreateSpec) {
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.LotUpsert) {
+//		Update(func(u *ent.InvestmentLotUpsert) {
 //			SetCreateTime(v+v).
 //		}).
 //		Exec(ctx)
-func (_c *LotCreate) OnConflict(opts ...sql.ConflictOption) *LotUpsertOne {
+func (_c *InvestmentLotCreate) OnConflict(opts ...sql.ConflictOption) *InvestmentLotUpsertOne {
 	_c.conflict = opts
-	return &LotUpsertOne{
+	return &InvestmentLotUpsertOne{
 		create: _c,
 	}
 }
@@ -302,93 +302,93 @@ func (_c *LotCreate) OnConflict(opts ...sql.ConflictOption) *LotUpsertOne {
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Lot.Create().
+//	client.InvestmentLot.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (_c *LotCreate) OnConflictColumns(columns ...string) *LotUpsertOne {
+func (_c *InvestmentLotCreate) OnConflictColumns(columns ...string) *InvestmentLotUpsertOne {
 	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
-	return &LotUpsertOne{
+	return &InvestmentLotUpsertOne{
 		create: _c,
 	}
 }
 
 type (
-	// LotUpsertOne is the builder for "upsert"-ing
-	//  one Lot node.
-	LotUpsertOne struct {
-		create *LotCreate
+	// InvestmentLotUpsertOne is the builder for "upsert"-ing
+	//  one InvestmentLot node.
+	InvestmentLotUpsertOne struct {
+		create *InvestmentLotCreate
 	}
 
-	// LotUpsert is the "OnConflict" setter.
-	LotUpsert struct {
+	// InvestmentLotUpsert is the "OnConflict" setter.
+	InvestmentLotUpsert struct {
 		*sql.UpdateSet
 	}
 )
 
 // SetUpdateTime sets the "update_time" field.
-func (u *LotUpsert) SetUpdateTime(v time.Time) *LotUpsert {
-	u.Set(lot.FieldUpdateTime, v)
+func (u *InvestmentLotUpsert) SetUpdateTime(v time.Time) *InvestmentLotUpsert {
+	u.Set(investmentlot.FieldUpdateTime, v)
 	return u
 }
 
 // UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *LotUpsert) UpdateUpdateTime() *LotUpsert {
-	u.SetExcluded(lot.FieldUpdateTime)
+func (u *InvestmentLotUpsert) UpdateUpdateTime() *InvestmentLotUpsert {
+	u.SetExcluded(investmentlot.FieldUpdateTime)
 	return u
 }
 
 // SetAmount sets the "amount" field.
-func (u *LotUpsert) SetAmount(v decimal.Decimal) *LotUpsert {
-	u.Set(lot.FieldAmount, v)
+func (u *InvestmentLotUpsert) SetAmount(v decimal.Decimal) *InvestmentLotUpsert {
+	u.Set(investmentlot.FieldAmount, v)
 	return u
 }
 
 // UpdateAmount sets the "amount" field to the value that was provided on create.
-func (u *LotUpsert) UpdateAmount() *LotUpsert {
-	u.SetExcluded(lot.FieldAmount)
+func (u *InvestmentLotUpsert) UpdateAmount() *InvestmentLotUpsert {
+	u.SetExcluded(investmentlot.FieldAmount)
 	return u
 }
 
 // AddAmount adds v to the "amount" field.
-func (u *LotUpsert) AddAmount(v decimal.Decimal) *LotUpsert {
-	u.Add(lot.FieldAmount, v)
+func (u *InvestmentLotUpsert) AddAmount(v decimal.Decimal) *InvestmentLotUpsert {
+	u.Add(investmentlot.FieldAmount, v)
 	return u
 }
 
 // SetPrice sets the "price" field.
-func (u *LotUpsert) SetPrice(v decimal.Decimal) *LotUpsert {
-	u.Set(lot.FieldPrice, v)
+func (u *InvestmentLotUpsert) SetPrice(v decimal.Decimal) *InvestmentLotUpsert {
+	u.Set(investmentlot.FieldPrice, v)
 	return u
 }
 
 // UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *LotUpsert) UpdatePrice() *LotUpsert {
-	u.SetExcluded(lot.FieldPrice)
+func (u *InvestmentLotUpsert) UpdatePrice() *InvestmentLotUpsert {
+	u.SetExcluded(investmentlot.FieldPrice)
 	return u
 }
 
 // AddPrice adds v to the "price" field.
-func (u *LotUpsert) AddPrice(v decimal.Decimal) *LotUpsert {
-	u.Add(lot.FieldPrice, v)
+func (u *InvestmentLotUpsert) AddPrice(v decimal.Decimal) *InvestmentLotUpsert {
+	u.Add(investmentlot.FieldPrice, v)
 	return u
 }
 
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
-//	client.Lot.Create().
+//	client.InvestmentLot.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-func (u *LotUpsertOne) UpdateNewValues() *LotUpsertOne {
+func (u *InvestmentLotUpsertOne) UpdateNewValues() *InvestmentLotUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.CreateTime(); exists {
-			s.SetIgnore(lot.FieldCreateTime)
+			s.SetIgnore(investmentlot.FieldCreateTime)
 		}
 		if _, exists := u.create.mutation.HouseholdID(); exists {
-			s.SetIgnore(lot.FieldHouseholdID)
+			s.SetIgnore(investmentlot.FieldHouseholdID)
 		}
 	}))
 	return u
@@ -397,103 +397,103 @@ func (u *LotUpsertOne) UpdateNewValues() *LotUpsertOne {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Lot.Create().
+//	client.InvestmentLot.Create().
 //	    OnConflict(sql.ResolveWithIgnore()).
 //	    Exec(ctx)
-func (u *LotUpsertOne) Ignore() *LotUpsertOne {
+func (u *InvestmentLotUpsertOne) Ignore() *InvestmentLotUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *LotUpsertOne) DoNothing() *LotUpsertOne {
+func (u *InvestmentLotUpsertOne) DoNothing() *InvestmentLotUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the LotCreate.OnConflict
+// Update allows overriding fields `UPDATE` values. See the InvestmentLotCreate.OnConflict
 // documentation for more info.
-func (u *LotUpsertOne) Update(set func(*LotUpsert)) *LotUpsertOne {
+func (u *InvestmentLotUpsertOne) Update(set func(*InvestmentLotUpsert)) *InvestmentLotUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&LotUpsert{UpdateSet: update})
+		set(&InvestmentLotUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (u *LotUpsertOne) SetUpdateTime(v time.Time) *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) SetUpdateTime(v time.Time) *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.SetUpdateTime(v)
 	})
 }
 
 // UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *LotUpsertOne) UpdateUpdateTime() *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) UpdateUpdateTime() *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.UpdateUpdateTime()
 	})
 }
 
 // SetAmount sets the "amount" field.
-func (u *LotUpsertOne) SetAmount(v decimal.Decimal) *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) SetAmount(v decimal.Decimal) *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.SetAmount(v)
 	})
 }
 
 // AddAmount adds v to the "amount" field.
-func (u *LotUpsertOne) AddAmount(v decimal.Decimal) *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) AddAmount(v decimal.Decimal) *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.AddAmount(v)
 	})
 }
 
 // UpdateAmount sets the "amount" field to the value that was provided on create.
-func (u *LotUpsertOne) UpdateAmount() *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) UpdateAmount() *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.UpdateAmount()
 	})
 }
 
 // SetPrice sets the "price" field.
-func (u *LotUpsertOne) SetPrice(v decimal.Decimal) *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) SetPrice(v decimal.Decimal) *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.SetPrice(v)
 	})
 }
 
 // AddPrice adds v to the "price" field.
-func (u *LotUpsertOne) AddPrice(v decimal.Decimal) *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) AddPrice(v decimal.Decimal) *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.AddPrice(v)
 	})
 }
 
 // UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *LotUpsertOne) UpdatePrice() *LotUpsertOne {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertOne) UpdatePrice() *InvestmentLotUpsertOne {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.UpdatePrice()
 	})
 }
 
 // Exec executes the query.
-func (u *LotUpsertOne) Exec(ctx context.Context) error {
+func (u *InvestmentLotUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
-		return errors.New("ent: missing options for LotCreate.OnConflict")
+		return errors.New("ent: missing options for InvestmentLotCreate.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *LotUpsertOne) ExecX(ctx context.Context) {
+func (u *InvestmentLotUpsertOne) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *LotUpsertOne) ID(ctx context.Context) (id int, err error) {
+func (u *InvestmentLotUpsertOne) ID(ctx context.Context) (id int, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -502,7 +502,7 @@ func (u *LotUpsertOne) ID(ctx context.Context) (id int, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *LotUpsertOne) IDX(ctx context.Context) int {
+func (u *InvestmentLotUpsertOne) IDX(ctx context.Context) int {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -510,28 +510,28 @@ func (u *LotUpsertOne) IDX(ctx context.Context) int {
 	return id
 }
 
-// LotCreateBulk is the builder for creating many Lot entities in bulk.
-type LotCreateBulk struct {
+// InvestmentLotCreateBulk is the builder for creating many InvestmentLot entities in bulk.
+type InvestmentLotCreateBulk struct {
 	config
 	err      error
-	builders []*LotCreate
+	builders []*InvestmentLotCreate
 	conflict []sql.ConflictOption
 }
 
-// Save creates the Lot entities in the database.
-func (_c *LotCreateBulk) Save(ctx context.Context) ([]*Lot, error) {
+// Save creates the InvestmentLot entities in the database.
+func (_c *InvestmentLotCreateBulk) Save(ctx context.Context) ([]*InvestmentLot, error) {
 	if _c.err != nil {
 		return nil, _c.err
 	}
 	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
-	nodes := make([]*Lot, len(_c.builders))
+	nodes := make([]*InvestmentLot, len(_c.builders))
 	mutators := make([]Mutator, len(_c.builders))
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*LotMutation)
+				mutation, ok := m.(*InvestmentLotMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -579,7 +579,7 @@ func (_c *LotCreateBulk) Save(ctx context.Context) ([]*Lot, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_c *LotCreateBulk) SaveX(ctx context.Context) []*Lot {
+func (_c *InvestmentLotCreateBulk) SaveX(ctx context.Context) []*InvestmentLot {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -588,13 +588,13 @@ func (_c *LotCreateBulk) SaveX(ctx context.Context) []*Lot {
 }
 
 // Exec executes the query.
-func (_c *LotCreateBulk) Exec(ctx context.Context) error {
+func (_c *InvestmentLotCreateBulk) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *LotCreateBulk) ExecX(ctx context.Context) {
+func (_c *InvestmentLotCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
@@ -603,7 +603,7 @@ func (_c *LotCreateBulk) ExecX(ctx context.Context) {
 // OnConflict allows configuring the `ON CONFLICT` / `ON DUPLICATE KEY` clause
 // of the `INSERT` statement. For example:
 //
-//	client.Lot.CreateBulk(builders...).
+//	client.InvestmentLot.CreateBulk(builders...).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -611,13 +611,13 @@ func (_c *LotCreateBulk) ExecX(ctx context.Context) {
 //		).
 //		// Override some of the fields with custom
 //		// update values.
-//		Update(func(u *ent.LotUpsert) {
+//		Update(func(u *ent.InvestmentLotUpsert) {
 //			SetCreateTime(v+v).
 //		}).
 //		Exec(ctx)
-func (_c *LotCreateBulk) OnConflict(opts ...sql.ConflictOption) *LotUpsertBulk {
+func (_c *InvestmentLotCreateBulk) OnConflict(opts ...sql.ConflictOption) *InvestmentLotUpsertBulk {
 	_c.conflict = opts
-	return &LotUpsertBulk{
+	return &InvestmentLotUpsertBulk{
 		create: _c,
 	}
 }
@@ -625,39 +625,39 @@ func (_c *LotCreateBulk) OnConflict(opts ...sql.ConflictOption) *LotUpsertBulk {
 // OnConflictColumns calls `OnConflict` and configures the columns
 // as conflict target. Using this option is equivalent to using:
 //
-//	client.Lot.Create().
+//	client.InvestmentLot.Create().
 //		OnConflict(sql.ConflictColumns(columns...)).
 //		Exec(ctx)
-func (_c *LotCreateBulk) OnConflictColumns(columns ...string) *LotUpsertBulk {
+func (_c *InvestmentLotCreateBulk) OnConflictColumns(columns ...string) *InvestmentLotUpsertBulk {
 	_c.conflict = append(_c.conflict, sql.ConflictColumns(columns...))
-	return &LotUpsertBulk{
+	return &InvestmentLotUpsertBulk{
 		create: _c,
 	}
 }
 
-// LotUpsertBulk is the builder for "upsert"-ing
-// a bulk of Lot nodes.
-type LotUpsertBulk struct {
-	create *LotCreateBulk
+// InvestmentLotUpsertBulk is the builder for "upsert"-ing
+// a bulk of InvestmentLot nodes.
+type InvestmentLotUpsertBulk struct {
+	create *InvestmentLotCreateBulk
 }
 
 // UpdateNewValues updates the mutable fields using the new values that
 // were set on create. Using this option is equivalent to using:
 //
-//	client.Lot.Create().
+//	client.InvestmentLot.Create().
 //		OnConflict(
 //			sql.ResolveWithNewValues(),
 //		).
 //		Exec(ctx)
-func (u *LotUpsertBulk) UpdateNewValues() *LotUpsertBulk {
+func (u *InvestmentLotUpsertBulk) UpdateNewValues() *InvestmentLotUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithNewValues())
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		for _, b := range u.create.builders {
 			if _, exists := b.mutation.CreateTime(); exists {
-				s.SetIgnore(lot.FieldCreateTime)
+				s.SetIgnore(investmentlot.FieldCreateTime)
 			}
 			if _, exists := b.mutation.HouseholdID(); exists {
-				s.SetIgnore(lot.FieldHouseholdID)
+				s.SetIgnore(investmentlot.FieldHouseholdID)
 			}
 		}
 	}))
@@ -667,104 +667,104 @@ func (u *LotUpsertBulk) UpdateNewValues() *LotUpsertBulk {
 // Ignore sets each column to itself in case of conflict.
 // Using this option is equivalent to using:
 //
-//	client.Lot.Create().
+//	client.InvestmentLot.Create().
 //		OnConflict(sql.ResolveWithIgnore()).
 //		Exec(ctx)
-func (u *LotUpsertBulk) Ignore() *LotUpsertBulk {
+func (u *InvestmentLotUpsertBulk) Ignore() *InvestmentLotUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWithIgnore())
 	return u
 }
 
 // DoNothing configures the conflict_action to `DO NOTHING`.
 // Supported only by SQLite and PostgreSQL.
-func (u *LotUpsertBulk) DoNothing() *LotUpsertBulk {
+func (u *InvestmentLotUpsertBulk) DoNothing() *InvestmentLotUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.DoNothing())
 	return u
 }
 
-// Update allows overriding fields `UPDATE` values. See the LotCreateBulk.OnConflict
+// Update allows overriding fields `UPDATE` values. See the InvestmentLotCreateBulk.OnConflict
 // documentation for more info.
-func (u *LotUpsertBulk) Update(set func(*LotUpsert)) *LotUpsertBulk {
+func (u *InvestmentLotUpsertBulk) Update(set func(*InvestmentLotUpsert)) *InvestmentLotUpsertBulk {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(update *sql.UpdateSet) {
-		set(&LotUpsert{UpdateSet: update})
+		set(&InvestmentLotUpsert{UpdateSet: update})
 	}))
 	return u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (u *LotUpsertBulk) SetUpdateTime(v time.Time) *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) SetUpdateTime(v time.Time) *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.SetUpdateTime(v)
 	})
 }
 
 // UpdateUpdateTime sets the "update_time" field to the value that was provided on create.
-func (u *LotUpsertBulk) UpdateUpdateTime() *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) UpdateUpdateTime() *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.UpdateUpdateTime()
 	})
 }
 
 // SetAmount sets the "amount" field.
-func (u *LotUpsertBulk) SetAmount(v decimal.Decimal) *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) SetAmount(v decimal.Decimal) *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.SetAmount(v)
 	})
 }
 
 // AddAmount adds v to the "amount" field.
-func (u *LotUpsertBulk) AddAmount(v decimal.Decimal) *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) AddAmount(v decimal.Decimal) *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.AddAmount(v)
 	})
 }
 
 // UpdateAmount sets the "amount" field to the value that was provided on create.
-func (u *LotUpsertBulk) UpdateAmount() *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) UpdateAmount() *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.UpdateAmount()
 	})
 }
 
 // SetPrice sets the "price" field.
-func (u *LotUpsertBulk) SetPrice(v decimal.Decimal) *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) SetPrice(v decimal.Decimal) *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.SetPrice(v)
 	})
 }
 
 // AddPrice adds v to the "price" field.
-func (u *LotUpsertBulk) AddPrice(v decimal.Decimal) *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) AddPrice(v decimal.Decimal) *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.AddPrice(v)
 	})
 }
 
 // UpdatePrice sets the "price" field to the value that was provided on create.
-func (u *LotUpsertBulk) UpdatePrice() *LotUpsertBulk {
-	return u.Update(func(s *LotUpsert) {
+func (u *InvestmentLotUpsertBulk) UpdatePrice() *InvestmentLotUpsertBulk {
+	return u.Update(func(s *InvestmentLotUpsert) {
 		s.UpdatePrice()
 	})
 }
 
 // Exec executes the query.
-func (u *LotUpsertBulk) Exec(ctx context.Context) error {
+func (u *InvestmentLotUpsertBulk) Exec(ctx context.Context) error {
 	if u.create.err != nil {
 		return u.create.err
 	}
 	for i, b := range u.create.builders {
 		if len(b.conflict) != 0 {
-			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the LotCreateBulk instead", i)
+			return fmt.Errorf("ent: OnConflict was set for builder %d. Set it on the InvestmentLotCreateBulk instead", i)
 		}
 	}
 	if len(u.create.conflict) == 0 {
-		return errors.New("ent: missing options for LotCreateBulk.OnConflict")
+		return errors.New("ent: missing options for InvestmentLotCreateBulk.OnConflict")
 	}
 	return u.create.Exec(ctx)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (u *LotUpsertBulk) ExecX(ctx context.Context) {
+func (u *InvestmentLotUpsertBulk) ExecX(ctx context.Context) {
 	if err := u.create.Exec(ctx); err != nil {
 		panic(err)
 	}

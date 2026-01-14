@@ -1,14 +1,14 @@
 package schema
 
 import (
+	"beavermoney.app/ent/privacy"
+	"beavermoney.app/ent/rules"
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	"beavermoney.app/ent/privacy"
-	"beavermoney.app/ent/rules"
 )
 
 // Household holds the schema definition for the Household entity.
@@ -37,7 +37,7 @@ func (Household) Edges() []ent.Edge {
 		edge.To("accounts", Account.Type),
 		edge.To("transactions", Transaction.Type),
 		edge.To("investments", Investment.Type),
-		edge.To("lots", Lot.Type),
+		edge.To("investment_lots", InvestmentLot.Type),
 		edge.To("transaction_categories", TransactionCategory.Type),
 		edge.To("transaction_entries", TransactionEntry.Type),
 	}

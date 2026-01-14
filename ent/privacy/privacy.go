@@ -207,28 +207,28 @@ func (f InvestmentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InvestmentMutation", m)
 }
 
-// The LotQueryRuleFunc type is an adapter to allow the use of ordinary
+// The InvestmentLotQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type LotQueryRuleFunc func(context.Context, *ent.LotQuery) error
+type InvestmentLotQueryRuleFunc func(context.Context, *ent.InvestmentLotQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f LotQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.LotQuery); ok {
+func (f InvestmentLotQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.InvestmentLotQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("ent/privacy: unexpected query type %T, expect *ent.LotQuery", q)
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.InvestmentLotQuery", q)
 }
 
-// The LotMutationRuleFunc type is an adapter to allow the use of ordinary
+// The InvestmentLotMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type LotMutationRuleFunc func(context.Context, *ent.LotMutation) error
+type InvestmentLotMutationRuleFunc func(context.Context, *ent.InvestmentLotMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f LotMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
-	if m, ok := m.(*ent.LotMutation); ok {
+func (f InvestmentLotMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.InvestmentLotMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.LotMutation", m)
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InvestmentLotMutation", m)
 }
 
 // The TransactionQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -418,7 +418,7 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.InvestmentQuery:
 		return q.Filter(), nil
-	case *ent.LotQuery:
+	case *ent.InvestmentLotQuery:
 		return q.Filter(), nil
 	case *ent.TransactionQuery:
 		return q.Filter(), nil
@@ -447,7 +447,7 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.InvestmentMutation:
 		return m.Filter(), nil
-	case *ent.LotMutation:
+	case *ent.InvestmentLotMutation:
 		return m.Filter(), nil
 	case *ent.TransactionMutation:
 		return m.Filter(), nil

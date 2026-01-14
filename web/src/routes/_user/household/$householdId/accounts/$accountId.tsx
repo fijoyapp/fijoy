@@ -23,7 +23,7 @@ export const Route = createFileRoute(
               ],
             },
             {
-              hasLotsWith: [
+              hasInvestmentLotsWith: [
                 {
                   hasInvestmentWith: [
                     {

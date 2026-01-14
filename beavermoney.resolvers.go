@@ -278,7 +278,7 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 		return nil, err
 	}
 
-	err = client.Lot.
+	err = client.InvestmentLot.
 		Create().
 		SetAmount(*input.Input.Amount).
 		SetPrice(costBasis).
@@ -301,8 +301,8 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 	}, nil
 }
 
-// CreateCategory is the resolver for the createCategory field.
-func (r *mutationResolver) CreateCategory(ctx context.Context, input CreateCategoryInput) (*ent.TransactionCategoryEdge, error) {
+// CreateTransactionCategory is the resolver for the createTransactionCategory field.
+func (r *mutationResolver) CreateTransactionCategory(ctx context.Context, input ent.CreateTransactionCategoryInput) (*ent.TransactionCategoryEdge, error) {
 	client := ent.FromContext(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -319,6 +319,36 @@ func (r *mutationResolver) CreateCategory(ctx context.Context, input CreateCateg
 		Node:   category,
 		Cursor: gqlutil.EncodeCursor(category.ID),
 	}, nil
+}
+
+// CreateExpense is the resolver for the createExpense field.
+func (r *mutationResolver) CreateExpense(ctx context.Context, input CreateExpenseInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: CreateExpense - createExpense"))
+}
+
+// CreateIncome is the resolver for the createIncome field.
+func (r *mutationResolver) CreateIncome(ctx context.Context, input CreateIncomeInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: CreateIncome - createIncome"))
+}
+
+// CreateTransfer is the resolver for the createTransfer field.
+func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTransferInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: CreateTransfer - createTransfer"))
+}
+
+// BuyInvestment is the resolver for the buyInvestment field.
+func (r *mutationResolver) BuyInvestment(ctx context.Context, input BuyInvestmentInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: BuyInvestment - buyInvestment"))
+}
+
+// SellInvestment is the resolver for the sellInvestment field.
+func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestmentInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: SellInvestment - sellInvestment"))
+}
+
+// TransferInvestment is the resolver for the transferInvestment field.
+func (r *mutationResolver) TransferInvestment(ctx context.Context, input TransferInvestmentInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: TransferInvestment - transferInvestment"))
 }
 
 // FxRate is the resolver for the fxRate field.

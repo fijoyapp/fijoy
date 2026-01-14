@@ -12,7 +12,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -140,19 +140,19 @@ func (_c *InvestmentCreate) SetCurrency(v *Currency) *InvestmentCreate {
 	return _c.SetCurrencyID(v.ID)
 }
 
-// AddLotIDs adds the "lots" edge to the Lot entity by IDs.
-func (_c *InvestmentCreate) AddLotIDs(ids ...int) *InvestmentCreate {
-	_c.mutation.AddLotIDs(ids...)
+// AddInvestmentLotIDs adds the "investment_lots" edge to the InvestmentLot entity by IDs.
+func (_c *InvestmentCreate) AddInvestmentLotIDs(ids ...int) *InvestmentCreate {
+	_c.mutation.AddInvestmentLotIDs(ids...)
 	return _c
 }
 
-// AddLots adds the "lots" edges to the Lot entity.
-func (_c *InvestmentCreate) AddLots(v ...*Lot) *InvestmentCreate {
+// AddInvestmentLots adds the "investment_lots" edges to the InvestmentLot entity.
+func (_c *InvestmentCreate) AddInvestmentLots(v ...*InvestmentLot) *InvestmentCreate {
 	ids := make([]int, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddLotIDs(ids...)
+	return _c.AddInvestmentLotIDs(ids...)
 }
 
 // Mutation returns the InvestmentMutation object of the builder.
@@ -381,15 +381,15 @@ func (_c *InvestmentCreate) createSpec() (*Investment, *sqlgraph.CreateSpec) {
 		_node.currency_investments = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.LotsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.InvestmentLotsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   investment.LotsTable,
-			Columns: []string{investment.LotsColumn},
+			Table:   investment.InvestmentLotsTable,
+			Columns: []string{investment.InvestmentLotsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt),
+				IDSpec: sqlgraph.NewFieldSpec(investmentlot.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

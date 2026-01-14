@@ -9,6 +9,13 @@ import (
 	"beavermoney.app/ent/transactioncategory"
 )
 
+type BuyInvestmentInputCustom struct {
+	Transaction      *ent.CreateTransactionInput        `json:"transaction"`
+	TransactionEntry *ent.CreateTransactionEntryInput   `json:"transactionEntry"`
+	InvestmentLot    *ent.CreateInvestmentLotInput      `json:"investmentLot"`
+	Fees             []*ent.CreateTransactionEntryInput `json:"fees"`
+}
+
 type CategoryAggregate struct {
 	Category         *ent.TransactionCategory `json:"category"`
 	Total            string                   `json:"total"`
@@ -22,14 +29,27 @@ type CategoryTypeAggregate struct {
 	Categories       []*CategoryAggregate     `json:"categories"`
 }
 
-type CreateCategoryInput struct {
-	Name string                   `json:"name"`
-	Type transactioncategory.Type `json:"type"`
+type CreateExpenseInputCustom struct {
+	Transaction      *ent.CreateTransactionInput        `json:"transaction"`
+	TransactionEntry *ent.CreateTransactionEntryInput   `json:"transactionEntry"`
+	Fees             []*ent.CreateTransactionEntryInput `json:"fees"`
+}
+
+type CreateIncomeInputCustom struct {
+	Transaction      *ent.CreateTransactionInput        `json:"transaction"`
+	TransactionEntry *ent.CreateTransactionEntryInput   `json:"transactionEntry"`
+	Fees             []*ent.CreateTransactionEntryInput `json:"fees"`
 }
 
 type CreateInvestmentInputCustom struct {
 	Input     *ent.CreateInvestmentInput `json:"input"`
 	CostBasis string                     `json:"costBasis"`
+}
+
+type CreateTransferInputCustom struct {
+	Transaction        *ent.CreateTransactionInput        `json:"transaction"`
+	TransactionEntries []*ent.CreateTransactionEntryInput `json:"transactionEntries"`
+	Fees               []*ent.CreateTransactionEntryInput `json:"fees"`
 }
 
 type EquityQuoteResult struct {
@@ -50,7 +70,20 @@ type FinancialReport struct {
 	EndDate                time.Time                `json:"endDate"`
 }
 
+type SellInvestmentInputCustom struct {
+	Transaction      *ent.CreateTransactionInput        `json:"transaction"`
+	TransactionEntry *ent.CreateTransactionEntryInput   `json:"transactionEntry"`
+	InvestmentLot    *ent.CreateInvestmentLotInput      `json:"investmentLot"`
+	Fees             []*ent.CreateTransactionEntryInput `json:"fees"`
+}
+
 type TimePeriodInput struct {
 	StartDate *time.Time `json:"startDate,omitempty"`
 	EndDate   *time.Time `json:"endDate,omitempty"`
+}
+
+type TransferInvestmentInputCustom struct {
+	Transaction    *ent.CreateTransactionInput        `json:"transaction"`
+	InvestmentLots []*ent.CreateInvestmentLotInput    `json:"investmentLots"`
+	Fees           []*ent.CreateTransactionEntryInput `json:"fees"`
 }

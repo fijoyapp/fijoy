@@ -33,8 +33,8 @@ const (
 	EdgeCategory = "category"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
-	// EdgeLots holds the string denoting the lots edge name in mutations.
-	EdgeLots = "lots"
+	// EdgeInvestmentLots holds the string denoting the investment_lots edge name in mutations.
+	EdgeInvestmentLots = "investment_lots"
 	// Table holds the table name of the transaction in the database.
 	Table = "transactions"
 	// UserTable is the table that holds the user relation/edge.
@@ -65,13 +65,13 @@ const (
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
 	TransactionEntriesColumn = "transaction_transaction_entries"
-	// LotsTable is the table that holds the lots relation/edge.
-	LotsTable = "lots"
-	// LotsInverseTable is the table name for the Lot entity.
-	// It exists in this package in order to avoid circular dependency with the "lot" package.
-	LotsInverseTable = "lots"
-	// LotsColumn is the table column denoting the lots relation/edge.
-	LotsColumn = "transaction_lots"
+	// InvestmentLotsTable is the table that holds the investment_lots relation/edge.
+	InvestmentLotsTable = "investment_lots"
+	// InvestmentLotsInverseTable is the table name for the InvestmentLot entity.
+	// It exists in this package in order to avoid circular dependency with the "investmentlot" package.
+	InvestmentLotsInverseTable = "investment_lots"
+	// InvestmentLotsColumn is the table column denoting the investment_lots relation/edge.
+	InvestmentLotsColumn = "transaction_investment_lots"
 )
 
 // Columns holds all SQL columns for transaction fields.
@@ -190,17 +190,17 @@ func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 	}
 }
 
-// ByLotsCount orders the results by lots count.
-func ByLotsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByInvestmentLotsCount orders the results by investment_lots count.
+func ByInvestmentLotsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newLotsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newInvestmentLotsStep(), opts...)
 	}
 }
 
-// ByLots orders the results by lots terms.
-func ByLots(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByInvestmentLots orders the results by investment_lots terms.
+func ByInvestmentLots(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newLotsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newInvestmentLotsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newUserStep() *sqlgraph.Step {
@@ -231,10 +231,10 @@ func newTransactionEntriesStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
 	)
 }
-func newLotsStep() *sqlgraph.Step {
+func newInvestmentLotsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(LotsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, LotsTable, LotsColumn),
+		sqlgraph.To(InvestmentLotsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, InvestmentLotsTable, InvestmentLotsColumn),
 	)
 }

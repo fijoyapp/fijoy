@@ -34,7 +34,7 @@ const transactionCardFragment = graphql`
       name
       type
     }
-    lots {
+    investmentLots {
       id
       amount
       price
@@ -68,8 +68,12 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
 
   return (
     <Fragment>
-      {data.lots?.map((lot) => (
-        <LotCard key={lot.id} data={data} lot={lot} />
+      {data.investmentLots?.map((investmentLot) => (
+        <LotCard
+          key={investmentLot.id}
+          data={data}
+          investmentLot={investmentLot}
+        />
       ))}
       {data.transactionEntries?.map((entry) => (
         <TransactionEntryCard
@@ -123,10 +127,12 @@ function TransactionEntryCard({
 
 function LotCard({
   data,
-  lot,
+  investmentLot,
 }: {
   data: transactionCardFragment$data
-  lot: NonNullable<transactionCardFragment$data['lots']>[number]
+  investmentLot: NonNullable<
+    transactionCardFragment$data['investmentLots']
+  >[number]
 }) {
   const { formatCurrency } = useCurrency()
 
@@ -135,10 +141,10 @@ function LotCard({
       <ItemMedia variant="image">
         <Avatar>
           <AvatarImage
-            src={getLogoStockTickerURL(lot.investment.symbol || '')}
-            alt={lot.investment.symbol || 'unknown logo'}
+            src={getLogoStockTickerURL(investmentLot.investment.symbol || '')}
+            alt={investmentLot.investment.symbol || 'unknown logo'}
           />
-          <AvatarFallback>{lot.investment.symbol}</AvatarFallback>
+          <AvatarFallback>{investmentLot.investment.symbol}</AvatarFallback>
         </Avatar>
       </ItemMedia>
       <ItemContent className="">
@@ -153,16 +159,18 @@ function LotCard({
         <ItemTitle className="line-clamp-1">
           <span className="">
             {formatCurrency({
-              value: currency(lot.price).multiply(currency(lot.amount)),
-              currencyCode: lot.investment.currency.code,
+              value: currency(investmentLot.price).multiply(
+                currency(investmentLot.amount),
+              ),
+              currencyCode: investmentLot.investment.currency.code,
             })}
           </span>
         </ItemTitle>
         <ItemDescription>
-          {lot.amount} {lot.investment.name} @{' '}
+          {investmentLot.amount} {investmentLot.investment.name} @{' '}
           {formatCurrency({
-            value: currency(lot.price),
-            currencyCode: lot.investment.currency.code,
+            value: currency(investmentLot.price),
+            currencyCode: investmentLot.investment.currency.code,
           })}
         </ItemDescription>
       </ItemContent>

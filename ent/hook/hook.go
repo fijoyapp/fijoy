@@ -57,16 +57,16 @@ func (f InvestmentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvestmentMutation", m)
 }
 
-// The LotFunc type is an adapter to allow the use of ordinary
-// function as Lot mutator.
-type LotFunc func(context.Context, *ent.LotMutation) (ent.Value, error)
+// The InvestmentLotFunc type is an adapter to allow the use of ordinary
+// function as InvestmentLot mutator.
+type InvestmentLotFunc func(context.Context, *ent.InvestmentLotMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f LotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.LotMutation); ok {
+func (f InvestmentLotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.InvestmentLotMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LotMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvestmentLotMutation", m)
 }
 
 // The TransactionFunc type is an adapter to allow the use of ordinary

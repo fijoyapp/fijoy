@@ -30,12 +30,17 @@ input CreateInvestmentInputCustom {
 type Mutation {
   createAccount(input: CreateAccountInput!): AccountEdge!
   createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
-  createCategory(input: CreateCategoryInput!): TransactionCategoryEdge!
-}
+  createTransactionCategory(
+    input: CreateTransactionCategoryInput!
+  ): TransactionCategoryEdge!
 
-input CreateCategoryInput {
-  name: String!
-  type: TransactionCategoryType!
+  # Transaction mutations
+  createExpense(input: CreateExpenseInputCustom!): TransactionEdge!
+  createIncome(input: CreateIncomeInputCustom!): TransactionEdge!
+  createTransfer(input: CreateTransferInputCustom!): TransactionEdge!
+  buyInvestment(input: BuyInvestmentInputCustom!): TransactionEdge!
+  sellInvestment(input: SellInvestmentInputCustom!): TransactionEdge!
+  transferInvestment(input: TransferInvestmentInputCustom!): TransactionEdge!
 }
 
 type FinancialReport {
@@ -67,4 +72,49 @@ type CategoryAggregate {
 input TimePeriodInput {
   startDate: Time
   endDate: Time
+}
+
+# Expense: Money out from account
+input CreateExpenseInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+# Income: Money in to account
+input CreateIncomeInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+# Transfer: Between two accounts
+input CreateTransferInputCustom {
+  transaction: CreateTransactionInput!
+  # Should contain two entries: from and to
+  transactionEntries: [CreateTransactionEntryInput!]!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+# Buy Investment: Cash -> Shares
+input BuyInvestmentInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  investmentLot: CreateInvestmentLotInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+# Sell Investment: Shares -> Cash
+input SellInvestmentInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  investmentLot: CreateInvestmentLotInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+# 6. Transfer Investment: Shares between investment accounts
+input TransferInvestmentInputCustom {
+  transaction: CreateTransactionInput!
+  investmentLots: [CreateInvestmentLotInput!]!
+  fees: [CreateTransactionEntryInput!]! = []
 }

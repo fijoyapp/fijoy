@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9b1a93d6d025eaf587abc0ff3650b999>>
+ * @generated SignedSource<<823a2c39d3ef2f6f3b38d8d46f9ff418>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -52,8 +52,8 @@ export type TransactionWhereInput = {
   hasCategoryWith?: ReadonlyArray<TransactionCategoryWhereInput> | null | undefined;
   hasHousehold?: boolean | null | undefined;
   hasHouseholdWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
-  hasLots?: boolean | null | undefined;
-  hasLotsWith?: ReadonlyArray<LotWhereInput> | null | undefined;
+  hasInvestmentLots?: boolean | null | undefined;
+  hasInvestmentLotsWith?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   hasTransactionEntries?: boolean | null | undefined;
   hasTransactionEntriesWith?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
   hasUser?: boolean | null | undefined;
@@ -160,10 +160,10 @@ export type HouseholdWhereInput = {
   hasAccountsWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
   hasCurrency?: boolean | null | undefined;
   hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
+  hasInvestmentLots?: boolean | null | undefined;
+  hasInvestmentLotsWith?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   hasInvestments?: boolean | null | undefined;
   hasInvestmentsWith?: ReadonlyArray<InvestmentWhereInput> | null | undefined;
-  hasLots?: boolean | null | undefined;
-  hasLotsWith?: ReadonlyArray<LotWhereInput> | null | undefined;
   hasTransactionCategories?: boolean | null | undefined;
   hasTransactionCategoriesWith?: ReadonlyArray<TransactionCategoryWhereInput> | null | undefined;
   hasTransactionEntries?: boolean | null | undefined;
@@ -425,8 +425,8 @@ export type InvestmentWhereInput = {
   hasCurrencyWith?: ReadonlyArray<CurrencyWhereInput> | null | undefined;
   hasHousehold?: boolean | null | undefined;
   hasHouseholdWith?: ReadonlyArray<HouseholdWhereInput> | null | undefined;
-  hasLots?: boolean | null | undefined;
-  hasLotsWith?: ReadonlyArray<LotWhereInput> | null | undefined;
+  hasInvestmentLots?: boolean | null | undefined;
+  hasInvestmentLotsWith?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   householdID?: string | null | undefined;
   householdIDIn?: ReadonlyArray<string> | null | undefined;
   householdIDNEQ?: string | null | undefined;
@@ -496,7 +496,7 @@ export type InvestmentWhereInput = {
   valueNEQ?: string | null | undefined;
   valueNotIn?: ReadonlyArray<string> | null | undefined;
 };
-export type LotWhereInput = {
+export type InvestmentLotWhereInput = {
   amount?: string | null | undefined;
   amountGT?: string | null | undefined;
   amountGTE?: string | null | undefined;
@@ -505,7 +505,7 @@ export type LotWhereInput = {
   amountLTE?: string | null | undefined;
   amountNEQ?: string | null | undefined;
   amountNotIn?: ReadonlyArray<string> | null | undefined;
-  and?: ReadonlyArray<LotWhereInput> | null | undefined;
+  and?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   createTime?: any | null | undefined;
   createTimeGT?: any | null | undefined;
   createTimeGTE?: any | null | undefined;
@@ -532,8 +532,8 @@ export type LotWhereInput = {
   idLTE?: string | null | undefined;
   idNEQ?: string | null | undefined;
   idNotIn?: ReadonlyArray<string> | null | undefined;
-  not?: LotWhereInput | null | undefined;
-  or?: ReadonlyArray<LotWhereInput> | null | undefined;
+  not?: InvestmentLotWhereInput | null | undefined;
+  or?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   price?: string | null | undefined;
   priceGT?: string | null | undefined;
   priceGTE?: string | null | undefined;
@@ -875,9 +875,9 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Lot",
+                    "concreteType": "InvestmentLot",
                     "kind": "LinkedField",
-                    "name": "lots",
+                    "name": "investmentLots",
                     "plural": true,
                     "selections": [
                       (v7/*: any*/),
@@ -1037,12 +1037,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d495143f2adafab7c5968f18f43c32bc",
+    "cacheID": "848a163fadca835c6af888c9b643961f",
     "id": null,
     "metadata": {},
     "name": "TransactionsQuery",
     "operationKind": "query",
-    "text": "query TransactionsQuery(\n  $where: TransactionWhereInput\n  $startDate: Time\n  $endDate: Time\n) {\n  ...transactionsPanelFragment_7P6yy\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  lots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment_7P6yy on Query {\n  ...transactionsListFragment_3FC4Qo\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    ...financialSummaryCardsFragment\n  }\n}\n"
+    "text": "query TransactionsQuery(\n  $where: TransactionWhereInput\n  $startDate: Time\n  $endDate: Time\n) {\n  ...transactionsPanelFragment_7P6yy\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment_7P6yy on Query {\n  ...transactionsListFragment_3FC4Qo\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    ...financialSummaryCardsFragment\n  }\n}\n"
   }
 };
 })();

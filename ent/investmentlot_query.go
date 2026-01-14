@@ -10,7 +10,7 @@ import (
 
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
 	"beavermoney.app/ent/transaction"
 	"entgo.io/ent"
@@ -19,57 +19,57 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// LotQuery is the builder for querying Lot entities.
-type LotQuery struct {
+// InvestmentLotQuery is the builder for querying InvestmentLot entities.
+type InvestmentLotQuery struct {
 	config
 	ctx             *QueryContext
-	order           []lot.OrderOption
+	order           []investmentlot.OrderOption
 	inters          []Interceptor
-	predicates      []predicate.Lot
+	predicates      []predicate.InvestmentLot
 	withHousehold   *HouseholdQuery
 	withInvestment  *InvestmentQuery
 	withTransaction *TransactionQuery
 	withFKs         bool
-	loadTotal       []func(context.Context, []*Lot) error
+	loadTotal       []func(context.Context, []*InvestmentLot) error
 	modifiers       []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the LotQuery builder.
-func (_q *LotQuery) Where(ps ...predicate.Lot) *LotQuery {
+// Where adds a new predicate for the InvestmentLotQuery builder.
+func (_q *InvestmentLotQuery) Where(ps ...predicate.InvestmentLot) *InvestmentLotQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *LotQuery) Limit(limit int) *LotQuery {
+func (_q *InvestmentLotQuery) Limit(limit int) *InvestmentLotQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *LotQuery) Offset(offset int) *LotQuery {
+func (_q *InvestmentLotQuery) Offset(offset int) *InvestmentLotQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *LotQuery) Unique(unique bool) *LotQuery {
+func (_q *InvestmentLotQuery) Unique(unique bool) *InvestmentLotQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *LotQuery) Order(o ...lot.OrderOption) *LotQuery {
+func (_q *InvestmentLotQuery) Order(o ...investmentlot.OrderOption) *InvestmentLotQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
 // QueryHousehold chains the current query on the "household" edge.
-func (_q *LotQuery) QueryHousehold() *HouseholdQuery {
+func (_q *InvestmentLotQuery) QueryHousehold() *HouseholdQuery {
 	query := (&HouseholdClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -80,9 +80,9 @@ func (_q *LotQuery) QueryHousehold() *HouseholdQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(lot.Table, lot.FieldID, selector),
+			sqlgraph.From(investmentlot.Table, investmentlot.FieldID, selector),
 			sqlgraph.To(household.Table, household.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, lot.HouseholdTable, lot.HouseholdColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, investmentlot.HouseholdTable, investmentlot.HouseholdColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -91,7 +91,7 @@ func (_q *LotQuery) QueryHousehold() *HouseholdQuery {
 }
 
 // QueryInvestment chains the current query on the "investment" edge.
-func (_q *LotQuery) QueryInvestment() *InvestmentQuery {
+func (_q *InvestmentLotQuery) QueryInvestment() *InvestmentQuery {
 	query := (&InvestmentClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -102,9 +102,9 @@ func (_q *LotQuery) QueryInvestment() *InvestmentQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(lot.Table, lot.FieldID, selector),
+			sqlgraph.From(investmentlot.Table, investmentlot.FieldID, selector),
 			sqlgraph.To(investment.Table, investment.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, lot.InvestmentTable, lot.InvestmentColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, investmentlot.InvestmentTable, investmentlot.InvestmentColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -113,7 +113,7 @@ func (_q *LotQuery) QueryInvestment() *InvestmentQuery {
 }
 
 // QueryTransaction chains the current query on the "transaction" edge.
-func (_q *LotQuery) QueryTransaction() *TransactionQuery {
+func (_q *InvestmentLotQuery) QueryTransaction() *TransactionQuery {
 	query := (&TransactionClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -124,9 +124,9 @@ func (_q *LotQuery) QueryTransaction() *TransactionQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(lot.Table, lot.FieldID, selector),
+			sqlgraph.From(investmentlot.Table, investmentlot.FieldID, selector),
 			sqlgraph.To(transaction.Table, transaction.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, lot.TransactionTable, lot.TransactionColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, investmentlot.TransactionTable, investmentlot.TransactionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -134,21 +134,21 @@ func (_q *LotQuery) QueryTransaction() *TransactionQuery {
 	return query
 }
 
-// First returns the first Lot entity from the query.
-// Returns a *NotFoundError when no Lot was found.
-func (_q *LotQuery) First(ctx context.Context) (*Lot, error) {
+// First returns the first InvestmentLot entity from the query.
+// Returns a *NotFoundError when no InvestmentLot was found.
+func (_q *InvestmentLotQuery) First(ctx context.Context) (*InvestmentLot, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{lot.Label}
+		return nil, &NotFoundError{investmentlot.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *LotQuery) FirstX(ctx context.Context) *Lot {
+func (_q *InvestmentLotQuery) FirstX(ctx context.Context) *InvestmentLot {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -156,22 +156,22 @@ func (_q *LotQuery) FirstX(ctx context.Context) *Lot {
 	return node
 }
 
-// FirstID returns the first Lot ID from the query.
-// Returns a *NotFoundError when no Lot ID was found.
-func (_q *LotQuery) FirstID(ctx context.Context) (id int, err error) {
+// FirstID returns the first InvestmentLot ID from the query.
+// Returns a *NotFoundError when no InvestmentLot ID was found.
+func (_q *InvestmentLotQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{lot.Label}
+		err = &NotFoundError{investmentlot.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *LotQuery) FirstIDX(ctx context.Context) int {
+func (_q *InvestmentLotQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -179,10 +179,10 @@ func (_q *LotQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single Lot entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Lot entity is found.
-// Returns a *NotFoundError when no Lot entities are found.
-func (_q *LotQuery) Only(ctx context.Context) (*Lot, error) {
+// Only returns a single InvestmentLot entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one InvestmentLot entity is found.
+// Returns a *NotFoundError when no InvestmentLot entities are found.
+func (_q *InvestmentLotQuery) Only(ctx context.Context) (*InvestmentLot, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -191,14 +191,14 @@ func (_q *LotQuery) Only(ctx context.Context) (*Lot, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{lot.Label}
+		return nil, &NotFoundError{investmentlot.Label}
 	default:
-		return nil, &NotSingularError{lot.Label}
+		return nil, &NotSingularError{investmentlot.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *LotQuery) OnlyX(ctx context.Context) *Lot {
+func (_q *InvestmentLotQuery) OnlyX(ctx context.Context) *InvestmentLot {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -206,10 +206,10 @@ func (_q *LotQuery) OnlyX(ctx context.Context) *Lot {
 	return node
 }
 
-// OnlyID is like Only, but returns the only Lot ID in the query.
-// Returns a *NotSingularError when more than one Lot ID is found.
+// OnlyID is like Only, but returns the only InvestmentLot ID in the query.
+// Returns a *NotSingularError when more than one InvestmentLot ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *LotQuery) OnlyID(ctx context.Context) (id int, err error) {
+func (_q *InvestmentLotQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
@@ -218,15 +218,15 @@ func (_q *LotQuery) OnlyID(ctx context.Context) (id int, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{lot.Label}
+		err = &NotFoundError{investmentlot.Label}
 	default:
-		err = &NotSingularError{lot.Label}
+		err = &NotSingularError{investmentlot.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *LotQuery) OnlyIDX(ctx context.Context) int {
+func (_q *InvestmentLotQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -234,18 +234,18 @@ func (_q *LotQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of Lots.
-func (_q *LotQuery) All(ctx context.Context) ([]*Lot, error) {
+// All executes the query and returns a list of InvestmentLots.
+func (_q *InvestmentLotQuery) All(ctx context.Context) ([]*InvestmentLot, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*Lot, *LotQuery]()
-	return withInterceptors[[]*Lot](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*InvestmentLot, *InvestmentLotQuery]()
+	return withInterceptors[[]*InvestmentLot](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *LotQuery) AllX(ctx context.Context) []*Lot {
+func (_q *InvestmentLotQuery) AllX(ctx context.Context) []*InvestmentLot {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -253,20 +253,20 @@ func (_q *LotQuery) AllX(ctx context.Context) []*Lot {
 	return nodes
 }
 
-// IDs executes the query and returns a list of Lot IDs.
-func (_q *LotQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of InvestmentLot IDs.
+func (_q *InvestmentLotQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(lot.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(investmentlot.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *LotQuery) IDsX(ctx context.Context) []int {
+func (_q *InvestmentLotQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -275,16 +275,16 @@ func (_q *LotQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (_q *LotQuery) Count(ctx context.Context) (int, error) {
+func (_q *InvestmentLotQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*LotQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*InvestmentLotQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *LotQuery) CountX(ctx context.Context) int {
+func (_q *InvestmentLotQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -293,7 +293,7 @@ func (_q *LotQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *LotQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *InvestmentLotQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -306,7 +306,7 @@ func (_q *LotQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *LotQuery) ExistX(ctx context.Context) bool {
+func (_q *InvestmentLotQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -314,18 +314,18 @@ func (_q *LotQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the LotQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the InvestmentLotQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *LotQuery) Clone() *LotQuery {
+func (_q *InvestmentLotQuery) Clone() *InvestmentLotQuery {
 	if _q == nil {
 		return nil
 	}
-	return &LotQuery{
+	return &InvestmentLotQuery{
 		config:          _q.config,
 		ctx:             _q.ctx.Clone(),
-		order:           append([]lot.OrderOption{}, _q.order...),
+		order:           append([]investmentlot.OrderOption{}, _q.order...),
 		inters:          append([]Interceptor{}, _q.inters...),
-		predicates:      append([]predicate.Lot{}, _q.predicates...),
+		predicates:      append([]predicate.InvestmentLot{}, _q.predicates...),
 		withHousehold:   _q.withHousehold.Clone(),
 		withInvestment:  _q.withInvestment.Clone(),
 		withTransaction: _q.withTransaction.Clone(),
@@ -338,7 +338,7 @@ func (_q *LotQuery) Clone() *LotQuery {
 
 // WithHousehold tells the query-builder to eager-load the nodes that are connected to
 // the "household" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *LotQuery) WithHousehold(opts ...func(*HouseholdQuery)) *LotQuery {
+func (_q *InvestmentLotQuery) WithHousehold(opts ...func(*HouseholdQuery)) *InvestmentLotQuery {
 	query := (&HouseholdClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -349,7 +349,7 @@ func (_q *LotQuery) WithHousehold(opts ...func(*HouseholdQuery)) *LotQuery {
 
 // WithInvestment tells the query-builder to eager-load the nodes that are connected to
 // the "investment" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *LotQuery) WithInvestment(opts ...func(*InvestmentQuery)) *LotQuery {
+func (_q *InvestmentLotQuery) WithInvestment(opts ...func(*InvestmentQuery)) *InvestmentLotQuery {
 	query := (&InvestmentClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -360,7 +360,7 @@ func (_q *LotQuery) WithInvestment(opts ...func(*InvestmentQuery)) *LotQuery {
 
 // WithTransaction tells the query-builder to eager-load the nodes that are connected to
 // the "transaction" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *LotQuery) WithTransaction(opts ...func(*TransactionQuery)) *LotQuery {
+func (_q *InvestmentLotQuery) WithTransaction(opts ...func(*TransactionQuery)) *InvestmentLotQuery {
 	query := (&TransactionClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
@@ -379,15 +379,15 @@ func (_q *LotQuery) WithTransaction(opts ...func(*TransactionQuery)) *LotQuery {
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.Lot.Query().
-//		GroupBy(lot.FieldCreateTime).
+//	client.InvestmentLot.Query().
+//		GroupBy(investmentlot.FieldCreateTime).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *LotQuery) GroupBy(field string, fields ...string) *LotGroupBy {
+func (_q *InvestmentLotQuery) GroupBy(field string, fields ...string) *InvestmentLotGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &LotGroupBy{build: _q}
+	grbuild := &InvestmentLotGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = lot.Label
+	grbuild.label = investmentlot.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -401,23 +401,23 @@ func (_q *LotQuery) GroupBy(field string, fields ...string) *LotGroupBy {
 //		CreateTime time.Time `json:"create_time,omitempty"`
 //	}
 //
-//	client.Lot.Query().
-//		Select(lot.FieldCreateTime).
+//	client.InvestmentLot.Query().
+//		Select(investmentlot.FieldCreateTime).
 //		Scan(ctx, &v)
-func (_q *LotQuery) Select(fields ...string) *LotSelect {
+func (_q *InvestmentLotQuery) Select(fields ...string) *InvestmentLotSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &LotSelect{LotQuery: _q}
-	sbuild.label = lot.Label
+	sbuild := &InvestmentLotSelect{InvestmentLotQuery: _q}
+	sbuild.label = investmentlot.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a LotSelect configured with the given aggregations.
-func (_q *LotQuery) Aggregate(fns ...AggregateFunc) *LotSelect {
+// Aggregate returns a InvestmentLotSelect configured with the given aggregations.
+func (_q *InvestmentLotQuery) Aggregate(fns ...AggregateFunc) *InvestmentLotSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *LotQuery) prepareQuery(ctx context.Context) error {
+func (_q *InvestmentLotQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -429,7 +429,7 @@ func (_q *LotQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !lot.ValidColumn(f) {
+		if !investmentlot.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -440,18 +440,18 @@ func (_q *LotQuery) prepareQuery(ctx context.Context) error {
 		}
 		_q.sql = prev
 	}
-	if lot.Policy == nil {
-		return errors.New("ent: uninitialized lot.Policy (forgotten import ent/runtime?)")
+	if investmentlot.Policy == nil {
+		return errors.New("ent: uninitialized investmentlot.Policy (forgotten import ent/runtime?)")
 	}
-	if err := lot.Policy.EvalQuery(ctx, _q); err != nil {
+	if err := investmentlot.Policy.EvalQuery(ctx, _q); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, error) {
+func (_q *InvestmentLotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*InvestmentLot, error) {
 	var (
-		nodes       = []*Lot{}
+		nodes       = []*InvestmentLot{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [3]bool{
@@ -464,13 +464,13 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 		withFKs = true
 	}
 	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, lot.ForeignKeys...)
+		_spec.Node.Columns = append(_spec.Node.Columns, investmentlot.ForeignKeys...)
 	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*Lot).scanValues(nil, columns)
+		return (*InvestmentLot).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &Lot{config: _q.config}
+		node := &InvestmentLot{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -489,19 +489,19 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 	}
 	if query := _q.withHousehold; query != nil {
 		if err := _q.loadHousehold(ctx, query, nodes, nil,
-			func(n *Lot, e *Household) { n.Edges.Household = e }); err != nil {
+			func(n *InvestmentLot, e *Household) { n.Edges.Household = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := _q.withInvestment; query != nil {
 		if err := _q.loadInvestment(ctx, query, nodes, nil,
-			func(n *Lot, e *Investment) { n.Edges.Investment = e }); err != nil {
+			func(n *InvestmentLot, e *Investment) { n.Edges.Investment = e }); err != nil {
 			return nil, err
 		}
 	}
 	if query := _q.withTransaction; query != nil {
 		if err := _q.loadTransaction(ctx, query, nodes, nil,
-			func(n *Lot, e *Transaction) { n.Edges.Transaction = e }); err != nil {
+			func(n *InvestmentLot, e *Transaction) { n.Edges.Transaction = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -513,9 +513,9 @@ func (_q *LotQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Lot, err
 	return nodes, nil
 }
 
-func (_q *LotQuery) loadHousehold(ctx context.Context, query *HouseholdQuery, nodes []*Lot, init func(*Lot), assign func(*Lot, *Household)) error {
+func (_q *InvestmentLotQuery) loadHousehold(ctx context.Context, query *HouseholdQuery, nodes []*InvestmentLot, init func(*InvestmentLot), assign func(*InvestmentLot, *Household)) error {
 	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Lot)
+	nodeids := make(map[int][]*InvestmentLot)
 	for i := range nodes {
 		fk := nodes[i].HouseholdID
 		if _, ok := nodeids[fk]; !ok {
@@ -542,14 +542,14 @@ func (_q *LotQuery) loadHousehold(ctx context.Context, query *HouseholdQuery, no
 	}
 	return nil
 }
-func (_q *LotQuery) loadInvestment(ctx context.Context, query *InvestmentQuery, nodes []*Lot, init func(*Lot), assign func(*Lot, *Investment)) error {
+func (_q *InvestmentLotQuery) loadInvestment(ctx context.Context, query *InvestmentQuery, nodes []*InvestmentLot, init func(*InvestmentLot), assign func(*InvestmentLot, *Investment)) error {
 	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Lot)
+	nodeids := make(map[int][]*InvestmentLot)
 	for i := range nodes {
-		if nodes[i].investment_lots == nil {
+		if nodes[i].investment_investment_lots == nil {
 			continue
 		}
-		fk := *nodes[i].investment_lots
+		fk := *nodes[i].investment_investment_lots
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -566,7 +566,7 @@ func (_q *LotQuery) loadInvestment(ctx context.Context, query *InvestmentQuery, 
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "investment_lots" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "investment_investment_lots" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -574,14 +574,14 @@ func (_q *LotQuery) loadInvestment(ctx context.Context, query *InvestmentQuery, 
 	}
 	return nil
 }
-func (_q *LotQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*Lot, init func(*Lot), assign func(*Lot, *Transaction)) error {
+func (_q *InvestmentLotQuery) loadTransaction(ctx context.Context, query *TransactionQuery, nodes []*InvestmentLot, init func(*InvestmentLot), assign func(*InvestmentLot, *Transaction)) error {
 	ids := make([]int, 0, len(nodes))
-	nodeids := make(map[int][]*Lot)
+	nodeids := make(map[int][]*InvestmentLot)
 	for i := range nodes {
-		if nodes[i].transaction_lots == nil {
+		if nodes[i].transaction_investment_lots == nil {
 			continue
 		}
-		fk := *nodes[i].transaction_lots
+		fk := *nodes[i].transaction_investment_lots
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -598,7 +598,7 @@ func (_q *LotQuery) loadTransaction(ctx context.Context, query *TransactionQuery
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "transaction_lots" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "transaction_investment_lots" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -607,7 +607,7 @@ func (_q *LotQuery) loadTransaction(ctx context.Context, query *TransactionQuery
 	return nil
 }
 
-func (_q *LotQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *InvestmentLotQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	if len(_q.modifiers) > 0 {
 		_spec.Modifiers = _q.modifiers
@@ -619,8 +619,8 @@ func (_q *LotQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *LotQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(lot.Table, lot.Columns, sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt))
+func (_q *InvestmentLotQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(investmentlot.Table, investmentlot.Columns, sqlgraph.NewFieldSpec(investmentlot.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -629,14 +629,14 @@ func (_q *LotQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, lot.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, investmentlot.FieldID)
 		for i := range fields {
-			if fields[i] != lot.FieldID {
+			if fields[i] != investmentlot.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
 		if _q.withHousehold != nil {
-			_spec.Node.AddColumnOnce(lot.FieldHouseholdID)
+			_spec.Node.AddColumnOnce(investmentlot.FieldHouseholdID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {
@@ -662,12 +662,12 @@ func (_q *LotQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *LotQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *InvestmentLotQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(lot.Table)
+	t1 := builder.Table(investmentlot.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = lot.Columns
+		columns = investmentlot.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -698,33 +698,33 @@ func (_q *LotQuery) sqlQuery(ctx context.Context) *sql.Selector {
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (_q *LotQuery) Modify(modifiers ...func(s *sql.Selector)) *LotSelect {
+func (_q *InvestmentLotQuery) Modify(modifiers ...func(s *sql.Selector)) *InvestmentLotSelect {
 	_q.modifiers = append(_q.modifiers, modifiers...)
 	return _q.Select()
 }
 
-// LotGroupBy is the group-by builder for Lot entities.
-type LotGroupBy struct {
+// InvestmentLotGroupBy is the group-by builder for InvestmentLot entities.
+type InvestmentLotGroupBy struct {
 	selector
-	build *LotQuery
+	build *InvestmentLotQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *LotGroupBy) Aggregate(fns ...AggregateFunc) *LotGroupBy {
+func (_g *InvestmentLotGroupBy) Aggregate(fns ...AggregateFunc) *InvestmentLotGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *LotGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *InvestmentLotGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*LotQuery, *LotGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*InvestmentLotQuery, *InvestmentLotGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *LotGroupBy) sqlScan(ctx context.Context, root *LotQuery, v any) error {
+func (_g *InvestmentLotGroupBy) sqlScan(ctx context.Context, root *InvestmentLotQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -751,28 +751,28 @@ func (_g *LotGroupBy) sqlScan(ctx context.Context, root *LotQuery, v any) error 
 	return sql.ScanSlice(rows, v)
 }
 
-// LotSelect is the builder for selecting fields of Lot entities.
-type LotSelect struct {
-	*LotQuery
+// InvestmentLotSelect is the builder for selecting fields of InvestmentLot entities.
+type InvestmentLotSelect struct {
+	*InvestmentLotQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *LotSelect) Aggregate(fns ...AggregateFunc) *LotSelect {
+func (_s *InvestmentLotSelect) Aggregate(fns ...AggregateFunc) *InvestmentLotSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *LotSelect) Scan(ctx context.Context, v any) error {
+func (_s *InvestmentLotSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*LotQuery, *LotSelect](ctx, _s.LotQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*InvestmentLotQuery, *InvestmentLotSelect](ctx, _s.InvestmentLotQuery, _s, _s.inters, v)
 }
 
-func (_s *LotSelect) sqlScan(ctx context.Context, root *LotQuery, v any) error {
+func (_s *InvestmentLotSelect) sqlScan(ctx context.Context, root *InvestmentLotQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {
@@ -794,7 +794,7 @@ func (_s *LotSelect) sqlScan(ctx context.Context, root *LotQuery, v any) error {
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (_s *LotSelect) Modify(modifiers ...func(s *sql.Selector)) *LotSelect {
+func (_s *InvestmentLotSelect) Modify(modifiers ...func(s *sql.Selector)) *InvestmentLotSelect {
 	_s.modifiers = append(_s.modifiers, modifiers...)
 	return _s
 }

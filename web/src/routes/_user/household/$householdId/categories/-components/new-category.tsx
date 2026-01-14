@@ -52,10 +52,11 @@ const formSchema = z.object({
 
 const newCategoryMutation = graphql`
   mutation newCategoryMutation(
-    $input: CreateCategoryInput!
+    $input: CreateTransactionCategoryInput!
     $connections: [ID!]!
   ) {
-    createCategory(input: $input) @appendEdge(connections: $connections) {
+    createTransactionCategory(input: $input)
+      @appendEdge(connections: $connections) {
       node {
         id
         name

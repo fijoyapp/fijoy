@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	"beavermoney.app/ent/lot"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -16,35 +16,35 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-// LotUpdate is the builder for updating Lot entities.
-type LotUpdate struct {
+// InvestmentLotUpdate is the builder for updating InvestmentLot entities.
+type InvestmentLotUpdate struct {
 	config
 	hooks     []Hook
-	mutation  *LotMutation
+	mutation  *InvestmentLotMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// Where appends a list predicates to the LotUpdate builder.
-func (_u *LotUpdate) Where(ps ...predicate.Lot) *LotUpdate {
+// Where appends a list predicates to the InvestmentLotUpdate builder.
+func (_u *InvestmentLotUpdate) Where(ps ...predicate.InvestmentLot) *InvestmentLotUpdate {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (_u *LotUpdate) SetUpdateTime(v time.Time) *LotUpdate {
+func (_u *InvestmentLotUpdate) SetUpdateTime(v time.Time) *InvestmentLotUpdate {
 	_u.mutation.SetUpdateTime(v)
 	return _u
 }
 
 // SetAmount sets the "amount" field.
-func (_u *LotUpdate) SetAmount(v decimal.Decimal) *LotUpdate {
+func (_u *InvestmentLotUpdate) SetAmount(v decimal.Decimal) *InvestmentLotUpdate {
 	_u.mutation.ResetAmount()
 	_u.mutation.SetAmount(v)
 	return _u
 }
 
 // SetNillableAmount sets the "amount" field if the given value is not nil.
-func (_u *LotUpdate) SetNillableAmount(v *decimal.Decimal) *LotUpdate {
+func (_u *InvestmentLotUpdate) SetNillableAmount(v *decimal.Decimal) *InvestmentLotUpdate {
 	if v != nil {
 		_u.SetAmount(*v)
 	}
@@ -52,20 +52,20 @@ func (_u *LotUpdate) SetNillableAmount(v *decimal.Decimal) *LotUpdate {
 }
 
 // AddAmount adds value to the "amount" field.
-func (_u *LotUpdate) AddAmount(v decimal.Decimal) *LotUpdate {
+func (_u *InvestmentLotUpdate) AddAmount(v decimal.Decimal) *InvestmentLotUpdate {
 	_u.mutation.AddAmount(v)
 	return _u
 }
 
 // SetPrice sets the "price" field.
-func (_u *LotUpdate) SetPrice(v decimal.Decimal) *LotUpdate {
+func (_u *InvestmentLotUpdate) SetPrice(v decimal.Decimal) *InvestmentLotUpdate {
 	_u.mutation.ResetPrice()
 	_u.mutation.SetPrice(v)
 	return _u
 }
 
 // SetNillablePrice sets the "price" field if the given value is not nil.
-func (_u *LotUpdate) SetNillablePrice(v *decimal.Decimal) *LotUpdate {
+func (_u *InvestmentLotUpdate) SetNillablePrice(v *decimal.Decimal) *InvestmentLotUpdate {
 	if v != nil {
 		_u.SetPrice(*v)
 	}
@@ -73,18 +73,18 @@ func (_u *LotUpdate) SetNillablePrice(v *decimal.Decimal) *LotUpdate {
 }
 
 // AddPrice adds value to the "price" field.
-func (_u *LotUpdate) AddPrice(v decimal.Decimal) *LotUpdate {
+func (_u *InvestmentLotUpdate) AddPrice(v decimal.Decimal) *InvestmentLotUpdate {
 	_u.mutation.AddPrice(v)
 	return _u
 }
 
-// Mutation returns the LotMutation object of the builder.
-func (_u *LotUpdate) Mutation() *LotMutation {
+// Mutation returns the InvestmentLotMutation object of the builder.
+func (_u *InvestmentLotUpdate) Mutation() *InvestmentLotMutation {
 	return _u.mutation
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (_u *LotUpdate) Save(ctx context.Context) (int, error) {
+func (_u *InvestmentLotUpdate) Save(ctx context.Context) (int, error) {
 	if err := _u.defaults(); err != nil {
 		return 0, err
 	}
@@ -92,7 +92,7 @@ func (_u *LotUpdate) Save(ctx context.Context) (int, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *LotUpdate) SaveX(ctx context.Context) int {
+func (_u *InvestmentLotUpdate) SaveX(ctx context.Context) int {
 	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -101,55 +101,55 @@ func (_u *LotUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (_u *LotUpdate) Exec(ctx context.Context) error {
+func (_u *InvestmentLotUpdate) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *LotUpdate) ExecX(ctx context.Context) {
+func (_u *InvestmentLotUpdate) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *LotUpdate) defaults() error {
+func (_u *InvestmentLotUpdate) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
-		if lot.UpdateDefaultUpdateTime == nil {
-			return fmt.Errorf("ent: uninitialized lot.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		if investmentlot.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized investmentlot.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
 		}
-		v := lot.UpdateDefaultUpdateTime()
+		v := investmentlot.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *LotUpdate) check() error {
+func (_u *InvestmentLotUpdate) check() error {
 	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Lot.household"`)
+		return errors.New(`ent: clearing a required unique edge "InvestmentLot.household"`)
 	}
 	if _u.mutation.InvestmentCleared() && len(_u.mutation.InvestmentIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Lot.investment"`)
+		return errors.New(`ent: clearing a required unique edge "InvestmentLot.investment"`)
 	}
 	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Lot.transaction"`)
+		return errors.New(`ent: clearing a required unique edge "InvestmentLot.transaction"`)
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (_u *LotUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *LotUpdate {
+func (_u *InvestmentLotUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *InvestmentLotUpdate {
 	_u.modifiers = append(_u.modifiers, modifiers...)
 	return _u
 }
 
-func (_u *LotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+func (_u *InvestmentLotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(lot.Table, lot.Columns, sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(investmentlot.Table, investmentlot.Columns, sqlgraph.NewFieldSpec(investmentlot.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -158,24 +158,24 @@ func (_u *LotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if value, ok := _u.mutation.UpdateTime(); ok {
-		_spec.SetField(lot.FieldUpdateTime, field.TypeTime, value)
+		_spec.SetField(investmentlot.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
-		_spec.SetField(lot.FieldAmount, field.TypeFloat64, value)
+		_spec.SetField(investmentlot.FieldAmount, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedAmount(); ok {
-		_spec.AddField(lot.FieldAmount, field.TypeFloat64, value)
+		_spec.AddField(investmentlot.FieldAmount, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.Price(); ok {
-		_spec.SetField(lot.FieldPrice, field.TypeFloat64, value)
+		_spec.SetField(investmentlot.FieldPrice, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedPrice(); ok {
-		_spec.AddField(lot.FieldPrice, field.TypeFloat64, value)
+		_spec.AddField(investmentlot.FieldPrice, field.TypeFloat64, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{lot.Label}
+			err = &NotFoundError{investmentlot.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -185,30 +185,30 @@ func (_u *LotUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	return _node, nil
 }
 
-// LotUpdateOne is the builder for updating a single Lot entity.
-type LotUpdateOne struct {
+// InvestmentLotUpdateOne is the builder for updating a single InvestmentLot entity.
+type InvestmentLotUpdateOne struct {
 	config
 	fields    []string
 	hooks     []Hook
-	mutation  *LotMutation
+	mutation  *InvestmentLotMutation
 	modifiers []func(*sql.UpdateBuilder)
 }
 
 // SetUpdateTime sets the "update_time" field.
-func (_u *LotUpdateOne) SetUpdateTime(v time.Time) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) SetUpdateTime(v time.Time) *InvestmentLotUpdateOne {
 	_u.mutation.SetUpdateTime(v)
 	return _u
 }
 
 // SetAmount sets the "amount" field.
-func (_u *LotUpdateOne) SetAmount(v decimal.Decimal) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) SetAmount(v decimal.Decimal) *InvestmentLotUpdateOne {
 	_u.mutation.ResetAmount()
 	_u.mutation.SetAmount(v)
 	return _u
 }
 
 // SetNillableAmount sets the "amount" field if the given value is not nil.
-func (_u *LotUpdateOne) SetNillableAmount(v *decimal.Decimal) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) SetNillableAmount(v *decimal.Decimal) *InvestmentLotUpdateOne {
 	if v != nil {
 		_u.SetAmount(*v)
 	}
@@ -216,20 +216,20 @@ func (_u *LotUpdateOne) SetNillableAmount(v *decimal.Decimal) *LotUpdateOne {
 }
 
 // AddAmount adds value to the "amount" field.
-func (_u *LotUpdateOne) AddAmount(v decimal.Decimal) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) AddAmount(v decimal.Decimal) *InvestmentLotUpdateOne {
 	_u.mutation.AddAmount(v)
 	return _u
 }
 
 // SetPrice sets the "price" field.
-func (_u *LotUpdateOne) SetPrice(v decimal.Decimal) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) SetPrice(v decimal.Decimal) *InvestmentLotUpdateOne {
 	_u.mutation.ResetPrice()
 	_u.mutation.SetPrice(v)
 	return _u
 }
 
 // SetNillablePrice sets the "price" field if the given value is not nil.
-func (_u *LotUpdateOne) SetNillablePrice(v *decimal.Decimal) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) SetNillablePrice(v *decimal.Decimal) *InvestmentLotUpdateOne {
 	if v != nil {
 		_u.SetPrice(*v)
 	}
@@ -237,31 +237,31 @@ func (_u *LotUpdateOne) SetNillablePrice(v *decimal.Decimal) *LotUpdateOne {
 }
 
 // AddPrice adds value to the "price" field.
-func (_u *LotUpdateOne) AddPrice(v decimal.Decimal) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) AddPrice(v decimal.Decimal) *InvestmentLotUpdateOne {
 	_u.mutation.AddPrice(v)
 	return _u
 }
 
-// Mutation returns the LotMutation object of the builder.
-func (_u *LotUpdateOne) Mutation() *LotMutation {
+// Mutation returns the InvestmentLotMutation object of the builder.
+func (_u *InvestmentLotUpdateOne) Mutation() *InvestmentLotMutation {
 	return _u.mutation
 }
 
-// Where appends a list predicates to the LotUpdate builder.
-func (_u *LotUpdateOne) Where(ps ...predicate.Lot) *LotUpdateOne {
+// Where appends a list predicates to the InvestmentLotUpdate builder.
+func (_u *InvestmentLotUpdateOne) Where(ps ...predicate.InvestmentLot) *InvestmentLotUpdateOne {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (_u *LotUpdateOne) Select(field string, fields ...string) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) Select(field string, fields ...string) *InvestmentLotUpdateOne {
 	_u.fields = append([]string{field}, fields...)
 	return _u
 }
 
-// Save executes the query and returns the updated Lot entity.
-func (_u *LotUpdateOne) Save(ctx context.Context) (*Lot, error) {
+// Save executes the query and returns the updated InvestmentLot entity.
+func (_u *InvestmentLotUpdateOne) Save(ctx context.Context) (*InvestmentLot, error) {
 	if err := _u.defaults(); err != nil {
 		return nil, err
 	}
@@ -269,7 +269,7 @@ func (_u *LotUpdateOne) Save(ctx context.Context) (*Lot, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *LotUpdateOne) SaveX(ctx context.Context) *Lot {
+func (_u *InvestmentLotUpdateOne) SaveX(ctx context.Context) *InvestmentLot {
 	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -278,68 +278,68 @@ func (_u *LotUpdateOne) SaveX(ctx context.Context) *Lot {
 }
 
 // Exec executes the query on the entity.
-func (_u *LotUpdateOne) Exec(ctx context.Context) error {
+func (_u *InvestmentLotUpdateOne) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *LotUpdateOne) ExecX(ctx context.Context) {
+func (_u *InvestmentLotUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *LotUpdateOne) defaults() error {
+func (_u *InvestmentLotUpdateOne) defaults() error {
 	if _, ok := _u.mutation.UpdateTime(); !ok {
-		if lot.UpdateDefaultUpdateTime == nil {
-			return fmt.Errorf("ent: uninitialized lot.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
+		if investmentlot.UpdateDefaultUpdateTime == nil {
+			return fmt.Errorf("ent: uninitialized investmentlot.UpdateDefaultUpdateTime (forgotten import ent/runtime?)")
 		}
-		v := lot.UpdateDefaultUpdateTime()
+		v := investmentlot.UpdateDefaultUpdateTime()
 		_u.mutation.SetUpdateTime(v)
 	}
 	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *LotUpdateOne) check() error {
+func (_u *InvestmentLotUpdateOne) check() error {
 	if _u.mutation.HouseholdCleared() && len(_u.mutation.HouseholdIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Lot.household"`)
+		return errors.New(`ent: clearing a required unique edge "InvestmentLot.household"`)
 	}
 	if _u.mutation.InvestmentCleared() && len(_u.mutation.InvestmentIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Lot.investment"`)
+		return errors.New(`ent: clearing a required unique edge "InvestmentLot.investment"`)
 	}
 	if _u.mutation.TransactionCleared() && len(_u.mutation.TransactionIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Lot.transaction"`)
+		return errors.New(`ent: clearing a required unique edge "InvestmentLot.transaction"`)
 	}
 	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
-func (_u *LotUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *LotUpdateOne {
+func (_u *InvestmentLotUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *InvestmentLotUpdateOne {
 	_u.modifiers = append(_u.modifiers, modifiers...)
 	return _u
 }
 
-func (_u *LotUpdateOne) sqlSave(ctx context.Context) (_node *Lot, err error) {
+func (_u *InvestmentLotUpdateOne) sqlSave(ctx context.Context) (_node *InvestmentLot, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(lot.Table, lot.Columns, sqlgraph.NewFieldSpec(lot.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(investmentlot.Table, investmentlot.Columns, sqlgraph.NewFieldSpec(investmentlot.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Lot.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "InvestmentLot.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, lot.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, investmentlot.FieldID)
 		for _, f := range fields {
-			if !lot.ValidColumn(f) {
+			if !investmentlot.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != lot.FieldID {
+			if f != investmentlot.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -352,27 +352,27 @@ func (_u *LotUpdateOne) sqlSave(ctx context.Context) (_node *Lot, err error) {
 		}
 	}
 	if value, ok := _u.mutation.UpdateTime(); ok {
-		_spec.SetField(lot.FieldUpdateTime, field.TypeTime, value)
+		_spec.SetField(investmentlot.FieldUpdateTime, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
-		_spec.SetField(lot.FieldAmount, field.TypeFloat64, value)
+		_spec.SetField(investmentlot.FieldAmount, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedAmount(); ok {
-		_spec.AddField(lot.FieldAmount, field.TypeFloat64, value)
+		_spec.AddField(investmentlot.FieldAmount, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.Price(); ok {
-		_spec.SetField(lot.FieldPrice, field.TypeFloat64, value)
+		_spec.SetField(investmentlot.FieldPrice, field.TypeFloat64, value)
 	}
 	if value, ok := _u.mutation.AddedPrice(); ok {
-		_spec.AddField(lot.FieldPrice, field.TypeFloat64, value)
+		_spec.AddField(investmentlot.FieldPrice, field.TypeFloat64, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
-	_node = &Lot{config: _u.config}
+	_node = &InvestmentLot{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{lot.Label}
+			err = &NotFoundError{investmentlot.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

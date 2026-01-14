@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d3d6d8c211cc56f7466cf5fa275c4d28>>
+ * @generated SignedSource<<5874136058c0e4d5856b80e8c3ba84d1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,16 +10,16 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
-export type CreateCategoryInput = {
+export type CreateTransactionCategoryInput = {
   name: string;
   type: TransactionCategoryType;
 };
 export type newCategoryMutation$variables = {
   connections: ReadonlyArray<string>;
-  input: CreateCategoryInput;
+  input: CreateTransactionCategoryInput;
 };
 export type newCategoryMutation$data = {
-  readonly createCategory: {
+  readonly createTransactionCategory: {
     readonly node: {
       readonly id: string;
       readonly name: string;
@@ -55,7 +55,7 @@ v3 = {
   "args": (v2/*: any*/),
   "concreteType": "TransactionCategoryEdge",
   "kind": "LinkedField",
-  "name": "createCategory",
+  "name": "createTransactionCategory",
   "plural": false,
   "selections": [
     {
@@ -125,7 +125,7 @@ return {
         "handle": "appendEdge",
         "key": "",
         "kind": "LinkedHandle",
-        "name": "createCategory",
+        "name": "createTransactionCategory",
         "handleArgs": [
           {
             "kind": "Variable",
@@ -137,16 +137,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6dc77572763cdca10296a593558fedd2",
+    "cacheID": "281613658fff8e3581d6e82e00361788",
     "id": null,
     "metadata": {},
     "name": "newCategoryMutation",
     "operationKind": "mutation",
-    "text": "mutation newCategoryMutation(\n  $input: CreateCategoryInput!\n) {\n  createCategory(input: $input) {\n    node {\n      id\n      name\n      type\n    }\n  }\n}\n"
+    "text": "mutation newCategoryMutation(\n  $input: CreateTransactionCategoryInput!\n) {\n  createTransactionCategory(input: $input) {\n    node {\n      id\n      name\n      type\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "58cc0976cb48d7d82687ec89ac72395e";
+(node as any).hash = "3280783a82ddf528c15d51fde74d5dda";
 
 export default node;
