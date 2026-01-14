@@ -6,7 +6,7 @@ import { useFragment, useMutation } from 'react-relay'
 import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useNavigate } from '@tanstack/react-router'
+// import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import type { newIncomeMutation } from './__generated__/newIncomeMutation.graphql'
 import type { newIncomeFragment$key } from './__generated__/newIncomeFragment.graphql'
@@ -102,7 +102,7 @@ type NewIncomeProps = {
 
 export function NewIncome({ fragmentRef }: NewIncomeProps) {
   const data = useFragment(newIncomeFragment, fragmentRef)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const [showCalendar, setShowCalendar] = useState(false)
 
   const [commitMutation, isMutationInFlight] =
@@ -180,10 +180,10 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
           )
 
           form.reset()
-          navigate({
-            from: '/household/$householdId/transactions/new',
-            to: '/household/$householdId/transactions',
-          })
+          // navigate({
+          //   from: '/household/$householdId/transactions/new',
+          //   to: '/household/$householdId/transactions',
+          // })
           toast.success('Income created successfully!')
         })
         .with({ status: 'error' }, ({ error }) => {
