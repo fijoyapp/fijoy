@@ -1,4 +1,4 @@
-import { EyeIcon, EyeOffIcon, Moon, Sun } from 'lucide-react'
+import { EyeIcon, EyeOffIcon, Moon, Sun, GripVertical, X } from 'lucide-react'
 import {
   Outlet,
   createFileRoute,
@@ -28,6 +28,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
+import { Item } from '@/components/ui/item'
 import {
   Drawer,
   DrawerContent,
@@ -41,7 +42,7 @@ import { useTheme } from '@/components/theme-provider'
 import { PendingComponent } from '@/components/pending-component'
 import { environment } from '@/environment'
 import { CommandMenu } from '@/components/command-menu'
-import { NewTransaction } from './transactions/-components/new-transaction'
+import { LogTransaction } from './transactions/-components/log-transaction'
 import { zodValidator } from '@tanstack/zod-adapter'
 import { useIsMobile } from '@/hooks/use-mobile'
 
@@ -74,14 +75,12 @@ interface RndPosition {
   x: number
   y: number
   width: number
-  height: number
 }
 
 const getDefaultRndPosition = (): RndPosition => ({
   x: window.innerWidth - 700,
   y: 80,
   width: 650,
-  height: 600,
 })
 
 const getRndPositionFromStorage = (): RndPosition => {
@@ -224,12 +223,12 @@ function RouteComponent() {
               if (!open) handleCloseNewTransaction()
             }}
           >
-            <DrawerContent>
-              <DrawerHeader>
+            <DrawerContent className="bg-background">
+              <DrawerHeader className="bg-background">
                 <DrawerTitle>New Transaction</DrawerTitle>
               </DrawerHeader>
-              <div className="overflow-y-auto px-4 pb-4">
-                <NewTransaction fragmentRef={data} />
+              <div className="overflow-y-auto px-4 pb-4 bg-background">
+                <LogTransaction fragmentRef={data} />
               </div>
             </DrawerContent>
           </Drawer>
@@ -239,7 +238,7 @@ function RouteComponent() {
         {!isMobile && search.showNewTransaction && (
           <Rnd
             position={{ x: rndPosition.x, y: rndPosition.y }}
-            size={{ width: rndPosition.width, height: rndPosition.height }}
+            size={{ width: rndPosition.width, height: 'auto' }}
             onDragStop={(_e, d) => {
               setRndPosition((prev) => ({
                 ...prev,
@@ -252,18 +251,44 @@ function RouteComponent() {
                 x: position.x,
                 y: position.y,
                 width: parseInt(ref.style.width),
-                height: parseInt(ref.style.height),
               })
             }}
+            enableResizing={{
+              top: false,
+              right: true,
+              bottom: false,
+              left: true,
+              topRight: false,
+              bottomRight: false,
+              bottomLeft: false,
+              topLeft: false,
+            }}
             minWidth={400}
-            minHeight={400}
             maxWidth={1200}
-            maxHeight={900}
             bounds="window"
             dragHandleClassName="drag-handle"
             style={{ zIndex: 50 }}
           >
-            <NewTransaction fragmentRef={data} />
+            <Item className="w-full overflow-hidden shadow-2xl bg-muted p-0 gap-0 h-full">
+              {/* Drag Handle Header */}
+              <div className="w-full drag-handle flex items-center justify-between border-b bg-muted/50 px-4 py-2 cursor-move">
+                <div className="flex items-center gap-2">
+                  <GripVertical className="h-5 w-5 text-muted-foreground" />
+                  <span className="font-semibold text-sm">Log Transaction</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={handleCloseNewTransaction}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Transaction Form */}
+              <LogTransaction fragmentRef={data} />
+            </Item>
           </Rnd>
         )}
       </SidebarProvider>
