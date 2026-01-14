@@ -1,7 +1,11 @@
 import {
   ArrowLeftRightIcon,
   ChartNoAxesCombinedIcon,
+  CreditCardIcon,
   LayoutGridIcon,
+  ReceiptIcon,
+  TagIcon,
+  TrendingUpIcon,
   WalletIcon,
 } from 'lucide-react'
 import { NavProjects } from './nav-projects'
@@ -36,7 +40,7 @@ const projects: Array<{
         includeSearch: false,
       },
     },
-    icon: ArrowLeftRightIcon,
+    icon: ReceiptIcon,
   },
   {
     name: 'Accounts',
@@ -47,7 +51,7 @@ const projects: Array<{
         includeSearch: false,
       },
     },
-    icon: WalletIcon,
+    icon: CreditCardIcon,
   },
   {
     name: 'Investments',
@@ -58,7 +62,7 @@ const projects: Array<{
         includeSearch: false,
       },
     },
-    icon: ChartNoAxesCombinedIcon,
+    icon: TrendingUpIcon,
   },
   {
     name: 'Categories',
@@ -69,7 +73,7 @@ const projects: Array<{
         includeSearch: false,
       },
     },
-    icon: LayoutGridIcon,
+    icon: TagIcon,
   },
 ]
 
