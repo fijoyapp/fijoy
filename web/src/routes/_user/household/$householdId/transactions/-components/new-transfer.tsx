@@ -1,0 +1,496 @@
+import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
+import { useForm, useStore } from '@tanstack/react-form'
+import { toast } from 'sonner'
+import * as z from 'zod'
+import { useFragment, useMutation } from 'react-relay'
+import currency from 'currency.js'
+import invariant from 'tiny-invariant'
+import { match } from 'ts-pattern'
+import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
+import type { newTransferMutation } from './__generated__/newTransferMutation.graphql'
+import type { newTransferFragment$key } from './__generated__/newTransferFragment.graphql'
+
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox'
+import { useHousehold } from '@/hooks/use-household'
+import { CurrencyInput } from '@/components/currency-input'
+import { commitMutationResult } from '@/lib/relay'
+import { Calendar } from '@/components/ui/calendar'
+
+const formSchema = z.object({
+  description: z
+    .string()
+    .min(1, 'Description must be at least 1 character.')
+    .max(256, 'Description must be at most 256 characters.'),
+  amount: z.number().positive('Amount must be positive'),
+  datetime: z.date(),
+  fromAccountId: z.string().min(1, 'Please select a from account'),
+  toAccountId: z.string().min(1, 'Please select a to account'),
+  categoryId: z.string().min(1, 'Please select a category'),
+})
+
+const newTransferFragment = graphql`
+  fragment newTransferFragment on Query {
+    accounts {
+      edges {
+        node {
+          id
+          name
+          type
+          currency {
+            code
+          }
+        }
+      }
+    }
+    transactionCategories {
+      edges {
+        node {
+          id
+          name
+          type
+        }
+      }
+    }
+  }
+`
+
+const newTransferMutation = graphql`
+  mutation newTransferMutation(
+    $input: CreateTransferInputCustom!
+    $connections: [ID!]!
+  ) {
+    createTransfer(input: $input) @appendEdge(connections: $connections) {
+      node {
+        id
+        description
+        datetime
+        category {
+          name
+        }
+      }
+    }
+  }
+`
+
+type NewTransferProps = {
+  fragmentRef: newTransferFragment$key
+}
+
+export function NewTransfer({ fragmentRef }: NewTransferProps) {
+  const data = useFragment(newTransferFragment, fragmentRef)
+  const navigate = useNavigate()
+  const [showCalendar, setShowCalendar] = useState(false)
+
+  const [commitMutation, isMutationInFlight] =
+    useMutation<newTransferMutation>(newTransferMutation)
+
+  const { household } = useHousehold()
+
+  // Filter accounts - show all non-investment accounts
+  const availableAccounts =
+    data.accounts.edges
+      ?.map((account) => {
+        invariant(account?.node, 'Account node is null')
+        return account.node
+      })
+      .filter((account) => account.type !== 'investment') ?? []
+
+  // Filter categories - only transfer categories
+  const transferCategories =
+    data.transactionCategories.edges
+      ?.map((category) => {
+        invariant(category?.node, 'Category node is null')
+        return category.node
+      })
+      .filter((category) => category.type === 'transfer') ?? []
+
+  const form = useForm({
+    defaultValues: {
+      description: '',
+      amount: 0,
+      datetime: new Date(),
+      fromAccountId: '',
+      toAccountId: '',
+      categoryId: '',
+    },
+    validators: {
+      onSubmit: formSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const formData = formSchema.parse(value)
+
+      const connectionID = ConnectionHandler.getConnectionID(
+        ROOT_ID,
+        'transactionsList_transactions',
+      )
+
+      // For transfers:
+      // - From account gets negative amount (money going out)
+      // - To account gets positive amount (money coming in)
+      const fromAmount = currency(formData.amount).multiply(-1)
+      const toAmount = currency(formData.amount)
+
+      const result = await commitMutationResult<newTransferMutation>(
+        commitMutation,
+        {
+          variables: {
+            input: {
+              transaction: {
+                description: formData.description,
+                datetime: formData.datetime.toISOString(),
+                userID: '', // TODO: Add user context
+                categoryID: formData.categoryId,
+              },
+              transactionEntries: [
+                {
+                  amount: fromAmount.toString(),
+                  accountID: formData.fromAccountId,
+                },
+                {
+                  amount: toAmount.toString(),
+                  accountID: formData.toAccountId,
+                },
+              ],
+              fees: [],
+            },
+            connections: [connectionID],
+          },
+        },
+      )
+
+      match(result)
+        .with({ status: 'success' }, ({ data: resultData }) => {
+          invariant(
+            resultData.createTransfer.node,
+            'No data returned from mutation',
+          )
+
+          form.reset()
+          navigate({
+            from: '/household/$householdId/transactions/new',
+            to: '/household/$householdId/transactions',
+          })
+          toast.success('Transfer created successfully!')
+        })
+        .with({ status: 'error' }, ({ error }) => {
+          toast.error(error.toString())
+        })
+        .exhaustive()
+    },
+  })
+
+  const fromAccountId = useStore(
+    form.store,
+    (state) => state.values.fromAccountId,
+  )
+
+  const fromAccount = availableAccounts.find((acc) => acc.id === fromAccountId)
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>New Transfer</CardTitle>
+        <CardDescription>Transfer money between accounts</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form
+          id="new-transfer-form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            form.handleSubmit()
+          }}
+        >
+          <FieldGroup>
+            <form.Field
+              name="description"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                    <Input
+                      data-1p-ignore
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid}
+                      placeholder="Transfer to savings"
+                      autoComplete="off"
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+
+            <form.Field
+              name="categoryId"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Category</FieldLabel>
+                    <Combobox
+                      items={transferCategories.map((cat) => cat.id)}
+                      itemToStringLabel={(item) =>
+                        transferCategories.find((cat) => cat.id === item)
+                          ?.name || ''
+                      }
+                      value={field.state.value}
+                      onValueChange={(value) => {
+                        field.handleChange(value || '')
+                      }}
+                    >
+                      <ComboboxInput
+                        data-1p-ignore
+                        id={field.name}
+                        name={field.name}
+                        placeholder="Select a category"
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(item: string) => (
+                            <ComboboxItem key={item} value={item}>
+                              {transferCategories.find((cat) => cat.id === item)
+                                ?.name || ''}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+
+            <form.Field
+              name="fromAccountId"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>From Account</FieldLabel>
+                    <Combobox
+                      items={availableAccounts.map((account) => account.id)}
+                      itemToStringLabel={(item) =>
+                        availableAccounts.find((acc) => acc.id === item)
+                          ?.name || ''
+                      }
+                      value={field.state.value}
+                      onValueChange={(value) => {
+                        field.handleChange(value || '')
+                      }}
+                    >
+                      <ComboboxInput
+                        data-1p-ignore
+                        id={field.name}
+                        name={field.name}
+                        placeholder="Select from account"
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(item: string) => (
+                            <ComboboxItem key={item} value={item}>
+                              {availableAccounts.find((acc) => acc.id === item)
+                                ?.name || ''}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+
+            <form.Field
+              name="toAccountId"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>To Account</FieldLabel>
+                    <Combobox
+                      items={availableAccounts.map((account) => account.id)}
+                      itemToStringLabel={(item) =>
+                        availableAccounts.find((acc) => acc.id === item)
+                          ?.name || ''
+                      }
+                      value={field.state.value}
+                      onValueChange={(value) => {
+                        field.handleChange(value || '')
+                      }}
+                    >
+                      <ComboboxInput
+                        data-1p-ignore
+                        id={field.name}
+                        name={field.name}
+                        placeholder="Select to account"
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(item: string) => (
+                            <ComboboxItem key={item} value={item}>
+                              {availableAccounts.find((acc) => acc.id === item)
+                                ?.name || ''}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+
+            <form.Field
+              name="amount"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Amount</FieldLabel>
+                    <FieldDescription>
+                      {fromAccount
+                        ? `Currency: ${fromAccount.currency.code}`
+                        : 'Select from account to see currency'}
+                    </FieldDescription>
+                    <CurrencyInput
+                      id={field.name}
+                      name={field.name}
+                      placeholder="Please enter an amount"
+                      onValueChange={(e) => {
+                        field.handleChange(e.floatValue ?? 0)
+                      }}
+                      value={field.state.value}
+                      locale={household.locale}
+                      currency={
+                        fromAccount?.currency.code ?? household.currency.code
+                      }
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+
+            <form.Field
+              name="datetime"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Date</FieldLabel>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal"
+                      onClick={() => setShowCalendar(!showCalendar)}
+                    >
+                      {field.state.value.toLocaleDateString(household.locale, {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </Button>
+                    {showCalendar && (
+                      <div className="mt-2">
+                        <Calendar
+                          mode="single"
+                          selected={field.state.value}
+                          onSelect={(date) => {
+                            if (date) {
+                              field.handleChange(date)
+                              setShowCalendar(false)
+                            }
+                          }}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date('1900-01-01')
+                          }
+                        />
+                      </div>
+                    )}
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+          </FieldGroup>
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Field orientation="horizontal">
+          <Button type="button" variant="outline" onClick={() => form.reset()}>
+            Reset
+          </Button>
+          <Button
+            disabled={isMutationInFlight}
+            type="submit"
+            form="new-transfer-form"
+          >
+            {isMutationInFlight ? 'Creating...' : 'Create'}
+          </Button>
+        </Field>
+      </CardFooter>
+    </Card>
+  )
+}
