@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<823a2c39d3ef2f6f3b38d8d46f9ff418>>
+ * @generated SignedSource<<3f85c5de48b7d59ded4bac42d930f13b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,10 @@ export type UserHouseholdRole = "admin" | "member" | "%future added value";
 export type UserKeyProvider = "google" | "%future added value";
 export type TransactionWhereInput = {
   and?: ReadonlyArray<TransactionWhereInput> | null | undefined;
+  categoryID?: string | null | undefined;
+  categoryIDIn?: ReadonlyArray<string> | null | undefined;
+  categoryIDNEQ?: string | null | undefined;
+  categoryIDNotIn?: ReadonlyArray<string> | null | undefined;
   createTime?: any | null | undefined;
   createTimeGT?: any | null | undefined;
   createTimeGTE?: any | null | undefined;
@@ -80,6 +84,10 @@ export type TransactionWhereInput = {
   updateTimeLTE?: any | null | undefined;
   updateTimeNEQ?: any | null | undefined;
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  userID?: string | null | undefined;
+  userIDIn?: ReadonlyArray<string> | null | undefined;
+  userIDNEQ?: string | null | undefined;
+  userIDNotIn?: ReadonlyArray<string> | null | undefined;
 };
 export type UserWhereInput = {
   and?: ReadonlyArray<UserWhereInput> | null | undefined;
@@ -156,6 +164,10 @@ export type HouseholdWhereInput = {
   createTimeLTE?: any | null | undefined;
   createTimeNEQ?: any | null | undefined;
   createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  currencyID?: string | null | undefined;
+  currencyIDIn?: ReadonlyArray<string> | null | undefined;
+  currencyIDNEQ?: string | null | undefined;
+  currencyIDNotIn?: ReadonlyArray<string> | null | undefined;
   hasAccounts?: boolean | null | undefined;
   hasAccountsWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
   hasCurrency?: boolean | null | undefined;
@@ -271,6 +283,10 @@ export type AccountWhereInput = {
   createTimeLTE?: any | null | undefined;
   createTimeNEQ?: any | null | undefined;
   createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  currencyID?: string | null | undefined;
+  currencyIDIn?: ReadonlyArray<string> | null | undefined;
+  currencyIDNEQ?: string | null | undefined;
+  currencyIDNotIn?: ReadonlyArray<string> | null | undefined;
   fxRate?: string | null | undefined;
   fxRateGT?: string | null | undefined;
   fxRateGTE?: string | null | undefined;
@@ -343,6 +359,10 @@ export type AccountWhereInput = {
   updateTimeLTE?: any | null | undefined;
   updateTimeNEQ?: any | null | undefined;
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  userID?: string | null | undefined;
+  userIDIn?: ReadonlyArray<string> | null | undefined;
+  userIDNEQ?: string | null | undefined;
+  userIDNotIn?: ReadonlyArray<string> | null | undefined;
   value?: string | null | undefined;
   valueGT?: string | null | undefined;
   valueGTE?: string | null | undefined;
@@ -353,6 +373,10 @@ export type AccountWhereInput = {
   valueNotIn?: ReadonlyArray<string> | null | undefined;
 };
 export type TransactionEntryWhereInput = {
+  accountID?: string | null | undefined;
+  accountIDIn?: ReadonlyArray<string> | null | undefined;
+  accountIDNEQ?: string | null | undefined;
+  accountIDNotIn?: ReadonlyArray<string> | null | undefined;
   amount?: string | null | undefined;
   amountGT?: string | null | undefined;
   amountGTE?: string | null | undefined;
@@ -370,6 +394,10 @@ export type TransactionEntryWhereInput = {
   createTimeLTE?: any | null | undefined;
   createTimeNEQ?: any | null | undefined;
   createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  currencyID?: string | null | undefined;
+  currencyIDIn?: ReadonlyArray<string> | null | undefined;
+  currencyIDNEQ?: string | null | undefined;
+  currencyIDNotIn?: ReadonlyArray<string> | null | undefined;
   hasAccount?: boolean | null | undefined;
   hasAccountWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
   hasCurrency?: boolean | null | undefined;
@@ -392,6 +420,10 @@ export type TransactionEntryWhereInput = {
   idNotIn?: ReadonlyArray<string> | null | undefined;
   not?: TransactionEntryWhereInput | null | undefined;
   or?: ReadonlyArray<TransactionEntryWhereInput> | null | undefined;
+  transactionID?: string | null | undefined;
+  transactionIDIn?: ReadonlyArray<string> | null | undefined;
+  transactionIDNEQ?: string | null | undefined;
+  transactionIDNotIn?: ReadonlyArray<string> | null | undefined;
   updateTime?: any | null | undefined;
   updateTimeGT?: any | null | undefined;
   updateTimeGTE?: any | null | undefined;
@@ -402,6 +434,10 @@ export type TransactionEntryWhereInput = {
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
 };
 export type InvestmentWhereInput = {
+  accountID?: string | null | undefined;
+  accountIDIn?: ReadonlyArray<string> | null | undefined;
+  accountIDNEQ?: string | null | undefined;
+  accountIDNotIn?: ReadonlyArray<string> | null | undefined;
   amount?: string | null | undefined;
   amountGT?: string | null | undefined;
   amountGTE?: string | null | undefined;
@@ -419,6 +455,10 @@ export type InvestmentWhereInput = {
   createTimeLTE?: any | null | undefined;
   createTimeNEQ?: any | null | undefined;
   createTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  currencyID?: string | null | undefined;
+  currencyIDIn?: ReadonlyArray<string> | null | undefined;
+  currencyIDNEQ?: string | null | undefined;
+  currencyIDNotIn?: ReadonlyArray<string> | null | undefined;
   hasAccount?: boolean | null | undefined;
   hasAccountWith?: ReadonlyArray<AccountWhereInput> | null | undefined;
   hasCurrency?: boolean | null | undefined;
@@ -532,6 +572,10 @@ export type InvestmentLotWhereInput = {
   idLTE?: string | null | undefined;
   idNEQ?: string | null | undefined;
   idNotIn?: ReadonlyArray<string> | null | undefined;
+  investmentID?: string | null | undefined;
+  investmentIDIn?: ReadonlyArray<string> | null | undefined;
+  investmentIDNEQ?: string | null | undefined;
+  investmentIDNotIn?: ReadonlyArray<string> | null | undefined;
   not?: InvestmentLotWhereInput | null | undefined;
   or?: ReadonlyArray<InvestmentLotWhereInput> | null | undefined;
   price?: string | null | undefined;
@@ -542,6 +586,10 @@ export type InvestmentLotWhereInput = {
   priceLTE?: string | null | undefined;
   priceNEQ?: string | null | undefined;
   priceNotIn?: ReadonlyArray<string> | null | undefined;
+  transactionID?: string | null | undefined;
+  transactionIDIn?: ReadonlyArray<string> | null | undefined;
+  transactionIDNEQ?: string | null | undefined;
+  transactionIDNotIn?: ReadonlyArray<string> | null | undefined;
   updateTime?: any | null | undefined;
   updateTimeGT?: any | null | undefined;
   updateTimeGTE?: any | null | undefined;
@@ -685,6 +733,10 @@ export type UserKeyWhereInput = {
   updateTimeLTE?: any | null | undefined;
   updateTimeNEQ?: any | null | undefined;
   updateTimeNotIn?: ReadonlyArray<any> | null | undefined;
+  userID?: string | null | undefined;
+  userIDIn?: ReadonlyArray<string> | null | undefined;
+  userIDNEQ?: string | null | undefined;
+  userIDNotIn?: ReadonlyArray<string> | null | undefined;
 };
 export type TransactionsQuery$variables = {
   endDate?: any | null | undefined;
