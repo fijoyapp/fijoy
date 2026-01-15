@@ -46,6 +46,7 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
           className="no-underline! "
           from="/household/$householdId/"
           to="/household/$householdId/investments/$investmentId"
+          search={(prev) => ({ ...prev })}
           activeOptions={{ exact: true }}
           params={{ investmentId: data.id }}
         >

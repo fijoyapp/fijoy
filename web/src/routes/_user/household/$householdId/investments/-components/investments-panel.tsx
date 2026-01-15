@@ -98,6 +98,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         <Link
           from={'/household/$householdId/investments'}
           to={'/household/$householdId/investments/new'}
+          search={(prev) => ({ ...prev })}
         >
           <Button nativeButton={true} className="rounded-full" size="icon-xl">
             <PlusIcon />

@@ -48,6 +48,7 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
           className="no-underline! "
           from="/household/$householdId/"
           to="/household/$householdId/accounts/$accountId"
+          search={(prev) => ({ ...prev })}
           activeOptions={{ exact: true }}
           params={{ accountId: data.id }}
         >
