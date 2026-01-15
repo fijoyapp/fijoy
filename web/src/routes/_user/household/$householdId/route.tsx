@@ -24,7 +24,12 @@ import {
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
-import { Drawer, DrawerContent } from '@/components/ui/drawer'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
 import {
@@ -180,24 +185,23 @@ function RouteComponent() {
         </SidebarInset>
         <MobileFabNav />
 
-        {/* Mobile: Drawer for New Transaction Form */}
+        {/* Mobile: Sheet for New Transaction Form */}
         {isMobile && (
-          <Drawer
+          <Sheet
             open={search.showNewTransaction}
             onOpenChange={(open) => {
               setLogTransactionOpen(open)
             }}
           >
-            <DrawerContent className="bg-background">
-              {/* <DrawerHeader className="bg-background"> */}
-              {/*   <DrawerTitle>Log Transaction</DrawerTitle> */}
-              {/* </DrawerHeader> */}
-              <div className="py-2"></div>
-              <div className="overflow-y-auto bg-background">
+            <SheetContent side="bottom" className="">
+              <SheetHeader className="px-6 py-4">
+                <SheetTitle>Log Transaction</SheetTitle>
+              </SheetHeader>
+              <div className="overflow-y-auto">
                 <LogTransaction fragmentRef={data} />
               </div>
-            </DrawerContent>
-          </Drawer>
+            </SheetContent>
+          </Sheet>
         )}
 
         {/* Desktop: Resizable & Draggable New Transaction Form */}
