@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8b5b5f7b67282c844edc3c4cbbb91b95>>
+ * @generated SignedSource<<3b249e4510b77827d0b08ca341016312>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,6 @@ export type CreateAccountInput = {
   type: AccountType;
 };
 export type newAccountMutation$variables = {
-  connections: ReadonlyArray<string>;
   input: CreateAccountInput;
 };
 export type newAccountMutation$data = {
@@ -39,45 +38,42 @@ export type newAccountMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "connections"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "input",
     "variableName": "input"
   }
 ],
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "type",
   "storageKey": null
 },
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -86,17 +82,14 @@ v6 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "newAccountMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "AccountEdge",
         "kind": "LinkedField",
         "name": "createAccount",
@@ -110,10 +103,10 @@ return {
             "name": "node",
             "plural": false,
             "selections": [
+              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v6/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -131,16 +124,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "newAccountMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "AccountEdge",
         "kind": "LinkedField",
         "name": "createAccount",
@@ -154,10 +144,10 @@ return {
             "name": "node",
             "plural": false,
             "selections": [
+              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -187,7 +177,7 @@ return {
                     "name": "code",
                     "storageKey": null
                   },
-                  (v3/*: any*/)
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -199,8 +189,8 @@ return {
                 "name": "user",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
-                  (v3/*: any*/)
+                  (v4/*: any*/),
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -216,22 +206,6 @@ return {
           }
         ],
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v2/*: any*/),
-        "filters": null,
-        "handle": "appendEdge",
-        "key": "",
-        "kind": "LinkedHandle",
-        "name": "createAccount",
-        "handleArgs": [
-          {
-            "kind": "Variable",
-            "name": "connections",
-            "variableName": "connections"
-          }
-        ]
       }
     ]
   },
@@ -246,6 +220,6 @@ return {
 };
 })();
 
-(node as any).hash = "84a87376eeaadbe67af55e5af0d040b2";
+(node as any).hash = "89e6fc7777354e0ba5f19a9f6eef34dc";
 
 export default node;
