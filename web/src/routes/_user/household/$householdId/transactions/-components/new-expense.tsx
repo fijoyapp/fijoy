@@ -44,6 +44,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
+import { getDefaultDates, parseDateRangeFromURL } from '@/lib/date-range'
 
 const formSchema = z.object({
   description: z
@@ -87,8 +88,9 @@ const newExpenseMutation = graphql`
     $input: CreateExpenseInputCustom!
     $connections: [ID!]!
   ) {
-    createExpense(input: $input) @appendEdge(connections: $connections) {
+    createExpense(input: $input) @prependEdge(connections: $connections) {
       node {
+        ...transactionCardFragment
         id
         description
         datetime
@@ -145,9 +147,18 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
     onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
 
+      const dates = getDefaultDates()
+      const period = parseDateRangeFromURL(dates.start, dates.end)
+
       const connectionID = ConnectionHandler.getConnectionID(
         ROOT_ID,
         'transactionsList_transactions',
+        {
+          where: {
+            datetimeGTE: period.startDate,
+            datetimeLT: period.endDate,
+          },
+        },
       )
 
       // Amount is negative for expenses
@@ -181,7 +192,7 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
             'No data returned from mutation',
           )
 
-          form.reset()
+          // form.reset()
           // navigate({
           //   from: '/household/$householdId/transactions/new',
           //   to: '/household/$householdId/transactions',

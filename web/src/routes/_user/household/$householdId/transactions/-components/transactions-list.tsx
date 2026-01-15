@@ -21,7 +21,7 @@ const transactionsListFragment = graphql`
       after: $cursor
       where: $where
       orderBy: { field: DATETIME, direction: DESC }
-    ) @connection(key: "transactionsList_transactions") {
+    ) @connection(key: "transactionsList_transactions", filters: ["where"]) {
       edges {
         node {
           id

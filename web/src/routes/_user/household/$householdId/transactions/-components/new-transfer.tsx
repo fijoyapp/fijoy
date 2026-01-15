@@ -44,6 +44,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
+import { getDefaultDates, parseDateRangeFromURL } from '@/lib/date-range'
 
 const formSchema = z.object({
   description: z
@@ -88,8 +89,9 @@ const newTransferMutation = graphql`
     $input: CreateTransferInputCustom!
     $connections: [ID!]!
   ) {
-    createTransfer(input: $input) @appendEdge(connections: $connections) {
+    createTransfer(input: $input) @prependEdge(connections: $connections) {
       node {
+        ...transactionCardFragment
         id
         description
         datetime
@@ -147,9 +149,18 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
     onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
 
+      const dates = getDefaultDates()
+      const period = parseDateRangeFromURL(dates.start, dates.end)
+
       const connectionID = ConnectionHandler.getConnectionID(
         ROOT_ID,
         'transactionsList_transactions',
+        {
+          where: {
+            datetimeGTE: period.startDate,
+            datetimeLT: period.endDate,
+          },
+        },
       )
 
       // For transfers:
@@ -192,7 +203,7 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
             'No data returned from mutation',
           )
 
-          form.reset()
+          // form.reset()
           // navigate({
           //   from: '/household/$householdId/transactions/new',
           //   to: '/household/$householdId/transactions',

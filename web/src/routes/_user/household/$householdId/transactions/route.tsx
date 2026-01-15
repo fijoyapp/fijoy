@@ -10,22 +10,8 @@ import { PendingComponent } from '@/components/pending-component'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { transactionsQuery } from './-transactions-query'
 import { type TransactionsQuery } from './__generated__/TransactionsQuery.graphql'
-import {
-  getDateRangeForPreset,
-  DATE_RANGE_PRESETS,
-  parseDateRangeFromURL,
-} from '@/lib/date-range'
-import { format } from 'date-fns'
+import { parseDateRangeFromURL, getDefaultDates } from '@/lib/date-range'
 import { zodValidator } from '@tanstack/zod-adapter'
-
-// Get default "This Month" dates
-const getDefaultDates = () => {
-  const range = getDateRangeForPreset(DATE_RANGE_PRESETS.THIS_MONTH)
-  return {
-    start: format(range.startDate, 'yyyy-MM-dd'),
-    end: format(range.endDate, 'yyyy-MM-dd'),
-  }
-}
 
 const defaults = getDefaultDates()
 

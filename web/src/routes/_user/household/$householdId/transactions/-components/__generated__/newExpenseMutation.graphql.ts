@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<377c63ece5eaf92336e2f3046a9a83d7>>
+ * @generated SignedSource<<1d9f876a66f8e867e7f4b8fd84a6f3db>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
 export type CreateExpenseInputCustom = {
   fees?: ReadonlyArray<CreateTransactionEntryInput>;
   transaction: CreateTransactionInput;
@@ -36,6 +37,7 @@ export type newExpenseMutation$data = {
       readonly datetime: any;
       readonly description: string | null | undefined;
       readonly id: string;
+      readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment">;
     } | null | undefined;
   };
 };
@@ -89,6 +91,32 @@ v6 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "amount",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Currency",
+  "kind": "LinkedField",
+  "name": "currency",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "code",
+      "storageKey": null
+    },
+    (v3/*: any*/)
+  ],
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -116,6 +144,11 @@ return {
             "name": "node",
             "plural": false,
             "selections": [
+              {
+                "args": null,
+                "kind": "FragmentSpread",
+                "name": "transactionCardFragment"
+              },
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
@@ -167,7 +200,6 @@ return {
             "plural": false,
             "selections": [
               (v3/*: any*/),
-              (v4/*: any*/),
               (v5/*: any*/),
               {
                 "alias": null,
@@ -178,10 +210,86 @@ return {
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "type",
+                    "storageKey": null
+                  },
                   (v3/*: any*/)
                 ],
                 "storageKey": null
-              }
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "InvestmentLot",
+                "kind": "LinkedField",
+                "name": "investmentLots",
+                "plural": true,
+                "selections": [
+                  (v3/*: any*/),
+                  (v7/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "price",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Investment",
+                    "kind": "LinkedField",
+                    "name": "investment",
+                    "plural": false,
+                    "selections": [
+                      (v6/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "symbol",
+                        "storageKey": null
+                      },
+                      (v8/*: any*/),
+                      (v3/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "TransactionEntry",
+                "kind": "LinkedField",
+                "name": "transactionEntries",
+                "plural": true,
+                "selections": [
+                  (v3/*: any*/),
+                  (v7/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Account",
+                    "kind": "LinkedField",
+                    "name": "account",
+                    "plural": false,
+                    "selections": [
+                      (v6/*: any*/),
+                      (v8/*: any*/),
+                      (v3/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              (v4/*: any*/)
             ],
             "storageKey": null
           }
@@ -192,7 +300,7 @@ return {
         "alias": null,
         "args": (v2/*: any*/),
         "filters": null,
-        "handle": "appendEdge",
+        "handle": "prependEdge",
         "key": "",
         "kind": "LinkedHandle",
         "name": "createExpense",
@@ -207,16 +315,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8fdf1d31205becd6ba6cec11e2229d72",
+    "cacheID": "5c94afa2f2cf5a624eb0ac9c94ef967e",
     "id": null,
     "metadata": {},
     "name": "newExpenseMutation",
     "operationKind": "mutation",
-    "text": "mutation newExpenseMutation(\n  $input: CreateExpenseInputCustom!\n) {\n  createExpense(input: $input) {\n    node {\n      id\n      description\n      datetime\n      category {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "mutation newExpenseMutation(\n  $input: CreateExpenseInputCustom!\n) {\n  createExpense(input: $input) {\n    node {\n      ...transactionCardFragment\n      id\n      description\n      datetime\n      category {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b27a336eea2e8cac8b8235c919d0100c";
+(node as any).hash = "1d62027afce077aa8e0fcaaf5f0284c0";
 
 export default node;
