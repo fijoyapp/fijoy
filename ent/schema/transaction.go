@@ -39,7 +39,12 @@ func (Transaction) Edges() []ent.Edge {
 			Field("user_id").
 			Ref("transactions").
 			Unique().
-			Required(),
+			Required().
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 		edge.From("household", Household.Type).
 			Field("household_id").
 			Ref("transactions").

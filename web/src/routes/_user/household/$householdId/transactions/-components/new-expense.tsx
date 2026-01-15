@@ -158,7 +158,6 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
               transaction: {
                 description: formData.description,
                 datetime: formData.datetime.toISOString(),
-                userID: '', // TODO: Add user context
                 categoryID: formData.categoryId,
               },
               transactionEntry: {
