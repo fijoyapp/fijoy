@@ -125,8 +125,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
     // Now navigate - the route loader will read from Relay store cache
     navigate({
-      from: '/household/$householdId/categories',
-      to: '/household/$householdId/categories',
+      to: '.',
       search: (prev) => ({
         ...prev,
         start,
