@@ -24,12 +24,6 @@ import {
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
 import {
@@ -180,29 +174,16 @@ function RouteComponent() {
             <div className="px-1"></div>
           </header>
           <div className="flex flex-1 flex-col">
-            <Outlet />
+            {search.showNewTransaction && isMobile ? (
+              <div className="p-4">
+                <LogTransaction fragmentRef={data} />
+              </div>
+            ) : (
+              <Outlet />
+            )}
           </div>
         </SidebarInset>
         <MobileFabNav />
-
-        {/* Mobile: Sheet for New Transaction Form */}
-        {isMobile && (
-          <Sheet
-            open={search.showNewTransaction}
-            onOpenChange={(open) => {
-              setLogTransactionOpen(open)
-            }}
-          >
-            <SheetContent side="bottom" className="">
-              <SheetHeader className="px-6 py-4">
-                <SheetTitle>Log Transaction</SheetTitle>
-              </SheetHeader>
-              <div className="overflow-y-auto">
-                <LogTransaction fragmentRef={data} />
-              </div>
-            </SheetContent>
-          </Sheet>
-        )}
 
         {/* Desktop: Resizable & Draggable New Transaction Form */}
         {!isMobile && search.showNewTransaction && (
