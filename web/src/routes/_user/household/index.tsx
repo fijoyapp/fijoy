@@ -1,6 +1,6 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
+import { fetchQuery, graphql } from 'relay-runtime'
 import type { householdIdQuery } from './__generated__/householdIdQuery.graphql'
 import { environment } from '@/environment'
 import { PendingComponent } from '@/components/pending-component'
@@ -8,12 +8,17 @@ import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 
 export const Route = createFileRoute('/_user/household/')({
   component: RouteComponent,
-  loader: () => {
+  loader: async () => {
+    await fetchQuery<householdIdQuery>(
+      environment,
+      householdIdQuery,
+      {},
+    ).toPromise()
     return loadQuery<householdIdQuery>(
       environment,
       householdIdQuery,
       {},
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-only' },
     )
   },
   pendingComponent: PendingComponent,

@@ -1,6 +1,6 @@
 import { EyeIcon, EyeOffIcon, Moon, Sun, GripVertical, X } from 'lucide-react'
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { graphql } from 'relay-runtime'
+import { fetchQuery, graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
 import { Rnd } from 'react-rnd'
@@ -65,20 +65,26 @@ const searchSchema = z.object({
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
   validateSearch: zodValidator(searchSchema),
-  beforeLoad: ({ params }) => {
+  loader: async ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
+    await fetchQuery<routeHouseholdIdQuery>(
+      environment,
+      routeHouseholdIdQuery,
+      {},
+    ).toPromise()
+
     return loadQuery<routeHouseholdIdQuery>(
       environment,
       routeHouseholdIdQuery,
       {},
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-only' },
     )
   },
   pendingComponent: PendingComponent,
 })
 
 function RouteComponent() {
-  const queryRef = Route.useRouteContext()
+  const queryRef = Route.useLoaderData()
   const data = usePreloadedQuery<routeHouseholdIdQuery>(
     routeHouseholdIdQuery,
     queryRef,

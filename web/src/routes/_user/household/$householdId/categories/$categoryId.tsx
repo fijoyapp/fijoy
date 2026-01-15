@@ -11,7 +11,8 @@ export const Route = createFileRoute(
   '/_user/household/$householdId/categories/$categoryId',
 )({
   component: RouteComponent,
-  beforeLoad: ({ params, search }) => {
+  loaderDeps: ({ search }) => search,
+  loader: ({ params, deps: search }) => {
     const period = parseDateRangeFromURL(search.start, search.end)
     return loadQuery<CategoryIdQuery>(
       environment,
@@ -36,7 +37,7 @@ const CategoryIdQuery = graphql`
 `
 
 function RouteComponent() {
-  const queryRef = Route.useRouteContext()
+  const queryRef = Route.useLoaderData()
 
   const data = usePreloadedQuery<CategoryIdQuery>(CategoryIdQuery, queryRef)
 
