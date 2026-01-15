@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { LOCAL_STORAGE_THEME } from '@/constant'
+import { LOCAL_STORAGE_THEME_KEY } from '@/constant'
 
 type Theme = 'dark' | 'light' | 'system'
 
@@ -24,7 +24,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
   children,
   defaultTheme = 'system',
-  storageKey = LOCAL_STORAGE_THEME,
+  storageKey = LOCAL_STORAGE_THEME_KEY,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
