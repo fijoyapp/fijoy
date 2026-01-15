@@ -55,8 +55,7 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
 
     // Now navigate - the route loader will read from Relay store cache
     navigate({
-      from: '/household/$householdId/transactions',
-      to: '/household/$householdId/transactions',
+      to: '.',
       search: (prev) => ({
         ...prev,
         start,
