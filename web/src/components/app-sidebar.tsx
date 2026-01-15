@@ -1,14 +1,4 @@
-import {
-  CreditCardIcon,
-  ReceiptIcon,
-  TagIcon,
-  TrendingUpIcon,
-} from 'lucide-react'
 import { NavProjects } from './nav-projects'
-import type { LucideIcon } from 'lucide-react'
-
-// import { NavMain } from '@/components/nav-main'
-import type { LinkOptions } from '@tanstack/react-router'
 import { NavUser } from '@/components/nav-user'
 import { HouseholdSwitcher } from '@/components/household-switcher'
 import {
@@ -21,73 +11,7 @@ import {
 import { graphql } from 'relay-runtime'
 import { appSidebarFragment$key } from './__generated__/appSidebarFragment.graphql'
 import { useFragment } from 'react-relay'
-
-const projects: Array<{
-  name: string
-  link: LinkOptions
-  icon: LucideIcon
-}> = [
-  {
-    name: 'Transactions',
-    link: {
-      to: '/household/$householdId/transactions',
-      activeOptions: {
-        exact: false,
-        includeSearch: false,
-      },
-      search: (prev) => ({
-        ...prev,
-        showNewTransaction: prev.showNewTransaction,
-      }),
-    },
-    icon: ReceiptIcon,
-  },
-  {
-    name: 'Accounts',
-    link: {
-      to: '/household/$householdId/accounts',
-      activeOptions: {
-        exact: false,
-        includeSearch: false,
-      },
-      search: (prev) => ({
-        ...prev,
-        showNewTransaction: prev.showNewTransaction,
-      }),
-    },
-    icon: CreditCardIcon,
-  },
-  {
-    name: 'Investments',
-    link: {
-      to: '/household/$householdId/investments',
-      activeOptions: {
-        exact: false,
-        includeSearch: false,
-      },
-      search: (prev) => ({
-        ...prev,
-        showNewTransaction: prev.showNewTransaction,
-      }),
-    },
-    icon: TrendingUpIcon,
-  },
-  {
-    name: 'Categories',
-    link: {
-      to: '/household/$householdId/categories',
-      activeOptions: {
-        exact: false,
-        includeSearch: false,
-      },
-      search: (prev) => ({
-        ...prev,
-        showNewTransaction: prev.showNewTransaction,
-      }),
-    },
-    icon: TagIcon,
-  },
-]
+import { NAV } from '@/constant'
 
 const user = {
   name: 'Joey',
@@ -114,7 +38,7 @@ export function AppSidebar({ fragmentRef, ...props }: AppSidebarProps) {
         <HouseholdSwitcher fragmentRef={data} />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={projects} />
+        <NavProjects projects={NAV} />
         {/* <NavMain items={data.navMain} /> */}
       </SidebarContent>
       <SidebarFooter>

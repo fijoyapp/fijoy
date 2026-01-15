@@ -1,3 +1,12 @@
+import { LinkOptions } from '@tanstack/react-router'
+import {
+  CreditCardIcon,
+  LucideIcon,
+  ReceiptIcon,
+  TagIcon,
+  TrendingUpIcon,
+} from 'lucide-react'
+
 export const LOCAL_STORAGE_HOUSEHOLD_ID_KEY = 'householdId'
 export const LOCAL_STORAGE_TOKEN_KEY = 'token'
 export const LOCAL_STORAGE_PRIVACY_MODE_KEY = 'privacyMode'
@@ -30,3 +39,70 @@ export const ACCOUNT_TYPE_DESCRIPTION: Record<string, string> = {
   liability:
     'Debts or obligations you owe to others, such as credit cards or loans',
 }
+
+export const NAV: Array<{
+  name: string
+  link: LinkOptions
+  icon: LucideIcon
+}> = [
+  {
+    name: 'Transactions',
+    link: {
+      to: '/household/$householdId/transactions',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
+    },
+    icon: ReceiptIcon,
+  },
+  {
+    name: 'Accounts',
+    link: {
+      to: '/household/$householdId/accounts',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
+    },
+    icon: CreditCardIcon,
+  },
+  {
+    name: 'Investments',
+    link: {
+      to: '/household/$householdId/investments',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
+    },
+    icon: TrendingUpIcon,
+  },
+  {
+    name: 'Categories',
+    link: {
+      to: '/household/$householdId/categories',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
+    },
+    icon: TagIcon,
+  },
+]

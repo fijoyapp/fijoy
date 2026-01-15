@@ -1,5 +1,10 @@
 import { EyeIcon, EyeOffIcon, Moon, Sun, GripVertical, X } from 'lucide-react'
-import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
+import {
+  Navigate,
+  Outlet,
+  createFileRoute,
+  useNavigate,
+} from '@tanstack/react-router'
 import { fetchQuery, graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
@@ -174,16 +179,17 @@ function RouteComponent() {
             <div className="px-1"></div>
           </header>
           <div className="flex flex-1 flex-col">
-            {search.showNewTransaction && isMobile ? (
-              <div className="p-4">
-                <LogTransaction fragmentRef={data} />
-              </div>
-            ) : (
-              <Outlet />
-            )}
+            <Outlet />
           </div>
         </SidebarInset>
         <MobileFabNav />
+        {isMobile && search.showNewTransaction && (
+          <Navigate
+            from={'/household/$householdId'}
+            to={'/household/$householdId/transactions/new'}
+            search={(prev) => ({ ...prev, showNewTransaction: false })}
+          />
+        )}
 
         {/* Desktop: Resizable & Draggable New Transaction Form */}
         {!isMobile && search.showNewTransaction && (
