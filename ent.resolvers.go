@@ -267,7 +267,7 @@ func (r *createInvestmentInputResolver) Amount(ctx context.Context, obj *ent.Cre
 
 	dec, err := decimal.NewFromString(*data)
 	if err != nil {
-		return fmt.Errorf("invalid decimal string for balance: %v", err)
+		return fmt.Errorf("invalid decimal string for amount: %v", err)
 	}
 
 	obj.Amount = &dec
@@ -276,17 +276,35 @@ func (r *createInvestmentInputResolver) Amount(ctx context.Context, obj *ent.Cre
 
 // Amount is the resolver for the amount field.
 func (r *createInvestmentLotInputResolver) Amount(ctx context.Context, obj *ent.CreateInvestmentLotInput, data string) error {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for amount: %v", err)
+	}
+
+	obj.Amount = dec
+	return nil
 }
 
 // Price is the resolver for the price field.
 func (r *createInvestmentLotInputResolver) Price(ctx context.Context, obj *ent.CreateInvestmentLotInput, data string) error {
-	panic(fmt.Errorf("not implemented: Price - price"))
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for price: %v", err)
+	}
+
+	obj.Price = dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.
 func (r *createTransactionEntryInputResolver) Amount(ctx context.Context, obj *ent.CreateTransactionEntryInput, data string) error {
-	panic(fmt.Errorf("not implemented: Amount - amount"))
+	dec, err := decimal.NewFromString(data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for amount: %v", err)
+	}
+
+	obj.Amount = dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.
