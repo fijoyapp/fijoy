@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e048e065f0b5fe03dc476038926990ff>>
+ * @generated SignedSource<<3b3e1ed46b69ee4f14d951dc23387cb7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -82,6 +82,14 @@ return {
     {
       "alias": "transactions",
       "args": [
+        {
+          "kind": "Literal",
+          "name": "orderBy",
+          "value": {
+            "direction": "DESC",
+            "field": "DATETIME"
+          }
+        },
         {
           "kind": "Variable",
           "name": "where",
@@ -175,6 +183,6 @@ return {
 };
 })();
 
-(node as any).hash = "eac562a3dbd14c8304d05f4965c914d7";
+(node as any).hash = "77764bae328c28c1bce6d5bb6b63050b";
 
 export default node;
