@@ -1,4 +1,4 @@
-import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
+import { graphql } from 'relay-runtime'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -6,7 +6,7 @@ import { useMutation } from 'react-relay'
 import { capitalize } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import type { newCategoryMutation } from './__generated__/newCategoryMutation.graphql'
 
 import { Button } from '@/components/ui/button'
@@ -51,12 +51,8 @@ const formSchema = z.object({
 })
 
 const newCategoryMutation = graphql`
-  mutation newCategoryMutation(
-    $input: CreateTransactionCategoryInput!
-    $connections: [ID!]!
-  ) {
-    createTransactionCategory(input: $input)
-      @appendEdge(connections: $connections) {
+  mutation newCategoryMutation($input: CreateTransactionCategoryInput!) {
+    createTransactionCategory(input: $input) {
       node {
         id
         name
@@ -71,6 +67,7 @@ export function NewCategory() {
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newCategoryMutation>(newCategoryMutation)
+  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
@@ -83,11 +80,6 @@ export function NewCategory() {
     onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
 
-      const connectionID = ConnectionHandler.getConnectionID(
-        ROOT_ID,
-        'categoriesPanel_transactionCategories',
-      )
-
       const result = await commitMutationResult<newCategoryMutation>(
         commitMutation,
         {
@@ -96,7 +88,6 @@ export function NewCategory() {
               name: formData.name,
               type: formData.type,
             },
-            connections: [connectionID],
           },
         },
       )
@@ -109,6 +100,7 @@ export function NewCategory() {
             'No data returned from mutation',
           )
 
+          router.invalidate()
           form.reset()
           navigate({
             from: '/household/$householdId/categories/new',
