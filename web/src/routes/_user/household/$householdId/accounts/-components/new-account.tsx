@@ -99,7 +99,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
       name: '',
       type: '',
       currencyCode: household.currency.code,
-      balance: 0,
+      balance: undefined as unknown as number,
     },
     validators: {
       onSubmit: formSchema,

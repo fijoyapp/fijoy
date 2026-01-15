@@ -135,7 +135,7 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
   const form = useForm({
     defaultValues: {
       description: '',
-      amount: 0,
+      amount: undefined as unknown as number,
       datetime: new Date(),
       fromAccountId: '',
       toAccountId: '',
@@ -409,7 +409,7 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                       name={field.name}
                       placeholder="Please enter an amount"
                       onValueChange={(e) => {
-                        field.handleChange(e.floatValue ?? 0)
+                        field.handleChange(e.floatValue!)
                       }}
                       value={field.state.value}
                       locale={household.locale}

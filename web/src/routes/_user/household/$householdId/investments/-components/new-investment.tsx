@@ -154,8 +154,8 @@ export function NewInvestment({
       name: '',
       symbol: '',
       type: 'stock',
-      amount: 0,
-      costBasis: 0,
+      amount: undefined as unknown as number,
+      costBasis: undefined as unknown as number,
       accountId: '',
     },
     validators: {
@@ -519,7 +519,6 @@ export function NewInvestment({
                       value={field.state.value}
                       locale={household.locale}
                       currency={household.currency.code}
-                      maximumFractionDigits={12}
                       onBlur={field.handleBlur}
                       aria-invalid={isInvalid}
                     />
