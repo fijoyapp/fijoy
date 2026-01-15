@@ -195,6 +195,7 @@ export function NewInvestment({
           navigate({
             from: '/household/$householdId/investments/new',
             to: '/household/$householdId/investments/$investmentId',
+            search: (prev) => ({ ...prev }),
             params: {
               investmentId: resultData.createInvestment.node.id,
             },

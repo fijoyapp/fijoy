@@ -145,6 +145,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
           navigate({
             from: '/household/$householdId/accounts/new',
             to: '/household/$householdId/accounts/$accountId',
+            search: (prev) => ({ ...prev }),
             params: {
               accountId: resultData.createAccount.node.id,
             },
