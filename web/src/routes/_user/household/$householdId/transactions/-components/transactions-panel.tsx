@@ -57,10 +57,11 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
     navigate({
       from: '/household/$householdId/transactions',
       to: '/household/$householdId/transactions',
-      search: {
+      search: (prev) => ({
+        ...prev,
         start,
         end,
-      },
+      }),
     })
   }
 
