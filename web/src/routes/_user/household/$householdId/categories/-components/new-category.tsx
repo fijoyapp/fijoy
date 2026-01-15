@@ -105,6 +105,7 @@ export function NewCategory() {
           navigate({
             from: '/household/$householdId/categories/new',
             to: '/household/$householdId/categories',
+            search: (prev) => ({ ...prev }),
           })
           toast.success(
             `${resultData.createTransactionCategory.node.name} is ready to go!`,
