@@ -2,7 +2,7 @@ import { fetchQuery, graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment } from 'react-relay'
-import { capitalize, groupBy, map } from 'lodash-es'
+import { capitalize, groupBy, identity, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
@@ -127,10 +127,11 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
     navigate({
       from: '/household/$householdId/categories',
       to: '/household/$householdId/categories',
-      search: {
+      search: (prev) => ({
+        ...prev,
         start,
         end,
-      },
+      }),
     })
   }
 
@@ -140,6 +141,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
         <Link
           from={'/household/$householdId/categories'}
           to={'/household/$householdId/categories/new'}
+          search={identity}
         >
           <Button nativeButton={true} size="icon-xl" className="rounded-full">
             <PlusIcon />
