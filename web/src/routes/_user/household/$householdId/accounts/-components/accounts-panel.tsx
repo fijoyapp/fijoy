@@ -83,7 +83,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   return (
     <Fragment>
-      <div className="flex flex-col absolute bottom-4 right-4 gap-2">
+      <div className="fixed flex flex-col lg:absolute bottom-4 right-4 gap-2">
         <Button
           variant="outline"
           nativeButton={true}

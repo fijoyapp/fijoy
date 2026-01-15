@@ -136,7 +136,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
   return (
     <Fragment>
-      <div className="absolute bottom-4 right-4">
+      <div className="fixed lg:absolute bottom-4 right-4">
         <Link
           from={'/household/$householdId/categories'}
           to={'/household/$householdId/categories/new'}
