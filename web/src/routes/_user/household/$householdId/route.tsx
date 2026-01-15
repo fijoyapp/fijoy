@@ -1,10 +1,5 @@
 import { EyeIcon, EyeOffIcon, Moon, Sun, GripVertical, X } from 'lucide-react'
-import {
-  Outlet,
-  createFileRoute,
-  retainSearchParams,
-  useNavigate,
-} from '@tanstack/react-router'
+import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
@@ -37,7 +32,10 @@ import {
 } from '@/components/ui/drawer'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
-import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
+import {
+  LOCAL_STORAGE_HOUSEHOLD_ID_KEY,
+  LOCAL_STORAGE_RND_POSITION_KEY,
+} from '@/constant'
 import { useTheme } from '@/components/theme-provider'
 import { PendingComponent } from '@/components/pending-component'
 import { environment } from '@/environment'
@@ -69,42 +67,9 @@ const searchSchema = z.object({
   showNewTransaction: z.boolean().optional().default(false),
 })
 
-const LOCAL_STORAGE_RND_POSITION_KEY = 'new-transaction-rnd-position'
-
-interface RndPosition {
-  x: number
-  y: number
-  width: number
-}
-
-const getDefaultRndPosition = (): RndPosition => ({
-  x: window.innerWidth - 700,
-  y: 80,
-  width: 650,
-})
-
-const getRndPositionFromStorage = (): RndPosition => {
-  const stored = localStorage.getItem(LOCAL_STORAGE_RND_POSITION_KEY)
-  if (stored) {
-    try {
-      return JSON.parse(stored) as RndPosition
-    } catch {
-      return getDefaultRndPosition()
-    }
-  }
-  return getDefaultRndPosition()
-}
-
-const saveRndPositionToStorage = (position: RndPosition) => {
-  localStorage.setItem(LOCAL_STORAGE_RND_POSITION_KEY, JSON.stringify(position))
-}
-
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
   validateSearch: zodValidator(searchSchema),
-  search: {
-    middlewares: [retainSearchParams(['showNewTransaction'])],
-  },
   beforeLoad: ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
     return loadQuery<routeHouseholdIdQuery>(
@@ -145,11 +110,10 @@ function RouteComponent() {
     saveRndPositionToStorage(rndPosition)
   }, [rndPosition])
 
-  // Close drawer handler
-  const handleCloseNewTransaction = () => {
+  const setLogTransactionOpen = (open: boolean) => {
     navigate({
       to: '.',
-      search: (prev) => ({ ...prev, showNewTransaction: false }),
+      search: (prev) => ({ ...prev, showNewTransaction: open }),
     })
   }
 
@@ -220,14 +184,15 @@ function RouteComponent() {
           <Drawer
             open={search.showNewTransaction}
             onOpenChange={(open) => {
-              if (!open) handleCloseNewTransaction()
+              setLogTransactionOpen(open)
             }}
           >
             <DrawerContent className="bg-background">
-              <DrawerHeader className="bg-background">
-                <DrawerTitle>New Transaction</DrawerTitle>
-              </DrawerHeader>
-              <div className="overflow-y-auto px-4 pb-4 bg-background">
+              {/* <DrawerHeader className="bg-background"> */}
+              {/*   <DrawerTitle>Log Transaction</DrawerTitle> */}
+              {/* </DrawerHeader> */}
+              <div className="py-2"></div>
+              <div className="overflow-y-auto bg-background">
                 <LogTransaction fragmentRef={data} />
               </div>
             </DrawerContent>
@@ -271,7 +236,7 @@ function RouteComponent() {
           >
             <Item className="w-full overflow-hidden shadow-2xl bg-muted p-0 gap-0 h-full">
               {/* Drag Handle Header */}
-              <div className="w-full drag-handle flex items-center justify-between border-b bg-muted/50 px-4 py-2 cursor-move">
+              <div className="w-full drag-handle flex items-center justify-between border-b px-4 py-2 cursor-move">
                 <div className="flex items-center gap-2">
                   <GripVertical className="h-5 w-5 text-muted-foreground" />
                   <span className="font-semibold text-sm">Log Transaction</span>
@@ -280,7 +245,7 @@ function RouteComponent() {
                   variant="ghost"
                   size="icon"
                   className="h-6 w-6"
-                  onClick={handleCloseNewTransaction}
+                  onClick={() => setLogTransactionOpen(false)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -294,4 +259,32 @@ function RouteComponent() {
       </SidebarProvider>
     </HouseholdProvider>
   )
+}
+
+type RndPosition = {
+  x: number
+  y: number
+  width: number
+}
+
+const getDefaultRndPosition = (): RndPosition => ({
+  x: window.innerWidth - 700,
+  y: 80,
+  width: 650,
+})
+
+const getRndPositionFromStorage = (): RndPosition => {
+  const stored = localStorage.getItem(LOCAL_STORAGE_RND_POSITION_KEY)
+  if (stored) {
+    try {
+      return JSON.parse(stored) as RndPosition
+    } catch {
+      return getDefaultRndPosition()
+    }
+  }
+  return getDefaultRndPosition()
+}
+
+const saveRndPositionToStorage = (position: RndPosition) => {
+  localStorage.setItem(LOCAL_STORAGE_RND_POSITION_KEY, JSON.stringify(position))
 }
