@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1b56d7e46169a034ad1b88fafc055604>>
+ * @generated SignedSource<<6a1fc81529629f75e97b6fea9f0365ee>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,7 +23,6 @@ export type CreateInvestmentInput = {
   type: InvestmentType;
 };
 export type newInvestmentMutation$variables = {
-  connections: ReadonlyArray<string>;
   input: CreateInvestmentInputCustom;
 };
 export type newInvestmentMutation$data = {
@@ -46,45 +45,42 @@ export type newInvestmentMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "connections"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "input",
     "variableName": "input"
   }
 ],
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "valueInHouseholdCurrency",
   "storageKey": null
 },
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "Account",
@@ -92,24 +88,21 @@ v6 = {
   "name": "account",
   "plural": false,
   "selections": [
-    (v4/*: any*/),
-    (v3/*: any*/)
+    (v3/*: any*/),
+    (v2/*: any*/)
   ],
   "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "newInvestmentMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "InvestmentEdge",
         "kind": "LinkedField",
         "name": "createInvestment",
@@ -123,10 +116,10 @@ return {
             "name": "node",
             "plural": false,
             "selections": [
+              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v6/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -144,16 +137,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "newInvestmentMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "InvestmentEdge",
         "kind": "LinkedField",
         "name": "createInvestment",
@@ -167,10 +157,10 @@ return {
             "name": "node",
             "plural": false,
             "selections": [
+              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
               (v5/*: any*/),
-              (v6/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -207,7 +197,7 @@ return {
                     "name": "code",
                     "storageKey": null
                   },
-                  (v3/*: any*/)
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -230,22 +220,6 @@ return {
           }
         ],
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v2/*: any*/),
-        "filters": null,
-        "handle": "appendEdge",
-        "key": "",
-        "kind": "LinkedHandle",
-        "name": "createInvestment",
-        "handleArgs": [
-          {
-            "kind": "Variable",
-            "name": "connections",
-            "variableName": "connections"
-          }
-        ]
       }
     ]
   },
@@ -260,6 +234,6 @@ return {
 };
 })();
 
-(node as any).hash = "cf7f5daf8a48fcf3651d2286141f8efd";
+(node as any).hash = "1ecd405c531292b12d350a6ce344c717";
 
 export default node;

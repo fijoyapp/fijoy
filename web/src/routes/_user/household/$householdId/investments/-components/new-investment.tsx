@@ -1,4 +1,4 @@
-import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
+import { graphql } from 'relay-runtime'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -6,7 +6,7 @@ import { useFragment, useMutation, useRefetchableFragment } from 'react-relay'
 import { capitalize } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -98,11 +98,8 @@ const newInvestmentEquityQuoteFragment = graphql`
 `
 
 const newInvestmentMutation = graphql`
-  mutation newInvestmentMutation(
-    $input: CreateInvestmentInputCustom!
-    $connections: [ID!]!
-  ) {
-    createInvestment(input: $input) @appendEdge(connections: $connections) {
+  mutation newInvestmentMutation($input: CreateInvestmentInputCustom!) {
+    createInvestment(input: $input) {
       node {
         id
         name
@@ -151,6 +148,7 @@ export function NewInvestment({
       })
       .filter((account) => account.type === 'investment') ?? []
 
+  const router = useRouter()
   const form = useForm({
     defaultValues: {
       name: '',
@@ -166,11 +164,6 @@ export function NewInvestment({
     onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
 
-      const connectionID = ConnectionHandler.getConnectionID(
-        ROOT_ID,
-        'investmentsPanel_investments',
-      )
-
       const result = await commitMutationResult<newInvestmentMutation>(
         commitMutation,
         {
@@ -185,7 +178,6 @@ export function NewInvestment({
               },
               costBasis: formData.costBasis.toString(),
             },
-            connections: [connectionID],
           },
         },
       )
@@ -198,6 +190,7 @@ export function NewInvestment({
             'No data returned from mutation',
           )
 
+          router.invalidate()
           form.reset()
           navigate({
             from: '/household/$householdId/investments/new',
