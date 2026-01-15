@@ -94,6 +94,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         </Button>
         <Link
           from={'/household/$householdId/accounts'}
+          search={(prev) => ({ ...prev })}
           to={'/household/$householdId/accounts/new'}
         >
           <Button nativeButton={true} size="icon-xl" className="rounded-full">
