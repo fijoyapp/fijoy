@@ -17,7 +17,6 @@ const router = createRouter({
   defaultPreload: 'intent',
   scrollRestoration: true,
   defaultStructuralSharing: true,
-  defaultPreloadStaleTime: 0,
   defaultViewTransition: true,
 })
 
