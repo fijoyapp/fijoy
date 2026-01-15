@@ -220,9 +220,9 @@ function RouteComponent() {
             }}
             enableResizing={{
               top: false,
-              right: true,
+              right: false,
               bottom: false,
-              left: true,
+              left: false,
               topRight: false,
               bottomRight: false,
               bottomLeft: false,
