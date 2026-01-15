@@ -1,4 +1,4 @@
-import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
+import { graphql } from 'relay-runtime'
 import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -44,7 +44,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { getDefaultDates, parseDateRangeFromURL } from '@/lib/date-range'
+import { useRouter } from '@tanstack/react-router'
 
 const formSchema = z.object({
   description: z
@@ -85,11 +85,8 @@ const newTransferFragment = graphql`
 `
 
 const newTransferMutation = graphql`
-  mutation newTransferMutation(
-    $input: CreateTransferInputCustom!
-    $connections: [ID!]!
-  ) {
-    createTransfer(input: $input) @prependEdge(connections: $connections) {
+  mutation newTransferMutation($input: CreateTransferInputCustom!) {
+    createTransfer(input: $input) {
       node {
         ...transactionCardFragment
         id
@@ -134,6 +131,7 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
       })
       .filter((category) => category.type === 'transfer') ?? []
 
+  const router = useRouter()
   const form = useForm({
     defaultValues: {
       description: '',
@@ -148,20 +146,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
     },
     onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
-
-      const dates = getDefaultDates()
-      const period = parseDateRangeFromURL(dates.start, dates.end)
-
-      const connectionID = ConnectionHandler.getConnectionID(
-        ROOT_ID,
-        'transactionsList_transactions',
-        {
-          where: {
-            datetimeGTE: period.startDate,
-            datetimeLT: period.endDate,
-          },
-        },
-      )
 
       // For transfers:
       // - From account gets negative amount (money going out)
@@ -191,7 +175,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
               ],
               fees: [],
             },
-            connections: [connectionID],
           },
         },
       )
@@ -209,6 +192,7 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
           //   to: '/household/$householdId/transactions',
           // })
           toast.success('Transfer created successfully!')
+          router.invalidate()
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())

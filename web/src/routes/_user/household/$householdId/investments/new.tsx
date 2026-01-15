@@ -15,7 +15,7 @@ export const Route = createFileRoute(
       environment,
       newInvestmentQuery,
       {},
-      { fetchPolicy: 'store-or-network' },
+      { fetchPolicy: 'store-and-network' },
     )
   },
   pendingComponent: PendingComponent,

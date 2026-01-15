@@ -1,4 +1,4 @@
-import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
+import { graphql } from 'relay-runtime'
 import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -44,7 +44,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { getDefaultDates, parseDateRangeFromURL } from '@/lib/date-range'
+import { useRouter } from '@tanstack/react-router'
 
 const formSchema = z.object({
   description: z
@@ -84,11 +84,8 @@ const newIncomeFragment = graphql`
 `
 
 const newIncomeMutation = graphql`
-  mutation newIncomeMutation(
-    $input: CreateIncomeInputCustom!
-    $connections: [ID!]!
-  ) {
-    createIncome(input: $input) @prependEdge(connections: $connections) {
+  mutation newIncomeMutation($input: CreateIncomeInputCustom!) {
+    createIncome(input: $input) {
       node {
         ...transactionCardFragment
         id
@@ -133,6 +130,7 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
       })
       .filter((category) => category.type === 'income') ?? []
 
+  const router = useRouter()
   const form = useForm({
     defaultValues: {
       description: '',
@@ -146,20 +144,6 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
     },
     onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
-
-      const dates = getDefaultDates()
-      const period = parseDateRangeFromURL(dates.start, dates.end)
-
-      const connectionID = ConnectionHandler.getConnectionID(
-        ROOT_ID,
-        'transactionsList_transactions',
-        {
-          where: {
-            datetimeGTE: period.startDate,
-            datetimeLT: period.endDate,
-          },
-        },
-      )
 
       // Amount is positive for income
       const amount = currency(formData.amount)
@@ -180,7 +164,6 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
               },
               fees: [],
             },
-            connections: [connectionID],
           },
         },
       )
@@ -198,6 +181,7 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
           //   to: '/household/$householdId/transactions',
           // })
           toast.success('Income created successfully!')
+          router.invalidate()
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())

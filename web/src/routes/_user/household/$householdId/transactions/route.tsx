@@ -39,7 +39,7 @@ export const Route = createFileRoute(
         startDate: period.startDate,
         endDate: period.endDate,
       },
-      { fetchPolicy: 'store-or-network' },
+      { fetchPolicy: 'store-and-network' },
     )
   },
   pendingComponent: PendingComponent,

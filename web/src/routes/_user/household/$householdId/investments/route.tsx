@@ -19,7 +19,7 @@ export const Route = createFileRoute(
       environment,
       investmentsQuery,
       {},
-      { fetchPolicy: 'store-or-network' },
+      { fetchPolicy: 'store-and-network' },
     )
   },
   pendingComponent: PendingComponent,
