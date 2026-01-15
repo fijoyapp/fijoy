@@ -24,6 +24,7 @@ import { useCurrency } from '@/hooks/use-currency'
 import { useHousehold } from '@/hooks/use-household'
 import { categoryCardCategoryFragment$key } from './__generated__/categoryCardCategoryFragment.graphql'
 import { categoryCardFinancialReportFragment$key } from './__generated__/categoryCardFinancialReportFragment.graphql'
+import { identity } from 'lodash-es'
 
 const categoryCardCategoryFragment = graphql`
   fragment categoryCardCategoryFragment on TransactionCategory {
@@ -95,6 +96,7 @@ export function CategoryCard({
           className="no-underline!"
           from="/household/$householdId/"
           to="/household/$householdId/categories/$categoryId"
+          search={identity}
           activeOptions={{ exact: true }}
           params={{ categoryId: category.id }}
         >
