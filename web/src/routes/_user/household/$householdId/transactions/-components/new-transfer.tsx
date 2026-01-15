@@ -7,11 +7,15 @@ import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
 // import { useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
 import type { newTransferMutation } from './__generated__/newTransferMutation.graphql'
 import type { newTransferFragment$key } from './__generated__/newTransferFragment.graphql'
 
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Card,
   CardContent,
@@ -104,7 +108,6 @@ type NewTransferProps = {
 export function NewTransfer({ fragmentRef }: NewTransferProps) {
   const data = useFragment(newTransferFragment, fragmentRef)
   // const navigate = useNavigate()
-  const [showCalendar, setShowCalendar] = useState(false)
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newTransferMutation>(newTransferMutation)
@@ -437,35 +440,40 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Date</FieldLabel>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full justify-start text-left font-normal"
-                      onClick={() => setShowCalendar(!showCalendar)}
-                    >
-                      {field.state.value.toLocaleDateString(household.locale, {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </Button>
-                    {showCalendar && (
-                      <div className="mt-2">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full justify-start text-left font-normal"
+                          >
+                            {field.state.value.toLocaleDateString(
+                              household.locale,
+                              {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              },
+                            )}
+                          </Button>
+                        }
+                      />
+                      <DropdownMenuContent className="w-auto p-0">
                         <Calendar
                           mode="single"
                           selected={field.state.value}
                           onSelect={(date) => {
                             if (date) {
                               field.handleChange(date)
-                              setShowCalendar(false)
                             }
                           }}
                           disabled={(date) =>
                             date > new Date() || date < new Date('1900-01-01')
                           }
                         />
-                      </div>
-                    )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
