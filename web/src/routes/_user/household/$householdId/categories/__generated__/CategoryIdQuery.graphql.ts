@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3c7c0b89863a5279fb8dc441bb08e1d7>>
+ * @generated SignedSource<<8877678dcaa70088a083d652e764b763>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -1014,8 +1014,7 @@ return {
         "alias": null,
         "args": (v2/*: any*/),
         "filters": [
-          "where",
-          "orderBy"
+          "where"
         ],
         "handle": "connection",
         "key": "transactionsList_transactions",

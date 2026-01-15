@@ -1,4 +1,4 @@
-import { parseISO } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 
 export const DATE_RANGE_PRESETS = {
   LAST_7_DAYS: 'LAST_7_DAYS',
@@ -12,6 +12,14 @@ export const DATE_RANGE_PRESETS = {
 
 export type DateRangePreset =
   (typeof DATE_RANGE_PRESETS)[keyof typeof DATE_RANGE_PRESETS]
+
+export const getDefaultDates = () => {
+  const range = getDateRangeForPreset(DATE_RANGE_PRESETS.THIS_MONTH)
+  return {
+    start: format(range.startDate, 'yyyy-MM-dd'),
+    end: format(range.endDate, 'yyyy-MM-dd'),
+  }
+}
 
 /**
  * Get UTC date range for common time period presets

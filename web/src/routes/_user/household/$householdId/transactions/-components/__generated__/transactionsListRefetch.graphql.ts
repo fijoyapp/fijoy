@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6edd60087985586b4dcfbe51eaf7a054>>
+ * @generated SignedSource<<f9e58b17a5d6069096e88e6f015e74ad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -1041,8 +1041,7 @@ return {
         "alias": null,
         "args": (v2/*: any*/),
         "filters": [
-          "where",
-          "orderBy"
+          "where"
         ],
         "handle": "connection",
         "key": "transactionsList_transactions",
@@ -1062,6 +1061,6 @@ return {
 };
 })();
 
-(node as any).hash = "77764bae328c28c1bce6d5bb6b63050b";
+(node as any).hash = "eac562a3dbd14c8304d05f4965c914d7";
 
 export default node;
