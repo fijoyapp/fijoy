@@ -43,7 +43,7 @@ export const Route = createFileRoute(
     const period = parseDateRangeFromURL(search.start, search.end)
 
     return loadQuery<CategoriesQuery>(environment, categoriesQuery, period, {
-      fetchPolicy: 'store-or-network',
+      fetchPolicy: 'store-and-network',
     })
   },
   pendingComponent: PendingComponent,

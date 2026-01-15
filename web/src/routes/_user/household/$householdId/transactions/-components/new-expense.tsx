@@ -1,4 +1,4 @@
-import { ConnectionHandler, ROOT_ID, graphql } from 'relay-runtime'
+import { graphql } from 'relay-runtime'
 import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -44,7 +44,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { getDefaultDates, parseDateRangeFromURL } from '@/lib/date-range'
+import { useRouter } from '@tanstack/react-router'
 
 const formSchema = z.object({
   description: z
@@ -84,11 +84,8 @@ const newExpenseFragment = graphql`
 `
 
 const newExpenseMutation = graphql`
-  mutation newExpenseMutation(
-    $input: CreateExpenseInputCustom!
-    $connections: [ID!]!
-  ) {
-    createExpense(input: $input) @prependEdge(connections: $connections) {
+  mutation newExpenseMutation($input: CreateExpenseInputCustom!) {
+    createExpense(input: $input) {
       node {
         ...transactionCardFragment
         id
@@ -133,6 +130,7 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
       })
       .filter((category) => category.type === 'expense') ?? []
 
+  const router = useRouter()
   const form = useForm({
     defaultValues: {
       description: '',
@@ -146,20 +144,6 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
     },
     onSubmit: async ({ value }) => {
       const formData = formSchema.parse(value)
-
-      const dates = getDefaultDates()
-      const period = parseDateRangeFromURL(dates.start, dates.end)
-
-      const connectionID = ConnectionHandler.getConnectionID(
-        ROOT_ID,
-        'transactionsList_transactions',
-        {
-          where: {
-            datetimeGTE: period.startDate,
-            datetimeLT: period.endDate,
-          },
-        },
-      )
 
       // Amount is negative for expenses
       const amount = currency(formData.amount).multiply(-1)
@@ -180,7 +164,6 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
               },
               fees: [],
             },
-            connections: [connectionID],
           },
         },
       )
@@ -198,6 +181,7 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
           //   to: '/household/$householdId/transactions',
           // })
           toast.success('Expense created successfully!')
+          router.invalidate()
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())

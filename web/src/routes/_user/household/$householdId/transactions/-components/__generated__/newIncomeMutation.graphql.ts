@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6b0881fdbf4ed09a03a3584f1e7e84bf>>
+ * @generated SignedSource<<1700b3f72f7b0485bacedb1d85b3bbc1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,7 +25,6 @@ export type CreateTransactionEntryInput = {
   amount: string;
 };
 export type newIncomeMutation$variables = {
-  connections: ReadonlyArray<string>;
   input: CreateIncomeInputCustom;
 };
 export type newIncomeMutation$data = {
@@ -47,59 +46,56 @@ export type newIncomeMutation = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "connections"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "input"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "input"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "input",
     "variableName": "input"
   }
 ],
-v3 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v4 = {
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "description",
   "storageKey": null
 },
-v5 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "datetime",
   "storageKey": null
 },
-v6 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v7 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "amount",
   "storageKey": null
 },
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "Currency",
@@ -114,23 +110,20 @@ v8 = {
       "name": "code",
       "storageKey": null
     },
-    (v3/*: any*/)
+    (v2/*: any*/)
   ],
   "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "newIncomeMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "TransactionEdge",
         "kind": "LinkedField",
         "name": "createIncome",
@@ -149,9 +142,9 @@ return {
                 "kind": "FragmentSpread",
                 "name": "transactionCardFragment"
               },
+              (v2/*: any*/),
               (v3/*: any*/),
               (v4/*: any*/),
-              (v5/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -160,7 +153,7 @@ return {
                 "name": "category",
                 "plural": false,
                 "selections": [
-                  (v6/*: any*/)
+                  (v5/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -176,16 +169,13 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "newIncomeMutation",
     "selections": [
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v1/*: any*/),
         "concreteType": "TransactionEdge",
         "kind": "LinkedField",
         "name": "createIncome",
@@ -199,8 +189,8 @@ return {
             "name": "node",
             "plural": false,
             "selections": [
-              (v3/*: any*/),
-              (v5/*: any*/),
+              (v2/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -209,7 +199,7 @@ return {
                 "name": "category",
                 "plural": false,
                 "selections": [
-                  (v6/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -217,7 +207,7 @@ return {
                     "name": "type",
                     "storageKey": null
                   },
-                  (v3/*: any*/)
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -229,8 +219,8 @@ return {
                 "name": "investmentLots",
                 "plural": true,
                 "selections": [
-                  (v3/*: any*/),
-                  (v7/*: any*/),
+                  (v2/*: any*/),
+                  (v6/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -246,7 +236,7 @@ return {
                     "name": "investment",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
+                      (v5/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -254,8 +244,8 @@ return {
                         "name": "symbol",
                         "storageKey": null
                       },
-                      (v8/*: any*/),
-                      (v3/*: any*/)
+                      (v7/*: any*/),
+                      (v2/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -270,8 +260,8 @@ return {
                 "name": "transactionEntries",
                 "plural": true,
                 "selections": [
-                  (v3/*: any*/),
-                  (v7/*: any*/),
+                  (v2/*: any*/),
+                  (v6/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -280,37 +270,21 @@ return {
                     "name": "account",
                     "plural": false,
                     "selections": [
-                      (v6/*: any*/),
-                      (v8/*: any*/),
-                      (v3/*: any*/)
+                      (v5/*: any*/),
+                      (v7/*: any*/),
+                      (v2/*: any*/)
                     ],
                     "storageKey": null
                   }
                 ],
                 "storageKey": null
               },
-              (v4/*: any*/)
+              (v3/*: any*/)
             ],
             "storageKey": null
           }
         ],
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v2/*: any*/),
-        "filters": null,
-        "handle": "prependEdge",
-        "key": "",
-        "kind": "LinkedHandle",
-        "name": "createIncome",
-        "handleArgs": [
-          {
-            "kind": "Variable",
-            "name": "connections",
-            "variableName": "connections"
-          }
-        ]
       }
     ]
   },
@@ -325,6 +299,6 @@ return {
 };
 })();
 
-(node as any).hash = "a48c9941e55d3244d2fc043bed9be848";
+(node as any).hash = "3081aed15648fa4e6cec19fc204bf75d";
 
 export default node;

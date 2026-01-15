@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_user/household/')({
       environment,
       householdIdQuery,
       {},
-      { fetchPolicy: 'store-or-network' },
+      { fetchPolicy: 'store-and-network' },
     )
   },
   pendingComponent: PendingComponent,

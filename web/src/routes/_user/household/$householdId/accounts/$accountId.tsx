@@ -36,7 +36,7 @@ export const Route = createFileRoute(
           ],
         },
       },
-      { fetchPolicy: 'store-or-network' },
+      { fetchPolicy: 'store-and-network' },
     )
   },
   pendingComponent: PendingComponent,
