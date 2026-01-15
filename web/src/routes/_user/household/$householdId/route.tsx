@@ -24,12 +24,7 @@ import {
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer'
+import { Drawer, DrawerContent } from '@/components/ui/drawer'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
 import {
