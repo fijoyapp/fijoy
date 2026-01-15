@@ -163,7 +163,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
               transaction: {
                 description: formData.description,
                 datetime: formData.datetime.toISOString(),
-                userID: '', // TODO: Add user context
                 categoryID: formData.categoryId,
               },
               transactionEntries: [

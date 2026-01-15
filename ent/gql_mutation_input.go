@@ -185,7 +185,6 @@ func (c *InvestmentLotUpdateOne) SetInput(i UpdateInvestmentLotInput) *Investmen
 type CreateTransactionInput struct {
 	Description *string
 	Datetime    time.Time
-	UserID      int
 	CategoryID  int
 }
 
@@ -195,7 +194,6 @@ func (i *CreateTransactionInput) Mutate(m *TransactionMutation) {
 		m.SetDescription(*v)
 	}
 	m.SetDatetime(i.Datetime)
-	m.SetUserID(i.UserID)
 	m.SetCategoryID(i.CategoryID)
 }
 
