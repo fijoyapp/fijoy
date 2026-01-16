@@ -46,16 +46,33 @@ import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
 import { useRouter } from '@tanstack/react-router'
 
-const formSchema = z.object({
-  description: z
-    .string()
-    .max(256, 'Description must be at most 256 characters.'),
-  amount: z.number().positive('Amount must be positive'),
-  datetime: z.date(),
-  fromAccountId: z.string().min(1, 'Please select a from account'),
-  toAccountId: z.string().min(1, 'Please select a to account'),
-  categoryId: z.string().min(1, 'Please select a category'),
-})
+const formSchema = z
+  .object({
+    description: z
+      .string()
+      .max(256, 'Description must be at most 256 characters.'),
+    amount: z.number().positive('Amount must be positive'),
+    debitAmount: z.number().positive('Debit amount must be positive'),
+    creditAmount: z.number().positive('Credit amount must be positive'),
+    datetime: z.date(),
+    fromAccountId: z.string().min(1, 'Please select a from account'),
+    toAccountId: z.string().min(1, 'Please select a to account'),
+    categoryId: z.string().min(1, 'Please select a category'),
+  })
+  .refine((data) => data.fromAccountId !== data.toAccountId, {
+    message: 'Cannot transfer to the same account',
+    path: ['toAccountId'],
+  })
+  .refine(
+    (data) => {
+      // At least one of amount fields must be filled
+      return data.amount > 0 || (data.debitAmount > 0 && data.creditAmount > 0)
+    },
+    {
+      message: 'Please enter amount(s)',
+      path: ['amount'],
+    },
+  )
 
 const newTransferFragment = graphql`
   fragment newTransferFragment on Query {
@@ -134,7 +151,9 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
   const form = useForm({
     defaultValues: {
       description: '',
-      amount: undefined as unknown as number,
+      amount: 0,
+      debitAmount: 0,
+      creditAmount: 0,
       datetime: new Date(),
       fromAccountId: '',
       toAccountId: '',
@@ -144,13 +163,28 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      const formData = formSchema.parse(value)
+      const fromAccount = availableAccounts.find(
+        (acc) => acc.id === value.fromAccountId,
+      )
+      const toAccount = availableAccounts.find(
+        (acc) => acc.id === value.toAccountId,
+      )
+
+      invariant(fromAccount, 'From account not found')
+      invariant(toAccount, 'To account not found')
+
+      const isDifferentCurrency =
+        fromAccount.currency.code !== toAccount.currency.code
 
       // For transfers:
       // - From account gets negative amount (money going out)
       // - To account gets positive amount (money coming in)
-      const fromAmount = currency(formData.amount).multiply(-1)
-      const toAmount = currency(formData.amount)
+      const fromAmount = isDifferentCurrency
+        ? currency(value.debitAmount!).multiply(-1)
+        : currency(value.amount!).multiply(-1)
+      const toAmount = isDifferentCurrency
+        ? currency(value.creditAmount!)
+        : currency(value.amount!)
 
       const result = await commitMutationResult<newTransferMutation>(
         commitMutation,
@@ -158,18 +192,18 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
           variables: {
             input: {
               transaction: {
-                description: formData.description,
-                datetime: formData.datetime.toISOString(),
-                categoryID: formData.categoryId,
+                description: value.description,
+                datetime: value.datetime.toISOString(),
+                categoryID: value.categoryId,
               },
               transactionEntries: [
                 {
                   amount: fromAmount.toString(),
-                  accountID: formData.fromAccountId,
+                  accountID: value.fromAccountId,
                 },
                 {
                   amount: toAmount.toString(),
-                  accountID: formData.toAccountId,
+                  accountID: value.toAccountId,
                 },
               ],
               fees: [],
@@ -205,7 +239,15 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
     (state) => state.values.fromAccountId,
   )
 
+  const toAccountId = useStore(form.store, (state) => state.values.toAccountId)
+
   const fromAccount = availableAccounts.find((acc) => acc.id === fromAccountId)
+  const toAccount = availableAccounts.find((acc) => acc.id === toAccountId)
+
+  const isDifferentCurrency =
+    fromAccount &&
+    toAccount &&
+    fromAccount.currency.code !== toAccount.currency.code
 
   return (
     <Card className="w-full">
@@ -390,41 +432,122 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
               }}
             />
 
-            <form.Field
-              name="amount"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Amount</FieldLabel>
-                    <FieldDescription>
-                      {fromAccount
-                        ? `Currency: ${fromAccount.currency.code}`
-                        : 'Select from account to see currency'}
-                    </FieldDescription>
-                    <CurrencyInput
-                      id={field.name}
-                      name={field.name}
-                      placeholder="Please enter an amount"
-                      onValueChange={(e) => {
-                        field.handleChange(e.floatValue!)
-                      }}
-                      value={field.state.value}
-                      locale={household.locale}
-                      currency={
-                        fromAccount?.currency.code ?? household.currency.code
-                      }
-                      onBlur={field.handleBlur}
-                      aria-invalid={isInvalid}
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                )
-              }}
-            />
+            {!isDifferentCurrency ? (
+              <form.Field
+                name="amount"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Amount</FieldLabel>
+                      <FieldDescription>
+                        {fromAccount
+                          ? `Currency: ${fromAccount.currency.code}`
+                          : 'Select from account to see currency'}
+                      </FieldDescription>
+                      <CurrencyInput
+                        id={field.name}
+                        name={field.name}
+                        placeholder="Please enter an amount"
+                        onValueChange={(e) => {
+                          field.handleChange(e.floatValue!)
+                        }}
+                        value={field.state.value}
+                        locale={household.locale}
+                        currency={
+                          fromAccount?.currency.code ?? household.currency.code
+                        }
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  )
+                }}
+              />
+            ) : (
+              <>
+                <form.Field
+                  name="debitAmount"
+                  children={(field) => {
+                    const isInvalid =
+                      field.state.meta.isTouched && !field.state.meta.isValid
+                    return (
+                      <Field data-invalid={isInvalid}>
+                        <FieldLabel htmlFor={field.name}>
+                          Debit Amount (From Account)
+                        </FieldLabel>
+                        <FieldDescription>
+                          {fromAccount
+                            ? `Currency: ${fromAccount.currency.code}`
+                            : 'Select from account to see currency'}
+                        </FieldDescription>
+                        <CurrencyInput
+                          id={field.name}
+                          name={field.name}
+                          placeholder="Amount to debit"
+                          onValueChange={(e) => {
+                            field.handleChange(e.floatValue!)
+                          }}
+                          value={field.state.value}
+                          locale={household.locale}
+                          currency={
+                            fromAccount?.currency.code ??
+                            household.currency.code
+                          }
+                          onBlur={field.handleBlur}
+                          aria-invalid={isInvalid}
+                        />
+                        {isInvalid && (
+                          <FieldError errors={field.state.meta.errors} />
+                        )}
+                      </Field>
+                    )
+                  }}
+                />
+
+                <form.Field
+                  name="creditAmount"
+                  children={(field) => {
+                    const isInvalid =
+                      field.state.meta.isTouched && !field.state.meta.isValid
+                    return (
+                      <Field data-invalid={isInvalid}>
+                        <FieldLabel htmlFor={field.name}>
+                          Credit Amount (To Account)
+                        </FieldLabel>
+                        <FieldDescription>
+                          {toAccount
+                            ? `Currency: ${toAccount.currency.code}`
+                            : 'Select to account to see currency'}
+                        </FieldDescription>
+                        <CurrencyInput
+                          id={field.name}
+                          name={field.name}
+                          placeholder="Amount to credit"
+                          onValueChange={(e) => {
+                            field.handleChange(e.floatValue!)
+                          }}
+                          value={field.state.value}
+                          locale={household.locale}
+                          currency={
+                            toAccount?.currency.code ?? household.currency.code
+                          }
+                          onBlur={field.handleBlur}
+                          aria-invalid={isInvalid}
+                        />
+                        {isInvalid && (
+                          <FieldError errors={field.state.meta.errors} />
+                        )}
+                      </Field>
+                    )
+                  }}
+                />
+              </>
+            )}
 
             <form.Field
               name="datetime"
