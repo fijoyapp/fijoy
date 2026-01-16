@@ -515,7 +515,7 @@ export function NewSell({ fragmentRef }: NewSellProps) {
                           </Button>
                         }
                       />
-                      <DropdownMenuContent className="w-auto p-0">
+                      <DropdownMenuContent className="w-auto p-0" side="top">
                         <Calendar
                           mode="single"
                           selected={field.state.value}
