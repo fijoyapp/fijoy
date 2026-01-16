@@ -69,6 +69,7 @@ const searchSchema = z.object({
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
   validateSearch: zodValidator(searchSchema),
+  staleTime: Infinity,
   loader: async ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
     await fetchQuery<routeHouseholdIdQuery>(
