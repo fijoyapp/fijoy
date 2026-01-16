@@ -13,6 +13,7 @@ import (
 	"beavermoney.app/ent"
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/internal/contextkeys"
@@ -809,7 +810,167 @@ func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestm
 
 // MoveInvestment is the resolver for the moveInvestment field.
 func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	panic(fmt.Errorf("not implemented: MoveInvestment - moveInvestment"))
+	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	// Validate we have exactly 2 lots (from and to)
+	if len(input.InvestmentLots) != 2 {
+		return nil, fmt.Errorf("move investment requires exactly 2 investment lots")
+	}
+
+	// Find from lot (negative amount) and to lot (positive amount)
+	var fromLot, toLot *ent.CreateInvestmentLotInput
+	for i := range input.InvestmentLots {
+		lot := input.InvestmentLots[i]
+		if lot.Amount.IsNegative() {
+			fromLot = lot
+		} else if lot.Amount.IsPositive() {
+			toLot = lot
+		}
+	}
+
+	// Validate from and to lots
+	if fromLot == nil || toLot == nil || fromLot.InvestmentID == 0 || toLot.InvestmentID == 0 {
+		return nil, fmt.Errorf("invalid investment lots: must have one negative (from) and one positive (to)")
+	}
+
+	// Validate amounts match
+	if !fromLot.Amount.Abs().Equal(toLot.Amount) {
+		return nil, fmt.Errorf("from and to amounts must match")
+	}
+
+	// Get investments and validate they belong to household and have same symbol
+	fromInvestment, err := client.Investment.Get(ctx, fromLot.InvestmentID)
+	if err != nil {
+		return nil, fmt.Errorf("from investment not found: %w", err)
+	}
+
+	toInvestment, err := client.Investment.Get(ctx, toLot.InvestmentID)
+	if err != nil {
+		return nil, fmt.Errorf("to investment not found: %w", err)
+	}
+
+	// Validate both investments belong to household
+	fromAccount, err := fromInvestment.QueryAccount().Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get from account: %w", err)
+	}
+	if fromAccount.HouseholdID != householdID {
+		return nil, fmt.Errorf("from investment does not belong to household")
+	}
+
+	toAccount, err := toInvestment.QueryAccount().Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get to account: %w", err)
+	}
+	if toAccount.HouseholdID != householdID {
+		return nil, fmt.Errorf("to investment does not belong to household")
+	}
+
+	// Validate same symbol
+	if fromInvestment.Symbol != toInvestment.Symbol {
+		return nil, fmt.Errorf("investments must have the same symbol")
+	}
+
+	// Calculate average price from fromInvestment
+	// Query all lots for the from investment to calculate average price
+	lots, err := client.InvestmentLot.Query().
+		Where(investmentlot.InvestmentID(fromInvestment.ID)).
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query investment lots: %w", err)
+	}
+
+	totalShares := decimal.Zero
+	totalCost := decimal.Zero
+	for _, lot := range lots {
+		totalShares = totalShares.Add(lot.Amount)
+		totalCost = totalCost.Add(lot.Amount.Mul(lot.Price))
+	}
+
+	if totalShares.IsZero() || totalShares.IsNegative() {
+		return nil, fmt.Errorf("insufficient shares in from investment")
+	}
+
+	// Check if we have enough shares to move
+	if totalShares.LessThan(toLot.Amount) {
+		return nil, fmt.Errorf("insufficient shares: have %s, trying to move %s", totalShares.String(), toLot.Amount.String())
+	}
+
+	averagePrice := totalCost.Div(totalShares)
+
+	// Create transaction
+	txn, err := client.Transaction.Create().
+		SetHouseholdID(householdID).
+		SetUserID(userID).
+		SetInput(*input.Transaction).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction: %w", err)
+	}
+
+	// Create investment lot for outgoing shares (negative)
+	err = client.InvestmentLot.Create().
+		SetHouseholdID(householdID).
+		SetTransactionID(txn.ID).
+		SetInvestmentID(fromInvestment.ID).
+		SetAmount(fromLot.Amount).
+		SetPrice(averagePrice).
+		Exec(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create from investment lot: %w", err)
+	}
+
+	// Create investment lot for incoming shares (positive)
+	err = client.InvestmentLot.Create().
+		SetHouseholdID(householdID).
+		SetTransactionID(txn.ID).
+		SetInvestmentID(toInvestment.ID).
+		SetAmount(toLot.Amount).
+		SetPrice(averagePrice).
+		Exec(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create to investment lot: %w", err)
+	}
+
+	// Create fee entries if any
+	for _, fee := range input.Fees {
+		feeAccount, err := client.Account.Get(ctx, fee.AccountID)
+		if err != nil {
+			return nil, fmt.Errorf("fee account not found: %w", err)
+		}
+		if feeAccount.HouseholdID != householdID {
+			return nil, fmt.Errorf("fee account does not belong to household")
+		}
+
+		feeCurrency, err := feeAccount.QueryCurrency().Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get fee account currency: %w", err)
+		}
+
+		err = client.TransactionEntry.Create().
+			SetHouseholdID(householdID).
+			SetTransactionID(txn.ID).
+			SetAccountID(feeAccount.ID).
+			SetCurrencyID(feeCurrency.ID).
+			SetAmount(fee.Amount).
+			Exec(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create fee entry: %w", err)
+		}
+	}
+
+	// Reload transaction to get updated data
+	txn, err = client.Transaction.Get(ctx, txn.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to reload transaction: %w", err)
+	}
+
+	return &ent.TransactionEdge{
+		Node:   txn,
+		Cursor: gqlutil.EncodeCursor(txn.ID),
+	}, nil
 }
 
 // FxRate is the resolver for the fxRate field.
@@ -857,15 +1018,3 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 type financialReportResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *mutationResolver) TransferInvestment(ctx context.Context, input TransferInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	panic(fmt.Errorf("not implemented: TransferInvestment - transferInvestment"))
-}
-*/
