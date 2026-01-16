@@ -577,6 +577,15 @@ export function NewInvestment({
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
+
+                // Get currency from quote data, fallback to household currency
+                const investmentType = form.getFieldValue('type')
+                const quote =
+                  investmentType === 'crypto'
+                    ? cryptoQuoteData.cryptoQuote
+                    : stockQuoteData.stockQuote
+                const currencyCode = quote?.currency || household.currency.code
+
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Cost Basis</FieldLabel>
@@ -590,7 +599,7 @@ export function NewInvestment({
                       }}
                       value={field.state.value}
                       locale={household.locale}
-                      currency={household.currency.code}
+                      currency={currencyCode}
                       onBlur={field.handleBlur}
                       aria-invalid={isInvalid}
                     />
