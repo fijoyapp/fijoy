@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoStockTickerURL } from '@/lib/logo'
+import { cn } from '@/lib/utils'
 
 const transactionCardFragment = graphql`
   fragment transactionCardFragment on Transaction {
@@ -127,7 +128,7 @@ function getSortedTransactionItems(
       const positiveLots = lots.filter(
         (item) => item.type === 'lot' && currency(item.lot.amount).value > 0,
       )
-      return [...negativeEntries, ...positiveLots]
+      return [...positiveLots, ...negativeEntries]
     })
     .with('Sell', () => {
       const negativeLots = lots.filter(
@@ -171,7 +172,10 @@ function TransactionEntryCard({
     <Item
       variant="outline"
       role="listitem"
-      className={`${!isFirst ? 'border-t-0 rounded-t-none' : ''} ${!isLast ? 'rounded-b-none' : ''}`}
+      className={cn(
+        !isFirst && 'border-t-0 rounded-t-none',
+        !isLast && 'rounded-b-none',
+      )}
     >
       <ItemMedia variant="image" className="rounded-full">
         {getCategoryTypeIcon({ type: data.category.type })}
@@ -218,7 +222,10 @@ function LotCard({
     <Item
       variant="outline"
       role="listitem"
-      className={`${!isFirst ? 'border-t-0 rounded-t-none' : ''} ${!isLast ? 'rounded-b-none' : ''}`}
+      className={cn(
+        !isFirst && 'border-t-0 rounded-t-none',
+        !isLast && 'rounded-b-none',
+      )}
     >
       <ItemMedia variant="image">
         <Avatar>
