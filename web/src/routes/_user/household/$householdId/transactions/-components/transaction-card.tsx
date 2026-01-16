@@ -25,6 +25,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoTickerURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'
+import { Fragment } from 'react/jsx-runtime'
+import { Separator } from '@/components/ui/separator'
 
 const transactionCardFragment = graphql`
   fragment transactionCardFragment on Transaction {
@@ -70,24 +72,29 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
   const sortedItems = getSortedTransactionItems(data)
 
   return (
-    <div className="flex flex-col gap-0 border rounded-lg overflow-hidden">
+    <div className="border-border [a]:hover:bg-muted rounded-md border text-xs/relaxed w-full group/item focus-visible:border-ring focus-visible:ring-ring/50 flex items-center flex-wrap outline-none transition-colors duration-100 focus-visible:ring-[3px] [a]:transition-colors">
       {sortedItems.map((item, index) =>
         item.type === 'lot' ? (
-          <LotCard
-            key={item.lot.id}
-            data={data}
-            investmentLot={item.lot}
-            isFirst={index === 0}
-            isLast={index === sortedItems.length - 1}
-          />
+          <Fragment key={item.lot.id}>
+            {index !== 0 && <Separator className="" />}
+            <LotCard
+              data={data}
+              investmentLot={item.lot}
+              isFirst={index === 0}
+              isLast={index === sortedItems.length - 1}
+            />
+            <Separator className="h-2" />
+          </Fragment>
         ) : (
-          <TransactionEntryCard
-            key={item.entry.id}
-            data={data}
-            transactionEntry={item.entry}
-            isFirst={index === 0}
-            isLast={index === sortedItems.length - 1}
-          />
+          <Fragment key={item.entry.id}>
+            {index !== 0 && <Separator className="" />}
+            <TransactionEntryCard
+              data={data}
+              transactionEntry={item.entry}
+              isFirst={index === 0}
+              isLast={index === sortedItems.length - 1}
+            />
+          </Fragment>
         ),
       )}
     </div>
@@ -170,7 +177,7 @@ function TransactionEntryCard({
 
   return (
     <Item
-      variant="outline"
+      variant="default"
       role="listitem"
       className={cn(
         !isFirst && 'border-t-0 rounded-t-none',
