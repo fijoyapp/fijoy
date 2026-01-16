@@ -557,6 +557,13 @@ func seed(
 		SaveX(ctx)
 
 	_ = entClient.TransactionCategory.Create().
+		SetName("Credit Card Bill").
+		SetHousehold(household).
+		SetType(transactioncategory.TypeTransfer).
+		SetIsImmutable(true).
+		SaveX(ctx)
+
+	_ = entClient.TransactionCategory.Create().
 		SetName("Sell").
 		SetHousehold(household).
 		SetType(transactioncategory.TypeInvestment).

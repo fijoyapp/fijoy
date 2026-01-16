@@ -2,6 +2,8 @@ import { createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
+import { Toaster } from '@/components/ui/sonner'
+
 import '../styles.css'
 import { RelayEnvironmentProvider } from 'react-relay'
 import { environment } from '@/environment'
@@ -29,6 +31,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           ]}
         />
         <TailwindIndicator />
+        <Toaster />
       </PrivacyModeProvider>
     </RelayEnvironmentProvider>
   )

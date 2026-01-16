@@ -489,7 +489,100 @@ func (r *mutationResolver) CreateIncome(ctx context.Context, input CreateIncomeI
 
 // CreateTransfer is the resolver for the createTransfer field.
 func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTransferInputCustom) (*ent.TransactionEdge, error) {
-	panic(fmt.Errorf("not implemented: CreateTransfer - createTransfer"))
+	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	// Validate we have at least 2 transaction entries
+	if len(input.TransactionEntries) < 2 {
+		return nil, fmt.Errorf("transfer requires at least 2 transaction entries")
+	}
+
+	// Validate accounts belong to household and get currencies
+	accountIDs := make(map[int]bool)
+	for _, entry := range input.TransactionEntries {
+		if accountIDs[entry.AccountID] {
+			return nil, fmt.Errorf("cannot transfer to the same account")
+		}
+		accountIDs[entry.AccountID] = true
+
+		_, err := client.Account.Get(ctx, entry.AccountID)
+		if err != nil {
+			return nil, fmt.Errorf("account not found: %w", err)
+		}
+	}
+
+	// Create transaction
+	txn, err := client.Transaction.Create().
+		SetHouseholdID(householdID).
+		SetUserID(userID).
+		SetInput(*input.Transaction).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction: %w", err)
+	}
+
+	// Create transaction entries
+	for _, entry := range input.TransactionEntries {
+		account, err := client.Account.Get(ctx, entry.AccountID)
+		if err != nil {
+			return nil, fmt.Errorf("account not found: %w", err)
+		}
+
+		accountCurrency, err := account.QueryCurrency().Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get account currency: %w", err)
+		}
+
+		err = client.TransactionEntry.Create().
+			SetHouseholdID(householdID).
+			SetTransactionID(txn.ID).
+			SetAccountID(account.ID).
+			SetCurrencyID(accountCurrency.ID).
+			SetAmount(entry.Amount).
+			Exec(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create transaction entry: %w", err)
+		}
+	}
+
+	// Create fee entries if any
+	for _, fee := range input.Fees {
+		feeAccount, err := client.Account.Get(ctx, fee.AccountID)
+		if err != nil {
+			return nil, fmt.Errorf("fee account not found: %w", err)
+		}
+		if feeAccount.HouseholdID != householdID {
+			return nil, fmt.Errorf("fee account does not belong to household")
+		}
+
+		feeCurrency, err := feeAccount.QueryCurrency().Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get fee account currency: %w", err)
+		}
+
+		err = client.TransactionEntry.Create().
+			SetHouseholdID(householdID).
+			SetTransactionID(txn.ID).
+			SetAccountID(feeAccount.ID).
+			SetCurrencyID(feeCurrency.ID).
+			SetAmount(fee.Amount).
+			Exec(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create fee entry: %w", err)
+		}
+	}
+
+	// Reload transaction to get updated data
+	txn, err = client.Transaction.Get(ctx, txn.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to reload transaction: %w", err)
+	}
+
+	return &ent.TransactionEdge{
+		Node:   txn,
+		Cursor: gqlutil.EncodeCursor(txn.ID),
+	}, nil
 }
 
 // BuyInvestment is the resolver for the buyInvestment field.
