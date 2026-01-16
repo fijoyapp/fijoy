@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8c13190e0ce26636f7608c50167d2f17>>
+ * @generated SignedSource<<34be9b2f83c4b3f9c321f7da6bb90183>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type newInvestmentQuery$variables = Record<PropertyKey, never>;
 export type newInvestmentQuery$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"newInvestmentEquityQuoteFragment" | "newInvestmentFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"newInvestmentFragment" | "newInvestmentStockQuoteFragment">;
 };
 export type newInvestmentQuery = {
   response: newInvestmentQuery$data;
@@ -42,7 +42,7 @@ return {
       {
         "args": null,
         "kind": "FragmentSpread",
-        "name": "newInvestmentEquityQuoteFragment"
+        "name": "newInvestmentStockQuoteFragment"
       }
     ],
     "type": "Query",
@@ -111,9 +111,9 @@ return {
             "value": ""
           }
         ],
-        "concreteType": "EquityQuoteResult",
+        "concreteType": "StockQuoteResult",
         "kind": "LinkedField",
-        "name": "equityQuote",
+        "name": "stockQuote",
         "plural": false,
         "selections": [
           {
@@ -146,21 +146,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "equityQuote(symbol:\"\")"
+        "storageKey": "stockQuote(symbol:\"\")"
       }
     ]
   },
   "params": {
-    "cacheID": "f2792af9550667d484d5ed5589f5e772",
+    "cacheID": "c785aafb047ec836e8bfcdd0bfa91a7e",
     "id": null,
     "metadata": {},
     "name": "newInvestmentQuery",
     "operationKind": "query",
-    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n  ...newInvestmentEquityQuoteFragment\n}\n\nfragment newInvestmentEquityQuoteFragment on Query {\n  equityQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n\nfragment newInvestmentFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        type\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n  ...newInvestmentStockQuoteFragment\n}\n\nfragment newInvestmentFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        type\n        name\n      }\n    }\n  }\n}\n\nfragment newInvestmentStockQuoteFragment on Query {\n  stockQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d992094ea0cc1cb1fe4b008ed9f36d3c";
+(node as any).hash = "d49c52f7a6ddf3f3f358271a3150f7a0";
 
 export default node;

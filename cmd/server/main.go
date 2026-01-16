@@ -647,7 +647,7 @@ func seed(
 		entClient.TransactionEntry.CreateBulk(txEntryCreates...).SaveX(ctx)
 	}
 
-	xeqtQuote, err := marketClient.EquityQuote(ctx, "XEQT.TO")
+	xeqtQuote, err := marketClient.StockQuote(ctx, "XEQT.TO")
 	if err != nil {
 		panic(err)
 	}

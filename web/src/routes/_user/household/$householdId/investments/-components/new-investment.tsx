@@ -50,9 +50,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoStockTickerURL } from '@/lib/logo'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
-import { newInvestmentEquityQuoteFragment$key } from './__generated__/newInvestmentEquityQuoteFragment.graphql'
 import { useEffect, useState, useTransition } from 'react'
 import { Spinner } from '@/components/ui/spinner'
+import { newInvestmentStockQuoteFragment$key } from './__generated__/newInvestmentStockQuoteFragment.graphql'
 
 const formSchema = z.object({
   name: z
@@ -83,11 +83,11 @@ const newInvestmentFragment = graphql`
   }
 `
 
-const newInvestmentEquityQuoteFragment = graphql`
-  fragment newInvestmentEquityQuoteFragment on Query
-  @refetchable(queryName: "newInvestmentEquityQuoteQuery")
+const newInvestmentStockQuoteFragment = graphql`
+  fragment newInvestmentStockQuoteFragment on Query
+  @refetchable(queryName: "newInvestmentStockQuoteQuery")
   @argumentDefinitions(symbol: { type: "String", defaultValue: "" }) {
-    equityQuote(symbol: $symbol) {
+    stockQuote(symbol: $symbol) {
       currentPrice
       symbol
       exchange
@@ -116,19 +116,19 @@ const newInvestmentMutation = graphql`
 
 type NewInvestmentProps = {
   newInvestmentFragmentRef: newInvestmentFragment$key
-  newInvestmentEquityQuoteFragmentRef: newInvestmentEquityQuoteFragment$key
+  newInvestmentStockQuoteFragmentRef: newInvestmentStockQuoteFragment$key
 }
 
 export function NewInvestment({
   newInvestmentFragmentRef,
-  newInvestmentEquityQuoteFragmentRef,
+  newInvestmentStockQuoteFragmentRef,
 }: NewInvestmentProps) {
   const [isPending, startTransition] = useTransition()
   const data = useFragment(newInvestmentFragment, newInvestmentFragmentRef)
 
-  const [equityQuoteData, refetchEquityQuote] = useRefetchableFragment(
-    newInvestmentEquityQuoteFragment,
-    newInvestmentEquityQuoteFragmentRef,
+  const [stockQuoteData, refetchStockQuote] = useRefetchableFragment(
+    newInvestmentStockQuoteFragment,
+    newInvestmentStockQuoteFragmentRef,
   )
   const [queriedSymbol, setQueriedSymbol] = useState('')
 
@@ -211,13 +211,13 @@ export function NewInvestment({
 
   useEffect(() => {
     form.validateField('symbol', 'change')
-  }, [equityQuoteData, isPending, queriedSymbol, form])
+  }, [stockQuoteData, isPending, queriedSymbol, form])
 
   useEffect(() => {
-    if (equityQuoteData.equityQuote) {
-      form.setFieldValue('name', equityQuoteData.equityQuote.name)
+    if (stockQuoteData.stockQuote) {
+      form.setFieldValue('name', stockQuoteData.stockQuote.name)
     }
-  }, [equityQuoteData, form])
+  }, [stockQuoteData, form])
 
   return (
     <Card className="w-full">
@@ -344,7 +344,7 @@ export function NewInvestment({
                   if (isPending) return undefined
 
                   // after fetch, no quote found
-                  if (!equityQuoteData.equityQuote) {
+                  if (!stockQuoteData.stockQuote) {
                     return {
                       message: 'Unable to find a quote for this symbol.',
                     }
@@ -358,7 +358,7 @@ export function NewInvestment({
                 onChange: (value) => {
                   startTransition(() => {
                     setQueriedSymbol(value.value)
-                    refetchEquityQuote({ symbol: value.value })
+                    refetchStockQuote({ symbol: value.value })
                   })
                 },
                 onChangeDebounceMs: 500,
@@ -387,38 +387,38 @@ export function NewInvestment({
                 )
               }}
             />
-            {equityQuoteData.equityQuote ? (
+            {stockQuoteData.stockQuote ? (
               <Item variant={'outline'}>
                 <ItemMedia variant="image">
                   <Avatar className="">
                     <AvatarImage
                       src={getLogoStockTickerURL(
-                        equityQuoteData.equityQuote.symbol || '',
+                        stockQuoteData.stockQuote.symbol || '',
                       )}
-                      alt={equityQuoteData.equityQuote.symbol || 'unknown logo'}
+                      alt={stockQuoteData.stockQuote.symbol || 'unknown logo'}
                     />
                     <AvatarFallback>
-                      {equityQuoteData.equityQuote.symbol}
+                      {stockQuoteData.stockQuote.symbol}
                     </AvatarFallback>
                   </Avatar>
                 </ItemMedia>
                 <ItemContent className="gap-px">
                   <ItemTitle className={cn('font-semibold')}>
-                    {equityQuoteData.equityQuote.name}
+                    {stockQuoteData.stockQuote.name}
                   </ItemTitle>
                   <ItemDescription>
                     {formatCurrency({
-                      value: equityQuoteData.equityQuote.currentPrice,
-                      currencyCode: equityQuoteData.equityQuote.currency,
+                      value: stockQuoteData.stockQuote.currentPrice,
+                      currencyCode: stockQuoteData.stockQuote.currency,
                     })}
                   </ItemDescription>
                 </ItemContent>
                 <ItemContent className="items-end gap-px">
                   <ItemTitle className="">
-                    <span>{equityQuoteData.equityQuote.symbol}</span>
+                    <span>{stockQuoteData.stockQuote.symbol}</span>
                   </ItemTitle>
                   <ItemDescription className="">
-                    <span>{equityQuoteData.equityQuote.exchange}</span>
+                    <span>{stockQuoteData.stockQuote.exchange}</span>
                   </ItemDescription>
                 </ItemContent>
               </Item>

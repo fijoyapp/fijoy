@@ -3,7 +3,15 @@ extend type Account {
   valueInHouseholdCurrency: String!
 }
 
-type EquityQuoteResult {
+type StockQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
+type CryptoQuoteResult {
   symbol: String!
   name: String!
   exchange: String!
@@ -17,7 +25,8 @@ extend type Investment {
 
 extend type Query {
   fxRate(from: String!, to: String!, datetime: Time!): String!
-  equityQuote(symbol: String!): EquityQuoteResult
+  stockQuote(symbol: String!): StockQuoteResult
+  cryptoQuote(symbol: String!): CryptoQuoteResult
 
   financialReport(period: TimePeriodInput!): FinancialReport!
 }

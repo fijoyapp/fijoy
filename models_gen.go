@@ -52,7 +52,7 @@ type CreateTransferInputCustom struct {
 	Fees               []*ent.CreateTransactionEntryInput `json:"fees"`
 }
 
-type EquityQuoteResult struct {
+type CryptoQuoteResult struct {
 	Symbol       string `json:"symbol"`
 	Name         string `json:"name"`
 	Exchange     string `json:"exchange"`
@@ -81,6 +81,14 @@ type SellInvestmentInputCustom struct {
 	TransactionEntry *ent.CreateTransactionEntryInput   `json:"transactionEntry"`
 	InvestmentLot    *ent.CreateInvestmentLotInput      `json:"investmentLot"`
 	Fees             []*ent.CreateTransactionEntryInput `json:"fees"`
+}
+
+type StockQuoteResult struct {
+	Symbol       string `json:"symbol"`
+	Name         string `json:"name"`
+	Exchange     string `json:"exchange"`
+	Currency     string `json:"currency"`
+	CurrentPrice string `json:"currentPrice"`
 }
 
 type TimePeriodInput struct {

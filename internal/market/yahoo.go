@@ -15,10 +15,10 @@ func NewYahooProvider() *YahooProvider {
 	return &YahooProvider{}
 }
 
-func (p *YahooProvider) EquityQuote(
+func (p *YahooProvider) StockQuote(
 	ctx context.Context,
 	symbol string,
-) (*EquityQuoteResult, error) {
+) (*StockQuoteResult, error) {
 	e, err := equity.Get(symbol)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,29 @@ func (p *YahooProvider) EquityQuote(
 		return nil, errors.New("asset not found")
 	}
 
-	return &EquityQuoteResult{
+	return &StockQuoteResult{
+		Symbol:       e.Symbol,
+		Name:         e.LongName,
+		Exchange:     e.FullExchangeName,
+		Currency:     e.CurrencyID,
+		CurrentPrice: decimal.NewFromFloat(e.RegularMarketPrice),
+	}, nil
+}
+
+func (p *YahooProvider) CryptoQuote(
+	ctx context.Context,
+	symbol string,
+) (*CryptoQuoteResult, error) {
+	e, err := equity.Get(symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	if e == nil || e.CurrencyID == "" {
+		return nil, errors.New("asset not found")
+	}
+
+	return &CryptoQuoteResult{
 		Symbol:       e.Symbol,
 		Name:         e.LongName,
 		Exchange:     e.FullExchangeName,

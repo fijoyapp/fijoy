@@ -221,7 +221,7 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 	// Uppercase the symbol before querying
 	symbolUpper := strings.ToUpper(input.Input.Symbol)
 
-	quote, err := r.marketClient.EquityQuote(ctx, symbolUpper)
+	quote, err := r.marketClient.StockQuote(ctx, symbolUpper)
 	if err != nil {
 		return nil, err
 	}
@@ -990,19 +990,35 @@ func (r *queryResolver) FxRate(ctx context.Context, from string, to string, date
 	return rate.String(), nil
 }
 
-// EquityQuote is the resolver for the equityQuote field.
-func (r *queryResolver) EquityQuote(ctx context.Context, symbol string) (*EquityQuoteResult, error) {
-	equityQuote, err := r.marketClient.EquityQuote(ctx, symbol)
+// StockQuote is the resolver for the stockQuote field.
+func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQuoteResult, error) {
+	stockQuote, err := r.marketClient.StockQuote(ctx, symbol)
 	if err != nil {
 		return nil, err
 	}
 
-	return &EquityQuoteResult{
+	return &StockQuoteResult{
 		Symbol:       symbol,
-		Name:         equityQuote.Name,
-		Exchange:     equityQuote.Exchange,
-		Currency:     equityQuote.Currency,
-		CurrentPrice: equityQuote.CurrentPrice.String(),
+		Name:         stockQuote.Name,
+		Exchange:     stockQuote.Exchange,
+		Currency:     stockQuote.Currency,
+		CurrentPrice: stockQuote.CurrentPrice.String(),
+	}, nil
+}
+
+// CryptoQuote is the resolver for the cryptoQuote field.
+func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*CryptoQuoteResult, error) {
+	cryptoQuote, err := r.marketClient.StockQuote(ctx, symbol)
+	if err != nil {
+		return nil, err
+	}
+
+	return &CryptoQuoteResult{
+		Symbol:       symbol,
+		Name:         cryptoQuote.Name,
+		Exchange:     cryptoQuote.Exchange,
+		Currency:     cryptoQuote.Currency,
+		CurrentPrice: cryptoQuote.CurrentPrice.String(),
 	}, nil
 }
 
