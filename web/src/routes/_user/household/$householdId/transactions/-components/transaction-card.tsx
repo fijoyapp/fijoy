@@ -66,24 +66,90 @@ type TransactionCardProps = {
 export function TransactionCard({ fragmentRef }: TransactionCardProps) {
   const data = useFragment(transactionCardFragment, fragmentRef)
 
+  // Sort entries based on category type
+  const sortedItems = getSortedTransactionItems(data)
+
   return (
     <Fragment>
-      {data.investmentLots?.map((investmentLot) => (
-        <LotCard
-          key={investmentLot.id}
-          data={data}
-          investmentLot={investmentLot}
-        />
-      ))}
-      {data.transactionEntries?.map((entry) => (
-        <TransactionEntryCard
-          key={entry.id}
-          data={data}
-          transactionEntry={entry}
-        />
-      ))}
+      {sortedItems.map((item) =>
+        item.type === 'lot' ? (
+          <LotCard key={item.lot.id} data={data} investmentLot={item.lot} />
+        ) : (
+          <TransactionEntryCard
+            key={item.entry.id}
+            data={data}
+            transactionEntry={item.entry}
+          />
+        ),
+      )}
     </Fragment>
   )
+}
+
+type SortedItem =
+  | {
+      type: 'lot'
+      lot: NonNullable<transactionCardFragment$data['investmentLots']>[number]
+    }
+  | {
+      type: 'entry'
+      entry: NonNullable<
+        transactionCardFragment$data['transactionEntries']
+      >[number]
+    }
+
+function getSortedTransactionItems(
+  data: transactionCardFragment$data,
+): SortedItem[] {
+  const lots: SortedItem[] =
+    data.investmentLots?.map((lot) => ({ type: 'lot' as const, lot })) ?? []
+  const entries: SortedItem[] =
+    data.transactionEntries?.map((entry) => ({
+      type: 'entry' as const,
+      entry,
+    })) ?? []
+
+  const categoryName = data.category.name
+
+  return match(categoryName)
+    .with('Buy', () => {
+      // Buy: From bottom to top - cash minus (negative entry), then share plus (positive lot)
+      const negativeEntries = entries.filter(
+        (item) =>
+          item.type === 'entry' && currency(item.entry.amount).value < 0,
+      )
+      const positiveLots = lots.filter(
+        (item) => item.type === 'lot' && currency(item.lot.amount).value > 0,
+      )
+      // Return with share plus first (renders on top), cash minus last (renders on bottom)
+      return [...positiveLots, ...negativeEntries]
+    })
+    .with('Sell', () => {
+      // Sell: From bottom to top - share minus (negative lot), then cash plus (positive entry)
+      const negativeLots = lots.filter(
+        (item) => item.type === 'lot' && currency(item.lot.amount).value < 0,
+      )
+      const positiveEntries = entries.filter(
+        (item) =>
+          item.type === 'entry' && currency(item.entry.amount).value > 0,
+      )
+      // Return with cash plus first (renders on top), share minus last (renders on bottom)
+      return [...positiveEntries, ...negativeLots]
+    })
+    .otherwise(() => {
+      // For all other types: Show debits (negative) first, then credits (positive)
+      // From bottom to top - debit first, then credit on top
+      const debits = [...lots, ...entries].filter((item) => {
+        const amount = item.type === 'lot' ? item.lot.amount : item.entry.amount
+        return currency(amount).value < 0
+      })
+      const credits = [...lots, ...entries].filter((item) => {
+        const amount = item.type === 'lot' ? item.lot.amount : item.entry.amount
+        return currency(amount).value >= 0
+      })
+      // Return with credits first (renders on top), debits last (renders on bottom)
+      return [...credits, ...debits]
+    })
 }
 
 function TransactionEntryCard({
