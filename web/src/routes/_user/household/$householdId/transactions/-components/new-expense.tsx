@@ -398,7 +398,7 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
                           </Button>
                         }
                       />
-                      <DropdownMenuContent className="w-auto p-0">
+                      <DropdownMenuContent className="w-auto p-0" side="top">
                         <Calendar
                           mode="single"
                           selected={field.state.value}
