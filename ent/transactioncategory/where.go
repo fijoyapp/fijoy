@@ -75,6 +75,11 @@ func Name(v string) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldEQ(FieldName, v))
 }
 
+// IsImmutable applies equality check predicate on the "is_immutable" field. It's identical to IsImmutableEQ.
+func IsImmutable(v bool) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldEQ(FieldIsImmutable, v))
+}
+
 // CreateTimeEQ applies the EQ predicate on the "create_time" field.
 func CreateTimeEQ(v time.Time) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldEQ(FieldCreateTime, v))
@@ -258,6 +263,16 @@ func TypeIn(vs ...Type) predicate.TransactionCategory {
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldNotIn(FieldType, vs...))
+}
+
+// IsImmutableEQ applies the EQ predicate on the "is_immutable" field.
+func IsImmutableEQ(v bool) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldEQ(FieldIsImmutable, v))
+}
+
+// IsImmutableNEQ applies the NEQ predicate on the "is_immutable" field.
+func IsImmutableNEQ(v bool) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldNEQ(FieldIsImmutable, v))
 }
 
 // HasHousehold applies the HasEdge predicate on the "household" edge.

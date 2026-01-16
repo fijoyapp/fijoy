@@ -2854,6 +2854,10 @@ type TransactionCategoryWhereInput struct {
 	TypeIn    []transactioncategory.Type `json:"typeIn,omitempty"`
 	TypeNotIn []transactioncategory.Type `json:"typeNotIn,omitempty"`
 
+	// "is_immutable" field predicates.
+	IsImmutable    *bool `json:"isImmutable,omitempty"`
+	IsImmutableNEQ *bool `json:"isImmutableNEQ,omitempty"`
+
 	// "household" edge predicates.
 	HasHousehold     *bool                  `json:"hasHousehold,omitempty"`
 	HasHouseholdWith []*HouseholdWhereInput `json:"hasHouseholdWith,omitempty"`
@@ -3068,6 +3072,12 @@ func (i *TransactionCategoryWhereInput) P() (predicate.TransactionCategory, erro
 	}
 	if len(i.TypeNotIn) > 0 {
 		predicates = append(predicates, transactioncategory.TypeNotIn(i.TypeNotIn...))
+	}
+	if i.IsImmutable != nil {
+		predicates = append(predicates, transactioncategory.IsImmutableEQ(*i.IsImmutable))
+	}
+	if i.IsImmutableNEQ != nil {
+		predicates = append(predicates, transactioncategory.IsImmutableNEQ(*i.IsImmutableNEQ))
 	}
 
 	if i.HasHousehold != nil {

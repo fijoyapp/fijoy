@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<45e368ed98e6432dd99a2d268af16dba>>
+ * @generated SignedSource<<52952466b7bd5bf00ddeec4047553a95>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -158,6 +158,27 @@ return {
                       (v0/*: any*/)
                     ],
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Investment",
+                    "kind": "LinkedField",
+                    "name": "investments",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "symbol",
+                        "storageKey": null
+                      },
+                      (v4/*: any*/)
+                    ],
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -207,12 +228,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0b594b0c4a5ff100ad24b345a1667018",
+    "cacheID": "25262ae684867ae347b0ab4a303bc14a",
     "id": null,
     "metadata": {},
     "name": "routeHouseholdIdQuery",
     "operationKind": "query",
-    "text": "query routeHouseholdIdQuery {\n  households {\n    id\n    name\n    locale\n    currency {\n      id\n      code\n    }\n  }\n  ...appSidebarFragment\n  ...logTransactionFragment\n}\n\nfragment appSidebarFragment on Query {\n  ...householdSwitcherFragment\n}\n\nfragment householdSwitcherFragment on Query {\n  households {\n    id\n    name\n  }\n}\n\nfragment logTransactionFragment on Query {\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n\nfragment newExpenseFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransferFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n"
+    "text": "query routeHouseholdIdQuery {\n  households {\n    id\n    name\n    locale\n    currency {\n      id\n      code\n    }\n  }\n  ...appSidebarFragment\n  ...logTransactionFragment\n}\n\nfragment appSidebarFragment on Query {\n  ...householdSwitcherFragment\n}\n\nfragment householdSwitcherFragment on Query {\n  households {\n    id\n    name\n  }\n}\n\nfragment logTransactionFragment on Query {\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n  ...newBuyFragment\n  ...newSellFragment\n}\n\nfragment newBuyFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n          type\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newExpenseFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newSellFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n          type\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransferFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n"
   }
 };
 })();

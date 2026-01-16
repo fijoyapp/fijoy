@@ -250,6 +250,10 @@ func init() {
 	transactioncategoryDescName := transactioncategoryFields[0].Descriptor()
 	// transactioncategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	transactioncategory.NameValidator = transactioncategoryDescName.Validators[0].(func(string) error)
+	// transactioncategoryDescIsImmutable is the schema descriptor for is_immutable field.
+	transactioncategoryDescIsImmutable := transactioncategoryFields[2].Descriptor()
+	// transactioncategory.DefaultIsImmutable holds the default value on creation for the is_immutable field.
+	transactioncategory.DefaultIsImmutable = transactioncategoryDescIsImmutable.Default.(bool)
 	transactionentryMixin := schema.TransactionEntry{}.Mixin()
 	transactionentry.Policy = privacy.NewPolicies(transactionentryMixin[1], schema.TransactionEntry{})
 	transactionentry.Hooks[0] = func(next ent.Mutator) ent.Mutator {

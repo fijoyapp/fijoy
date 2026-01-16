@@ -1,4 +1,4 @@
-h1:9LETdFCQmjnCXZKelZutx1EaoTkG05okmxRzgxt6b9g=
+h1:xkozL6y4gLvbdKeO14Yne6VR9xGZZViiHeZ7y9jjGvQ=
 20250114164520_init.down.sql h1:SCAmdeXWpL5+JX36g8TpgZIIJSUW7upGIWuaNUCrMqE=
 20250114164520_init.up.sql h1:pnRnVPIbDzMMuQJRjX9l3Nhc2+zz2ReZ/yMhtTcrnPM=
 20251227201721_balance-trigger.down.sql h1:Oc9p6XzXqV7wkEKRmfhM6n20a5R15L/5oereiTmvtTE=
@@ -9,3 +9,5 @@ h1:9LETdFCQmjnCXZKelZutx1EaoTkG05okmxRzgxt6b9g=
 20251229010253_value-trigger.up.sql h1:e9FVJejHOGSPhqnZ5XillCH2DpQs6MlWhbO/jrS65L4=
 20251229010254_balance-trigger.down.sql h1:iUhnEs6haI0emHIUxSFrnj5kv/y4eQgfW4yEcMghDs8=
 20251229010254_balance-trigger.up.sql h1:zJCPgUS5z0rXP1Mddd7mfy1No3E5bhGA50yQsuAjMus=
+20260116011359_immutable-category.down.sql h1:zLPRsLPuZ95jrChfZNr+nJzyYM8cNLMRTvMTicqbl/8=
+20260116011359_immutable-category.up.sql h1:C/7WAi1kblCqDabMNSenI8iaMUhEE1AefXyVhUEDCm8=

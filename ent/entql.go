@@ -161,6 +161,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transactioncategory.FieldHouseholdID: {Type: field.TypeInt, Column: transactioncategory.FieldHouseholdID},
 			transactioncategory.FieldName:        {Type: field.TypeString, Column: transactioncategory.FieldName},
 			transactioncategory.FieldType:        {Type: field.TypeEnum, Column: transactioncategory.FieldType},
+			transactioncategory.FieldIsImmutable: {Type: field.TypeBool, Column: transactioncategory.FieldIsImmutable},
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
@@ -1706,6 +1707,11 @@ func (f *TransactionCategoryFilter) WhereName(p entql.StringP) {
 // WhereType applies the entql string predicate on the type field.
 func (f *TransactionCategoryFilter) WhereType(p entql.StringP) {
 	f.Where(p.Field(transactioncategory.FieldType))
+}
+
+// WhereIsImmutable applies the entql bool predicate on the is_immutable field.
+func (f *TransactionCategoryFilter) WhereIsImmutable(p entql.BoolP) {
+	f.Where(p.Field(transactioncategory.FieldIsImmutable))
 }
 
 // WhereHasHousehold applies a predicate to check if query has an edge household.

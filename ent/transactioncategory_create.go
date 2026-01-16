@@ -70,6 +70,20 @@ func (_c *TransactionCategoryCreate) SetType(v transactioncategory.Type) *Transa
 	return _c
 }
 
+// SetIsImmutable sets the "is_immutable" field.
+func (_c *TransactionCategoryCreate) SetIsImmutable(v bool) *TransactionCategoryCreate {
+	_c.mutation.SetIsImmutable(v)
+	return _c
+}
+
+// SetNillableIsImmutable sets the "is_immutable" field if the given value is not nil.
+func (_c *TransactionCategoryCreate) SetNillableIsImmutable(v *bool) *TransactionCategoryCreate {
+	if v != nil {
+		_c.SetIsImmutable(*v)
+	}
+	return _c
+}
+
 // SetHousehold sets the "household" edge to the Household entity.
 func (_c *TransactionCategoryCreate) SetHousehold(v *Household) *TransactionCategoryCreate {
 	return _c.SetHouseholdID(v.ID)
@@ -141,6 +155,10 @@ func (_c *TransactionCategoryCreate) defaults() error {
 		v := transactioncategory.DefaultUpdateTime()
 		_c.mutation.SetUpdateTime(v)
 	}
+	if _, ok := _c.mutation.IsImmutable(); !ok {
+		v := transactioncategory.DefaultIsImmutable
+		_c.mutation.SetIsImmutable(v)
+	}
 	return nil
 }
 
@@ -170,6 +188,9 @@ func (_c *TransactionCategoryCreate) check() error {
 		if err := transactioncategory.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "TransactionCategory.type": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.IsImmutable(); !ok {
+		return &ValidationError{Name: "is_immutable", err: errors.New(`ent: missing required field "TransactionCategory.is_immutable"`)}
 	}
 	if len(_c.mutation.HouseholdIDs()) == 0 {
 		return &ValidationError{Name: "household", err: errors.New(`ent: missing required edge "TransactionCategory.household"`)}
@@ -216,6 +237,10 @@ func (_c *TransactionCategoryCreate) createSpec() (*TransactionCategory, *sqlgra
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(transactioncategory.FieldType, field.TypeEnum, value)
 		_node.Type = value
+	}
+	if value, ok := _c.mutation.IsImmutable(); ok {
+		_spec.SetField(transactioncategory.FieldIsImmutable, field.TypeBool, value)
+		_node.IsImmutable = value
 	}
 	if nodes := _c.mutation.HouseholdIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -338,6 +363,18 @@ func (u *TransactionCategoryUpsert) UpdateType() *TransactionCategoryUpsert {
 	return u
 }
 
+// SetIsImmutable sets the "is_immutable" field.
+func (u *TransactionCategoryUpsert) SetIsImmutable(v bool) *TransactionCategoryUpsert {
+	u.Set(transactioncategory.FieldIsImmutable, v)
+	return u
+}
+
+// UpdateIsImmutable sets the "is_immutable" field to the value that was provided on create.
+func (u *TransactionCategoryUpsert) UpdateIsImmutable() *TransactionCategoryUpsert {
+	u.SetExcluded(transactioncategory.FieldIsImmutable)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -425,6 +462,20 @@ func (u *TransactionCategoryUpsertOne) SetType(v transactioncategory.Type) *Tran
 func (u *TransactionCategoryUpsertOne) UpdateType() *TransactionCategoryUpsertOne {
 	return u.Update(func(s *TransactionCategoryUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetIsImmutable sets the "is_immutable" field.
+func (u *TransactionCategoryUpsertOne) SetIsImmutable(v bool) *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetIsImmutable(v)
+	})
+}
+
+// UpdateIsImmutable sets the "is_immutable" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertOne) UpdateIsImmutable() *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateIsImmutable()
 	})
 }
 
@@ -681,6 +732,20 @@ func (u *TransactionCategoryUpsertBulk) SetType(v transactioncategory.Type) *Tra
 func (u *TransactionCategoryUpsertBulk) UpdateType() *TransactionCategoryUpsertBulk {
 	return u.Update(func(s *TransactionCategoryUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetIsImmutable sets the "is_immutable" field.
+func (u *TransactionCategoryUpsertBulk) SetIsImmutable(v bool) *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetIsImmutable(v)
+	})
+}
+
+// UpdateIsImmutable sets the "is_immutable" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertBulk) UpdateIsImmutable() *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateIsImmutable()
 	})
 }
 

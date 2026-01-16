@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<02d872c6d0c6a0c0de5b1d40429d69f5>>
+ * @generated SignedSource<<c79514e48a83aedb5177ef68dc3a9265>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -108,6 +108,27 @@ return {
                       (v0/*: any*/)
                     ],
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Investment",
+                    "kind": "LinkedField",
+                    "name": "investments",
+                    "plural": true,
+                    "selections": [
+                      (v0/*: any*/),
+                      (v1/*: any*/),
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "symbol",
+                        "storageKey": null
+                      },
+                      (v2/*: any*/)
+                    ],
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -157,12 +178,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d92ef37ffba91723147d0648a3dbe27b",
+    "cacheID": "8a57aa551e875b83df0a0c94f5f5aad3",
     "id": null,
     "metadata": {},
     "name": "newTransactionQuery",
     "operationKind": "query",
-    "text": "query newTransactionQuery {\n  ...logTransactionFragment\n}\n\nfragment logTransactionFragment on Query {\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n}\n\nfragment newExpenseFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransferFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n"
+    "text": "query newTransactionQuery {\n  ...logTransactionFragment\n}\n\nfragment logTransactionFragment on Query {\n  ...newExpenseFragment\n  ...newIncomeFragment\n  ...newTransferFragment\n  ...newBuyFragment\n  ...newSellFragment\n}\n\nfragment newBuyFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n          type\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newExpenseFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newSellFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n          type\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransferFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        name\n        type\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n"
   }
 };
 })();

@@ -213,6 +213,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer", "investment", "setup"}},
+		{Name: "is_immutable", Type: field.TypeBool, Default: false},
 		{Name: "household_id", Type: field.TypeInt},
 	}
 	// TransactionCategoriesTable holds the schema information for the "transaction_categories" table.
@@ -223,7 +224,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "transaction_categories_households_transaction_categories",
-				Columns:    []*schema.Column{TransactionCategoriesColumns[5]},
+				Columns:    []*schema.Column{TransactionCategoriesColumns[6]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -232,7 +233,7 @@ var (
 			{
 				Name:    "transactioncategory_name_household_id",
 				Unique:  true,
-				Columns: []*schema.Column{TransactionCategoriesColumns[3], TransactionCategoriesColumns[5]},
+				Columns: []*schema.Column{TransactionCategoriesColumns[3], TransactionCategoriesColumns[6]},
 			},
 		},
 	}
