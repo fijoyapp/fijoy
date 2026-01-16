@@ -1008,7 +1008,7 @@ func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQu
 
 // CryptoQuote is the resolver for the cryptoQuote field.
 func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*CryptoQuoteResult, error) {
-	cryptoQuote, err := r.marketClient.StockQuote(ctx, symbol)
+	cryptoQuote, err := r.marketClient.CryptoQuote(ctx, symbol)
 	if err != nil {
 		return nil, err
 	}

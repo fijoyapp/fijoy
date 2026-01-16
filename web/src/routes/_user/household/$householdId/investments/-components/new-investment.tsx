@@ -47,12 +47,13 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getLogoStockTickerURL } from '@/lib/logo'
+import { getLogoTickerURL, getLogoCryptoURL } from '@/lib/logo'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
 import { Spinner } from '@/components/ui/spinner'
 import { newInvestmentStockQuoteFragment$key } from './__generated__/newInvestmentStockQuoteFragment.graphql'
+import { newInvestmentCryptoQuoteFragment$key } from './__generated__/newInvestmentCryptoQuoteFragment.graphql'
 
 const formSchema = z.object({
   name: z
@@ -97,6 +98,20 @@ const newInvestmentStockQuoteFragment = graphql`
   }
 `
 
+const newInvestmentCryptoQuoteFragment = graphql`
+  fragment newInvestmentCryptoQuoteFragment on Query
+  @refetchable(queryName: "newInvestmentCryptoQuoteQuery")
+  @argumentDefinitions(symbol: { type: "String", defaultValue: "" }) {
+    cryptoQuote(symbol: $symbol) {
+      currentPrice
+      symbol
+      exchange
+      name
+      currency
+    }
+  }
+`
+
 const newInvestmentMutation = graphql`
   mutation newInvestmentMutation($input: CreateInvestmentInputCustom!) {
     createInvestment(input: $input) {
@@ -117,11 +132,13 @@ const newInvestmentMutation = graphql`
 type NewInvestmentProps = {
   newInvestmentFragmentRef: newInvestmentFragment$key
   newInvestmentStockQuoteFragmentRef: newInvestmentStockQuoteFragment$key
+  newInvestmentCryptoQuoteFragmentRef: newInvestmentCryptoQuoteFragment$key
 }
 
 export function NewInvestment({
   newInvestmentFragmentRef,
   newInvestmentStockQuoteFragmentRef,
+  newInvestmentCryptoQuoteFragmentRef,
 }: NewInvestmentProps) {
   const [isPending, startTransition] = useTransition()
   const data = useFragment(newInvestmentFragment, newInvestmentFragmentRef)
@@ -130,6 +147,12 @@ export function NewInvestment({
     newInvestmentStockQuoteFragment,
     newInvestmentStockQuoteFragmentRef,
   )
+
+  const [cryptoQuoteData, refetchCryptoQuote] = useRefetchableFragment(
+    newInvestmentCryptoQuoteFragment,
+    newInvestmentCryptoQuoteFragmentRef,
+  )
+
   const [queriedSymbol, setQueriedSymbol] = useState('')
 
   const navigate = useNavigate()
@@ -211,13 +234,19 @@ export function NewInvestment({
 
   useEffect(() => {
     form.validateField('symbol', 'change')
-  }, [stockQuoteData, isPending, queriedSymbol, form])
+  }, [stockQuoteData, cryptoQuoteData, isPending, queriedSymbol, form])
 
   useEffect(() => {
-    if (stockQuoteData.stockQuote) {
-      form.setFieldValue('name', stockQuoteData.stockQuote.name)
+    const investmentType = form.getFieldValue('type')
+    const quote =
+      investmentType === 'crypto'
+        ? cryptoQuoteData.cryptoQuote
+        : stockQuoteData.stockQuote
+
+    if (quote) {
+      form.setFieldValue('name', quote.name)
     }
-  }, [stockQuoteData, form])
+  }, [stockQuoteData, cryptoQuoteData, form])
 
   return (
     <Card className="w-full">
@@ -284,6 +313,14 @@ export function NewInvestment({
             />
             <form.Field
               name="type"
+              listeners={{
+                onChange: ({ fieldApi }) => {
+                  // Clear symbol and name when type changes
+                  fieldApi.form.setFieldValue('symbol', '')
+                  fieldApi.form.setFieldValue('name', '')
+                  setQueriedSymbol('')
+                },
+              }}
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
@@ -328,7 +365,7 @@ export function NewInvestment({
             <form.Field
               name="symbol"
               validators={{
-                onChangeAsync: ({ value }) => {
+                onChangeAsync: ({ value, fieldApi }) => {
                   if (!value) return undefined // skip for empty value
 
                   // zod stuff
@@ -343,8 +380,16 @@ export function NewInvestment({
                   // is currently fetching
                   if (isPending) return undefined
 
+                  // Check which type of investment this is
+                  const investmentType = fieldApi.form.getFieldValue('type')
+
                   // after fetch, no quote found
-                  if (!stockQuoteData.stockQuote) {
+                  const quote =
+                    investmentType === 'crypto'
+                      ? cryptoQuoteData.cryptoQuote
+                      : stockQuoteData.stockQuote
+
+                  if (!quote) {
                     return {
                       message: 'Unable to find a quote for this symbol.',
                     }
@@ -355,10 +400,16 @@ export function NewInvestment({
                 onChangeAsyncDebounceMs: 500,
               }}
               listeners={{
-                onChange: (value) => {
+                onChange: ({ value, fieldApi }) => {
                   startTransition(() => {
-                    setQueriedSymbol(value.value)
-                    refetchStockQuote({ symbol: value.value })
+                    setQueriedSymbol(value)
+                    const investmentType = fieldApi.form.getFieldValue('type')
+
+                    if (investmentType === 'crypto') {
+                      refetchCryptoQuote({ symbol: value })
+                    } else {
+                      refetchStockQuote({ symbol: value })
+                    }
                   })
                 },
                 onChangeDebounceMs: 500,
@@ -366,6 +417,7 @@ export function NewInvestment({
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
+                const investmentType = form.getFieldValue('type')
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Symbol</FieldLabel>
@@ -377,7 +429,11 @@ export function NewInvestment({
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
-                      placeholder="e.g. XEQT.TO"
+                      placeholder={
+                        investmentType === 'crypto'
+                          ? 'e.g. BTC-CAD'
+                          : 'e.g. XEQT.TO'
+                      }
                       autoComplete="off"
                     />
                     {isInvalid && (
@@ -387,57 +443,74 @@ export function NewInvestment({
                 )
               }}
             />
-            {stockQuoteData.stockQuote ? (
-              <Item variant={'outline'}>
-                <ItemMedia variant="image">
-                  <Avatar className="">
-                    <AvatarImage
-                      src={getLogoStockTickerURL(
-                        stockQuoteData.stockQuote.symbol || '',
-                      )}
-                      alt={stockQuoteData.stockQuote.symbol || 'unknown logo'}
-                    />
-                    <AvatarFallback>
-                      {stockQuoteData.stockQuote.symbol}
-                    </AvatarFallback>
-                  </Avatar>
-                </ItemMedia>
-                <ItemContent className="gap-px">
-                  <ItemTitle className={cn('font-semibold')}>
-                    {stockQuoteData.stockQuote.name}
-                  </ItemTitle>
-                  <ItemDescription>
-                    {formatCurrency({
-                      value: stockQuoteData.stockQuote.currentPrice,
-                      currencyCode: stockQuoteData.stockQuote.currency,
-                    })}
-                  </ItemDescription>
-                </ItemContent>
-                <ItemContent className="items-end gap-px">
-                  <ItemTitle className="">
-                    <span>{stockQuoteData.stockQuote.symbol}</span>
-                  </ItemTitle>
-                  <ItemDescription className="">
-                    <span>{stockQuoteData.stockQuote.exchange}</span>
-                  </ItemDescription>
-                </ItemContent>
-              </Item>
-            ) : (
-              <Item variant="outline">
-                <ItemContent className="gap-px">
-                  <ItemTitle className={cn('')}>
-                    Start typing the symbol to fetch quote...
-                  </ItemTitle>
-                  <ItemDescription>
-                    Symbols are formatted according to Yahoo Finance.
-                  </ItemDescription>
-                </ItemContent>
+            {(() => {
+              const investmentType = form.getFieldValue('type')
+              const quote =
+                investmentType === 'crypto'
+                  ? cryptoQuoteData.cryptoQuote
+                  : stockQuoteData.stockQuote
 
-                <ItemContent className="items-end gap-px">
-                  {isPending && <Spinner />}
-                </ItemContent>
-              </Item>
-            )}
+              // For crypto logos, extract base symbol (e.g., "BTC" from "BTC-CAD")
+              const logoSymbol = quote?.symbol
+                ? investmentType === 'crypto'
+                  ? quote.symbol.split('-')[0]
+                  : quote.symbol
+                : ''
+
+              return quote ? (
+                <Item variant={'outline'}>
+                  <ItemMedia variant="image">
+                    <Avatar className="">
+                      <AvatarImage
+                        src={
+                          investmentType === 'crypto'
+                            ? getLogoCryptoURL(logoSymbol)
+                            : getLogoTickerURL(logoSymbol)
+                        }
+                        alt={quote.symbol || 'unknown logo'}
+                      />
+                      <AvatarFallback>{quote.symbol}</AvatarFallback>
+                    </Avatar>
+                  </ItemMedia>
+                  <ItemContent className="gap-px">
+                    <ItemTitle className={cn('font-semibold')}>
+                      {quote.name}
+                    </ItemTitle>
+                    <ItemDescription>
+                      {formatCurrency({
+                        value: quote.currentPrice,
+                        currencyCode: quote.currency,
+                      })}
+                    </ItemDescription>
+                  </ItemContent>
+                  <ItemContent className="items-end gap-px">
+                    <ItemTitle className="">
+                      <span>{quote.symbol}</span>
+                    </ItemTitle>
+                    <ItemDescription className="">
+                      <span>{quote.exchange}</span>
+                    </ItemDescription>
+                  </ItemContent>
+                </Item>
+              ) : (
+                <Item variant="outline">
+                  <ItemContent className="gap-px">
+                    <ItemTitle className={cn('')}>
+                      Start typing the symbol to fetch quote...
+                    </ItemTitle>
+                    <ItemDescription>
+                      {investmentType === 'crypto'
+                        ? 'Enter crypto symbol with currency pair (e.g., BTC-CAD, ETH-USD)'
+                        : 'Symbols are formatted according to Yahoo Finance.'}
+                    </ItemDescription>
+                  </ItemContent>
+
+                  <ItemContent className="items-end gap-px">
+                    {isPending && <Spinner />}
+                  </ItemContent>
+                </Item>
+              )
+            })()}
             <form.Field
               name="name"
               children={(field) => {

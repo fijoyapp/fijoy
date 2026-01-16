@@ -23,7 +23,7 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getLogoStockTickerURL } from '@/lib/logo'
+import { getLogoTickerURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'
 
 const transactionCardFragment = graphql`
@@ -230,7 +230,7 @@ function LotCard({
       <ItemMedia variant="image">
         <Avatar>
           <AvatarImage
-            src={getLogoStockTickerURL(investmentLot.investment.symbol || '')}
+            src={getLogoTickerURL(investmentLot.investment.symbol || '')}
             alt={investmentLot.investment.symbol || 'unknown logo'}
           />
           <AvatarFallback>{investmentLot.investment.symbol}</AvatarFallback>

@@ -13,7 +13,7 @@ import {
 import { useCurrency } from '@/hooks/use-currency'
 import { getPrettyTime } from '@/lib/time'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getLogoStockTickerURL } from '@/lib/logo'
+import { getLogoTickerURL } from '@/lib/logo'
 
 const investmentCardFragment = graphql`
   fragment investmentCardFragment on Investment {
@@ -55,7 +55,7 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
               <ItemMedia variant="image">
                 <Avatar className="">
                   <AvatarImage
-                    src={getLogoStockTickerURL(data.symbol || '')}
+                    src={getLogoTickerURL(data.symbol || '')}
                     alt={data.symbol || 'unknown logo'}
                   />
                   <AvatarFallback>{data.symbol}</AvatarFallback>
