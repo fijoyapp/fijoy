@@ -548,6 +548,7 @@ export function NewInvestment({
                     <FieldLabel htmlFor={field.name}>Amount</FieldLabel>
                     <Input
                       type="number"
+                      inputMode="decimal"
                       data-1p-ignore
                       id={field.name}
                       name={field.name}
