@@ -8,6 +8,7 @@ package beavermoney
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"beavermoney.app/ent"
@@ -217,7 +218,10 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 		return nil, fmt.Errorf("account does not belong to household")
 	}
 
-	quote, err := r.marketClient.EquityQuote(ctx, input.Input.Symbol)
+	// Uppercase the symbol before querying
+	symbolUpper := strings.ToUpper(input.Input.Symbol)
+
+	quote, err := r.marketClient.EquityQuote(ctx, symbolUpper)
 	if err != nil {
 		return nil, err
 	}
@@ -226,6 +230,9 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 	if err != nil {
 		return nil, err
 	}
+
+	// Set the symbol to uppercase
+	input.Input.Symbol = symbolUpper
 
 	investment, err := client.Investment.
 		Create().
