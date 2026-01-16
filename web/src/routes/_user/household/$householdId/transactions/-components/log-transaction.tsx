@@ -5,6 +5,7 @@ import { NewIncome } from './new-income'
 import { NewTransfer } from './new-transfer'
 import { NewBuy } from './new-buy'
 import { NewSell } from './new-sell'
+import { NewMove } from './new-move'
 import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
 import { logTransactionFragment$key } from './__generated__/logTransactionFragment.graphql'
@@ -16,10 +17,17 @@ const logTransactionFragment = graphql`
     ...newTransferFragment
     ...newBuyFragment
     ...newSellFragment
+    ...newMoveFragment
   }
 `
 
-type TransactionType = 'expense' | 'income' | 'transfer' | 'buy' | 'sell'
+type TransactionType =
+  | 'expense'
+  | 'income'
+  | 'transfer'
+  | 'buy'
+  | 'sell'
+  | 'move'
 
 type NewTransactionProps = {
   fragmentRef: logTransactionFragment$key
@@ -67,6 +75,13 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
         >
           Sell
         </Button>
+        <Button
+          size="sm"
+          variant={selectedType === 'move' ? 'default' : 'outline'}
+          onClick={() => setSelectedType('move')}
+        >
+          Move
+        </Button>
       </div>
 
       {selectedType === 'expense' && <NewExpense fragmentRef={data} />}
@@ -74,6 +89,7 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
       {selectedType === 'transfer' && <NewTransfer fragmentRef={data} />}
       {selectedType === 'buy' && <NewBuy fragmentRef={data} />}
       {selectedType === 'sell' && <NewSell fragmentRef={data} />}
+      {selectedType === 'move' && <NewMove fragmentRef={data} />}
     </Item>
   )
 }
