@@ -325,6 +325,22 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
 
             <form.Field
               name="fromAccountId"
+              validators={{
+                onChange: ({ value, fieldApi }) => {
+                  if (!value) {
+                    return undefined
+                  }
+                  const toAccountId = fieldApi.form.getFieldValue('toAccountId')
+                  if (toAccountId && value === toAccountId) {
+                    // Trigger validation on toAccountId field to show error there
+                    fieldApi.form.validateField('toAccountId', 'change')
+                  } else if (toAccountId) {
+                    // Clear error on toAccountId if it exists
+                    fieldApi.form.validateField('toAccountId', 'change')
+                  }
+                  return undefined
+                },
+              }}
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
