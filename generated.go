@@ -224,8 +224,8 @@ type ComplexityRoot struct {
 		CreateInvestment          func(childComplexity int, input CreateInvestmentInputCustom) int
 		CreateTransactionCategory func(childComplexity int, input ent.CreateTransactionCategoryInput) int
 		CreateTransfer            func(childComplexity int, input CreateTransferInputCustom) int
+		MoveInvestment            func(childComplexity int, input MoveInvestmentInputCustom) int
 		SellInvestment            func(childComplexity int, input SellInvestmentInputCustom) int
-		TransferInvestment        func(childComplexity int, input TransferInvestmentInputCustom) int
 	}
 
 	PageInfo struct {
@@ -388,7 +388,7 @@ type MutationResolver interface {
 	CreateTransfer(ctx context.Context, input CreateTransferInputCustom) (*ent.TransactionEdge, error)
 	BuyInvestment(ctx context.Context, input BuyInvestmentInputCustom) (*ent.TransactionEdge, error)
 	SellInvestment(ctx context.Context, input SellInvestmentInputCustom) (*ent.TransactionEdge, error)
-	TransferInvestment(ctx context.Context, input TransferInvestmentInputCustom) (*ent.TransactionEdge, error)
+	MoveInvestment(ctx context.Context, input MoveInvestmentInputCustom) (*ent.TransactionEdge, error)
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
@@ -1235,6 +1235,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateTransfer(childComplexity, args["input"].(CreateTransferInputCustom)), true
+	case "Mutation.moveInvestment":
+		if e.complexity.Mutation.MoveInvestment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_moveInvestment_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.MoveInvestment(childComplexity, args["input"].(MoveInvestmentInputCustom)), true
 	case "Mutation.sellInvestment":
 		if e.complexity.Mutation.SellInvestment == nil {
 			break
@@ -1246,17 +1257,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.SellInvestment(childComplexity, args["input"].(SellInvestmentInputCustom)), true
-	case "Mutation.transferInvestment":
-		if e.complexity.Mutation.TransferInvestment == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_transferInvestment_args(ctx, rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.TransferInvestment(childComplexity, args["input"].(TransferInvestmentInputCustom)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -1866,13 +1866,13 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputHouseholdWhereInput,
 		ec.unmarshalInputInvestmentLotWhereInput,
 		ec.unmarshalInputInvestmentWhereInput,
+		ec.unmarshalInputMoveInvestmentInputCustom,
 		ec.unmarshalInputSellInvestmentInputCustom,
 		ec.unmarshalInputTimePeriodInput,
 		ec.unmarshalInputTransactionCategoryWhereInput,
 		ec.unmarshalInputTransactionEntryWhereInput,
 		ec.unmarshalInputTransactionOrder,
 		ec.unmarshalInputTransactionWhereInput,
-		ec.unmarshalInputTransferInvestmentInputCustom,
 		ec.unmarshalInputUpdateAccountInput,
 		ec.unmarshalInputUpdateInvestmentInput,
 		ec.unmarshalInputUpdateInvestmentLotInput,
@@ -2073,10 +2073,10 @@ func (ec *executionContext) field_Mutation_createTransfer_args(ctx context.Conte
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_sellInvestment_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_moveInvestment_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNSellInvestmentInputCustom2beavermoneyᚗappᚐSellInvestmentInputCustom)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNMoveInvestmentInputCustom2beavermoneyᚗappᚐMoveInvestmentInputCustom)
 	if err != nil {
 		return nil, err
 	}
@@ -2084,10 +2084,10 @@ func (ec *executionContext) field_Mutation_sellInvestment_args(ctx context.Conte
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_transferInvestment_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_sellInvestment_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNTransferInvestmentInputCustom2beavermoneyᚗappᚐTransferInvestmentInputCustom)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNSellInvestmentInputCustom2beavermoneyᚗappᚐSellInvestmentInputCustom)
 	if err != nil {
 		return nil, err
 	}
@@ -6611,15 +6611,15 @@ func (ec *executionContext) fieldContext_Mutation_sellInvestment(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_transferInvestment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_moveInvestment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Mutation_transferInvestment,
+		ec.fieldContext_Mutation_moveInvestment,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.resolvers.Mutation().TransferInvestment(ctx, fc.Args["input"].(TransferInvestmentInputCustom))
+			return ec.resolvers.Mutation().MoveInvestment(ctx, fc.Args["input"].(MoveInvestmentInputCustom))
 		},
 		nil,
 		ec.marshalNTransactionEdge2ᚖbeavermoneyᚗappᚋentᚐTransactionEdge,
@@ -6628,7 +6628,7 @@ func (ec *executionContext) _Mutation_transferInvestment(ctx context.Context, fi
 	)
 }
 
-func (ec *executionContext) fieldContext_Mutation_transferInvestment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_moveInvestment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -6651,7 +6651,7 @@ func (ec *executionContext) fieldContext_Mutation_transferInvestment(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_transferInvestment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_moveInvestment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -14945,6 +14945,51 @@ func (ec *executionContext) unmarshalInputInvestmentWhereInput(ctx context.Conte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputMoveInvestmentInputCustom(ctx context.Context, obj any) (MoveInvestmentInputCustom, error) {
+	var it MoveInvestmentInputCustom
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	if _, present := asMap["fees"]; !present {
+		asMap["fees"] = []any{}
+	}
+
+	fieldsInOrder := [...]string{"transaction", "investmentLots", "fees"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "transaction":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transaction"))
+			data, err := ec.unmarshalNCreateTransactionInput2ᚖbeavermoneyᚗappᚋentᚐCreateTransactionInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Transaction = data
+		case "investmentLots":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("investmentLots"))
+			data, err := ec.unmarshalNCreateInvestmentLotInput2ᚕᚖbeavermoneyᚗappᚋentᚐCreateInvestmentLotInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InvestmentLots = data
+		case "fees":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fees"))
+			data, err := ec.unmarshalNCreateTransactionEntryInput2ᚕᚖbeavermoneyᚗappᚋentᚐCreateTransactionEntryInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Fees = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSellInvestmentInputCustom(ctx context.Context, obj any) (SellInvestmentInputCustom, error) {
 	var it SellInvestmentInputCustom
 	asMap := map[string]any{}
@@ -16434,51 +16479,6 @@ func (ec *executionContext) unmarshalInputTransactionWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.HasInvestmentLotsWith = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputTransferInvestmentInputCustom(ctx context.Context, obj any) (TransferInvestmentInputCustom, error) {
-	var it TransferInvestmentInputCustom
-	asMap := map[string]any{}
-	for k, v := range obj.(map[string]any) {
-		asMap[k] = v
-	}
-
-	if _, present := asMap["fees"]; !present {
-		asMap["fees"] = []any{}
-	}
-
-	fieldsInOrder := [...]string{"transaction", "investmentLots", "fees"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "transaction":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("transaction"))
-			data, err := ec.unmarshalNCreateTransactionInput2ᚖbeavermoneyᚗappᚋentᚐCreateTransactionInput(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Transaction = data
-		case "investmentLots":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("investmentLots"))
-			data, err := ec.unmarshalNCreateInvestmentLotInput2ᚕᚖbeavermoneyᚗappᚋentᚐCreateInvestmentLotInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.InvestmentLots = data
-		case "fees":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fees"))
-			data, err := ec.unmarshalNCreateTransactionEntryInput2ᚕᚖbeavermoneyᚗappᚋentᚐCreateTransactionEntryInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Fees = data
 		}
 	}
 
@@ -20058,9 +20058,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "transferInvestment":
+		case "moveInvestment":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_transferInvestment(ctx, field)
+				return ec._Mutation_moveInvestment(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -22637,6 +22637,11 @@ func (ec *executionContext) unmarshalNInvestmentWhereInput2ᚖbeavermoneyᚗapp�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNMoveInvestmentInputCustom2beavermoneyᚗappᚐMoveInvestmentInputCustom(ctx context.Context, v any) (MoveInvestmentInputCustom, error) {
+	res, err := ec.unmarshalInputMoveInvestmentInputCustom(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNNode2ᚕbeavermoneyᚗappᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v []ent.Noder) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -22900,11 +22905,6 @@ func (ec *executionContext) marshalNTransactionOrderField2ᚖbeavermoneyᚗapp�
 func (ec *executionContext) unmarshalNTransactionWhereInput2ᚖbeavermoneyᚗappᚋentᚐTransactionWhereInput(ctx context.Context, v any) (*ent.TransactionWhereInput, error) {
 	res, err := ec.unmarshalInputTransactionWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNTransferInvestmentInputCustom2beavermoneyᚗappᚐTransferInvestmentInputCustom(ctx context.Context, v any) (TransferInvestmentInputCustom, error) {
-	res, err := ec.unmarshalInputTransferInvestmentInputCustom(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUser2ᚖbeavermoneyᚗappᚋentᚐUser(ctx context.Context, sel ast.SelectionSet, v *ent.User) graphql.Marshaler {

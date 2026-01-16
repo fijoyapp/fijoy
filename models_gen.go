@@ -70,6 +70,12 @@ type FinancialReport struct {
 	EndDate                time.Time                `json:"endDate"`
 }
 
+type MoveInvestmentInputCustom struct {
+	Transaction    *ent.CreateTransactionInput        `json:"transaction"`
+	InvestmentLots []*ent.CreateInvestmentLotInput    `json:"investmentLots"`
+	Fees           []*ent.CreateTransactionEntryInput `json:"fees"`
+}
+
 type SellInvestmentInputCustom struct {
 	Transaction      *ent.CreateTransactionInput        `json:"transaction"`
 	TransactionEntry *ent.CreateTransactionEntryInput   `json:"transactionEntry"`
@@ -80,10 +86,4 @@ type SellInvestmentInputCustom struct {
 type TimePeriodInput struct {
 	StartDate *time.Time `json:"startDate,omitempty"`
 	EndDate   *time.Time `json:"endDate,omitempty"`
-}
-
-type TransferInvestmentInputCustom struct {
-	Transaction    *ent.CreateTransactionInput        `json:"transaction"`
-	InvestmentLots []*ent.CreateInvestmentLotInput    `json:"investmentLots"`
-	Fees           []*ent.CreateTransactionEntryInput `json:"fees"`
 }
