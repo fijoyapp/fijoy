@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<34be9b2f83c4b3f9c321f7da6bb90183>>
+ * @generated SignedSource<<024cde3ac935da24882e810b4da1c72c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type newInvestmentQuery$variables = Record<PropertyKey, never>;
 export type newInvestmentQuery$data = {
-  readonly " $fragmentSpreads": FragmentRefs<"newInvestmentFragment" | "newInvestmentStockQuoteFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"newInvestmentCryptoQuoteFragment" | "newInvestmentFragment" | "newInvestmentStockQuoteFragment">;
 };
 export type newInvestmentQuery = {
   response: newInvestmentQuery$data;
@@ -26,7 +26,45 @@ var v0 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
-};
+},
+v1 = [
+  {
+    "kind": "Literal",
+    "name": "symbol",
+    "value": ""
+  }
+],
+v2 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "currentPrice",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "symbol",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "exchange",
+    "storageKey": null
+  },
+  (v0/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "currency",
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -43,6 +81,11 @@ return {
         "args": null,
         "kind": "FragmentSpread",
         "name": "newInvestmentStockQuoteFragment"
+      },
+      {
+        "args": null,
+        "kind": "FragmentSpread",
+        "name": "newInvestmentCryptoQuoteFragment"
       }
     ],
     "type": "Query",
@@ -104,63 +147,37 @@ return {
       },
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Literal",
-            "name": "symbol",
-            "value": ""
-          }
-        ],
+        "args": (v1/*: any*/),
         "concreteType": "StockQuoteResult",
         "kind": "LinkedField",
         "name": "stockQuote",
         "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "currentPrice",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "symbol",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "exchange",
-            "storageKey": null
-          },
-          (v0/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "currency",
-            "storageKey": null
-          }
-        ],
+        "selections": (v2/*: any*/),
         "storageKey": "stockQuote(symbol:\"\")"
+      },
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "CryptoQuoteResult",
+        "kind": "LinkedField",
+        "name": "cryptoQuote",
+        "plural": false,
+        "selections": (v2/*: any*/),
+        "storageKey": "cryptoQuote(symbol:\"\")"
       }
     ]
   },
   "params": {
-    "cacheID": "c785aafb047ec836e8bfcdd0bfa91a7e",
+    "cacheID": "cb81f547cb73c7780b82e896c208d50c",
     "id": null,
     "metadata": {},
     "name": "newInvestmentQuery",
     "operationKind": "query",
-    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n  ...newInvestmentStockQuoteFragment\n}\n\nfragment newInvestmentFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        type\n        name\n      }\n    }\n  }\n}\n\nfragment newInvestmentStockQuoteFragment on Query {\n  stockQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n"
+    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n  ...newInvestmentStockQuoteFragment\n  ...newInvestmentCryptoQuoteFragment\n}\n\nfragment newInvestmentCryptoQuoteFragment on Query {\n  cryptoQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n\nfragment newInvestmentFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        type\n        name\n      }\n    }\n  }\n}\n\nfragment newInvestmentStockQuoteFragment on Query {\n  stockQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d49c52f7a6ddf3f3f358271a3150f7a0";
+(node as any).hash = "2233c2654a08ec13a086ee8e60ae1c2d";
 
 export default node;

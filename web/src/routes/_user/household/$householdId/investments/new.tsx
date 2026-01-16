@@ -31,6 +31,7 @@ const newInvestmentQuery = graphql`
   query newInvestmentQuery {
     ...newInvestmentFragment
     ...newInvestmentStockQuoteFragment
+    ...newInvestmentCryptoQuoteFragment
   }
 `
 
@@ -58,6 +59,7 @@ function RouteComponent() {
           <NewInvestment
             newInvestmentFragmentRef={data}
             newInvestmentStockQuoteFragmentRef={data}
+            newInvestmentCryptoQuoteFragmentRef={data}
           />
         </Item>
       </div>
