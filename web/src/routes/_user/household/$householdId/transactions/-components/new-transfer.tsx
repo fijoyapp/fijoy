@@ -115,12 +115,10 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
 
   // Filter accounts - show all non-investment accounts
   const availableAccounts =
-    data.accounts.edges
-      ?.map((account) => {
-        invariant(account?.node, 'Account node is null')
-        return account.node
-      })
-      .filter((account) => account.type !== 'investment') ?? []
+    data.accounts.edges?.map((account) => {
+      invariant(account?.node, 'Account node is null')
+      return account.node
+    }) ?? []
 
   // Filter categories - only transfer categories
   const transferCategories =
