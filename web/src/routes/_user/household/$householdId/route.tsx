@@ -1,11 +1,20 @@
-import { EyeIcon, EyeOffIcon, Moon, Sun, GripVertical, X } from 'lucide-react'
+import {
+  EyeIcon,
+  EyeOffIcon,
+  Moon,
+  Sun,
+  GripVertical,
+  X,
+  RefreshCwIcon,
+} from 'lucide-react'
 import {
   Navigate,
   Outlet,
   createFileRoute,
   useNavigate,
+  useRouter,
 } from '@tanstack/react-router'
-import { fetchQuery, graphql } from 'relay-runtime'
+import { commitLocalUpdate, fetchQuery, graphql } from 'relay-runtime'
 import { loadQuery, usePreloadedQuery } from 'react-relay'
 import invariant from 'tiny-invariant'
 import { Rnd } from 'react-rnd'
@@ -122,6 +131,7 @@ function RouteComponent() {
       search: (prev) => ({ ...prev, showNewTransaction: open }),
     })
   }
+  const router = useRouter()
 
   return (
     <HouseholdProvider household={household}>
@@ -148,6 +158,19 @@ function RouteComponent() {
               </Breadcrumb>
             </div>
             <div className="grow"></div>
+
+            <Button
+              className="cursor-pointer"
+              variant="outline"
+              onClick={() => {
+                commitLocalUpdate(environment, (store) => {
+                  store.invalidateStore()
+                })
+                router.invalidate()
+              }}
+            >
+              <RefreshCwIcon />
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
