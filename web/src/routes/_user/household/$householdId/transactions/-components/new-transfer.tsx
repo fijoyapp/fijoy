@@ -46,33 +46,18 @@ import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
 import { useRouter } from '@tanstack/react-router'
 
-const formSchema = z
-  .object({
-    description: z
-      .string()
-      .max(256, 'Description must be at most 256 characters.'),
-    amount: z.number().positive('Amount must be positive'),
-    debitAmount: z.number().positive('Debit amount must be positive'),
-    creditAmount: z.number().positive('Credit amount must be positive'),
-    datetime: z.date(),
-    fromAccountId: z.string().min(1, 'Please select a from account'),
-    toAccountId: z.string().min(1, 'Please select a to account'),
-    categoryId: z.string().min(1, 'Please select a category'),
-  })
-  .refine((data) => data.fromAccountId !== data.toAccountId, {
-    message: 'Cannot transfer to the same account',
-    path: ['toAccountId'],
-  })
-  .refine(
-    (data) => {
-      // At least one of amount fields must be filled
-      return data.amount > 0 || (data.debitAmount > 0 && data.creditAmount > 0)
-    },
-    {
-      message: 'Please enter amount(s)',
-      path: ['amount'],
-    },
-  )
+const formSchema = z.object({
+  description: z
+    .string()
+    .max(256, 'Description must be at most 256 characters.'),
+  amount: z.number().positive('Amount must be positive'),
+  debitAmount: z.number().positive('Debit amount must be positive'),
+  creditAmount: z.number().positive('Credit amount must be positive'),
+  datetime: z.date(),
+  fromAccountId: z.string().min(1, 'Please select a from account'),
+  toAccountId: z.string().min(1, 'Please select a to account'),
+  categoryId: z.string().min(1, 'Please select a category'),
+})
 
 const newTransferFragment = graphql`
   fragment newTransferFragment on Query {
@@ -387,6 +372,21 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
 
             <form.Field
               name="toAccountId"
+              validators={{
+                onChange: ({ value, fieldApi }) => {
+                  if (!value) {
+                    return undefined // Let zod handle the "required" validation
+                  }
+                  const fromAccountId =
+                    fieldApi.form.getFieldValue('fromAccountId')
+                  if (fromAccountId && value === fromAccountId) {
+                    return {
+                      message: 'Cannot transfer to the same account',
+                    }
+                  }
+                  return undefined
+                },
+              }}
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
