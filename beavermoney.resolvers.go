@@ -494,12 +494,224 @@ func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTrans
 
 // BuyInvestment is the resolver for the buyInvestment field.
 func (r *mutationResolver) BuyInvestment(ctx context.Context, input BuyInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	panic(fmt.Errorf("not implemented: BuyInvestment - buyInvestment"))
+	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	// Validate account belongs to household
+	account, err := client.Account.Get(ctx, input.TransactionEntry.AccountID)
+	if err != nil {
+		return nil, fmt.Errorf("account not found: %w", err)
+	}
+
+	// Validate investment belongs to the account
+	investment, err := client.Investment.Get(ctx, input.InvestmentLot.InvestmentID)
+	if err != nil {
+		return nil, fmt.Errorf("investment not found: %w", err)
+	}
+	if investment.AccountID != account.ID {
+		return nil, fmt.Errorf("investment does not belong to account")
+	}
+
+	// Get currency for the account
+	accountCurrency, err := account.QueryCurrency().Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get account currency: %w", err)
+	}
+
+	// Create transaction
+	txn, err := client.Transaction.Create().
+		SetHouseholdID(householdID).
+		SetUserID(userID).
+		SetInput(*input.Transaction).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction: %w", err)
+	}
+
+	// Validate amount (should be negative for buying - cash going out)
+	amount := input.TransactionEntry.Amount
+	if amount.IsPositive() {
+		return nil, fmt.Errorf("buy amount must be negative (cash going out)")
+	}
+
+	// Create transaction entry for the cash outflow
+	err = client.TransactionEntry.Create().
+		SetHouseholdID(householdID).
+		SetTransactionID(txn.ID).
+		SetAccountID(account.ID).
+		SetCurrencyID(accountCurrency.ID).
+		SetAmount(amount).
+		Exec(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction entry: %w", err)
+	}
+
+	// Validate investment lot amount (should be positive - shares going in)
+	if input.InvestmentLot.Amount.IsNegative() || input.InvestmentLot.Amount.IsZero() {
+		return nil, fmt.Errorf("investment lot amount must be positive")
+	}
+
+	// Create investment lot
+	err = client.InvestmentLot.Create().
+		SetHouseholdID(householdID).
+		SetTransactionID(txn.ID).
+		SetInvestmentID(investment.ID).
+		SetAmount(input.InvestmentLot.Amount).
+		SetPrice(input.InvestmentLot.Price).
+		Exec(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create investment lot: %w", err)
+	}
+
+	// Create fee entries if any
+	for _, fee := range input.Fees {
+		feeAccount, err := client.Account.Get(ctx, fee.AccountID)
+		if err != nil {
+			return nil, fmt.Errorf("fee account not found: %w", err)
+		}
+		if feeAccount.HouseholdID != householdID {
+			return nil, fmt.Errorf("fee account does not belong to household")
+		}
+
+		feeCurrency, err := feeAccount.QueryCurrency().Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get fee account currency: %w", err)
+		}
+
+		err = client.TransactionEntry.Create().
+			SetHouseholdID(householdID).
+			SetTransactionID(txn.ID).
+			SetAccountID(feeAccount.ID).
+			SetCurrencyID(feeCurrency.ID).
+			SetAmount(fee.Amount).
+			Exec(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create fee entry: %w", err)
+		}
+	}
+
+	// Reload transaction to get updated data
+	txn, err = client.Transaction.Get(ctx, txn.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to reload transaction: %w", err)
+	}
+
+	return &ent.TransactionEdge{
+		Node:   txn,
+		Cursor: gqlutil.EncodeCursor(txn.ID),
+	}, nil
 }
 
 // SellInvestment is the resolver for the sellInvestment field.
 func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	panic(fmt.Errorf("not implemented: SellInvestment - sellInvestment"))
+	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	// Validate account belongs to household
+	account, err := client.Account.Get(ctx, input.TransactionEntry.AccountID)
+	if err != nil {
+		return nil, fmt.Errorf("account not found: %w", err)
+	}
+
+	// Validate investment belongs to the account
+	investment, err := client.Investment.Get(ctx, input.InvestmentLot.InvestmentID)
+	if err != nil {
+		return nil, fmt.Errorf("investment not found: %w", err)
+	}
+	if investment.AccountID != account.ID {
+		return nil, fmt.Errorf("investment does not belong to account")
+	}
+
+	// Get currency for the account
+	accountCurrency, err := account.QueryCurrency().Only(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get account currency: %w", err)
+	}
+
+	// Create transaction
+	txn, err := client.Transaction.Create().
+		SetHouseholdID(householdID).
+		SetUserID(userID).
+		SetInput(*input.Transaction).
+		Save(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction: %w", err)
+	}
+
+	// Validate amount (should be positive for selling - cash coming in)
+	amount := input.TransactionEntry.Amount
+	if amount.IsNegative() {
+		return nil, fmt.Errorf("sell amount must be positive (cash coming in)")
+	}
+
+	// Create transaction entry for the cash inflow
+	err = client.TransactionEntry.Create().
+		SetHouseholdID(householdID).
+		SetTransactionID(txn.ID).
+		SetAccountID(account.ID).
+		SetCurrencyID(accountCurrency.ID).
+		SetAmount(amount).
+		Exec(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction entry: %w", err)
+	}
+
+	// Validate investment lot amount (should be negative - shares going out)
+	if input.InvestmentLot.Amount.IsPositive() || input.InvestmentLot.Amount.IsZero() {
+		return nil, fmt.Errorf("investment lot amount must be negative (shares going out)")
+	}
+
+	// Create investment lot with negative amount
+	err = client.InvestmentLot.Create().
+		SetHouseholdID(householdID).
+		SetTransactionID(txn.ID).
+		SetInvestmentID(investment.ID).
+		SetAmount(input.InvestmentLot.Amount).
+		SetPrice(input.InvestmentLot.Price).
+		Exec(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create investment lot: %w", err)
+	}
+
+	// Create fee entries if any
+	for _, fee := range input.Fees {
+		feeAccount, err := client.Account.Get(ctx, fee.AccountID)
+		if err != nil {
+			return nil, fmt.Errorf("fee account not found: %w", err)
+		}
+		if feeAccount.HouseholdID != householdID {
+			return nil, fmt.Errorf("fee account does not belong to household")
+		}
+
+		feeCurrency, err := feeAccount.QueryCurrency().Only(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get fee account currency: %w", err)
+		}
+
+		err = client.TransactionEntry.Create().
+			SetHouseholdID(householdID).
+			SetTransactionID(txn.ID).
+			SetAccountID(feeAccount.ID).
+			SetCurrencyID(feeCurrency.ID).
+			SetAmount(fee.Amount).
+			Exec(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create fee entry: %w", err)
+		}
+	}
+
+	// Reload transaction to get updated data
+	txn, err = client.Transaction.Get(ctx, txn.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to reload transaction: %w", err)
+	}
+
+	return &ent.TransactionEdge{
+		Node:   txn,
+		Cursor: gqlutil.EncodeCursor(txn.ID),
+	}, nil
 }
 
 // TransferInvestment is the resolver for the transferInvestment field.
