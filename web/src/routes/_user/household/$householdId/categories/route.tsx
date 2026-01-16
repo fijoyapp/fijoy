@@ -1,5 +1,9 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
+import {
+  loadQuery,
+  usePreloadedQuery,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
 import { Fragment } from 'react/jsx-runtime'
 import * as z from 'zod'
 import { CategoriesPanel } from './-components/categories-panel'
@@ -17,6 +21,7 @@ import {
 } from '@/lib/date-range'
 import { format } from 'date-fns'
 import { zodValidator } from '@tanstack/zod-adapter'
+import { ROOT_ID } from 'relay-runtime'
 
 // Get default "This Month" dates
 const getDefaultDates = () => {
@@ -43,16 +48,25 @@ export const Route = createFileRoute(
     const period = parseDateRangeFromURL(search.start, search.end)
 
     return loadQuery<CategoriesQuery>(environment, categoriesQuery, period, {
-      fetchPolicy: 'store-and-network',
+      fetchPolicy: 'store-or-network',
     })
   },
   pendingComponent: PendingComponent,
 })
 
 function RouteComponent() {
+  const search = Route.useSearch()
   const queryRef = Route.useRouteContext()
 
   const data = usePreloadedQuery<CategoriesQuery>(categoriesQuery, queryRef)
+
+  useSubscribeToInvalidationState([ROOT_ID], () => {
+    const period = parseDateRangeFromURL(search.start, search.end)
+
+    return loadQuery<CategoriesQuery>(environment, categoriesQuery, period, {
+      fetchPolicy: 'network-only',
+    })
+  })
 
   const duelPaneDisplay = useDualPaneDisplay()
 

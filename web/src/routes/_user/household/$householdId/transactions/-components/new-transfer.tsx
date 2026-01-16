@@ -44,7 +44,6 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { useRouter } from '@tanstack/react-router'
 
 const formSchema = z.object({
   description: z
@@ -132,7 +131,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
       })
       .filter((category) => category.type === 'transfer') ?? []
 
-  const router = useRouter()
   const form = useForm({
     defaultValues: {
       description: '',
@@ -210,7 +208,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
           //   to: '/household/$householdId/transactions',
           // })
           toast.success('Transfer created successfully!')
-          router.invalidate()
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())

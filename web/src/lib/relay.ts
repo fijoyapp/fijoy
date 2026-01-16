@@ -24,6 +24,9 @@ export function commitMutationResult<T extends MutationParameters>(
       onError: (err) => {
         resolve({ status: 'error', error: err })
       },
+      updater: (store) => {
+        store.invalidateStore()
+      },
     })
   })
 }

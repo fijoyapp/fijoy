@@ -1,6 +1,10 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 
-import { loadQuery, usePreloadedQuery } from 'react-relay'
+import {
+  loadQuery,
+  usePreloadedQuery,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
 import { Fragment } from 'react/jsx-runtime'
 import { AccountsPanel } from './-components/accounts-panel'
 import type { routeAccountsQuery } from './__generated__/routeAccountsQuery.graphql'
@@ -11,6 +15,7 @@ import { PendingComponent } from '@/components/pending-component'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { accountsQuery } from './-accounts-query'
 import { AccountsQuery } from './__generated__/AccountsQuery.graphql'
+import { ROOT_ID } from 'relay-runtime'
 
 export const Route = createFileRoute('/_user/household/$householdId/accounts')({
   component: RouteComponent,
@@ -19,7 +24,7 @@ export const Route = createFileRoute('/_user/household/$householdId/accounts')({
       environment,
       accountsQuery,
       {},
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-or-network' },
     )
   },
   pendingComponent: PendingComponent,
@@ -29,6 +34,15 @@ function RouteComponent() {
   const queryRef = Route.useRouteContext()
 
   const data = usePreloadedQuery<routeAccountsQuery>(accountsQuery, queryRef)
+
+  useSubscribeToInvalidationState([ROOT_ID], () => {
+    return loadQuery<AccountsQuery>(
+      environment,
+      accountsQuery,
+      {},
+      { fetchPolicy: 'network-only' },
+    )
+  })
 
   const duelPaneDisplay = useDualPaneDisplay()
 

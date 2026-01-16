@@ -1,6 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { graphql } from 'relay-runtime'
+import {
+  loadQuery,
+  usePreloadedQuery,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
+import { graphql, ROOT_ID } from 'relay-runtime'
 import { TransactionsList } from '../transactions/-components/transactions-list'
 import type { AccountIdQuery } from './__generated__/AccountIdQuery.graphql'
 import { environment } from '@/environment'
@@ -36,7 +40,7 @@ export const Route = createFileRoute(
           ],
         },
       },
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-or-network' },
     )
   },
   pendingComponent: PendingComponent,
@@ -49,9 +53,40 @@ const AccountIdQuery = graphql`
 `
 
 function RouteComponent() {
+  const params = Route.useParams()
   const queryRef = Route.useLoaderData()
 
   const data = usePreloadedQuery<AccountIdQuery>(AccountIdQuery, queryRef)
+
+  useSubscribeToInvalidationState([ROOT_ID], () => {
+    return loadQuery<AccountIdQuery>(
+      environment,
+      AccountIdQuery,
+      {
+        where: {
+          or: [
+            {
+              hasTransactionEntriesWith: [
+                { hasAccountWith: [{ id: params.accountId }] },
+              ],
+            },
+            {
+              hasInvestmentLotsWith: [
+                {
+                  hasInvestmentWith: [
+                    {
+                      hasAccountWith: [{ id: params.accountId }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      { fetchPolicy: 'network-only' },
+    )
+  })
 
   return (
     <div>

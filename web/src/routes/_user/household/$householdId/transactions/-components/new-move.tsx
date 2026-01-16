@@ -43,7 +43,6 @@ import {
 import { useHousehold } from '@/hooks/use-household'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { useRouter } from '@tanstack/react-router'
 
 const formSchema = z.object({
   description: z
@@ -140,7 +139,6 @@ export function NewMove({ fragmentRef }: NewMoveProps) {
 
   invariant(moveCategory, 'Move category not found')
 
-  const router = useRouter()
   const form = useForm({
     defaultValues: {
       description: '',
@@ -209,7 +207,6 @@ export function NewMove({ fragmentRef }: NewMoveProps) {
           )
 
           toast.success('Investment moved successfully!')
-          router.invalidate()
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())

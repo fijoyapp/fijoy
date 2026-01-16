@@ -44,7 +44,6 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { useRouter } from '@tanstack/react-router'
 
 const formSchema = z.object({
   description: z
@@ -129,7 +128,6 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
       })
       .filter((category) => category.type === 'income') ?? []
 
-  const router = useRouter()
   const form = useForm({
     defaultValues: {
       description: '',
@@ -174,13 +172,7 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
             'No data returned from mutation',
           )
 
-          // form.reset()
-          // navigate({
-          //   from: '/household/$householdId/transactions/new',
-          //   to: '/household/$householdId/transactions',
-          // })
           toast.success('Income created successfully!')
-          router.invalidate()
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())

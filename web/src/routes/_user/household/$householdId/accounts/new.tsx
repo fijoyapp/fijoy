@@ -1,6 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { graphql } from 'relay-runtime'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
+import { graphql, ROOT_ID } from 'relay-runtime'
+import {
+  loadQuery,
+  usePreloadedQuery,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
 import { NewAccount } from './-components/new-account'
 import type { newAccountQuery } from './__generated__/newAccountQuery.graphql'
 import { environment } from '@/environment'
@@ -16,7 +20,7 @@ export const Route = createFileRoute(
       environment,
       newAccountQuery,
       {},
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-or-network' },
     )
   },
   pendingComponent: PendingComponent,
@@ -32,6 +36,15 @@ function RouteComponent() {
   const queryRef = Route.useLoaderData()
 
   const data = usePreloadedQuery<newAccountQuery>(newAccountQuery, queryRef)
+
+  useSubscribeToInvalidationState([ROOT_ID], () => {
+    return loadQuery<newAccountQuery>(
+      environment,
+      newAccountQuery,
+      {},
+      { fetchPolicy: 'network-only' },
+    )
+  })
 
   return (
     <div className="flex h-full">

@@ -44,7 +44,6 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { useRouter } from '@tanstack/react-router'
 
 const formSchema = z.object({
   description: z
@@ -137,7 +136,6 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
 
   invariant(buyCategory, 'Buy category not found')
 
-  const router = useRouter()
   const form = useForm({
     defaultValues: {
       description: '',
@@ -190,7 +188,6 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
           )
 
           toast.success('Buy transaction created successfully!')
-          router.invalidate()
         })
         .with({ status: 'error' }, ({ error }) => {
           toast.error(error.toString())

@@ -14,8 +14,12 @@ import {
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
-import { commitLocalUpdate, fetchQuery, graphql } from 'relay-runtime'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
+import { commitLocalUpdate, fetchQuery, graphql, ROOT_ID } from 'relay-runtime'
+import {
+  loadQuery,
+  usePreloadedQuery,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
 import invariant from 'tiny-invariant'
 import { Rnd } from 'react-rnd'
 import { z } from 'zod'
@@ -106,6 +110,15 @@ function RouteComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate()
   const isMobile = useIsMobile()
+
+  useSubscribeToInvalidationState([ROOT_ID], () => {
+    return loadQuery<routeHouseholdIdQuery>(
+      environment,
+      routeHouseholdIdQuery,
+      {},
+      { fetchPolicy: 'network-only' },
+    )
+  })
 
   const { householdId } = Route.useParams()
 

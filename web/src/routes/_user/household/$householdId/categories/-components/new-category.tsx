@@ -6,7 +6,7 @@ import { useMutation } from 'react-relay'
 import { capitalize } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import type { newCategoryMutation } from './__generated__/newCategoryMutation.graphql'
 
 import { Button } from '@/components/ui/button'
@@ -67,7 +67,6 @@ export function NewCategory() {
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newCategoryMutation>(newCategoryMutation)
-  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
@@ -100,7 +99,6 @@ export function NewCategory() {
             'No data returned from mutation',
           )
 
-          router.invalidate()
           form.reset()
           navigate({
             from: '/household/$householdId/categories/new',

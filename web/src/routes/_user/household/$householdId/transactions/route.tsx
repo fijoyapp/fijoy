@@ -1,5 +1,9 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
+import {
+  loadQuery,
+  usePreloadedQuery,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
 import { Fragment } from 'react/jsx-runtime'
 import * as z from 'zod'
 import { TransactionsPanel } from './-components/transactions-panel'
@@ -12,6 +16,7 @@ import { transactionsQuery } from './-transactions-query'
 import { type TransactionsQuery } from './__generated__/TransactionsQuery.graphql'
 import { parseDateRangeFromURL, getDefaultDates } from '@/lib/date-range'
 import { zodValidator } from '@tanstack/zod-adapter'
+import { ROOT_ID } from 'relay-runtime'
 
 const defaults = getDefaultDates()
 
@@ -39,16 +44,35 @@ export const Route = createFileRoute(
         startDate: period.startDate,
         endDate: period.endDate,
       },
-      { fetchPolicy: 'store-and-network' },
+      { fetchPolicy: 'store-or-network' },
     )
   },
   pendingComponent: PendingComponent,
 })
 
 function RouteComponent() {
+  const search = Route.useSearch()
   const queryRef = Route.useRouteContext()
 
   const data = usePreloadedQuery<TransactionsQuery>(transactionsQuery, queryRef)
+
+  useSubscribeToInvalidationState([ROOT_ID], () => {
+    const period = parseDateRangeFromURL(search.start, search.end)
+
+    return loadQuery<TransactionsQuery>(
+      environment,
+      transactionsQuery,
+      {
+        where: {
+          datetimeGTE: period.startDate,
+          datetimeLT: period.endDate,
+        },
+        startDate: period.startDate,
+        endDate: period.endDate,
+      },
+      { fetchPolicy: 'network-only' },
+    )
+  })
 
   const duelPaneDisplay = useDualPaneDisplay()
 

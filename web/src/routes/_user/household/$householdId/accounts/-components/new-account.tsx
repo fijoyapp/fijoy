@@ -7,7 +7,7 @@ import { capitalize } from 'lodash-es'
 import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import type { newAccountMutation } from './__generated__/newAccountMutation.graphql'
 import type { newAccountFragment$key } from './__generated__/newAccountFragment.graphql'
 
@@ -93,7 +93,6 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
 
   const { household } = useHousehold()
 
-  const router = useRouter()
   const form = useForm({
     defaultValues: {
       name: '',
@@ -138,8 +137,6 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
             resultData.createAccount.node,
             'No data returned from mutation',
           )
-
-          router.invalidate()
 
           form.reset()
           navigate({

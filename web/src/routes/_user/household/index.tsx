@@ -1,6 +1,10 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
-import { loadQuery, usePreloadedQuery } from 'react-relay'
-import { fetchQuery, graphql } from 'relay-runtime'
+import {
+  loadQuery,
+  usePreloadedQuery,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
+import { fetchQuery, graphql, ROOT_ID } from 'relay-runtime'
 import type { householdIdQuery } from './__generated__/householdIdQuery.graphql'
 import { environment } from '@/environment'
 import { PendingComponent } from '@/components/pending-component'
@@ -35,6 +39,15 @@ const householdIdQuery = graphql`
 function RouteComponent() {
   const queryRef = Route.useLoaderData()
   const data = usePreloadedQuery<householdIdQuery>(householdIdQuery, queryRef)
+
+  useSubscribeToInvalidationState([ROOT_ID], () => {
+    return loadQuery<householdIdQuery>(
+      environment,
+      householdIdQuery,
+      {},
+      { fetchPolicy: 'network-only' },
+    )
+  })
 
   const householdId = localStorage.getItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY)
 
