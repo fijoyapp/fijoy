@@ -28,6 +28,8 @@ const (
 	FieldName = "name"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldIsImmutable holds the string denoting the is_immutable field in the database.
+	FieldIsImmutable = "is_immutable"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
 	EdgeHousehold = "household"
 	// EdgeTransactions holds the string denoting the transactions edge name in mutations.
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldHouseholdID,
 	FieldName,
 	FieldType,
+	FieldIsImmutable,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -86,6 +89,8 @@ var (
 	UpdateDefaultUpdateTime func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultIsImmutable holds the default value on creation for the "is_immutable" field.
+	DefaultIsImmutable bool
 )
 
 // Type defines the type for the "type" enum field.
@@ -145,6 +150,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByIsImmutable orders the results by the is_immutable field.
+func ByIsImmutable(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsImmutable, opts...).ToFunc()
 }
 
 // ByHouseholdField orders the results by household field.

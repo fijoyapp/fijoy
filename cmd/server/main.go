@@ -549,10 +549,18 @@ func seed(
 		SetType(transactioncategory.TypeExpense).
 		SaveX(ctx)
 
-	investmentCategory := entClient.TransactionCategory.Create().
-		SetName("Investment").
+	buyCategory := entClient.TransactionCategory.Create().
+		SetName("Buy").
 		SetHousehold(household).
-		SetType(transactioncategory.TypeTransfer).
+		SetType(transactioncategory.TypeInvestment).
+		SetIsImmutable(true).
+		SaveX(ctx)
+
+	_ = entClient.TransactionCategory.Create().
+		SetName("Sell").
+		SetHousehold(household).
+		SetType(transactioncategory.TypeInvestment).
+		SetIsImmutable(true).
 		SaveX(ctx)
 
 	salary := entClient.TransactionCategory.Create().
@@ -644,7 +652,7 @@ func seed(
 		transaction := entClient.Transaction.Create().
 			SetUser(joey).
 			SetHousehold(household).
-			SetCategory(investmentCategory).
+			SetCategory(buyCategory).
 			SetDatetime(genRandomDatetime()).SaveX(ctx)
 
 		entClient.InvestmentLot.Create().
@@ -660,7 +668,7 @@ func seed(
 		transaction := entClient.Transaction.Create().
 			SetUser(joey).
 			SetHousehold(household).
-			SetCategory(investmentCategory).
+			SetCategory(buyCategory).
 			SetDatetime(genRandomDatetime()).SaveX(ctx)
 		entClient.InvestmentLot.Create().
 			SetInvestment(xeqt).

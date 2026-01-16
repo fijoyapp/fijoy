@@ -273,6 +273,7 @@ type ComplexityRoot struct {
 		Household    func(childComplexity int) int
 		HouseholdID  func(childComplexity int) int
 		ID           func(childComplexity int) int
+		IsImmutable  func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Transactions func(childComplexity int) int
 		Type         func(childComplexity int) int
@@ -1520,6 +1521,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.TransactionCategory.ID(childComplexity), true
+	case "TransactionCategory.isImmutable":
+		if e.complexity.TransactionCategory.IsImmutable == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.IsImmutable(childComplexity), true
 	case "TransactionCategory.name":
 		if e.complexity.TransactionCategory.Name == nil {
 			break
@@ -3294,6 +3301,8 @@ func (ec *executionContext) fieldContext_CategoryAggregate_category(_ context.Co
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "isImmutable":
+				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
 				return ec.fieldContext_TransactionCategory_household(ctx, field)
 			case "transactions":
@@ -4711,6 +4720,8 @@ func (ec *executionContext) fieldContext_Household_transactionCategories(_ conte
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "isImmutable":
+				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
 				return ec.fieldContext_TransactionCategory_household(ctx, field)
 			case "transactions":
@@ -7935,6 +7946,8 @@ func (ec *executionContext) fieldContext_Transaction_category(_ context.Context,
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "isImmutable":
+				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
 				return ec.fieldContext_TransactionCategory_household(ctx, field)
 			case "transactions":
@@ -8228,6 +8241,35 @@ func (ec *executionContext) fieldContext_TransactionCategory_type(_ context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _TransactionCategory_isImmutable(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_isImmutable,
+		func(ctx context.Context) (any, error) {
+			return obj.IsImmutable, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_isImmutable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TransactionCategory_household(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -8485,6 +8527,8 @@ func (ec *executionContext) fieldContext_TransactionCategoryEdge_node(_ context.
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "isImmutable":
+				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
 				return ec.fieldContext_TransactionCategory_household(ctx, field)
 			case "transactions":
@@ -12702,7 +12746,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionCategoryInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "type"}
+	fieldsInOrder := [...]string{"name", "type", "isImmutable"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12723,6 +12767,13 @@ func (ec *executionContext) unmarshalInputCreateTransactionCategoryInput(ctx con
 				return it, err
 			}
 			it.Type = data
+		case "isImmutable":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isImmutable"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsImmutable = data
 		}
 	}
 
@@ -14987,7 +15038,7 @@ func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "hasHousehold", "hasHouseholdWith", "hasTransactions", "hasTransactionsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "isImmutable", "isImmutableNEQ", "hasHousehold", "hasHouseholdWith", "hasTransactions", "hasTransactionsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -15330,6 +15381,20 @@ func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx cont
 				return it, err
 			}
 			it.TypeNotIn = data
+		case "isImmutable":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isImmutable"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsImmutable = data
+		case "isImmutableNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isImmutableNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsImmutableNEQ = data
 		case "hasHousehold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHousehold"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -20706,6 +20771,11 @@ func (ec *executionContext) _TransactionCategory(ctx context.Context, sel ast.Se
 			}
 		case "type":
 			out.Values[i] = ec._TransactionCategory_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "isImmutable":
+			out.Values[i] = ec._TransactionCategory_isImmutable(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

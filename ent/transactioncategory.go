@@ -28,6 +28,8 @@ type TransactionCategory struct {
 	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
 	Type transactioncategory.Type `json:"type,omitempty"`
+	// IsImmutable holds the value of the "is_immutable" field.
+	IsImmutable bool `json:"is_immutable,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TransactionCategoryQuery when eager-loading is set.
 	Edges        TransactionCategoryEdges `json:"edges"`
@@ -74,6 +76,8 @@ func (*TransactionCategory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case transactioncategory.FieldIsImmutable:
+			values[i] = new(sql.NullBool)
 		case transactioncategory.FieldID, transactioncategory.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
 		case transactioncategory.FieldName, transactioncategory.FieldType:
@@ -130,6 +134,12 @@ func (_m *TransactionCategory) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
 				_m.Type = transactioncategory.Type(value.String)
+			}
+		case transactioncategory.FieldIsImmutable:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field is_immutable", values[i])
+			} else if value.Valid {
+				_m.IsImmutable = value.Bool
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -191,6 +201,9 @@ func (_m *TransactionCategory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
+	builder.WriteString(", ")
+	builder.WriteString("is_immutable=")
+	builder.WriteString(fmt.Sprintf("%v", _m.IsImmutable))
 	builder.WriteByte(')')
 	return builder.String()
 }

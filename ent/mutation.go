@@ -6348,6 +6348,7 @@ type TransactionCategoryMutation struct {
 	update_time         *time.Time
 	name                *string
 	_type               *transactioncategory.Type
+	is_immutable        *bool
 	clearedFields       map[string]struct{}
 	household           *int
 	clearedhousehold    bool
@@ -6637,6 +6638,42 @@ func (m *TransactionCategoryMutation) ResetType() {
 	m._type = nil
 }
 
+// SetIsImmutable sets the "is_immutable" field.
+func (m *TransactionCategoryMutation) SetIsImmutable(b bool) {
+	m.is_immutable = &b
+}
+
+// IsImmutable returns the value of the "is_immutable" field in the mutation.
+func (m *TransactionCategoryMutation) IsImmutable() (r bool, exists bool) {
+	v := m.is_immutable
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsImmutable returns the old "is_immutable" field's value of the TransactionCategory entity.
+// If the TransactionCategory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransactionCategoryMutation) OldIsImmutable(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsImmutable is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsImmutable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsImmutable: %w", err)
+	}
+	return oldValue.IsImmutable, nil
+}
+
+// ResetIsImmutable resets all changes to the "is_immutable" field.
+func (m *TransactionCategoryMutation) ResetIsImmutable() {
+	m.is_immutable = nil
+}
+
 // ClearHousehold clears the "household" edge to the Household entity.
 func (m *TransactionCategoryMutation) ClearHousehold() {
 	m.clearedhousehold = true
@@ -6752,7 +6789,7 @@ func (m *TransactionCategoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransactionCategoryMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.create_time != nil {
 		fields = append(fields, transactioncategory.FieldCreateTime)
 	}
@@ -6767,6 +6804,9 @@ func (m *TransactionCategoryMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, transactioncategory.FieldType)
+	}
+	if m.is_immutable != nil {
+		fields = append(fields, transactioncategory.FieldIsImmutable)
 	}
 	return fields
 }
@@ -6786,6 +6826,8 @@ func (m *TransactionCategoryMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case transactioncategory.FieldType:
 		return m.GetType()
+	case transactioncategory.FieldIsImmutable:
+		return m.IsImmutable()
 	}
 	return nil, false
 }
@@ -6805,6 +6847,8 @@ func (m *TransactionCategoryMutation) OldField(ctx context.Context, name string)
 		return m.OldName(ctx)
 	case transactioncategory.FieldType:
 		return m.OldType(ctx)
+	case transactioncategory.FieldIsImmutable:
+		return m.OldIsImmutable(ctx)
 	}
 	return nil, fmt.Errorf("unknown TransactionCategory field %s", name)
 }
@@ -6848,6 +6892,13 @@ func (m *TransactionCategoryMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
+		return nil
+	case transactioncategory.FieldIsImmutable:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsImmutable(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TransactionCategory field %s", name)
@@ -6915,6 +6966,9 @@ func (m *TransactionCategoryMutation) ResetField(name string) error {
 		return nil
 	case transactioncategory.FieldType:
 		m.ResetType()
+		return nil
+	case transactioncategory.FieldIsImmutable:
+		m.ResetIsImmutable()
 		return nil
 	}
 	return fmt.Errorf("unknown TransactionCategory field %s", name)

@@ -64,6 +64,20 @@ func (_u *TransactionCategoryUpdate) SetNillableType(v *transactioncategory.Type
 	return _u
 }
 
+// SetIsImmutable sets the "is_immutable" field.
+func (_u *TransactionCategoryUpdate) SetIsImmutable(v bool) *TransactionCategoryUpdate {
+	_u.mutation.SetIsImmutable(v)
+	return _u
+}
+
+// SetNillableIsImmutable sets the "is_immutable" field if the given value is not nil.
+func (_u *TransactionCategoryUpdate) SetNillableIsImmutable(v *bool) *TransactionCategoryUpdate {
+	if v != nil {
+		_u.SetIsImmutable(*v)
+	}
+	return _u
+}
+
 // AddTransactionIDs adds the "transactions" edge to the Transaction entity by IDs.
 func (_u *TransactionCategoryUpdate) AddTransactionIDs(ids ...int) *TransactionCategoryUpdate {
 	_u.mutation.AddTransactionIDs(ids...)
@@ -192,6 +206,9 @@ func (_u *TransactionCategoryUpdate) sqlSave(ctx context.Context) (_node int, er
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(transactioncategory.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := _u.mutation.IsImmutable(); ok {
+		_spec.SetField(transactioncategory.FieldIsImmutable, field.TypeBool, value)
+	}
 	if _u.mutation.TransactionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -289,6 +306,20 @@ func (_u *TransactionCategoryUpdateOne) SetType(v transactioncategory.Type) *Tra
 func (_u *TransactionCategoryUpdateOne) SetNillableType(v *transactioncategory.Type) *TransactionCategoryUpdateOne {
 	if v != nil {
 		_u.SetType(*v)
+	}
+	return _u
+}
+
+// SetIsImmutable sets the "is_immutable" field.
+func (_u *TransactionCategoryUpdateOne) SetIsImmutable(v bool) *TransactionCategoryUpdateOne {
+	_u.mutation.SetIsImmutable(v)
+	return _u
+}
+
+// SetNillableIsImmutable sets the "is_immutable" field if the given value is not nil.
+func (_u *TransactionCategoryUpdateOne) SetNillableIsImmutable(v *bool) *TransactionCategoryUpdateOne {
+	if v != nil {
+		_u.SetIsImmutable(*v)
 	}
 	return _u
 }
@@ -450,6 +481,9 @@ func (_u *TransactionCategoryUpdateOne) sqlSave(ctx context.Context) (_node *Tra
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(transactioncategory.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.IsImmutable(); ok {
+		_spec.SetField(transactioncategory.FieldIsImmutable, field.TypeBool, value)
 	}
 	if _u.mutation.TransactionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -1114,6 +1114,11 @@ func (_q *TransactionCategoryQuery) collectField(ctx context.Context, oneNode bo
 				selectedFields = append(selectedFields, transactioncategory.FieldType)
 				fieldSeen[transactioncategory.FieldType] = struct{}{}
 			}
+		case "isImmutable":
+			if _, ok := fieldSeen[transactioncategory.FieldIsImmutable]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldIsImmutable)
+				fieldSeen[transactioncategory.FieldIsImmutable] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

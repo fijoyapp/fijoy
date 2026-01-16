@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6edd60087985586b4dcfbe51eaf7a054>>
+ * @generated SignedSource<<8f1f542951ef885377eb2809d98792dc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -625,6 +625,8 @@ export type TransactionCategoryWhereInput = {
   idLTE?: string | null | undefined;
   idNEQ?: string | null | undefined;
   idNotIn?: ReadonlyArray<string> | null | undefined;
+  isImmutable?: boolean | null | undefined;
+  isImmutableNEQ?: boolean | null | undefined;
   name?: string | null | undefined;
   nameContains?: string | null | undefined;
   nameContainsFold?: string | null | undefined;
