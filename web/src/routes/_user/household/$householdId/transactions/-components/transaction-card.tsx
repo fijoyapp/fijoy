@@ -8,7 +8,6 @@ import {
   TrendingUpIcon,
   WrenchIcon,
 } from 'lucide-react'
-import { Fragment } from 'react/jsx-runtime'
 import currency from 'currency.js'
 import type {
   TransactionCategoryType,
@@ -70,19 +69,27 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
   const sortedItems = getSortedTransactionItems(data)
 
   return (
-    <Fragment>
-      {sortedItems.map((item) =>
+    <div className="flex flex-col gap-0 border rounded-lg overflow-hidden">
+      {sortedItems.map((item, index) =>
         item.type === 'lot' ? (
-          <LotCard key={item.lot.id} data={data} investmentLot={item.lot} />
+          <LotCard
+            key={item.lot.id}
+            data={data}
+            investmentLot={item.lot}
+            isFirst={index === 0}
+            isLast={index === sortedItems.length - 1}
+          />
         ) : (
           <TransactionEntryCard
             key={item.entry.id}
             data={data}
             transactionEntry={item.entry}
+            isFirst={index === 0}
+            isLast={index === sortedItems.length - 1}
           />
         ),
       )}
-    </Fragment>
+    </div>
   )
 }
 
@@ -113,7 +120,6 @@ function getSortedTransactionItems(
 
   return match(categoryName)
     .with('Buy', () => {
-      // Buy: From bottom to top - cash minus (negative entry), then share plus (positive lot)
       const negativeEntries = entries.filter(
         (item) =>
           item.type === 'entry' && currency(item.entry.amount).value < 0,
@@ -121,11 +127,9 @@ function getSortedTransactionItems(
       const positiveLots = lots.filter(
         (item) => item.type === 'lot' && currency(item.lot.amount).value > 0,
       )
-      // Return with share plus first (renders on top), cash minus last (renders on bottom)
-      return [...positiveLots, ...negativeEntries]
+      return [...negativeEntries, ...positiveLots]
     })
     .with('Sell', () => {
-      // Sell: From bottom to top - share minus (negative lot), then cash plus (positive entry)
       const negativeLots = lots.filter(
         (item) => item.type === 'lot' && currency(item.lot.amount).value < 0,
       )
@@ -133,12 +137,9 @@ function getSortedTransactionItems(
         (item) =>
           item.type === 'entry' && currency(item.entry.amount).value > 0,
       )
-      // Return with cash plus first (renders on top), share minus last (renders on bottom)
-      return [...positiveEntries, ...negativeLots]
+      return [...negativeLots, ...positiveEntries]
     })
     .otherwise(() => {
-      // For all other types: Show debits (negative) first, then credits (positive)
-      // From bottom to top - debit first, then credit on top
       const debits = [...lots, ...entries].filter((item) => {
         const amount = item.type === 'lot' ? item.lot.amount : item.entry.amount
         return currency(amount).value < 0
@@ -147,24 +148,31 @@ function getSortedTransactionItems(
         const amount = item.type === 'lot' ? item.lot.amount : item.entry.amount
         return currency(amount).value >= 0
       })
-      // Return with credits first (renders on top), debits last (renders on bottom)
-      return [...credits, ...debits]
+      return [...debits, ...credits]
     })
 }
 
 function TransactionEntryCard({
   data,
   transactionEntry,
+  isFirst,
+  isLast,
 }: {
   data: transactionCardFragment$data
   transactionEntry: NonNullable<
     transactionCardFragment$data['transactionEntries']
   >[number]
+  isFirst: boolean
+  isLast: boolean
 }) {
   const { formatCurrency } = useCurrency()
 
   return (
-    <Item variant="outline" role="listitem">
+    <Item
+      variant="outline"
+      role="listitem"
+      className={`${!isFirst ? 'border-t-0 rounded-t-none' : ''} ${!isLast ? 'rounded-b-none' : ''}`}
+    >
       <ItemMedia variant="image" className="rounded-full">
         {getCategoryTypeIcon({ type: data.category.type })}
       </ItemMedia>
@@ -194,16 +202,24 @@ function TransactionEntryCard({
 function LotCard({
   data,
   investmentLot,
+  isFirst,
+  isLast,
 }: {
   data: transactionCardFragment$data
   investmentLot: NonNullable<
     transactionCardFragment$data['investmentLots']
   >[number]
+  isFirst: boolean
+  isLast: boolean
 }) {
   const { formatCurrency } = useCurrency()
 
   return (
-    <Item variant="outline" role="listitem">
+    <Item
+      variant="outline"
+      role="listitem"
+      className={`${!isFirst ? 'border-t-0 rounded-t-none' : ''} ${!isLast ? 'rounded-b-none' : ''}`}
+    >
       <ItemMedia variant="image">
         <Avatar>
           <AvatarImage
