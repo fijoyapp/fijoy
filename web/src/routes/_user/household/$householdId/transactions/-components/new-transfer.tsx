@@ -49,9 +49,9 @@ const formSchema = z.object({
   description: z
     .string()
     .max(256, 'Description must be at most 256 characters.'),
-  amount: z.number().positive('Amount must be positive'),
-  debitAmount: z.number().positive('Debit amount must be positive'),
-  creditAmount: z.number().positive('Credit amount must be positive'),
+  amount: z.number(),
+  debitAmount: z.number(),
+  creditAmount: z.number(),
   datetime: z.date(),
   fromAccountId: z.string().min(1, 'Please select a from account'),
   toAccountId: z.string().min(1, 'Please select a to account'),
@@ -446,6 +446,14 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
             {!isDifferentCurrency ? (
               <form.Field
                 name="amount"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (!value || value <= 0) {
+                      return { message: 'Amount must be positive' }
+                    }
+                    return undefined
+                  },
+                }}
                 children={(field) => {
                   const isInvalid =
                     field.state.meta.isTouched && !field.state.meta.isValid
@@ -483,6 +491,14 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
               <>
                 <form.Field
                   name="debitAmount"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (!value || value <= 0) {
+                        return { message: 'Debit amount must be positive' }
+                      }
+                      return undefined
+                    },
+                  }}
                   children={(field) => {
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid
@@ -522,6 +538,14 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
 
                 <form.Field
                   name="creditAmount"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (!value || value <= 0) {
+                        return { message: 'Credit amount must be positive' }
+                      }
+                      return undefined
+                    },
+                  }}
                   children={(field) => {
                     const isInvalid =
                       field.state.meta.isTouched && !field.state.meta.isValid
