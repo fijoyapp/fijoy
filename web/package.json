@@ -31,7 +31,6 @@
     "date-fns": "^4.1.0",
     "lodash-es": "^4.17.22",
     "lucide-react": "^0.562.0",
-    "next-themes": "^0.4.6",
     "pulltorefreshjs": "^0.1.22",
     "react": "^19.2.3",
     "react-day-picker": "^9.13.0",
