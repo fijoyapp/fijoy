@@ -49,7 +49,6 @@ import { useRouter } from '@tanstack/react-router'
 const formSchema = z.object({
   description: z
     .string()
-    .min(1, 'Description must be at least 1 character.')
     .max(256, 'Description must be at most 256 characters.'),
   amount: z.number().positive('Amount must be positive'),
   datetime: z.date(),
