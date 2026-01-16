@@ -714,9 +714,9 @@ func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestm
 	}, nil
 }
 
-// TransferInvestment is the resolver for the transferInvestment field.
-func (r *mutationResolver) TransferInvestment(ctx context.Context, input TransferInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	panic(fmt.Errorf("not implemented: TransferInvestment - transferInvestment"))
+// MoveInvestment is the resolver for the moveInvestment field.
+func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestmentInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: MoveInvestment - moveInvestment"))
 }
 
 // FxRate is the resolver for the fxRate field.
@@ -764,3 +764,15 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 type financialReportResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *mutationResolver) TransferInvestment(ctx context.Context, input TransferInvestmentInputCustom) (*ent.TransactionEdge, error) {
+	panic(fmt.Errorf("not implemented: TransferInvestment - transferInvestment"))
+}
+*/

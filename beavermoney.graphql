@@ -40,7 +40,7 @@ type Mutation {
   createTransfer(input: CreateTransferInputCustom!): TransactionEdge!
   buyInvestment(input: BuyInvestmentInputCustom!): TransactionEdge!
   sellInvestment(input: SellInvestmentInputCustom!): TransactionEdge!
-  transferInvestment(input: TransferInvestmentInputCustom!): TransactionEdge!
+  moveInvestment(input: MoveInvestmentInputCustom!): TransactionEdge!
 }
 
 type FinancialReport {
@@ -112,8 +112,8 @@ input SellInvestmentInputCustom {
   fees: [CreateTransactionEntryInput!]! = []
 }
 
-# 6. Transfer Investment: Shares between investment accounts
-input TransferInvestmentInputCustom {
+# 6. Move Investment: Shares between investment accounts
+input MoveInvestmentInputCustom {
   transaction: CreateTransactionInput!
   investmentLots: [CreateInvestmentLotInput!]!
   fees: [CreateTransactionEntryInput!]! = []
