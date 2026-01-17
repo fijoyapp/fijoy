@@ -30,3 +30,5 @@ migrate name:
 [parallel]
 dev: merge-graphql relay-watch
 
+install-web:
+    cd web && pnpm install
