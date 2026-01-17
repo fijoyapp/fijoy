@@ -170,7 +170,11 @@ export function DateRangeFilter({
         {isPending && <Spinner />}
       </div>
 
-      <Select value={getCurrentPreset()} onValueChange={handlePresetChange}>
+      <Select
+        name="date-range-filter"
+        value={getCurrentPreset()}
+        onValueChange={handlePresetChange}
+      >
         <SelectTrigger className="w-32">
           <SelectValue />
         </SelectTrigger>
