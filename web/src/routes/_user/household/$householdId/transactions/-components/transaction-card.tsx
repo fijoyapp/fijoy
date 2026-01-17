@@ -72,7 +72,7 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
   const sortedItems = getSortedTransactionItems(data)
 
   return (
-    <div className="border-border [a]:hover:bg-muted rounded-md border text-xs/relaxed w-full group/item focus-visible:border-ring focus-visible:ring-ring/50 flex items-center flex-wrap outline-none transition-colors duration-100 focus-visible:ring-[3px] [a]:transition-colors">
+    <div className="border-border [a]:hover:bg-muted group/item focus-visible:border-ring focus-visible:ring-ring/50 flex w-full flex-wrap items-center rounded-md border text-xs/relaxed transition-colors duration-100 outline-none focus-visible:ring-[3px] [a]:transition-colors">
       {sortedItems.map((item, index) =>
         item.type === 'lot' ? (
           <Fragment key={item.lot.id}>
@@ -180,7 +180,7 @@ function TransactionEntryCard({
       variant="default"
       role="listitem"
       className={cn(
-        !isFirst && 'border-t-0 rounded-t-none',
+        !isFirst && 'rounded-t-none border-t-0',
         !isLast && 'rounded-b-none',
       )}
     >
@@ -230,7 +230,7 @@ function LotCard({
       variant="outline"
       role="listitem"
       className={cn(
-        !isFirst && 'border-t-0 rounded-t-none',
+        !isFirst && 'rounded-t-none border-t-0',
         !isLast && 'rounded-b-none',
       )}
     >
@@ -277,19 +277,19 @@ function LotCard({
 function getCategoryTypeIcon({ type }: { type: TransactionCategoryType }) {
   return match(type)
     .with('income', () => (
-      <BanknoteArrowUpIcon className="size-10 text-white bg-green-500/90 p-1.5" />
+      <BanknoteArrowUpIcon className="size-10 bg-green-500/90 p-1.5 text-white" />
     ))
     .with('expense', () => (
-      <BanknoteArrowDownIcon className="size-10 text-white bg-red-500/90 p-1.5" />
+      <BanknoteArrowDownIcon className="size-10 bg-red-500/90 p-1.5 text-white" />
     ))
     .with('transfer', () => (
-      <ArrowLeftRightIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
+      <ArrowLeftRightIcon className="size-10 bg-orange-500/90 p-1.5 text-white" />
     ))
     .with('setup', () => (
-      <WrenchIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
+      <WrenchIcon className="size-10 bg-orange-500/90 p-1.5 text-white" />
     ))
     .with('investment', () => (
-      <TrendingUpIcon className="size-10 text-white bg-blue-500/90 p-1.5" />
+      <TrendingUpIcon className="size-10 bg-blue-500/90 p-1.5 text-white" />
     ))
     .otherwise(() => null)
 }

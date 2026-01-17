@@ -12,7 +12,7 @@ function RouteComponent() {
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
           to="/"
-          className="flex flex-col font-medium justify-center items-center w-auto"
+          className="flex w-auto flex-col items-center justify-center font-medium"
         >
           <Logo size={128} className="rounded-xl" />
           <span>Beaver Money</span>

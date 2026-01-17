@@ -45,7 +45,7 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
     <Item
       render={
         <Link
-          className="no-underline! "
+          className="no-underline!"
           from="/household/$householdId/"
           to="/household/$householdId/accounts/$accountId"
           search={(prev) => ({ ...prev })}

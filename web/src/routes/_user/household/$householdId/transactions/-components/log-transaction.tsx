@@ -38,7 +38,7 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
   const [selectedType, setSelectedType] = useState<TransactionType>('expense')
 
   return (
-    <Item className="w-full bg-muted p-0 gap-0 h-full">
+    <Item className="bg-muted h-full w-full gap-0 p-0">
       <div className="flex gap-2 p-4">
         <Button
           size="sm"

@@ -152,7 +152,7 @@ function RouteComponent() {
       <SidebarProvider>
         <AppSidebar fragmentRef={data} />
         <SidebarInset>
-          <header className="bg-background border-b sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <header className="bg-background sticky top-0 z-10 flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1 cursor-pointer" />
               <Separator orientation="vertical" className="mr-2" />
@@ -263,12 +263,12 @@ function RouteComponent() {
             dragHandleClassName="drag-handle"
             style={{ zIndex: 50 }}
           >
-            <Item className="w-full overflow-hidden shadow-2xl bg-muted p-0 gap-0 h-full">
+            <Item className="bg-muted h-full w-full gap-0 overflow-hidden p-0 shadow-2xl">
               {/* Drag Handle Header */}
-              <div className="w-full drag-handle flex items-center justify-between border-b px-4 py-2 cursor-move">
+              <div className="drag-handle flex w-full cursor-move items-center justify-between border-b px-4 py-2">
                 <div className="flex items-center gap-2">
-                  <GripVertical className="h-5 w-5 text-muted-foreground" />
-                  <span className="font-semibold text-sm">Log Transaction</span>
+                  <GripVertical className="text-muted-foreground h-5 w-5" />
+                  <span className="text-sm font-semibold">Log Transaction</span>
                 </div>
                 <Button
                   variant="ghost"

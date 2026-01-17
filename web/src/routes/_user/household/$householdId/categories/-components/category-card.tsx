@@ -143,19 +143,19 @@ export function CategoryCard({
 function getCategoryTypeIcon({ type }: { type: TransactionCategoryType }) {
   return match(type)
     .with('income', () => (
-      <BanknoteArrowUpIcon className="size-10 text-white bg-green-500/90 p-1.5" />
+      <BanknoteArrowUpIcon className="size-10 bg-green-500/90 p-1.5 text-white" />
     ))
     .with('expense', () => (
-      <BanknoteArrowDownIcon className="size-10 text-white bg-red-500/90 p-1.5" />
+      <BanknoteArrowDownIcon className="size-10 bg-red-500/90 p-1.5 text-white" />
     ))
     .with('transfer', () => (
-      <ArrowLeftRightIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
+      <ArrowLeftRightIcon className="size-10 bg-orange-500/90 p-1.5 text-white" />
     ))
     .with('setup', () => (
-      <WrenchIcon className="size-10 text-white bg-orange-500/90 p-1.5" />
+      <WrenchIcon className="size-10 bg-orange-500/90 p-1.5 text-white" />
     ))
     .with('investment', () => (
-      <TrendingUpIcon className="size-10 text-white bg-blue-500/90 p-1.5" />
+      <TrendingUpIcon className="size-10 bg-blue-500/90 p-1.5 text-white" />
     ))
     .otherwise(() => null)
 }

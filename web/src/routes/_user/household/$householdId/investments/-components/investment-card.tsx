@@ -43,7 +43,7 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
     <Item
       render={
         <Link
-          className="no-underline! "
+          className="no-underline!"
           from="/household/$householdId/"
           to="/household/$householdId/investments/$investmentId"
           search={(prev) => ({ ...prev })}
