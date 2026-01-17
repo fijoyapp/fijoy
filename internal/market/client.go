@@ -1,3 +1,5 @@
+// Package market provides a client for fetching
+// market data such as stock and cryptocurrency quotes.
 package market
 
 import (
