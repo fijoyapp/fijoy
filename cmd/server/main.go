@@ -76,14 +76,15 @@ func main() {
 	marketClient := market.NewClient(marketProvider)
 
 	// Seed database (dev only)
-	if !cfg.IsProd {
-		if err := seed.Seed(ctx, entClient, fxrateClient, marketClient); err != nil {
-			logger.Error(
-				"seeding database failed",
-				slog.String("error", err.Error()),
-			)
-		}
+	// if !cfg.IsProd {
+	// Seed data always for now
+	if err := seed.Seed(ctx, entClient, fxrateClient, marketClient); err != nil {
+		logger.Error(
+			"seeding database failed",
+			slog.String("error", err.Error()),
+		)
 	}
+	// }
 
 	// Setup router
 	r := chi.NewRouter()
