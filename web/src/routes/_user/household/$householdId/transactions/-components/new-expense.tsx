@@ -380,6 +380,8 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
                       <DropdownMenuTrigger
                         render={
                           <Button
+                            id={field.name}
+                            name={field.name}
                             type="button"
                             variant="outline"
                             className="w-full justify-start text-left font-normal"
