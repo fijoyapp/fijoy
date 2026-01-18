@@ -8,6 +8,7 @@ import {
   TrendingUpIcon,
   WrenchIcon,
 } from 'lucide-react'
+import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
 import { match } from 'ts-pattern'
 import currency from 'currency.js'
 import { useMemo } from 'react'
@@ -31,6 +32,7 @@ const categoryCardCategoryFragment = graphql`
     id
     name
     type
+    icon
   }
 `
 
@@ -103,7 +105,10 @@ export function CategoryCard({
           {({ isActive }) => (
             <>
               <ItemMedia variant="image" className="rounded-full">
-                {getCategoryTypeIcon({ type: category.type })}
+                {getCategoryTypeIcon({
+                  type: category.type,
+                  icon: category.icon,
+                })}
               </ItemMedia>
               <ItemContent className="gap-px">
                 <ItemTitle className={cn(isActive && 'font-semibold')}>
@@ -140,7 +145,50 @@ export function CategoryCard({
   )
 }
 
-function getCategoryTypeIcon({ type }: { type: TransactionCategoryType }) {
+function getCategoryTypeIcon({
+  type,
+  icon,
+}: {
+  type: TransactionCategoryType
+  icon: string | null | undefined
+}) {
+  // If custom icon is provided, use DynamicIcon
+  if (icon) {
+    return match(type)
+      .with('income', () => (
+        <DynamicIcon
+          name={icon as unknown as IconName}
+          className="size-10 bg-green-500/90 p-1.5 text-white"
+        />
+      ))
+      .with('expense', () => (
+        <DynamicIcon
+          name={icon as unknown as IconName}
+          className="size-10 bg-red-500/90 p-1.5 text-white"
+        />
+      ))
+      .with('transfer', () => (
+        <DynamicIcon
+          name={icon as unknown as IconName}
+          className="size-10 bg-orange-500/90 p-1.5 text-white"
+        />
+      ))
+      .with('setup', () => (
+        <DynamicIcon
+          name={icon as unknown as IconName}
+          className="size-10 bg-orange-500/90 p-1.5 text-white"
+        />
+      ))
+      .with('investment', () => (
+        <DynamicIcon
+          name={icon as unknown as IconName}
+          className="size-10 bg-blue-500/90 p-1.5 text-white"
+        />
+      ))
+      .otherwise(() => null)
+  }
+
+  // Fallback to default icons
   return match(type)
     .with('income', () => (
       <BanknoteArrowUpIcon className="size-10 bg-green-500/90 p-1.5 text-white" />

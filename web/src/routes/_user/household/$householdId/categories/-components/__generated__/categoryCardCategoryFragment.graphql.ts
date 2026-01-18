@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5dccbbcc977679cdb4237e489bec7f53>>
+ * @generated SignedSource<<63d8e320c965a308587458f32b3322e9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type categoryCardCategoryFragment$data = {
+  readonly icon: string;
   readonly id: string;
   readonly name: string;
   readonly type: TransactionCategoryType;
@@ -48,12 +49,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "type",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "icon",
+      "storageKey": null
     }
   ],
   "type": "TransactionCategory",
   "abstractKey": null
 };
 
-(node as any).hash = "527d574e9273326048b9aa920467fec6";
+(node as any).hash = "5bdd624de36890ee4a9fa4255bf43a0f";
 
 export default node;

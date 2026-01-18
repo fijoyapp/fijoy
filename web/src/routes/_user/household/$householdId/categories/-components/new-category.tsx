@@ -47,6 +47,7 @@ const formSchema = z.object({
     .string()
     .min(1, 'Category name must be at least 1 character.')
     .max(32, 'Category name must be at most 32 characters.'),
+  icon: z.string(),
   type: z.enum(['expense', 'income']),
 })
 
@@ -71,6 +72,7 @@ export function NewCategory() {
   const form = useForm({
     defaultValues: {
       name: '',
+      icon: '',
       type: '',
     },
     validators: {
@@ -85,6 +87,7 @@ export function NewCategory() {
           variables: {
             input: {
               name: formData.name,
+              icon: formData.icon,
               type: formData.type,
             },
           },
@@ -150,6 +153,32 @@ export function NewCategory() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
                       placeholder="Groceries"
+                      autoComplete="off"
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+            <form.Field
+              name="icon"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Icon</FieldLabel>
+                    <Input
+                      data-1p-ignore
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      aria-invalid={isInvalid}
+                      placeholder="e.g., shopping-cart"
                       autoComplete="off"
                     />
                     {isInvalid && (
