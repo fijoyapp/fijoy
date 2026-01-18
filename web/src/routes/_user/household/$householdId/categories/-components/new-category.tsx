@@ -34,6 +34,7 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox'
 import { commitMutationResult } from '@/lib/relay'
+import { IconPicker, type IconName } from '@/components/ui/icon-picker'
 
 const CATEGORY_TYPES = ['expense', 'income'] as const
 
@@ -170,16 +171,12 @@ export function NewCategory() {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Icon</FieldLabel>
-                    <Input
-                      data-1p-ignore
+                    <IconPicker
                       id={field.name}
                       name={field.name}
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      placeholder="e.g., shopping-cart"
-                      autoComplete="off"
+                      value={field.state.value as IconName}
+                      onValueChange={(value) => field.handleChange(value)}
+                      className="max-w-min"
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
