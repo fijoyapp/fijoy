@@ -7,6 +7,7 @@ import {
 } from 'date-fns'
 import { useState, useTransition, useMemo } from 'react'
 import type { DateRange } from 'react-day-picker'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -171,10 +172,36 @@ export function DateRangeFilter({
     setIsPickerOpen(false)
   }
 
+  const handlePrevious = () => {
+    if (groupBy === 'MONTH') {
+      // Navigate to previous month
+      const newMonth = selectedMonth === 0 ? 11 : selectedMonth - 1
+      const newYear =
+        selectedMonth === 0 ? selectedMonthYear - 1 : selectedMonthYear
+      handleMonthSelect(newMonth, newYear)
+    } else if (groupBy === 'YEAR') {
+      // Navigate to previous year
+      handleYearSelect(selectedYear - 1)
+    }
+  }
+
+  const handleNext = () => {
+    if (groupBy === 'MONTH') {
+      // Navigate to next month
+      const newMonth = selectedMonth === 11 ? 0 : selectedMonth + 1
+      const newYear =
+        selectedMonth === 11 ? selectedMonthYear + 1 : selectedMonthYear
+      handleMonthSelect(newMonth, newYear)
+    } else if (groupBy === 'YEAR') {
+      // Navigate to next year
+      handleYearSelect(selectedYear + 1)
+    }
+  }
+
   const getDisplayLabel = () => {
     if (groupBy === 'MONTH') {
       const date = new Date(selectedMonthYear, selectedMonth, 1)
-      return format(date, 'MMMM yyyy')
+      return format(date, 'MMM yyyy')
     }
     if (groupBy === 'YEAR') {
       return selectedYear.toString()
@@ -211,8 +238,19 @@ export function DateRangeFilter({
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handlePrevious}
+          disabled={groupBy === 'CUSTOM'}
+        >
+          <ChevronLeft className="size-4" />
+        </Button>
+
         <DropdownMenu open={isPickerOpen} onOpenChange={setIsPickerOpen}>
-          <DropdownMenuTrigger render={<Button variant="outline" />}>
+          <DropdownMenuTrigger
+            render={<Button variant="outline" className="w-24" />}
+          >
             {getDisplayLabel()}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-auto p-0">
@@ -305,6 +343,15 @@ export function DateRangeFilter({
             )}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleNext}
+          disabled={groupBy === 'CUSTOM'}
+        >
+          <ChevronRight className="size-4" />
+        </Button>
 
         {isPending && <Spinner />}
       </div>
