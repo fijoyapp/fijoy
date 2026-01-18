@@ -7,7 +7,7 @@ import {
 } from 'date-fns'
 import { useState, useTransition, useMemo } from 'react'
 import type { DateRange } from 'react-day-picker'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Undo2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -198,6 +198,39 @@ export function DateRangeFilter({
     }
   }
 
+  const handleToday = () => {
+    const now = new Date()
+    if (groupBy === 'MONTH') {
+      // Navigate to current month
+      handleMonthSelect(now.getMonth(), now.getFullYear())
+    } else if (groupBy === 'YEAR') {
+      // Navigate to current year
+      handleYearSelect(now.getFullYear())
+    } else {
+      // For CUSTOM, go to current month
+      const start = startOfMonth(now)
+      const end = endOfMonth(now)
+      startTransition(async () => {
+        await onDateRangeChange(formatDateForURL(start), formatDateForURL(end))
+      })
+    }
+  }
+
+  // Check if we're on the current period
+  const isCurrentPeriod = useMemo(() => {
+    const now = new Date()
+    if (groupBy === 'MONTH') {
+      return (
+        selectedMonth === now.getMonth() &&
+        selectedMonthYear === now.getFullYear()
+      )
+    }
+    if (groupBy === 'YEAR') {
+      return selectedYear === now.getFullYear()
+    }
+    return false
+  }, [groupBy, selectedMonth, selectedMonthYear, selectedYear])
+
   const getDisplayLabel = () => {
     if (groupBy === 'MONTH') {
       const date = new Date(selectedMonthYear, selectedMonth, 1)
@@ -353,6 +386,17 @@ export function DateRangeFilter({
           <ChevronRight className="size-4" />
         </Button>
 
+        {!isCurrentPeriod && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleToday}
+            title={groupBy === 'MONTH' ? 'Go to this month' : 'Go to this year'}
+          >
+            <Undo2 className="size-4" />
+          </Button>
+        )}
+
         {isPending && <Spinner />}
       </div>
 
@@ -361,7 +405,7 @@ export function DateRangeFilter({
         value={groupBy}
         onValueChange={handleGroupByChange}
       >
-        <SelectTrigger className="w-32">
+        <SelectTrigger className="w-24">
           <SelectValue>{GROUP_BY_LABELS[groupBy]}</SelectValue>
         </SelectTrigger>
         <SelectContent>
