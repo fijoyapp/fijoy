@@ -22,7 +22,7 @@ type Config struct {
 	SessionSecret string `env:"SESSION_SECRET,notEmpty"`
 	JWTSecret     string `env:"JWT_SECRET,notEmpty"`
 
-	FrankfurterBaseURL string `env:"FRANKFURTER_BASE_URL" envDefault:"https://api.frankfurter.app"`
+	FrankfurterBaseURL string `env:"FRANKFURTER_BASE_URL"`
 
 	IsProd bool
 }
