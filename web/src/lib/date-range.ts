@@ -1,9 +1,6 @@
 import { format, parseISO } from 'date-fns'
 
 export const DATE_RANGE_PRESETS = {
-  LAST_7_DAYS: 'LAST_7_DAYS',
-  LAST_30_DAYS: 'LAST_30_DAYS',
-  LAST_90_DAYS: 'LAST_90_DAYS',
   THIS_MONTH: 'THIS_MONTH',
   LAST_MONTH: 'LAST_MONTH',
   THIS_YEAR: 'THIS_YEAR',
@@ -37,40 +34,18 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
   )
 
   switch (preset) {
-    case DATE_RANGE_PRESETS.LAST_7_DAYS: {
-      const start = new Date(
-        startOfToday.getFullYear(),
-        startOfToday.getMonth(),
-        startOfToday.getDate() - 6,
-      )
-      return { startDate: start, endDate: startOfToday }
-    }
-
-    case DATE_RANGE_PRESETS.LAST_30_DAYS: {
-      const start = new Date(
-        startOfToday.getFullYear(),
-        startOfToday.getMonth(),
-        startOfToday.getDate() - 29,
-      )
-      return { startDate: start, endDate: startOfToday }
-    }
-
-    case DATE_RANGE_PRESETS.LAST_90_DAYS: {
-      const start = new Date(
-        startOfToday.getFullYear(),
-        startOfToday.getMonth(),
-        startOfToday.getDate() - 89,
-      )
-      return { startDate: start, endDate: startOfToday }
-    }
-
     case DATE_RANGE_PRESETS.THIS_MONTH: {
       const start = new Date(
         startOfToday.getFullYear(),
         startOfToday.getMonth(),
         1,
       )
-      return { startDate: start, endDate: startOfToday }
+      const end = new Date(
+        startOfToday.getFullYear(),
+        startOfToday.getMonth() + 1,
+        0,
+      )
+      return { startDate: start, endDate: end }
     }
 
     case DATE_RANGE_PRESETS.LAST_MONTH: {
@@ -89,12 +64,13 @@ export function getDateRangeForPreset(preset: DateRangePreset): {
 
     case DATE_RANGE_PRESETS.THIS_YEAR: {
       const start = new Date(startOfToday.getFullYear(), 0, 1)
-      return { startDate: start, endDate: startOfToday }
+      const end = new Date(startOfToday.getFullYear(), 11, 31)
+      return { startDate: start, endDate: end }
     }
 
     case DATE_RANGE_PRESETS.LAST_YEAR: {
       const start = new Date(startOfToday.getFullYear() - 1, 0, 1)
-      const end = new Date(startOfToday.getFullYear(), 0, 0)
+      const end = new Date(startOfToday.getFullYear() - 1, 11, 31)
       return { startDate: start, endDate: end }
     }
 
