@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/lib/utils'
 
 type GroupByOption = 'MONTH' | 'YEAR' | 'CUSTOM'
 
@@ -54,7 +55,7 @@ export function DateRangeFilter({
   const startDateObj = useMemo(() => new Date(startDate), [startDate])
   const endDateObj = useMemo(() => new Date(endDate), [endDate])
 
-  // Detect grouping mode based on start and end dates
+  // Detect grouping mode based on start and end dates (source of truth)
   const groupBy = useMemo((): GroupByOption => {
     const start = startOfMonth(startDateObj)
     const end = endOfMonth(startDateObj)
@@ -82,17 +83,16 @@ export function DateRangeFilter({
     return 'CUSTOM'
   }, [startDateObj, endDateObj])
 
-  const [selectedMonth, setSelectedMonth] = useState<number>(
-    startDateObj.getMonth(),
-  )
-  const [selectedMonthYear, setSelectedMonthYear] = useState<number>(
-    startDateObj.getFullYear(),
-  )
+  // UI state: track if user wants to see custom picker (overrides groupBy for display)
+  const [showCustomPicker, setShowCustomPicker] = useState(false)
 
-  // For YEAR mode: selected year
-  const [selectedYear, setSelectedYear] = useState<number>(
-    startDateObj.getFullYear(),
+  // Derive selected month/year from URL (source of truth)
+  const selectedMonth = useMemo(() => startDateObj.getMonth(), [startDateObj])
+  const selectedMonthYear = useMemo(
+    () => startDateObj.getFullYear(),
+    [startDateObj],
   )
+  const selectedYear = useMemo(() => startDateObj.getFullYear(), [startDateObj])
 
   // For CUSTOM mode: date range
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>({
@@ -106,8 +106,8 @@ export function DateRangeFilter({
     const newGroupBy = value as GroupByOption
 
     // When switching modes, apply appropriate date range and refresh data
-    // The groupBy will be automatically derived from the new date range
     if (newGroupBy === 'MONTH') {
+      setShowCustomPicker(false)
       // Use the currently selected month/year
       const date = new Date(selectedMonthYear, selectedMonth, 1)
       const start = startOfMonth(date)
@@ -117,6 +117,7 @@ export function DateRangeFilter({
         await onDateRangeChange(formatDateForURL(start), formatDateForURL(end))
       })
     } else if (newGroupBy === 'YEAR') {
+      setShowCustomPicker(false)
       // Use the currently selected year
       const start = startOfYear(new Date(selectedYear, 0, 1))
       const end = endOfYear(new Date(selectedYear, 0, 1))
@@ -124,14 +125,15 @@ export function DateRangeFilter({
       startTransition(async () => {
         await onDateRangeChange(formatDateForURL(start), formatDateForURL(end))
       })
+    } else if (newGroupBy === 'CUSTOM') {
+      // Set UI state to show custom picker and open dropdown
+      setShowCustomPicker(true)
+      setIsPickerOpen(true)
     }
-    // CUSTOM mode keeps the current date range until user selects new dates
   }
 
   const handleMonthSelect = (month: number, year: number) => {
     const date = new Date(year, month, 1)
-    setSelectedMonth(month)
-    setSelectedMonthYear(year)
     const start = startOfMonth(date)
     const end = endOfMonth(date)
 
@@ -142,7 +144,6 @@ export function DateRangeFilter({
   }
 
   const handleYearSelect = (year: number) => {
-    setSelectedYear(year)
     const start = startOfYear(new Date(year, 0, 1))
     const end = endOfYear(new Date(year, 0, 1))
 
@@ -161,6 +162,7 @@ export function DateRangeFilter({
         await onDateRangeChange(start, end)
       })
       setIsPickerOpen(false)
+      setShowCustomPicker(false)
     }
   }
 
@@ -170,6 +172,7 @@ export function DateRangeFilter({
       to: new Date(endDate),
     })
     setIsPickerOpen(false)
+    setShowCustomPicker(false)
   }
 
   const handlePrevious = () => {
@@ -282,12 +285,17 @@ export function DateRangeFilter({
 
         <DropdownMenu open={isPickerOpen} onOpenChange={setIsPickerOpen}>
           <DropdownMenuTrigger
-            render={<Button variant="outline" className="w-24" />}
+            render={
+              <Button
+                variant="outline"
+                className={cn(groupBy !== 'CUSTOM' && 'w-24')}
+              />
+            }
           >
             {getDisplayLabel()}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-auto p-0">
-            {groupBy === 'MONTH' && (
+            {!showCustomPicker && groupBy === 'MONTH' && (
               <div className="flex flex-col gap-3 p-4">
                 <div className="text-sm font-medium">Select Month</div>
                 <Select
@@ -326,7 +334,7 @@ export function DateRangeFilter({
               </div>
             )}
 
-            {groupBy === 'YEAR' && (
+            {!showCustomPicker && groupBy === 'YEAR' && (
               <div className="flex flex-col gap-2 p-3">
                 <div className="text-sm font-medium">Select Year</div>
                 <div className="grid max-h-60 grid-cols-3 gap-2 overflow-y-auto">
@@ -344,7 +352,7 @@ export function DateRangeFilter({
               </div>
             )}
 
-            {groupBy === 'CUSTOM' && (
+            {(showCustomPicker || groupBy === 'CUSTOM') && (
               <>
                 <Calendar
                   className="bg-card"
@@ -386,7 +394,7 @@ export function DateRangeFilter({
           <ChevronRight className="size-4" />
         </Button>
 
-        {!isCurrentPeriod && (
+        {!isCurrentPeriod && groupBy !== 'CUSTOM' && (
           <Button
             variant="outline"
             size="icon"
@@ -402,11 +410,13 @@ export function DateRangeFilter({
 
       <Select
         name="group-by-filter"
-        value={groupBy}
+        value={showCustomPicker ? 'CUSTOM' : groupBy}
         onValueChange={handleGroupByChange}
       >
         <SelectTrigger className="w-24">
-          <SelectValue>{GROUP_BY_LABELS[groupBy]}</SelectValue>
+          <SelectValue>
+            {GROUP_BY_LABELS[showCustomPicker ? 'CUSTOM' : groupBy]}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {Object.entries(GROUP_BY_LABELS).map(([value, label]) => (
