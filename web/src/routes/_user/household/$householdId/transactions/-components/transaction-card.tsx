@@ -79,13 +79,12 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
         item.type === 'lot' ? (
           <Fragment key={item.lot.id}>
             {index !== 0 && <Separator className="" />}
-            <LotCard
+            <InvestmentLotCard
               data={data}
               investmentLot={item.lot}
               isFirst={index === 0}
               isLast={index === sortedItems.length - 1}
             />
-            <Separator className="h-2" />
           </Fragment>
         ) : (
           <Fragment key={item.entry.id}>
@@ -215,7 +214,7 @@ function TransactionEntryCard({
   )
 }
 
-function LotCard({
+function InvestmentLotCard({
   data,
   investmentLot,
   isFirst,
@@ -232,7 +231,7 @@ function LotCard({
 
   return (
     <Item
-      variant="outline"
+      variant="default"
       role="listitem"
       className={cn(
         !isFirst && 'rounded-t-none border-t-0',
