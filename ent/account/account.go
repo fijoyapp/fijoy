@@ -31,8 +31,8 @@ const (
 	FieldType = "type"
 	// FieldBalance holds the string denoting the balance field in the database.
 	FieldBalance = "balance"
-	// FieldIconPath holds the string denoting the icon_path field in the database.
-	FieldIconPath = "icon_path"
+	// FieldIcon holds the string denoting the icon field in the database.
+	FieldIcon = "icon"
 	// FieldValue holds the string denoting the value field in the database.
 	FieldValue = "value"
 	// FieldFxRate holds the string denoting the fx_rate field in the database.
@@ -99,7 +99,7 @@ var Columns = []string{
 	FieldName,
 	FieldType,
 	FieldBalance,
-	FieldIconPath,
+	FieldIcon,
 	FieldValue,
 	FieldFxRate,
 	FieldCurrencyID,
@@ -206,9 +206,9 @@ func ByBalance(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBalance, opts...).ToFunc()
 }
 
-// ByIconPath orders the results by the icon_path field.
-func ByIconPath(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIconPath, opts...).ToFunc()
+// ByIcon orders the results by the icon field.
+func ByIcon(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIcon, opts...).ToFunc()
 }
 
 // ByValue orders the results by the value field.

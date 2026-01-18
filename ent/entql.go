@@ -42,7 +42,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			account.FieldName:        {Type: field.TypeString, Column: account.FieldName},
 			account.FieldType:        {Type: field.TypeEnum, Column: account.FieldType},
 			account.FieldBalance:     {Type: field.TypeFloat64, Column: account.FieldBalance},
-			account.FieldIconPath:    {Type: field.TypeString, Column: account.FieldIconPath},
+			account.FieldIcon:        {Type: field.TypeString, Column: account.FieldIcon},
 			account.FieldValue:       {Type: field.TypeFloat64, Column: account.FieldValue},
 			account.FieldFxRate:      {Type: field.TypeFloat64, Column: account.FieldFxRate},
 			account.FieldCurrencyID:  {Type: field.TypeInt, Column: account.FieldCurrencyID},
@@ -161,6 +161,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transactioncategory.FieldHouseholdID: {Type: field.TypeInt, Column: transactioncategory.FieldHouseholdID},
 			transactioncategory.FieldName:        {Type: field.TypeString, Column: transactioncategory.FieldName},
 			transactioncategory.FieldType:        {Type: field.TypeEnum, Column: transactioncategory.FieldType},
+			transactioncategory.FieldIcon:        {Type: field.TypeString, Column: transactioncategory.FieldIcon},
 			transactioncategory.FieldIsImmutable: {Type: field.TypeBool, Column: transactioncategory.FieldIsImmutable},
 		},
 	}
@@ -844,9 +845,9 @@ func (f *AccountFilter) WhereBalance(p entql.Float64P) {
 	f.Where(p.Field(account.FieldBalance))
 }
 
-// WhereIconPath applies the entql string predicate on the icon_path field.
-func (f *AccountFilter) WhereIconPath(p entql.StringP) {
-	f.Where(p.Field(account.FieldIconPath))
+// WhereIcon applies the entql string predicate on the icon field.
+func (f *AccountFilter) WhereIcon(p entql.StringP) {
+	f.Where(p.Field(account.FieldIcon))
 }
 
 // WhereValue applies the entql float64 predicate on the value field.
@@ -1707,6 +1708,11 @@ func (f *TransactionCategoryFilter) WhereName(p entql.StringP) {
 // WhereType applies the entql string predicate on the type field.
 func (f *TransactionCategoryFilter) WhereType(p entql.StringP) {
 	f.Where(p.Field(transactioncategory.FieldType))
+}
+
+// WhereIcon applies the entql string predicate on the icon field.
+func (f *TransactionCategoryFilter) WhereIcon(p entql.StringP) {
+	f.Where(p.Field(transactioncategory.FieldIcon))
 }
 
 // WhereIsImmutable applies the entql bool predicate on the is_immutable field.

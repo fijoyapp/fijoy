@@ -16,7 +16,7 @@ type CreateAccountInput struct {
 	Name       string
 	Type       account.Type
 	Balance    *decimal.Decimal
-	IconPath   *string
+	Icon       *string
 	CurrencyID int
 }
 
@@ -27,8 +27,8 @@ func (i *CreateAccountInput) Mutate(m *AccountMutation) {
 	if v := i.Balance; v != nil {
 		m.SetBalance(*v)
 	}
-	if v := i.IconPath; v != nil {
-		m.SetIconPath(*v)
+	if v := i.Icon; v != nil {
+		m.SetIcon(*v)
 	}
 	m.SetCurrencyID(i.CurrencyID)
 }
@@ -41,9 +41,9 @@ func (c *AccountCreate) SetInput(i CreateAccountInput) *AccountCreate {
 
 // UpdateAccountInput represents a mutation input for updating accounts.
 type UpdateAccountInput struct {
-	Name          *string
-	ClearIconPath bool
-	IconPath      *string
+	Name      *string
+	ClearIcon bool
+	Icon      *string
 }
 
 // Mutate applies the UpdateAccountInput on the AccountMutation builder.
@@ -51,11 +51,11 @@ func (i *UpdateAccountInput) Mutate(m *AccountMutation) {
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
-	if i.ClearIconPath {
-		m.ClearIconPath()
+	if i.ClearIcon {
+		m.ClearIcon()
 	}
-	if v := i.IconPath; v != nil {
-		m.SetIconPath(*v)
+	if v := i.Icon; v != nil {
+		m.SetIcon(*v)
 	}
 }
 
@@ -207,6 +207,7 @@ func (c *TransactionCreate) SetInput(i CreateTransactionInput) *TransactionCreat
 type CreateTransactionCategoryInput struct {
 	Name        string
 	Type        transactioncategory.Type
+	Icon        string
 	IsImmutable *bool
 }
 
@@ -214,6 +215,7 @@ type CreateTransactionCategoryInput struct {
 func (i *CreateTransactionCategoryInput) Mutate(m *TransactionCategoryMutation) {
 	m.SetName(i.Name)
 	m.SetType(i.Type)
+	m.SetIcon(i.Icon)
 	if v := i.IsImmutable; v != nil {
 		m.SetIsImmutable(*v)
 	}

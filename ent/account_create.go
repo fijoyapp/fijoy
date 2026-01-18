@@ -88,16 +88,16 @@ func (_c *AccountCreate) SetNillableBalance(v *decimal.Decimal) *AccountCreate {
 	return _c
 }
 
-// SetIconPath sets the "icon_path" field.
-func (_c *AccountCreate) SetIconPath(v string) *AccountCreate {
-	_c.mutation.SetIconPath(v)
+// SetIcon sets the "icon" field.
+func (_c *AccountCreate) SetIcon(v string) *AccountCreate {
+	_c.mutation.SetIcon(v)
 	return _c
 }
 
-// SetNillableIconPath sets the "icon_path" field if the given value is not nil.
-func (_c *AccountCreate) SetNillableIconPath(v *string) *AccountCreate {
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_c *AccountCreate) SetNillableIcon(v *string) *AccountCreate {
 	if v != nil {
-		_c.SetIconPath(*v)
+		_c.SetIcon(*v)
 	}
 	return _c
 }
@@ -355,9 +355,9 @@ func (_c *AccountCreate) createSpec() (*Account, *sqlgraph.CreateSpec) {
 		_spec.SetField(account.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
 	}
-	if value, ok := _c.mutation.IconPath(); ok {
-		_spec.SetField(account.FieldIconPath, field.TypeString, value)
-		_node.IconPath = value
+	if value, ok := _c.mutation.Icon(); ok {
+		_spec.SetField(account.FieldIcon, field.TypeString, value)
+		_node.Icon = value
 	}
 	if value, ok := _c.mutation.Value(); ok {
 		_spec.SetField(account.FieldValue, field.TypeFloat64, value)
@@ -544,21 +544,21 @@ func (u *AccountUpsert) AddBalance(v decimal.Decimal) *AccountUpsert {
 	return u
 }
 
-// SetIconPath sets the "icon_path" field.
-func (u *AccountUpsert) SetIconPath(v string) *AccountUpsert {
-	u.Set(account.FieldIconPath, v)
+// SetIcon sets the "icon" field.
+func (u *AccountUpsert) SetIcon(v string) *AccountUpsert {
+	u.Set(account.FieldIcon, v)
 	return u
 }
 
-// UpdateIconPath sets the "icon_path" field to the value that was provided on create.
-func (u *AccountUpsert) UpdateIconPath() *AccountUpsert {
-	u.SetExcluded(account.FieldIconPath)
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *AccountUpsert) UpdateIcon() *AccountUpsert {
+	u.SetExcluded(account.FieldIcon)
 	return u
 }
 
-// ClearIconPath clears the value of the "icon_path" field.
-func (u *AccountUpsert) ClearIconPath() *AccountUpsert {
-	u.SetNull(account.FieldIconPath)
+// ClearIcon clears the value of the "icon" field.
+func (u *AccountUpsert) ClearIcon() *AccountUpsert {
+	u.SetNull(account.FieldIcon)
 	return u
 }
 
@@ -704,24 +704,24 @@ func (u *AccountUpsertOne) UpdateBalance() *AccountUpsertOne {
 	})
 }
 
-// SetIconPath sets the "icon_path" field.
-func (u *AccountUpsertOne) SetIconPath(v string) *AccountUpsertOne {
+// SetIcon sets the "icon" field.
+func (u *AccountUpsertOne) SetIcon(v string) *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
-		s.SetIconPath(v)
+		s.SetIcon(v)
 	})
 }
 
-// UpdateIconPath sets the "icon_path" field to the value that was provided on create.
-func (u *AccountUpsertOne) UpdateIconPath() *AccountUpsertOne {
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *AccountUpsertOne) UpdateIcon() *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
-		s.UpdateIconPath()
+		s.UpdateIcon()
 	})
 }
 
-// ClearIconPath clears the value of the "icon_path" field.
-func (u *AccountUpsertOne) ClearIconPath() *AccountUpsertOne {
+// ClearIcon clears the value of the "icon" field.
+func (u *AccountUpsertOne) ClearIcon() *AccountUpsertOne {
 	return u.Update(func(s *AccountUpsert) {
-		s.ClearIconPath()
+		s.ClearIcon()
 	})
 }
 
@@ -1039,24 +1039,24 @@ func (u *AccountUpsertBulk) UpdateBalance() *AccountUpsertBulk {
 	})
 }
 
-// SetIconPath sets the "icon_path" field.
-func (u *AccountUpsertBulk) SetIconPath(v string) *AccountUpsertBulk {
+// SetIcon sets the "icon" field.
+func (u *AccountUpsertBulk) SetIcon(v string) *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
-		s.SetIconPath(v)
+		s.SetIcon(v)
 	})
 }
 
-// UpdateIconPath sets the "icon_path" field to the value that was provided on create.
-func (u *AccountUpsertBulk) UpdateIconPath() *AccountUpsertBulk {
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *AccountUpsertBulk) UpdateIcon() *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
-		s.UpdateIconPath()
+		s.UpdateIcon()
 	})
 }
 
-// ClearIconPath clears the value of the "icon_path" field.
-func (u *AccountUpsertBulk) ClearIconPath() *AccountUpsertBulk {
+// ClearIcon clears the value of the "icon" field.
+func (u *AccountUpsertBulk) ClearIcon() *AccountUpsertBulk {
 	return u.Update(func(s *AccountUpsert) {
-		s.ClearIconPath()
+		s.ClearIcon()
 	})
 }
 

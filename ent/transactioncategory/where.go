@@ -75,6 +75,11 @@ func Name(v string) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldEQ(FieldName, v))
 }
 
+// Icon applies equality check predicate on the "icon" field. It's identical to IconEQ.
+func Icon(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldEQ(FieldIcon, v))
+}
+
 // IsImmutable applies equality check predicate on the "is_immutable" field. It's identical to IsImmutableEQ.
 func IsImmutable(v bool) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldEQ(FieldIsImmutable, v))
@@ -263,6 +268,71 @@ func TypeIn(vs ...Type) predicate.TransactionCategory {
 // TypeNotIn applies the NotIn predicate on the "type" field.
 func TypeNotIn(vs ...Type) predicate.TransactionCategory {
 	return predicate.TransactionCategory(sql.FieldNotIn(FieldType, vs...))
+}
+
+// IconEQ applies the EQ predicate on the "icon" field.
+func IconEQ(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldEQ(FieldIcon, v))
+}
+
+// IconNEQ applies the NEQ predicate on the "icon" field.
+func IconNEQ(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldNEQ(FieldIcon, v))
+}
+
+// IconIn applies the In predicate on the "icon" field.
+func IconIn(vs ...string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldIn(FieldIcon, vs...))
+}
+
+// IconNotIn applies the NotIn predicate on the "icon" field.
+func IconNotIn(vs ...string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldNotIn(FieldIcon, vs...))
+}
+
+// IconGT applies the GT predicate on the "icon" field.
+func IconGT(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldGT(FieldIcon, v))
+}
+
+// IconGTE applies the GTE predicate on the "icon" field.
+func IconGTE(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldGTE(FieldIcon, v))
+}
+
+// IconLT applies the LT predicate on the "icon" field.
+func IconLT(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldLT(FieldIcon, v))
+}
+
+// IconLTE applies the LTE predicate on the "icon" field.
+func IconLTE(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldLTE(FieldIcon, v))
+}
+
+// IconContains applies the Contains predicate on the "icon" field.
+func IconContains(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldContains(FieldIcon, v))
+}
+
+// IconHasPrefix applies the HasPrefix predicate on the "icon" field.
+func IconHasPrefix(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldHasPrefix(FieldIcon, v))
+}
+
+// IconHasSuffix applies the HasSuffix predicate on the "icon" field.
+func IconHasSuffix(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldHasSuffix(FieldIcon, v))
+}
+
+// IconEqualFold applies the EqualFold predicate on the "icon" field.
+func IconEqualFold(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldEqualFold(FieldIcon, v))
+}
+
+// IconContainsFold applies the ContainsFold predicate on the "icon" field.
+func IconContainsFold(v string) predicate.TransactionCategory {
+	return predicate.TransactionCategory(sql.FieldContainsFold(FieldIcon, v))
 }
 
 // IsImmutableEQ applies the EQ predicate on the "is_immutable" field.

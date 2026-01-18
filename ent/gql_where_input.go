@@ -96,22 +96,22 @@ type AccountWhereInput struct {
 	BalanceLT    *decimal.Decimal  `json:"balanceLT,omitempty"`
 	BalanceLTE   *decimal.Decimal  `json:"balanceLTE,omitempty"`
 
-	// "icon_path" field predicates.
-	IconPath             *string  `json:"iconPath,omitempty"`
-	IconPathNEQ          *string  `json:"iconPathNEQ,omitempty"`
-	IconPathIn           []string `json:"iconPathIn,omitempty"`
-	IconPathNotIn        []string `json:"iconPathNotIn,omitempty"`
-	IconPathGT           *string  `json:"iconPathGT,omitempty"`
-	IconPathGTE          *string  `json:"iconPathGTE,omitempty"`
-	IconPathLT           *string  `json:"iconPathLT,omitempty"`
-	IconPathLTE          *string  `json:"iconPathLTE,omitempty"`
-	IconPathContains     *string  `json:"iconPathContains,omitempty"`
-	IconPathHasPrefix    *string  `json:"iconPathHasPrefix,omitempty"`
-	IconPathHasSuffix    *string  `json:"iconPathHasSuffix,omitempty"`
-	IconPathIsNil        bool     `json:"iconPathIsNil,omitempty"`
-	IconPathNotNil       bool     `json:"iconPathNotNil,omitempty"`
-	IconPathEqualFold    *string  `json:"iconPathEqualFold,omitempty"`
-	IconPathContainsFold *string  `json:"iconPathContainsFold,omitempty"`
+	// "icon" field predicates.
+	Icon             *string  `json:"icon,omitempty"`
+	IconNEQ          *string  `json:"iconNEQ,omitempty"`
+	IconIn           []string `json:"iconIn,omitempty"`
+	IconNotIn        []string `json:"iconNotIn,omitempty"`
+	IconGT           *string  `json:"iconGT,omitempty"`
+	IconGTE          *string  `json:"iconGTE,omitempty"`
+	IconLT           *string  `json:"iconLT,omitempty"`
+	IconLTE          *string  `json:"iconLTE,omitempty"`
+	IconContains     *string  `json:"iconContains,omitempty"`
+	IconHasPrefix    *string  `json:"iconHasPrefix,omitempty"`
+	IconHasSuffix    *string  `json:"iconHasSuffix,omitempty"`
+	IconIsNil        bool     `json:"iconIsNil,omitempty"`
+	IconNotNil       bool     `json:"iconNotNil,omitempty"`
+	IconEqualFold    *string  `json:"iconEqualFold,omitempty"`
+	IconContainsFold *string  `json:"iconContainsFold,omitempty"`
 
 	// "value" field predicates.
 	Value      *decimal.Decimal  `json:"value,omitempty"`
@@ -396,50 +396,50 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	if i.BalanceLTE != nil {
 		predicates = append(predicates, account.BalanceLTE(*i.BalanceLTE))
 	}
-	if i.IconPath != nil {
-		predicates = append(predicates, account.IconPathEQ(*i.IconPath))
+	if i.Icon != nil {
+		predicates = append(predicates, account.IconEQ(*i.Icon))
 	}
-	if i.IconPathNEQ != nil {
-		predicates = append(predicates, account.IconPathNEQ(*i.IconPathNEQ))
+	if i.IconNEQ != nil {
+		predicates = append(predicates, account.IconNEQ(*i.IconNEQ))
 	}
-	if len(i.IconPathIn) > 0 {
-		predicates = append(predicates, account.IconPathIn(i.IconPathIn...))
+	if len(i.IconIn) > 0 {
+		predicates = append(predicates, account.IconIn(i.IconIn...))
 	}
-	if len(i.IconPathNotIn) > 0 {
-		predicates = append(predicates, account.IconPathNotIn(i.IconPathNotIn...))
+	if len(i.IconNotIn) > 0 {
+		predicates = append(predicates, account.IconNotIn(i.IconNotIn...))
 	}
-	if i.IconPathGT != nil {
-		predicates = append(predicates, account.IconPathGT(*i.IconPathGT))
+	if i.IconGT != nil {
+		predicates = append(predicates, account.IconGT(*i.IconGT))
 	}
-	if i.IconPathGTE != nil {
-		predicates = append(predicates, account.IconPathGTE(*i.IconPathGTE))
+	if i.IconGTE != nil {
+		predicates = append(predicates, account.IconGTE(*i.IconGTE))
 	}
-	if i.IconPathLT != nil {
-		predicates = append(predicates, account.IconPathLT(*i.IconPathLT))
+	if i.IconLT != nil {
+		predicates = append(predicates, account.IconLT(*i.IconLT))
 	}
-	if i.IconPathLTE != nil {
-		predicates = append(predicates, account.IconPathLTE(*i.IconPathLTE))
+	if i.IconLTE != nil {
+		predicates = append(predicates, account.IconLTE(*i.IconLTE))
 	}
-	if i.IconPathContains != nil {
-		predicates = append(predicates, account.IconPathContains(*i.IconPathContains))
+	if i.IconContains != nil {
+		predicates = append(predicates, account.IconContains(*i.IconContains))
 	}
-	if i.IconPathHasPrefix != nil {
-		predicates = append(predicates, account.IconPathHasPrefix(*i.IconPathHasPrefix))
+	if i.IconHasPrefix != nil {
+		predicates = append(predicates, account.IconHasPrefix(*i.IconHasPrefix))
 	}
-	if i.IconPathHasSuffix != nil {
-		predicates = append(predicates, account.IconPathHasSuffix(*i.IconPathHasSuffix))
+	if i.IconHasSuffix != nil {
+		predicates = append(predicates, account.IconHasSuffix(*i.IconHasSuffix))
 	}
-	if i.IconPathIsNil {
-		predicates = append(predicates, account.IconPathIsNil())
+	if i.IconIsNil {
+		predicates = append(predicates, account.IconIsNil())
 	}
-	if i.IconPathNotNil {
-		predicates = append(predicates, account.IconPathNotNil())
+	if i.IconNotNil {
+		predicates = append(predicates, account.IconNotNil())
 	}
-	if i.IconPathEqualFold != nil {
-		predicates = append(predicates, account.IconPathEqualFold(*i.IconPathEqualFold))
+	if i.IconEqualFold != nil {
+		predicates = append(predicates, account.IconEqualFold(*i.IconEqualFold))
 	}
-	if i.IconPathContainsFold != nil {
-		predicates = append(predicates, account.IconPathContainsFold(*i.IconPathContainsFold))
+	if i.IconContainsFold != nil {
+		predicates = append(predicates, account.IconContainsFold(*i.IconContainsFold))
 	}
 	if i.Value != nil {
 		predicates = append(predicates, account.ValueEQ(*i.Value))
@@ -2854,6 +2854,21 @@ type TransactionCategoryWhereInput struct {
 	TypeIn    []transactioncategory.Type `json:"typeIn,omitempty"`
 	TypeNotIn []transactioncategory.Type `json:"typeNotIn,omitempty"`
 
+	// "icon" field predicates.
+	Icon             *string  `json:"icon,omitempty"`
+	IconNEQ          *string  `json:"iconNEQ,omitempty"`
+	IconIn           []string `json:"iconIn,omitempty"`
+	IconNotIn        []string `json:"iconNotIn,omitempty"`
+	IconGT           *string  `json:"iconGT,omitempty"`
+	IconGTE          *string  `json:"iconGTE,omitempty"`
+	IconLT           *string  `json:"iconLT,omitempty"`
+	IconLTE          *string  `json:"iconLTE,omitempty"`
+	IconContains     *string  `json:"iconContains,omitempty"`
+	IconHasPrefix    *string  `json:"iconHasPrefix,omitempty"`
+	IconHasSuffix    *string  `json:"iconHasSuffix,omitempty"`
+	IconEqualFold    *string  `json:"iconEqualFold,omitempty"`
+	IconContainsFold *string  `json:"iconContainsFold,omitempty"`
+
 	// "is_immutable" field predicates.
 	IsImmutable    *bool `json:"isImmutable,omitempty"`
 	IsImmutableNEQ *bool `json:"isImmutableNEQ,omitempty"`
@@ -3072,6 +3087,45 @@ func (i *TransactionCategoryWhereInput) P() (predicate.TransactionCategory, erro
 	}
 	if len(i.TypeNotIn) > 0 {
 		predicates = append(predicates, transactioncategory.TypeNotIn(i.TypeNotIn...))
+	}
+	if i.Icon != nil {
+		predicates = append(predicates, transactioncategory.IconEQ(*i.Icon))
+	}
+	if i.IconNEQ != nil {
+		predicates = append(predicates, transactioncategory.IconNEQ(*i.IconNEQ))
+	}
+	if len(i.IconIn) > 0 {
+		predicates = append(predicates, transactioncategory.IconIn(i.IconIn...))
+	}
+	if len(i.IconNotIn) > 0 {
+		predicates = append(predicates, transactioncategory.IconNotIn(i.IconNotIn...))
+	}
+	if i.IconGT != nil {
+		predicates = append(predicates, transactioncategory.IconGT(*i.IconGT))
+	}
+	if i.IconGTE != nil {
+		predicates = append(predicates, transactioncategory.IconGTE(*i.IconGTE))
+	}
+	if i.IconLT != nil {
+		predicates = append(predicates, transactioncategory.IconLT(*i.IconLT))
+	}
+	if i.IconLTE != nil {
+		predicates = append(predicates, transactioncategory.IconLTE(*i.IconLTE))
+	}
+	if i.IconContains != nil {
+		predicates = append(predicates, transactioncategory.IconContains(*i.IconContains))
+	}
+	if i.IconHasPrefix != nil {
+		predicates = append(predicates, transactioncategory.IconHasPrefix(*i.IconHasPrefix))
+	}
+	if i.IconHasSuffix != nil {
+		predicates = append(predicates, transactioncategory.IconHasSuffix(*i.IconHasSuffix))
+	}
+	if i.IconEqualFold != nil {
+		predicates = append(predicates, transactioncategory.IconEqualFold(*i.IconEqualFold))
+	}
+	if i.IconContainsFold != nil {
+		predicates = append(predicates, transactioncategory.IconContainsFold(*i.IconContainsFold))
 	}
 	if i.IsImmutable != nil {
 		predicates = append(predicates, transactioncategory.IsImmutableEQ(*i.IsImmutable))

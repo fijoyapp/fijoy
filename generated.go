@@ -79,7 +79,7 @@ type ComplexityRoot struct {
 		Household                  func(childComplexity int) int
 		HouseholdID                func(childComplexity int) int
 		ID                         func(childComplexity int) int
-		IconPath                   func(childComplexity int) int
+		Icon                       func(childComplexity int) int
 		Investments                func(childComplexity int) int
 		Name                       func(childComplexity int) int
 		TransactionEntries         func(childComplexity int) int
@@ -282,6 +282,7 @@ type ComplexityRoot struct {
 		Household    func(childComplexity int) int
 		HouseholdID  func(childComplexity int) int
 		ID           func(childComplexity int) int
+		Icon         func(childComplexity int) int
 		IsImmutable  func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Transactions func(childComplexity int) int
@@ -595,12 +596,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Account.ID(childComplexity), true
-	case "Account.iconPath":
-		if e.complexity.Account.IconPath == nil {
+	case "Account.icon":
+		if e.complexity.Account.Icon == nil {
 			break
 		}
 
-		return e.complexity.Account.IconPath(childComplexity), true
+		return e.complexity.Account.Icon(childComplexity), true
 	case "Account.investments":
 		if e.complexity.Account.Investments == nil {
 			break
@@ -1573,6 +1574,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.TransactionCategory.ID(childComplexity), true
+	case "TransactionCategory.icon":
+		if e.complexity.TransactionCategory.Icon == nil {
+			break
+		}
+
+		return e.complexity.TransactionCategory.Icon(childComplexity), true
 	case "TransactionCategory.isImmutable":
 		if e.complexity.TransactionCategory.IsImmutable == nil {
 			break
@@ -2649,14 +2656,14 @@ func (ec *executionContext) fieldContext_Account_balance(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Account_iconPath(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+func (ec *executionContext) _Account_icon(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
 		ec.OperationContext,
 		field,
-		ec.fieldContext_Account_iconPath,
+		ec.fieldContext_Account_icon,
 		func(ctx context.Context) (any, error) {
-			return obj.IconPath, nil
+			return obj.Icon, nil
 		},
 		nil,
 		ec.marshalOString2string,
@@ -2665,7 +2672,7 @@ func (ec *executionContext) _Account_iconPath(ctx context.Context, field graphql
 	)
 }
 
-func (ec *executionContext) fieldContext_Account_iconPath(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Account_icon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Account",
 		Field:      field,
@@ -3268,8 +3275,8 @@ func (ec *executionContext) fieldContext_AccountEdge_node(_ context.Context, fie
 				return ec.fieldContext_Account_type(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
-			case "iconPath":
-				return ec.fieldContext_Account_iconPath(ctx, field)
+			case "icon":
+				return ec.fieldContext_Account_icon(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
 			case "fxRate":
@@ -3364,6 +3371,8 @@ func (ec *executionContext) fieldContext_CategoryAggregate_category(_ context.Co
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "icon":
+				return ec.fieldContext_TransactionCategory_icon(ctx, field)
 			case "isImmutable":
 				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
@@ -3800,8 +3809,8 @@ func (ec *executionContext) fieldContext_Currency_accounts(_ context.Context, fi
 				return ec.fieldContext_Account_type(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
-			case "iconPath":
-				return ec.fieldContext_Account_iconPath(ctx, field)
+			case "icon":
+				return ec.fieldContext_Account_icon(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
 			case "fxRate":
@@ -4541,8 +4550,8 @@ func (ec *executionContext) fieldContext_Household_accounts(_ context.Context, f
 				return ec.fieldContext_Account_type(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
-			case "iconPath":
-				return ec.fieldContext_Account_iconPath(ctx, field)
+			case "icon":
+				return ec.fieldContext_Account_icon(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
 			case "fxRate":
@@ -4783,6 +4792,8 @@ func (ec *executionContext) fieldContext_Household_transactionCategories(_ conte
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "icon":
+				return ec.fieldContext_TransactionCategory_icon(ctx, field)
 			case "isImmutable":
 				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
@@ -5284,8 +5295,8 @@ func (ec *executionContext) fieldContext_Investment_account(_ context.Context, f
 				return ec.fieldContext_Account_type(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
-			case "iconPath":
-				return ec.fieldContext_Account_iconPath(ctx, field)
+			case "icon":
+				return ec.fieldContext_Account_icon(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
 			case "fxRate":
@@ -8207,6 +8218,8 @@ func (ec *executionContext) fieldContext_Transaction_category(_ context.Context,
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "icon":
+				return ec.fieldContext_TransactionCategory_icon(ctx, field)
 			case "isImmutable":
 				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
@@ -8502,6 +8515,35 @@ func (ec *executionContext) fieldContext_TransactionCategory_type(_ context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _TransactionCategory_icon(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_TransactionCategory_icon,
+		func(ctx context.Context) (any, error) {
+			return obj.Icon, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_TransactionCategory_icon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "TransactionCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TransactionCategory_isImmutable(ctx context.Context, field graphql.CollectedField, obj *ent.TransactionCategory) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -8788,6 +8830,8 @@ func (ec *executionContext) fieldContext_TransactionCategoryEdge_node(_ context.
 				return ec.fieldContext_TransactionCategory_name(ctx, field)
 			case "type":
 				return ec.fieldContext_TransactionCategory_type(ctx, field)
+			case "icon":
+				return ec.fieldContext_TransactionCategory_icon(ctx, field)
 			case "isImmutable":
 				return ec.fieldContext_TransactionCategory_isImmutable(ctx, field)
 			case "household":
@@ -9350,8 +9394,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_account(_ context.Cont
 				return ec.fieldContext_Account_type(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
-			case "iconPath":
-				return ec.fieldContext_Account_iconPath(ctx, field)
+			case "icon":
+				return ec.fieldContext_Account_icon(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
 			case "fxRate":
@@ -9725,8 +9769,8 @@ func (ec *executionContext) fieldContext_User_accounts(_ context.Context, field 
 				return ec.fieldContext_Account_type(ctx, field)
 			case "balance":
 				return ec.fieldContext_Account_balance(ctx, field)
-			case "iconPath":
-				return ec.fieldContext_Account_iconPath(ctx, field)
+			case "icon":
+				return ec.fieldContext_Account_icon(ctx, field)
 			case "value":
 				return ec.fieldContext_Account_value(ctx, field)
 			case "fxRate":
@@ -11869,7 +11913,7 @@ func (ec *executionContext) unmarshalInputAccountWhereInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "balance", "balanceNEQ", "balanceIn", "balanceNotIn", "balanceGT", "balanceGTE", "balanceLT", "balanceLTE", "iconPath", "iconPathNEQ", "iconPathIn", "iconPathNotIn", "iconPathGT", "iconPathGTE", "iconPathLT", "iconPathLTE", "iconPathContains", "iconPathHasPrefix", "iconPathHasSuffix", "iconPathIsNil", "iconPathNotNil", "iconPathEqualFold", "iconPathContainsFold", "value", "valueNEQ", "valueIn", "valueNotIn", "valueGT", "valueGTE", "valueLT", "valueLTE", "fxRate", "fxRateNEQ", "fxRateIn", "fxRateNotIn", "fxRateGT", "fxRateGTE", "fxRateLT", "fxRateLTE", "currencyID", "currencyIDNEQ", "currencyIDIn", "currencyIDNotIn", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasUser", "hasUserWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasInvestments", "hasInvestmentsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "balance", "balanceNEQ", "balanceIn", "balanceNotIn", "balanceGT", "balanceGTE", "balanceLT", "balanceLTE", "icon", "iconNEQ", "iconIn", "iconNotIn", "iconGT", "iconGTE", "iconLT", "iconLTE", "iconContains", "iconHasPrefix", "iconHasSuffix", "iconIsNil", "iconNotNil", "iconEqualFold", "iconContainsFold", "value", "valueNEQ", "valueIn", "valueNotIn", "valueGT", "valueGTE", "valueLT", "valueLTE", "fxRate", "fxRateNEQ", "fxRateIn", "fxRateNotIn", "fxRateGT", "fxRateGTE", "fxRateLT", "fxRateLTE", "currencyID", "currencyIDNEQ", "currencyIDIn", "currencyIDNotIn", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasUser", "hasUserWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasInvestments", "hasInvestmentsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12284,111 +12328,111 @@ func (ec *executionContext) unmarshalInputAccountWhereInput(ctx context.Context,
 			if err = ec.resolvers.AccountWhereInput().BalanceLte(ctx, &it, data); err != nil {
 				return it, err
 			}
-		case "iconPath":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPath"))
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPath = data
-		case "iconPathNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathNEQ"))
+			it.Icon = data
+		case "iconNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNEQ"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathNEQ = data
-		case "iconPathIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathIn"))
+			it.IconNEQ = data
+		case "iconIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathIn = data
-		case "iconPathNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathNotIn"))
+			it.IconIn = data
+		case "iconNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNotIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathNotIn = data
-		case "iconPathGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathGT"))
+			it.IconNotIn = data
+		case "iconGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconGT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathGT = data
-		case "iconPathGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathGTE"))
+			it.IconGT = data
+		case "iconGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconGTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathGTE = data
-		case "iconPathLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathLT"))
+			it.IconGTE = data
+		case "iconLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconLT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathLT = data
-		case "iconPathLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathLTE"))
+			it.IconLT = data
+		case "iconLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconLTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathLTE = data
-		case "iconPathContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathContains"))
+			it.IconLTE = data
+		case "iconContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconContains"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathContains = data
-		case "iconPathHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathHasPrefix"))
+			it.IconContains = data
+		case "iconHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconHasPrefix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathHasPrefix = data
-		case "iconPathHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathHasSuffix"))
+			it.IconHasPrefix = data
+		case "iconHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconHasSuffix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathHasSuffix = data
-		case "iconPathIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathIsNil"))
+			it.IconHasSuffix = data
+		case "iconIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathIsNil = data
-		case "iconPathNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathNotNil"))
+			it.IconIsNil = data
+		case "iconNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathNotNil = data
-		case "iconPathEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathEqualFold"))
+			it.IconNotNil = data
+		case "iconEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathEqualFold = data
-		case "iconPathContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPathContainsFold"))
+			it.IconEqualFold = data
+		case "iconContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconContainsFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPathContainsFold = data
+			it.IconContainsFold = data
 		case "value":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -12724,7 +12768,7 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "type", "balance", "iconPath", "currencyID"}
+	fieldsInOrder := [...]string{"name", "type", "balance", "icon", "currencyID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -12754,13 +12798,13 @@ func (ec *executionContext) unmarshalInputCreateAccountInput(ctx context.Context
 			if err = ec.resolvers.CreateAccountInput().Balance(ctx, &it, data); err != nil {
 				return it, err
 			}
-		case "iconPath":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPath"))
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPath = data
+			it.Icon = data
 		case "currencyID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyID"))
 			data, err := ec.unmarshalNID2int(ctx, v)
@@ -13007,7 +13051,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionCategoryInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "type", "isImmutable"}
+	fieldsInOrder := [...]string{"name", "type", "icon", "isImmutable"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13028,6 +13072,13 @@ func (ec *executionContext) unmarshalInputCreateTransactionCategoryInput(ctx con
 				return it, err
 			}
 			it.Type = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
 		case "isImmutable":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isImmutable"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -15344,7 +15395,7 @@ func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "isImmutable", "isImmutableNEQ", "hasHousehold", "hasHouseholdWith", "hasTransactions", "hasTransactionsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "type", "typeNEQ", "typeIn", "typeNotIn", "icon", "iconNEQ", "iconIn", "iconNotIn", "iconGT", "iconGTE", "iconLT", "iconLTE", "iconContains", "iconHasPrefix", "iconHasSuffix", "iconEqualFold", "iconContainsFold", "isImmutable", "isImmutableNEQ", "hasHousehold", "hasHouseholdWith", "hasTransactions", "hasTransactionsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -15687,6 +15738,97 @@ func (ec *executionContext) unmarshalInputTransactionCategoryWhereInput(ctx cont
 				return it, err
 			}
 			it.TypeNotIn = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
+		case "iconNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconNEQ = data
+		case "iconIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconIn = data
+		case "iconNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconNotIn = data
+		case "iconGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconGT = data
+		case "iconGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconGTE = data
+		case "iconLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconLT = data
+		case "iconLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconLTE = data
+		case "iconContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconContains = data
+		case "iconHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconHasPrefix = data
+		case "iconHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconHasSuffix = data
+		case "iconEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconEqualFold = data
+		case "iconContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconContainsFold = data
 		case "isImmutable":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isImmutable"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -16753,7 +16895,7 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "iconPath", "clearIconPath"}
+	fieldsInOrder := [...]string{"name", "icon", "clearIcon"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16767,20 +16909,20 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 				return it, err
 			}
 			it.Name = data
-		case "iconPath":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconPath"))
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IconPath = data
-		case "clearIconPath":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIconPath"))
+			it.Icon = data
+		case "clearIcon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIcon"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearIconPath = data
+			it.ClearIcon = data
 		}
 	}
 
@@ -18096,8 +18238,8 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "iconPath":
-			out.Values[i] = ec._Account_iconPath(ctx, field, obj)
+		case "icon":
+			out.Values[i] = ec._Account_icon(ctx, field, obj)
 		case "value":
 			field := field
 
@@ -21110,6 +21252,11 @@ func (ec *executionContext) _TransactionCategory(ctx context.Context, sel ast.Se
 			}
 		case "type":
 			out.Values[i] = ec._TransactionCategory_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "icon":
+			out.Values[i] = ec._TransactionCategory_icon(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

@@ -28,6 +28,8 @@ const (
 	FieldName = "name"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldIcon holds the string denoting the icon field in the database.
+	FieldIcon = "icon"
 	// FieldIsImmutable holds the string denoting the is_immutable field in the database.
 	FieldIsImmutable = "is_immutable"
 	// EdgeHousehold holds the string denoting the household edge name in mutations.
@@ -60,6 +62,7 @@ var Columns = []string{
 	FieldHouseholdID,
 	FieldName,
 	FieldType,
+	FieldIcon,
 	FieldIsImmutable,
 }
 
@@ -150,6 +153,11 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByIcon orders the results by the icon field.
+func ByIcon(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIcon, opts...).ToFunc()
 }
 
 // ByIsImmutable orders the results by the is_immutable field.

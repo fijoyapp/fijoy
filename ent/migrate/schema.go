@@ -17,7 +17,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"liquidity", "investment", "property", "receivable", "liability"}},
 		{Name: "balance", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
-		{Name: "icon_path", Type: field.TypeString, Nullable: true},
+		{Name: "icon", Type: field.TypeString, Nullable: true},
 		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
 		{Name: "currency_id", Type: field.TypeInt},
@@ -213,6 +213,7 @@ var (
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"expense", "income", "transfer", "investment", "setup"}},
+		{Name: "icon", Type: field.TypeString},
 		{Name: "is_immutable", Type: field.TypeBool, Default: false},
 		{Name: "household_id", Type: field.TypeInt},
 	}
@@ -224,7 +225,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "transaction_categories_households_transaction_categories",
-				Columns:    []*schema.Column{TransactionCategoriesColumns[6]},
+				Columns:    []*schema.Column{TransactionCategoriesColumns[7]},
 				RefColumns: []*schema.Column{HouseholdsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -233,7 +234,7 @@ var (
 			{
 				Name:    "transactioncategory_name_household_id",
 				Unique:  true,
-				Columns: []*schema.Column{TransactionCategoriesColumns[3], TransactionCategoriesColumns[6]},
+				Columns: []*schema.Column{TransactionCategoriesColumns[3], TransactionCategoriesColumns[7]},
 			},
 		},
 	}

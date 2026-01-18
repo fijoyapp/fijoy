@@ -81,9 +81,9 @@ func Balance(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldEQ(FieldBalance, v))
 }
 
-// IconPath applies equality check predicate on the "icon_path" field. It's identical to IconPathEQ.
-func IconPath(v string) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldIconPath, v))
+// Icon applies equality check predicate on the "icon" field. It's identical to IconEQ.
+func Icon(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIcon, v))
 }
 
 // Value applies equality check predicate on the "value" field. It's identical to ValueEQ.
@@ -331,79 +331,79 @@ func BalanceLTE(v decimal.Decimal) predicate.Account {
 	return predicate.Account(sql.FieldLTE(FieldBalance, v))
 }
 
-// IconPathEQ applies the EQ predicate on the "icon_path" field.
-func IconPathEQ(v string) predicate.Account {
-	return predicate.Account(sql.FieldEQ(FieldIconPath, v))
+// IconEQ applies the EQ predicate on the "icon" field.
+func IconEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldEQ(FieldIcon, v))
 }
 
-// IconPathNEQ applies the NEQ predicate on the "icon_path" field.
-func IconPathNEQ(v string) predicate.Account {
-	return predicate.Account(sql.FieldNEQ(FieldIconPath, v))
+// IconNEQ applies the NEQ predicate on the "icon" field.
+func IconNEQ(v string) predicate.Account {
+	return predicate.Account(sql.FieldNEQ(FieldIcon, v))
 }
 
-// IconPathIn applies the In predicate on the "icon_path" field.
-func IconPathIn(vs ...string) predicate.Account {
-	return predicate.Account(sql.FieldIn(FieldIconPath, vs...))
+// IconIn applies the In predicate on the "icon" field.
+func IconIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldIn(FieldIcon, vs...))
 }
 
-// IconPathNotIn applies the NotIn predicate on the "icon_path" field.
-func IconPathNotIn(vs ...string) predicate.Account {
-	return predicate.Account(sql.FieldNotIn(FieldIconPath, vs...))
+// IconNotIn applies the NotIn predicate on the "icon" field.
+func IconNotIn(vs ...string) predicate.Account {
+	return predicate.Account(sql.FieldNotIn(FieldIcon, vs...))
 }
 
-// IconPathGT applies the GT predicate on the "icon_path" field.
-func IconPathGT(v string) predicate.Account {
-	return predicate.Account(sql.FieldGT(FieldIconPath, v))
+// IconGT applies the GT predicate on the "icon" field.
+func IconGT(v string) predicate.Account {
+	return predicate.Account(sql.FieldGT(FieldIcon, v))
 }
 
-// IconPathGTE applies the GTE predicate on the "icon_path" field.
-func IconPathGTE(v string) predicate.Account {
-	return predicate.Account(sql.FieldGTE(FieldIconPath, v))
+// IconGTE applies the GTE predicate on the "icon" field.
+func IconGTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldGTE(FieldIcon, v))
 }
 
-// IconPathLT applies the LT predicate on the "icon_path" field.
-func IconPathLT(v string) predicate.Account {
-	return predicate.Account(sql.FieldLT(FieldIconPath, v))
+// IconLT applies the LT predicate on the "icon" field.
+func IconLT(v string) predicate.Account {
+	return predicate.Account(sql.FieldLT(FieldIcon, v))
 }
 
-// IconPathLTE applies the LTE predicate on the "icon_path" field.
-func IconPathLTE(v string) predicate.Account {
-	return predicate.Account(sql.FieldLTE(FieldIconPath, v))
+// IconLTE applies the LTE predicate on the "icon" field.
+func IconLTE(v string) predicate.Account {
+	return predicate.Account(sql.FieldLTE(FieldIcon, v))
 }
 
-// IconPathContains applies the Contains predicate on the "icon_path" field.
-func IconPathContains(v string) predicate.Account {
-	return predicate.Account(sql.FieldContains(FieldIconPath, v))
+// IconContains applies the Contains predicate on the "icon" field.
+func IconContains(v string) predicate.Account {
+	return predicate.Account(sql.FieldContains(FieldIcon, v))
 }
 
-// IconPathHasPrefix applies the HasPrefix predicate on the "icon_path" field.
-func IconPathHasPrefix(v string) predicate.Account {
-	return predicate.Account(sql.FieldHasPrefix(FieldIconPath, v))
+// IconHasPrefix applies the HasPrefix predicate on the "icon" field.
+func IconHasPrefix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasPrefix(FieldIcon, v))
 }
 
-// IconPathHasSuffix applies the HasSuffix predicate on the "icon_path" field.
-func IconPathHasSuffix(v string) predicate.Account {
-	return predicate.Account(sql.FieldHasSuffix(FieldIconPath, v))
+// IconHasSuffix applies the HasSuffix predicate on the "icon" field.
+func IconHasSuffix(v string) predicate.Account {
+	return predicate.Account(sql.FieldHasSuffix(FieldIcon, v))
 }
 
-// IconPathIsNil applies the IsNil predicate on the "icon_path" field.
-func IconPathIsNil() predicate.Account {
-	return predicate.Account(sql.FieldIsNull(FieldIconPath))
+// IconIsNil applies the IsNil predicate on the "icon" field.
+func IconIsNil() predicate.Account {
+	return predicate.Account(sql.FieldIsNull(FieldIcon))
 }
 
-// IconPathNotNil applies the NotNil predicate on the "icon_path" field.
-func IconPathNotNil() predicate.Account {
-	return predicate.Account(sql.FieldNotNull(FieldIconPath))
+// IconNotNil applies the NotNil predicate on the "icon" field.
+func IconNotNil() predicate.Account {
+	return predicate.Account(sql.FieldNotNull(FieldIcon))
 }
 
-// IconPathEqualFold applies the EqualFold predicate on the "icon_path" field.
-func IconPathEqualFold(v string) predicate.Account {
-	return predicate.Account(sql.FieldEqualFold(FieldIconPath, v))
+// IconEqualFold applies the EqualFold predicate on the "icon" field.
+func IconEqualFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldEqualFold(FieldIcon, v))
 }
 
-// IconPathContainsFold applies the ContainsFold predicate on the "icon_path" field.
-func IconPathContainsFold(v string) predicate.Account {
-	return predicate.Account(sql.FieldContainsFold(FieldIconPath, v))
+// IconContainsFold applies the ContainsFold predicate on the "icon" field.
+func IconContainsFold(v string) predicate.Account {
+	return predicate.Account(sql.FieldContainsFold(FieldIcon, v))
 }
 
 // ValueEQ applies the EQ predicate on the "value" field.

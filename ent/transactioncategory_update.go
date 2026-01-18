@@ -64,6 +64,20 @@ func (_u *TransactionCategoryUpdate) SetNillableType(v *transactioncategory.Type
 	return _u
 }
 
+// SetIcon sets the "icon" field.
+func (_u *TransactionCategoryUpdate) SetIcon(v string) *TransactionCategoryUpdate {
+	_u.mutation.SetIcon(v)
+	return _u
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_u *TransactionCategoryUpdate) SetNillableIcon(v *string) *TransactionCategoryUpdate {
+	if v != nil {
+		_u.SetIcon(*v)
+	}
+	return _u
+}
+
 // SetIsImmutable sets the "is_immutable" field.
 func (_u *TransactionCategoryUpdate) SetIsImmutable(v bool) *TransactionCategoryUpdate {
 	_u.mutation.SetIsImmutable(v)
@@ -206,6 +220,9 @@ func (_u *TransactionCategoryUpdate) sqlSave(ctx context.Context) (_node int, er
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(transactioncategory.FieldType, field.TypeEnum, value)
 	}
+	if value, ok := _u.mutation.Icon(); ok {
+		_spec.SetField(transactioncategory.FieldIcon, field.TypeString, value)
+	}
 	if value, ok := _u.mutation.IsImmutable(); ok {
 		_spec.SetField(transactioncategory.FieldIsImmutable, field.TypeBool, value)
 	}
@@ -306,6 +323,20 @@ func (_u *TransactionCategoryUpdateOne) SetType(v transactioncategory.Type) *Tra
 func (_u *TransactionCategoryUpdateOne) SetNillableType(v *transactioncategory.Type) *TransactionCategoryUpdateOne {
 	if v != nil {
 		_u.SetType(*v)
+	}
+	return _u
+}
+
+// SetIcon sets the "icon" field.
+func (_u *TransactionCategoryUpdateOne) SetIcon(v string) *TransactionCategoryUpdateOne {
+	_u.mutation.SetIcon(v)
+	return _u
+}
+
+// SetNillableIcon sets the "icon" field if the given value is not nil.
+func (_u *TransactionCategoryUpdateOne) SetNillableIcon(v *string) *TransactionCategoryUpdateOne {
+	if v != nil {
+		_u.SetIcon(*v)
 	}
 	return _u
 }
@@ -481,6 +512,9 @@ func (_u *TransactionCategoryUpdateOne) sqlSave(ctx context.Context) (_node *Tra
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(transactioncategory.FieldType, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.Icon(); ok {
+		_spec.SetField(transactioncategory.FieldIcon, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.IsImmutable(); ok {
 		_spec.SetField(transactioncategory.FieldIsImmutable, field.TypeBool, value)

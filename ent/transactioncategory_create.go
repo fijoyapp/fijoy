@@ -70,6 +70,12 @@ func (_c *TransactionCategoryCreate) SetType(v transactioncategory.Type) *Transa
 	return _c
 }
 
+// SetIcon sets the "icon" field.
+func (_c *TransactionCategoryCreate) SetIcon(v string) *TransactionCategoryCreate {
+	_c.mutation.SetIcon(v)
+	return _c
+}
+
 // SetIsImmutable sets the "is_immutable" field.
 func (_c *TransactionCategoryCreate) SetIsImmutable(v bool) *TransactionCategoryCreate {
 	_c.mutation.SetIsImmutable(v)
@@ -189,6 +195,9 @@ func (_c *TransactionCategoryCreate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "TransactionCategory.type": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.Icon(); !ok {
+		return &ValidationError{Name: "icon", err: errors.New(`ent: missing required field "TransactionCategory.icon"`)}
+	}
 	if _, ok := _c.mutation.IsImmutable(); !ok {
 		return &ValidationError{Name: "is_immutable", err: errors.New(`ent: missing required field "TransactionCategory.is_immutable"`)}
 	}
@@ -237,6 +246,10 @@ func (_c *TransactionCategoryCreate) createSpec() (*TransactionCategory, *sqlgra
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(transactioncategory.FieldType, field.TypeEnum, value)
 		_node.Type = value
+	}
+	if value, ok := _c.mutation.Icon(); ok {
+		_spec.SetField(transactioncategory.FieldIcon, field.TypeString, value)
+		_node.Icon = value
 	}
 	if value, ok := _c.mutation.IsImmutable(); ok {
 		_spec.SetField(transactioncategory.FieldIsImmutable, field.TypeBool, value)
@@ -363,6 +376,18 @@ func (u *TransactionCategoryUpsert) UpdateType() *TransactionCategoryUpsert {
 	return u
 }
 
+// SetIcon sets the "icon" field.
+func (u *TransactionCategoryUpsert) SetIcon(v string) *TransactionCategoryUpsert {
+	u.Set(transactioncategory.FieldIcon, v)
+	return u
+}
+
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *TransactionCategoryUpsert) UpdateIcon() *TransactionCategoryUpsert {
+	u.SetExcluded(transactioncategory.FieldIcon)
+	return u
+}
+
 // SetIsImmutable sets the "is_immutable" field.
 func (u *TransactionCategoryUpsert) SetIsImmutable(v bool) *TransactionCategoryUpsert {
 	u.Set(transactioncategory.FieldIsImmutable, v)
@@ -462,6 +487,20 @@ func (u *TransactionCategoryUpsertOne) SetType(v transactioncategory.Type) *Tran
 func (u *TransactionCategoryUpsertOne) UpdateType() *TransactionCategoryUpsertOne {
 	return u.Update(func(s *TransactionCategoryUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetIcon sets the "icon" field.
+func (u *TransactionCategoryUpsertOne) SetIcon(v string) *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetIcon(v)
+	})
+}
+
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertOne) UpdateIcon() *TransactionCategoryUpsertOne {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateIcon()
 	})
 }
 
@@ -732,6 +771,20 @@ func (u *TransactionCategoryUpsertBulk) SetType(v transactioncategory.Type) *Tra
 func (u *TransactionCategoryUpsertBulk) UpdateType() *TransactionCategoryUpsertBulk {
 	return u.Update(func(s *TransactionCategoryUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetIcon sets the "icon" field.
+func (u *TransactionCategoryUpsertBulk) SetIcon(v string) *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.SetIcon(v)
+	})
+}
+
+// UpdateIcon sets the "icon" field to the value that was provided on create.
+func (u *TransactionCategoryUpsertBulk) UpdateIcon() *TransactionCategoryUpsertBulk {
+	return u.Update(func(s *TransactionCategoryUpsert) {
+		s.UpdateIcon()
 	})
 }
 

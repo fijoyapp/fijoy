@@ -142,10 +142,10 @@ func (_q *AccountQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, account.FieldBalance)
 				fieldSeen[account.FieldBalance] = struct{}{}
 			}
-		case "iconPath":
-			if _, ok := fieldSeen[account.FieldIconPath]; !ok {
-				selectedFields = append(selectedFields, account.FieldIconPath)
-				fieldSeen[account.FieldIconPath] = struct{}{}
+		case "icon":
+			if _, ok := fieldSeen[account.FieldIcon]; !ok {
+				selectedFields = append(selectedFields, account.FieldIcon)
+				fieldSeen[account.FieldIcon] = struct{}{}
 			}
 		case "value":
 			if _, ok := fieldSeen[account.FieldValue]; !ok {
@@ -1113,6 +1113,11 @@ func (_q *TransactionCategoryQuery) collectField(ctx context.Context, oneNode bo
 			if _, ok := fieldSeen[transactioncategory.FieldType]; !ok {
 				selectedFields = append(selectedFields, transactioncategory.FieldType)
 				fieldSeen[transactioncategory.FieldType] = struct{}{}
+			}
+		case "icon":
+			if _, ok := fieldSeen[transactioncategory.FieldIcon]; !ok {
+				selectedFields = append(selectedFields, transactioncategory.FieldIcon)
+				fieldSeen[transactioncategory.FieldIcon] = struct{}{}
 			}
 		case "isImmutable":
 			if _, ok := fieldSeen[transactioncategory.FieldIsImmutable]; !ok {

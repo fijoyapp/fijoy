@@ -39,7 +39,7 @@ func (Account) Fields() []ent.Field {
 				return decimal.NewFromInt(0)
 			}),
 
-		field.String("icon_path").Optional(),
+		field.String("icon").Optional(),
 
 		field.Float("value").GoType(decimal.Decimal{}).
 			SchemaType(map[string]string{

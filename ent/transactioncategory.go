@@ -28,6 +28,8 @@ type TransactionCategory struct {
 	Name string `json:"name,omitempty"`
 	// Type holds the value of the "type" field.
 	Type transactioncategory.Type `json:"type,omitempty"`
+	// Icon holds the value of the "icon" field.
+	Icon string `json:"icon,omitempty"`
 	// IsImmutable holds the value of the "is_immutable" field.
 	IsImmutable bool `json:"is_immutable,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -80,7 +82,7 @@ func (*TransactionCategory) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case transactioncategory.FieldID, transactioncategory.FieldHouseholdID:
 			values[i] = new(sql.NullInt64)
-		case transactioncategory.FieldName, transactioncategory.FieldType:
+		case transactioncategory.FieldName, transactioncategory.FieldType, transactioncategory.FieldIcon:
 			values[i] = new(sql.NullString)
 		case transactioncategory.FieldCreateTime, transactioncategory.FieldUpdateTime:
 			values[i] = new(sql.NullTime)
@@ -134,6 +136,12 @@ func (_m *TransactionCategory) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
 				_m.Type = transactioncategory.Type(value.String)
+			}
+		case transactioncategory.FieldIcon:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field icon", values[i])
+			} else if value.Valid {
+				_m.Icon = value.String
 			}
 		case transactioncategory.FieldIsImmutable:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -201,6 +209,9 @@ func (_m *TransactionCategory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Type))
+	builder.WriteString(", ")
+	builder.WriteString("icon=")
+	builder.WriteString(_m.Icon)
 	builder.WriteString(", ")
 	builder.WriteString("is_immutable=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IsImmutable))

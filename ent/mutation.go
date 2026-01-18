@@ -60,7 +60,7 @@ type AccountMutation struct {
 	_type                      *account.Type
 	balance                    *decimal.Decimal
 	addbalance                 *decimal.Decimal
-	icon_path                  *string
+	icon                       *string
 	value                      *decimal.Decimal
 	addvalue                   *decimal.Decimal
 	fx_rate                    *decimal.Decimal
@@ -417,53 +417,53 @@ func (m *AccountMutation) ResetBalance() {
 	m.addbalance = nil
 }
 
-// SetIconPath sets the "icon_path" field.
-func (m *AccountMutation) SetIconPath(s string) {
-	m.icon_path = &s
+// SetIcon sets the "icon" field.
+func (m *AccountMutation) SetIcon(s string) {
+	m.icon = &s
 }
 
-// IconPath returns the value of the "icon_path" field in the mutation.
-func (m *AccountMutation) IconPath() (r string, exists bool) {
-	v := m.icon_path
+// Icon returns the value of the "icon" field in the mutation.
+func (m *AccountMutation) Icon() (r string, exists bool) {
+	v := m.icon
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIconPath returns the old "icon_path" field's value of the Account entity.
+// OldIcon returns the old "icon" field's value of the Account entity.
 // If the Account object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AccountMutation) OldIconPath(ctx context.Context) (v string, err error) {
+func (m *AccountMutation) OldIcon(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldIconPath is only allowed on UpdateOne operations")
+		return v, errors.New("OldIcon is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldIconPath requires an ID field in the mutation")
+		return v, errors.New("OldIcon requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIconPath: %w", err)
+		return v, fmt.Errorf("querying old value for OldIcon: %w", err)
 	}
-	return oldValue.IconPath, nil
+	return oldValue.Icon, nil
 }
 
-// ClearIconPath clears the value of the "icon_path" field.
-func (m *AccountMutation) ClearIconPath() {
-	m.icon_path = nil
-	m.clearedFields[account.FieldIconPath] = struct{}{}
+// ClearIcon clears the value of the "icon" field.
+func (m *AccountMutation) ClearIcon() {
+	m.icon = nil
+	m.clearedFields[account.FieldIcon] = struct{}{}
 }
 
-// IconPathCleared returns if the "icon_path" field was cleared in this mutation.
-func (m *AccountMutation) IconPathCleared() bool {
-	_, ok := m.clearedFields[account.FieldIconPath]
+// IconCleared returns if the "icon" field was cleared in this mutation.
+func (m *AccountMutation) IconCleared() bool {
+	_, ok := m.clearedFields[account.FieldIcon]
 	return ok
 }
 
-// ResetIconPath resets all changes to the "icon_path" field.
-func (m *AccountMutation) ResetIconPath() {
-	m.icon_path = nil
-	delete(m.clearedFields, account.FieldIconPath)
+// ResetIcon resets all changes to the "icon" field.
+func (m *AccountMutation) ResetIcon() {
+	m.icon = nil
+	delete(m.clearedFields, account.FieldIcon)
 }
 
 // SetValue sets the "value" field.
@@ -892,8 +892,8 @@ func (m *AccountMutation) Fields() []string {
 	if m.balance != nil {
 		fields = append(fields, account.FieldBalance)
 	}
-	if m.icon_path != nil {
-		fields = append(fields, account.FieldIconPath)
+	if m.icon != nil {
+		fields = append(fields, account.FieldIcon)
 	}
 	if m.value != nil {
 		fields = append(fields, account.FieldValue)
@@ -927,8 +927,8 @@ func (m *AccountMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case account.FieldBalance:
 		return m.Balance()
-	case account.FieldIconPath:
-		return m.IconPath()
+	case account.FieldIcon:
+		return m.Icon()
 	case account.FieldValue:
 		return m.Value()
 	case account.FieldFxRate:
@@ -958,8 +958,8 @@ func (m *AccountMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldType(ctx)
 	case account.FieldBalance:
 		return m.OldBalance(ctx)
-	case account.FieldIconPath:
-		return m.OldIconPath(ctx)
+	case account.FieldIcon:
+		return m.OldIcon(ctx)
 	case account.FieldValue:
 		return m.OldValue(ctx)
 	case account.FieldFxRate:
@@ -1019,12 +1019,12 @@ func (m *AccountMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBalance(v)
 		return nil
-	case account.FieldIconPath:
+	case account.FieldIcon:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIconPath(v)
+		m.SetIcon(v)
 		return nil
 	case account.FieldValue:
 		v, ok := value.(decimal.Decimal)
@@ -1123,8 +1123,8 @@ func (m *AccountMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *AccountMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(account.FieldIconPath) {
-		fields = append(fields, account.FieldIconPath)
+	if m.FieldCleared(account.FieldIcon) {
+		fields = append(fields, account.FieldIcon)
 	}
 	return fields
 }
@@ -1140,8 +1140,8 @@ func (m *AccountMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *AccountMutation) ClearField(name string) error {
 	switch name {
-	case account.FieldIconPath:
-		m.ClearIconPath()
+	case account.FieldIcon:
+		m.ClearIcon()
 		return nil
 	}
 	return fmt.Errorf("unknown Account nullable field %s", name)
@@ -1169,8 +1169,8 @@ func (m *AccountMutation) ResetField(name string) error {
 	case account.FieldBalance:
 		m.ResetBalance()
 		return nil
-	case account.FieldIconPath:
-		m.ResetIconPath()
+	case account.FieldIcon:
+		m.ResetIcon()
 		return nil
 	case account.FieldValue:
 		m.ResetValue()
@@ -6348,6 +6348,7 @@ type TransactionCategoryMutation struct {
 	update_time         *time.Time
 	name                *string
 	_type               *transactioncategory.Type
+	icon                *string
 	is_immutable        *bool
 	clearedFields       map[string]struct{}
 	household           *int
@@ -6638,6 +6639,42 @@ func (m *TransactionCategoryMutation) ResetType() {
 	m._type = nil
 }
 
+// SetIcon sets the "icon" field.
+func (m *TransactionCategoryMutation) SetIcon(s string) {
+	m.icon = &s
+}
+
+// Icon returns the value of the "icon" field in the mutation.
+func (m *TransactionCategoryMutation) Icon() (r string, exists bool) {
+	v := m.icon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIcon returns the old "icon" field's value of the TransactionCategory entity.
+// If the TransactionCategory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TransactionCategoryMutation) OldIcon(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIcon is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIcon requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIcon: %w", err)
+	}
+	return oldValue.Icon, nil
+}
+
+// ResetIcon resets all changes to the "icon" field.
+func (m *TransactionCategoryMutation) ResetIcon() {
+	m.icon = nil
+}
+
 // SetIsImmutable sets the "is_immutable" field.
 func (m *TransactionCategoryMutation) SetIsImmutable(b bool) {
 	m.is_immutable = &b
@@ -6789,7 +6826,7 @@ func (m *TransactionCategoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TransactionCategoryMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.create_time != nil {
 		fields = append(fields, transactioncategory.FieldCreateTime)
 	}
@@ -6804,6 +6841,9 @@ func (m *TransactionCategoryMutation) Fields() []string {
 	}
 	if m._type != nil {
 		fields = append(fields, transactioncategory.FieldType)
+	}
+	if m.icon != nil {
+		fields = append(fields, transactioncategory.FieldIcon)
 	}
 	if m.is_immutable != nil {
 		fields = append(fields, transactioncategory.FieldIsImmutable)
@@ -6826,6 +6866,8 @@ func (m *TransactionCategoryMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case transactioncategory.FieldType:
 		return m.GetType()
+	case transactioncategory.FieldIcon:
+		return m.Icon()
 	case transactioncategory.FieldIsImmutable:
 		return m.IsImmutable()
 	}
@@ -6847,6 +6889,8 @@ func (m *TransactionCategoryMutation) OldField(ctx context.Context, name string)
 		return m.OldName(ctx)
 	case transactioncategory.FieldType:
 		return m.OldType(ctx)
+	case transactioncategory.FieldIcon:
+		return m.OldIcon(ctx)
 	case transactioncategory.FieldIsImmutable:
 		return m.OldIsImmutable(ctx)
 	}
@@ -6892,6 +6936,13 @@ func (m *TransactionCategoryMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetType(v)
+		return nil
+	case transactioncategory.FieldIcon:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIcon(v)
 		return nil
 	case transactioncategory.FieldIsImmutable:
 		v, ok := value.(bool)
@@ -6966,6 +7017,9 @@ func (m *TransactionCategoryMutation) ResetField(name string) error {
 		return nil
 	case transactioncategory.FieldType:
 		m.ResetType()
+		return nil
+	case transactioncategory.FieldIcon:
+		m.ResetIcon()
 		return nil
 	case transactioncategory.FieldIsImmutable:
 		m.ResetIsImmutable()

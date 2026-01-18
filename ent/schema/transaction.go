@@ -114,6 +114,9 @@ func (TransactionCategory) Fields() []ent.Field {
 		field.String("name").NotEmpty(),
 		field.Enum("type").
 			Values("expense", "income", "transfer", "investment", "setup"),
+
+		field.String("icon"),
+
 		field.Bool("is_immutable").Default(false),
 	}
 }
