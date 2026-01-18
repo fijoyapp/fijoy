@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7d74941f94236644a80f50dc1397430b>>
+ * @generated SignedSource<<419d58eae38793af445c52fa87f1f3bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ export type TransactionCategoryType = "expense" | "income" | "investment" | "set
 import { FragmentRefs } from "relay-runtime";
 export type transactionCardFragment$data = {
   readonly category: {
+    readonly icon: string;
     readonly name: string;
     readonly type: TransactionCategoryType;
   };
@@ -116,6 +117,13 @@ return {
           "kind": "ScalarField",
           "name": "type",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "icon",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -192,6 +200,6 @@ return {
 };
 })();
 
-(node as any).hash = "2ddda5a90335a72ce2ae58add34868e5";
+(node as any).hash = "92f90a8e4ed5a126653f01f1d2ba3bdb";
 
 export default node;

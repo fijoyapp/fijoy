@@ -20,7 +20,7 @@ const accountCardFragment = graphql`
     id
     name
     type
-    iconPath
+    icon
     updateTime
     currency {
       code
@@ -57,8 +57,8 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
               <ItemMedia variant="image">
                 <Avatar className="">
                   <AvatarImage
-                    src={getLogoDomainURL(data.iconPath || '')}
-                    alt={data.iconPath || 'unknown logo'}
+                    src={getLogoDomainURL(data.icon || '')}
+                    alt={data.icon || 'unknown logo'}
                   />
                   <AvatarFallback>{data.name}</AvatarFallback>
                 </Avatar>

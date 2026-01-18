@@ -35,6 +35,7 @@ const transactionCardFragment = graphql`
     category {
       name
       type
+      icon
     }
     investmentLots {
       id

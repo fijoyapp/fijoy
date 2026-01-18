@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1a3dc7341b5acea5afced219fc94cab2>>
+ * @generated SignedSource<<a53cc95747beece8473a88e0ba9792a3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -309,21 +309,21 @@ export type AccountWhereInput = {
   householdIDIn?: ReadonlyArray<string> | null | undefined;
   householdIDNEQ?: string | null | undefined;
   householdIDNotIn?: ReadonlyArray<string> | null | undefined;
-  iconPath?: string | null | undefined;
-  iconPathContains?: string | null | undefined;
-  iconPathContainsFold?: string | null | undefined;
-  iconPathEqualFold?: string | null | undefined;
-  iconPathGT?: string | null | undefined;
-  iconPathGTE?: string | null | undefined;
-  iconPathHasPrefix?: string | null | undefined;
-  iconPathHasSuffix?: string | null | undefined;
-  iconPathIn?: ReadonlyArray<string> | null | undefined;
-  iconPathIsNil?: boolean | null | undefined;
-  iconPathLT?: string | null | undefined;
-  iconPathLTE?: string | null | undefined;
-  iconPathNEQ?: string | null | undefined;
-  iconPathNotIn?: ReadonlyArray<string> | null | undefined;
-  iconPathNotNil?: boolean | null | undefined;
+  icon?: string | null | undefined;
+  iconContains?: string | null | undefined;
+  iconContainsFold?: string | null | undefined;
+  iconEqualFold?: string | null | undefined;
+  iconGT?: string | null | undefined;
+  iconGTE?: string | null | undefined;
+  iconHasPrefix?: string | null | undefined;
+  iconHasSuffix?: string | null | undefined;
+  iconIn?: ReadonlyArray<string> | null | undefined;
+  iconIsNil?: boolean | null | undefined;
+  iconLT?: string | null | undefined;
+  iconLTE?: string | null | undefined;
+  iconNEQ?: string | null | undefined;
+  iconNotIn?: ReadonlyArray<string> | null | undefined;
+  iconNotNil?: boolean | null | undefined;
   id?: string | null | undefined;
   idGT?: string | null | undefined;
   idGTE?: string | null | undefined;
@@ -617,6 +617,19 @@ export type TransactionCategoryWhereInput = {
   householdIDIn?: ReadonlyArray<string> | null | undefined;
   householdIDNEQ?: string | null | undefined;
   householdIDNotIn?: ReadonlyArray<string> | null | undefined;
+  icon?: string | null | undefined;
+  iconContains?: string | null | undefined;
+  iconContainsFold?: string | null | undefined;
+  iconEqualFold?: string | null | undefined;
+  iconGT?: string | null | undefined;
+  iconGTE?: string | null | undefined;
+  iconHasPrefix?: string | null | undefined;
+  iconHasSuffix?: string | null | undefined;
+  iconIn?: ReadonlyArray<string> | null | undefined;
+  iconLT?: string | null | undefined;
+  iconLTE?: string | null | undefined;
+  iconNEQ?: string | null | undefined;
+  iconNotIn?: ReadonlyArray<string> | null | undefined;
   id?: string | null | undefined;
   idGT?: string | null | undefined;
   idGTE?: string | null | undefined;
@@ -892,6 +905,13 @@ return {
                         "name": "type",
                         "storageKey": null
                       },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "icon",
+                        "storageKey": null
+                      },
                       (v3/*: any*/)
                     ],
                     "storageKey": null
@@ -1027,12 +1047,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d551ad1a9273e9cb170bd1e0ee70926a",
+    "cacheID": "79924c05eda7d2d619a4f9dfd5da2971",
     "id": null,
     "metadata": {},
     "name": "AccountIdQuery",
     "operationKind": "query",
-    "text": "query AccountIdQuery(\n  $where: TransactionWhereInput\n) {\n  ...transactionsListFragment_3FC4Qo\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query AccountIdQuery(\n  $where: TransactionWhereInput\n) {\n  ...transactionsListFragment_3FC4Qo\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    icon\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();

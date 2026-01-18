@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9cc7e56d8594ce568252e4dab57906dd>>
+ * @generated SignedSource<<faa0b5cde31595a98fd96482069423fe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -207,6 +207,13 @@ return {
                     "name": "type",
                     "storageKey": null
                   },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "icon",
+                    "storageKey": null
+                  },
                   (v2/*: any*/)
                 ],
                 "storageKey": null
@@ -289,12 +296,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5c94afa2f2cf5a624eb0ac9c94ef967e",
+    "cacheID": "1696ae2c843c5be23142a673c4bbaf03",
     "id": null,
     "metadata": {},
     "name": "newExpenseMutation",
     "operationKind": "mutation",
-    "text": "mutation newExpenseMutation(\n  $input: CreateExpenseInputCustom!\n) {\n  createExpense(input: $input) {\n    node {\n      ...transactionCardFragment\n      id\n      description\n      datetime\n      category {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n"
+    "text": "mutation newExpenseMutation(\n  $input: CreateExpenseInputCustom!\n) {\n  createExpense(input: $input) {\n    node {\n      ...transactionCardFragment\n      id\n      description\n      datetime\n      category {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    icon\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();

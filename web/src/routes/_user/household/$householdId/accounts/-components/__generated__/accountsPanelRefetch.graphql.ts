@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<053bbf5d43c13bd26b37634c0a729e85>>
+ * @generated SignedSource<<2d31841b9255421b8c03ec1a1c711ac3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -138,7 +138,7 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "iconPath",
+                    "name": "icon",
                     "storageKey": null
                   },
                   {
@@ -247,12 +247,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "45a7e88102a1c4ca0bebbc41057214ca",
+    "cacheID": "09073adbf03187c9665dba7f92415493",
     "id": null,
     "metadata": {},
     "name": "accountsPanelRefetch",
     "operationKind": "query",
-    "text": "query accountsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...accountsPanelFragment_1G22uz\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  iconPath\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment_1G22uz on Query {\n  accounts(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query accountsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...accountsPanelFragment_1G22uz\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment_1G22uz on Query {\n  accounts(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

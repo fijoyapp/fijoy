@@ -129,7 +129,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
               type: formData.type,
               currencyID: currencyID,
               balance: balance.toString(),
-              iconPath: formData.icon || null,
+              icon: formData.icon || null,
             },
           },
         },

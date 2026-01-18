@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1bece406f65a4e6ff7d1eaf319369116>>
+ * @generated SignedSource<<cb6c876d267b8b37f49257f8fc35e080>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -212,6 +212,13 @@ return {
                     "name": "type",
                     "storageKey": null
                   },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "icon",
+                    "storageKey": null
+                  },
                   (v2/*: any*/)
                 ],
                 "storageKey": null
@@ -294,12 +301,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e41c8f57ffcac1cbbc4c866cb1880ec7",
+    "cacheID": "f978d5019e7a5e83a8fbf8f10ae47825",
     "id": null,
     "metadata": {},
     "name": "newMoveMutation",
     "operationKind": "mutation",
-    "text": "mutation newMoveMutation(\n  $input: MoveInvestmentInputCustom!\n) {\n  moveInvestment(input: $input) {\n    node {\n      ...transactionCardFragment\n      id\n      description\n      datetime\n      category {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n"
+    "text": "mutation newMoveMutation(\n  $input: MoveInvestmentInputCustom!\n) {\n  moveInvestment(input: $input) {\n    node {\n      ...transactionCardFragment\n      id\n      description\n      datetime\n      category {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    icon\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n"
   }
 };
 })();

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3b249e4510b77827d0b08ca341016312>>
+ * @generated SignedSource<<12e8d33109e45287deac5e8926e743c7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type AccountType = "investment" | "liability" | "liquidity" | "property" 
 export type CreateAccountInput = {
   balance?: string | null | undefined;
   currencyID: string;
-  iconPath?: string | null | undefined;
+  icon?: string | null | undefined;
   name: string;
   type: AccountType;
 };
@@ -152,7 +152,7 @@ return {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "iconPath",
+                "name": "icon",
                 "storageKey": null
               },
               {
@@ -210,12 +210,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e179e5a355a64d7f0d39041ba929c51b",
+    "cacheID": "61165b524099a3d0f277fa6f83673ac3",
     "id": null,
     "metadata": {},
     "name": "newAccountMutation",
     "operationKind": "mutation",
-    "text": "mutation newAccountMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    node {\n      id\n      type\n      name\n      valueInHouseholdCurrency\n      ...accountCardFragment\n    }\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  iconPath\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n"
+    "text": "mutation newAccountMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    node {\n      id\n      type\n      name\n      valueInHouseholdCurrency\n      ...accountCardFragment\n    }\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n"
   }
 };
 })();
