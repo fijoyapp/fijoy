@@ -49,9 +49,9 @@ IconRenderer.displayName = 'IconRenderer'
 
 const IconsColumnSkeleton = () => {
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex w-full flex-col gap-2">
       <Skeleton className="h-4 w-1/2 rounded-md" />
-      <div className="grid grid-cols-5 gap-2 w-full">
+      <div className="grid w-full grid-cols-5 gap-2">
         {Array.from({ length: 40 }).map((_, i) => (
           <Skeleton key={i} className="h-10 w-10 rounded-md" />
         ))}
@@ -313,7 +313,7 @@ const IconPicker = React.forwardRef<
           <Tooltip>
             <TooltipTrigger
               className={cn(
-                'p-2 rounded-md border hover:bg-foreground/10 transition',
+                'hover:bg-foreground/10 rounded-md border p-2 transition',
                 'flex items-center justify-center',
               )}
               onClick={() => handleIconClick(icon.name as IconName)}
@@ -360,12 +360,12 @@ const IconPicker = React.forwardRef<
                 <div
                   key={virtualItem.key}
                   style={itemStyle}
-                  className="top-0 bg-background z-10"
+                  className="bg-background top-0 z-10"
                 >
-                  <h3 className="font-medium text-sm capitalize">
+                  <h3 className="text-sm font-medium capitalize">
                     {categorizedIcons[item.categoryIndex].name}
                   </h3>
-                  <div className="h-[1px] bg-foreground/10 w-full" />
+                  <div className="bg-foreground/10 h-[1px] w-full" />
                 </div>
               )
             }
@@ -376,7 +376,7 @@ const IconPicker = React.forwardRef<
                 data-index={virtualItem.index}
                 style={itemStyle}
               >
-                <div className="grid grid-cols-5 gap-2 w-full">
+                <div className="grid w-full grid-cols-5 gap-2">
                   {item.icons!.map(renderIcon)}
                 </div>
               </div>
@@ -438,7 +438,7 @@ const IconPicker = React.forwardRef<
             />
           )}
           {categorized && search.trim() === '' && (
-            <div className="flex flex-row gap-1 mt-2 overflow-x-auto pb-2">
+            <div className="mt-2 flex flex-row gap-1 overflow-x-auto pb-2">
               {categoryButtons}
             </div>
           )}
@@ -468,4 +468,3 @@ const Icon = React.forwardRef<React.ComponentRef<LucideIcon>, IconProps>(
 Icon.displayName = 'Icon'
 
 export { IconPicker, Icon, type IconName }
-
