@@ -69,7 +69,7 @@ func main() {
 	}
 
 	// Setup internal clients
-	fxrateProvider := fxrate.NewFrankfurterProvider()
+	fxrateProvider := fxrate.NewFrankfurterProvider(cfg.FrankfurterBaseURL)
 	fxrateClient := fxrate.NewClient(fxrateProvider)
 
 	marketProvider := market.NewYahooProvider()

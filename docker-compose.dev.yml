@@ -14,6 +14,10 @@ services:
     image: redis:8.2
     ports:
       - 6379:6379
+  frankfurter:
+    image: lineofflight/frankfurter
+    ports:
+      - 8080:8080
 
   # minio:
   #   image: minio/minio

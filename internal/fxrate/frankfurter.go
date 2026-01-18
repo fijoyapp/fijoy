@@ -12,15 +12,17 @@ import (
 
 // FrankfurterProvider implements the ExchangeRateProvider interface for the frankfurter.dev API.
 type FrankfurterProvider struct {
-	client *http.Client
+	client  *http.Client
+	baseURL string
 }
 
 // NewFrankfurterProvider creates a new FrankfurterProvider.
-func NewFrankfurterProvider() *FrankfurterProvider {
+func NewFrankfurterProvider(baseURL string) *FrankfurterProvider {
 	return &FrankfurterProvider{
 		client: &http.Client{
 			Timeout: 10 * time.Second,
 		},
+		baseURL: baseURL,
 	}
 }
 
@@ -32,7 +34,8 @@ func (p *FrankfurterProvider) GetRate(
 ) (decimal.Decimal, error) {
 	dateStr := datetime.Format("2006-01-02")
 	url := fmt.Sprintf(
-		"https://api.frankfurter.app/%s?from=%s&to=%s",
+		"%s/%s?from=%s&to=%s",
+		p.baseURL,
 		dateStr,
 		fromCurrency,
 		toCurrency,
