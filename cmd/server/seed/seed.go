@@ -115,7 +115,7 @@ func Seed(
 		SetName("Chase Total Checking").
 		SetCurrency(usd).
 		SetFxRate(usdToCadRate).
-		SetIconPath("chase.com").
+		SetIcon("chase.com").
 		SetUser(joey).
 		SetHousehold(household).
 		SetType(account.TypeLiquidity).
@@ -124,7 +124,7 @@ func Seed(
 	wealthsimple := entClient.Account.Create().
 		SetName("Wealthsimple Visa Infinite").
 		SetUser(joey).
-		SetIconPath("wealthsimple.com").
+		SetIcon("wealthsimple.com").
 		SetFxRate(decimal.NewFromInt(1)).
 		SetCurrency(cad).
 		SetHousehold(household).
@@ -134,7 +134,7 @@ func Seed(
 	webull := entClient.Account.Create().
 		SetHousehold(household).
 		SetFxRate(decimal.NewFromInt(1)).
-		SetIconPath("webull.ca").
+		SetIcon("webull.ca").
 		SetName("Webull").
 		SetUser(joey).
 		SetCurrency(cad).
@@ -144,18 +144,21 @@ func Seed(
 	restaurant := entClient.TransactionCategory.Create().
 		SetName("Restaurant").
 		SetHousehold(household).
+		SetIcon("soup").
 		SetType(transactioncategory.TypeExpense).
 		SaveX(ctx)
 
 	grocery := entClient.TransactionCategory.Create().
 		SetName("Grocery").
 		SetHousehold(household).
+		SetIcon("apple").
 		SetType(transactioncategory.TypeExpense).
 		SaveX(ctx)
 
 	buyCategory := entClient.TransactionCategory.Create().
 		SetName("Buy").
 		SetHousehold(household).
+		SetIcon("banknote-arrow-down").
 		SetType(transactioncategory.TypeInvestment).
 		SetIsImmutable(true).
 		SaveX(ctx)
@@ -163,6 +166,7 @@ func Seed(
 	_ = entClient.TransactionCategory.Create().
 		SetName("Sell").
 		SetHousehold(household).
+		SetIcon("banknote-arrow-up").
 		SetType(transactioncategory.TypeInvestment).
 		SetIsImmutable(true).
 		SaveX(ctx)
@@ -170,12 +174,14 @@ func Seed(
 	_ = entClient.TransactionCategory.Create().
 		SetName("Move").
 		SetHousehold(household).
+		SetIcon("arrow-left-right").
 		SetType(transactioncategory.TypeInvestment).
 		SetIsImmutable(true).
 		SaveX(ctx)
 
 	_ = entClient.TransactionCategory.Create().
 		SetName("Credit Card Bill").
+		SetIcon("credit-card").
 		SetHousehold(household).
 		SetType(transactioncategory.TypeTransfer).
 		SetIsImmutable(true).
@@ -184,6 +190,7 @@ func Seed(
 	salary := entClient.TransactionCategory.Create().
 		SetName("Salary").
 		SetHousehold(household).
+		SetIcon("hand-coins").
 		SetType(transactioncategory.TypeIncome).
 		SaveX(ctx)
 
