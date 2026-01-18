@@ -18,6 +18,7 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -419,11 +420,13 @@ export function DateRangeFilter({
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          {Object.entries(GROUP_BY_LABELS).map(([value, label]) => (
-            <SelectItem key={value} value={value}>
-              {label}
-            </SelectItem>
-          ))}
+          <SelectGroup>
+            {Object.entries(GROUP_BY_LABELS).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>
