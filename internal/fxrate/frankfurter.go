@@ -34,7 +34,7 @@ func (p *FrankfurterProvider) GetRate(
 ) (decimal.Decimal, error) {
 	dateStr := datetime.Format("2006-01-02")
 	url := fmt.Sprintf(
-		"%s/%s?from=%s&to=%s",
+		"%s/v1/%s?from=%s&to=%s",
 		p.baseURL,
 		dateStr,
 		fromCurrency,
