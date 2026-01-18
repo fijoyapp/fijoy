@@ -40,12 +40,15 @@ import { ACCOUNT_TYPE_DESCRIPTION, ACCOUNT_TYPE_LIST } from '@/constant'
 import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getLogoDomainURL } from '@/lib/logo'
 
 const formSchema = z.object({
   name: z
     .string()
     .min(1, 'Account name must be at least 1 character.')
     .max(32, 'Account name must be at most 32 characters.'),
+  icon: z.string(),
   currencyCode: z.string(),
   type: z.literal([
     'liquidity',
@@ -96,6 +99,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
   const form = useForm({
     defaultValues: {
       name: '',
+      icon: undefined as unknown as string,
       type: '',
       currencyCode: household.currency.code,
       balance: undefined as unknown as number,
@@ -125,6 +129,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
               type: formData.type,
               currencyID: currencyID,
               balance: balance.toString(),
+              iconPath: formData.icon || null,
             },
           },
         },
@@ -197,6 +202,53 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                       placeholder="Wealthsimple Chequing"
                       autoComplete="off"
                     />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+            <form.Field
+              name="icon"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Icon</FieldLabel>
+                    <FieldDescription>
+                      Enter a domain to fetch logo (e.g., chase.com)
+                    </FieldDescription>
+                    <div className="flex items-center gap-3">
+                      <Input
+                        data-1p-ignore
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => {
+                          field.handleChange(e.target.value)
+                        }}
+                        aria-invalid={isInvalid}
+                        placeholder="e.g., chase.com"
+                        autoComplete="off"
+                        className="flex-1"
+                      />
+                      {field.state.value && (
+                        <div className="flex items-center gap-2">
+                          <Avatar className="size-6">
+                            <AvatarImage
+                              src={getLogoDomainURL(field.state.value)}
+                              alt={field.state.value}
+                            />
+                            <AvatarFallback className="text-xs">
+                              {field.state.value.slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
+                      )}
+                    </div>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
