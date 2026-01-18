@@ -17510,4 +17510,3 @@ export const iconsData: Array<{
     tags: ['magnifying glass', 'plus'],
   },
 ]
-
