@@ -112,6 +112,11 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 	return obj.Value.Mul(account.FxRate).String(), nil
 }
 
+// CreateHousehold is the resolver for the createHousehold field.
+func (r *mutationResolver) CreateHousehold(ctx context.Context, input ent.CreateHouseholdInput) (*ent.Household, error) {
+	panic(fmt.Errorf("not implemented: CreateHousehold - createHousehold"))
+}
+
 // CreateAccount is the resolver for the createAccount field.
 func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error) {
 	now := time.Now()

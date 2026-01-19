@@ -35,20 +35,63 @@ func (Household) Edges() []ent.Edge {
 			Required(),
 		edge.From("users", User.Type).
 			Ref("households").
-			Through("user_households", UserHousehold.Type),
+			Through("user_households", UserHousehold.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 
-		edge.To("accounts", Account.Type),
-		edge.To("transactions", Transaction.Type),
-		edge.To("investments", Investment.Type),
-		edge.To("investment_lots", InvestmentLot.Type),
-		edge.To("transaction_categories", TransactionCategory.Type),
-		edge.To("transaction_entries", TransactionEntry.Type),
+		edge.To("accounts", Account.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
+		edge.To("transactions", Transaction.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
+		edge.To("investments", Investment.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
+		edge.To("investment_lots", InvestmentLot.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
+		edge.To("transaction_categories", TransactionCategory.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
+		edge.To("transaction_entries", TransactionEntry.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 	}
 }
 
 func (Household) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
 
@@ -70,6 +113,11 @@ func (Household) Policy() ent.Policy {
 
 func (Household) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.Time{},
+		mixin.AnnotateFields(mixin.Time{},
+			entgql.Skip(
+				entgql.SkipMutationCreateInput,
+				entgql.SkipMutationUpdateInput,
+			),
+		),
 	}
 }

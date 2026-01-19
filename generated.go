@@ -220,6 +220,7 @@ type ComplexityRoot struct {
 		BuyInvestment             func(childComplexity int, input BuyInvestmentInputCustom) int
 		CreateAccount             func(childComplexity int, input ent.CreateAccountInput) int
 		CreateExpense             func(childComplexity int, input CreateExpenseInputCustom) int
+		CreateHousehold           func(childComplexity int, input ent.CreateHouseholdInput) int
 		CreateIncome              func(childComplexity int, input CreateIncomeInputCustom) int
 		CreateInvestment          func(childComplexity int, input CreateInvestmentInputCustom) int
 		CreateTransactionCategory func(childComplexity int, input ent.CreateTransactionCategoryInput) int
@@ -391,6 +392,7 @@ type InvestmentLotResolver interface {
 	Price(ctx context.Context, obj *ent.InvestmentLot) (string, error)
 }
 type MutationResolver interface {
+	CreateHousehold(ctx context.Context, input ent.CreateHouseholdInput) (*ent.Household, error)
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error)
 	CreateInvestment(ctx context.Context, input CreateInvestmentInputCustom) (*ent.InvestmentEdge, error)
 	CreateTransactionCategory(ctx context.Context, input ent.CreateTransactionCategoryInput) (*ent.TransactionCategoryEdge, error)
@@ -1204,6 +1206,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateExpense(childComplexity, args["input"].(CreateExpenseInputCustom)), true
+	case "Mutation.createHousehold":
+		if e.complexity.Mutation.CreateHousehold == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createHousehold_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateHousehold(childComplexity, args["input"].(ent.CreateHouseholdInput)), true
 	case "Mutation.createIncome":
 		if e.complexity.Mutation.CreateIncome == nil {
 			break
@@ -1921,6 +1934,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputBuyInvestmentInputCustom,
 		ec.unmarshalInputCreateAccountInput,
 		ec.unmarshalInputCreateExpenseInputCustom,
+		ec.unmarshalInputCreateHouseholdInput,
 		ec.unmarshalInputCreateIncomeInputCustom,
 		ec.unmarshalInputCreateInvestmentInput,
 		ec.unmarshalInputCreateInvestmentInputCustom,
@@ -1941,6 +1955,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputTransactionOrder,
 		ec.unmarshalInputTransactionWhereInput,
 		ec.unmarshalInputUpdateAccountInput,
+		ec.unmarshalInputUpdateHouseholdInput,
 		ec.unmarshalInputUpdateInvestmentInput,
 		ec.unmarshalInputUpdateInvestmentLotInput,
 		ec.unmarshalInputUserHouseholdWhereInput,
@@ -2089,6 +2104,17 @@ func (ec *executionContext) field_Mutation_createExpense_args(ctx context.Contex
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateExpenseInputCustom2beavermoneyᚗappᚐCreateExpenseInputCustom)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createHousehold_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateHouseholdInput2beavermoneyᚗappᚋentᚐCreateHouseholdInput)
 	if err != nil {
 		return nil, err
 	}
@@ -6313,6 +6339,79 @@ func (ec *executionContext) fieldContext_InvestmentLotEdge_cursor(_ context.Cont
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Cursor does not have child fields")
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createHousehold(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createHousehold,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateHousehold(ctx, fc.Args["input"].(ent.CreateHouseholdInput))
+		},
+		nil,
+		ec.marshalNHousehold2ᚖbeavermoneyᚗappᚋentᚐHousehold,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createHousehold(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Household_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Household_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Household_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
+			case "currencyID":
+				return ec.fieldContext_Household_currencyID(ctx, field)
+			case "currency":
+				return ec.fieldContext_Household_currency(ctx, field)
+			case "users":
+				return ec.fieldContext_Household_users(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Household_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Household_transactions(ctx, field)
+			case "investments":
+				return ec.fieldContext_Household_investments(ctx, field)
+			case "investmentLots":
+				return ec.fieldContext_Household_investmentLots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_Household_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createHousehold_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -12900,6 +12999,47 @@ func (ec *executionContext) unmarshalInputCreateExpenseInputCustom(ctx context.C
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateHouseholdInput(ctx context.Context, obj any) (ent.CreateHouseholdInput, error) {
+	var it ent.CreateHouseholdInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "locale", "currencyID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "locale":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locale"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Locale = data
+		case "currencyID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyID"))
+			data, err := ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrencyID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateIncomeInputCustom(ctx context.Context, obj any) (CreateIncomeInputCustom, error) {
 	var it CreateIncomeInputCustom
 	asMap := map[string]any{}
@@ -16959,6 +17099,47 @@ func (ec *executionContext) unmarshalInputUpdateAccountInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateHouseholdInput(ctx context.Context, obj any) (ent.UpdateHouseholdInput, error) {
+	var it ent.UpdateHouseholdInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "locale", "currencyID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "locale":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locale"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Locale = data
+		case "currencyID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrencyID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateInvestmentInput(ctx context.Context, obj any) (ent.UpdateInvestmentInput, error) {
 	var it ent.UpdateInvestmentInput
 	asMap := map[string]any{}
@@ -20435,6 +20616,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
+		case "createHousehold":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createHousehold(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createAccount":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createAccount(ctx, field)
@@ -22804,6 +22992,11 @@ func (ec *executionContext) unmarshalNCreateExpenseInputCustom2beavermoneyᚗapp
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateHouseholdInput2beavermoneyᚗappᚋentᚐCreateHouseholdInput(ctx context.Context, v any) (ent.CreateHouseholdInput, error) {
+	res, err := ec.unmarshalInputCreateHouseholdInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateIncomeInputCustom2beavermoneyᚗappᚐCreateIncomeInputCustom(ctx context.Context, v any) (CreateIncomeInputCustom, error) {
 	res, err := ec.unmarshalInputCreateIncomeInputCustom(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -22955,6 +23148,10 @@ func (ec *executionContext) marshalNFinancialReport2ᚖbeavermoneyᚗappᚐFinan
 		return graphql.Null
 	}
 	return ec._FinancialReport(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNHousehold2beavermoneyᚗappᚋentᚐHousehold(ctx context.Context, sel ast.SelectionSet, v ent.Household) graphql.Marshaler {
+	return ec._Household(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNHousehold2ᚕᚖbeavermoneyᚗappᚋentᚐHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Household) graphql.Marshaler {

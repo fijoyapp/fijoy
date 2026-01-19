@@ -37,6 +37,8 @@ input CreateInvestmentInputCustom {
 }
 
 type Mutation {
+  createHousehold(input: CreateHouseholdInput!): Household!
+
   createAccount(input: CreateAccountInput!): AccountEdge!
   createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
   createTransactionCategory(
