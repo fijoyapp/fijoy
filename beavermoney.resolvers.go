@@ -980,6 +980,11 @@ func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestm
 	}, nil
 }
 
+// Refresh is the resolver for the refresh field.
+func (r *mutationResolver) Refresh(ctx context.Context) (bool, error) {
+	panic(fmt.Errorf("not implemented: Refresh - refresh"))
+}
+
 // FxRate is the resolver for the fxRate field.
 func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error) {
 	rate, err := r.fxrateClient.GetRate(ctx, from, to, datetime)
