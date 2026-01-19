@@ -545,7 +545,6 @@ input CreateTransactionCategoryInput {
   name: String!
   type: TransactionCategoryType!
   icon: String!
-  isImmutable: Boolean
 }
 
 """

@@ -205,10 +205,9 @@ func (c *TransactionCreate) SetInput(i CreateTransactionInput) *TransactionCreat
 
 // CreateTransactionCategoryInput represents a mutation input for creating transactioncategories.
 type CreateTransactionCategoryInput struct {
-	Name        string
-	Type        transactioncategory.Type
-	Icon        string
-	IsImmutable *bool
+	Name string
+	Type transactioncategory.Type
+	Icon string
 }
 
 // Mutate applies the CreateTransactionCategoryInput on the TransactionCategoryMutation builder.
@@ -216,9 +215,6 @@ func (i *CreateTransactionCategoryInput) Mutate(m *TransactionCategoryMutation) 
 	m.SetName(i.Name)
 	m.SetType(i.Type)
 	m.SetIcon(i.Icon)
-	if v := i.IsImmutable; v != nil {
-		m.SetIsImmutable(*v)
-	}
 }
 
 // SetInput applies the change-set in the CreateTransactionCategoryInput on the TransactionCategoryCreate builder.

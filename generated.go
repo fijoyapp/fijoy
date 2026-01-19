@@ -13088,7 +13088,7 @@ func (ec *executionContext) unmarshalInputCreateTransactionCategoryInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "type", "icon", "isImmutable"}
+	fieldsInOrder := [...]string{"name", "type", "icon"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13116,13 +13116,6 @@ func (ec *executionContext) unmarshalInputCreateTransactionCategoryInput(ctx con
 				return it, err
 			}
 			it.Icon = data
-		case "isImmutable":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isImmutable"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsImmutable = data
 		}
 	}
 

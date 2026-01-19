@@ -117,7 +117,12 @@ func (TransactionCategory) Fields() []ent.Field {
 
 		field.String("icon"),
 
-		field.Bool("is_immutable").Default(false),
+		field.Bool("is_immutable").Default(false).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+				),
+			),
 	}
 }
 

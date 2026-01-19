@@ -233,7 +233,6 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 		return nil, fmt.Errorf("investment currency %s does not match account currency %s", quote.Currency, account.Edges.Currency.Code)
 	}
 
-
 	currencyID, err := client.Currency.Query().Where(currency.CodeEQ(quote.Currency)).OnlyID(ctx)
 	if err != nil {
 		return nil, err
@@ -324,8 +323,7 @@ func (r *mutationResolver) CreateTransactionCategory(ctx context.Context, input 
 
 	category, err := client.TransactionCategory.Create().
 		SetHouseholdID(householdID).
-		SetName(input.Name).
-		SetType(transactioncategory.Type(input.Type)).
+		SetInput(input).
 		Save(ctx)
 	if err != nil {
 		return nil, err

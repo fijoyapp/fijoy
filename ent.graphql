@@ -260,7 +260,6 @@ input CreateTransactionCategoryInput {
   name: String!
   type: TransactionCategoryType!
   icon: String!
-  isImmutable: Boolean
 }
 """
 CreateTransactionEntryInput is used for create TransactionEntry object.
