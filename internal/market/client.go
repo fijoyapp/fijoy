@@ -76,12 +76,30 @@ func (c *Client) StockQuotes(
 	ctx context.Context,
 	symbols []string,
 ) (map[string]*StockQuoteResult, error) {
-	return c.provider.StockQuotes(ctx, symbols)
+	// Deduplicate symbols
+	seen := make(map[string]bool)
+	deduped := make([]string, 0, len(symbols))
+	for _, symbol := range symbols {
+		if !seen[symbol] {
+			seen[symbol] = true
+			deduped = append(deduped, symbol)
+		}
+	}
+	return c.provider.StockQuotes(ctx, deduped)
 }
 
 func (c *Client) CryptoQuotes(
 	ctx context.Context,
 	symbols []string,
 ) (map[string]*CryptoQuoteResult, error) {
-	return c.provider.CryptoQuotes(ctx, symbols)
+	// Deduplicate symbols
+	seen := make(map[string]bool)
+	deduped := make([]string, 0, len(symbols))
+	for _, symbol := range symbols {
+		if !seen[symbol] {
+			seen[symbol] = true
+			deduped = append(deduped, symbol)
+		}
+	}
+	return c.provider.CryptoQuotes(ctx, deduped)
 }
