@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4a21ec867b0004e52c0366605b2f77a2>>
+ * @generated SignedSource<<427ee800f40ac48715e6ea43c6e069f8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,7 +24,7 @@ var v0 = [
   {
     "kind": "Literal",
     "name": "first",
-    "value": 20
+    "value": 50
   }
 ],
 v1 = {
@@ -202,7 +202,7 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "accounts(first:20)"
+        "storageKey": "accounts(first:50)"
       },
       {
         "alias": null,
@@ -216,12 +216,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0aca99f7f9d117daf07d29532f9eba60",
+    "cacheID": "b68c5bb65e84511544d24f6731205cf4",
     "id": null,
     "metadata": {},
     "name": "AccountsQuery",
     "operationKind": "query",
-    "text": "query AccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  accounts(first: 20) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AccountsQuery {\n  ...accountsPanelFragment\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment on Query {\n  accounts(first: 50) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d31841b9255421b8c03ec1a1c711ac3>>
+ * @generated SignedSource<<4e2b3174376254a7b83cade820f297e7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,7 +25,7 @@ export type accountsPanelRefetch = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
-    "defaultValue": 20,
+    "defaultValue": 50,
     "kind": "LocalArgument",
     "name": "count"
   },
@@ -247,16 +247,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "09073adbf03187c9665dba7f92415493",
+    "cacheID": "d09a5b25f01bd727e290a0a3f470e86e",
     "id": null,
     "metadata": {},
     "name": "accountsPanelRefetch",
     "operationKind": "query",
-    "text": "query accountsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...accountsPanelFragment_1G22uz\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment_1G22uz on Query {\n  accounts(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query accountsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n) {\n  ...accountsPanelFragment_1G22uz\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  currency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n}\n\nfragment accountsPanelFragment_1G22uz on Query {\n  accounts(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        valueInHouseholdCurrency\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5f165d5bfeb96b8440a2e8889c9e48c0";
+(node as any).hash = "584c40269fac16ceeffe34c9583528c6";
 
 export default node;

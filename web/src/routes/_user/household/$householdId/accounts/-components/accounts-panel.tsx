@@ -37,7 +37,7 @@ import { ACCOUNT_TYPE_LIST } from '@/constant'
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query
   @argumentDefinitions(
-    count: { type: "Int", defaultValue: 20 }
+    count: { type: "Int", defaultValue: 50 }
     cursor: { type: "Cursor" }
   )
   @refetchable(queryName: "accountsPanelRefetch") {
