@@ -364,6 +364,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
                       currency={currencyCode}
                       onBlur={field.handleBlur}
                       aria-invalid={isInvalid}
+                      allowNegative={true}
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
