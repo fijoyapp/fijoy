@@ -7,6 +7,7 @@ import (
 
 	"beavermoney.app/ent"
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/user"
@@ -31,9 +32,9 @@ func Seed(
 		return nil
 	}
 
-	cad := entClient.Currency.Create().SetCode("CAD").SaveX(ctx)
-	entClient.Currency.Create().SetCode("CNY").SaveX(ctx)
-	usd := entClient.Currency.Create().SetCode("USD").SaveX(ctx)
+	cad := entClient.Currency.Query().Where(currency.CodeEQ("CAD")).OnlyX(ctx)
+	entClient.Currency.Query().Where(currency.CodeEQ("CNY")).OnlyX(ctx)
+	usd := entClient.Currency.Query().Where(currency.CodeEQ("USD")).OnlyX(ctx)
 
 	usdToCadRate, err := fxrateClient.GetRate(ctx, "USD", "CAD", time.Now())
 	if err != nil {
