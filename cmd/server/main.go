@@ -18,6 +18,7 @@ import (
 	"beavermoney.app/cmd/server/config"
 	"beavermoney.app/cmd/server/database"
 	"beavermoney.app/cmd/server/seed"
+	"beavermoney.app/cmd/server/setup"
 	"beavermoney.app/ent/user"
 	"beavermoney.app/ent/userkey"
 	"beavermoney.app/internal/contextkeys"
@@ -60,6 +61,15 @@ func main() {
 
 	// Run migrations
 	if err := database.Migrate(db, logger); err != nil {
+		panic(err)
+	}
+
+	// Setup database (currencies, etc.)
+	if err := setup.Setup(ctx, entClient, logger); err != nil {
+		logger.Error(
+			"database setup failed",
+			slog.String("error", err.Error()),
+		)
 		panic(err)
 	}
 
