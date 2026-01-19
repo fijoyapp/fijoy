@@ -59,6 +59,17 @@ type eodhdSearchResponse []struct {
 	Type     string `json:"Type"`
 }
 
+// eodhdHistoricalDataPoint represents a single historical data point from EODHD API.
+type eodhdHistoricalDataPoint struct {
+	Date          string  `json:"date"`
+	Open          float64 `json:"open"`
+	High          float64 `json:"high"`
+	Low           float64 `json:"low"`
+	Close         float64 `json:"close"`
+	AdjustedClose float64 `json:"adjusted_close"`
+	Volume        int64   `json:"volume"`
+}
+
 func (p *EODHDProvider) StockQuote(
 	ctx context.Context,
 	symbol string,
@@ -254,4 +265,179 @@ func (p *EODHDProvider) CryptoQuotes(
 	}
 
 	return results, nil
+}
+
+// HistoricalQuote fetches historical price data for a symbol.
+// Period: 'd' for daily, 'w' for weekly, 'm' for monthly.
+// Date format: YYYY-MM-DD for from and to parameters.
+func (p *EODHDProvider) HistoricalQuote(
+	ctx context.Context,
+	symbol string,
+	period string,
+	from time.Time,
+	to time.Time,
+	isStock bool,
+) (*HistoricalQuoteResult, error) {
+	// Validate period
+	if period != "d" && period != "w" && period != "m" {
+		return nil, fmt.Errorf("invalid period: %s (must be 'd', 'w', or 'm')", period)
+	}
+
+	// EODHD requires the exchange code appended to the symbol
+	// For stocks: AAPL.US
+	// For crypto: BTC-USD.CC
+	originalSymbol := symbol
+	if isStock {
+		// Stock symbol
+		if !strings.Contains(symbol, ".") {
+			symbol = symbol + ".US"
+		}
+	} else {
+		// Crypto symbol
+		if !strings.HasSuffix(symbol, ".CC") {
+			// Assume the symbol is like "BTC-USD" or just "BTC"
+			if !strings.Contains(symbol, "-") {
+				symbol = symbol + "-USD"
+			}
+			symbol = symbol + ".CC"
+		}
+	}
+
+	// Format dates as YYYY-MM-DD
+	fromStr := from.Format("2006-01-02")
+	toStr := to.Format("2006-01-02")
+
+	// Build the URL for historical data
+	url := fmt.Sprintf(
+		"%s/eod/%s?api_token=%s&fmt=json&period=%s&from=%s&to=%s",
+		p.baseURL,
+		symbol,
+		p.apiKey,
+		period,
+		fromStr,
+		toStr,
+	)
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	resp, err := p.client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch historical data: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("EODHD API returned status %d", resp.StatusCode)
+	}
+
+	var histData []eodhdHistoricalDataPoint
+	if err := json.NewDecoder(resp.Body).Decode(&histData); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	// Convert to our format
+	dataPoints := make([]HistoricalDataPoint, 0, len(histData))
+	for _, point := range histData {
+		// Parse the date string (format: "YYYY-MM-DD")
+		date, err := time.Parse("2006-01-02", point.Date)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse date %s: %w", point.Date, err)
+		}
+
+		// Use adjusted_close as the close price (adjusted for splits and dividends)
+		dataPoints = append(dataPoints, HistoricalDataPoint{
+			Date:  date,
+			Close: decimal.NewFromFloat(point.AdjustedClose),
+		})
+	}
+
+	// Get metadata from search API
+	searchSymbol := strings.Split(symbol, ".")[0]
+	if !isStock {
+		// For crypto, remove the .CC and use the base symbol
+		searchSymbol = strings.Split(strings.TrimSuffix(symbol, ".CC"), "-")[0]
+	}
+
+	searchURL := fmt.Sprintf(
+		"%s/search/%s?api_token=%s&limit=1",
+		p.baseURL,
+		searchSymbol,
+		p.apiKey,
+	)
+
+	searchReq, err := http.NewRequestWithContext(ctx, http.MethodGet, searchURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create search request: %w", err)
+	}
+
+	searchResp, err := p.client.Do(searchReq)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch metadata: %w", err)
+	}
+	defer searchResp.Body.Close()
+
+	var searchData eodhdSearchResponse
+	var name, exchange, currency string
+
+	if searchResp.StatusCode == http.StatusOK {
+		if err := json.NewDecoder(searchResp.Body).Decode(&searchData); err == nil && len(searchData) > 0 {
+			name = searchData[0].Name
+			exchange = searchData[0].Exchange
+			currency = searchData[0].Currency
+		}
+	}
+
+	// Fallback if search didn't return data
+	if name == "" {
+		name = originalSymbol
+	}
+	if exchange == "" {
+		if isStock {
+			parts := strings.Split(symbol, ".")
+			if len(parts) > 1 {
+				exchange = parts[1]
+			}
+		} else {
+			exchange = "Crypto"
+		}
+	}
+	if currency == "" {
+		currency = "USD" // Default to USD
+	}
+
+	result := &HistoricalQuoteResult{
+		Symbol: originalSymbol,
+		Period: period,
+		Data:   dataPoints,
+	}
+	result.Metadata.Name = name
+	result.Metadata.Exchange = exchange
+	result.Metadata.Currency = currency
+
+	return result, nil
+}
+
+// StockHistoricalQuote fetches historical price data for a stock symbol.
+func (p *EODHDProvider) StockHistoricalQuote(
+	ctx context.Context,
+	symbol string,
+	period string,
+	from time.Time,
+	to time.Time,
+) (*HistoricalQuoteResult, error) {
+	return p.HistoricalQuote(ctx, symbol, period, from, to, true)
+}
+
+// CryptoHistoricalQuote fetches historical price data for a crypto symbol.
+func (p *EODHDProvider) CryptoHistoricalQuote(
+	ctx context.Context,
+	symbol string,
+	period string,
+	from time.Time,
+	to time.Time,
+) (*HistoricalQuoteResult, error) {
+	return p.HistoricalQuote(ctx, symbol, period, from, to, false)
 }
