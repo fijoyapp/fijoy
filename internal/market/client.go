@@ -5,6 +5,7 @@ package market
 import (
 	"context"
 
+	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 )
 
@@ -76,30 +77,12 @@ func (c *Client) StockQuotes(
 	ctx context.Context,
 	symbols []string,
 ) (map[string]*StockQuoteResult, error) {
-	// Deduplicate symbols
-	seen := make(map[string]bool)
-	deduped := make([]string, 0, len(symbols))
-	for _, symbol := range symbols {
-		if !seen[symbol] {
-			seen[symbol] = true
-			deduped = append(deduped, symbol)
-		}
-	}
-	return c.provider.StockQuotes(ctx, deduped)
+	return c.provider.StockQuotes(ctx, lo.Uniq(symbols))
 }
 
 func (c *Client) CryptoQuotes(
 	ctx context.Context,
 	symbols []string,
 ) (map[string]*CryptoQuoteResult, error) {
-	// Deduplicate symbols
-	seen := make(map[string]bool)
-	deduped := make([]string, 0, len(symbols))
-	for _, symbol := range symbols {
-		if !seen[symbol] {
-			seen[symbol] = true
-			deduped = append(deduped, symbol)
-		}
-	}
-	return c.provider.CryptoQuotes(ctx, deduped)
+	return c.provider.CryptoQuotes(ctx, lo.Uniq(symbols))
 }
