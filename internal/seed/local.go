@@ -52,6 +52,10 @@ func Seed(
 		SetLocale("en-CA").
 		SaveX(ctx)
 
+	if err = SeedHouseholdCategories(ctx, entClient, household.ID); err != nil {
+		panic(err)
+	}
+
 	household2 := entClient.Household.Create().
 		SetName("Acme Corp").
 		SetCurrency(cad).
@@ -142,58 +146,29 @@ func Seed(
 		SetType(account.TypeInvestment).
 		SaveX(ctx)
 
-	restaurant := entClient.TransactionCategory.Create().
-		SetName("Restaurant").
-		SetHousehold(household).
-		SetIcon("soup").
-		SetType(transactioncategory.TypeExpense).
-		SaveX(ctx)
+	restaurant := entClient.TransactionCategory.Query().
+		Where(
+			transactioncategory.NameEQ("Restaurant"),
+		).
+		OnlyX(ctx)
 
-	grocery := entClient.TransactionCategory.Create().
-		SetName("Grocery").
-		SetHousehold(household).
-		SetIcon("apple").
-		SetType(transactioncategory.TypeExpense).
-		SaveX(ctx)
+	grocery := entClient.TransactionCategory.Query().
+		Where(
+			transactioncategory.NameEQ("Grocery"),
+		).
+		OnlyX(ctx)
 
-	buyCategory := entClient.TransactionCategory.Create().
-		SetName("Buy").
-		SetHousehold(household).
-		SetIcon("banknote-arrow-down").
-		SetType(transactioncategory.TypeInvestment).
-		SetIsImmutable(true).
-		SaveX(ctx)
+	buyCategory := entClient.TransactionCategory.Query().
+		Where(
+			transactioncategory.NameEQ("Buy"),
+		).
+		OnlyX(ctx)
 
-	_ = entClient.TransactionCategory.Create().
-		SetName("Sell").
-		SetHousehold(household).
-		SetIcon("banknote-arrow-up").
-		SetType(transactioncategory.TypeInvestment).
-		SetIsImmutable(true).
-		SaveX(ctx)
-
-	_ = entClient.TransactionCategory.Create().
-		SetName("Move").
-		SetHousehold(household).
-		SetIcon("arrow-left-right").
-		SetType(transactioncategory.TypeInvestment).
-		SetIsImmutable(true).
-		SaveX(ctx)
-
-	_ = entClient.TransactionCategory.Create().
-		SetName("Credit Card Bill").
-		SetIcon("credit-card").
-		SetHousehold(household).
-		SetType(transactioncategory.TypeTransfer).
-		SetIsImmutable(true).
-		SaveX(ctx)
-
-	salary := entClient.TransactionCategory.Create().
-		SetName("Salary").
-		SetHousehold(household).
-		SetIcon("hand-coins").
-		SetType(transactioncategory.TypeIncome).
-		SaveX(ctx)
+	salary := entClient.TransactionCategory.Query().
+		Where(
+			transactioncategory.NameEQ("Salary"),
+		).
+		OnlyX(ctx)
 
 	{
 		transaction := entClient.Transaction.Create().
