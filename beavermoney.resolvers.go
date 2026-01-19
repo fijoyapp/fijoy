@@ -19,8 +19,10 @@ import (
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
+	"beavermoney.app/ent/userhousehold"
 	"beavermoney.app/internal/contextkeys"
 	"beavermoney.app/internal/gqlutil"
+	"beavermoney.app/internal/seed"
 	"entgo.io/ent/dialect/sql"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -114,7 +116,39 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 
 // CreateHousehold is the resolver for the createHousehold field.
 func (r *mutationResolver) CreateHousehold(ctx context.Context, input ent.CreateHouseholdInput) (*ent.Household, error) {
-	panic(fmt.Errorf("not implemented: CreateHousehold - createHousehold"))
+	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
+
+	// Create the household with a privacy bypass context since the user doesn't have
+	// a household context yet
+	bypassCtx := contextkeys.NewPrivacyBypassContext(ctx)
+
+	household, err := client.Household.Create().
+		SetInput(input).
+		Save(bypassCtx)
+	if err != nil {
+		r.logger.Error("Failed to create household", "error", err)
+		return nil, fmt.Errorf("failed to create household: %w", err)
+	}
+
+	// Create UserHousehold relationship (user is admin of the new household)
+	err = client.UserHousehold.Create().
+		SetUserID(userID).
+		SetHouseholdID(household.ID).
+		SetRole(userhousehold.RoleAdmin).
+		Exec(bypassCtx)
+	if err != nil {
+		r.logger.Error("Failed to create user-household relationship", "error", err)
+		return nil, fmt.Errorf("failed to create user-household relationship: %w", err)
+	}
+
+	// Seed default transaction categories for the new household
+	if err := seed.SeedHouseholdCategories(bypassCtx, client, household.ID); err != nil {
+		r.logger.Error("Failed to seed household categories", "error", err)
+		return nil, fmt.Errorf("failed to seed household categories: %w", err)
+	}
+
+	return household, nil
 }
 
 // CreateAccount is the resolver for the createAccount field.
