@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -161,7 +162,10 @@ func (p *FrankfurterProvider) GetRates(
 
 		// Invert: if EUR->USD is 1.2, then USD->EUR is 1/1.2
 		if rate.IsZero() {
-			return nil, fmt.Errorf("invalid rate (zero) for currency %s", fromCurrency)
+			return nil, fmt.Errorf(
+				"invalid rate (zero) for currency %s",
+				fromCurrency,
+			)
 		}
 		results[fromCurrency] = decimal.NewFromInt(1).Div(rate)
 	}
@@ -174,9 +178,10 @@ func joinCurrencies(currencies []string) string {
 	if len(currencies) == 0 {
 		return ""
 	}
-	result := currencies[0]
+	var result strings.Builder
+	result.WriteString(currencies[0])
 	for i := 1; i < len(currencies); i++ {
-		result += "," + currencies[i]
+		result.WriteString("," + currencies[i])
 	}
-	return result
+	return result.String()
 }
