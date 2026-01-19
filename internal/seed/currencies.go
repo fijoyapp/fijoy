@@ -1,4 +1,4 @@
-package setup
+package seed
 
 import (
 	"context"
@@ -59,22 +59,13 @@ var StandardCurrencies = []string{
 	"TWD", // Taiwan Dollar
 }
 
-// Setup initializes the database with required data like currencies.
-// It ensures all standard currencies exist in the database.
-func Setup(ctx context.Context, client *ent.Client, logger *slog.Logger) error {
-	logger.Info("Running database setup")
-
-	if err := setupCurrencies(ctx, client, logger); err != nil {
-		return err
-	}
-
-	logger.Info("Database setup completed successfully")
-	return nil
-}
-
 // setupCurrencies ensures all standard currencies exist in the database.
 // Uses an upsert pattern to avoid duplicates and be idempotent.
-func setupCurrencies(ctx context.Context, client *ent.Client, logger *slog.Logger) error {
+func setupCurrencies(
+	ctx context.Context,
+	client *ent.Client,
+	logger *slog.Logger,
+) error {
 	logger.Info("Setting up currencies", "count", len(StandardCurrencies))
 
 	// Deduplicate currency codes to ensure no duplicates

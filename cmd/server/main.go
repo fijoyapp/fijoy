@@ -17,13 +17,12 @@ import (
 	"beavermoney.app/cmd/server/auth"
 	"beavermoney.app/cmd/server/config"
 	"beavermoney.app/cmd/server/database"
-	"beavermoney.app/cmd/server/seed"
-	"beavermoney.app/cmd/server/setup"
 	"beavermoney.app/ent/user"
 	"beavermoney.app/ent/userkey"
 	"beavermoney.app/internal/contextkeys"
 	"beavermoney.app/internal/fxrate"
 	"beavermoney.app/internal/market"
+	"beavermoney.app/internal/seed"
 	"entgo.io/contrib/entgql"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -65,7 +64,7 @@ func main() {
 	}
 
 	// Setup database (currencies, etc.)
-	if err := setup.Setup(ctx, entClient, logger); err != nil {
+	if err := seed.Setup(ctx, entClient, logger); err != nil {
 		logger.Error(
 			"database setup failed",
 			slog.String("error", err.Error()),
