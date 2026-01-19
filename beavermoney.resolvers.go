@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"beavermoney.app/ent"
+	"beavermoney.app/ent/account"
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
@@ -211,7 +212,7 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 	householdID := contextkeys.GetHouseholdID(ctx)
 	zero := decimal.NewFromInt(0)
 
-	account, err := client.Account.Get(ctx, input.Input.AccountID)
+	account, err := client.Account.Query().Where(account.IDEQ(input.Input.AccountID)).WithCurrency().Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -227,6 +228,11 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 	if err != nil {
 		return nil, err
 	}
+
+	if quote.Currency != account.Edges.Currency.Code {
+		return nil, fmt.Errorf("investment currency %s does not match account currency %s", quote.Currency, account.Edges.Currency.Code)
+	}
+
 
 	currencyID, err := client.Currency.Query().Where(currency.CodeEQ(quote.Currency)).OnlyID(ctx)
 	if err != nil {
