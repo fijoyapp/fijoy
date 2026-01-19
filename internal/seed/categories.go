@@ -156,6 +156,14 @@ var DefaultCategories = []DefaultCategory{
 			Type: transactioncategory.TypeIncome,
 		},
 	},
+	{
+		CreateTransactionCategoryInput: ent.CreateTransactionCategoryInput{
+			Name: "Setup",
+			Icon: "wrench",
+			Type: transactioncategory.TypeSetup,
+		},
+		IsImmutable: true,
+	},
 }
 
 // SeedHouseholdCategories creates default transaction categories for a household.

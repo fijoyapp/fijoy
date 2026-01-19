@@ -195,27 +195,16 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 		}, nil
 	}
 
-	categoryID, err := client.TransactionCategory.Create().
-		SetHousehold(household).
-		SetName("Setup").
-		SetType(transactioncategory.TypeSetup).
-		OnConflict(
-			sql.ConflictColumns(
-				transactioncategory.FieldName,
-				transactioncategory.FieldHouseholdID,
-			),
-		).
-		Ignore().
-		ID(ctx)
-	if err != nil {
-		return nil, err
-	}
+	setupCategory := client.TransactionCategory.
+		Query().
+		Where(transactioncategory.NameEQ("Setup")).
+		OnlyX(ctx)
 
 	transaction, err := client.Transaction.Create().
 		SetHouseholdID(householdID).
 		SetDescription("Initial Balance").
 		SetDatetime(now).
-		SetCategoryID(categoryID).
+		SetCategory(setupCategory).
 		SetUserID(userID).
 		Save(ctx)
 	if err != nil {
