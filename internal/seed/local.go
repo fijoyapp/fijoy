@@ -52,6 +52,8 @@ func Seed(
 		SetLocale("en-CA").
 		SaveX(ctx)
 
+	ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), household.ID)
+
 	if err = SeedHouseholdCategories(ctx, entClient, household.ID); err != nil {
 		panic(err)
 	}
@@ -61,8 +63,6 @@ func Seed(
 		SetCurrency(cad).
 		SetLocale("en-CA").
 		SaveX(ctx)
-
-	ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), household.ID)
 
 	entClient.UserHousehold.Create().
 		SetUser(joey).
@@ -115,6 +115,8 @@ func Seed(
 		SetHousehold(differentHousehold).
 		SetType(account.TypeLiquidity).
 		SaveX(differentCtx)
+
+	ctx = context.WithValue(ctx, contextkeys.HouseholdIDKey(), household.ID)
 
 	chase := entClient.Account.Create().
 		SetName("Chase Total Checking").
