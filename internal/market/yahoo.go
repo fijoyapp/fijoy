@@ -58,3 +58,65 @@ func (p *YahooProvider) CryptoQuote(
 		CurrentPrice: decimal.NewFromFloat(e.RegularMarketPrice),
 	}, nil
 }
+
+func (p *YahooProvider) StockQuotes(
+	ctx context.Context,
+	symbols []string,
+) (map[string]*StockQuoteResult, error) {
+	if len(symbols) == 0 {
+		return make(map[string]*StockQuoteResult), nil
+	}
+
+	iter := equity.List(symbols)
+	results := make(map[string]*StockQuoteResult, len(symbols))
+
+	for iter.Next() {
+		e := iter.Equity()
+		if e != nil && e.CurrencyID != "" {
+			results[e.Symbol] = &StockQuoteResult{
+				Symbol:       e.Symbol,
+				Name:         e.LongName,
+				Exchange:     e.FullExchangeName,
+				Currency:     e.CurrencyID,
+				CurrentPrice: decimal.NewFromFloat(e.RegularMarketPrice),
+			}
+		}
+	}
+
+	if err := iter.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (p *YahooProvider) CryptoQuotes(
+	ctx context.Context,
+	symbols []string,
+) (map[string]*CryptoQuoteResult, error) {
+	if len(symbols) == 0 {
+		return make(map[string]*CryptoQuoteResult), nil
+	}
+
+	iter := equity.List(symbols)
+	results := make(map[string]*CryptoQuoteResult, len(symbols))
+
+	for iter.Next() {
+		e := iter.Equity()
+		if e != nil && e.CurrencyID != "" {
+			results[e.Symbol] = &CryptoQuoteResult{
+				Symbol:       e.Symbol,
+				Name:         e.LongName,
+				Exchange:     e.FullExchangeName,
+				Currency:     e.CurrencyID,
+				CurrentPrice: decimal.NewFromFloat(e.RegularMarketPrice),
+			}
+		}
+	}
+
+	if err := iter.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}

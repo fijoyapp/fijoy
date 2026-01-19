@@ -18,6 +18,16 @@ type MarketProvider interface {
 		ctx context.Context,
 		symbol string,
 	) (*CryptoQuoteResult, error)
+
+	StockQuotes(
+		ctx context.Context,
+		symbols []string,
+	) (map[string]*StockQuoteResult, error)
+
+	CryptoQuotes(
+		ctx context.Context,
+		symbols []string,
+	) (map[string]*CryptoQuoteResult, error)
 }
 
 type StockQuoteResult struct {
@@ -60,4 +70,18 @@ func (c *Client) CryptoQuote(
 	symbol string,
 ) (*CryptoQuoteResult, error) {
 	return c.provider.CryptoQuote(ctx, symbol)
+}
+
+func (c *Client) StockQuotes(
+	ctx context.Context,
+	symbols []string,
+) (map[string]*StockQuoteResult, error) {
+	return c.provider.StockQuotes(ctx, symbols)
+}
+
+func (c *Client) CryptoQuotes(
+	ctx context.Context,
+	symbols []string,
+) (map[string]*CryptoQuoteResult, error) {
+	return c.provider.CryptoQuotes(ctx, symbols)
 }
