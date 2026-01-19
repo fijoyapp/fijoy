@@ -18,8 +18,8 @@ const transactionsPanelFragment = graphql`
   fragment transactionsPanelFragment on Query
   @argumentDefinitions(
     where: { type: "TransactionWhereInput" }
-    startDate: { type: "Time" }
-    endDate: { type: "Time" }
+    startDate: { type: "Time!" }
+    endDate: { type: "Time!" }
   ) {
     ...transactionsListFragment @arguments(where: $where)
     financialReport(period: { startDate: $startDate, endDate: $endDate }) {

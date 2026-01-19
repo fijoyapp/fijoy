@@ -3,8 +3,8 @@ import { graphql } from 'relay-runtime'
 export const transactionsQuery = graphql`
   query TransactionsQuery(
     $where: TransactionWhereInput
-    $startDate: Time
-    $endDate: Time
+    $startDate: Time!
+    $endDate: Time!
   ) {
     # eslint-disable-next-line relay/must-colocate-fragment-spreads
     ...transactionsPanelFragment

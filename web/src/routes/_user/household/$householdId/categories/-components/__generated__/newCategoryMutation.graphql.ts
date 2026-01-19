@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6d28ffc211f2194d2389b0b573fdd0b3>>
+ * @generated SignedSource<<44e657bb52e62ea7765c1f366f978228>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,6 @@ import { ConcreteRequest } from 'relay-runtime';
 export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
 export type CreateTransactionCategoryInput = {
   icon: string;
-  isImmutable?: boolean | null | undefined;
   name: string;
   type: TransactionCategoryType;
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c7f4c8ef55cc25d7135c3c55c6253693>>
+ * @generated SignedSource<<b5cbe1ac5e101060b0c25e7263624247>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,8 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type CategoriesQuery$variables = {
-  endDate?: any | null | undefined;
-  startDate?: any | null | undefined;
+  endDate: any;
+  startDate: any;
 };
 export type CategoriesQuery$data = {
   readonly " $fragmentSpreads": FragmentRefs<"categoriesPanelFragment">;
@@ -294,16 +294,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "66e3e7457bd67ae4941ef4a50807712a",
+    "cacheID": "03e7a776b6fbcda484eebb739f2fffa8",
     "id": null,
     "metadata": {},
     "name": "CategoriesQuery",
     "operationKind": "query",
-    "text": "query CategoriesQuery(\n  $startDate: Time\n  $endDate: Time\n) {\n  ...categoriesPanelFragment_2Yo7Kq\n}\n\nfragment categoriesPanelFragment_2Yo7Kq on Query {\n  transactionCategories(first: 20) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n    ...financialSummaryCardsFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n  icon\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n"
+    "text": "query CategoriesQuery(\n  $startDate: Time!\n  $endDate: Time!\n) {\n  ...categoriesPanelFragment_2Yo7Kq\n}\n\nfragment categoriesPanelFragment_2Yo7Kq on Query {\n  transactionCategories(first: 20) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n    ...financialSummaryCardsFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n  icon\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fc0f28389ca28c3bc058ea2bce208ddd";
+(node as any).hash = "b3a5afb0279215b5e1cba3b1bbeefe21";
 
 export default node;

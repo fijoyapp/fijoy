@@ -37,8 +37,8 @@ const CategoriesPanelFragment = graphql`
   @argumentDefinitions(
     count: { type: "Int", defaultValue: 20 }
     cursor: { type: "Cursor" }
-    startDate: { type: "Time" }
-    endDate: { type: "Time" }
+    startDate: { type: "Time!" }
+    endDate: { type: "Time!" }
   )
   @refetchable(queryName: "categoriesPanelRefetch") {
     transactionCategories(first: $count, after: $cursor)
