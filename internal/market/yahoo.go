@@ -3,6 +3,7 @@ package market
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/beavermoney/finance-go/equity"
 	"github.com/shopspring/decimal"
@@ -119,4 +120,26 @@ func (p *YahooProvider) CryptoQuotes(
 	}
 
 	return results, nil
+}
+
+// StockHistoricalQuote is not supported by Yahoo provider.
+func (p *YahooProvider) StockHistoricalQuote(
+	ctx context.Context,
+	symbol string,
+	period string,
+	from time.Time,
+	to time.Time,
+) (*HistoricalQuoteResult, error) {
+	return nil, errors.New("historical quotes not supported by Yahoo provider")
+}
+
+// CryptoHistoricalQuote is not supported by Yahoo provider.
+func (p *YahooProvider) CryptoHistoricalQuote(
+	ctx context.Context,
+	symbol string,
+	period string,
+	from time.Time,
+	to time.Time,
+) (*HistoricalQuoteResult, error) {
+	return nil, errors.New("historical quotes not supported by Yahoo provider")
 }
