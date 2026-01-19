@@ -97,7 +97,7 @@ func (p *EODHDProvider) StockQuote(
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch stock quote: %w", err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("EODHD API returned status %d", resp.StatusCode)
@@ -116,7 +116,12 @@ func (p *EODHDProvider) StockQuote(
 		p.apiKey,
 	)
 
-	searchReq, err := http.NewRequestWithContext(ctx, http.MethodGet, searchURL, nil)
+	searchReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		searchURL,
+		nil,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create search request: %w", err)
 	}
@@ -125,13 +130,14 @@ func (p *EODHDProvider) StockQuote(
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch stock metadata: %w", err)
 	}
-	defer searchResp.Body.Close()
+	defer searchResp.Body.Close() //nolint:errcheck
 
 	var searchData eodhdSearchResponse
 	var name, exchange, currency string
 
 	if searchResp.StatusCode == http.StatusOK {
-		if err := json.NewDecoder(searchResp.Body).Decode(&searchData); err == nil && len(searchData) > 0 {
+		if err := json.NewDecoder(searchResp.Body).Decode(&searchData); err == nil &&
+			len(searchData) > 0 {
 			name = searchData[0].Name
 			exchange = searchData[0].Exchange
 			currency = searchData[0].Currency
@@ -191,7 +197,7 @@ func (p *EODHDProvider) CryptoQuote(
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch crypto quote: %w", err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("EODHD API returned status %d", resp.StatusCode)
@@ -280,7 +286,10 @@ func (p *EODHDProvider) HistoricalQuote(
 ) (*HistoricalQuoteResult, error) {
 	// Validate period
 	if period != "d" && period != "w" && period != "m" {
-		return nil, fmt.Errorf("invalid period: %s (must be 'd', 'w', or 'm')", period)
+		return nil, fmt.Errorf(
+			"invalid period: %s (must be 'd', 'w', or 'm')",
+			period,
+		)
 	}
 
 	// EODHD requires the exchange code appended to the symbol
@@ -327,7 +336,7 @@ func (p *EODHDProvider) HistoricalQuote(
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch historical data: %w", err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("EODHD API returned status %d", resp.StatusCode)
@@ -344,7 +353,11 @@ func (p *EODHDProvider) HistoricalQuote(
 		// Parse the date string (format: "YYYY-MM-DD")
 		date, err := time.Parse("2006-01-02", point.Date)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse date %s: %w", point.Date, err)
+			return nil, fmt.Errorf(
+				"failed to parse date %s: %w",
+				point.Date,
+				err,
+			)
 		}
 
 		// Use adjusted_close as the close price (adjusted for splits and dividends)
@@ -368,7 +381,12 @@ func (p *EODHDProvider) HistoricalQuote(
 		p.apiKey,
 	)
 
-	searchReq, err := http.NewRequestWithContext(ctx, http.MethodGet, searchURL, nil)
+	searchReq, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		searchURL,
+		nil,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create search request: %w", err)
 	}
@@ -377,13 +395,14 @@ func (p *EODHDProvider) HistoricalQuote(
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch metadata: %w", err)
 	}
-	defer searchResp.Body.Close()
+	defer searchResp.Body.Close() //nolint:errcheck
 
 	var searchData eodhdSearchResponse
 	var name, exchange, currency string
 
 	if searchResp.StatusCode == http.StatusOK {
-		if err := json.NewDecoder(searchResp.Body).Decode(&searchData); err == nil && len(searchData) > 0 {
+		if err := json.NewDecoder(searchResp.Body).Decode(&searchData); err == nil &&
+			len(searchData) > 0 {
 			name = searchData[0].Name
 			exchange = searchData[0].Exchange
 			currency = searchData[0].Currency
