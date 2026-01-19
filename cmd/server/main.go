@@ -76,7 +76,15 @@ func main() {
 	fxrateProvider := fxrate.NewFrankfurterProvider(cfg.FrankfurterBaseURL)
 	fxrateClient := fxrate.NewClient(fxrateProvider)
 
-	marketProvider := market.NewYahooProvider()
+	// Use EODHD provider if API key is provided, otherwise fall back to Yahoo
+	var marketProvider market.MarketProvider
+	if cfg.EODHDAPIKey != "" {
+		logger.Info("using EODHD market data provider")
+		marketProvider = market.NewEODHDProvider(cfg.EODHDAPIKey)
+	} else {
+		logger.Info("using Yahoo Finance market data provider")
+		marketProvider = market.NewYahooProvider()
+	}
 	marketClient := market.NewClient(marketProvider)
 
 	// Seed database (dev only)
