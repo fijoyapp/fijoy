@@ -14,12 +14,14 @@ import (
 	"beavermoney.app/ent"
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
+	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/internal/contextkeys"
 	"beavermoney.app/internal/gqlutil"
 	"entgo.io/ent/dialect/sql"
+	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 )
 
@@ -982,7 +984,167 @@ func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestm
 
 // Refresh is the resolver for the refresh field.
 func (r *mutationResolver) Refresh(ctx context.Context) (bool, error) {
-	panic(fmt.Errorf("not implemented: Refresh - refresh"))
+	client := ent.FromContext(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+	now := time.Now()
+
+	// Get household with currency
+	household, err := client.Household.Query().
+		Where(household.IDEQ(householdID)).
+		WithCurrency().
+		Only(ctx)
+	if err != nil {
+		r.logger.Error("Failed to fetch household", "error", err)
+		return false, err
+	}
+
+	householdCurrencyCode := household.Edges.Currency.Code
+
+	// Fetch all accounts for the household with their currencies
+	accounts, err := client.Account.Query().
+		WithCurrency().
+		All(ctx)
+	if err != nil {
+		r.logger.Error("Failed to fetch accounts", "error", err)
+		return false, err
+	}
+
+	// Group accounts by currency to minimize FX rate API calls
+	currencyToAccounts := lo.GroupBy(accounts, func(account *ent.Account) string {
+		return account.Edges.Currency.Code
+	})
+
+	// Get unique currencies excluding household currency
+	uniqueCurrencies := lo.Filter(lo.Keys(currencyToAccounts), func(code string, _ int) bool {
+		return code != householdCurrencyCode
+	})
+
+	// Batch fetch FX rates for all unique currencies
+	if len(uniqueCurrencies) > 0 {
+		rates, err := r.fxrateClient.GetRates(ctx, uniqueCurrencies, householdCurrencyCode, now)
+		if err != nil {
+			r.logger.Error("Failed to fetch FX rates", "error", err)
+			return false, err
+		}
+
+		// Update accounts with new FX rates
+		for currencyCode, accountList := range currencyToAccounts {
+			var fxRate decimal.Decimal
+			if currencyCode == householdCurrencyCode {
+				fxRate = decimal.NewFromInt(1)
+			} else {
+				rate, ok := rates[currencyCode]
+				if !ok {
+					r.logger.Error("FX rate not found for currency", "currency", currencyCode)
+					continue
+				}
+				fxRate = rate
+			}
+
+			// Update all accounts with this currency
+			for _, account := range accountList {
+				err := client.Account.UpdateOneID(account.ID).
+					SetFxRate(fxRate).
+					Exec(ctx)
+				if err != nil {
+					r.logger.Error("Failed to update account FX rate", "error", err, "accountID", account.ID)
+					return false, err
+				}
+			}
+		}
+	}
+
+	// Fetch all investments for the household
+	investments, err := client.Investment.Query().
+		All(ctx)
+	if err != nil {
+		r.logger.Error("Failed to fetch investments", "error", err)
+		return false, err
+	}
+
+	if len(investments) == 0 {
+		return true, nil
+	}
+
+	// Group investments by type (stock vs crypto)
+	stockInvestments := lo.GroupBy(
+		lo.Filter(investments, func(inv *ent.Investment, _ int) bool {
+			return inv.Type == investment.TypeStock
+		}),
+		func(inv *ent.Investment) string {
+			return strings.ToUpper(inv.Symbol)
+		},
+	)
+
+	cryptoInvestments := lo.GroupBy(
+		lo.Filter(investments, func(inv *ent.Investment, _ int) bool {
+			return inv.Type == investment.TypeCrypto
+		}),
+		func(inv *ent.Investment) string {
+			return strings.ToUpper(inv.Symbol)
+		},
+	)
+
+	stockSymbols := lo.Keys(stockInvestments)
+	cryptoSymbols := lo.Keys(cryptoInvestments)
+
+	// Batch fetch stock quotes
+	if len(stockSymbols) > 0 {
+		quotes, err := r.marketClient.StockQuotes(ctx, stockSymbols)
+		if err != nil {
+			r.logger.Error("Failed to fetch stock quotes", "error", err)
+			return false, err
+		}
+
+		// Update investments with new quotes
+		for symbol, invList := range stockInvestments {
+			quote, ok := quotes[symbol]
+			if !ok {
+				r.logger.Error("Stock quote not found for symbol", "symbol", symbol)
+				continue
+			}
+
+			for _, inv := range invList {
+				err := client.Investment.UpdateOneID(inv.ID).
+					SetQuote(quote.CurrentPrice).
+					Exec(ctx)
+				if err != nil {
+					r.logger.Error("Failed to update investment quote", "error", err, "investmentID", inv.ID)
+					return false, err
+				}
+			}
+		}
+	}
+
+	// Batch fetch crypto quotes
+	if len(cryptoSymbols) > 0 {
+		quotes, err := r.marketClient.CryptoQuotes(ctx, cryptoSymbols)
+		if err != nil {
+			r.logger.Error("Failed to fetch crypto quotes", "error", err)
+			return false, err
+		}
+
+		// Update investments with new quotes
+		for symbol, invList := range cryptoInvestments {
+			quote, ok := quotes[symbol]
+			if !ok {
+				r.logger.Error("Crypto quote not found for symbol", "symbol", symbol)
+				continue
+			}
+
+			for _, inv := range invList {
+				err := client.Investment.UpdateOneID(inv.ID).
+					SetQuote(quote.CurrentPrice).
+					Exec(ctx)
+				if err != nil {
+					r.logger.Error("Failed to update investment quote", "error", err, "investmentID", inv.ID)
+					return false, err
+				}
+			}
+		}
+	}
+
+	return true, nil
 }
 
 // FxRate is the resolver for the fxRate field.
