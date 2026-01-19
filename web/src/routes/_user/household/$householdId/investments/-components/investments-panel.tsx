@@ -36,7 +36,7 @@ import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 const InvestmentsPanelFragment = graphql`
   fragment investmentsPanelFragment on Query
   @argumentDefinitions(
-    count: { type: "Int", defaultValue: 20 }
+    count: { type: "Int", defaultValue: 50 }
     cursor: { type: "Cursor" }
   )
   @refetchable(queryName: "investmentsPanelRefetch") {

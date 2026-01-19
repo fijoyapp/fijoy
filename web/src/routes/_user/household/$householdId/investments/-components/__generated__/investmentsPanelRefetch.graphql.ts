@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9bde637b886095dca01ad90410ee97ed>>
+ * @generated SignedSource<<68d50f777da34a00c502046b6db31340>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,7 +25,7 @@ export type investmentsPanelRefetch = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
-    "defaultValue": 20,
+    "defaultValue": 50,
     "kind": "LocalArgument",
     "name": "count"
   },
@@ -254,16 +254,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "677c2dfe05aef26f3c37960acc76a350",
+    "cacheID": "37a95ed05236c57c79733e8e1b577cf9",
     "id": null,
     "metadata": {},
     "name": "investmentsPanelRefetch",
     "operationKind": "query",
-    "text": "query investmentsPanelRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n) {\n  ...investmentsPanelFragment_1G22uz\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  currency {\n    code\n    id\n  }\n  amount\n  value\n}\n\nfragment investmentsPanelFragment_1G22uz on Query {\n  investments(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query investmentsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n) {\n  ...investmentsPanelFragment_1G22uz\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  currency {\n    code\n    id\n  }\n  amount\n  value\n}\n\nfragment investmentsPanelFragment_1G22uz on Query {\n  investments(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b64ab874375d638a16628b9dce4097ee";
+(node as any).hash = "75ee1f24d33590ff77a0a1d18db1fd07";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a62f63a415a39c6a8043843af4b42aef>>
+ * @generated SignedSource<<cec9735131d6bea19dfa0b5d46b1e3bc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,7 +24,7 @@ var v0 = [
   {
     "kind": "Literal",
     "name": "first",
-    "value": 20
+    "value": 50
   }
 ],
 v1 = {
@@ -209,7 +209,7 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "investments(first:20)"
+        "storageKey": "investments(first:50)"
       },
       {
         "alias": null,
@@ -223,12 +223,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "924771d7a780c3a76fd3e817f01b446f",
+    "cacheID": "abc8ebf595786af055ff95744d4b397b",
     "id": null,
     "metadata": {},
     "name": "InvestmentsQuery",
     "operationKind": "query",
-    "text": "query InvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  currency {\n    code\n    id\n  }\n  amount\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  investments(first: 20) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query InvestmentsQuery {\n  ...investmentsPanelFragment\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  currency {\n    code\n    id\n  }\n  amount\n  value\n}\n\nfragment investmentsPanelFragment on Query {\n  investments(first: 50) {\n    edges {\n      node {\n        id\n        name\n        valueInHouseholdCurrency\n        account {\n          name\n          id\n        }\n        ...investmentCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

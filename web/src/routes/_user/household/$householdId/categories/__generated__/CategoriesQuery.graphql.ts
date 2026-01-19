@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b5cbe1ac5e101060b0c25e7263624247>>
+ * @generated SignedSource<<cfaddc8a95c7df8f81addc26e0d9311b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -49,7 +49,7 @@ v3 = [
   {
     "kind": "Literal",
     "name": "first",
-    "value": 20
+    "value": 50
   }
 ],
 v4 = {
@@ -229,7 +229,7 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "transactionCategories(first:20)"
+        "storageKey": "transactionCategories(first:50)"
       },
       {
         "alias": null,
@@ -294,12 +294,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "03e7a776b6fbcda484eebb739f2fffa8",
+    "cacheID": "6c924432e1345cee618febd947b06842",
     "id": null,
     "metadata": {},
     "name": "CategoriesQuery",
     "operationKind": "query",
-    "text": "query CategoriesQuery(\n  $startDate: Time!\n  $endDate: Time!\n) {\n  ...categoriesPanelFragment_2Yo7Kq\n}\n\nfragment categoriesPanelFragment_2Yo7Kq on Query {\n  transactionCategories(first: 20) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n    ...financialSummaryCardsFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n  icon\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n"
+    "text": "query CategoriesQuery(\n  $startDate: Time!\n  $endDate: Time!\n) {\n  ...categoriesPanelFragment_2Yo7Kq\n}\n\nfragment categoriesPanelFragment_2Yo7Kq on Query {\n  transactionCategories(first: 50) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n    ...financialSummaryCardsFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n  icon\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n"
   }
 };
 })();

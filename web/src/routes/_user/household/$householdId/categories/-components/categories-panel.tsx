@@ -35,7 +35,7 @@ import { parseDateRangeFromURL } from '@/lib/date-range'
 const CategoriesPanelFragment = graphql`
   fragment categoriesPanelFragment on Query
   @argumentDefinitions(
-    count: { type: "Int", defaultValue: 20 }
+    count: { type: "Int", defaultValue: 50 }
     cursor: { type: "Cursor" }
     startDate: { type: "Time!" }
     endDate: { type: "Time!" }
