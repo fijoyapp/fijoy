@@ -1,7 +1,7 @@
-import { graphql } from 'relay-runtime'
+import { commitLocalUpdate, graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
-import { useFragment } from 'react-relay'
+import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
 import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
@@ -10,7 +10,10 @@ import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
 import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { toast } from 'sonner'
+import { match } from 'ts-pattern'
 import { AccountCard } from './account-card'
+import type { accountsPanelRefreshMutation } from './__generated__/accountsPanelRefreshMutation.graphql'
 import type { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
 import {
   Accordion,
@@ -52,14 +55,50 @@ const AccountsPanelFragment = graphql`
   }
 `
 
+const AccountsPanelRefreshMutation = graphql`
+  mutation accountsPanelRefreshMutation {
+    refresh
+  }
+`
+
 type AccountsListPageProps = {
   fragmentRef: accountsPanelFragment$key
 }
 
 export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const data = useFragment(AccountsPanelFragment, fragmentRef)
+  const environment = useRelayEnvironment()
+
+  const [commitRefreshMutation, isRefreshInFlight] =
+    useMutation<accountsPanelRefreshMutation>(AccountsPanelRefreshMutation)
 
   const { formatCurrencyWithPrivacyMode } = useCurrency()
+
+  const handleRefresh = () => {
+    commitRefreshMutation({
+      variables: {},
+      onCompleted: (data, errors) => {
+        const result = { status: 'success' as const, data, errors }
+        match(result)
+          .with({ status: 'success', errors: null }, () => {
+            // Invalidate the Relay store to refetch all queries
+            commitLocalUpdate(environment, (store) => {
+              store.invalidateStore()
+            })
+            toast.success('Accounts refreshed successfully!')
+          })
+          .with({ status: 'success' }, ({ errors }) => {
+            toast.error(
+              `Refresh failed: ${errors?.[0]?.message ?? 'Unknown error'}`,
+            )
+          })
+          .exhaustive()
+      },
+      onError: (error) => {
+        toast.error(`Refresh failed: ${error.message}`)
+      },
+    })
+  }
 
   const groupedAccounts = useMemo(
     () =>
@@ -89,8 +128,10 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           nativeButton={true}
           size="icon-xl"
           className="rounded-full"
+          onClick={handleRefresh}
+          disabled={isRefreshInFlight}
         >
-          <RefreshCwIcon />
+          <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
         </Button>
         <Link
           from={'/household/$householdId/accounts'}
