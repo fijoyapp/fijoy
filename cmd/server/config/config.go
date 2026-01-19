@@ -24,6 +24,8 @@ type Config struct {
 
 	FrankfurterBaseURL string `env:"FRANKFURTER_BASE_URL"`
 
+	EODHDAPIKey string `env:"EODHD_API_KEY"`
+
 	IsProd bool
 }
 
