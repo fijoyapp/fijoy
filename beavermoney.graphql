@@ -29,6 +29,7 @@ extend type Query {
   cryptoQuote(symbol: String!): CryptoQuoteResult
 
   financialReport(period: TimePeriodInput!): FinancialReport!
+  netWorthOverTime(period: TimePeriodInput!): [NetWorthDataPoint!]!
 }
 
 input CreateInvestmentInputCustom {
@@ -83,8 +84,22 @@ type CategoryAggregate {
 }
 
 input TimePeriodInput {
-  startDate: Time
-  endDate: Time
+  startDate: Time!
+  endDate: Time!
+}
+
+type NetWorthBreakdown {
+  liquidity: String!
+  investment: String!
+  property: String!
+  receivable: String!
+  liability: String!
+}
+
+type NetWorthDataPoint {
+  date: Time!
+  netWorth: String!
+  breakdown: NetWorthBreakdown!
 }
 
 # Expense: Money out from account

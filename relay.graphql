@@ -73,6 +73,7 @@ type Query {
   stockQuote(symbol: String!): StockQuoteResult
   cryptoQuote(symbol: String!): CryptoQuoteResult
   financialReport(period: TimePeriodInput!): FinancialReport!
+  netWorthOverTime(period: TimePeriodInput!): [NetWorthDataPoint!]!
   """
   Fetches an object given its ID.
   """
@@ -256,8 +257,22 @@ type CategoryAggregate {
 }
 
 input TimePeriodInput {
-  startDate: Time
-  endDate: Time
+  startDate: Time!
+  endDate: Time!
+}
+
+type NetWorthBreakdown {
+  liquidity: String!
+  investment: String!
+  property: String!
+  receivable: String!
+  liability: String!
+}
+
+type NetWorthDataPoint {
+  date: Time!
+  netWorth: String!
+  breakdown: NetWorthBreakdown!
 }
 
 input CreateExpenseInputCustom {
