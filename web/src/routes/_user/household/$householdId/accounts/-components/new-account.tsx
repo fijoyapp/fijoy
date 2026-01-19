@@ -99,7 +99,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
   const form = useForm({
     defaultValues: {
       name: '',
-      icon: undefined as unknown as string,
+      icon: '',
       type: '',
       currencyCode: household.currency.code,
       balance: undefined as unknown as number,
