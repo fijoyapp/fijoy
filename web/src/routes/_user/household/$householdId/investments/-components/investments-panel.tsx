@@ -1,15 +1,18 @@
-import { graphql } from 'relay-runtime'
+import { commitLocalUpdate, graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
-import { useFragment } from 'react-relay'
+import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
 import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
+import { toast } from 'sonner'
+import { match } from 'ts-pattern'
 import { InvestmentCard } from './investment-card'
 import type { investmentsPanelFragment$key } from './__generated__/investmentsPanelFragment.graphql'
+import type { investmentsPanelRefreshMutation } from './__generated__/investmentsPanelRefreshMutation.graphql'
 import {
   Accordion,
   AccordionContent,
@@ -55,14 +58,52 @@ const InvestmentsPanelFragment = graphql`
   }
 `
 
+const InvestmentsPanelRefreshMutation = graphql`
+  mutation investmentsPanelRefreshMutation {
+    refresh
+  }
+`
+
 type InvestmentsPanelProps = {
   fragmentRef: investmentsPanelFragment$key
 }
 
 export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
   const data = useFragment(InvestmentsPanelFragment, fragmentRef)
+  const environment = useRelayEnvironment()
+
+  const [commitRefreshMutation, isRefreshInFlight] =
+    useMutation<investmentsPanelRefreshMutation>(
+      InvestmentsPanelRefreshMutation,
+    )
 
   const { formatCurrencyWithPrivacyMode } = useCurrency()
+
+  const handleRefresh = () => {
+    commitRefreshMutation({
+      variables: {},
+      onCompleted: (data, errors) => {
+        const result = { status: 'success' as const, data, errors }
+        match(result)
+          .with({ status: 'success', errors: null }, () => {
+            // Invalidate the Relay store to refetch all queries
+            commitLocalUpdate(environment, (store) => {
+              store.invalidateStore()
+            })
+            toast.success('Investments refreshed successfully!')
+          })
+          .with({ status: 'success' }, ({ errors }) => {
+            toast.error(
+              `Refresh failed: ${errors?.[0]?.message ?? 'Unknown error'}`,
+            )
+          })
+          .exhaustive()
+      },
+      onError: (error) => {
+        toast.error(`Refresh failed: ${error.message}`)
+      },
+    })
+  }
 
   const groupedInvestments = useMemo(
     () =>
@@ -92,8 +133,10 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
           nativeButton={true}
           size="icon-xl"
           className="rounded-full"
+          onClick={handleRefresh}
+          disabled={isRefreshInFlight}
         >
-          <RefreshCwIcon />
+          <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
         </Button>
         <Link
           from={'/household/$householdId/investments'}
