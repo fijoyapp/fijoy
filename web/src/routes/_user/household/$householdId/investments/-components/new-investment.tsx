@@ -602,6 +602,7 @@ export function NewInvestment({
                       currency={currencyCode}
                       onBlur={field.handleBlur}
                       aria-invalid={isInvalid}
+                      decimalScale={8}
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
