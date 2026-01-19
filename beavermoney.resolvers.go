@@ -290,18 +290,10 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 		}, nil
 	}
 
-	categoryID, err := client.TransactionCategory.Create().
-		SetHouseholdID(householdID).
-		SetName("Setup").
-		SetType(transactioncategory.TypeSetup).
-		OnConflict(
-			sql.ConflictColumns(
-				transactioncategory.FieldName,
-				transactioncategory.FieldHouseholdID,
-			),
-		).
-		Ignore().
-		ID(ctx)
+	categoryID, err := client.TransactionCategory.
+		Query().
+		Where(transactioncategory.NameEQ("Setup")).
+		OnlyID(ctx)
 	if err != nil {
 		return nil, err
 	}
