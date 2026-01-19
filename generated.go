@@ -225,6 +225,7 @@ type ComplexityRoot struct {
 		CreateTransactionCategory func(childComplexity int, input ent.CreateTransactionCategoryInput) int
 		CreateTransfer            func(childComplexity int, input CreateTransferInputCustom) int
 		MoveInvestment            func(childComplexity int, input MoveInvestmentInputCustom) int
+		Refresh                   func(childComplexity int) int
 		SellInvestment            func(childComplexity int, input SellInvestmentInputCustom) int
 	}
 
@@ -399,6 +400,7 @@ type MutationResolver interface {
 	BuyInvestment(ctx context.Context, input BuyInvestmentInputCustom) (*ent.TransactionEdge, error)
 	SellInvestment(ctx context.Context, input SellInvestmentInputCustom) (*ent.TransactionEdge, error)
 	MoveInvestment(ctx context.Context, input MoveInvestmentInputCustom) (*ent.TransactionEdge, error)
+	Refresh(ctx context.Context) (bool, error)
 }
 type QueryResolver interface {
 	Node(ctx context.Context, id int) (ent.Noder, error)
@@ -1257,6 +1259,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.MoveInvestment(childComplexity, args["input"].(MoveInvestmentInputCustom)), true
+	case "Mutation.refresh":
+		if e.complexity.Mutation.Refresh == nil {
+			break
+		}
+
+		return e.complexity.Mutation.Refresh(childComplexity), true
 	case "Mutation.sellInvestment":
 		if e.complexity.Mutation.SellInvestment == nil {
 			break
@@ -6728,6 +6736,35 @@ func (ec *executionContext) fieldContext_Mutation_moveInvestment(ctx context.Con
 	if fc.Args, err = ec.field_Mutation_moveInvestment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_refresh(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_refresh,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Mutation().Refresh(ctx)
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_refresh(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -20464,6 +20501,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "moveInvestment":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_moveInvestment(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "refresh":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_refresh(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
