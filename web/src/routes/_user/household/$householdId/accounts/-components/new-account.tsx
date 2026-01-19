@@ -161,10 +161,9 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
     },
   })
 
-  const currencyCode = useStore(
-    form.store,
-    (state) => state.values.currencyCode,
-  )
+  const currencyCode = useStore(form.store, (state) => {
+    return state.values.currencyCode || household.currency.code
+  })
 
   return (
     <Card className="w-full">
