@@ -1244,6 +1244,11 @@ func (r *queryResolver) FinancialReport(ctx context.Context, period TimePeriodIn
 	}, nil
 }
 
+// NetWorthOverTime is the resolver for the netWorthOverTime field.
+func (r *queryResolver) NetWorthOverTime(ctx context.Context, period TimePeriodInput) ([]*NetWorthDataPoint, error) {
+	panic(fmt.Errorf("not implemented: NetWorthOverTime - netWorthOverTime"))
+}
+
 // FinancialReport returns FinancialReportResolver implementation.
 func (r *Resolver) FinancialReport() FinancialReportResolver { return &financialReportResolver{r} }
 

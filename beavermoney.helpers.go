@@ -187,18 +187,18 @@ func (r *financialReportResolver) aggregateByCategoryType(
 
 func parseTimePeriod(period TimePeriodInput) (time.Time, time.Time) {
 	// If dates provided, use them directly (client sends UTC)
-	if period.StartDate != nil && period.EndDate != nil {
-		return *period.StartDate, *period.EndDate
+	if !period.StartDate.IsZero() && !period.EndDate.IsZero() {
+		return period.StartDate, period.EndDate
 	}
 
 	// If only startDate, use it to now
-	if period.StartDate != nil {
-		return *period.StartDate, time.Now()
+	if !period.StartDate.IsZero() {
+		return period.StartDate, time.Now()
 	}
 
 	// If only endDate, use zero time (all time) to endDate
-	if period.EndDate != nil {
-		return time.Time{}, *period.EndDate
+	if !period.EndDate.IsZero() {
+		return time.Time{}, period.EndDate
 	}
 
 	// Default: all time
