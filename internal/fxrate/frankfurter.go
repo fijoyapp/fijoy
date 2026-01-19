@@ -175,13 +175,5 @@ func (p *FrankfurterProvider) GetRates(
 
 // joinCurrencies joins currency codes with commas.
 func joinCurrencies(currencies []string) string {
-	if len(currencies) == 0 {
-		return ""
-	}
-	var result strings.Builder
-	result.WriteString(currencies[0])
-	for i := 1; i < len(currencies); i++ {
-		result.WriteString("," + currencies[i])
-	}
-	return result.String()
+	return strings.Join(currencies, ",")
 }
