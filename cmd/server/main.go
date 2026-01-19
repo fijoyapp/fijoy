@@ -58,11 +58,6 @@ func main() {
 	defer entClient.Close() //nolint:errcheck
 	defer db.Close()        //nolint:errcheck
 
-	// TODO: remove this when we go to production
-	if err := database.ResetSchema(ctx, db); err != nil {
-		logger.Warn("failed to reset schema", slog.String("error", err.Error()))
-	}
-
 	// Run migrations
 	if err := database.Migrate(db, logger); err != nil {
 		panic(err)
@@ -127,10 +122,9 @@ func main() {
 		"/auth/{provider}/callback",
 		func(res http.ResponseWriter, req *http.Request) {
 			p := req.PathValue("provider")
-			// TODO: set this to local only when we go to production
-			if p == "local" {
+			if !cfg.IsProd && p == "local" {
 				userID := entClient.User.Query().
-					Where(user.EmailEQ("joey@itsjoeoui.com")).
+					Where(user.EmailEQ("joey@beavermoney.app")).
 					OnlyIDX(contextkeys.NewPrivacyBypassContext(ctx))
 
 				_, tokenString, _ := tokenAuth.Encode(

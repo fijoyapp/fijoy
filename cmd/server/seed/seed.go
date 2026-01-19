@@ -25,7 +25,7 @@ func Seed(
 	marketClient *market.Client,
 ) error {
 	alreadySeeded := entClient.User.Query().
-		Where(user.EmailEQ("joey@itsjoeoui.com")).
+		Where(user.EmailEQ("joey@beavermoney.app")).
 		ExistX(contextkeys.NewPrivacyBypassContext(ctx))
 	if alreadySeeded {
 		return nil
@@ -41,7 +41,7 @@ func Seed(
 	}
 
 	joey := entClient.User.Create().
-		SetEmail("joey@itsjoeoui.com").
+		SetEmail("joey@beavermoney.app").
 		SetName("Joey").
 		SaveX(ctx)
 

@@ -1,7 +1,6 @@
 package database
 
 import (
-	"context"
 	"database/sql"
 	"log/slog"
 
@@ -48,14 +47,4 @@ func Migrate(db *sql.DB, logger *slog.Logger) error {
 
 	logger.Info("database migrated successfully")
 	return nil
-}
-
-// ResetSchema drops and recreates the public schema.
-// WARNING: This is destructive and should only be used in development.
-func ResetSchema(ctx context.Context, db *sql.DB) error {
-	_, err := db.ExecContext(
-		ctx,
-		"DROP SCHEMA public CASCADE; CREATE SCHEMA public;",
-	)
-	return err
 }
