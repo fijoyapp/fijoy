@@ -2,7 +2,7 @@ import { commitLocalUpdate, graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
-import { capitalize, groupBy, map } from 'lodash-es'
+import { groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
@@ -172,7 +172,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
           return (
             <AccordionItem value={account.id} key={account.id}>
               <AccordionTrigger className="cursor-pointer justify-normal gap-2 hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-0">
-                <span>{capitalize(account.name)}</span>
+                <span>{account.name}</span>
                 <span className="grow"></span>
                 <span className="mr-3 font-mono">
                   {formatCurrencyWithPrivacyMode({
