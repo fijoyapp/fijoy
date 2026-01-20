@@ -125,12 +125,10 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
 
   // Filter accounts - only investment accounts
   const investmentAccounts =
-    data.accounts.edges
-      ?.map((account) => {
-        invariant(account?.node, 'Account node is null')
-        return account.node
-      })
-      .filter((account) => account.type === 'investment') ?? []
+    data.accounts.edges?.map((account) => {
+      invariant(account?.node, 'Account node is null')
+      return account.node
+    }) ?? []
 
   // Find "Buy" category
   const buyCategory = data.transactionCategories.edges

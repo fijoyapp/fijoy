@@ -118,12 +118,10 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
 
   // Filter accounts - show all non-investment accounts
   const availableAccounts =
-    data.accounts.edges
-      ?.map((account) => {
-        invariant(account?.node, 'Account node is null')
-        return account.node
-      })
-      .filter((account) => account.type !== 'investment') ?? []
+    data.accounts.edges?.map((account) => {
+      invariant(account?.node, 'Account node is null')
+      return account.node
+    }) ?? []
 
   // Filter categories - only expense categories
   const expenseCategories =
