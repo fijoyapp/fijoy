@@ -122,8 +122,7 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
       ?.map((account) => {
         invariant(account?.node, 'Account node is null')
         return account.node
-      })
-      .filter((account) => account.type !== 'investment') ?? []
+      }) ?? []
 
   // Filter categories - only income categories
   const incomeCategories =

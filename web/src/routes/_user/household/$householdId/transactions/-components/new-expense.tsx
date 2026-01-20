@@ -122,8 +122,7 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
       ?.map((account) => {
         invariant(account?.node, 'Account node is null')
         return account.node
-      })
-      .filter((account) => account.type !== 'investment') ?? []
+      }) ?? []
 
   // Filter categories - only expense categories
   const expenseCategories =
