@@ -6,6 +6,7 @@ function Spinner({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
     <HugeiconsIcon
       icon={Loading03Icon}
+      //@ts-expect-error wtf
       strokeWidth={2}
       role="status"
       aria-label="Loading"
