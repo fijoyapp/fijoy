@@ -4,7 +4,7 @@ import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
 import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import currency from 'currency.js'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
@@ -72,6 +72,8 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const [commitRefreshMutation, isRefreshInFlight] =
     useMutation<accountsPanelRefreshMutation>(AccountsPanelRefreshMutation)
 
+  const [displayIndex, setDisplayIndex] = useState(0)
+
   const { formatCurrencyWithPrivacyMode } = useCurrency()
 
   const handleRefresh = () => {
@@ -111,14 +113,41 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   const { household } = useHousehold()
 
-  const netWorth = useMemo(() => {
-    return (data.accounts.edges ?? [])
+  const displayOptions = useMemo(() => {
+    const assets = (data.accounts.edges ?? [])
+      .filter((edge) => {
+        invariant(edge?.node, 'Account node is null')
+        return edge.node.type !== 'liability'
+      })
       .map((edge) => {
         invariant(edge?.node, 'Account node is null')
         return currency(edge.node.valueInHouseholdCurrency)
       })
       .reduce((a, b) => a.add(b), currency(0))
+
+    const liabilities = (data.accounts.edges ?? [])
+      .filter((edge) => {
+        invariant(edge?.node, 'Account node is null')
+        return edge.node.type === 'liability'
+      })
+      .map((edge) => {
+        invariant(edge?.node, 'Account node is null')
+        return currency(edge.node.valueInHouseholdCurrency)
+      })
+      .reduce((a, b) => a.add(b), currency(0))
+
+    const netWorth = assets.add(liabilities) // liabilities are negative
+
+    return [
+      { label: 'Net Worth', value: netWorth },
+      { label: 'Assets', value: assets },
+      { label: 'Liabilities', value: liabilities },
+    ]
   }, [data.accounts])
+
+  const cycleDisplay = () => {
+    setDisplayIndex((prev) => (prev + 1) % displayOptions.length)
+  }
 
   return (
     <Fragment>
@@ -143,13 +172,16 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           </Button>
         </Link>
       </div>
-      <Item variant="outline" className="">
+      <Item variant="outline" className="cursor-pointer" onClick={cycleDisplay}>
         <ItemContent>
-          <ItemDescription>Net Worth</ItemDescription>
+          <ItemDescription>
+            {displayOptions[displayIndex].label}
+          </ItemDescription>
           <ItemTitle className="text-2xl">
             {formatCurrencyWithPrivacyMode({
-              value: netWorth,
+              value: displayOptions[displayIndex].value,
               currencyCode: household.currency.code,
+              liability: displayIndex === 2, // Show liability formatting for Total Liabilities
             })}
           </ItemTitle>
         </ItemContent>
