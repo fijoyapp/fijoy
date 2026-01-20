@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<024cde3ac935da24882e810b4da1c72c>>
+ * @generated SignedSource<<c2545ed725836e1e92249e6b3ca6d06b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,17 +24,24 @@ var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v1 = [
+v2 = [
   {
     "kind": "Literal",
     "name": "symbol",
     "value": ""
   }
 ],
-v2 = [
+v3 = [
   {
     "alias": null,
     "args": null,
@@ -56,7 +63,7 @@ v2 = [
     "name": "exchange",
     "storageKey": null
   },
-  (v0/*: any*/),
+  (v1/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -121,13 +128,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
+                  (v0/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -135,7 +136,40 @@ return {
                     "name": "type",
                     "storageKey": null
                   },
-                  (v0/*: any*/)
+                  (v1/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "icon",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "value",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Currency",
+                    "kind": "LinkedField",
+                    "name": "currency",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "code",
+                        "storageKey": null
+                      },
+                      (v0/*: any*/)
+                    ],
+                    "storageKey": null
+                  }
                 ],
                 "storageKey": null
               }
@@ -147,33 +181,33 @@ return {
       },
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "StockQuoteResult",
         "kind": "LinkedField",
         "name": "stockQuote",
         "plural": false,
-        "selections": (v2/*: any*/),
+        "selections": (v3/*: any*/),
         "storageKey": "stockQuote(symbol:\"\")"
       },
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v2/*: any*/),
         "concreteType": "CryptoQuoteResult",
         "kind": "LinkedField",
         "name": "cryptoQuote",
         "plural": false,
-        "selections": (v2/*: any*/),
+        "selections": (v3/*: any*/),
         "storageKey": "cryptoQuote(symbol:\"\")"
       }
     ]
   },
   "params": {
-    "cacheID": "cb81f547cb73c7780b82e896c208d50c",
+    "cacheID": "1c30c15f5537ed030d2e90dbd58c7c65",
     "id": null,
     "metadata": {},
     "name": "newInvestmentQuery",
     "operationKind": "query",
-    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n  ...newInvestmentStockQuoteFragment\n  ...newInvestmentCryptoQuoteFragment\n}\n\nfragment newInvestmentCryptoQuoteFragment on Query {\n  cryptoQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n\nfragment newInvestmentFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        type\n        name\n      }\n    }\n  }\n}\n\nfragment newInvestmentStockQuoteFragment on Query {\n  stockQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n"
+    "text": "query newInvestmentQuery {\n  ...newInvestmentFragment\n  ...newInvestmentStockQuoteFragment\n  ...newInvestmentCryptoQuoteFragment\n}\n\nfragment newInvestmentCryptoQuoteFragment on Query {\n  cryptoQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n\nfragment newInvestmentFragment on Query {\n  accounts {\n    edges {\n      node {\n        id\n        type\n        name\n        icon\n        value\n        currency {\n          code\n          id\n        }\n      }\n    }\n  }\n}\n\nfragment newInvestmentStockQuoteFragment on Query {\n  stockQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n"
   }
 };
 })();

@@ -47,7 +47,11 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getLogoTickerURL, getLogoCryptoURL } from '@/lib/logo'
+import {
+  getLogoTickerURL,
+  getLogoCryptoURL,
+  getLogoDomainURL,
+} from '@/lib/logo'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
@@ -78,6 +82,11 @@ const newInvestmentFragment = graphql`
           id
           type
           name
+          icon
+          value
+          currency {
+            code
+          }
         }
       }
     }
@@ -157,7 +166,7 @@ export function NewInvestment({
 
   const navigate = useNavigate()
 
-  const { formatCurrency } = useCurrency()
+  const { formatCurrency, formatCurrencyWithPrivacyMode } = useCurrency()
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newInvestmentMutation>(newInvestmentMutation)
@@ -295,12 +304,37 @@ export function NewInvestment({
                       <ComboboxContent>
                         <ComboboxEmpty>No items found.</ComboboxEmpty>
                         <ComboboxList>
-                          {(item: string) => (
-                            <ComboboxItem key={item} value={item}>
-                              {investmentAccounts.find((acc) => acc.id === item)
-                                ?.name || ''}
-                            </ComboboxItem>
-                          )}
+                          {(item: string) => {
+                            const account = investmentAccounts.find(
+                              (acc) => acc.id === item,
+                            )
+                            return (
+                              <ComboboxItem
+                                key={item}
+                                value={item}
+                                className="flex items-center gap-2"
+                              >
+                                <Avatar className="size-5">
+                                  <AvatarImage
+                                    src={getLogoDomainURL(account?.icon || '')}
+                                    alt={account?.icon || 'unknown logo'}
+                                  />
+                                  <AvatarFallback className="text-[8px]">
+                                    {account?.name}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="flex-1">{account?.name}</span>
+                                <span className="text-muted-foreground font-mono">
+                                  {account &&
+                                    formatCurrencyWithPrivacyMode({
+                                      value: account.value,
+                                      currencyCode: account.currency.code,
+                                      liability: account.type === 'liability',
+                                    })}
+                                </span>
+                              </ComboboxItem>
+                            )
+                          }}
                         </ComboboxList>
                       </ComboboxContent>
                     </Combobox>

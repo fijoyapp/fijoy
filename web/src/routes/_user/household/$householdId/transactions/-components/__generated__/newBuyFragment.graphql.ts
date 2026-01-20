@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1596ff243bc669f2afbfdc50618ce46f>>
+ * @generated SignedSource<<0944e0dcb82118929c74576900dd701e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,6 +20,7 @@ export type newBuyFragment$data = {
         readonly currency: {
           readonly code: string;
         };
+        readonly icon: string | null | undefined;
         readonly id: string;
         readonly investments: ReadonlyArray<{
           readonly id: string;
@@ -29,6 +30,7 @@ export type newBuyFragment$data = {
         }> | null | undefined;
         readonly name: string;
         readonly type: AccountType;
+        readonly value: string;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -103,6 +105,20 @@ return {
                 (v0/*: any*/),
                 (v1/*: any*/),
                 (v2/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "icon",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "value",
+                  "storageKey": null
+                },
                 {
                   "alias": null,
                   "args": null,
@@ -193,6 +209,6 @@ return {
 };
 })();
 
-(node as any).hash = "46a5b5e70b909a8f5648a47733885a9f";
+(node as any).hash = "51d5b0af45956c6691b9df2faff47ce4";
 
 export default node;
