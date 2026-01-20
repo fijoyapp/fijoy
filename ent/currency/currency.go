@@ -22,6 +22,10 @@ const (
 	EdgeTransactionEntries = "transaction_entries"
 	// EdgeHouseholds holds the string denoting the households edge name in mutations.
 	EdgeHouseholds = "households"
+	// EdgeFxRateCachesFrom holds the string denoting the fx_rate_caches_from edge name in mutations.
+	EdgeFxRateCachesFrom = "fx_rate_caches_from"
+	// EdgeFxRateCachesTo holds the string denoting the fx_rate_caches_to edge name in mutations.
+	EdgeFxRateCachesTo = "fx_rate_caches_to"
 	// Table holds the table name of the currency in the database.
 	Table = "currencies"
 	// AccountsTable is the table that holds the accounts relation/edge.
@@ -52,6 +56,20 @@ const (
 	HouseholdsInverseTable = "households"
 	// HouseholdsColumn is the table column denoting the households relation/edge.
 	HouseholdsColumn = "currency_id"
+	// FxRateCachesFromTable is the table that holds the fx_rate_caches_from relation/edge.
+	FxRateCachesFromTable = "fx_rate_caches"
+	// FxRateCachesFromInverseTable is the table name for the FXRateCache entity.
+	// It exists in this package in order to avoid circular dependency with the "fxratecache" package.
+	FxRateCachesFromInverseTable = "fx_rate_caches"
+	// FxRateCachesFromColumn is the table column denoting the fx_rate_caches_from relation/edge.
+	FxRateCachesFromColumn = "from_currency_id"
+	// FxRateCachesToTable is the table that holds the fx_rate_caches_to relation/edge.
+	FxRateCachesToTable = "fx_rate_caches"
+	// FxRateCachesToInverseTable is the table name for the FXRateCache entity.
+	// It exists in this package in order to avoid circular dependency with the "fxratecache" package.
+	FxRateCachesToInverseTable = "fx_rate_caches"
+	// FxRateCachesToColumn is the table column denoting the fx_rate_caches_to relation/edge.
+	FxRateCachesToColumn = "to_currency_id"
 )
 
 // Columns holds all SQL columns for currency fields.
@@ -143,6 +161,34 @@ func ByHouseholds(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newHouseholdsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByFxRateCachesFromCount orders the results by fx_rate_caches_from count.
+func ByFxRateCachesFromCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFxRateCachesFromStep(), opts...)
+	}
+}
+
+// ByFxRateCachesFrom orders the results by fx_rate_caches_from terms.
+func ByFxRateCachesFrom(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFxRateCachesFromStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByFxRateCachesToCount orders the results by fx_rate_caches_to count.
+func ByFxRateCachesToCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFxRateCachesToStep(), opts...)
+	}
+}
+
+// ByFxRateCachesTo orders the results by fx_rate_caches_to terms.
+func ByFxRateCachesTo(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFxRateCachesToStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newAccountsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -169,5 +215,19 @@ func newHouseholdsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(HouseholdsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, HouseholdsTable, HouseholdsColumn),
+	)
+}
+func newFxRateCachesFromStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FxRateCachesFromInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, FxRateCachesFromTable, FxRateCachesFromColumn),
+	)
+}
+func newFxRateCachesToStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FxRateCachesToInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, FxRateCachesToTable, FxRateCachesToColumn),
 	)
 }

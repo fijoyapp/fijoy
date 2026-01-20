@@ -104,6 +104,46 @@ func (_m *Currency) Households(ctx context.Context) (result []*Household, err er
 	return result, err
 }
 
+func (_m *Currency) FxRateCachesFrom(ctx context.Context) (result []*FXRateCache, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedFxRateCachesFrom(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.FxRateCachesFromOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryFxRateCachesFrom().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *Currency) FxRateCachesTo(ctx context.Context) (result []*FXRateCache, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = _m.NamedFxRateCachesTo(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = _m.Edges.FxRateCachesToOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = _m.QueryFxRateCachesTo().All(ctx)
+	}
+	return result, err
+}
+
+func (_m *FXRateCache) FromCurrency(ctx context.Context) (*Currency, error) {
+	result, err := _m.Edges.FromCurrencyOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryFromCurrency().Only(ctx)
+	}
+	return result, err
+}
+
+func (_m *FXRateCache) ToCurrency(ctx context.Context) (*Currency, error) {
+	result, err := _m.Edges.ToCurrencyOrErr()
+	if IsNotLoaded(err) {
+		result, err = _m.QueryToCurrency().Only(ctx)
+	}
+	return result, err
+}
+
 func (_m *Household) Currency(ctx context.Context) (*Currency, error) {
 	result, err := _m.Edges.CurrencyOrErr()
 	if IsNotLoaded(err) {

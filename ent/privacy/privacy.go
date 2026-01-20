@@ -135,6 +135,30 @@ func (f AccountMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AccountMutation", m)
 }
 
+// The CryptoQuoteCacheQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CryptoQuoteCacheQueryRuleFunc func(context.Context, *ent.CryptoQuoteCacheQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CryptoQuoteCacheQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CryptoQuoteCacheQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CryptoQuoteCacheQuery", q)
+}
+
+// The CryptoQuoteCacheMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CryptoQuoteCacheMutationRuleFunc func(context.Context, *ent.CryptoQuoteCacheMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CryptoQuoteCacheMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CryptoQuoteCacheMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CryptoQuoteCacheMutation", m)
+}
+
 // The CurrencyQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CurrencyQueryRuleFunc func(context.Context, *ent.CurrencyQuery) error
@@ -157,6 +181,30 @@ func (f CurrencyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CurrencyMutation", m)
+}
+
+// The FXRateCacheQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FXRateCacheQueryRuleFunc func(context.Context, *ent.FXRateCacheQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FXRateCacheQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.FXRateCacheQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.FXRateCacheQuery", q)
+}
+
+// The FXRateCacheMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FXRateCacheMutationRuleFunc func(context.Context, *ent.FXRateCacheMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FXRateCacheMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.FXRateCacheMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FXRateCacheMutation", m)
 }
 
 // The HouseholdQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -229,6 +277,30 @@ func (f InvestmentLotMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InvestmentLotMutation", m)
+}
+
+// The StockQuoteCacheQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type StockQuoteCacheQueryRuleFunc func(context.Context, *ent.StockQuoteCacheQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f StockQuoteCacheQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.StockQuoteCacheQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.StockQuoteCacheQuery", q)
+}
+
+// The StockQuoteCacheMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type StockQuoteCacheMutationRuleFunc func(context.Context, *ent.StockQuoteCacheMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f StockQuoteCacheMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.StockQuoteCacheMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockQuoteCacheMutation", m)
 }
 
 // The TransactionQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -412,13 +484,19 @@ func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *ent.AccountQuery:
 		return q.Filter(), nil
+	case *ent.CryptoQuoteCacheQuery:
+		return q.Filter(), nil
 	case *ent.CurrencyQuery:
+		return q.Filter(), nil
+	case *ent.FXRateCacheQuery:
 		return q.Filter(), nil
 	case *ent.HouseholdQuery:
 		return q.Filter(), nil
 	case *ent.InvestmentQuery:
 		return q.Filter(), nil
 	case *ent.InvestmentLotQuery:
+		return q.Filter(), nil
+	case *ent.StockQuoteCacheQuery:
 		return q.Filter(), nil
 	case *ent.TransactionQuery:
 		return q.Filter(), nil
@@ -441,13 +519,19 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *ent.AccountMutation:
 		return m.Filter(), nil
+	case *ent.CryptoQuoteCacheMutation:
+		return m.Filter(), nil
 	case *ent.CurrencyMutation:
+		return m.Filter(), nil
+	case *ent.FXRateCacheMutation:
 		return m.Filter(), nil
 	case *ent.HouseholdMutation:
 		return m.Filter(), nil
 	case *ent.InvestmentMutation:
 		return m.Filter(), nil
 	case *ent.InvestmentLotMutation:
+		return m.Filter(), nil
+	case *ent.StockQuoteCacheMutation:
 		return m.Filter(), nil
 	case *ent.TransactionMutation:
 		return m.Filter(), nil

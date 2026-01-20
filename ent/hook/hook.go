@@ -21,6 +21,18 @@ func (f AccountFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, err
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccountMutation", m)
 }
 
+// The CryptoQuoteCacheFunc type is an adapter to allow the use of ordinary
+// function as CryptoQuoteCache mutator.
+type CryptoQuoteCacheFunc func(context.Context, *ent.CryptoQuoteCacheMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CryptoQuoteCacheFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CryptoQuoteCacheMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CryptoQuoteCacheMutation", m)
+}
+
 // The CurrencyFunc type is an adapter to allow the use of ordinary
 // function as Currency mutator.
 type CurrencyFunc func(context.Context, *ent.CurrencyMutation) (ent.Value, error)
@@ -31,6 +43,18 @@ func (f CurrencyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CurrencyMutation", m)
+}
+
+// The FXRateCacheFunc type is an adapter to allow the use of ordinary
+// function as FXRateCache mutator.
+type FXRateCacheFunc func(context.Context, *ent.FXRateCacheMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FXRateCacheFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FXRateCacheMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FXRateCacheMutation", m)
 }
 
 // The HouseholdFunc type is an adapter to allow the use of ordinary
@@ -67,6 +91,18 @@ func (f InvestmentLotFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.InvestmentLotMutation", m)
+}
+
+// The StockQuoteCacheFunc type is an adapter to allow the use of ordinary
+// function as StockQuoteCache mutator.
+type StockQuoteCacheFunc func(context.Context, *ent.StockQuoteCacheMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StockQuoteCacheFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockQuoteCacheMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockQuoteCacheMutation", m)
 }
 
 // The TransactionFunc type is an adapter to allow the use of ordinary

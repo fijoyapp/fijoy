@@ -29,6 +29,16 @@ func (r *accountResolver) FxRate(ctx context.Context, obj *ent.Account) (string,
 	return obj.FxRate.String(), nil
 }
 
+// Value is the resolver for the value field.
+func (r *cryptoQuoteCacheResolver) Value(ctx context.Context, obj *ent.CryptoQuoteCache) (float64, error) {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+
+// Value is the resolver for the value field.
+func (r *fXRateCacheResolver) Value(ctx context.Context, obj *ent.FXRateCache) (float64, error) {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *investmentResolver) Amount(ctx context.Context, obj *ent.Investment) (string, error) {
 	return obj.Amount.String(), nil
@@ -107,6 +117,11 @@ func (r *queryResolver) TransactionEntries(ctx context.Context) ([]*ent.Transact
 // UserHouseholds is the resolver for the userHouseholds field.
 func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error) {
 	return r.entClient.UserHousehold.Query().All(ctx)
+}
+
+// Value is the resolver for the value field.
+func (r *stockQuoteCacheResolver) Value(ctx context.Context, obj *ent.StockQuoteCache) (float64, error) {
+	panic(fmt.Errorf("not implemented: Value - value"))
 }
 
 // Amount is the resolver for the amount field.
@@ -305,6 +320,86 @@ func (r *createTransactionEntryInputResolver) Amount(ctx context.Context, obj *e
 
 	obj.Amount = dec
 	return nil
+}
+
+// Value is the resolver for the value field.
+func (r *cryptoQuoteCacheWhereInputResolver) Value(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+
+// ValueNeq is the resolver for the valueNEQ field.
+func (r *cryptoQuoteCacheWhereInputResolver) ValueNeq(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueNeq - valueNEQ"))
+}
+
+// ValueIn is the resolver for the valueIn field.
+func (r *cryptoQuoteCacheWhereInputResolver) ValueIn(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data []float64) error {
+	panic(fmt.Errorf("not implemented: ValueIn - valueIn"))
+}
+
+// ValueNotIn is the resolver for the valueNotIn field.
+func (r *cryptoQuoteCacheWhereInputResolver) ValueNotIn(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data []float64) error {
+	panic(fmt.Errorf("not implemented: ValueNotIn - valueNotIn"))
+}
+
+// ValueGt is the resolver for the valueGT field.
+func (r *cryptoQuoteCacheWhereInputResolver) ValueGt(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueGt - valueGT"))
+}
+
+// ValueGte is the resolver for the valueGTE field.
+func (r *cryptoQuoteCacheWhereInputResolver) ValueGte(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueGte - valueGTE"))
+}
+
+// ValueLt is the resolver for the valueLT field.
+func (r *cryptoQuoteCacheWhereInputResolver) ValueLt(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueLt - valueLT"))
+}
+
+// ValueLte is the resolver for the valueLTE field.
+func (r *cryptoQuoteCacheWhereInputResolver) ValueLte(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueLte - valueLTE"))
+}
+
+// Value is the resolver for the value field.
+func (r *fXRateCacheWhereInputResolver) Value(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+
+// ValueNeq is the resolver for the valueNEQ field.
+func (r *fXRateCacheWhereInputResolver) ValueNeq(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueNeq - valueNEQ"))
+}
+
+// ValueIn is the resolver for the valueIn field.
+func (r *fXRateCacheWhereInputResolver) ValueIn(ctx context.Context, obj *ent.FXRateCacheWhereInput, data []float64) error {
+	panic(fmt.Errorf("not implemented: ValueIn - valueIn"))
+}
+
+// ValueNotIn is the resolver for the valueNotIn field.
+func (r *fXRateCacheWhereInputResolver) ValueNotIn(ctx context.Context, obj *ent.FXRateCacheWhereInput, data []float64) error {
+	panic(fmt.Errorf("not implemented: ValueNotIn - valueNotIn"))
+}
+
+// ValueGt is the resolver for the valueGT field.
+func (r *fXRateCacheWhereInputResolver) ValueGt(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueGt - valueGT"))
+}
+
+// ValueGte is the resolver for the valueGTE field.
+func (r *fXRateCacheWhereInputResolver) ValueGte(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueGte - valueGTE"))
+}
+
+// ValueLt is the resolver for the valueLT field.
+func (r *fXRateCacheWhereInputResolver) ValueLt(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueLt - valueLT"))
+}
+
+// ValueLte is the resolver for the valueLTE field.
+func (r *fXRateCacheWhereInputResolver) ValueLte(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueLte - valueLTE"))
 }
 
 // Amount is the resolver for the amount field.
@@ -507,6 +602,46 @@ func (r *investmentWhereInputResolver) ValueLte(ctx context.Context, obj *ent.In
 	panic(fmt.Errorf("not implemented: ValueLte - valueLTE"))
 }
 
+// Value is the resolver for the value field.
+func (r *stockQuoteCacheWhereInputResolver) Value(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: Value - value"))
+}
+
+// ValueNeq is the resolver for the valueNEQ field.
+func (r *stockQuoteCacheWhereInputResolver) ValueNeq(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueNeq - valueNEQ"))
+}
+
+// ValueIn is the resolver for the valueIn field.
+func (r *stockQuoteCacheWhereInputResolver) ValueIn(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data []float64) error {
+	panic(fmt.Errorf("not implemented: ValueIn - valueIn"))
+}
+
+// ValueNotIn is the resolver for the valueNotIn field.
+func (r *stockQuoteCacheWhereInputResolver) ValueNotIn(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data []float64) error {
+	panic(fmt.Errorf("not implemented: ValueNotIn - valueNotIn"))
+}
+
+// ValueGt is the resolver for the valueGT field.
+func (r *stockQuoteCacheWhereInputResolver) ValueGt(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueGt - valueGT"))
+}
+
+// ValueGte is the resolver for the valueGTE field.
+func (r *stockQuoteCacheWhereInputResolver) ValueGte(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueGte - valueGTE"))
+}
+
+// ValueLt is the resolver for the valueLT field.
+func (r *stockQuoteCacheWhereInputResolver) ValueLt(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueLt - valueLT"))
+}
+
+// ValueLte is the resolver for the valueLTE field.
+func (r *stockQuoteCacheWhereInputResolver) ValueLte(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error {
+	panic(fmt.Errorf("not implemented: ValueLte - valueLTE"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *transactionEntryWhereInputResolver) Amount(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
 	panic(fmt.Errorf("not implemented: Amount - amount"))
@@ -565,6 +700,12 @@ func (r *updateInvestmentLotInputResolver) Price(ctx context.Context, obj *ent.U
 // Account returns AccountResolver implementation.
 func (r *Resolver) Account() AccountResolver { return &accountResolver{r} }
 
+// CryptoQuoteCache returns CryptoQuoteCacheResolver implementation.
+func (r *Resolver) CryptoQuoteCache() CryptoQuoteCacheResolver { return &cryptoQuoteCacheResolver{r} }
+
+// FXRateCache returns FXRateCacheResolver implementation.
+func (r *Resolver) FXRateCache() FXRateCacheResolver { return &fXRateCacheResolver{r} }
+
 // Investment returns InvestmentResolver implementation.
 func (r *Resolver) Investment() InvestmentResolver { return &investmentResolver{r} }
 
@@ -573,6 +714,9 @@ func (r *Resolver) InvestmentLot() InvestmentLotResolver { return &investmentLot
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
+// StockQuoteCache returns StockQuoteCacheResolver implementation.
+func (r *Resolver) StockQuoteCache() StockQuoteCacheResolver { return &stockQuoteCacheResolver{r} }
 
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
@@ -602,6 +746,16 @@ func (r *Resolver) CreateTransactionEntryInput() CreateTransactionEntryInputReso
 	return &createTransactionEntryInputResolver{r}
 }
 
+// CryptoQuoteCacheWhereInput returns CryptoQuoteCacheWhereInputResolver implementation.
+func (r *Resolver) CryptoQuoteCacheWhereInput() CryptoQuoteCacheWhereInputResolver {
+	return &cryptoQuoteCacheWhereInputResolver{r}
+}
+
+// FXRateCacheWhereInput returns FXRateCacheWhereInputResolver implementation.
+func (r *Resolver) FXRateCacheWhereInput() FXRateCacheWhereInputResolver {
+	return &fXRateCacheWhereInputResolver{r}
+}
+
 // InvestmentLotWhereInput returns InvestmentLotWhereInputResolver implementation.
 func (r *Resolver) InvestmentLotWhereInput() InvestmentLotWhereInputResolver {
 	return &investmentLotWhereInputResolver{r}
@@ -610,6 +764,11 @@ func (r *Resolver) InvestmentLotWhereInput() InvestmentLotWhereInputResolver {
 // InvestmentWhereInput returns InvestmentWhereInputResolver implementation.
 func (r *Resolver) InvestmentWhereInput() InvestmentWhereInputResolver {
 	return &investmentWhereInputResolver{r}
+}
+
+// StockQuoteCacheWhereInput returns StockQuoteCacheWhereInputResolver implementation.
+func (r *Resolver) StockQuoteCacheWhereInput() StockQuoteCacheWhereInputResolver {
+	return &stockQuoteCacheWhereInputResolver{r}
 }
 
 // TransactionEntryWhereInput returns TransactionEntryWhereInputResolver implementation.
@@ -628,17 +787,23 @@ func (r *Resolver) UpdateInvestmentLotInput() UpdateInvestmentLotInputResolver {
 }
 
 type accountResolver struct{ *Resolver }
+type cryptoQuoteCacheResolver struct{ *Resolver }
+type fXRateCacheResolver struct{ *Resolver }
 type investmentResolver struct{ *Resolver }
 type investmentLotResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type stockQuoteCacheResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
 type accountWhereInputResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
 type createInvestmentInputResolver struct{ *Resolver }
 type createInvestmentLotInputResolver struct{ *Resolver }
 type createTransactionEntryInputResolver struct{ *Resolver }
+type cryptoQuoteCacheWhereInputResolver struct{ *Resolver }
+type fXRateCacheWhereInputResolver struct{ *Resolver }
 type investmentLotWhereInputResolver struct{ *Resolver }
 type investmentWhereInputResolver struct{ *Resolver }
+type stockQuoteCacheWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }
 type updateInvestmentInputResolver struct{ *Resolver }
 type updateInvestmentLotInputResolver struct{ *Resolver }

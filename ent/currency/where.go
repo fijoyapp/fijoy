@@ -215,6 +215,52 @@ func HasHouseholdsWith(preds ...predicate.Household) predicate.Currency {
 	})
 }
 
+// HasFxRateCachesFrom applies the HasEdge predicate on the "fx_rate_caches_from" edge.
+func HasFxRateCachesFrom() predicate.Currency {
+	return predicate.Currency(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FxRateCachesFromTable, FxRateCachesFromColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFxRateCachesFromWith applies the HasEdge predicate on the "fx_rate_caches_from" edge with a given conditions (other predicates).
+func HasFxRateCachesFromWith(preds ...predicate.FXRateCache) predicate.Currency {
+	return predicate.Currency(func(s *sql.Selector) {
+		step := newFxRateCachesFromStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasFxRateCachesTo applies the HasEdge predicate on the "fx_rate_caches_to" edge.
+func HasFxRateCachesTo() predicate.Currency {
+	return predicate.Currency(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, FxRateCachesToTable, FxRateCachesToColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFxRateCachesToWith applies the HasEdge predicate on the "fx_rate_caches_to" edge with a given conditions (other predicates).
+func HasFxRateCachesToWith(preds ...predicate.FXRateCache) predicate.Currency {
+	return predicate.Currency(func(s *sql.Selector) {
+		step := newFxRateCachesToStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Currency) predicate.Currency {
 	return predicate.Currency(sql.AndPredicates(predicates...))
