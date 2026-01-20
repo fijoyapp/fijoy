@@ -62,6 +62,8 @@ const newMoveFragment = graphql`
           id
           name
           type
+          icon
+          value
           investments {
             id
             name

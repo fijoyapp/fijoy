@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<25e7fd084015880226e0d9a66a296820>>
+ * @generated SignedSource<<9c94809e3a4e67785e41415c627bb56b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,9 +19,11 @@ export type newTransferFragment$data = {
         readonly currency: {
           readonly code: string;
         };
+        readonly icon: string | null | undefined;
         readonly id: string;
         readonly name: string;
         readonly type: AccountType;
+        readonly value: string;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -99,6 +101,20 @@ return {
                 {
                   "alias": null,
                   "args": null,
+                  "kind": "ScalarField",
+                  "name": "icon",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "value",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
                   "concreteType": "Currency",
                   "kind": "LinkedField",
                   "name": "currency",
@@ -165,6 +181,6 @@ return {
 };
 })();
 
-(node as any).hash = "ad5332a9b75fac683b63cfb08663fb2d";
+(node as any).hash = "2d052903aa88a4aefbbf5c10550555f7";
 
 export default node;

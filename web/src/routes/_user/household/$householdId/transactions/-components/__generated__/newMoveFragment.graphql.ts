@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<32f8541d4b432ab871d326d0c0db8ffe>>
+ * @generated SignedSource<<ff812c06730133661c344d92cdec5dcf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type newMoveFragment$data = {
   readonly accounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly icon: string | null | undefined;
         readonly id: string;
         readonly investments: ReadonlyArray<{
           readonly id: string;
@@ -26,6 +27,7 @@ export type newMoveFragment$data = {
         }> | null | undefined;
         readonly name: string;
         readonly type: AccountType;
+        readonly value: string;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -103,6 +105,20 @@ return {
                 {
                   "alias": null,
                   "args": null,
+                  "kind": "ScalarField",
+                  "name": "icon",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "value",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
                   "concreteType": "Investment",
                   "kind": "LinkedField",
                   "name": "investments",
@@ -172,6 +188,6 @@ return {
 };
 })();
 
-(node as any).hash = "5a4591c363d1f6cf392f093090013931";
+(node as any).hash = "f4f5b116c264523974031067f1c05ba5";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<395fa17ff8d33a056ceadbf880051c50>>
+ * @generated SignedSource<<c604cc97b1c91b16b8a2de7bf06201df>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,9 +15,14 @@ export type newInvestmentFragment$data = {
   readonly accounts: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly currency: {
+          readonly code: string;
+        };
+        readonly icon: string | null | undefined;
         readonly id: string;
         readonly name: string;
         readonly type: AccountType;
+        readonly value: string;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -78,6 +83,38 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "name",
                   "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "icon",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "value",
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "Currency",
+                  "kind": "LinkedField",
+                  "name": "currency",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "code",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
                 }
               ],
               "storageKey": null
@@ -93,6 +130,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "8dff1f571af700671489023279a9ab5c";
+(node as any).hash = "b85aa0e5d2485c809ff4b41b9389acb6";
 
 export default node;
