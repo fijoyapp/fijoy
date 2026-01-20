@@ -118,11 +118,10 @@ export function NewIncome({ fragmentRef }: NewIncomeProps) {
 
   // Filter accounts - show all non-investment accounts
   const availableAccounts =
-    data.accounts.edges
-      ?.map((account) => {
-        invariant(account?.node, 'Account node is null')
-        return account.node
-      }) ?? []
+    data.accounts.edges?.map((account) => {
+      invariant(account?.node, 'Account node is null')
+      return account.node
+    }) ?? []
 
   // Filter categories - only income categories
   const incomeCategories =
