@@ -50,12 +50,10 @@ function RouteComponent() {
   })
 
   return (
-    <div className="flex h-full">
-      <div className="flex-1">
-        <Item className="p-0">
-          <LogTransaction fragmentRef={data} />
-        </Item>
-      </div>
+    <div className="flex max-h-full w-full">
+      <Item className="p-0">
+        <LogTransaction fragmentRef={data} />
+      </Item>
     </div>
   )
 }

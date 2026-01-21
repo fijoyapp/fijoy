@@ -9,6 +9,7 @@ import { NewMove } from './new-move'
 import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
 import { logTransactionFragment$key } from './__generated__/logTransactionFragment.graphql'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 
 const logTransactionFragment = graphql`
   fragment logTransactionFragment on Query {
@@ -39,50 +40,53 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
 
   return (
     <Item className="bg-muted h-full w-full gap-0 p-0">
-      <div className="flex gap-2 p-4">
-        <Button
-          size="sm"
-          variant={selectedType === 'expense' ? 'default' : 'outline'}
-          onClick={() => setSelectedType('expense')}
-        >
-          Expense
-        </Button>
-        <Button
-          size="sm"
-          variant={selectedType === 'income' ? 'default' : 'outline'}
-          onClick={() => setSelectedType('income')}
-        >
-          Income
-        </Button>
-        <Button
-          size="sm"
-          variant={selectedType === 'transfer' ? 'default' : 'outline'}
-          onClick={() => setSelectedType('transfer')}
-        >
-          Transfer
-        </Button>
-        <Button
-          size="sm"
-          variant={selectedType === 'buy' ? 'default' : 'outline'}
-          onClick={() => setSelectedType('buy')}
-        >
-          Buy
-        </Button>
-        <Button
-          size="sm"
-          variant={selectedType === 'sell' ? 'default' : 'outline'}
-          onClick={() => setSelectedType('sell')}
-        >
-          Sell
-        </Button>
-        <Button
-          size="sm"
-          variant={selectedType === 'move' ? 'default' : 'outline'}
-          onClick={() => setSelectedType('move')}
-        >
-          Move
-        </Button>
-      </div>
+      <ScrollArea className="w-full">
+        <div className="flex gap-2 p-4">
+          <Button
+            size="sm"
+            variant={selectedType === 'expense' ? 'default' : 'outline'}
+            onClick={() => setSelectedType('expense')}
+          >
+            Expense
+          </Button>
+          <Button
+            size="sm"
+            variant={selectedType === 'income' ? 'default' : 'outline'}
+            onClick={() => setSelectedType('income')}
+          >
+            Income
+          </Button>
+          <Button
+            size="sm"
+            variant={selectedType === 'transfer' ? 'default' : 'outline'}
+            onClick={() => setSelectedType('transfer')}
+          >
+            Transfer
+          </Button>
+          <Button
+            size="sm"
+            variant={selectedType === 'buy' ? 'default' : 'outline'}
+            onClick={() => setSelectedType('buy')}
+          >
+            Buy
+          </Button>
+          <Button
+            size="sm"
+            variant={selectedType === 'sell' ? 'default' : 'outline'}
+            onClick={() => setSelectedType('sell')}
+          >
+            Sell
+          </Button>
+          <Button
+            size="sm"
+            variant={selectedType === 'move' ? 'default' : 'outline'}
+            onClick={() => setSelectedType('move')}
+          >
+            Move
+          </Button>
+          <div className="px-1"></div>
+        </div>
+      </ScrollArea>
 
       {selectedType === 'expense' && <NewExpense fragmentRef={data} />}
       {selectedType === 'income' && <NewIncome fragmentRef={data} />}
