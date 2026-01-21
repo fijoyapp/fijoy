@@ -55,6 +55,7 @@ import { CommandMenu } from '@/components/command-menu'
 import { LogTransaction } from './transactions/-components/log-transaction'
 import { zodValidator } from '@tanstack/zod-adapter'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { cn } from '@/lib/utils'
 
 const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {
@@ -229,7 +230,7 @@ function RouteComponent() {
         )}
 
         {/* Desktop: Resizable & Draggable New Transaction Form */}
-        {!isMobile && search.showNewTransaction && (
+        {!isMobile && (
           <Rnd
             position={{ x: rndPosition.x, y: rndPosition.y }}
             size={{ width: rndPosition.width, height: 'auto' }}
@@ -263,7 +264,12 @@ function RouteComponent() {
             dragHandleClassName="drag-handle"
             style={{ zIndex: 50 }}
           >
-            <Item className="bg-muted h-full w-full gap-0 overflow-hidden p-0 shadow-2xl">
+            <Item
+              className={cn(
+                'bg-muted h-full w-full gap-0 overflow-hidden p-0 shadow-2xl',
+                search.showNewTransaction ? 'block' : 'hidden',
+              )}
+            >
               {/* Drag Handle Header */}
               <div className="drag-handle flex w-full cursor-move items-center justify-between border-b px-4 py-2">
                 <div className="flex items-center gap-2">
