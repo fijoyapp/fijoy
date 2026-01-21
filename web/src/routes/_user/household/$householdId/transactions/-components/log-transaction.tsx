@@ -9,7 +9,7 @@ import { NewMove } from './new-move'
 import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
 import { logTransactionFragment$key } from './__generated__/logTransactionFragment.graphql'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const logTransactionFragment = graphql`
   fragment logTransactionFragment on Query {
