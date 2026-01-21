@@ -217,6 +217,7 @@ function RouteComponent() {
           </header>
           <div className="flex flex-1 flex-col">
             <Outlet />
+            <div className="py-8"></div>
           </div>
         </SidebarInset>
         <MobileFabNav />
