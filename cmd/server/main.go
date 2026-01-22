@@ -142,6 +142,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
+	r.Use(middleware.Compress(5))
 	r.Use(httprate.LimitByIP(100, time.Minute))
 	r.Use(sentryMiddleware.Handle) // must be after Recoverer
 
