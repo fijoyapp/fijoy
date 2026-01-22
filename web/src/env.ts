@@ -11,6 +11,7 @@ export const env = createEnv({
   client: {
     VITE_SERVER_URL: z.string().min(1),
     VITE_LOGO_DEV_PUBLISHABLE_KEY: z.string().optional(),
+    VITE_SENTRY_DSN: z.string().optional(),
   },
 
   /**

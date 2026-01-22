@@ -26,6 +26,8 @@ type Config struct {
 
 	EODHDAPIKey string `env:"EODHD_API_KEY"`
 
+	SentryDSN string `env:"SENTRY_DSN"`
+
 	IsProd bool
 }
 

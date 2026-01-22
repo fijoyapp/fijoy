@@ -27,6 +27,8 @@ import (
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/getsentry/sentry-go"
+	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -45,6 +47,25 @@ func main() {
 
 	// Setup logging
 	logger := setupLogging(cfg.IsProd)
+
+	// To initialize Sentry's handler, you need to initialize Sentry itself beforehand
+	if err := sentry.Init(sentry.ClientOptions{
+		Dsn: cfg.SentryDSN,
+		// Set TracesSampleRate to 1.0 to capture 100%
+		// of transactions for tracing.
+		// We recommend adjusting this value in production,
+		TracesSampleRate: 1.0,
+		// Enable structured logs to Sentry
+		EnableLogs:     true,
+		SendDefaultPII: true,
+	}); err != nil {
+		logger.Error("Sentry initialization failed", "err", err)
+	}
+	defer sentry.Flush(time.Second)
+
+	sentryMiddleware := sentryhttp.New(sentryhttp.Options{
+		Repanic: true,
+	})
 
 	// Setup auth
 	tokenAuth := auth.NewJWTAuth(cfg.JWTSecret)
@@ -118,6 +139,8 @@ func main() {
 	}))
 
 	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(sentryMiddleware.Handle) // must be after Recoverer
 
 	// Setup GQL
 	gqlHandler := handler.NewDefaultServer(

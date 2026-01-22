@@ -8,6 +8,15 @@ import { routeTree } from './routeTree.gen'
 import './styles.css'
 import { LOCAL_STORAGE_THEME_KEY } from './constant'
 import { ThemeProvider } from '@/components/theme-provider'
+import * as Sentry from '@sentry/react'
+import { env } from './env'
+
+Sentry.init({
+  dsn: env.VITE_SENTRY_DSN,
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true,
+})
 
 // Create a new router instance
 const router = createRouter({
