@@ -17,7 +17,7 @@ export const ACCOUNT_TYPE_LIST = [
   'liquidity',
   'investment',
   // 'property',
-  // 'receivable',
+  'receivable',
   'liability',
 ] as const
 
@@ -35,7 +35,7 @@ export const ACCOUNT_TYPE_DESCRIPTION: Record<string, string> = {
   liquidity: 'Cash or cash-equivalent accounts, such as checking or savings',
   investment: 'Accounts that hold investments, such as brokerage accounts',
   property: 'Real estate or other valuable property',
-  receivable: 'Money owed to you, such as invoices or loans you have given',
+  receivable: 'Money owed to you, such as pending reimbursements or money lent',
   liability:
     'Debts or obligations you owe to others, such as credit cards or loans',
 }
