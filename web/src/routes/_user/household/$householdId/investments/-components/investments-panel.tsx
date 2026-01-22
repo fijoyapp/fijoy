@@ -132,7 +132,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
           variant="outline"
           nativeButton={true}
           size="icon-xl"
-          className="rounded-full"
+          className="bg-background dark:bg-card rounded-full"
           onClick={handleRefresh}
           disabled={isRefreshInFlight}
         >
