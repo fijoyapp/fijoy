@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/log"
 
 	_ "beavermoney.app/ent/runtime"
+	"github.com/go-chi/httprate"
 
 	"beavermoney.app"
 	"beavermoney.app/cmd/server/auth"
@@ -140,6 +141,7 @@ func main() {
 
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(httprate.LimitByIP(100, time.Minute))
 	r.Use(sentryMiddleware.Handle) // must be after Recoverer
 
 	// Setup GQL
