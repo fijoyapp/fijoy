@@ -52,9 +52,9 @@ const formSchema = z.object({
   description: z
     .string()
     .max(256, 'Description must be at most 256 characters.'),
-  amount: z.number(),
-  debitAmount: z.number(),
-  creditAmount: z.number(),
+  amount: z.number().optional(),
+  debitAmount: z.number().optional(),
+  creditAmount: z.number().optional(),
   datetime: z.date(),
   fromAccountId: z.string().min(1, 'Please select a from account'),
   toAccountId: z.string().min(1, 'Please select a to account'),
@@ -135,17 +135,19 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
       })
       .filter((category) => category.type === 'transfer') ?? []
 
+  const defaultValues: z.infer<typeof formSchema> = {
+    description: '',
+    amount: undefined,
+    debitAmount: undefined,
+    creditAmount: undefined,
+    datetime: new Date(),
+    fromAccountId: '',
+    toAccountId: '',
+    categoryId: '',
+  }
+
   const form = useForm({
-    defaultValues: {
-      description: '',
-      amount: 0,
-      debitAmount: 0,
-      creditAmount: 0,
-      datetime: new Date(),
-      fromAccountId: '',
-      toAccountId: '',
-      categoryId: '',
-    },
+    defaultValues,
     validators: {
       onSubmit: formSchema,
     },
