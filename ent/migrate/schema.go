@@ -50,6 +50,28 @@ var (
 			},
 		},
 	}
+	// CryptoQuoteCachesColumns holds the columns for the "crypto_quote_caches" table.
+	CryptoQuoteCachesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "symbol", Type: field.TypeString},
+		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "date", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "date"}},
+	}
+	// CryptoQuoteCachesTable holds the schema information for the "crypto_quote_caches" table.
+	CryptoQuoteCachesTable = &schema.Table{
+		Name:       "crypto_quote_caches",
+		Columns:    CryptoQuoteCachesColumns,
+		PrimaryKey: []*schema.Column{CryptoQuoteCachesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "cryptoquotecache_symbol_date",
+				Unique:  true,
+				Columns: []*schema.Column{CryptoQuoteCachesColumns[3], CryptoQuoteCachesColumns[5]},
+			},
+		},
+	}
 	// CurrenciesColumns holds the columns for the "currencies" table.
 	CurrenciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -60,6 +82,43 @@ var (
 		Name:       "currencies",
 		Columns:    CurrenciesColumns,
 		PrimaryKey: []*schema.Column{CurrenciesColumns[0]},
+	}
+	// FxRateCachesColumns holds the columns for the "fx_rate_caches" table.
+	FxRateCachesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "date", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "date"}},
+		{Name: "from_currency_id", Type: field.TypeInt},
+		{Name: "to_currency_id", Type: field.TypeInt},
+	}
+	// FxRateCachesTable holds the schema information for the "fx_rate_caches" table.
+	FxRateCachesTable = &schema.Table{
+		Name:       "fx_rate_caches",
+		Columns:    FxRateCachesColumns,
+		PrimaryKey: []*schema.Column{FxRateCachesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "fx_rate_caches_currencies_fx_rate_caches_from",
+				Columns:    []*schema.Column{FxRateCachesColumns[5]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "fx_rate_caches_currencies_fx_rate_caches_to",
+				Columns:    []*schema.Column{FxRateCachesColumns[6]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "fxratecache_from_currency_id_to_currency_id_date",
+				Unique:  true,
+				Columns: []*schema.Column{FxRateCachesColumns[5], FxRateCachesColumns[6], FxRateCachesColumns[4]},
+			},
+		},
 	}
 	// HouseholdsColumns holds the columns for the "households" table.
 	HouseholdsColumns = []*schema.Column{
@@ -159,6 +218,28 @@ var (
 				Columns:    []*schema.Column{InvestmentLotsColumns[7]},
 				RefColumns: []*schema.Column{TransactionsColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// StockQuoteCachesColumns holds the columns for the "stock_quote_caches" table.
+	StockQuoteCachesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "symbol", Type: field.TypeString},
+		{Name: "value", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "date", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "date"}},
+	}
+	// StockQuoteCachesTable holds the schema information for the "stock_quote_caches" table.
+	StockQuoteCachesTable = &schema.Table{
+		Name:       "stock_quote_caches",
+		Columns:    StockQuoteCachesColumns,
+		PrimaryKey: []*schema.Column{StockQuoteCachesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "stockquotecache_symbol_date",
+				Unique:  true,
+				Columns: []*schema.Column{StockQuoteCachesColumns[3], StockQuoteCachesColumns[5]},
 			},
 		},
 	}
@@ -364,10 +445,13 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AccountsTable,
+		CryptoQuoteCachesTable,
 		CurrenciesTable,
+		FxRateCachesTable,
 		HouseholdsTable,
 		InvestmentsTable,
 		InvestmentLotsTable,
+		StockQuoteCachesTable,
 		TransactionsTable,
 		TransactionCategoriesTable,
 		TransactionEntriesTable,
@@ -384,8 +468,16 @@ func init() {
 	AccountsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(0),
 	}
+	CryptoQuoteCachesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(55834574848),
+	}
 	CurrenciesTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(4294967296),
+	}
+	FxRateCachesTable.ForeignKeys[0].RefTable = CurrenciesTable
+	FxRateCachesTable.ForeignKeys[1].RefTable = CurrenciesTable
+	FxRateCachesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(51539607552),
 	}
 	HouseholdsTable.ForeignKeys[0].RefTable = CurrenciesTable
 	HouseholdsTable.Annotation = &entsql.Annotation{
@@ -402,6 +494,9 @@ func init() {
 	InvestmentLotsTable.ForeignKeys[2].RefTable = TransactionsTable
 	InvestmentLotsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(47244640256),
+	}
+	StockQuoteCachesTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(60129542144),
 	}
 	TransactionsTable.ForeignKeys[0].RefTable = HouseholdsTable
 	TransactionsTable.ForeignKeys[1].RefTable = TransactionCategoriesTable

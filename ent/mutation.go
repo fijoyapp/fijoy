@@ -10,11 +10,14 @@ import (
 	"time"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -36,10 +39,13 @@ const (
 
 	// Node types.
 	TypeAccount             = "Account"
+	TypeCryptoQuoteCache    = "CryptoQuoteCache"
 	TypeCurrency            = "Currency"
+	TypeFXRateCache         = "FXRateCache"
 	TypeHousehold           = "Household"
 	TypeInvestment          = "Investment"
 	TypeInvestmentLot       = "InvestmentLot"
+	TypeStockQuoteCache     = "StockQuoteCache"
 	TypeTransaction         = "Transaction"
 	TypeTransactionCategory = "TransactionCategory"
 	TypeTransactionEntry    = "TransactionEntry"
@@ -1352,6 +1358,584 @@ func (m *AccountMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Account edge %s", name)
 }
 
+// CryptoQuoteCacheMutation represents an operation that mutates the CryptoQuoteCache nodes in the graph.
+type CryptoQuoteCacheMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	create_time   *time.Time
+	update_time   *time.Time
+	symbol        *string
+	value         *decimal.Decimal
+	addvalue      *decimal.Decimal
+	date          *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CryptoQuoteCache, error)
+	predicates    []predicate.CryptoQuoteCache
+}
+
+var _ ent.Mutation = (*CryptoQuoteCacheMutation)(nil)
+
+// cryptoquotecacheOption allows management of the mutation configuration using functional options.
+type cryptoquotecacheOption func(*CryptoQuoteCacheMutation)
+
+// newCryptoQuoteCacheMutation creates new mutation for the CryptoQuoteCache entity.
+func newCryptoQuoteCacheMutation(c config, op Op, opts ...cryptoquotecacheOption) *CryptoQuoteCacheMutation {
+	m := &CryptoQuoteCacheMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCryptoQuoteCache,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCryptoQuoteCacheID sets the ID field of the mutation.
+func withCryptoQuoteCacheID(id int) cryptoquotecacheOption {
+	return func(m *CryptoQuoteCacheMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CryptoQuoteCache
+		)
+		m.oldValue = func(ctx context.Context) (*CryptoQuoteCache, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CryptoQuoteCache.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCryptoQuoteCache sets the old CryptoQuoteCache of the mutation.
+func withCryptoQuoteCache(node *CryptoQuoteCache) cryptoquotecacheOption {
+	return func(m *CryptoQuoteCacheMutation) {
+		m.oldValue = func(context.Context) (*CryptoQuoteCache, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CryptoQuoteCacheMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CryptoQuoteCacheMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CryptoQuoteCacheMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CryptoQuoteCacheMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CryptoQuoteCache.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *CryptoQuoteCacheMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *CryptoQuoteCacheMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the CryptoQuoteCache entity.
+// If the CryptoQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CryptoQuoteCacheMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *CryptoQuoteCacheMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *CryptoQuoteCacheMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *CryptoQuoteCacheMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the CryptoQuoteCache entity.
+// If the CryptoQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CryptoQuoteCacheMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *CryptoQuoteCacheMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetSymbol sets the "symbol" field.
+func (m *CryptoQuoteCacheMutation) SetSymbol(s string) {
+	m.symbol = &s
+}
+
+// Symbol returns the value of the "symbol" field in the mutation.
+func (m *CryptoQuoteCacheMutation) Symbol() (r string, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbol returns the old "symbol" field's value of the CryptoQuoteCache entity.
+// If the CryptoQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CryptoQuoteCacheMutation) OldSymbol(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbol requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbol: %w", err)
+	}
+	return oldValue.Symbol, nil
+}
+
+// ResetSymbol resets all changes to the "symbol" field.
+func (m *CryptoQuoteCacheMutation) ResetSymbol() {
+	m.symbol = nil
+}
+
+// SetValue sets the "value" field.
+func (m *CryptoQuoteCacheMutation) SetValue(d decimal.Decimal) {
+	m.value = &d
+	m.addvalue = nil
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *CryptoQuoteCacheMutation) Value() (r decimal.Decimal, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the CryptoQuoteCache entity.
+// If the CryptoQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CryptoQuoteCacheMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// AddValue adds d to the "value" field.
+func (m *CryptoQuoteCacheMutation) AddValue(d decimal.Decimal) {
+	if m.addvalue != nil {
+		*m.addvalue = m.addvalue.Add(d)
+	} else {
+		m.addvalue = &d
+	}
+}
+
+// AddedValue returns the value that was added to the "value" field in this mutation.
+func (m *CryptoQuoteCacheMutation) AddedValue() (r decimal.Decimal, exists bool) {
+	v := m.addvalue
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *CryptoQuoteCacheMutation) ResetValue() {
+	m.value = nil
+	m.addvalue = nil
+}
+
+// SetDate sets the "date" field.
+func (m *CryptoQuoteCacheMutation) SetDate(t time.Time) {
+	m.date = &t
+}
+
+// Date returns the value of the "date" field in the mutation.
+func (m *CryptoQuoteCacheMutation) Date() (r time.Time, exists bool) {
+	v := m.date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDate returns the old "date" field's value of the CryptoQuoteCache entity.
+// If the CryptoQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CryptoQuoteCacheMutation) OldDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDate: %w", err)
+	}
+	return oldValue.Date, nil
+}
+
+// ResetDate resets all changes to the "date" field.
+func (m *CryptoQuoteCacheMutation) ResetDate() {
+	m.date = nil
+}
+
+// Where appends a list predicates to the CryptoQuoteCacheMutation builder.
+func (m *CryptoQuoteCacheMutation) Where(ps ...predicate.CryptoQuoteCache) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CryptoQuoteCacheMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CryptoQuoteCacheMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CryptoQuoteCache, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CryptoQuoteCacheMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CryptoQuoteCacheMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CryptoQuoteCache).
+func (m *CryptoQuoteCacheMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CryptoQuoteCacheMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, cryptoquotecache.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, cryptoquotecache.FieldUpdateTime)
+	}
+	if m.symbol != nil {
+		fields = append(fields, cryptoquotecache.FieldSymbol)
+	}
+	if m.value != nil {
+		fields = append(fields, cryptoquotecache.FieldValue)
+	}
+	if m.date != nil {
+		fields = append(fields, cryptoquotecache.FieldDate)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CryptoQuoteCacheMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case cryptoquotecache.FieldCreateTime:
+		return m.CreateTime()
+	case cryptoquotecache.FieldUpdateTime:
+		return m.UpdateTime()
+	case cryptoquotecache.FieldSymbol:
+		return m.Symbol()
+	case cryptoquotecache.FieldValue:
+		return m.Value()
+	case cryptoquotecache.FieldDate:
+		return m.Date()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CryptoQuoteCacheMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case cryptoquotecache.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case cryptoquotecache.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case cryptoquotecache.FieldSymbol:
+		return m.OldSymbol(ctx)
+	case cryptoquotecache.FieldValue:
+		return m.OldValue(ctx)
+	case cryptoquotecache.FieldDate:
+		return m.OldDate(ctx)
+	}
+	return nil, fmt.Errorf("unknown CryptoQuoteCache field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CryptoQuoteCacheMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case cryptoquotecache.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case cryptoquotecache.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case cryptoquotecache.FieldSymbol:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbol(v)
+		return nil
+	case cryptoquotecache.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
+	case cryptoquotecache.FieldDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDate(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CryptoQuoteCache field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CryptoQuoteCacheMutation) AddedFields() []string {
+	var fields []string
+	if m.addvalue != nil {
+		fields = append(fields, cryptoquotecache.FieldValue)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CryptoQuoteCacheMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case cryptoquotecache.FieldValue:
+		return m.AddedValue()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CryptoQuoteCacheMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case cryptoquotecache.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CryptoQuoteCache numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CryptoQuoteCacheMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CryptoQuoteCacheMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CryptoQuoteCacheMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown CryptoQuoteCache nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CryptoQuoteCacheMutation) ResetField(name string) error {
+	switch name {
+	case cryptoquotecache.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case cryptoquotecache.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case cryptoquotecache.FieldSymbol:
+		m.ResetSymbol()
+		return nil
+	case cryptoquotecache.FieldValue:
+		m.ResetValue()
+		return nil
+	case cryptoquotecache.FieldDate:
+		m.ResetDate()
+		return nil
+	}
+	return fmt.Errorf("unknown CryptoQuoteCache field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CryptoQuoteCacheMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CryptoQuoteCacheMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CryptoQuoteCacheMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CryptoQuoteCacheMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CryptoQuoteCacheMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CryptoQuoteCacheMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CryptoQuoteCacheMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CryptoQuoteCache unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CryptoQuoteCacheMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CryptoQuoteCache edge %s", name)
+}
+
 // CurrencyMutation represents an operation that mutates the Currency nodes in the graph.
 type CurrencyMutation struct {
 	config
@@ -1372,6 +1956,12 @@ type CurrencyMutation struct {
 	households                 map[int]struct{}
 	removedhouseholds          map[int]struct{}
 	clearedhouseholds          bool
+	fx_rate_caches_from        map[int]struct{}
+	removedfx_rate_caches_from map[int]struct{}
+	clearedfx_rate_caches_from bool
+	fx_rate_caches_to          map[int]struct{}
+	removedfx_rate_caches_to   map[int]struct{}
+	clearedfx_rate_caches_to   bool
 	done                       bool
 	oldValue                   func(context.Context) (*Currency, error)
 	predicates                 []predicate.Currency
@@ -1727,6 +2317,114 @@ func (m *CurrencyMutation) ResetHouseholds() {
 	m.removedhouseholds = nil
 }
 
+// AddFxRateCachesFromIDs adds the "fx_rate_caches_from" edge to the FXRateCache entity by ids.
+func (m *CurrencyMutation) AddFxRateCachesFromIDs(ids ...int) {
+	if m.fx_rate_caches_from == nil {
+		m.fx_rate_caches_from = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.fx_rate_caches_from[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFxRateCachesFrom clears the "fx_rate_caches_from" edge to the FXRateCache entity.
+func (m *CurrencyMutation) ClearFxRateCachesFrom() {
+	m.clearedfx_rate_caches_from = true
+}
+
+// FxRateCachesFromCleared reports if the "fx_rate_caches_from" edge to the FXRateCache entity was cleared.
+func (m *CurrencyMutation) FxRateCachesFromCleared() bool {
+	return m.clearedfx_rate_caches_from
+}
+
+// RemoveFxRateCachesFromIDs removes the "fx_rate_caches_from" edge to the FXRateCache entity by IDs.
+func (m *CurrencyMutation) RemoveFxRateCachesFromIDs(ids ...int) {
+	if m.removedfx_rate_caches_from == nil {
+		m.removedfx_rate_caches_from = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.fx_rate_caches_from, ids[i])
+		m.removedfx_rate_caches_from[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFxRateCachesFrom returns the removed IDs of the "fx_rate_caches_from" edge to the FXRateCache entity.
+func (m *CurrencyMutation) RemovedFxRateCachesFromIDs() (ids []int) {
+	for id := range m.removedfx_rate_caches_from {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FxRateCachesFromIDs returns the "fx_rate_caches_from" edge IDs in the mutation.
+func (m *CurrencyMutation) FxRateCachesFromIDs() (ids []int) {
+	for id := range m.fx_rate_caches_from {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFxRateCachesFrom resets all changes to the "fx_rate_caches_from" edge.
+func (m *CurrencyMutation) ResetFxRateCachesFrom() {
+	m.fx_rate_caches_from = nil
+	m.clearedfx_rate_caches_from = false
+	m.removedfx_rate_caches_from = nil
+}
+
+// AddFxRateCachesToIDs adds the "fx_rate_caches_to" edge to the FXRateCache entity by ids.
+func (m *CurrencyMutation) AddFxRateCachesToIDs(ids ...int) {
+	if m.fx_rate_caches_to == nil {
+		m.fx_rate_caches_to = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.fx_rate_caches_to[ids[i]] = struct{}{}
+	}
+}
+
+// ClearFxRateCachesTo clears the "fx_rate_caches_to" edge to the FXRateCache entity.
+func (m *CurrencyMutation) ClearFxRateCachesTo() {
+	m.clearedfx_rate_caches_to = true
+}
+
+// FxRateCachesToCleared reports if the "fx_rate_caches_to" edge to the FXRateCache entity was cleared.
+func (m *CurrencyMutation) FxRateCachesToCleared() bool {
+	return m.clearedfx_rate_caches_to
+}
+
+// RemoveFxRateCachesToIDs removes the "fx_rate_caches_to" edge to the FXRateCache entity by IDs.
+func (m *CurrencyMutation) RemoveFxRateCachesToIDs(ids ...int) {
+	if m.removedfx_rate_caches_to == nil {
+		m.removedfx_rate_caches_to = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.fx_rate_caches_to, ids[i])
+		m.removedfx_rate_caches_to[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedFxRateCachesTo returns the removed IDs of the "fx_rate_caches_to" edge to the FXRateCache entity.
+func (m *CurrencyMutation) RemovedFxRateCachesToIDs() (ids []int) {
+	for id := range m.removedfx_rate_caches_to {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// FxRateCachesToIDs returns the "fx_rate_caches_to" edge IDs in the mutation.
+func (m *CurrencyMutation) FxRateCachesToIDs() (ids []int) {
+	for id := range m.fx_rate_caches_to {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetFxRateCachesTo resets all changes to the "fx_rate_caches_to" edge.
+func (m *CurrencyMutation) ResetFxRateCachesTo() {
+	m.fx_rate_caches_to = nil
+	m.clearedfx_rate_caches_to = false
+	m.removedfx_rate_caches_to = nil
+}
+
 // Where appends a list predicates to the CurrencyMutation builder.
 func (m *CurrencyMutation) Where(ps ...predicate.Currency) {
 	m.predicates = append(m.predicates, ps...)
@@ -1860,7 +2558,7 @@ func (m *CurrencyMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CurrencyMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.accounts != nil {
 		edges = append(edges, currency.EdgeAccounts)
 	}
@@ -1872,6 +2570,12 @@ func (m *CurrencyMutation) AddedEdges() []string {
 	}
 	if m.households != nil {
 		edges = append(edges, currency.EdgeHouseholds)
+	}
+	if m.fx_rate_caches_from != nil {
+		edges = append(edges, currency.EdgeFxRateCachesFrom)
+	}
+	if m.fx_rate_caches_to != nil {
+		edges = append(edges, currency.EdgeFxRateCachesTo)
 	}
 	return edges
 }
@@ -1904,13 +2608,25 @@ func (m *CurrencyMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case currency.EdgeFxRateCachesFrom:
+		ids := make([]ent.Value, 0, len(m.fx_rate_caches_from))
+		for id := range m.fx_rate_caches_from {
+			ids = append(ids, id)
+		}
+		return ids
+	case currency.EdgeFxRateCachesTo:
+		ids := make([]ent.Value, 0, len(m.fx_rate_caches_to))
+		for id := range m.fx_rate_caches_to {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CurrencyMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.removedaccounts != nil {
 		edges = append(edges, currency.EdgeAccounts)
 	}
@@ -1922,6 +2638,12 @@ func (m *CurrencyMutation) RemovedEdges() []string {
 	}
 	if m.removedhouseholds != nil {
 		edges = append(edges, currency.EdgeHouseholds)
+	}
+	if m.removedfx_rate_caches_from != nil {
+		edges = append(edges, currency.EdgeFxRateCachesFrom)
+	}
+	if m.removedfx_rate_caches_to != nil {
+		edges = append(edges, currency.EdgeFxRateCachesTo)
 	}
 	return edges
 }
@@ -1954,13 +2676,25 @@ func (m *CurrencyMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case currency.EdgeFxRateCachesFrom:
+		ids := make([]ent.Value, 0, len(m.removedfx_rate_caches_from))
+		for id := range m.removedfx_rate_caches_from {
+			ids = append(ids, id)
+		}
+		return ids
+	case currency.EdgeFxRateCachesTo:
+		ids := make([]ent.Value, 0, len(m.removedfx_rate_caches_to))
+		for id := range m.removedfx_rate_caches_to {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CurrencyMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 6)
 	if m.clearedaccounts {
 		edges = append(edges, currency.EdgeAccounts)
 	}
@@ -1972,6 +2706,12 @@ func (m *CurrencyMutation) ClearedEdges() []string {
 	}
 	if m.clearedhouseholds {
 		edges = append(edges, currency.EdgeHouseholds)
+	}
+	if m.clearedfx_rate_caches_from {
+		edges = append(edges, currency.EdgeFxRateCachesFrom)
+	}
+	if m.clearedfx_rate_caches_to {
+		edges = append(edges, currency.EdgeFxRateCachesTo)
 	}
 	return edges
 }
@@ -1988,6 +2728,10 @@ func (m *CurrencyMutation) EdgeCleared(name string) bool {
 		return m.clearedtransaction_entries
 	case currency.EdgeHouseholds:
 		return m.clearedhouseholds
+	case currency.EdgeFxRateCachesFrom:
+		return m.clearedfx_rate_caches_from
+	case currency.EdgeFxRateCachesTo:
+		return m.clearedfx_rate_caches_to
 	}
 	return false
 }
@@ -2016,8 +2760,746 @@ func (m *CurrencyMutation) ResetEdge(name string) error {
 	case currency.EdgeHouseholds:
 		m.ResetHouseholds()
 		return nil
+	case currency.EdgeFxRateCachesFrom:
+		m.ResetFxRateCachesFrom()
+		return nil
+	case currency.EdgeFxRateCachesTo:
+		m.ResetFxRateCachesTo()
+		return nil
 	}
 	return fmt.Errorf("unknown Currency edge %s", name)
+}
+
+// FXRateCacheMutation represents an operation that mutates the FXRateCache nodes in the graph.
+type FXRateCacheMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *int
+	create_time          *time.Time
+	update_time          *time.Time
+	value                *decimal.Decimal
+	addvalue             *decimal.Decimal
+	date                 *time.Time
+	clearedFields        map[string]struct{}
+	from_currency        *int
+	clearedfrom_currency bool
+	to_currency          *int
+	clearedto_currency   bool
+	done                 bool
+	oldValue             func(context.Context) (*FXRateCache, error)
+	predicates           []predicate.FXRateCache
+}
+
+var _ ent.Mutation = (*FXRateCacheMutation)(nil)
+
+// fxratecacheOption allows management of the mutation configuration using functional options.
+type fxratecacheOption func(*FXRateCacheMutation)
+
+// newFXRateCacheMutation creates new mutation for the FXRateCache entity.
+func newFXRateCacheMutation(c config, op Op, opts ...fxratecacheOption) *FXRateCacheMutation {
+	m := &FXRateCacheMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFXRateCache,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFXRateCacheID sets the ID field of the mutation.
+func withFXRateCacheID(id int) fxratecacheOption {
+	return func(m *FXRateCacheMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FXRateCache
+		)
+		m.oldValue = func(ctx context.Context) (*FXRateCache, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FXRateCache.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFXRateCache sets the old FXRateCache of the mutation.
+func withFXRateCache(node *FXRateCache) fxratecacheOption {
+	return func(m *FXRateCacheMutation) {
+		m.oldValue = func(context.Context) (*FXRateCache, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FXRateCacheMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FXRateCacheMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FXRateCacheMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FXRateCacheMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FXRateCache.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *FXRateCacheMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *FXRateCacheMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the FXRateCache entity.
+// If the FXRateCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FXRateCacheMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *FXRateCacheMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *FXRateCacheMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *FXRateCacheMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the FXRateCache entity.
+// If the FXRateCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FXRateCacheMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *FXRateCacheMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetFromCurrencyID sets the "from_currency_id" field.
+func (m *FXRateCacheMutation) SetFromCurrencyID(i int) {
+	m.from_currency = &i
+}
+
+// FromCurrencyID returns the value of the "from_currency_id" field in the mutation.
+func (m *FXRateCacheMutation) FromCurrencyID() (r int, exists bool) {
+	v := m.from_currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFromCurrencyID returns the old "from_currency_id" field's value of the FXRateCache entity.
+// If the FXRateCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FXRateCacheMutation) OldFromCurrencyID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFromCurrencyID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFromCurrencyID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFromCurrencyID: %w", err)
+	}
+	return oldValue.FromCurrencyID, nil
+}
+
+// ResetFromCurrencyID resets all changes to the "from_currency_id" field.
+func (m *FXRateCacheMutation) ResetFromCurrencyID() {
+	m.from_currency = nil
+}
+
+// SetToCurrencyID sets the "to_currency_id" field.
+func (m *FXRateCacheMutation) SetToCurrencyID(i int) {
+	m.to_currency = &i
+}
+
+// ToCurrencyID returns the value of the "to_currency_id" field in the mutation.
+func (m *FXRateCacheMutation) ToCurrencyID() (r int, exists bool) {
+	v := m.to_currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToCurrencyID returns the old "to_currency_id" field's value of the FXRateCache entity.
+// If the FXRateCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FXRateCacheMutation) OldToCurrencyID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldToCurrencyID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldToCurrencyID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToCurrencyID: %w", err)
+	}
+	return oldValue.ToCurrencyID, nil
+}
+
+// ResetToCurrencyID resets all changes to the "to_currency_id" field.
+func (m *FXRateCacheMutation) ResetToCurrencyID() {
+	m.to_currency = nil
+}
+
+// SetValue sets the "value" field.
+func (m *FXRateCacheMutation) SetValue(d decimal.Decimal) {
+	m.value = &d
+	m.addvalue = nil
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *FXRateCacheMutation) Value() (r decimal.Decimal, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the FXRateCache entity.
+// If the FXRateCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FXRateCacheMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// AddValue adds d to the "value" field.
+func (m *FXRateCacheMutation) AddValue(d decimal.Decimal) {
+	if m.addvalue != nil {
+		*m.addvalue = m.addvalue.Add(d)
+	} else {
+		m.addvalue = &d
+	}
+}
+
+// AddedValue returns the value that was added to the "value" field in this mutation.
+func (m *FXRateCacheMutation) AddedValue() (r decimal.Decimal, exists bool) {
+	v := m.addvalue
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *FXRateCacheMutation) ResetValue() {
+	m.value = nil
+	m.addvalue = nil
+}
+
+// SetDate sets the "date" field.
+func (m *FXRateCacheMutation) SetDate(t time.Time) {
+	m.date = &t
+}
+
+// Date returns the value of the "date" field in the mutation.
+func (m *FXRateCacheMutation) Date() (r time.Time, exists bool) {
+	v := m.date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDate returns the old "date" field's value of the FXRateCache entity.
+// If the FXRateCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FXRateCacheMutation) OldDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDate: %w", err)
+	}
+	return oldValue.Date, nil
+}
+
+// ResetDate resets all changes to the "date" field.
+func (m *FXRateCacheMutation) ResetDate() {
+	m.date = nil
+}
+
+// ClearFromCurrency clears the "from_currency" edge to the Currency entity.
+func (m *FXRateCacheMutation) ClearFromCurrency() {
+	m.clearedfrom_currency = true
+	m.clearedFields[fxratecache.FieldFromCurrencyID] = struct{}{}
+}
+
+// FromCurrencyCleared reports if the "from_currency" edge to the Currency entity was cleared.
+func (m *FXRateCacheMutation) FromCurrencyCleared() bool {
+	return m.clearedfrom_currency
+}
+
+// FromCurrencyIDs returns the "from_currency" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// FromCurrencyID instead. It exists only for internal usage by the builders.
+func (m *FXRateCacheMutation) FromCurrencyIDs() (ids []int) {
+	if id := m.from_currency; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFromCurrency resets all changes to the "from_currency" edge.
+func (m *FXRateCacheMutation) ResetFromCurrency() {
+	m.from_currency = nil
+	m.clearedfrom_currency = false
+}
+
+// ClearToCurrency clears the "to_currency" edge to the Currency entity.
+func (m *FXRateCacheMutation) ClearToCurrency() {
+	m.clearedto_currency = true
+	m.clearedFields[fxratecache.FieldToCurrencyID] = struct{}{}
+}
+
+// ToCurrencyCleared reports if the "to_currency" edge to the Currency entity was cleared.
+func (m *FXRateCacheMutation) ToCurrencyCleared() bool {
+	return m.clearedto_currency
+}
+
+// ToCurrencyIDs returns the "to_currency" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ToCurrencyID instead. It exists only for internal usage by the builders.
+func (m *FXRateCacheMutation) ToCurrencyIDs() (ids []int) {
+	if id := m.to_currency; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetToCurrency resets all changes to the "to_currency" edge.
+func (m *FXRateCacheMutation) ResetToCurrency() {
+	m.to_currency = nil
+	m.clearedto_currency = false
+}
+
+// Where appends a list predicates to the FXRateCacheMutation builder.
+func (m *FXRateCacheMutation) Where(ps ...predicate.FXRateCache) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FXRateCacheMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FXRateCacheMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FXRateCache, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FXRateCacheMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FXRateCacheMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FXRateCache).
+func (m *FXRateCacheMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FXRateCacheMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.create_time != nil {
+		fields = append(fields, fxratecache.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, fxratecache.FieldUpdateTime)
+	}
+	if m.from_currency != nil {
+		fields = append(fields, fxratecache.FieldFromCurrencyID)
+	}
+	if m.to_currency != nil {
+		fields = append(fields, fxratecache.FieldToCurrencyID)
+	}
+	if m.value != nil {
+		fields = append(fields, fxratecache.FieldValue)
+	}
+	if m.date != nil {
+		fields = append(fields, fxratecache.FieldDate)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FXRateCacheMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case fxratecache.FieldCreateTime:
+		return m.CreateTime()
+	case fxratecache.FieldUpdateTime:
+		return m.UpdateTime()
+	case fxratecache.FieldFromCurrencyID:
+		return m.FromCurrencyID()
+	case fxratecache.FieldToCurrencyID:
+		return m.ToCurrencyID()
+	case fxratecache.FieldValue:
+		return m.Value()
+	case fxratecache.FieldDate:
+		return m.Date()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FXRateCacheMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case fxratecache.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case fxratecache.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case fxratecache.FieldFromCurrencyID:
+		return m.OldFromCurrencyID(ctx)
+	case fxratecache.FieldToCurrencyID:
+		return m.OldToCurrencyID(ctx)
+	case fxratecache.FieldValue:
+		return m.OldValue(ctx)
+	case fxratecache.FieldDate:
+		return m.OldDate(ctx)
+	}
+	return nil, fmt.Errorf("unknown FXRateCache field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FXRateCacheMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case fxratecache.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case fxratecache.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case fxratecache.FieldFromCurrencyID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFromCurrencyID(v)
+		return nil
+	case fxratecache.FieldToCurrencyID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToCurrencyID(v)
+		return nil
+	case fxratecache.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
+	case fxratecache.FieldDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDate(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FXRateCache field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FXRateCacheMutation) AddedFields() []string {
+	var fields []string
+	if m.addvalue != nil {
+		fields = append(fields, fxratecache.FieldValue)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FXRateCacheMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case fxratecache.FieldValue:
+		return m.AddedValue()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FXRateCacheMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case fxratecache.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FXRateCache numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FXRateCacheMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FXRateCacheMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FXRateCacheMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown FXRateCache nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FXRateCacheMutation) ResetField(name string) error {
+	switch name {
+	case fxratecache.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case fxratecache.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case fxratecache.FieldFromCurrencyID:
+		m.ResetFromCurrencyID()
+		return nil
+	case fxratecache.FieldToCurrencyID:
+		m.ResetToCurrencyID()
+		return nil
+	case fxratecache.FieldValue:
+		m.ResetValue()
+		return nil
+	case fxratecache.FieldDate:
+		m.ResetDate()
+		return nil
+	}
+	return fmt.Errorf("unknown FXRateCache field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FXRateCacheMutation) AddedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.from_currency != nil {
+		edges = append(edges, fxratecache.EdgeFromCurrency)
+	}
+	if m.to_currency != nil {
+		edges = append(edges, fxratecache.EdgeToCurrency)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FXRateCacheMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case fxratecache.EdgeFromCurrency:
+		if id := m.from_currency; id != nil {
+			return []ent.Value{*id}
+		}
+	case fxratecache.EdgeToCurrency:
+		if id := m.to_currency; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FXRateCacheMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 2)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FXRateCacheMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FXRateCacheMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 2)
+	if m.clearedfrom_currency {
+		edges = append(edges, fxratecache.EdgeFromCurrency)
+	}
+	if m.clearedto_currency {
+		edges = append(edges, fxratecache.EdgeToCurrency)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FXRateCacheMutation) EdgeCleared(name string) bool {
+	switch name {
+	case fxratecache.EdgeFromCurrency:
+		return m.clearedfrom_currency
+	case fxratecache.EdgeToCurrency:
+		return m.clearedto_currency
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FXRateCacheMutation) ClearEdge(name string) error {
+	switch name {
+	case fxratecache.EdgeFromCurrency:
+		m.ClearFromCurrency()
+		return nil
+	case fxratecache.EdgeToCurrency:
+		m.ClearToCurrency()
+		return nil
+	}
+	return fmt.Errorf("unknown FXRateCache unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FXRateCacheMutation) ResetEdge(name string) error {
+	switch name {
+	case fxratecache.EdgeFromCurrency:
+		m.ResetFromCurrency()
+		return nil
+	case fxratecache.EdgeToCurrency:
+		m.ResetToCurrency()
+		return nil
+	}
+	return fmt.Errorf("unknown FXRateCache edge %s", name)
 }
 
 // HouseholdMutation represents an operation that mutates the Household nodes in the graph.
@@ -5347,6 +6829,584 @@ func (m *InvestmentLotMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown InvestmentLot edge %s", name)
+}
+
+// StockQuoteCacheMutation represents an operation that mutates the StockQuoteCache nodes in the graph.
+type StockQuoteCacheMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	create_time   *time.Time
+	update_time   *time.Time
+	symbol        *string
+	value         *decimal.Decimal
+	addvalue      *decimal.Decimal
+	date          *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*StockQuoteCache, error)
+	predicates    []predicate.StockQuoteCache
+}
+
+var _ ent.Mutation = (*StockQuoteCacheMutation)(nil)
+
+// stockquotecacheOption allows management of the mutation configuration using functional options.
+type stockquotecacheOption func(*StockQuoteCacheMutation)
+
+// newStockQuoteCacheMutation creates new mutation for the StockQuoteCache entity.
+func newStockQuoteCacheMutation(c config, op Op, opts ...stockquotecacheOption) *StockQuoteCacheMutation {
+	m := &StockQuoteCacheMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeStockQuoteCache,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withStockQuoteCacheID sets the ID field of the mutation.
+func withStockQuoteCacheID(id int) stockquotecacheOption {
+	return func(m *StockQuoteCacheMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *StockQuoteCache
+		)
+		m.oldValue = func(ctx context.Context) (*StockQuoteCache, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().StockQuoteCache.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withStockQuoteCache sets the old StockQuoteCache of the mutation.
+func withStockQuoteCache(node *StockQuoteCache) stockquotecacheOption {
+	return func(m *StockQuoteCacheMutation) {
+		m.oldValue = func(context.Context) (*StockQuoteCache, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m StockQuoteCacheMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m StockQuoteCacheMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *StockQuoteCacheMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *StockQuoteCacheMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().StockQuoteCache.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *StockQuoteCacheMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *StockQuoteCacheMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the StockQuoteCache entity.
+// If the StockQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockQuoteCacheMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *StockQuoteCacheMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *StockQuoteCacheMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *StockQuoteCacheMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the StockQuoteCache entity.
+// If the StockQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockQuoteCacheMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *StockQuoteCacheMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetSymbol sets the "symbol" field.
+func (m *StockQuoteCacheMutation) SetSymbol(s string) {
+	m.symbol = &s
+}
+
+// Symbol returns the value of the "symbol" field in the mutation.
+func (m *StockQuoteCacheMutation) Symbol() (r string, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbol returns the old "symbol" field's value of the StockQuoteCache entity.
+// If the StockQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockQuoteCacheMutation) OldSymbol(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbol requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbol: %w", err)
+	}
+	return oldValue.Symbol, nil
+}
+
+// ResetSymbol resets all changes to the "symbol" field.
+func (m *StockQuoteCacheMutation) ResetSymbol() {
+	m.symbol = nil
+}
+
+// SetValue sets the "value" field.
+func (m *StockQuoteCacheMutation) SetValue(d decimal.Decimal) {
+	m.value = &d
+	m.addvalue = nil
+}
+
+// Value returns the value of the "value" field in the mutation.
+func (m *StockQuoteCacheMutation) Value() (r decimal.Decimal, exists bool) {
+	v := m.value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValue returns the old "value" field's value of the StockQuoteCache entity.
+// If the StockQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockQuoteCacheMutation) OldValue(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValue: %w", err)
+	}
+	return oldValue.Value, nil
+}
+
+// AddValue adds d to the "value" field.
+func (m *StockQuoteCacheMutation) AddValue(d decimal.Decimal) {
+	if m.addvalue != nil {
+		*m.addvalue = m.addvalue.Add(d)
+	} else {
+		m.addvalue = &d
+	}
+}
+
+// AddedValue returns the value that was added to the "value" field in this mutation.
+func (m *StockQuoteCacheMutation) AddedValue() (r decimal.Decimal, exists bool) {
+	v := m.addvalue
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetValue resets all changes to the "value" field.
+func (m *StockQuoteCacheMutation) ResetValue() {
+	m.value = nil
+	m.addvalue = nil
+}
+
+// SetDate sets the "date" field.
+func (m *StockQuoteCacheMutation) SetDate(t time.Time) {
+	m.date = &t
+}
+
+// Date returns the value of the "date" field in the mutation.
+func (m *StockQuoteCacheMutation) Date() (r time.Time, exists bool) {
+	v := m.date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDate returns the old "date" field's value of the StockQuoteCache entity.
+// If the StockQuoteCache object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockQuoteCacheMutation) OldDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDate: %w", err)
+	}
+	return oldValue.Date, nil
+}
+
+// ResetDate resets all changes to the "date" field.
+func (m *StockQuoteCacheMutation) ResetDate() {
+	m.date = nil
+}
+
+// Where appends a list predicates to the StockQuoteCacheMutation builder.
+func (m *StockQuoteCacheMutation) Where(ps ...predicate.StockQuoteCache) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the StockQuoteCacheMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *StockQuoteCacheMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.StockQuoteCache, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *StockQuoteCacheMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *StockQuoteCacheMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (StockQuoteCache).
+func (m *StockQuoteCacheMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *StockQuoteCacheMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.create_time != nil {
+		fields = append(fields, stockquotecache.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, stockquotecache.FieldUpdateTime)
+	}
+	if m.symbol != nil {
+		fields = append(fields, stockquotecache.FieldSymbol)
+	}
+	if m.value != nil {
+		fields = append(fields, stockquotecache.FieldValue)
+	}
+	if m.date != nil {
+		fields = append(fields, stockquotecache.FieldDate)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *StockQuoteCacheMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case stockquotecache.FieldCreateTime:
+		return m.CreateTime()
+	case stockquotecache.FieldUpdateTime:
+		return m.UpdateTime()
+	case stockquotecache.FieldSymbol:
+		return m.Symbol()
+	case stockquotecache.FieldValue:
+		return m.Value()
+	case stockquotecache.FieldDate:
+		return m.Date()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *StockQuoteCacheMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case stockquotecache.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case stockquotecache.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case stockquotecache.FieldSymbol:
+		return m.OldSymbol(ctx)
+	case stockquotecache.FieldValue:
+		return m.OldValue(ctx)
+	case stockquotecache.FieldDate:
+		return m.OldDate(ctx)
+	}
+	return nil, fmt.Errorf("unknown StockQuoteCache field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *StockQuoteCacheMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case stockquotecache.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case stockquotecache.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case stockquotecache.FieldSymbol:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbol(v)
+		return nil
+	case stockquotecache.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValue(v)
+		return nil
+	case stockquotecache.FieldDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDate(v)
+		return nil
+	}
+	return fmt.Errorf("unknown StockQuoteCache field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *StockQuoteCacheMutation) AddedFields() []string {
+	var fields []string
+	if m.addvalue != nil {
+		fields = append(fields, stockquotecache.FieldValue)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *StockQuoteCacheMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case stockquotecache.FieldValue:
+		return m.AddedValue()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *StockQuoteCacheMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case stockquotecache.FieldValue:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown StockQuoteCache numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *StockQuoteCacheMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *StockQuoteCacheMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *StockQuoteCacheMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown StockQuoteCache nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *StockQuoteCacheMutation) ResetField(name string) error {
+	switch name {
+	case stockquotecache.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case stockquotecache.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case stockquotecache.FieldSymbol:
+		m.ResetSymbol()
+		return nil
+	case stockquotecache.FieldValue:
+		m.ResetValue()
+		return nil
+	case stockquotecache.FieldDate:
+		m.ResetDate()
+		return nil
+	}
+	return fmt.Errorf("unknown StockQuoteCache field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *StockQuoteCacheMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *StockQuoteCacheMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *StockQuoteCacheMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *StockQuoteCacheMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *StockQuoteCacheMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *StockQuoteCacheMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *StockQuoteCacheMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown StockQuoteCache unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *StockQuoteCacheMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown StockQuoteCache edge %s", name)
 }
 
 // TransactionMutation represents an operation that mutates the Transaction nodes in the graph.

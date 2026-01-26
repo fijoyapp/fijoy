@@ -47,19 +47,25 @@ type Config struct {
 
 type ResolverRoot interface {
 	Account() AccountResolver
+	CryptoQuoteCache() CryptoQuoteCacheResolver
+	FXRateCache() FXRateCacheResolver
 	FinancialReport() FinancialReportResolver
 	Investment() InvestmentResolver
 	InvestmentLot() InvestmentLotResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	StockQuoteCache() StockQuoteCacheResolver
 	TransactionEntry() TransactionEntryResolver
 	AccountWhereInput() AccountWhereInputResolver
 	CreateAccountInput() CreateAccountInputResolver
 	CreateInvestmentInput() CreateInvestmentInputResolver
 	CreateInvestmentLotInput() CreateInvestmentLotInputResolver
 	CreateTransactionEntryInput() CreateTransactionEntryInputResolver
+	CryptoQuoteCacheWhereInput() CryptoQuoteCacheWhereInputResolver
+	FXRateCacheWhereInput() FXRateCacheWhereInputResolver
 	InvestmentLotWhereInput() InvestmentLotWhereInputResolver
 	InvestmentWhereInput() InvestmentWhereInputResolver
+	StockQuoteCacheWhereInput() StockQuoteCacheWhereInputResolver
 	TransactionEntryWhereInput() TransactionEntryWhereInputResolver
 	UpdateInvestmentInput() UpdateInvestmentInputResolver
 	UpdateInvestmentLotInput() UpdateInvestmentLotInputResolver
@@ -115,6 +121,15 @@ type ComplexityRoot struct {
 		TransactionCount func(childComplexity int) int
 	}
 
+	CryptoQuoteCache struct {
+		CreateTime func(childComplexity int) int
+		Date       func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Symbol     func(childComplexity int) int
+		UpdateTime func(childComplexity int) int
+		Value      func(childComplexity int) int
+	}
+
 	CryptoQuoteResult struct {
 		Currency     func(childComplexity int) int
 		CurrentPrice func(childComplexity int) int
@@ -126,10 +141,24 @@ type ComplexityRoot struct {
 	Currency struct {
 		Accounts           func(childComplexity int) int
 		Code               func(childComplexity int) int
+		FxRateCachesFrom   func(childComplexity int) int
+		FxRateCachesTo     func(childComplexity int) int
 		Households         func(childComplexity int) int
 		ID                 func(childComplexity int) int
 		Investments        func(childComplexity int) int
 		TransactionEntries func(childComplexity int) int
+	}
+
+	FXRateCache struct {
+		CreateTime     func(childComplexity int) int
+		Date           func(childComplexity int) int
+		FromCurrency   func(childComplexity int) int
+		FromCurrencyID func(childComplexity int) int
+		ID             func(childComplexity int) int
+		ToCurrency     func(childComplexity int) int
+		ToCurrencyID   func(childComplexity int) int
+		UpdateTime     func(childComplexity int) int
+		Value          func(childComplexity int) int
 	}
 
 	FinancialReport struct {
@@ -270,6 +299,15 @@ type ComplexityRoot struct {
 		UserHouseholds        func(childComplexity int) int
 	}
 
+	StockQuoteCache struct {
+		CreateTime func(childComplexity int) int
+		Date       func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Symbol     func(childComplexity int) int
+		UpdateTime func(childComplexity int) int
+		Value      func(childComplexity int) int
+	}
+
 	StockQuoteResult struct {
 		Currency     func(childComplexity int) int
 		CurrentPrice func(childComplexity int) int
@@ -388,6 +426,12 @@ type AccountResolver interface {
 	BalanceInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error)
 	ValueInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error)
 }
+type CryptoQuoteCacheResolver interface {
+	Value(ctx context.Context, obj *ent.CryptoQuoteCache) (float64, error)
+}
+type FXRateCacheResolver interface {
+	Value(ctx context.Context, obj *ent.FXRateCache) (float64, error)
+}
 type FinancialReportResolver interface {
 	TotalIncome(ctx context.Context, obj *FinancialReport) (string, error)
 	TotalExpenses(ctx context.Context, obj *FinancialReport) (string, error)
@@ -437,6 +481,9 @@ type QueryResolver interface {
 	FinancialReport(ctx context.Context, period TimePeriodInput) (*FinancialReport, error)
 	NetWorthOverTime(ctx context.Context, period TimePeriodInput) ([]*NetWorthDataPoint, error)
 }
+type StockQuoteCacheResolver interface {
+	Value(ctx context.Context, obj *ent.StockQuoteCache) (float64, error)
+}
 type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
 }
@@ -481,6 +528,26 @@ type CreateInvestmentLotInputResolver interface {
 type CreateTransactionEntryInputResolver interface {
 	Amount(ctx context.Context, obj *ent.CreateTransactionEntryInput, data string) error
 }
+type CryptoQuoteCacheWhereInputResolver interface {
+	Value(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error
+	ValueNeq(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error
+	ValueIn(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data []float64) error
+	ValueNotIn(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data []float64) error
+	ValueGt(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error
+	ValueGte(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error
+	ValueLt(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error
+	ValueLte(ctx context.Context, obj *ent.CryptoQuoteCacheWhereInput, data *float64) error
+}
+type FXRateCacheWhereInputResolver interface {
+	Value(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error
+	ValueNeq(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error
+	ValueIn(ctx context.Context, obj *ent.FXRateCacheWhereInput, data []float64) error
+	ValueNotIn(ctx context.Context, obj *ent.FXRateCacheWhereInput, data []float64) error
+	ValueGt(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error
+	ValueGte(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error
+	ValueLt(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error
+	ValueLte(ctx context.Context, obj *ent.FXRateCacheWhereInput, data *float64) error
+}
 type InvestmentLotWhereInputResolver interface {
 	Amount(ctx context.Context, obj *ent.InvestmentLotWhereInput, data *string) error
 	AmountNeq(ctx context.Context, obj *ent.InvestmentLotWhereInput, data *string) error
@@ -524,6 +591,16 @@ type InvestmentWhereInputResolver interface {
 	ValueGte(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
 	ValueLt(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
 	ValueLte(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
+}
+type StockQuoteCacheWhereInputResolver interface {
+	Value(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error
+	ValueNeq(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error
+	ValueIn(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data []float64) error
+	ValueNotIn(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data []float64) error
+	ValueGt(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error
+	ValueGte(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error
+	ValueLt(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error
+	ValueLte(ctx context.Context, obj *ent.StockQuoteCacheWhereInput, data *float64) error
 }
 type TransactionEntryWhereInputResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error
@@ -753,6 +830,43 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.CategoryTypeAggregate.TransactionCount(childComplexity), true
 
+	case "CryptoQuoteCache.createTime":
+		if e.complexity.CryptoQuoteCache.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.CryptoQuoteCache.CreateTime(childComplexity), true
+	case "CryptoQuoteCache.date":
+		if e.complexity.CryptoQuoteCache.Date == nil {
+			break
+		}
+
+		return e.complexity.CryptoQuoteCache.Date(childComplexity), true
+	case "CryptoQuoteCache.id":
+		if e.complexity.CryptoQuoteCache.ID == nil {
+			break
+		}
+
+		return e.complexity.CryptoQuoteCache.ID(childComplexity), true
+	case "CryptoQuoteCache.symbol":
+		if e.complexity.CryptoQuoteCache.Symbol == nil {
+			break
+		}
+
+		return e.complexity.CryptoQuoteCache.Symbol(childComplexity), true
+	case "CryptoQuoteCache.updateTime":
+		if e.complexity.CryptoQuoteCache.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.CryptoQuoteCache.UpdateTime(childComplexity), true
+	case "CryptoQuoteCache.value":
+		if e.complexity.CryptoQuoteCache.Value == nil {
+			break
+		}
+
+		return e.complexity.CryptoQuoteCache.Value(childComplexity), true
+
 	case "CryptoQuoteResult.currency":
 		if e.complexity.CryptoQuoteResult.Currency == nil {
 			break
@@ -796,6 +910,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Currency.Code(childComplexity), true
+	case "Currency.fxRateCachesFrom":
+		if e.complexity.Currency.FxRateCachesFrom == nil {
+			break
+		}
+
+		return e.complexity.Currency.FxRateCachesFrom(childComplexity), true
+	case "Currency.fxRateCachesTo":
+		if e.complexity.Currency.FxRateCachesTo == nil {
+			break
+		}
+
+		return e.complexity.Currency.FxRateCachesTo(childComplexity), true
 	case "Currency.households":
 		if e.complexity.Currency.Households == nil {
 			break
@@ -820,6 +946,61 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Currency.TransactionEntries(childComplexity), true
+
+	case "FXRateCache.createTime":
+		if e.complexity.FXRateCache.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.CreateTime(childComplexity), true
+	case "FXRateCache.date":
+		if e.complexity.FXRateCache.Date == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.Date(childComplexity), true
+	case "FXRateCache.fromCurrency":
+		if e.complexity.FXRateCache.FromCurrency == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.FromCurrency(childComplexity), true
+	case "FXRateCache.fromCurrencyID":
+		if e.complexity.FXRateCache.FromCurrencyID == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.FromCurrencyID(childComplexity), true
+	case "FXRateCache.id":
+		if e.complexity.FXRateCache.ID == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.ID(childComplexity), true
+	case "FXRateCache.toCurrency":
+		if e.complexity.FXRateCache.ToCurrency == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.ToCurrency(childComplexity), true
+	case "FXRateCache.toCurrencyID":
+		if e.complexity.FXRateCache.ToCurrencyID == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.ToCurrencyID(childComplexity), true
+	case "FXRateCache.updateTime":
+		if e.complexity.FXRateCache.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.UpdateTime(childComplexity), true
+	case "FXRateCache.value":
+		if e.complexity.FXRateCache.Value == nil {
+			break
+		}
+
+		return e.complexity.FXRateCache.Value(childComplexity), true
 
 	case "FinancialReport.endDate":
 		if e.complexity.FinancialReport.EndDate == nil {
@@ -1538,6 +1719,43 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.UserHouseholds(childComplexity), true
 
+	case "StockQuoteCache.createTime":
+		if e.complexity.StockQuoteCache.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.StockQuoteCache.CreateTime(childComplexity), true
+	case "StockQuoteCache.date":
+		if e.complexity.StockQuoteCache.Date == nil {
+			break
+		}
+
+		return e.complexity.StockQuoteCache.Date(childComplexity), true
+	case "StockQuoteCache.id":
+		if e.complexity.StockQuoteCache.ID == nil {
+			break
+		}
+
+		return e.complexity.StockQuoteCache.ID(childComplexity), true
+	case "StockQuoteCache.symbol":
+		if e.complexity.StockQuoteCache.Symbol == nil {
+			break
+		}
+
+		return e.complexity.StockQuoteCache.Symbol(childComplexity), true
+	case "StockQuoteCache.updateTime":
+		if e.complexity.StockQuoteCache.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.StockQuoteCache.UpdateTime(childComplexity), true
+	case "StockQuoteCache.value":
+		if e.complexity.StockQuoteCache.Value == nil {
+			break
+		}
+
+		return e.complexity.StockQuoteCache.Value(childComplexity), true
+
 	case "StockQuoteResult.currency":
 		if e.complexity.StockQuoteResult.Currency == nil {
 			break
@@ -2020,12 +2238,15 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateTransactionEntryInput,
 		ec.unmarshalInputCreateTransactionInput,
 		ec.unmarshalInputCreateTransferInputCustom,
+		ec.unmarshalInputCryptoQuoteCacheWhereInput,
 		ec.unmarshalInputCurrencyWhereInput,
+		ec.unmarshalInputFXRateCacheWhereInput,
 		ec.unmarshalInputHouseholdWhereInput,
 		ec.unmarshalInputInvestmentLotWhereInput,
 		ec.unmarshalInputInvestmentWhereInput,
 		ec.unmarshalInputMoveInvestmentInputCustom,
 		ec.unmarshalInputSellInvestmentInputCustom,
+		ec.unmarshalInputStockQuoteCacheWhereInput,
 		ec.unmarshalInputTimePeriodInput,
 		ec.unmarshalInputTransactionCategoryWhereInput,
 		ec.unmarshalInputTransactionEntryWhereInput,
@@ -3020,6 +3241,10 @@ func (ec *executionContext) fieldContext_Account_currency(_ context.Context, fie
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "fxRateCachesFrom":
+				return ec.fieldContext_Currency_fxRateCachesFrom(ctx, field)
+			case "fxRateCachesTo":
+				return ec.fieldContext_Currency_fxRateCachesTo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -3690,6 +3915,180 @@ func (ec *executionContext) fieldContext_CategoryTypeAggregate_categories(_ cont
 	return fc, nil
 }
 
+func (ec *executionContext) _CryptoQuoteCache_id(ctx context.Context, field graphql.CollectedField, obj *ent.CryptoQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CryptoQuoteCache_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CryptoQuoteCache_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CryptoQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CryptoQuoteCache_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.CryptoQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CryptoQuoteCache_createTime,
+		func(ctx context.Context) (any, error) {
+			return obj.CreateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CryptoQuoteCache_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CryptoQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CryptoQuoteCache_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.CryptoQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CryptoQuoteCache_updateTime,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CryptoQuoteCache_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CryptoQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CryptoQuoteCache_symbol(ctx context.Context, field graphql.CollectedField, obj *ent.CryptoQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CryptoQuoteCache_symbol,
+		func(ctx context.Context) (any, error) {
+			return obj.Symbol, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CryptoQuoteCache_symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CryptoQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CryptoQuoteCache_value(ctx context.Context, field graphql.CollectedField, obj *ent.CryptoQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CryptoQuoteCache_value,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.CryptoQuoteCache().Value(ctx, obj)
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CryptoQuoteCache_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CryptoQuoteCache",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CryptoQuoteCache_date(ctx context.Context, field graphql.CollectedField, obj *ent.CryptoQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_CryptoQuoteCache_date,
+		func(ctx context.Context) (any, error) {
+			return obj.Date, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_CryptoQuoteCache_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CryptoQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _CryptoQuoteResult_symbol(ctx context.Context, field graphql.CollectedField, obj *CryptoQuoteResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4143,6 +4542,401 @@ func (ec *executionContext) fieldContext_Currency_households(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Currency_fxRateCachesFrom(ctx context.Context, field graphql.CollectedField, obj *ent.Currency) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Currency_fxRateCachesFrom,
+		func(ctx context.Context) (any, error) {
+			return obj.FxRateCachesFrom(ctx)
+		},
+		nil,
+		ec.marshalOFXRateCache2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Currency_fxRateCachesFrom(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FXRateCache_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_FXRateCache_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_FXRateCache_updateTime(ctx, field)
+			case "fromCurrencyID":
+				return ec.fieldContext_FXRateCache_fromCurrencyID(ctx, field)
+			case "toCurrencyID":
+				return ec.fieldContext_FXRateCache_toCurrencyID(ctx, field)
+			case "value":
+				return ec.fieldContext_FXRateCache_value(ctx, field)
+			case "date":
+				return ec.fieldContext_FXRateCache_date(ctx, field)
+			case "fromCurrency":
+				return ec.fieldContext_FXRateCache_fromCurrency(ctx, field)
+			case "toCurrency":
+				return ec.fieldContext_FXRateCache_toCurrency(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FXRateCache", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Currency_fxRateCachesTo(ctx context.Context, field graphql.CollectedField, obj *ent.Currency) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Currency_fxRateCachesTo,
+		func(ctx context.Context) (any, error) {
+			return obj.FxRateCachesTo(ctx)
+		},
+		nil,
+		ec.marshalOFXRateCache2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Currency_fxRateCachesTo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_FXRateCache_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_FXRateCache_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_FXRateCache_updateTime(ctx, field)
+			case "fromCurrencyID":
+				return ec.fieldContext_FXRateCache_fromCurrencyID(ctx, field)
+			case "toCurrencyID":
+				return ec.fieldContext_FXRateCache_toCurrencyID(ctx, field)
+			case "value":
+				return ec.fieldContext_FXRateCache_value(ctx, field)
+			case "date":
+				return ec.fieldContext_FXRateCache_date(ctx, field)
+			case "fromCurrency":
+				return ec.fieldContext_FXRateCache_fromCurrency(ctx, field)
+			case "toCurrency":
+				return ec.fieldContext_FXRateCache_toCurrency(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type FXRateCache", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_id(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_createTime,
+		func(ctx context.Context) (any, error) {
+			return obj.CreateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_updateTime,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_fromCurrencyID(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_fromCurrencyID,
+		func(ctx context.Context) (any, error) {
+			return obj.FromCurrencyID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_fromCurrencyID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_toCurrencyID(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_toCurrencyID,
+		func(ctx context.Context) (any, error) {
+			return obj.ToCurrencyID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_toCurrencyID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_value(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_value,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.FXRateCache().Value(ctx, obj)
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_date(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_date,
+		func(ctx context.Context) (any, error) {
+			return obj.Date, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_fromCurrency(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_fromCurrency,
+		func(ctx context.Context) (any, error) {
+			return obj.FromCurrency(ctx)
+		},
+		nil,
+		ec.marshalNCurrency2ᚖbeavermoneyᚗappᚋentᚐCurrency,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_fromCurrency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Currency_id(ctx, field)
+			case "code":
+				return ec.fieldContext_Currency_code(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Currency_accounts(ctx, field)
+			case "investments":
+				return ec.fieldContext_Currency_investments(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Currency_transactionEntries(ctx, field)
+			case "households":
+				return ec.fieldContext_Currency_households(ctx, field)
+			case "fxRateCachesFrom":
+				return ec.fieldContext_Currency_fxRateCachesFrom(ctx, field)
+			case "fxRateCachesTo":
+				return ec.fieldContext_Currency_fxRateCachesTo(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FXRateCache_toCurrency(ctx context.Context, field graphql.CollectedField, obj *ent.FXRateCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_FXRateCache_toCurrency,
+		func(ctx context.Context) (any, error) {
+			return obj.ToCurrency(ctx)
+		},
+		nil,
+		ec.marshalNCurrency2ᚖbeavermoneyᚗappᚋentᚐCurrency,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_FXRateCache_toCurrency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FXRateCache",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Currency_id(ctx, field)
+			case "code":
+				return ec.fieldContext_Currency_code(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Currency_accounts(ctx, field)
+			case "investments":
+				return ec.fieldContext_Currency_investments(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Currency_transactionEntries(ctx, field)
+			case "households":
+				return ec.fieldContext_Currency_households(ctx, field)
+			case "fxRateCachesFrom":
+				return ec.fieldContext_Currency_fxRateCachesFrom(ctx, field)
+			case "fxRateCachesTo":
+				return ec.fieldContext_Currency_fxRateCachesTo(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _FinancialReport_totalIncome(ctx context.Context, field graphql.CollectedField, obj *FinancialReport) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4576,6 +5370,10 @@ func (ec *executionContext) fieldContext_Household_currency(_ context.Context, f
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "fxRateCachesFrom":
+				return ec.fieldContext_Currency_fxRateCachesFrom(ctx, field)
+			case "fxRateCachesTo":
+				return ec.fieldContext_Currency_fxRateCachesTo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -5545,6 +6343,10 @@ func (ec *executionContext) fieldContext_Investment_currency(_ context.Context, 
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "fxRateCachesFrom":
+				return ec.fieldContext_Currency_fxRateCachesFrom(ctx, field)
+			case "fxRateCachesTo":
+				return ec.fieldContext_Currency_fxRateCachesTo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -7483,6 +8285,10 @@ func (ec *executionContext) fieldContext_Query_currencies(_ context.Context, fie
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "fxRateCachesFrom":
+				return ec.fieldContext_Currency_fxRateCachesFrom(ctx, field)
+			case "fxRateCachesTo":
+				return ec.fieldContext_Currency_fxRateCachesTo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -8205,6 +9011,180 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StockQuoteCache_id(ctx context.Context, field graphql.CollectedField, obj *ent.StockQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StockQuoteCache_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_StockQuoteCache_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StockQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StockQuoteCache_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.StockQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StockQuoteCache_createTime,
+		func(ctx context.Context) (any, error) {
+			return obj.CreateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_StockQuoteCache_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StockQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StockQuoteCache_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.StockQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StockQuoteCache_updateTime,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_StockQuoteCache_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StockQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StockQuoteCache_symbol(ctx context.Context, field graphql.CollectedField, obj *ent.StockQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StockQuoteCache_symbol,
+		func(ctx context.Context) (any, error) {
+			return obj.Symbol, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_StockQuoteCache_symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StockQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StockQuoteCache_value(ctx context.Context, field graphql.CollectedField, obj *ent.StockQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StockQuoteCache_value,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.StockQuoteCache().Value(ctx, obj)
+		},
+		nil,
+		ec.marshalNFloat2float64,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_StockQuoteCache_value(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StockQuoteCache",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StockQuoteCache_date(ctx context.Context, field graphql.CollectedField, obj *ent.StockQuoteCache) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_StockQuoteCache_date,
+		func(ctx context.Context) (any, error) {
+			return obj.Date, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_StockQuoteCache_date(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StockQuoteCache",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9978,6 +10958,10 @@ func (ec *executionContext) fieldContext_TransactionEntry_currency(_ context.Con
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "fxRateCachesFrom":
+				return ec.fieldContext_Currency_fxRateCachesFrom(ctx, field)
+			case "fxRateCachesTo":
+				return ec.fieldContext_Currency_fxRateCachesTo(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -13765,6 +14749,434 @@ func (ec *executionContext) unmarshalInputCreateTransferInputCustom(ctx context.
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCryptoQuoteCacheWhereInput(ctx context.Context, obj any) (ent.CryptoQuoteCacheWhereInput, error) {
+	var it ent.CryptoQuoteCacheWhereInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "value", "valueNEQ", "valueIn", "valueNotIn", "valueGT", "valueGTE", "valueLT", "valueLTE", "date", "dateNEQ", "dateIn", "dateNotIn", "dateGT", "dateGTE", "dateLT", "dateLTE"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalOCryptoQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐCryptoQuoteCacheWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalOCryptoQuoteCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐCryptoQuoteCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalOCryptoQuoteCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐCryptoQuoteCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "createTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTime = data
+		case "createTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNEQ = data
+		case "createTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeIn = data
+		case "createTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNotIn = data
+		case "createTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGT = data
+		case "createTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGTE = data
+		case "createTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLT = data
+		case "createTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLTE = data
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTime = data
+		case "updateTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNEQ = data
+		case "updateTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeIn = data
+		case "updateTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNotIn = data
+		case "updateTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGT = data
+		case "updateTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGTE = data
+		case "updateTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLT = data
+		case "updateTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLTE = data
+		case "symbol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Symbol = data
+		case "symbolNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolNEQ = data
+		case "symbolIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolIn = data
+		case "symbolNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolNotIn = data
+		case "symbolGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolGT = data
+		case "symbolGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolGTE = data
+		case "symbolLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolLT = data
+		case "symbolLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolLTE = data
+		case "symbolContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolContains = data
+		case "symbolHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolHasPrefix = data
+		case "symbolHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolHasSuffix = data
+		case "symbolEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolEqualFold = data
+		case "symbolContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolContainsFold = data
+		case "value":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().Value(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueNEQ"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().ValueNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueIn"))
+			data, err := ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().ValueIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueNotIn"))
+			data, err := ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().ValueNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueGT"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().ValueGt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueGTE"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().ValueGte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueLT"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().ValueLt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueLTE"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CryptoQuoteCacheWhereInput().ValueLte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "date":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Date = data
+		case "dateNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateNEQ = data
+		case "dateIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateIn = data
+		case "dateNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateNotIn = data
+		case "dateGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateGT = data
+		case "dateGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateGTE = data
+		case "dateLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateLT = data
+		case "dateLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateLTE = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCurrencyWhereInput(ctx context.Context, obj any) (ent.CurrencyWhereInput, error) {
 	var it ent.CurrencyWhereInput
 	asMap := map[string]any{}
@@ -13772,7 +15184,7 @@ func (ec *executionContext) unmarshalInputCurrencyWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "code", "codeNEQ", "codeIn", "codeNotIn", "codeGT", "codeGTE", "codeLT", "codeLTE", "codeContains", "codeHasPrefix", "codeHasSuffix", "codeEqualFold", "codeContainsFold", "hasAccounts", "hasAccountsWith", "hasInvestments", "hasInvestmentsWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasHouseholds", "hasHouseholdsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "code", "codeNEQ", "codeIn", "codeNotIn", "codeGT", "codeGTE", "codeLT", "codeLTE", "codeContains", "codeHasPrefix", "codeHasSuffix", "codeEqualFold", "codeContainsFold", "hasAccounts", "hasAccountsWith", "hasInvestments", "hasInvestmentsWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasHouseholds", "hasHouseholdsWith", "hasFxRateCachesFrom", "hasFxRateCachesFromWith", "hasFxRateCachesTo", "hasFxRateCachesToWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -14003,6 +15415,455 @@ func (ec *executionContext) unmarshalInputCurrencyWhereInput(ctx context.Context
 				return it, err
 			}
 			it.HasHouseholdsWith = data
+		case "hasFxRateCachesFrom":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasFxRateCachesFrom"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasFxRateCachesFrom = data
+		case "hasFxRateCachesFromWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasFxRateCachesFromWith"))
+			data, err := ec.unmarshalOFXRateCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasFxRateCachesFromWith = data
+		case "hasFxRateCachesTo":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasFxRateCachesTo"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasFxRateCachesTo = data
+		case "hasFxRateCachesToWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasFxRateCachesToWith"))
+			data, err := ec.unmarshalOFXRateCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasFxRateCachesToWith = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputFXRateCacheWhereInput(ctx context.Context, obj any) (ent.FXRateCacheWhereInput, error) {
+	var it ent.FXRateCacheWhereInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "fromCurrencyID", "fromCurrencyIDNEQ", "fromCurrencyIDIn", "fromCurrencyIDNotIn", "toCurrencyID", "toCurrencyIDNEQ", "toCurrencyIDIn", "toCurrencyIDNotIn", "value", "valueNEQ", "valueIn", "valueNotIn", "valueGT", "valueGTE", "valueLT", "valueLTE", "date", "dateNEQ", "dateIn", "dateNotIn", "dateGT", "dateGTE", "dateLT", "dateLTE", "hasFromCurrency", "hasFromCurrencyWith", "hasToCurrency", "hasToCurrencyWith"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalOFXRateCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalOFXRateCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalOFXRateCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "createTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTime = data
+		case "createTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNEQ = data
+		case "createTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeIn = data
+		case "createTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNotIn = data
+		case "createTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGT = data
+		case "createTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGTE = data
+		case "createTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLT = data
+		case "createTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLTE = data
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTime = data
+		case "updateTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNEQ = data
+		case "updateTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeIn = data
+		case "updateTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNotIn = data
+		case "updateTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGT = data
+		case "updateTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGTE = data
+		case "updateTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLT = data
+		case "updateTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLTE = data
+		case "fromCurrencyID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromCurrencyID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FromCurrencyID = data
+		case "fromCurrencyIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromCurrencyIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FromCurrencyIDNEQ = data
+		case "fromCurrencyIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromCurrencyIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FromCurrencyIDIn = data
+		case "fromCurrencyIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fromCurrencyIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FromCurrencyIDNotIn = data
+		case "toCurrencyID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toCurrencyID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ToCurrencyID = data
+		case "toCurrencyIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toCurrencyIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ToCurrencyIDNEQ = data
+		case "toCurrencyIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toCurrencyIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ToCurrencyIDIn = data
+		case "toCurrencyIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("toCurrencyIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ToCurrencyIDNotIn = data
+		case "value":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().Value(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueNEQ"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().ValueNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueIn"))
+			data, err := ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().ValueIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueNotIn"))
+			data, err := ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().ValueNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueGT"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().ValueGt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueGTE"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().ValueGte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueLT"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().ValueLt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueLTE"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.FXRateCacheWhereInput().ValueLte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "date":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Date = data
+		case "dateNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateNEQ = data
+		case "dateIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateIn = data
+		case "dateNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateNotIn = data
+		case "dateGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateGT = data
+		case "dateGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateGTE = data
+		case "dateLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateLT = data
+		case "dateLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateLTE = data
+		case "hasFromCurrency":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasFromCurrency"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasFromCurrency = data
+		case "hasFromCurrencyWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasFromCurrencyWith"))
+			data, err := ec.unmarshalOCurrencyWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐCurrencyWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasFromCurrencyWith = data
+		case "hasToCurrency":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasToCurrency"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasToCurrency = data
+		case "hasToCurrencyWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasToCurrencyWith"))
+			data, err := ec.unmarshalOCurrencyWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐCurrencyWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasToCurrencyWith = data
 		}
 	}
 
@@ -15899,6 +17760,434 @@ func (ec *executionContext) unmarshalInputSellInvestmentInputCustom(ctx context.
 				return it, err
 			}
 			it.Fees = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputStockQuoteCacheWhereInput(ctx context.Context, obj any) (ent.StockQuoteCacheWhereInput, error) {
+	var it ent.StockQuoteCacheWhereInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "symbol", "symbolNEQ", "symbolIn", "symbolNotIn", "symbolGT", "symbolGTE", "symbolLT", "symbolLTE", "symbolContains", "symbolHasPrefix", "symbolHasSuffix", "symbolEqualFold", "symbolContainsFold", "value", "valueNEQ", "valueIn", "valueNotIn", "valueGT", "valueGTE", "valueLT", "valueLTE", "date", "dateNEQ", "dateIn", "dateNotIn", "dateGT", "dateGTE", "dateLT", "dateLTE"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalOStockQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐStockQuoteCacheWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalOStockQuoteCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐStockQuoteCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalOStockQuoteCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐStockQuoteCacheWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "createTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTime = data
+		case "createTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNEQ = data
+		case "createTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeIn = data
+		case "createTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNotIn = data
+		case "createTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGT = data
+		case "createTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGTE = data
+		case "createTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLT = data
+		case "createTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLTE = data
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTime = data
+		case "updateTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNEQ = data
+		case "updateTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeIn = data
+		case "updateTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNotIn = data
+		case "updateTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGT = data
+		case "updateTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGTE = data
+		case "updateTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLT = data
+		case "updateTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLTE = data
+		case "symbol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Symbol = data
+		case "symbolNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolNEQ = data
+		case "symbolIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolIn = data
+		case "symbolNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolNotIn = data
+		case "symbolGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolGT = data
+		case "symbolGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolGTE = data
+		case "symbolLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolLT = data
+		case "symbolLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolLTE = data
+		case "symbolContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolContains = data
+		case "symbolHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolHasPrefix = data
+		case "symbolHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolHasSuffix = data
+		case "symbolEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolEqualFold = data
+		case "symbolContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbolContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SymbolContainsFold = data
+		case "value":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().Value(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueNEQ"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().ValueNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueIn"))
+			data, err := ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().ValueIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueNotIn"))
+			data, err := ec.unmarshalOFloat2ᚕfloat64ᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().ValueNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueGT"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().ValueGt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueGTE"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().ValueGte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueLT"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().ValueLt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "valueLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("valueLTE"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.StockQuoteCacheWhereInput().ValueLte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "date":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("date"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Date = data
+		case "dateNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateNEQ = data
+		case "dateIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateIn = data
+		case "dateNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateNotIn = data
+		case "dateGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateGT = data
+		case "dateGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateGTE = data
+		case "dateLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateLT = data
+		case "dateLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dateLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DateLTE = data
 		}
 	}
 
@@ -18715,6 +21004,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Transaction(ctx, sel, obj)
+	case *ent.StockQuoteCache:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._StockQuoteCache(ctx, sel, obj)
 	case *ent.InvestmentLot:
 		if obj == nil {
 			return graphql.Null
@@ -18730,11 +21024,21 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Household(ctx, sel, obj)
+	case *ent.FXRateCache:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._FXRateCache(ctx, sel, obj)
 	case *ent.Currency:
 		if obj == nil {
 			return graphql.Null
 		}
 		return ec._Currency(ctx, sel, obj)
+	case *ent.CryptoQuoteCache:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._CryptoQuoteCache(ctx, sel, obj)
 	case *ent.Account:
 		if obj == nil {
 			return graphql.Null
@@ -19373,6 +21677,101 @@ func (ec *executionContext) _CategoryTypeAggregate(ctx context.Context, sel ast.
 	return out
 }
 
+var cryptoQuoteCacheImplementors = []string{"CryptoQuoteCache", "Node"}
+
+func (ec *executionContext) _CryptoQuoteCache(ctx context.Context, sel ast.SelectionSet, obj *ent.CryptoQuoteCache) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cryptoQuoteCacheImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CryptoQuoteCache")
+		case "id":
+			out.Values[i] = ec._CryptoQuoteCache_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._CryptoQuoteCache_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._CryptoQuoteCache_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "symbol":
+			out.Values[i] = ec._CryptoQuoteCache_symbol(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "value":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._CryptoQuoteCache_value(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "date":
+			out.Values[i] = ec._CryptoQuoteCache_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var cryptoQuoteResultImplementors = []string{"CryptoQuoteResult"}
 
 func (ec *executionContext) _CryptoQuoteResult(ctx context.Context, sel ast.SelectionSet, obj *CryptoQuoteResult) graphql.Marshaler {
@@ -19562,6 +21961,244 @@ func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet,
 					}
 				}()
 				res = ec._Currency_households(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "fxRateCachesFrom":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Currency_fxRateCachesFrom(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "fxRateCachesTo":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Currency_fxRateCachesTo(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var fXRateCacheImplementors = []string{"FXRateCache", "Node"}
+
+func (ec *executionContext) _FXRateCache(ctx context.Context, sel ast.SelectionSet, obj *ent.FXRateCache) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, fXRateCacheImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FXRateCache")
+		case "id":
+			out.Values[i] = ec._FXRateCache_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._FXRateCache_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._FXRateCache_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "fromCurrencyID":
+			out.Values[i] = ec._FXRateCache_fromCurrencyID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "toCurrencyID":
+			out.Values[i] = ec._FXRateCache_toCurrencyID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "value":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FXRateCache_value(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "date":
+			out.Values[i] = ec._FXRateCache_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "fromCurrency":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FXRateCache_fromCurrency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "toCurrency":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._FXRateCache_toCurrency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -21646,6 +24283,101 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
+var stockQuoteCacheImplementors = []string{"StockQuoteCache", "Node"}
+
+func (ec *executionContext) _StockQuoteCache(ctx context.Context, sel ast.SelectionSet, obj *ent.StockQuoteCache) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, stockQuoteCacheImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StockQuoteCache")
+		case "id":
+			out.Values[i] = ec._StockQuoteCache_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._StockQuoteCache_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._StockQuoteCache_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "symbol":
+			out.Values[i] = ec._StockQuoteCache_symbol(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "value":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StockQuoteCache_value(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "date":
+			out.Values[i] = ec._StockQuoteCache_date(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var stockQuoteResultImplementors = []string{"StockQuoteResult"}
 
 func (ec *executionContext) _StockQuoteResult(ctx context.Context, sel ast.SelectionSet, obj *StockQuoteResult) graphql.Marshaler {
@@ -23578,6 +26310,11 @@ func (ec *executionContext) unmarshalNCreateTransferInputCustom2beavermoneyᚗap
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCryptoQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐCryptoQuoteCacheWhereInput(ctx context.Context, v any) (*ent.CryptoQuoteCacheWhereInput, error) {
+	res, err := ec.unmarshalInputCryptoQuoteCacheWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNCurrency2ᚕᚖbeavermoneyᚗappᚋentᚐCurrencyᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Currency) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -23647,6 +26384,21 @@ func (ec *executionContext) marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCurso
 	return v
 }
 
+func (ec *executionContext) marshalNFXRateCache2ᚖbeavermoneyᚗappᚋentᚐFXRateCache(ctx context.Context, sel ast.SelectionSet, v *ent.FXRateCache) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._FXRateCache(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFXRateCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInput(ctx context.Context, v any) (*ent.FXRateCacheWhereInput, error) {
+	res, err := ec.unmarshalInputFXRateCacheWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNFinancialReport2beavermoneyᚗappᚐFinancialReport(ctx context.Context, sel ast.SelectionSet, v FinancialReport) graphql.Marshaler {
 	return ec._FinancialReport(ctx, sel, &v)
 }
@@ -23659,6 +26411,22 @@ func (ec *executionContext) marshalNFinancialReport2ᚖbeavermoneyᚗappᚐFinan
 		return graphql.Null
 	}
 	return ec._FinancialReport(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	_ = sel
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) marshalNHousehold2beavermoneyᚗappᚋentᚐHousehold(ctx context.Context, sel ast.SelectionSet, v ent.Household) graphql.Marshaler {
@@ -23992,6 +26760,11 @@ func (ec *executionContext) marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPag
 func (ec *executionContext) unmarshalNSellInvestmentInputCustom2beavermoneyᚗappᚐSellInvestmentInputCustom(ctx context.Context, v any) (SellInvestmentInputCustom, error) {
 	res, err := ec.unmarshalInputSellInvestmentInputCustom(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNStockQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐStockQuoteCacheWhereInput(ctx context.Context, v any) (*ent.StockQuoteCacheWhereInput, error) {
+	res, err := ec.unmarshalInputStockQuoteCacheWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) (string, error) {
@@ -24803,6 +27576,32 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) unmarshalOCryptoQuoteCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐCryptoQuoteCacheWhereInputᚄ(ctx context.Context, v any) ([]*ent.CryptoQuoteCacheWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*ent.CryptoQuoteCacheWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCryptoQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐCryptoQuoteCacheWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOCryptoQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐCryptoQuoteCacheWhereInput(ctx context.Context, v any) (*ent.CryptoQuoteCacheWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCryptoQuoteCacheWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOCryptoQuoteResult2ᚖbeavermoneyᚗappᚐCryptoQuoteResult(ctx context.Context, sel ast.SelectionSet, v *CryptoQuoteResult) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -24850,6 +27649,132 @@ func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCu
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOFXRateCache2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.FXRateCache) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNFXRateCache2ᚖbeavermoneyᚗappᚋentᚐFXRateCache(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOFXRateCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInputᚄ(ctx context.Context, v any) ([]*ent.FXRateCacheWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*ent.FXRateCacheWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFXRateCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOFXRateCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐFXRateCacheWhereInput(ctx context.Context, v any) (*ent.FXRateCacheWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputFXRateCacheWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚕfloat64ᚄ(ctx context.Context, v any) ([]float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]float64, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFloat2float64(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOFloat2ᚕfloat64ᚄ(ctx context.Context, sel ast.SelectionSet, v []float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNFloat2float64(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel ast.SelectionSet, v *float64) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	_ = sel
+	res := graphql.MarshalFloatContext(*v)
+	return graphql.WrapContextMarshaler(ctx, res)
 }
 
 func (ec *executionContext) marshalOHousehold2ᚕᚖbeavermoneyᚗappᚋentᚐHouseholdᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Household) graphql.Marshaler {
@@ -25339,6 +28264,32 @@ func (ec *executionContext) marshalONode2beavermoneyᚗappᚋentᚐNoder(ctx con
 		return graphql.Null
 	}
 	return ec._Node(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOStockQuoteCacheWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐStockQuoteCacheWhereInputᚄ(ctx context.Context, v any) ([]*ent.StockQuoteCacheWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*ent.StockQuoteCacheWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNStockQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐStockQuoteCacheWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOStockQuoteCacheWhereInput2ᚖbeavermoneyᚗappᚋentᚐStockQuoteCacheWhereInput(ctx context.Context, v any) (*ent.StockQuoteCacheWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputStockQuoteCacheWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOStockQuoteResult2ᚖbeavermoneyᚗappᚐStockQuoteResult(ctx context.Context, sel ast.SelectionSet, v *StockQuoteResult) graphql.Marshaler {

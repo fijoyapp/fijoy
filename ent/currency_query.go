@@ -10,6 +10,7 @@ import (
 
 	"beavermoney.app/ent/account"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/predicate"
@@ -31,12 +32,16 @@ type CurrencyQuery struct {
 	withInvestments             *InvestmentQuery
 	withTransactionEntries      *TransactionEntryQuery
 	withHouseholds              *HouseholdQuery
+	withFxRateCachesFrom        *FXRateCacheQuery
+	withFxRateCachesTo          *FXRateCacheQuery
 	loadTotal                   []func(context.Context, []*Currency) error
 	modifiers                   []func(*sql.Selector)
 	withNamedAccounts           map[string]*AccountQuery
 	withNamedInvestments        map[string]*InvestmentQuery
 	withNamedTransactionEntries map[string]*TransactionEntryQuery
 	withNamedHouseholds         map[string]*HouseholdQuery
+	withNamedFxRateCachesFrom   map[string]*FXRateCacheQuery
+	withNamedFxRateCachesTo     map[string]*FXRateCacheQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -154,6 +159,50 @@ func (_q *CurrencyQuery) QueryHouseholds() *HouseholdQuery {
 			sqlgraph.From(currency.Table, currency.FieldID, selector),
 			sqlgraph.To(household.Table, household.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, currency.HouseholdsTable, currency.HouseholdsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFxRateCachesFrom chains the current query on the "fx_rate_caches_from" edge.
+func (_q *CurrencyQuery) QueryFxRateCachesFrom() *FXRateCacheQuery {
+	query := (&FXRateCacheClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(currency.Table, currency.FieldID, selector),
+			sqlgraph.To(fxratecache.Table, fxratecache.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.FxRateCachesFromTable, currency.FxRateCachesFromColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFxRateCachesTo chains the current query on the "fx_rate_caches_to" edge.
+func (_q *CurrencyQuery) QueryFxRateCachesTo() *FXRateCacheQuery {
+	query := (&FXRateCacheClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(currency.Table, currency.FieldID, selector),
+			sqlgraph.To(fxratecache.Table, fxratecache.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.FxRateCachesToTable, currency.FxRateCachesToColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -357,6 +406,8 @@ func (_q *CurrencyQuery) Clone() *CurrencyQuery {
 		withInvestments:        _q.withInvestments.Clone(),
 		withTransactionEntries: _q.withTransactionEntries.Clone(),
 		withHouseholds:         _q.withHouseholds.Clone(),
+		withFxRateCachesFrom:   _q.withFxRateCachesFrom.Clone(),
+		withFxRateCachesTo:     _q.withFxRateCachesTo.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -405,6 +456,28 @@ func (_q *CurrencyQuery) WithHouseholds(opts ...func(*HouseholdQuery)) *Currency
 		opt(query)
 	}
 	_q.withHouseholds = query
+	return _q
+}
+
+// WithFxRateCachesFrom tells the query-builder to eager-load the nodes that are connected to
+// the "fx_rate_caches_from" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *CurrencyQuery) WithFxRateCachesFrom(opts ...func(*FXRateCacheQuery)) *CurrencyQuery {
+	query := (&FXRateCacheClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withFxRateCachesFrom = query
+	return _q
+}
+
+// WithFxRateCachesTo tells the query-builder to eager-load the nodes that are connected to
+// the "fx_rate_caches_to" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *CurrencyQuery) WithFxRateCachesTo(opts ...func(*FXRateCacheQuery)) *CurrencyQuery {
+	query := (&FXRateCacheClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withFxRateCachesTo = query
 	return _q
 }
 
@@ -486,11 +559,13 @@ func (_q *CurrencyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cur
 	var (
 		nodes       = []*Currency{}
 		_spec       = _q.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [6]bool{
 			_q.withAccounts != nil,
 			_q.withInvestments != nil,
 			_q.withTransactionEntries != nil,
 			_q.withHouseholds != nil,
+			_q.withFxRateCachesFrom != nil,
+			_q.withFxRateCachesTo != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -544,6 +619,20 @@ func (_q *CurrencyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cur
 			return nil, err
 		}
 	}
+	if query := _q.withFxRateCachesFrom; query != nil {
+		if err := _q.loadFxRateCachesFrom(ctx, query, nodes,
+			func(n *Currency) { n.Edges.FxRateCachesFrom = []*FXRateCache{} },
+			func(n *Currency, e *FXRateCache) { n.Edges.FxRateCachesFrom = append(n.Edges.FxRateCachesFrom, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withFxRateCachesTo; query != nil {
+		if err := _q.loadFxRateCachesTo(ctx, query, nodes,
+			func(n *Currency) { n.Edges.FxRateCachesTo = []*FXRateCache{} },
+			func(n *Currency, e *FXRateCache) { n.Edges.FxRateCachesTo = append(n.Edges.FxRateCachesTo, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range _q.withNamedAccounts {
 		if err := _q.loadAccounts(ctx, query, nodes,
 			func(n *Currency) { n.appendNamedAccounts(name) },
@@ -569,6 +658,20 @@ func (_q *CurrencyQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Cur
 		if err := _q.loadHouseholds(ctx, query, nodes,
 			func(n *Currency) { n.appendNamedHouseholds(name) },
 			func(n *Currency, e *Household) { n.appendNamedHouseholds(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedFxRateCachesFrom {
+		if err := _q.loadFxRateCachesFrom(ctx, query, nodes,
+			func(n *Currency) { n.appendNamedFxRateCachesFrom(name) },
+			func(n *Currency, e *FXRateCache) { n.appendNamedFxRateCachesFrom(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedFxRateCachesTo {
+		if err := _q.loadFxRateCachesTo(ctx, query, nodes,
+			func(n *Currency) { n.appendNamedFxRateCachesTo(name) },
+			func(n *Currency, e *FXRateCache) { n.appendNamedFxRateCachesTo(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -695,6 +798,66 @@ func (_q *CurrencyQuery) loadHouseholds(ctx context.Context, query *HouseholdQue
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "currency_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *CurrencyQuery) loadFxRateCachesFrom(ctx context.Context, query *FXRateCacheQuery, nodes []*Currency, init func(*Currency), assign func(*Currency, *FXRateCache)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Currency)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(fxratecache.FieldFromCurrencyID)
+	}
+	query.Where(predicate.FXRateCache(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(currency.FxRateCachesFromColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.FromCurrencyID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "from_currency_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *CurrencyQuery) loadFxRateCachesTo(ctx context.Context, query *FXRateCacheQuery, nodes []*Currency, init func(*Currency), assign func(*Currency, *FXRateCache)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*Currency)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(fxratecache.FieldToCurrencyID)
+	}
+	query.Where(predicate.FXRateCache(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(currency.FxRateCachesToColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ToCurrencyID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "to_currency_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -847,6 +1010,34 @@ func (_q *CurrencyQuery) WithNamedHouseholds(name string, opts ...func(*Househol
 		_q.withNamedHouseholds = make(map[string]*HouseholdQuery)
 	}
 	_q.withNamedHouseholds[name] = query
+	return _q
+}
+
+// WithNamedFxRateCachesFrom tells the query-builder to eager-load the nodes that are connected to the "fx_rate_caches_from"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *CurrencyQuery) WithNamedFxRateCachesFrom(name string, opts ...func(*FXRateCacheQuery)) *CurrencyQuery {
+	query := (&FXRateCacheClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedFxRateCachesFrom == nil {
+		_q.withNamedFxRateCachesFrom = make(map[string]*FXRateCacheQuery)
+	}
+	_q.withNamedFxRateCachesFrom[name] = query
+	return _q
+}
+
+// WithNamedFxRateCachesTo tells the query-builder to eager-load the nodes that are connected to the "fx_rate_caches_to"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *CurrencyQuery) WithNamedFxRateCachesTo(name string, opts ...func(*FXRateCacheQuery)) *CurrencyQuery {
+	query := (&FXRateCacheClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedFxRateCachesTo == nil {
+		_q.withNamedFxRateCachesTo = make(map[string]*FXRateCacheQuery)
+	}
+	_q.withNamedFxRateCachesTo[name] = query
 	return _q
 }
 

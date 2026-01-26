@@ -9,8 +9,14 @@ import (
 // Account is the predicate function for account builders.
 type Account func(*sql.Selector)
 
+// CryptoQuoteCache is the predicate function for cryptoquotecache builders.
+type CryptoQuoteCache func(*sql.Selector)
+
 // Currency is the predicate function for currency builders.
 type Currency func(*sql.Selector)
+
+// FXRateCache is the predicate function for fxratecache builders.
+type FXRateCache func(*sql.Selector)
 
 // Household is the predicate function for household builders.
 type Household func(*sql.Selector)
@@ -20,6 +26,9 @@ type Investment func(*sql.Selector)
 
 // InvestmentLot is the predicate function for investmentlot builders.
 type InvestmentLot func(*sql.Selector)
+
+// StockQuoteCache is the predicate function for stockquotecache builders.
+type StockQuoteCache func(*sql.Selector)
 
 // Transaction is the predicate function for transaction builders.
 type Transaction func(*sql.Selector)

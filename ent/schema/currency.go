@@ -27,6 +27,8 @@ func (Currency) Edges() []ent.Edge {
 		edge.To("investments", Investment.Type),
 		edge.To("transaction_entries", TransactionEntry.Type),
 		edge.To("households", Household.Type),
+		edge.To("fx_rate_caches_from", FXRateCache.Type),
+		edge.To("fx_rate_caches_to", FXRateCache.Type),
 	}
 }
 

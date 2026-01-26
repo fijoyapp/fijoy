@@ -8,11 +8,14 @@ import (
 	"fmt"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/internal"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -34,10 +37,20 @@ var accountImplementors = []string{"Account", "Node"}
 // IsNode implements the Node interface check for GQLGen.
 func (*Account) IsNode() {}
 
+var cryptoquotecacheImplementors = []string{"CryptoQuoteCache", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*CryptoQuoteCache) IsNode() {}
+
 var currencyImplementors = []string{"Currency", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Currency) IsNode() {}
+
+var fxratecacheImplementors = []string{"FXRateCache", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*FXRateCache) IsNode() {}
 
 var householdImplementors = []string{"Household", "Node"}
 
@@ -53,6 +66,11 @@ var investmentlotImplementors = []string{"InvestmentLot", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*InvestmentLot) IsNode() {}
+
+var stockquotecacheImplementors = []string{"StockQuoteCache", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*StockQuoteCache) IsNode() {}
 
 var transactionImplementors = []string{"Transaction", "Node"}
 
@@ -170,11 +188,29 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			}
 		}
 		return query.Only(ctx)
+	case cryptoquotecache.Table:
+		query := c.CryptoQuoteCache.Query().
+			Where(cryptoquotecache.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, cryptoquotecacheImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
 	case currency.Table:
 		query := c.Currency.Query().
 			Where(currency.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, currencyImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case fxratecache.Table:
+		query := c.FXRateCache.Query().
+			Where(fxratecache.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, fxratecacheImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -202,6 +238,15 @@ func (c *Client) noder(ctx context.Context, table string, id int) (Noder, error)
 			Where(investmentlot.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, investmentlotImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case stockquotecache.Table:
+		query := c.StockQuoteCache.Query().
+			Where(stockquotecache.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, stockquotecacheImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -349,10 +394,42 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 				*noder = node
 			}
 		}
+	case cryptoquotecache.Table:
+		query := c.CryptoQuoteCache.Query().
+			Where(cryptoquotecache.IDIn(ids...))
+		query, err := query.CollectFields(ctx, cryptoquotecacheImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case currency.Table:
 		query := c.Currency.Query().
 			Where(currency.IDIn(ids...))
 		query, err := query.CollectFields(ctx, currencyImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case fxratecache.Table:
+		query := c.FXRateCache.Query().
+			Where(fxratecache.IDIn(ids...))
+		query, err := query.CollectFields(ctx, fxratecacheImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -401,6 +478,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []int) ([]Noder, 
 		query := c.InvestmentLot.Query().
 			Where(investmentlot.IDIn(ids...))
 		query, err := query.CollectFields(ctx, investmentlotImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case stockquotecache.Table:
+		query := c.StockQuoteCache.Query().
+			Where(stockquotecache.IDIn(ids...))
+		query, err := query.CollectFields(ctx, stockquotecacheImplementors...)
 		if err != nil {
 			return nil, err
 		}

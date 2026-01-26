@@ -8,11 +8,14 @@ import (
 	"time"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -614,6 +617,320 @@ func (i *AccountWhereInput) P() (predicate.Account, error) {
 	}
 }
 
+// CryptoQuoteCacheWhereInput represents a where input for filtering CryptoQuoteCache queries.
+type CryptoQuoteCacheWhereInput struct {
+	Predicates []predicate.CryptoQuoteCache  `json:"-"`
+	Not        *CryptoQuoteCacheWhereInput   `json:"not,omitempty"`
+	Or         []*CryptoQuoteCacheWhereInput `json:"or,omitempty"`
+	And        []*CryptoQuoteCacheWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *int  `json:"id,omitempty"`
+	IDNEQ   *int  `json:"idNEQ,omitempty"`
+	IDIn    []int `json:"idIn,omitempty"`
+	IDNotIn []int `json:"idNotIn,omitempty"`
+	IDGT    *int  `json:"idGT,omitempty"`
+	IDGTE   *int  `json:"idGTE,omitempty"`
+	IDLT    *int  `json:"idLT,omitempty"`
+	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "create_time" field predicates.
+	CreateTime      *time.Time  `json:"createTime,omitempty"`
+	CreateTimeNEQ   *time.Time  `json:"createTimeNEQ,omitempty"`
+	CreateTimeIn    []time.Time `json:"createTimeIn,omitempty"`
+	CreateTimeNotIn []time.Time `json:"createTimeNotIn,omitempty"`
+	CreateTimeGT    *time.Time  `json:"createTimeGT,omitempty"`
+	CreateTimeGTE   *time.Time  `json:"createTimeGTE,omitempty"`
+	CreateTimeLT    *time.Time  `json:"createTimeLT,omitempty"`
+	CreateTimeLTE   *time.Time  `json:"createTimeLTE,omitempty"`
+
+	// "update_time" field predicates.
+	UpdateTime      *time.Time  `json:"updateTime,omitempty"`
+	UpdateTimeNEQ   *time.Time  `json:"updateTimeNEQ,omitempty"`
+	UpdateTimeIn    []time.Time `json:"updateTimeIn,omitempty"`
+	UpdateTimeNotIn []time.Time `json:"updateTimeNotIn,omitempty"`
+	UpdateTimeGT    *time.Time  `json:"updateTimeGT,omitempty"`
+	UpdateTimeGTE   *time.Time  `json:"updateTimeGTE,omitempty"`
+	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
+	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
+
+	// "symbol" field predicates.
+	Symbol             *string  `json:"symbol,omitempty"`
+	SymbolNEQ          *string  `json:"symbolNEQ,omitempty"`
+	SymbolIn           []string `json:"symbolIn,omitempty"`
+	SymbolNotIn        []string `json:"symbolNotIn,omitempty"`
+	SymbolGT           *string  `json:"symbolGT,omitempty"`
+	SymbolGTE          *string  `json:"symbolGTE,omitempty"`
+	SymbolLT           *string  `json:"symbolLT,omitempty"`
+	SymbolLTE          *string  `json:"symbolLTE,omitempty"`
+	SymbolContains     *string  `json:"symbolContains,omitempty"`
+	SymbolHasPrefix    *string  `json:"symbolHasPrefix,omitempty"`
+	SymbolHasSuffix    *string  `json:"symbolHasSuffix,omitempty"`
+	SymbolEqualFold    *string  `json:"symbolEqualFold,omitempty"`
+	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
+
+	// "value" field predicates.
+	Value      *decimal.Decimal  `json:"value,omitempty"`
+	ValueNEQ   *decimal.Decimal  `json:"valueNEQ,omitempty"`
+	ValueIn    []decimal.Decimal `json:"valueIn,omitempty"`
+	ValueNotIn []decimal.Decimal `json:"valueNotIn,omitempty"`
+	ValueGT    *decimal.Decimal  `json:"valueGT,omitempty"`
+	ValueGTE   *decimal.Decimal  `json:"valueGTE,omitempty"`
+	ValueLT    *decimal.Decimal  `json:"valueLT,omitempty"`
+	ValueLTE   *decimal.Decimal  `json:"valueLTE,omitempty"`
+
+	// "date" field predicates.
+	Date      *time.Time  `json:"date,omitempty"`
+	DateNEQ   *time.Time  `json:"dateNEQ,omitempty"`
+	DateIn    []time.Time `json:"dateIn,omitempty"`
+	DateNotIn []time.Time `json:"dateNotIn,omitempty"`
+	DateGT    *time.Time  `json:"dateGT,omitempty"`
+	DateGTE   *time.Time  `json:"dateGTE,omitempty"`
+	DateLT    *time.Time  `json:"dateLT,omitempty"`
+	DateLTE   *time.Time  `json:"dateLTE,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *CryptoQuoteCacheWhereInput) AddPredicates(predicates ...predicate.CryptoQuoteCache) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the CryptoQuoteCacheWhereInput filter on the CryptoQuoteCacheQuery builder.
+func (i *CryptoQuoteCacheWhereInput) Filter(q *CryptoQuoteCacheQuery) (*CryptoQuoteCacheQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyCryptoQuoteCacheWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyCryptoQuoteCacheWhereInput is returned in case the CryptoQuoteCacheWhereInput is empty.
+var ErrEmptyCryptoQuoteCacheWhereInput = errors.New("ent: empty predicate CryptoQuoteCacheWhereInput")
+
+// P returns a predicate for filtering cryptoquotecaches.
+// An error is returned if the input is empty or invalid.
+func (i *CryptoQuoteCacheWhereInput) P() (predicate.CryptoQuoteCache, error) {
+	var predicates []predicate.CryptoQuoteCache
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, cryptoquotecache.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.CryptoQuoteCache, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, cryptoquotecache.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.CryptoQuoteCache, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, cryptoquotecache.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, cryptoquotecache.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, cryptoquotecache.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, cryptoquotecache.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, cryptoquotecache.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, cryptoquotecache.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, cryptoquotecache.IDLTE(*i.IDLTE))
+	}
+	if i.CreateTime != nil {
+		predicates = append(predicates, cryptoquotecache.CreateTimeEQ(*i.CreateTime))
+	}
+	if i.CreateTimeNEQ != nil {
+		predicates = append(predicates, cryptoquotecache.CreateTimeNEQ(*i.CreateTimeNEQ))
+	}
+	if len(i.CreateTimeIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.CreateTimeIn(i.CreateTimeIn...))
+	}
+	if len(i.CreateTimeNotIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.CreateTimeNotIn(i.CreateTimeNotIn...))
+	}
+	if i.CreateTimeGT != nil {
+		predicates = append(predicates, cryptoquotecache.CreateTimeGT(*i.CreateTimeGT))
+	}
+	if i.CreateTimeGTE != nil {
+		predicates = append(predicates, cryptoquotecache.CreateTimeGTE(*i.CreateTimeGTE))
+	}
+	if i.CreateTimeLT != nil {
+		predicates = append(predicates, cryptoquotecache.CreateTimeLT(*i.CreateTimeLT))
+	}
+	if i.CreateTimeLTE != nil {
+		predicates = append(predicates, cryptoquotecache.CreateTimeLTE(*i.CreateTimeLTE))
+	}
+	if i.UpdateTime != nil {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeEQ(*i.UpdateTime))
+	}
+	if i.UpdateTimeNEQ != nil {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeNEQ(*i.UpdateTimeNEQ))
+	}
+	if len(i.UpdateTimeIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeIn(i.UpdateTimeIn...))
+	}
+	if len(i.UpdateTimeNotIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeNotIn(i.UpdateTimeNotIn...))
+	}
+	if i.UpdateTimeGT != nil {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeGT(*i.UpdateTimeGT))
+	}
+	if i.UpdateTimeGTE != nil {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeGTE(*i.UpdateTimeGTE))
+	}
+	if i.UpdateTimeLT != nil {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeLT(*i.UpdateTimeLT))
+	}
+	if i.UpdateTimeLTE != nil {
+		predicates = append(predicates, cryptoquotecache.UpdateTimeLTE(*i.UpdateTimeLTE))
+	}
+	if i.Symbol != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolEQ(*i.Symbol))
+	}
+	if i.SymbolNEQ != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolNEQ(*i.SymbolNEQ))
+	}
+	if len(i.SymbolIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.SymbolIn(i.SymbolIn...))
+	}
+	if len(i.SymbolNotIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.SymbolNotIn(i.SymbolNotIn...))
+	}
+	if i.SymbolGT != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolGT(*i.SymbolGT))
+	}
+	if i.SymbolGTE != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolGTE(*i.SymbolGTE))
+	}
+	if i.SymbolLT != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolLT(*i.SymbolLT))
+	}
+	if i.SymbolLTE != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolLTE(*i.SymbolLTE))
+	}
+	if i.SymbolContains != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolContains(*i.SymbolContains))
+	}
+	if i.SymbolHasPrefix != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolHasPrefix(*i.SymbolHasPrefix))
+	}
+	if i.SymbolHasSuffix != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolHasSuffix(*i.SymbolHasSuffix))
+	}
+	if i.SymbolEqualFold != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolEqualFold(*i.SymbolEqualFold))
+	}
+	if i.SymbolContainsFold != nil {
+		predicates = append(predicates, cryptoquotecache.SymbolContainsFold(*i.SymbolContainsFold))
+	}
+	if i.Value != nil {
+		predicates = append(predicates, cryptoquotecache.ValueEQ(*i.Value))
+	}
+	if i.ValueNEQ != nil {
+		predicates = append(predicates, cryptoquotecache.ValueNEQ(*i.ValueNEQ))
+	}
+	if len(i.ValueIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.ValueIn(i.ValueIn...))
+	}
+	if len(i.ValueNotIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.ValueNotIn(i.ValueNotIn...))
+	}
+	if i.ValueGT != nil {
+		predicates = append(predicates, cryptoquotecache.ValueGT(*i.ValueGT))
+	}
+	if i.ValueGTE != nil {
+		predicates = append(predicates, cryptoquotecache.ValueGTE(*i.ValueGTE))
+	}
+	if i.ValueLT != nil {
+		predicates = append(predicates, cryptoquotecache.ValueLT(*i.ValueLT))
+	}
+	if i.ValueLTE != nil {
+		predicates = append(predicates, cryptoquotecache.ValueLTE(*i.ValueLTE))
+	}
+	if i.Date != nil {
+		predicates = append(predicates, cryptoquotecache.DateEQ(*i.Date))
+	}
+	if i.DateNEQ != nil {
+		predicates = append(predicates, cryptoquotecache.DateNEQ(*i.DateNEQ))
+	}
+	if len(i.DateIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.DateIn(i.DateIn...))
+	}
+	if len(i.DateNotIn) > 0 {
+		predicates = append(predicates, cryptoquotecache.DateNotIn(i.DateNotIn...))
+	}
+	if i.DateGT != nil {
+		predicates = append(predicates, cryptoquotecache.DateGT(*i.DateGT))
+	}
+	if i.DateGTE != nil {
+		predicates = append(predicates, cryptoquotecache.DateGTE(*i.DateGTE))
+	}
+	if i.DateLT != nil {
+		predicates = append(predicates, cryptoquotecache.DateLT(*i.DateLT))
+	}
+	if i.DateLTE != nil {
+		predicates = append(predicates, cryptoquotecache.DateLTE(*i.DateLTE))
+	}
+
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyCryptoQuoteCacheWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return cryptoquotecache.And(predicates...), nil
+	}
+}
+
 // CurrencyWhereInput represents a where input for filtering Currency queries.
 type CurrencyWhereInput struct {
 	Predicates []predicate.Currency  `json:"-"`
@@ -661,6 +978,14 @@ type CurrencyWhereInput struct {
 	// "households" edge predicates.
 	HasHouseholds     *bool                  `json:"hasHouseholds,omitempty"`
 	HasHouseholdsWith []*HouseholdWhereInput `json:"hasHouseholdsWith,omitempty"`
+
+	// "fx_rate_caches_from" edge predicates.
+	HasFxRateCachesFrom     *bool                    `json:"hasFxRateCachesFrom,omitempty"`
+	HasFxRateCachesFromWith []*FXRateCacheWhereInput `json:"hasFxRateCachesFromWith,omitempty"`
+
+	// "fx_rate_caches_to" edge predicates.
+	HasFxRateCachesTo     *bool                    `json:"hasFxRateCachesTo,omitempty"`
+	HasFxRateCachesToWith []*FXRateCacheWhereInput `json:"hasFxRateCachesToWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -870,6 +1195,42 @@ func (i *CurrencyWhereInput) P() (predicate.Currency, error) {
 		}
 		predicates = append(predicates, currency.HasHouseholdsWith(with...))
 	}
+	if i.HasFxRateCachesFrom != nil {
+		p := currency.HasFxRateCachesFrom()
+		if !*i.HasFxRateCachesFrom {
+			p = currency.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasFxRateCachesFromWith) > 0 {
+		with := make([]predicate.FXRateCache, 0, len(i.HasFxRateCachesFromWith))
+		for _, w := range i.HasFxRateCachesFromWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasFxRateCachesFromWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, currency.HasFxRateCachesFromWith(with...))
+	}
+	if i.HasFxRateCachesTo != nil {
+		p := currency.HasFxRateCachesTo()
+		if !*i.HasFxRateCachesTo {
+			p = currency.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasFxRateCachesToWith) > 0 {
+		with := make([]predicate.FXRateCache, 0, len(i.HasFxRateCachesToWith))
+		for _, w := range i.HasFxRateCachesToWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasFxRateCachesToWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, currency.HasFxRateCachesToWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
 		return nil, ErrEmptyCurrencyWhereInput
@@ -877,6 +1238,346 @@ func (i *CurrencyWhereInput) P() (predicate.Currency, error) {
 		return predicates[0], nil
 	default:
 		return currency.And(predicates...), nil
+	}
+}
+
+// FXRateCacheWhereInput represents a where input for filtering FXRateCache queries.
+type FXRateCacheWhereInput struct {
+	Predicates []predicate.FXRateCache  `json:"-"`
+	Not        *FXRateCacheWhereInput   `json:"not,omitempty"`
+	Or         []*FXRateCacheWhereInput `json:"or,omitempty"`
+	And        []*FXRateCacheWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *int  `json:"id,omitempty"`
+	IDNEQ   *int  `json:"idNEQ,omitempty"`
+	IDIn    []int `json:"idIn,omitempty"`
+	IDNotIn []int `json:"idNotIn,omitempty"`
+	IDGT    *int  `json:"idGT,omitempty"`
+	IDGTE   *int  `json:"idGTE,omitempty"`
+	IDLT    *int  `json:"idLT,omitempty"`
+	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "create_time" field predicates.
+	CreateTime      *time.Time  `json:"createTime,omitempty"`
+	CreateTimeNEQ   *time.Time  `json:"createTimeNEQ,omitempty"`
+	CreateTimeIn    []time.Time `json:"createTimeIn,omitempty"`
+	CreateTimeNotIn []time.Time `json:"createTimeNotIn,omitempty"`
+	CreateTimeGT    *time.Time  `json:"createTimeGT,omitempty"`
+	CreateTimeGTE   *time.Time  `json:"createTimeGTE,omitempty"`
+	CreateTimeLT    *time.Time  `json:"createTimeLT,omitempty"`
+	CreateTimeLTE   *time.Time  `json:"createTimeLTE,omitempty"`
+
+	// "update_time" field predicates.
+	UpdateTime      *time.Time  `json:"updateTime,omitempty"`
+	UpdateTimeNEQ   *time.Time  `json:"updateTimeNEQ,omitempty"`
+	UpdateTimeIn    []time.Time `json:"updateTimeIn,omitempty"`
+	UpdateTimeNotIn []time.Time `json:"updateTimeNotIn,omitempty"`
+	UpdateTimeGT    *time.Time  `json:"updateTimeGT,omitempty"`
+	UpdateTimeGTE   *time.Time  `json:"updateTimeGTE,omitempty"`
+	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
+	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
+
+	// "from_currency_id" field predicates.
+	FromCurrencyID      *int  `json:"fromCurrencyID,omitempty"`
+	FromCurrencyIDNEQ   *int  `json:"fromCurrencyIDNEQ,omitempty"`
+	FromCurrencyIDIn    []int `json:"fromCurrencyIDIn,omitempty"`
+	FromCurrencyIDNotIn []int `json:"fromCurrencyIDNotIn,omitempty"`
+
+	// "to_currency_id" field predicates.
+	ToCurrencyID      *int  `json:"toCurrencyID,omitempty"`
+	ToCurrencyIDNEQ   *int  `json:"toCurrencyIDNEQ,omitempty"`
+	ToCurrencyIDIn    []int `json:"toCurrencyIDIn,omitempty"`
+	ToCurrencyIDNotIn []int `json:"toCurrencyIDNotIn,omitempty"`
+
+	// "value" field predicates.
+	Value      *decimal.Decimal  `json:"value,omitempty"`
+	ValueNEQ   *decimal.Decimal  `json:"valueNEQ,omitempty"`
+	ValueIn    []decimal.Decimal `json:"valueIn,omitempty"`
+	ValueNotIn []decimal.Decimal `json:"valueNotIn,omitempty"`
+	ValueGT    *decimal.Decimal  `json:"valueGT,omitempty"`
+	ValueGTE   *decimal.Decimal  `json:"valueGTE,omitempty"`
+	ValueLT    *decimal.Decimal  `json:"valueLT,omitempty"`
+	ValueLTE   *decimal.Decimal  `json:"valueLTE,omitempty"`
+
+	// "date" field predicates.
+	Date      *time.Time  `json:"date,omitempty"`
+	DateNEQ   *time.Time  `json:"dateNEQ,omitempty"`
+	DateIn    []time.Time `json:"dateIn,omitempty"`
+	DateNotIn []time.Time `json:"dateNotIn,omitempty"`
+	DateGT    *time.Time  `json:"dateGT,omitempty"`
+	DateGTE   *time.Time  `json:"dateGTE,omitempty"`
+	DateLT    *time.Time  `json:"dateLT,omitempty"`
+	DateLTE   *time.Time  `json:"dateLTE,omitempty"`
+
+	// "from_currency" edge predicates.
+	HasFromCurrency     *bool                 `json:"hasFromCurrency,omitempty"`
+	HasFromCurrencyWith []*CurrencyWhereInput `json:"hasFromCurrencyWith,omitempty"`
+
+	// "to_currency" edge predicates.
+	HasToCurrency     *bool                 `json:"hasToCurrency,omitempty"`
+	HasToCurrencyWith []*CurrencyWhereInput `json:"hasToCurrencyWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *FXRateCacheWhereInput) AddPredicates(predicates ...predicate.FXRateCache) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the FXRateCacheWhereInput filter on the FXRateCacheQuery builder.
+func (i *FXRateCacheWhereInput) Filter(q *FXRateCacheQuery) (*FXRateCacheQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyFXRateCacheWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyFXRateCacheWhereInput is returned in case the FXRateCacheWhereInput is empty.
+var ErrEmptyFXRateCacheWhereInput = errors.New("ent: empty predicate FXRateCacheWhereInput")
+
+// P returns a predicate for filtering fxratecaches.
+// An error is returned if the input is empty or invalid.
+func (i *FXRateCacheWhereInput) P() (predicate.FXRateCache, error) {
+	var predicates []predicate.FXRateCache
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, fxratecache.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.FXRateCache, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, fxratecache.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.FXRateCache, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, fxratecache.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, fxratecache.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, fxratecache.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, fxratecache.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, fxratecache.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, fxratecache.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, fxratecache.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, fxratecache.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, fxratecache.IDLTE(*i.IDLTE))
+	}
+	if i.CreateTime != nil {
+		predicates = append(predicates, fxratecache.CreateTimeEQ(*i.CreateTime))
+	}
+	if i.CreateTimeNEQ != nil {
+		predicates = append(predicates, fxratecache.CreateTimeNEQ(*i.CreateTimeNEQ))
+	}
+	if len(i.CreateTimeIn) > 0 {
+		predicates = append(predicates, fxratecache.CreateTimeIn(i.CreateTimeIn...))
+	}
+	if len(i.CreateTimeNotIn) > 0 {
+		predicates = append(predicates, fxratecache.CreateTimeNotIn(i.CreateTimeNotIn...))
+	}
+	if i.CreateTimeGT != nil {
+		predicates = append(predicates, fxratecache.CreateTimeGT(*i.CreateTimeGT))
+	}
+	if i.CreateTimeGTE != nil {
+		predicates = append(predicates, fxratecache.CreateTimeGTE(*i.CreateTimeGTE))
+	}
+	if i.CreateTimeLT != nil {
+		predicates = append(predicates, fxratecache.CreateTimeLT(*i.CreateTimeLT))
+	}
+	if i.CreateTimeLTE != nil {
+		predicates = append(predicates, fxratecache.CreateTimeLTE(*i.CreateTimeLTE))
+	}
+	if i.UpdateTime != nil {
+		predicates = append(predicates, fxratecache.UpdateTimeEQ(*i.UpdateTime))
+	}
+	if i.UpdateTimeNEQ != nil {
+		predicates = append(predicates, fxratecache.UpdateTimeNEQ(*i.UpdateTimeNEQ))
+	}
+	if len(i.UpdateTimeIn) > 0 {
+		predicates = append(predicates, fxratecache.UpdateTimeIn(i.UpdateTimeIn...))
+	}
+	if len(i.UpdateTimeNotIn) > 0 {
+		predicates = append(predicates, fxratecache.UpdateTimeNotIn(i.UpdateTimeNotIn...))
+	}
+	if i.UpdateTimeGT != nil {
+		predicates = append(predicates, fxratecache.UpdateTimeGT(*i.UpdateTimeGT))
+	}
+	if i.UpdateTimeGTE != nil {
+		predicates = append(predicates, fxratecache.UpdateTimeGTE(*i.UpdateTimeGTE))
+	}
+	if i.UpdateTimeLT != nil {
+		predicates = append(predicates, fxratecache.UpdateTimeLT(*i.UpdateTimeLT))
+	}
+	if i.UpdateTimeLTE != nil {
+		predicates = append(predicates, fxratecache.UpdateTimeLTE(*i.UpdateTimeLTE))
+	}
+	if i.FromCurrencyID != nil {
+		predicates = append(predicates, fxratecache.FromCurrencyIDEQ(*i.FromCurrencyID))
+	}
+	if i.FromCurrencyIDNEQ != nil {
+		predicates = append(predicates, fxratecache.FromCurrencyIDNEQ(*i.FromCurrencyIDNEQ))
+	}
+	if len(i.FromCurrencyIDIn) > 0 {
+		predicates = append(predicates, fxratecache.FromCurrencyIDIn(i.FromCurrencyIDIn...))
+	}
+	if len(i.FromCurrencyIDNotIn) > 0 {
+		predicates = append(predicates, fxratecache.FromCurrencyIDNotIn(i.FromCurrencyIDNotIn...))
+	}
+	if i.ToCurrencyID != nil {
+		predicates = append(predicates, fxratecache.ToCurrencyIDEQ(*i.ToCurrencyID))
+	}
+	if i.ToCurrencyIDNEQ != nil {
+		predicates = append(predicates, fxratecache.ToCurrencyIDNEQ(*i.ToCurrencyIDNEQ))
+	}
+	if len(i.ToCurrencyIDIn) > 0 {
+		predicates = append(predicates, fxratecache.ToCurrencyIDIn(i.ToCurrencyIDIn...))
+	}
+	if len(i.ToCurrencyIDNotIn) > 0 {
+		predicates = append(predicates, fxratecache.ToCurrencyIDNotIn(i.ToCurrencyIDNotIn...))
+	}
+	if i.Value != nil {
+		predicates = append(predicates, fxratecache.ValueEQ(*i.Value))
+	}
+	if i.ValueNEQ != nil {
+		predicates = append(predicates, fxratecache.ValueNEQ(*i.ValueNEQ))
+	}
+	if len(i.ValueIn) > 0 {
+		predicates = append(predicates, fxratecache.ValueIn(i.ValueIn...))
+	}
+	if len(i.ValueNotIn) > 0 {
+		predicates = append(predicates, fxratecache.ValueNotIn(i.ValueNotIn...))
+	}
+	if i.ValueGT != nil {
+		predicates = append(predicates, fxratecache.ValueGT(*i.ValueGT))
+	}
+	if i.ValueGTE != nil {
+		predicates = append(predicates, fxratecache.ValueGTE(*i.ValueGTE))
+	}
+	if i.ValueLT != nil {
+		predicates = append(predicates, fxratecache.ValueLT(*i.ValueLT))
+	}
+	if i.ValueLTE != nil {
+		predicates = append(predicates, fxratecache.ValueLTE(*i.ValueLTE))
+	}
+	if i.Date != nil {
+		predicates = append(predicates, fxratecache.DateEQ(*i.Date))
+	}
+	if i.DateNEQ != nil {
+		predicates = append(predicates, fxratecache.DateNEQ(*i.DateNEQ))
+	}
+	if len(i.DateIn) > 0 {
+		predicates = append(predicates, fxratecache.DateIn(i.DateIn...))
+	}
+	if len(i.DateNotIn) > 0 {
+		predicates = append(predicates, fxratecache.DateNotIn(i.DateNotIn...))
+	}
+	if i.DateGT != nil {
+		predicates = append(predicates, fxratecache.DateGT(*i.DateGT))
+	}
+	if i.DateGTE != nil {
+		predicates = append(predicates, fxratecache.DateGTE(*i.DateGTE))
+	}
+	if i.DateLT != nil {
+		predicates = append(predicates, fxratecache.DateLT(*i.DateLT))
+	}
+	if i.DateLTE != nil {
+		predicates = append(predicates, fxratecache.DateLTE(*i.DateLTE))
+	}
+
+	if i.HasFromCurrency != nil {
+		p := fxratecache.HasFromCurrency()
+		if !*i.HasFromCurrency {
+			p = fxratecache.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasFromCurrencyWith) > 0 {
+		with := make([]predicate.Currency, 0, len(i.HasFromCurrencyWith))
+		for _, w := range i.HasFromCurrencyWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasFromCurrencyWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, fxratecache.HasFromCurrencyWith(with...))
+	}
+	if i.HasToCurrency != nil {
+		p := fxratecache.HasToCurrency()
+		if !*i.HasToCurrency {
+			p = fxratecache.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasToCurrencyWith) > 0 {
+		with := make([]predicate.Currency, 0, len(i.HasToCurrencyWith))
+		for _, w := range i.HasToCurrencyWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasToCurrencyWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, fxratecache.HasToCurrencyWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyFXRateCacheWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return fxratecache.And(predicates...), nil
 	}
 }
 
@@ -2335,6 +3036,320 @@ func (i *InvestmentLotWhereInput) P() (predicate.InvestmentLot, error) {
 		return predicates[0], nil
 	default:
 		return investmentlot.And(predicates...), nil
+	}
+}
+
+// StockQuoteCacheWhereInput represents a where input for filtering StockQuoteCache queries.
+type StockQuoteCacheWhereInput struct {
+	Predicates []predicate.StockQuoteCache  `json:"-"`
+	Not        *StockQuoteCacheWhereInput   `json:"not,omitempty"`
+	Or         []*StockQuoteCacheWhereInput `json:"or,omitempty"`
+	And        []*StockQuoteCacheWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID      *int  `json:"id,omitempty"`
+	IDNEQ   *int  `json:"idNEQ,omitempty"`
+	IDIn    []int `json:"idIn,omitempty"`
+	IDNotIn []int `json:"idNotIn,omitempty"`
+	IDGT    *int  `json:"idGT,omitempty"`
+	IDGTE   *int  `json:"idGTE,omitempty"`
+	IDLT    *int  `json:"idLT,omitempty"`
+	IDLTE   *int  `json:"idLTE,omitempty"`
+
+	// "create_time" field predicates.
+	CreateTime      *time.Time  `json:"createTime,omitempty"`
+	CreateTimeNEQ   *time.Time  `json:"createTimeNEQ,omitempty"`
+	CreateTimeIn    []time.Time `json:"createTimeIn,omitempty"`
+	CreateTimeNotIn []time.Time `json:"createTimeNotIn,omitempty"`
+	CreateTimeGT    *time.Time  `json:"createTimeGT,omitempty"`
+	CreateTimeGTE   *time.Time  `json:"createTimeGTE,omitempty"`
+	CreateTimeLT    *time.Time  `json:"createTimeLT,omitempty"`
+	CreateTimeLTE   *time.Time  `json:"createTimeLTE,omitempty"`
+
+	// "update_time" field predicates.
+	UpdateTime      *time.Time  `json:"updateTime,omitempty"`
+	UpdateTimeNEQ   *time.Time  `json:"updateTimeNEQ,omitempty"`
+	UpdateTimeIn    []time.Time `json:"updateTimeIn,omitempty"`
+	UpdateTimeNotIn []time.Time `json:"updateTimeNotIn,omitempty"`
+	UpdateTimeGT    *time.Time  `json:"updateTimeGT,omitempty"`
+	UpdateTimeGTE   *time.Time  `json:"updateTimeGTE,omitempty"`
+	UpdateTimeLT    *time.Time  `json:"updateTimeLT,omitempty"`
+	UpdateTimeLTE   *time.Time  `json:"updateTimeLTE,omitempty"`
+
+	// "symbol" field predicates.
+	Symbol             *string  `json:"symbol,omitempty"`
+	SymbolNEQ          *string  `json:"symbolNEQ,omitempty"`
+	SymbolIn           []string `json:"symbolIn,omitempty"`
+	SymbolNotIn        []string `json:"symbolNotIn,omitempty"`
+	SymbolGT           *string  `json:"symbolGT,omitempty"`
+	SymbolGTE          *string  `json:"symbolGTE,omitempty"`
+	SymbolLT           *string  `json:"symbolLT,omitempty"`
+	SymbolLTE          *string  `json:"symbolLTE,omitempty"`
+	SymbolContains     *string  `json:"symbolContains,omitempty"`
+	SymbolHasPrefix    *string  `json:"symbolHasPrefix,omitempty"`
+	SymbolHasSuffix    *string  `json:"symbolHasSuffix,omitempty"`
+	SymbolEqualFold    *string  `json:"symbolEqualFold,omitempty"`
+	SymbolContainsFold *string  `json:"symbolContainsFold,omitempty"`
+
+	// "value" field predicates.
+	Value      *decimal.Decimal  `json:"value,omitempty"`
+	ValueNEQ   *decimal.Decimal  `json:"valueNEQ,omitempty"`
+	ValueIn    []decimal.Decimal `json:"valueIn,omitempty"`
+	ValueNotIn []decimal.Decimal `json:"valueNotIn,omitempty"`
+	ValueGT    *decimal.Decimal  `json:"valueGT,omitempty"`
+	ValueGTE   *decimal.Decimal  `json:"valueGTE,omitempty"`
+	ValueLT    *decimal.Decimal  `json:"valueLT,omitempty"`
+	ValueLTE   *decimal.Decimal  `json:"valueLTE,omitempty"`
+
+	// "date" field predicates.
+	Date      *time.Time  `json:"date,omitempty"`
+	DateNEQ   *time.Time  `json:"dateNEQ,omitempty"`
+	DateIn    []time.Time `json:"dateIn,omitempty"`
+	DateNotIn []time.Time `json:"dateNotIn,omitempty"`
+	DateGT    *time.Time  `json:"dateGT,omitempty"`
+	DateGTE   *time.Time  `json:"dateGTE,omitempty"`
+	DateLT    *time.Time  `json:"dateLT,omitempty"`
+	DateLTE   *time.Time  `json:"dateLTE,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *StockQuoteCacheWhereInput) AddPredicates(predicates ...predicate.StockQuoteCache) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the StockQuoteCacheWhereInput filter on the StockQuoteCacheQuery builder.
+func (i *StockQuoteCacheWhereInput) Filter(q *StockQuoteCacheQuery) (*StockQuoteCacheQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyStockQuoteCacheWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyStockQuoteCacheWhereInput is returned in case the StockQuoteCacheWhereInput is empty.
+var ErrEmptyStockQuoteCacheWhereInput = errors.New("ent: empty predicate StockQuoteCacheWhereInput")
+
+// P returns a predicate for filtering stockquotecaches.
+// An error is returned if the input is empty or invalid.
+func (i *StockQuoteCacheWhereInput) P() (predicate.StockQuoteCache, error) {
+	var predicates []predicate.StockQuoteCache
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, stockquotecache.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.StockQuoteCache, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, stockquotecache.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.StockQuoteCache, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, stockquotecache.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, stockquotecache.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, stockquotecache.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, stockquotecache.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, stockquotecache.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, stockquotecache.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, stockquotecache.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, stockquotecache.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, stockquotecache.IDLTE(*i.IDLTE))
+	}
+	if i.CreateTime != nil {
+		predicates = append(predicates, stockquotecache.CreateTimeEQ(*i.CreateTime))
+	}
+	if i.CreateTimeNEQ != nil {
+		predicates = append(predicates, stockquotecache.CreateTimeNEQ(*i.CreateTimeNEQ))
+	}
+	if len(i.CreateTimeIn) > 0 {
+		predicates = append(predicates, stockquotecache.CreateTimeIn(i.CreateTimeIn...))
+	}
+	if len(i.CreateTimeNotIn) > 0 {
+		predicates = append(predicates, stockquotecache.CreateTimeNotIn(i.CreateTimeNotIn...))
+	}
+	if i.CreateTimeGT != nil {
+		predicates = append(predicates, stockquotecache.CreateTimeGT(*i.CreateTimeGT))
+	}
+	if i.CreateTimeGTE != nil {
+		predicates = append(predicates, stockquotecache.CreateTimeGTE(*i.CreateTimeGTE))
+	}
+	if i.CreateTimeLT != nil {
+		predicates = append(predicates, stockquotecache.CreateTimeLT(*i.CreateTimeLT))
+	}
+	if i.CreateTimeLTE != nil {
+		predicates = append(predicates, stockquotecache.CreateTimeLTE(*i.CreateTimeLTE))
+	}
+	if i.UpdateTime != nil {
+		predicates = append(predicates, stockquotecache.UpdateTimeEQ(*i.UpdateTime))
+	}
+	if i.UpdateTimeNEQ != nil {
+		predicates = append(predicates, stockquotecache.UpdateTimeNEQ(*i.UpdateTimeNEQ))
+	}
+	if len(i.UpdateTimeIn) > 0 {
+		predicates = append(predicates, stockquotecache.UpdateTimeIn(i.UpdateTimeIn...))
+	}
+	if len(i.UpdateTimeNotIn) > 0 {
+		predicates = append(predicates, stockquotecache.UpdateTimeNotIn(i.UpdateTimeNotIn...))
+	}
+	if i.UpdateTimeGT != nil {
+		predicates = append(predicates, stockquotecache.UpdateTimeGT(*i.UpdateTimeGT))
+	}
+	if i.UpdateTimeGTE != nil {
+		predicates = append(predicates, stockquotecache.UpdateTimeGTE(*i.UpdateTimeGTE))
+	}
+	if i.UpdateTimeLT != nil {
+		predicates = append(predicates, stockquotecache.UpdateTimeLT(*i.UpdateTimeLT))
+	}
+	if i.UpdateTimeLTE != nil {
+		predicates = append(predicates, stockquotecache.UpdateTimeLTE(*i.UpdateTimeLTE))
+	}
+	if i.Symbol != nil {
+		predicates = append(predicates, stockquotecache.SymbolEQ(*i.Symbol))
+	}
+	if i.SymbolNEQ != nil {
+		predicates = append(predicates, stockquotecache.SymbolNEQ(*i.SymbolNEQ))
+	}
+	if len(i.SymbolIn) > 0 {
+		predicates = append(predicates, stockquotecache.SymbolIn(i.SymbolIn...))
+	}
+	if len(i.SymbolNotIn) > 0 {
+		predicates = append(predicates, stockquotecache.SymbolNotIn(i.SymbolNotIn...))
+	}
+	if i.SymbolGT != nil {
+		predicates = append(predicates, stockquotecache.SymbolGT(*i.SymbolGT))
+	}
+	if i.SymbolGTE != nil {
+		predicates = append(predicates, stockquotecache.SymbolGTE(*i.SymbolGTE))
+	}
+	if i.SymbolLT != nil {
+		predicates = append(predicates, stockquotecache.SymbolLT(*i.SymbolLT))
+	}
+	if i.SymbolLTE != nil {
+		predicates = append(predicates, stockquotecache.SymbolLTE(*i.SymbolLTE))
+	}
+	if i.SymbolContains != nil {
+		predicates = append(predicates, stockquotecache.SymbolContains(*i.SymbolContains))
+	}
+	if i.SymbolHasPrefix != nil {
+		predicates = append(predicates, stockquotecache.SymbolHasPrefix(*i.SymbolHasPrefix))
+	}
+	if i.SymbolHasSuffix != nil {
+		predicates = append(predicates, stockquotecache.SymbolHasSuffix(*i.SymbolHasSuffix))
+	}
+	if i.SymbolEqualFold != nil {
+		predicates = append(predicates, stockquotecache.SymbolEqualFold(*i.SymbolEqualFold))
+	}
+	if i.SymbolContainsFold != nil {
+		predicates = append(predicates, stockquotecache.SymbolContainsFold(*i.SymbolContainsFold))
+	}
+	if i.Value != nil {
+		predicates = append(predicates, stockquotecache.ValueEQ(*i.Value))
+	}
+	if i.ValueNEQ != nil {
+		predicates = append(predicates, stockquotecache.ValueNEQ(*i.ValueNEQ))
+	}
+	if len(i.ValueIn) > 0 {
+		predicates = append(predicates, stockquotecache.ValueIn(i.ValueIn...))
+	}
+	if len(i.ValueNotIn) > 0 {
+		predicates = append(predicates, stockquotecache.ValueNotIn(i.ValueNotIn...))
+	}
+	if i.ValueGT != nil {
+		predicates = append(predicates, stockquotecache.ValueGT(*i.ValueGT))
+	}
+	if i.ValueGTE != nil {
+		predicates = append(predicates, stockquotecache.ValueGTE(*i.ValueGTE))
+	}
+	if i.ValueLT != nil {
+		predicates = append(predicates, stockquotecache.ValueLT(*i.ValueLT))
+	}
+	if i.ValueLTE != nil {
+		predicates = append(predicates, stockquotecache.ValueLTE(*i.ValueLTE))
+	}
+	if i.Date != nil {
+		predicates = append(predicates, stockquotecache.DateEQ(*i.Date))
+	}
+	if i.DateNEQ != nil {
+		predicates = append(predicates, stockquotecache.DateNEQ(*i.DateNEQ))
+	}
+	if len(i.DateIn) > 0 {
+		predicates = append(predicates, stockquotecache.DateIn(i.DateIn...))
+	}
+	if len(i.DateNotIn) > 0 {
+		predicates = append(predicates, stockquotecache.DateNotIn(i.DateNotIn...))
+	}
+	if i.DateGT != nil {
+		predicates = append(predicates, stockquotecache.DateGT(*i.DateGT))
+	}
+	if i.DateGTE != nil {
+		predicates = append(predicates, stockquotecache.DateGTE(*i.DateGTE))
+	}
+	if i.DateLT != nil {
+		predicates = append(predicates, stockquotecache.DateLT(*i.DateLT))
+	}
+	if i.DateLTE != nil {
+		predicates = append(predicates, stockquotecache.DateLTE(*i.DateLTE))
+	}
+
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyStockQuoteCacheWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return stockquotecache.And(predicates...), nil
 	}
 }
 

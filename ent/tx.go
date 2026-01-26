@@ -14,14 +14,20 @@ type Tx struct {
 	config
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
+	// CryptoQuoteCache is the client for interacting with the CryptoQuoteCache builders.
+	CryptoQuoteCache *CryptoQuoteCacheClient
 	// Currency is the client for interacting with the Currency builders.
 	Currency *CurrencyClient
+	// FXRateCache is the client for interacting with the FXRateCache builders.
+	FXRateCache *FXRateCacheClient
 	// Household is the client for interacting with the Household builders.
 	Household *HouseholdClient
 	// Investment is the client for interacting with the Investment builders.
 	Investment *InvestmentClient
 	// InvestmentLot is the client for interacting with the InvestmentLot builders.
 	InvestmentLot *InvestmentLotClient
+	// StockQuoteCache is the client for interacting with the StockQuoteCache builders.
+	StockQuoteCache *StockQuoteCacheClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
 	// TransactionCategory is the client for interacting with the TransactionCategory builders.
@@ -166,10 +172,13 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Account = NewAccountClient(tx.config)
+	tx.CryptoQuoteCache = NewCryptoQuoteCacheClient(tx.config)
 	tx.Currency = NewCurrencyClient(tx.config)
+	tx.FXRateCache = NewFXRateCacheClient(tx.config)
 	tx.Household = NewHouseholdClient(tx.config)
 	tx.Investment = NewInvestmentClient(tx.config)
 	tx.InvestmentLot = NewInvestmentLotClient(tx.config)
+	tx.StockQuoteCache = NewStockQuoteCacheClient(tx.config)
 	tx.Transaction = NewTransactionClient(tx.config)
 	tx.TransactionCategory = NewTransactionCategoryClient(tx.config)
 	tx.TransactionEntry = NewTransactionEntryClient(tx.config)

@@ -9,6 +9,7 @@ import (
 
 	"beavermoney.app/ent/account"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/transactionentry"
@@ -89,6 +90,36 @@ func (_c *CurrencyCreate) AddHouseholds(v ...*Household) *CurrencyCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddHouseholdIDs(ids...)
+}
+
+// AddFxRateCachesFromIDs adds the "fx_rate_caches_from" edge to the FXRateCache entity by IDs.
+func (_c *CurrencyCreate) AddFxRateCachesFromIDs(ids ...int) *CurrencyCreate {
+	_c.mutation.AddFxRateCachesFromIDs(ids...)
+	return _c
+}
+
+// AddFxRateCachesFrom adds the "fx_rate_caches_from" edges to the FXRateCache entity.
+func (_c *CurrencyCreate) AddFxRateCachesFrom(v ...*FXRateCache) *CurrencyCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddFxRateCachesFromIDs(ids...)
+}
+
+// AddFxRateCachesToIDs adds the "fx_rate_caches_to" edge to the FXRateCache entity by IDs.
+func (_c *CurrencyCreate) AddFxRateCachesToIDs(ids ...int) *CurrencyCreate {
+	_c.mutation.AddFxRateCachesToIDs(ids...)
+	return _c
+}
+
+// AddFxRateCachesTo adds the "fx_rate_caches_to" edges to the FXRateCache entity.
+func (_c *CurrencyCreate) AddFxRateCachesTo(v ...*FXRateCache) *CurrencyCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddFxRateCachesToIDs(ids...)
 }
 
 // Mutation returns the CurrencyMutation object of the builder.
@@ -221,6 +252,38 @@ func (_c *CurrencyCreate) createSpec() (*Currency, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.FxRateCachesFromIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.FxRateCachesFromTable,
+			Columns: []string{currency.FxRateCachesFromColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(fxratecache.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.FxRateCachesToIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.FxRateCachesToTable,
+			Columns: []string{currency.FxRateCachesToColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(fxratecache.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

@@ -7,11 +7,14 @@ import (
 	"time"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/schema"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -72,12 +75,46 @@ func init() {
 	accountDescUserID := accountFields[7].Descriptor()
 	// account.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	account.UserIDValidator = accountDescUserID.Validators[0].(func(int) error)
+	cryptoquotecacheMixin := schema.CryptoQuoteCache{}.Mixin()
+	cryptoquotecacheMixinFields0 := cryptoquotecacheMixin[0].Fields()
+	_ = cryptoquotecacheMixinFields0
+	cryptoquotecacheFields := schema.CryptoQuoteCache{}.Fields()
+	_ = cryptoquotecacheFields
+	// cryptoquotecacheDescCreateTime is the schema descriptor for create_time field.
+	cryptoquotecacheDescCreateTime := cryptoquotecacheMixinFields0[0].Descriptor()
+	// cryptoquotecache.DefaultCreateTime holds the default value on creation for the create_time field.
+	cryptoquotecache.DefaultCreateTime = cryptoquotecacheDescCreateTime.Default.(func() time.Time)
+	// cryptoquotecacheDescUpdateTime is the schema descriptor for update_time field.
+	cryptoquotecacheDescUpdateTime := cryptoquotecacheMixinFields0[1].Descriptor()
+	// cryptoquotecache.DefaultUpdateTime holds the default value on creation for the update_time field.
+	cryptoquotecache.DefaultUpdateTime = cryptoquotecacheDescUpdateTime.Default.(func() time.Time)
+	// cryptoquotecache.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	cryptoquotecache.UpdateDefaultUpdateTime = cryptoquotecacheDescUpdateTime.UpdateDefault.(func() time.Time)
+	// cryptoquotecacheDescSymbol is the schema descriptor for symbol field.
+	cryptoquotecacheDescSymbol := cryptoquotecacheFields[0].Descriptor()
+	// cryptoquotecache.SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
+	cryptoquotecache.SymbolValidator = cryptoquotecacheDescSymbol.Validators[0].(func(string) error)
 	currencyFields := schema.Currency{}.Fields()
 	_ = currencyFields
 	// currencyDescCode is the schema descriptor for code field.
 	currencyDescCode := currencyFields[0].Descriptor()
 	// currency.CodeValidator is a validator for the "code" field. It is called by the builders before save.
 	currency.CodeValidator = currencyDescCode.Validators[0].(func(string) error)
+	fxratecacheMixin := schema.FXRateCache{}.Mixin()
+	fxratecacheMixinFields0 := fxratecacheMixin[0].Fields()
+	_ = fxratecacheMixinFields0
+	fxratecacheFields := schema.FXRateCache{}.Fields()
+	_ = fxratecacheFields
+	// fxratecacheDescCreateTime is the schema descriptor for create_time field.
+	fxratecacheDescCreateTime := fxratecacheMixinFields0[0].Descriptor()
+	// fxratecache.DefaultCreateTime holds the default value on creation for the create_time field.
+	fxratecache.DefaultCreateTime = fxratecacheDescCreateTime.Default.(func() time.Time)
+	// fxratecacheDescUpdateTime is the schema descriptor for update_time field.
+	fxratecacheDescUpdateTime := fxratecacheMixinFields0[1].Descriptor()
+	// fxratecache.DefaultUpdateTime holds the default value on creation for the update_time field.
+	fxratecache.DefaultUpdateTime = fxratecacheDescUpdateTime.Default.(func() time.Time)
+	// fxratecache.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	fxratecache.UpdateDefaultUpdateTime = fxratecacheDescUpdateTime.UpdateDefault.(func() time.Time)
 	householdMixin := schema.Household{}.Mixin()
 	household.Policy = privacy.NewPolicies(schema.Household{})
 	household.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -190,6 +227,25 @@ func init() {
 	investmentlotDescTransactionID := investmentlotFields[3].Descriptor()
 	// investmentlot.TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
 	investmentlot.TransactionIDValidator = investmentlotDescTransactionID.Validators[0].(func(int) error)
+	stockquotecacheMixin := schema.StockQuoteCache{}.Mixin()
+	stockquotecacheMixinFields0 := stockquotecacheMixin[0].Fields()
+	_ = stockquotecacheMixinFields0
+	stockquotecacheFields := schema.StockQuoteCache{}.Fields()
+	_ = stockquotecacheFields
+	// stockquotecacheDescCreateTime is the schema descriptor for create_time field.
+	stockquotecacheDescCreateTime := stockquotecacheMixinFields0[0].Descriptor()
+	// stockquotecache.DefaultCreateTime holds the default value on creation for the create_time field.
+	stockquotecache.DefaultCreateTime = stockquotecacheDescCreateTime.Default.(func() time.Time)
+	// stockquotecacheDescUpdateTime is the schema descriptor for update_time field.
+	stockquotecacheDescUpdateTime := stockquotecacheMixinFields0[1].Descriptor()
+	// stockquotecache.DefaultUpdateTime holds the default value on creation for the update_time field.
+	stockquotecache.DefaultUpdateTime = stockquotecacheDescUpdateTime.Default.(func() time.Time)
+	// stockquotecache.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	stockquotecache.UpdateDefaultUpdateTime = stockquotecacheDescUpdateTime.UpdateDefault.(func() time.Time)
+	// stockquotecacheDescSymbol is the schema descriptor for symbol field.
+	stockquotecacheDescSymbol := stockquotecacheFields[0].Descriptor()
+	// stockquotecache.SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
+	stockquotecache.SymbolValidator = stockquotecacheDescSymbol.Validators[0].(func(string) error)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transaction.Policy = privacy.NewPolicies(transactionMixin[1], schema.Transaction{})
 	transaction.Hooks[0] = func(next ent.Mutator) ent.Mutator {

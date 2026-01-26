@@ -12,10 +12,13 @@ import (
 	"beavermoney.app/ent/migrate"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -35,14 +38,20 @@ type Client struct {
 	Schema *migrate.Schema
 	// Account is the client for interacting with the Account builders.
 	Account *AccountClient
+	// CryptoQuoteCache is the client for interacting with the CryptoQuoteCache builders.
+	CryptoQuoteCache *CryptoQuoteCacheClient
 	// Currency is the client for interacting with the Currency builders.
 	Currency *CurrencyClient
+	// FXRateCache is the client for interacting with the FXRateCache builders.
+	FXRateCache *FXRateCacheClient
 	// Household is the client for interacting with the Household builders.
 	Household *HouseholdClient
 	// Investment is the client for interacting with the Investment builders.
 	Investment *InvestmentClient
 	// InvestmentLot is the client for interacting with the InvestmentLot builders.
 	InvestmentLot *InvestmentLotClient
+	// StockQuoteCache is the client for interacting with the StockQuoteCache builders.
+	StockQuoteCache *StockQuoteCacheClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
 	// TransactionCategory is the client for interacting with the TransactionCategory builders.
@@ -67,10 +76,13 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Account = NewAccountClient(c.config)
+	c.CryptoQuoteCache = NewCryptoQuoteCacheClient(c.config)
 	c.Currency = NewCurrencyClient(c.config)
+	c.FXRateCache = NewFXRateCacheClient(c.config)
 	c.Household = NewHouseholdClient(c.config)
 	c.Investment = NewInvestmentClient(c.config)
 	c.InvestmentLot = NewInvestmentLotClient(c.config)
+	c.StockQuoteCache = NewStockQuoteCacheClient(c.config)
 	c.Transaction = NewTransactionClient(c.config)
 	c.TransactionCategory = NewTransactionCategoryClient(c.config)
 	c.TransactionEntry = NewTransactionEntryClient(c.config)
@@ -170,10 +182,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                 ctx,
 		config:              cfg,
 		Account:             NewAccountClient(cfg),
+		CryptoQuoteCache:    NewCryptoQuoteCacheClient(cfg),
 		Currency:            NewCurrencyClient(cfg),
+		FXRateCache:         NewFXRateCacheClient(cfg),
 		Household:           NewHouseholdClient(cfg),
 		Investment:          NewInvestmentClient(cfg),
 		InvestmentLot:       NewInvestmentLotClient(cfg),
+		StockQuoteCache:     NewStockQuoteCacheClient(cfg),
 		Transaction:         NewTransactionClient(cfg),
 		TransactionCategory: NewTransactionCategoryClient(cfg),
 		TransactionEntry:    NewTransactionEntryClient(cfg),
@@ -200,10 +215,13 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:                 ctx,
 		config:              cfg,
 		Account:             NewAccountClient(cfg),
+		CryptoQuoteCache:    NewCryptoQuoteCacheClient(cfg),
 		Currency:            NewCurrencyClient(cfg),
+		FXRateCache:         NewFXRateCacheClient(cfg),
 		Household:           NewHouseholdClient(cfg),
 		Investment:          NewInvestmentClient(cfg),
 		InvestmentLot:       NewInvestmentLotClient(cfg),
+		StockQuoteCache:     NewStockQuoteCacheClient(cfg),
 		Transaction:         NewTransactionClient(cfg),
 		TransactionCategory: NewTransactionCategoryClient(cfg),
 		TransactionEntry:    NewTransactionEntryClient(cfg),
@@ -239,9 +257,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Account, c.Currency, c.Household, c.Investment, c.InvestmentLot,
-		c.Transaction, c.TransactionCategory, c.TransactionEntry, c.User,
-		c.UserHousehold, c.UserKey,
+		c.Account, c.CryptoQuoteCache, c.Currency, c.FXRateCache, c.Household,
+		c.Investment, c.InvestmentLot, c.StockQuoteCache, c.Transaction,
+		c.TransactionCategory, c.TransactionEntry, c.User, c.UserHousehold, c.UserKey,
 	} {
 		n.Use(hooks...)
 	}
@@ -251,9 +269,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Account, c.Currency, c.Household, c.Investment, c.InvestmentLot,
-		c.Transaction, c.TransactionCategory, c.TransactionEntry, c.User,
-		c.UserHousehold, c.UserKey,
+		c.Account, c.CryptoQuoteCache, c.Currency, c.FXRateCache, c.Household,
+		c.Investment, c.InvestmentLot, c.StockQuoteCache, c.Transaction,
+		c.TransactionCategory, c.TransactionEntry, c.User, c.UserHousehold, c.UserKey,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -264,14 +282,20 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AccountMutation:
 		return c.Account.mutate(ctx, m)
+	case *CryptoQuoteCacheMutation:
+		return c.CryptoQuoteCache.mutate(ctx, m)
 	case *CurrencyMutation:
 		return c.Currency.mutate(ctx, m)
+	case *FXRateCacheMutation:
+		return c.FXRateCache.mutate(ctx, m)
 	case *HouseholdMutation:
 		return c.Household.mutate(ctx, m)
 	case *InvestmentMutation:
 		return c.Investment.mutate(ctx, m)
 	case *InvestmentLotMutation:
 		return c.InvestmentLot.mutate(ctx, m)
+	case *StockQuoteCacheMutation:
+		return c.StockQuoteCache.mutate(ctx, m)
 	case *TransactionMutation:
 		return c.Transaction.mutate(ctx, m)
 	case *TransactionCategoryMutation:
@@ -503,6 +527,139 @@ func (c *AccountClient) mutate(ctx context.Context, m *AccountMutation) (Value, 
 	}
 }
 
+// CryptoQuoteCacheClient is a client for the CryptoQuoteCache schema.
+type CryptoQuoteCacheClient struct {
+	config
+}
+
+// NewCryptoQuoteCacheClient returns a client for the CryptoQuoteCache from the given config.
+func NewCryptoQuoteCacheClient(c config) *CryptoQuoteCacheClient {
+	return &CryptoQuoteCacheClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `cryptoquotecache.Hooks(f(g(h())))`.
+func (c *CryptoQuoteCacheClient) Use(hooks ...Hook) {
+	c.hooks.CryptoQuoteCache = append(c.hooks.CryptoQuoteCache, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `cryptoquotecache.Intercept(f(g(h())))`.
+func (c *CryptoQuoteCacheClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CryptoQuoteCache = append(c.inters.CryptoQuoteCache, interceptors...)
+}
+
+// Create returns a builder for creating a CryptoQuoteCache entity.
+func (c *CryptoQuoteCacheClient) Create() *CryptoQuoteCacheCreate {
+	mutation := newCryptoQuoteCacheMutation(c.config, OpCreate)
+	return &CryptoQuoteCacheCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CryptoQuoteCache entities.
+func (c *CryptoQuoteCacheClient) CreateBulk(builders ...*CryptoQuoteCacheCreate) *CryptoQuoteCacheCreateBulk {
+	return &CryptoQuoteCacheCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CryptoQuoteCacheClient) MapCreateBulk(slice any, setFunc func(*CryptoQuoteCacheCreate, int)) *CryptoQuoteCacheCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CryptoQuoteCacheCreateBulk{err: fmt.Errorf("calling to CryptoQuoteCacheClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CryptoQuoteCacheCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CryptoQuoteCacheCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CryptoQuoteCache.
+func (c *CryptoQuoteCacheClient) Update() *CryptoQuoteCacheUpdate {
+	mutation := newCryptoQuoteCacheMutation(c.config, OpUpdate)
+	return &CryptoQuoteCacheUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CryptoQuoteCacheClient) UpdateOne(_m *CryptoQuoteCache) *CryptoQuoteCacheUpdateOne {
+	mutation := newCryptoQuoteCacheMutation(c.config, OpUpdateOne, withCryptoQuoteCache(_m))
+	return &CryptoQuoteCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CryptoQuoteCacheClient) UpdateOneID(id int) *CryptoQuoteCacheUpdateOne {
+	mutation := newCryptoQuoteCacheMutation(c.config, OpUpdateOne, withCryptoQuoteCacheID(id))
+	return &CryptoQuoteCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CryptoQuoteCache.
+func (c *CryptoQuoteCacheClient) Delete() *CryptoQuoteCacheDelete {
+	mutation := newCryptoQuoteCacheMutation(c.config, OpDelete)
+	return &CryptoQuoteCacheDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CryptoQuoteCacheClient) DeleteOne(_m *CryptoQuoteCache) *CryptoQuoteCacheDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CryptoQuoteCacheClient) DeleteOneID(id int) *CryptoQuoteCacheDeleteOne {
+	builder := c.Delete().Where(cryptoquotecache.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CryptoQuoteCacheDeleteOne{builder}
+}
+
+// Query returns a query builder for CryptoQuoteCache.
+func (c *CryptoQuoteCacheClient) Query() *CryptoQuoteCacheQuery {
+	return &CryptoQuoteCacheQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCryptoQuoteCache},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CryptoQuoteCache entity by its id.
+func (c *CryptoQuoteCacheClient) Get(ctx context.Context, id int) (*CryptoQuoteCache, error) {
+	return c.Query().Where(cryptoquotecache.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CryptoQuoteCacheClient) GetX(ctx context.Context, id int) *CryptoQuoteCache {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CryptoQuoteCacheClient) Hooks() []Hook {
+	return c.hooks.CryptoQuoteCache
+}
+
+// Interceptors returns the client interceptors.
+func (c *CryptoQuoteCacheClient) Interceptors() []Interceptor {
+	return c.inters.CryptoQuoteCache
+}
+
+func (c *CryptoQuoteCacheClient) mutate(ctx context.Context, m *CryptoQuoteCacheMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CryptoQuoteCacheCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CryptoQuoteCacheUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CryptoQuoteCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CryptoQuoteCacheDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CryptoQuoteCache mutation op: %q", m.Op())
+	}
+}
+
 // CurrencyClient is a client for the Currency schema.
 type CurrencyClient struct {
 	config
@@ -675,6 +832,38 @@ func (c *CurrencyClient) QueryHouseholds(_m *Currency) *HouseholdQuery {
 	return query
 }
 
+// QueryFxRateCachesFrom queries the fx_rate_caches_from edge of a Currency.
+func (c *CurrencyClient) QueryFxRateCachesFrom(_m *Currency) *FXRateCacheQuery {
+	query := (&FXRateCacheClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(currency.Table, currency.FieldID, id),
+			sqlgraph.To(fxratecache.Table, fxratecache.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.FxRateCachesFromTable, currency.FxRateCachesFromColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFxRateCachesTo queries the fx_rate_caches_to edge of a Currency.
+func (c *CurrencyClient) QueryFxRateCachesTo(_m *Currency) *FXRateCacheQuery {
+	query := (&FXRateCacheClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(currency.Table, currency.FieldID, id),
+			sqlgraph.To(fxratecache.Table, fxratecache.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.FxRateCachesToTable, currency.FxRateCachesToColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CurrencyClient) Hooks() []Hook {
 	return c.hooks.Currency
@@ -697,6 +886,171 @@ func (c *CurrencyClient) mutate(ctx context.Context, m *CurrencyMutation) (Value
 		return (&CurrencyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Currency mutation op: %q", m.Op())
+	}
+}
+
+// FXRateCacheClient is a client for the FXRateCache schema.
+type FXRateCacheClient struct {
+	config
+}
+
+// NewFXRateCacheClient returns a client for the FXRateCache from the given config.
+func NewFXRateCacheClient(c config) *FXRateCacheClient {
+	return &FXRateCacheClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `fxratecache.Hooks(f(g(h())))`.
+func (c *FXRateCacheClient) Use(hooks ...Hook) {
+	c.hooks.FXRateCache = append(c.hooks.FXRateCache, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `fxratecache.Intercept(f(g(h())))`.
+func (c *FXRateCacheClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FXRateCache = append(c.inters.FXRateCache, interceptors...)
+}
+
+// Create returns a builder for creating a FXRateCache entity.
+func (c *FXRateCacheClient) Create() *FXRateCacheCreate {
+	mutation := newFXRateCacheMutation(c.config, OpCreate)
+	return &FXRateCacheCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FXRateCache entities.
+func (c *FXRateCacheClient) CreateBulk(builders ...*FXRateCacheCreate) *FXRateCacheCreateBulk {
+	return &FXRateCacheCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FXRateCacheClient) MapCreateBulk(slice any, setFunc func(*FXRateCacheCreate, int)) *FXRateCacheCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FXRateCacheCreateBulk{err: fmt.Errorf("calling to FXRateCacheClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FXRateCacheCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FXRateCacheCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FXRateCache.
+func (c *FXRateCacheClient) Update() *FXRateCacheUpdate {
+	mutation := newFXRateCacheMutation(c.config, OpUpdate)
+	return &FXRateCacheUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FXRateCacheClient) UpdateOne(_m *FXRateCache) *FXRateCacheUpdateOne {
+	mutation := newFXRateCacheMutation(c.config, OpUpdateOne, withFXRateCache(_m))
+	return &FXRateCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FXRateCacheClient) UpdateOneID(id int) *FXRateCacheUpdateOne {
+	mutation := newFXRateCacheMutation(c.config, OpUpdateOne, withFXRateCacheID(id))
+	return &FXRateCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FXRateCache.
+func (c *FXRateCacheClient) Delete() *FXRateCacheDelete {
+	mutation := newFXRateCacheMutation(c.config, OpDelete)
+	return &FXRateCacheDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FXRateCacheClient) DeleteOne(_m *FXRateCache) *FXRateCacheDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FXRateCacheClient) DeleteOneID(id int) *FXRateCacheDeleteOne {
+	builder := c.Delete().Where(fxratecache.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FXRateCacheDeleteOne{builder}
+}
+
+// Query returns a query builder for FXRateCache.
+func (c *FXRateCacheClient) Query() *FXRateCacheQuery {
+	return &FXRateCacheQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFXRateCache},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FXRateCache entity by its id.
+func (c *FXRateCacheClient) Get(ctx context.Context, id int) (*FXRateCache, error) {
+	return c.Query().Where(fxratecache.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FXRateCacheClient) GetX(ctx context.Context, id int) *FXRateCache {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryFromCurrency queries the from_currency edge of a FXRateCache.
+func (c *FXRateCacheClient) QueryFromCurrency(_m *FXRateCache) *CurrencyQuery {
+	query := (&CurrencyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(fxratecache.Table, fxratecache.FieldID, id),
+			sqlgraph.To(currency.Table, currency.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, fxratecache.FromCurrencyTable, fxratecache.FromCurrencyColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryToCurrency queries the to_currency edge of a FXRateCache.
+func (c *FXRateCacheClient) QueryToCurrency(_m *FXRateCache) *CurrencyQuery {
+	query := (&CurrencyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(fxratecache.Table, fxratecache.FieldID, id),
+			sqlgraph.To(currency.Table, currency.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, fxratecache.ToCurrencyTable, fxratecache.ToCurrencyColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FXRateCacheClient) Hooks() []Hook {
+	return c.hooks.FXRateCache
+}
+
+// Interceptors returns the client interceptors.
+func (c *FXRateCacheClient) Interceptors() []Interceptor {
+	return c.inters.FXRateCache
+}
+
+func (c *FXRateCacheClient) mutate(ctx context.Context, m *FXRateCacheMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FXRateCacheCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FXRateCacheUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FXRateCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FXRateCacheDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FXRateCache mutation op: %q", m.Op())
 	}
 }
 
@@ -1355,6 +1709,139 @@ func (c *InvestmentLotClient) mutate(ctx context.Context, m *InvestmentLotMutati
 		return (&InvestmentLotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown InvestmentLot mutation op: %q", m.Op())
+	}
+}
+
+// StockQuoteCacheClient is a client for the StockQuoteCache schema.
+type StockQuoteCacheClient struct {
+	config
+}
+
+// NewStockQuoteCacheClient returns a client for the StockQuoteCache from the given config.
+func NewStockQuoteCacheClient(c config) *StockQuoteCacheClient {
+	return &StockQuoteCacheClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `stockquotecache.Hooks(f(g(h())))`.
+func (c *StockQuoteCacheClient) Use(hooks ...Hook) {
+	c.hooks.StockQuoteCache = append(c.hooks.StockQuoteCache, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `stockquotecache.Intercept(f(g(h())))`.
+func (c *StockQuoteCacheClient) Intercept(interceptors ...Interceptor) {
+	c.inters.StockQuoteCache = append(c.inters.StockQuoteCache, interceptors...)
+}
+
+// Create returns a builder for creating a StockQuoteCache entity.
+func (c *StockQuoteCacheClient) Create() *StockQuoteCacheCreate {
+	mutation := newStockQuoteCacheMutation(c.config, OpCreate)
+	return &StockQuoteCacheCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of StockQuoteCache entities.
+func (c *StockQuoteCacheClient) CreateBulk(builders ...*StockQuoteCacheCreate) *StockQuoteCacheCreateBulk {
+	return &StockQuoteCacheCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *StockQuoteCacheClient) MapCreateBulk(slice any, setFunc func(*StockQuoteCacheCreate, int)) *StockQuoteCacheCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &StockQuoteCacheCreateBulk{err: fmt.Errorf("calling to StockQuoteCacheClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*StockQuoteCacheCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &StockQuoteCacheCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for StockQuoteCache.
+func (c *StockQuoteCacheClient) Update() *StockQuoteCacheUpdate {
+	mutation := newStockQuoteCacheMutation(c.config, OpUpdate)
+	return &StockQuoteCacheUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StockQuoteCacheClient) UpdateOne(_m *StockQuoteCache) *StockQuoteCacheUpdateOne {
+	mutation := newStockQuoteCacheMutation(c.config, OpUpdateOne, withStockQuoteCache(_m))
+	return &StockQuoteCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StockQuoteCacheClient) UpdateOneID(id int) *StockQuoteCacheUpdateOne {
+	mutation := newStockQuoteCacheMutation(c.config, OpUpdateOne, withStockQuoteCacheID(id))
+	return &StockQuoteCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StockQuoteCache.
+func (c *StockQuoteCacheClient) Delete() *StockQuoteCacheDelete {
+	mutation := newStockQuoteCacheMutation(c.config, OpDelete)
+	return &StockQuoteCacheDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *StockQuoteCacheClient) DeleteOne(_m *StockQuoteCache) *StockQuoteCacheDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *StockQuoteCacheClient) DeleteOneID(id int) *StockQuoteCacheDeleteOne {
+	builder := c.Delete().Where(stockquotecache.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StockQuoteCacheDeleteOne{builder}
+}
+
+// Query returns a query builder for StockQuoteCache.
+func (c *StockQuoteCacheClient) Query() *StockQuoteCacheQuery {
+	return &StockQuoteCacheQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeStockQuoteCache},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a StockQuoteCache entity by its id.
+func (c *StockQuoteCacheClient) Get(ctx context.Context, id int) (*StockQuoteCache, error) {
+	return c.Query().Where(stockquotecache.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StockQuoteCacheClient) GetX(ctx context.Context, id int) *StockQuoteCache {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *StockQuoteCacheClient) Hooks() []Hook {
+	return c.hooks.StockQuoteCache
+}
+
+// Interceptors returns the client interceptors.
+func (c *StockQuoteCacheClient) Interceptors() []Interceptor {
+	return c.inters.StockQuoteCache
+}
+
+func (c *StockQuoteCacheClient) mutate(ctx context.Context, m *StockQuoteCacheMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&StockQuoteCacheCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&StockQuoteCacheUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&StockQuoteCacheUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&StockQuoteCacheDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown StockQuoteCache mutation op: %q", m.Op())
 	}
 }
 
@@ -2469,12 +2956,13 @@ func (c *UserKeyClient) mutate(ctx context.Context, m *UserKeyMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, Currency, Household, Investment, InvestmentLot, Transaction,
-		TransactionCategory, TransactionEntry, User, UserHousehold, UserKey []ent.Hook
+		Account, CryptoQuoteCache, Currency, FXRateCache, Household, Investment,
+		InvestmentLot, StockQuoteCache, Transaction, TransactionCategory,
+		TransactionEntry, User, UserHousehold, UserKey []ent.Hook
 	}
 	inters struct {
-		Account, Currency, Household, Investment, InvestmentLot, Transaction,
-		TransactionCategory, TransactionEntry, User, UserHousehold,
-		UserKey []ent.Interceptor
+		Account, CryptoQuoteCache, Currency, FXRateCache, Household, Investment,
+		InvestmentLot, StockQuoteCache, Transaction, TransactionCategory,
+		TransactionEntry, User, UserHousehold, UserKey []ent.Interceptor
 	}
 )

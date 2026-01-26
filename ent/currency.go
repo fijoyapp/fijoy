@@ -34,16 +34,22 @@ type CurrencyEdges struct {
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// Households holds the value of the households edge.
 	Households []*Household `json:"households,omitempty"`
+	// FxRateCachesFrom holds the value of the fx_rate_caches_from edge.
+	FxRateCachesFrom []*FXRateCache `json:"fx_rate_caches_from,omitempty"`
+	// FxRateCachesTo holds the value of the fx_rate_caches_to edge.
+	FxRateCachesTo []*FXRateCache `json:"fx_rate_caches_to,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [6]map[string]int
 
 	namedAccounts           map[string][]*Account
 	namedInvestments        map[string][]*Investment
 	namedTransactionEntries map[string][]*TransactionEntry
 	namedHouseholds         map[string][]*Household
+	namedFxRateCachesFrom   map[string][]*FXRateCache
+	namedFxRateCachesTo     map[string][]*FXRateCache
 }
 
 // AccountsOrErr returns the Accounts value or an error if the edge
@@ -80,6 +86,24 @@ func (e CurrencyEdges) HouseholdsOrErr() ([]*Household, error) {
 		return e.Households, nil
 	}
 	return nil, &NotLoadedError{edge: "households"}
+}
+
+// FxRateCachesFromOrErr returns the FxRateCachesFrom value or an error if the edge
+// was not loaded in eager-loading.
+func (e CurrencyEdges) FxRateCachesFromOrErr() ([]*FXRateCache, error) {
+	if e.loadedTypes[4] {
+		return e.FxRateCachesFrom, nil
+	}
+	return nil, &NotLoadedError{edge: "fx_rate_caches_from"}
+}
+
+// FxRateCachesToOrErr returns the FxRateCachesTo value or an error if the edge
+// was not loaded in eager-loading.
+func (e CurrencyEdges) FxRateCachesToOrErr() ([]*FXRateCache, error) {
+	if e.loadedTypes[5] {
+		return e.FxRateCachesTo, nil
+	}
+	return nil, &NotLoadedError{edge: "fx_rate_caches_to"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -149,6 +173,16 @@ func (_m *Currency) QueryTransactionEntries() *TransactionEntryQuery {
 // QueryHouseholds queries the "households" edge of the Currency entity.
 func (_m *Currency) QueryHouseholds() *HouseholdQuery {
 	return NewCurrencyClient(_m.config).QueryHouseholds(_m)
+}
+
+// QueryFxRateCachesFrom queries the "fx_rate_caches_from" edge of the Currency entity.
+func (_m *Currency) QueryFxRateCachesFrom() *FXRateCacheQuery {
+	return NewCurrencyClient(_m.config).QueryFxRateCachesFrom(_m)
+}
+
+// QueryFxRateCachesTo queries the "fx_rate_caches_to" edge of the Currency entity.
+func (_m *Currency) QueryFxRateCachesTo() *FXRateCacheQuery {
+	return NewCurrencyClient(_m.config).QueryFxRateCachesTo(_m)
 }
 
 // Update returns a builder for updating this Currency.
@@ -273,6 +307,54 @@ func (_m *Currency) appendNamedHouseholds(name string, edges ...*Household) {
 		_m.Edges.namedHouseholds[name] = []*Household{}
 	} else {
 		_m.Edges.namedHouseholds[name] = append(_m.Edges.namedHouseholds[name], edges...)
+	}
+}
+
+// NamedFxRateCachesFrom returns the FxRateCachesFrom named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Currency) NamedFxRateCachesFrom(name string) ([]*FXRateCache, error) {
+	if _m.Edges.namedFxRateCachesFrom == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedFxRateCachesFrom[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Currency) appendNamedFxRateCachesFrom(name string, edges ...*FXRateCache) {
+	if _m.Edges.namedFxRateCachesFrom == nil {
+		_m.Edges.namedFxRateCachesFrom = make(map[string][]*FXRateCache)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedFxRateCachesFrom[name] = []*FXRateCache{}
+	} else {
+		_m.Edges.namedFxRateCachesFrom[name] = append(_m.Edges.namedFxRateCachesFrom[name], edges...)
+	}
+}
+
+// NamedFxRateCachesTo returns the FxRateCachesTo named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Currency) NamedFxRateCachesTo(name string) ([]*FXRateCache, error) {
+	if _m.Edges.namedFxRateCachesTo == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedFxRateCachesTo[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Currency) appendNamedFxRateCachesTo(name string, edges ...*FXRateCache) {
+	if _m.Edges.namedFxRateCachesTo == nil {
+		_m.Edges.namedFxRateCachesTo = make(map[string][]*FXRateCache)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedFxRateCachesTo[name] = []*FXRateCache{}
+	} else {
+		_m.Edges.namedFxRateCachesTo[name] = append(_m.Edges.namedFxRateCachesTo[name], edges...)
 	}
 }
 

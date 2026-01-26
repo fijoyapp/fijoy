@@ -10,10 +10,13 @@ import (
 	"sync"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -84,10 +87,13 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			account.Table:             account.ValidColumn,
+			cryptoquotecache.Table:    cryptoquotecache.ValidColumn,
 			currency.Table:            currency.ValidColumn,
+			fxratecache.Table:         fxratecache.ValidColumn,
 			household.Table:           household.ValidColumn,
 			investment.Table:          investment.ValidColumn,
 			investmentlot.Table:       investmentlot.ValidColumn,
+			stockquotecache.Table:     stockquotecache.ValidColumn,
 			transaction.Table:         transaction.ValidColumn,
 			transactioncategory.Table: transactioncategory.ValidColumn,
 			transactionentry.Table:    transactionentry.ValidColumn,

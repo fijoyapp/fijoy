@@ -4,11 +4,14 @@ package ent
 
 import (
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -24,7 +27,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 11)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 14)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   account.Table,
@@ -51,6 +54,24 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   cryptoquotecache.Table,
+			Columns: cryptoquotecache.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: cryptoquotecache.FieldID,
+			},
+		},
+		Type: "CryptoQuoteCache",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			cryptoquotecache.FieldCreateTime: {Type: field.TypeTime, Column: cryptoquotecache.FieldCreateTime},
+			cryptoquotecache.FieldUpdateTime: {Type: field.TypeTime, Column: cryptoquotecache.FieldUpdateTime},
+			cryptoquotecache.FieldSymbol:     {Type: field.TypeString, Column: cryptoquotecache.FieldSymbol},
+			cryptoquotecache.FieldValue:      {Type: field.TypeFloat64, Column: cryptoquotecache.FieldValue},
+			cryptoquotecache.FieldDate:       {Type: field.TypeTime, Column: cryptoquotecache.FieldDate},
+		},
+	}
+	graph.Nodes[2] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   currency.Table,
 			Columns: currency.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -63,7 +84,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 			currency.FieldCode: {Type: field.TypeString, Column: currency.FieldCode},
 		},
 	}
-	graph.Nodes[2] = &sqlgraph.Node{
+	graph.Nodes[3] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   fxratecache.Table,
+			Columns: fxratecache.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: fxratecache.FieldID,
+			},
+		},
+		Type: "FXRateCache",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			fxratecache.FieldCreateTime:     {Type: field.TypeTime, Column: fxratecache.FieldCreateTime},
+			fxratecache.FieldUpdateTime:     {Type: field.TypeTime, Column: fxratecache.FieldUpdateTime},
+			fxratecache.FieldFromCurrencyID: {Type: field.TypeInt, Column: fxratecache.FieldFromCurrencyID},
+			fxratecache.FieldToCurrencyID:   {Type: field.TypeInt, Column: fxratecache.FieldToCurrencyID},
+			fxratecache.FieldValue:          {Type: field.TypeFloat64, Column: fxratecache.FieldValue},
+			fxratecache.FieldDate:           {Type: field.TypeTime, Column: fxratecache.FieldDate},
+		},
+	}
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   household.Table,
 			Columns: household.Columns,
@@ -81,7 +121,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			household.FieldCurrencyID: {Type: field.TypeInt, Column: household.FieldCurrencyID},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   investment.Table,
 			Columns: investment.Columns,
@@ -105,7 +145,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			investment.FieldCurrencyID:  {Type: field.TypeInt, Column: investment.FieldCurrencyID},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   investmentlot.Table,
 			Columns: investmentlot.Columns,
@@ -125,7 +165,25 @@ var schemaGraph = func() *sqlgraph.Schema {
 			investmentlot.FieldTransactionID: {Type: field.TypeInt, Column: investmentlot.FieldTransactionID},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   stockquotecache.Table,
+			Columns: stockquotecache.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: stockquotecache.FieldID,
+			},
+		},
+		Type: "StockQuoteCache",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			stockquotecache.FieldCreateTime: {Type: field.TypeTime, Column: stockquotecache.FieldCreateTime},
+			stockquotecache.FieldUpdateTime: {Type: field.TypeTime, Column: stockquotecache.FieldUpdateTime},
+			stockquotecache.FieldSymbol:     {Type: field.TypeString, Column: stockquotecache.FieldSymbol},
+			stockquotecache.FieldValue:      {Type: field.TypeFloat64, Column: stockquotecache.FieldValue},
+			stockquotecache.FieldDate:       {Type: field.TypeTime, Column: stockquotecache.FieldDate},
+		},
+	}
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transaction.Table,
 			Columns: transaction.Columns,
@@ -145,7 +203,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transaction.FieldCategoryID:  {Type: field.TypeInt, Column: transaction.FieldCategoryID},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transactioncategory.Table,
 			Columns: transactioncategory.Columns,
@@ -165,7 +223,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transactioncategory.FieldIsImmutable: {Type: field.TypeBool, Column: transactioncategory.FieldIsImmutable},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transactionentry.Table,
 			Columns: transactionentry.Columns,
@@ -185,7 +243,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transactionentry.FieldTransactionID: {Type: field.TypeInt, Column: transactionentry.FieldTransactionID},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -202,7 +260,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldName:       {Type: field.TypeString, Column: user.FieldName},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userhousehold.Table,
 			Columns: userhousehold.Columns,
@@ -220,7 +278,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userhousehold.FieldRole:        {Type: field.TypeEnum, Column: userhousehold.FieldRole},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[13] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userkey.Table,
 			Columns: userkey.Columns,
@@ -345,6 +403,54 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"Currency",
 		"Household",
+	)
+	graph.MustAddE(
+		"fx_rate_caches_from",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.FxRateCachesFromTable,
+			Columns: []string{currency.FxRateCachesFromColumn},
+			Bidi:    false,
+		},
+		"Currency",
+		"FXRateCache",
+	)
+	graph.MustAddE(
+		"fx_rate_caches_to",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.FxRateCachesToTable,
+			Columns: []string{currency.FxRateCachesToColumn},
+			Bidi:    false,
+		},
+		"Currency",
+		"FXRateCache",
+	)
+	graph.MustAddE(
+		"from_currency",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   fxratecache.FromCurrencyTable,
+			Columns: []string{fxratecache.FromCurrencyColumn},
+			Bidi:    false,
+		},
+		"FXRateCache",
+		"Currency",
+	)
+	graph.MustAddE(
+		"to_currency",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   fxratecache.ToCurrencyTable,
+			Columns: []string{fxratecache.ToCurrencyColumn},
+			Bidi:    false,
+		},
+		"FXRateCache",
+		"Currency",
 	)
 	graph.MustAddE(
 		"currency",
@@ -941,6 +1047,71 @@ func (f *AccountFilter) WhereHasInvestmentsWith(preds ...predicate.Investment) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (_q *CryptoQuoteCacheQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the CryptoQuoteCacheQuery builder.
+func (_q *CryptoQuoteCacheQuery) Filter() *CryptoQuoteCacheFilter {
+	return &CryptoQuoteCacheFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *CryptoQuoteCacheMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the CryptoQuoteCacheMutation builder.
+func (m *CryptoQuoteCacheMutation) Filter() *CryptoQuoteCacheFilter {
+	return &CryptoQuoteCacheFilter{config: m.config, predicateAdder: m}
+}
+
+// CryptoQuoteCacheFilter provides a generic filtering capability at runtime for CryptoQuoteCacheQuery.
+type CryptoQuoteCacheFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *CryptoQuoteCacheFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *CryptoQuoteCacheFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(cryptoquotecache.FieldID))
+}
+
+// WhereCreateTime applies the entql time.Time predicate on the create_time field.
+func (f *CryptoQuoteCacheFilter) WhereCreateTime(p entql.TimeP) {
+	f.Where(p.Field(cryptoquotecache.FieldCreateTime))
+}
+
+// WhereUpdateTime applies the entql time.Time predicate on the update_time field.
+func (f *CryptoQuoteCacheFilter) WhereUpdateTime(p entql.TimeP) {
+	f.Where(p.Field(cryptoquotecache.FieldUpdateTime))
+}
+
+// WhereSymbol applies the entql string predicate on the symbol field.
+func (f *CryptoQuoteCacheFilter) WhereSymbol(p entql.StringP) {
+	f.Where(p.Field(cryptoquotecache.FieldSymbol))
+}
+
+// WhereValue applies the entql float64 predicate on the value field.
+func (f *CryptoQuoteCacheFilter) WhereValue(p entql.Float64P) {
+	f.Where(p.Field(cryptoquotecache.FieldValue))
+}
+
+// WhereDate applies the entql time.Time predicate on the date field.
+func (f *CryptoQuoteCacheFilter) WhereDate(p entql.TimeP) {
+	f.Where(p.Field(cryptoquotecache.FieldDate))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (_q *CurrencyQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
 }
@@ -969,7 +1140,7 @@ type CurrencyFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *CurrencyFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1041,6 +1212,132 @@ func (f *CurrencyFilter) WhereHasHouseholdsWith(preds ...predicate.Household) {
 	})))
 }
 
+// WhereHasFxRateCachesFrom applies a predicate to check if query has an edge fx_rate_caches_from.
+func (f *CurrencyFilter) WhereHasFxRateCachesFrom() {
+	f.Where(entql.HasEdge("fx_rate_caches_from"))
+}
+
+// WhereHasFxRateCachesFromWith applies a predicate to check if query has an edge fx_rate_caches_from with a given conditions (other predicates).
+func (f *CurrencyFilter) WhereHasFxRateCachesFromWith(preds ...predicate.FXRateCache) {
+	f.Where(entql.HasEdgeWith("fx_rate_caches_from", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasFxRateCachesTo applies a predicate to check if query has an edge fx_rate_caches_to.
+func (f *CurrencyFilter) WhereHasFxRateCachesTo() {
+	f.Where(entql.HasEdge("fx_rate_caches_to"))
+}
+
+// WhereHasFxRateCachesToWith applies a predicate to check if query has an edge fx_rate_caches_to with a given conditions (other predicates).
+func (f *CurrencyFilter) WhereHasFxRateCachesToWith(preds ...predicate.FXRateCache) {
+	f.Where(entql.HasEdgeWith("fx_rate_caches_to", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (_q *FXRateCacheQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the FXRateCacheQuery builder.
+func (_q *FXRateCacheQuery) Filter() *FXRateCacheFilter {
+	return &FXRateCacheFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *FXRateCacheMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the FXRateCacheMutation builder.
+func (m *FXRateCacheMutation) Filter() *FXRateCacheFilter {
+	return &FXRateCacheFilter{config: m.config, predicateAdder: m}
+}
+
+// FXRateCacheFilter provides a generic filtering capability at runtime for FXRateCacheQuery.
+type FXRateCacheFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *FXRateCacheFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *FXRateCacheFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(fxratecache.FieldID))
+}
+
+// WhereCreateTime applies the entql time.Time predicate on the create_time field.
+func (f *FXRateCacheFilter) WhereCreateTime(p entql.TimeP) {
+	f.Where(p.Field(fxratecache.FieldCreateTime))
+}
+
+// WhereUpdateTime applies the entql time.Time predicate on the update_time field.
+func (f *FXRateCacheFilter) WhereUpdateTime(p entql.TimeP) {
+	f.Where(p.Field(fxratecache.FieldUpdateTime))
+}
+
+// WhereFromCurrencyID applies the entql int predicate on the from_currency_id field.
+func (f *FXRateCacheFilter) WhereFromCurrencyID(p entql.IntP) {
+	f.Where(p.Field(fxratecache.FieldFromCurrencyID))
+}
+
+// WhereToCurrencyID applies the entql int predicate on the to_currency_id field.
+func (f *FXRateCacheFilter) WhereToCurrencyID(p entql.IntP) {
+	f.Where(p.Field(fxratecache.FieldToCurrencyID))
+}
+
+// WhereValue applies the entql float64 predicate on the value field.
+func (f *FXRateCacheFilter) WhereValue(p entql.Float64P) {
+	f.Where(p.Field(fxratecache.FieldValue))
+}
+
+// WhereDate applies the entql time.Time predicate on the date field.
+func (f *FXRateCacheFilter) WhereDate(p entql.TimeP) {
+	f.Where(p.Field(fxratecache.FieldDate))
+}
+
+// WhereHasFromCurrency applies a predicate to check if query has an edge from_currency.
+func (f *FXRateCacheFilter) WhereHasFromCurrency() {
+	f.Where(entql.HasEdge("from_currency"))
+}
+
+// WhereHasFromCurrencyWith applies a predicate to check if query has an edge from_currency with a given conditions (other predicates).
+func (f *FXRateCacheFilter) WhereHasFromCurrencyWith(preds ...predicate.Currency) {
+	f.Where(entql.HasEdgeWith("from_currency", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasToCurrency applies a predicate to check if query has an edge to_currency.
+func (f *FXRateCacheFilter) WhereHasToCurrency() {
+	f.Where(entql.HasEdge("to_currency"))
+}
+
+// WhereHasToCurrencyWith applies a predicate to check if query has an edge to_currency with a given conditions (other predicates).
+func (f *FXRateCacheFilter) WhereHasToCurrencyWith(preds ...predicate.Currency) {
+	f.Where(entql.HasEdgeWith("to_currency", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (_q *HouseholdQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
@@ -1070,7 +1367,7 @@ type HouseholdFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *HouseholdFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1261,7 +1558,7 @@ type InvestmentFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvestmentFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1412,7 +1709,7 @@ type InvestmentLotFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *InvestmentLotFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1501,6 +1798,71 @@ func (f *InvestmentLotFilter) WhereHasTransactionWith(preds ...predicate.Transac
 }
 
 // addPredicate implements the predicateAdder interface.
+func (_q *StockQuoteCacheQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the StockQuoteCacheQuery builder.
+func (_q *StockQuoteCacheQuery) Filter() *StockQuoteCacheFilter {
+	return &StockQuoteCacheFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *StockQuoteCacheMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the StockQuoteCacheMutation builder.
+func (m *StockQuoteCacheMutation) Filter() *StockQuoteCacheFilter {
+	return &StockQuoteCacheFilter{config: m.config, predicateAdder: m}
+}
+
+// StockQuoteCacheFilter provides a generic filtering capability at runtime for StockQuoteCacheQuery.
+type StockQuoteCacheFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *StockQuoteCacheFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *StockQuoteCacheFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(stockquotecache.FieldID))
+}
+
+// WhereCreateTime applies the entql time.Time predicate on the create_time field.
+func (f *StockQuoteCacheFilter) WhereCreateTime(p entql.TimeP) {
+	f.Where(p.Field(stockquotecache.FieldCreateTime))
+}
+
+// WhereUpdateTime applies the entql time.Time predicate on the update_time field.
+func (f *StockQuoteCacheFilter) WhereUpdateTime(p entql.TimeP) {
+	f.Where(p.Field(stockquotecache.FieldUpdateTime))
+}
+
+// WhereSymbol applies the entql string predicate on the symbol field.
+func (f *StockQuoteCacheFilter) WhereSymbol(p entql.StringP) {
+	f.Where(p.Field(stockquotecache.FieldSymbol))
+}
+
+// WhereValue applies the entql float64 predicate on the value field.
+func (f *StockQuoteCacheFilter) WhereValue(p entql.Float64P) {
+	f.Where(p.Field(stockquotecache.FieldValue))
+}
+
+// WhereDate applies the entql time.Time predicate on the date field.
+func (f *StockQuoteCacheFilter) WhereDate(p entql.TimeP) {
+	f.Where(p.Field(stockquotecache.FieldDate))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (_q *TransactionQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
 }
@@ -1529,7 +1891,7 @@ type TransactionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransactionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1674,7 +2036,7 @@ type TransactionCategoryFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransactionCategoryFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1777,7 +2139,7 @@ type TransactionEntryFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransactionEntryFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1908,7 +2270,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2038,7 +2400,7 @@ type UserHouseholdFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserHouseholdFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2131,7 +2493,7 @@ type UserKeyFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserKeyFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

@@ -6,10 +6,13 @@ import (
 	"context"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -209,6 +212,93 @@ func newAccountPaginateArgs(rv map[string]any) *accountPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *CryptoQuoteCacheQuery) CollectFields(ctx context.Context, satisfies ...string) (*CryptoQuoteCacheQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *CryptoQuoteCacheQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(cryptoquotecache.Columns))
+		selectedFields = []string{cryptoquotecache.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createTime":
+			if _, ok := fieldSeen[cryptoquotecache.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, cryptoquotecache.FieldCreateTime)
+				fieldSeen[cryptoquotecache.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[cryptoquotecache.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, cryptoquotecache.FieldUpdateTime)
+				fieldSeen[cryptoquotecache.FieldUpdateTime] = struct{}{}
+			}
+		case "symbol":
+			if _, ok := fieldSeen[cryptoquotecache.FieldSymbol]; !ok {
+				selectedFields = append(selectedFields, cryptoquotecache.FieldSymbol)
+				fieldSeen[cryptoquotecache.FieldSymbol] = struct{}{}
+			}
+		case "value":
+			if _, ok := fieldSeen[cryptoquotecache.FieldValue]; !ok {
+				selectedFields = append(selectedFields, cryptoquotecache.FieldValue)
+				fieldSeen[cryptoquotecache.FieldValue] = struct{}{}
+			}
+		case "date":
+			if _, ok := fieldSeen[cryptoquotecache.FieldDate]; !ok {
+				selectedFields = append(selectedFields, cryptoquotecache.FieldDate)
+				fieldSeen[cryptoquotecache.FieldDate] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type cryptoquotecachePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []CryptoQuoteCachePaginateOption
+}
+
+func newCryptoQuoteCachePaginateArgs(rv map[string]any) *cryptoquotecachePaginateArgs {
+	args := &cryptoquotecachePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*CryptoQuoteCacheWhereInput); ok {
+		args.opts = append(args.opts, WithCryptoQuoteCacheFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (_q *CurrencyQuery) CollectFields(ctx context.Context, satisfies ...string) (*CurrencyQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -281,6 +371,32 @@ func (_q *CurrencyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 			_q.WithNamedHouseholds(alias, func(wq *HouseholdQuery) {
 				*wq = *query
 			})
+
+		case "fxRateCachesFrom":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&FXRateCacheClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, fxratecacheImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedFxRateCachesFrom(alias, func(wq *FXRateCacheQuery) {
+				*wq = *query
+			})
+
+		case "fxRateCachesTo":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&FXRateCacheClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, fxratecacheImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedFxRateCachesTo(alias, func(wq *FXRateCacheQuery) {
+				*wq = *query
+			})
 		case "code":
 			if _, ok := fieldSeen[currency.FieldCode]; !ok {
 				selectedFields = append(selectedFields, currency.FieldCode)
@@ -323,6 +439,128 @@ func newCurrencyPaginateArgs(rv map[string]any) *currencyPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*CurrencyWhereInput); ok {
 		args.opts = append(args.opts, WithCurrencyFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *FXRateCacheQuery) CollectFields(ctx context.Context, satisfies ...string) (*FXRateCacheQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *FXRateCacheQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(fxratecache.Columns))
+		selectedFields = []string{fxratecache.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "fromCurrency":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&CurrencyClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, currencyImplementors)...); err != nil {
+				return err
+			}
+			_q.withFromCurrency = query
+			if _, ok := fieldSeen[fxratecache.FieldFromCurrencyID]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldFromCurrencyID)
+				fieldSeen[fxratecache.FieldFromCurrencyID] = struct{}{}
+			}
+
+		case "toCurrency":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&CurrencyClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, currencyImplementors)...); err != nil {
+				return err
+			}
+			_q.withToCurrency = query
+			if _, ok := fieldSeen[fxratecache.FieldToCurrencyID]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldToCurrencyID)
+				fieldSeen[fxratecache.FieldToCurrencyID] = struct{}{}
+			}
+		case "createTime":
+			if _, ok := fieldSeen[fxratecache.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldCreateTime)
+				fieldSeen[fxratecache.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[fxratecache.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldUpdateTime)
+				fieldSeen[fxratecache.FieldUpdateTime] = struct{}{}
+			}
+		case "fromCurrencyID":
+			if _, ok := fieldSeen[fxratecache.FieldFromCurrencyID]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldFromCurrencyID)
+				fieldSeen[fxratecache.FieldFromCurrencyID] = struct{}{}
+			}
+		case "toCurrencyID":
+			if _, ok := fieldSeen[fxratecache.FieldToCurrencyID]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldToCurrencyID)
+				fieldSeen[fxratecache.FieldToCurrencyID] = struct{}{}
+			}
+		case "value":
+			if _, ok := fieldSeen[fxratecache.FieldValue]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldValue)
+				fieldSeen[fxratecache.FieldValue] = struct{}{}
+			}
+		case "date":
+			if _, ok := fieldSeen[fxratecache.FieldDate]; !ok {
+				selectedFields = append(selectedFields, fxratecache.FieldDate)
+				fieldSeen[fxratecache.FieldDate] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type fxratecachePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []FXRateCachePaginateOption
+}
+
+func newFXRateCachePaginateArgs(rv map[string]any) *fxratecachePaginateArgs {
+	args := &fxratecachePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*FXRateCacheWhereInput); ok {
+		args.opts = append(args.opts, WithFXRateCacheFilter(v.Filter))
 	}
 	return args
 }
@@ -846,6 +1084,93 @@ func newInvestmentLotPaginateArgs(rv map[string]any) *investmentlotPaginateArgs 
 	}
 	if v, ok := rv[whereField].(*InvestmentLotWhereInput); ok {
 		args.opts = append(args.opts, WithInvestmentLotFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *StockQuoteCacheQuery) CollectFields(ctx context.Context, satisfies ...string) (*StockQuoteCacheQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *StockQuoteCacheQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(stockquotecache.Columns))
+		selectedFields = []string{stockquotecache.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createTime":
+			if _, ok := fieldSeen[stockquotecache.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, stockquotecache.FieldCreateTime)
+				fieldSeen[stockquotecache.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[stockquotecache.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, stockquotecache.FieldUpdateTime)
+				fieldSeen[stockquotecache.FieldUpdateTime] = struct{}{}
+			}
+		case "symbol":
+			if _, ok := fieldSeen[stockquotecache.FieldSymbol]; !ok {
+				selectedFields = append(selectedFields, stockquotecache.FieldSymbol)
+				fieldSeen[stockquotecache.FieldSymbol] = struct{}{}
+			}
+		case "value":
+			if _, ok := fieldSeen[stockquotecache.FieldValue]; !ok {
+				selectedFields = append(selectedFields, stockquotecache.FieldValue)
+				fieldSeen[stockquotecache.FieldValue] = struct{}{}
+			}
+		case "date":
+			if _, ok := fieldSeen[stockquotecache.FieldDate]; !ok {
+				selectedFields = append(selectedFields, stockquotecache.FieldDate)
+				fieldSeen[stockquotecache.FieldDate] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type stockquotecachePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []StockQuoteCachePaginateOption
+}
+
+func newStockQuoteCachePaginateArgs(rv map[string]any) *stockquotecachePaginateArgs {
+	args := &stockquotecachePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*StockQuoteCacheWhereInput); ok {
+		args.opts = append(args.opts, WithStockQuoteCacheFilter(v.Filter))
 	}
 	return args
 }

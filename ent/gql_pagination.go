@@ -10,10 +10,13 @@ import (
 	"strconv"
 
 	"beavermoney.app/ent/account"
+	"beavermoney.app/ent/cryptoquotecache"
 	"beavermoney.app/ent/currency"
+	"beavermoney.app/ent/fxratecache"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/stockquotecache"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -357,6 +360,255 @@ func (_m *Account) ToEdge(order *AccountOrder) *AccountEdge {
 	}
 }
 
+// CryptoQuoteCacheEdge is the edge representation of CryptoQuoteCache.
+type CryptoQuoteCacheEdge struct {
+	Node   *CryptoQuoteCache `json:"node"`
+	Cursor Cursor            `json:"cursor"`
+}
+
+// CryptoQuoteCacheConnection is the connection containing edges to CryptoQuoteCache.
+type CryptoQuoteCacheConnection struct {
+	Edges      []*CryptoQuoteCacheEdge `json:"edges"`
+	PageInfo   PageInfo                `json:"pageInfo"`
+	TotalCount int                     `json:"totalCount"`
+}
+
+func (c *CryptoQuoteCacheConnection) build(nodes []*CryptoQuoteCache, pager *cryptoquotecachePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *CryptoQuoteCache
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *CryptoQuoteCache {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *CryptoQuoteCache {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*CryptoQuoteCacheEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &CryptoQuoteCacheEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// CryptoQuoteCachePaginateOption enables pagination customization.
+type CryptoQuoteCachePaginateOption func(*cryptoquotecachePager) error
+
+// WithCryptoQuoteCacheOrder configures pagination ordering.
+func WithCryptoQuoteCacheOrder(order *CryptoQuoteCacheOrder) CryptoQuoteCachePaginateOption {
+	if order == nil {
+		order = DefaultCryptoQuoteCacheOrder
+	}
+	o := *order
+	return func(pager *cryptoquotecachePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultCryptoQuoteCacheOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithCryptoQuoteCacheFilter configures pagination filter.
+func WithCryptoQuoteCacheFilter(filter func(*CryptoQuoteCacheQuery) (*CryptoQuoteCacheQuery, error)) CryptoQuoteCachePaginateOption {
+	return func(pager *cryptoquotecachePager) error {
+		if filter == nil {
+			return errors.New("CryptoQuoteCacheQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type cryptoquotecachePager struct {
+	reverse bool
+	order   *CryptoQuoteCacheOrder
+	filter  func(*CryptoQuoteCacheQuery) (*CryptoQuoteCacheQuery, error)
+}
+
+func newCryptoQuoteCachePager(opts []CryptoQuoteCachePaginateOption, reverse bool) (*cryptoquotecachePager, error) {
+	pager := &cryptoquotecachePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultCryptoQuoteCacheOrder
+	}
+	return pager, nil
+}
+
+func (p *cryptoquotecachePager) applyFilter(query *CryptoQuoteCacheQuery) (*CryptoQuoteCacheQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *cryptoquotecachePager) toCursor(_m *CryptoQuoteCache) Cursor {
+	return p.order.Field.toCursor(_m)
+}
+
+func (p *cryptoquotecachePager) applyCursors(query *CryptoQuoteCacheQuery, after, before *Cursor) (*CryptoQuoteCacheQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultCryptoQuoteCacheOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *cryptoquotecachePager) applyOrder(query *CryptoQuoteCacheQuery) *CryptoQuoteCacheQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultCryptoQuoteCacheOrder.Field {
+		query = query.Order(DefaultCryptoQuoteCacheOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *cryptoquotecachePager) orderExpr(query *CryptoQuoteCacheQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultCryptoQuoteCacheOrder.Field {
+			b.Comma().Ident(DefaultCryptoQuoteCacheOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to CryptoQuoteCache.
+func (_m *CryptoQuoteCacheQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...CryptoQuoteCachePaginateOption,
+) (*CryptoQuoteCacheConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newCryptoQuoteCachePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if _m, err = pager.applyFilter(_m); err != nil {
+		return nil, err
+	}
+	conn := &CryptoQuoteCacheConnection{Edges: []*CryptoQuoteCacheEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := _m.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if _m, err = pager.applyCursors(_m, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		_m.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := _m.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	_m = pager.applyOrder(_m)
+	nodes, err := _m.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// CryptoQuoteCacheOrderField defines the ordering field of CryptoQuoteCache.
+type CryptoQuoteCacheOrderField struct {
+	// Value extracts the ordering value from the given CryptoQuoteCache.
+	Value    func(*CryptoQuoteCache) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) cryptoquotecache.OrderOption
+	toCursor func(*CryptoQuoteCache) Cursor
+}
+
+// CryptoQuoteCacheOrder defines the ordering of CryptoQuoteCache.
+type CryptoQuoteCacheOrder struct {
+	Direction OrderDirection              `json:"direction"`
+	Field     *CryptoQuoteCacheOrderField `json:"field"`
+}
+
+// DefaultCryptoQuoteCacheOrder is the default ordering of CryptoQuoteCache.
+var DefaultCryptoQuoteCacheOrder = &CryptoQuoteCacheOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &CryptoQuoteCacheOrderField{
+		Value: func(_m *CryptoQuoteCache) (ent.Value, error) {
+			return _m.ID, nil
+		},
+		column: cryptoquotecache.FieldID,
+		toTerm: cryptoquotecache.ByID,
+		toCursor: func(_m *CryptoQuoteCache) Cursor {
+			return Cursor{ID: _m.ID}
+		},
+	},
+}
+
+// ToEdge converts CryptoQuoteCache into CryptoQuoteCacheEdge.
+func (_m *CryptoQuoteCache) ToEdge(order *CryptoQuoteCacheOrder) *CryptoQuoteCacheEdge {
+	if order == nil {
+		order = DefaultCryptoQuoteCacheOrder
+	}
+	return &CryptoQuoteCacheEdge{
+		Node:   _m,
+		Cursor: order.Field.toCursor(_m),
+	}
+}
+
 // CurrencyEdge is the edge representation of Currency.
 type CurrencyEdge struct {
 	Node   *Currency `json:"node"`
@@ -601,6 +853,255 @@ func (_m *Currency) ToEdge(order *CurrencyOrder) *CurrencyEdge {
 		order = DefaultCurrencyOrder
 	}
 	return &CurrencyEdge{
+		Node:   _m,
+		Cursor: order.Field.toCursor(_m),
+	}
+}
+
+// FXRateCacheEdge is the edge representation of FXRateCache.
+type FXRateCacheEdge struct {
+	Node   *FXRateCache `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// FXRateCacheConnection is the connection containing edges to FXRateCache.
+type FXRateCacheConnection struct {
+	Edges      []*FXRateCacheEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+func (c *FXRateCacheConnection) build(nodes []*FXRateCache, pager *fxratecachePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *FXRateCache
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *FXRateCache {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *FXRateCache {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*FXRateCacheEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &FXRateCacheEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// FXRateCachePaginateOption enables pagination customization.
+type FXRateCachePaginateOption func(*fxratecachePager) error
+
+// WithFXRateCacheOrder configures pagination ordering.
+func WithFXRateCacheOrder(order *FXRateCacheOrder) FXRateCachePaginateOption {
+	if order == nil {
+		order = DefaultFXRateCacheOrder
+	}
+	o := *order
+	return func(pager *fxratecachePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultFXRateCacheOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithFXRateCacheFilter configures pagination filter.
+func WithFXRateCacheFilter(filter func(*FXRateCacheQuery) (*FXRateCacheQuery, error)) FXRateCachePaginateOption {
+	return func(pager *fxratecachePager) error {
+		if filter == nil {
+			return errors.New("FXRateCacheQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type fxratecachePager struct {
+	reverse bool
+	order   *FXRateCacheOrder
+	filter  func(*FXRateCacheQuery) (*FXRateCacheQuery, error)
+}
+
+func newFXRateCachePager(opts []FXRateCachePaginateOption, reverse bool) (*fxratecachePager, error) {
+	pager := &fxratecachePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultFXRateCacheOrder
+	}
+	return pager, nil
+}
+
+func (p *fxratecachePager) applyFilter(query *FXRateCacheQuery) (*FXRateCacheQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *fxratecachePager) toCursor(_m *FXRateCache) Cursor {
+	return p.order.Field.toCursor(_m)
+}
+
+func (p *fxratecachePager) applyCursors(query *FXRateCacheQuery, after, before *Cursor) (*FXRateCacheQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultFXRateCacheOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *fxratecachePager) applyOrder(query *FXRateCacheQuery) *FXRateCacheQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultFXRateCacheOrder.Field {
+		query = query.Order(DefaultFXRateCacheOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *fxratecachePager) orderExpr(query *FXRateCacheQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultFXRateCacheOrder.Field {
+			b.Comma().Ident(DefaultFXRateCacheOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to FXRateCache.
+func (_m *FXRateCacheQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...FXRateCachePaginateOption,
+) (*FXRateCacheConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newFXRateCachePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if _m, err = pager.applyFilter(_m); err != nil {
+		return nil, err
+	}
+	conn := &FXRateCacheConnection{Edges: []*FXRateCacheEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := _m.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if _m, err = pager.applyCursors(_m, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		_m.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := _m.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	_m = pager.applyOrder(_m)
+	nodes, err := _m.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// FXRateCacheOrderField defines the ordering field of FXRateCache.
+type FXRateCacheOrderField struct {
+	// Value extracts the ordering value from the given FXRateCache.
+	Value    func(*FXRateCache) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) fxratecache.OrderOption
+	toCursor func(*FXRateCache) Cursor
+}
+
+// FXRateCacheOrder defines the ordering of FXRateCache.
+type FXRateCacheOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *FXRateCacheOrderField `json:"field"`
+}
+
+// DefaultFXRateCacheOrder is the default ordering of FXRateCache.
+var DefaultFXRateCacheOrder = &FXRateCacheOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &FXRateCacheOrderField{
+		Value: func(_m *FXRateCache) (ent.Value, error) {
+			return _m.ID, nil
+		},
+		column: fxratecache.FieldID,
+		toTerm: fxratecache.ByID,
+		toCursor: func(_m *FXRateCache) Cursor {
+			return Cursor{ID: _m.ID}
+		},
+	},
+}
+
+// ToEdge converts FXRateCache into FXRateCacheEdge.
+func (_m *FXRateCache) ToEdge(order *FXRateCacheOrder) *FXRateCacheEdge {
+	if order == nil {
+		order = DefaultFXRateCacheOrder
+	}
+	return &FXRateCacheEdge{
 		Node:   _m,
 		Cursor: order.Field.toCursor(_m),
 	}
@@ -1348,6 +1849,255 @@ func (_m *InvestmentLot) ToEdge(order *InvestmentLotOrder) *InvestmentLotEdge {
 		order = DefaultInvestmentLotOrder
 	}
 	return &InvestmentLotEdge{
+		Node:   _m,
+		Cursor: order.Field.toCursor(_m),
+	}
+}
+
+// StockQuoteCacheEdge is the edge representation of StockQuoteCache.
+type StockQuoteCacheEdge struct {
+	Node   *StockQuoteCache `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// StockQuoteCacheConnection is the connection containing edges to StockQuoteCache.
+type StockQuoteCacheConnection struct {
+	Edges      []*StockQuoteCacheEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+func (c *StockQuoteCacheConnection) build(nodes []*StockQuoteCache, pager *stockquotecachePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *StockQuoteCache
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *StockQuoteCache {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *StockQuoteCache {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*StockQuoteCacheEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &StockQuoteCacheEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// StockQuoteCachePaginateOption enables pagination customization.
+type StockQuoteCachePaginateOption func(*stockquotecachePager) error
+
+// WithStockQuoteCacheOrder configures pagination ordering.
+func WithStockQuoteCacheOrder(order *StockQuoteCacheOrder) StockQuoteCachePaginateOption {
+	if order == nil {
+		order = DefaultStockQuoteCacheOrder
+	}
+	o := *order
+	return func(pager *stockquotecachePager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultStockQuoteCacheOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithStockQuoteCacheFilter configures pagination filter.
+func WithStockQuoteCacheFilter(filter func(*StockQuoteCacheQuery) (*StockQuoteCacheQuery, error)) StockQuoteCachePaginateOption {
+	return func(pager *stockquotecachePager) error {
+		if filter == nil {
+			return errors.New("StockQuoteCacheQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type stockquotecachePager struct {
+	reverse bool
+	order   *StockQuoteCacheOrder
+	filter  func(*StockQuoteCacheQuery) (*StockQuoteCacheQuery, error)
+}
+
+func newStockQuoteCachePager(opts []StockQuoteCachePaginateOption, reverse bool) (*stockquotecachePager, error) {
+	pager := &stockquotecachePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultStockQuoteCacheOrder
+	}
+	return pager, nil
+}
+
+func (p *stockquotecachePager) applyFilter(query *StockQuoteCacheQuery) (*StockQuoteCacheQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *stockquotecachePager) toCursor(_m *StockQuoteCache) Cursor {
+	return p.order.Field.toCursor(_m)
+}
+
+func (p *stockquotecachePager) applyCursors(query *StockQuoteCacheQuery, after, before *Cursor) (*StockQuoteCacheQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultStockQuoteCacheOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *stockquotecachePager) applyOrder(query *StockQuoteCacheQuery) *StockQuoteCacheQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultStockQuoteCacheOrder.Field {
+		query = query.Order(DefaultStockQuoteCacheOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *stockquotecachePager) orderExpr(query *StockQuoteCacheQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultStockQuoteCacheOrder.Field {
+			b.Comma().Ident(DefaultStockQuoteCacheOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to StockQuoteCache.
+func (_m *StockQuoteCacheQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...StockQuoteCachePaginateOption,
+) (*StockQuoteCacheConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newStockQuoteCachePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if _m, err = pager.applyFilter(_m); err != nil {
+		return nil, err
+	}
+	conn := &StockQuoteCacheConnection{Edges: []*StockQuoteCacheEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := _m.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if _m, err = pager.applyCursors(_m, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		_m.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := _m.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	_m = pager.applyOrder(_m)
+	nodes, err := _m.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// StockQuoteCacheOrderField defines the ordering field of StockQuoteCache.
+type StockQuoteCacheOrderField struct {
+	// Value extracts the ordering value from the given StockQuoteCache.
+	Value    func(*StockQuoteCache) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) stockquotecache.OrderOption
+	toCursor func(*StockQuoteCache) Cursor
+}
+
+// StockQuoteCacheOrder defines the ordering of StockQuoteCache.
+type StockQuoteCacheOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *StockQuoteCacheOrderField `json:"field"`
+}
+
+// DefaultStockQuoteCacheOrder is the default ordering of StockQuoteCache.
+var DefaultStockQuoteCacheOrder = &StockQuoteCacheOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &StockQuoteCacheOrderField{
+		Value: func(_m *StockQuoteCache) (ent.Value, error) {
+			return _m.ID, nil
+		},
+		column: stockquotecache.FieldID,
+		toTerm: stockquotecache.ByID,
+		toCursor: func(_m *StockQuoteCache) Cursor {
+			return Cursor{ID: _m.ID}
+		},
+	},
+}
+
+// ToEdge converts StockQuoteCache into StockQuoteCacheEdge.
+func (_m *StockQuoteCache) ToEdge(order *StockQuoteCacheOrder) *StockQuoteCacheEdge {
+	if order == nil {
+		order = DefaultStockQuoteCacheOrder
+	}
+	return &StockQuoteCacheEdge{
 		Node:   _m,
 		Cursor: order.Field.toCursor(_m),
 	}
