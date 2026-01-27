@@ -162,6 +162,49 @@ var (
 			},
 		},
 	}
+	// RecurringSubscriptionsColumns holds the columns for the "recurring_subscriptions" table.
+	RecurringSubscriptionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "update_time", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString},
+		{Name: "interval", Type: field.TypeEnum, Enums: []string{"day", "week", "month", "year"}},
+		{Name: "interval_count", Type: field.TypeInt, Default: 1},
+		{Name: "start_date", Type: field.TypeTime},
+		{Name: "active", Type: field.TypeBool, Default: true},
+		{Name: "icon", Type: field.TypeString, Nullable: true},
+		{Name: "cost", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "fx_rate", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},
+		{Name: "currency_id", Type: field.TypeInt},
+		{Name: "household_id", Type: field.TypeInt},
+		{Name: "user_id", Type: field.TypeInt},
+	}
+	// RecurringSubscriptionsTable holds the schema information for the "recurring_subscriptions" table.
+	RecurringSubscriptionsTable = &schema.Table{
+		Name:       "recurring_subscriptions",
+		Columns:    RecurringSubscriptionsColumns,
+		PrimaryKey: []*schema.Column{RecurringSubscriptionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "recurring_subscriptions_currencies_recurring_subscriptions",
+				Columns:    []*schema.Column{RecurringSubscriptionsColumns[11]},
+				RefColumns: []*schema.Column{CurrenciesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "recurring_subscriptions_households_recurring_subscriptions",
+				Columns:    []*schema.Column{RecurringSubscriptionsColumns[12]},
+				RefColumns: []*schema.Column{HouseholdsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "recurring_subscriptions_users_recurring_subscriptions",
+				Columns:    []*schema.Column{RecurringSubscriptionsColumns[13]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// TransactionsColumns holds the columns for the "transactions" table.
 	TransactionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -368,6 +411,7 @@ var (
 		HouseholdsTable,
 		InvestmentsTable,
 		InvestmentLotsTable,
+		RecurringSubscriptionsTable,
 		TransactionsTable,
 		TransactionCategoriesTable,
 		TransactionEntriesTable,
@@ -402,6 +446,12 @@ func init() {
 	InvestmentLotsTable.ForeignKeys[2].RefTable = TransactionsTable
 	InvestmentLotsTable.Annotation = &entsql.Annotation{
 		IncrementStart: func(i int) *int { return &i }(47244640256),
+	}
+	RecurringSubscriptionsTable.ForeignKeys[0].RefTable = CurrenciesTable
+	RecurringSubscriptionsTable.ForeignKeys[1].RefTable = HouseholdsTable
+	RecurringSubscriptionsTable.ForeignKeys[2].RefTable = UsersTable
+	RecurringSubscriptionsTable.Annotation = &entsql.Annotation{
+		IncrementStart: func(i int) *int { return &i }(51539607552),
 	}
 	TransactionsTable.ForeignKeys[0].RefTable = HouseholdsTable
 	TransactionsTable.ForeignKeys[1].RefTable = TransactionCategoriesTable

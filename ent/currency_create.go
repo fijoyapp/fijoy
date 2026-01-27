@@ -11,6 +11,7 @@ import (
 	"beavermoney.app/ent/currency"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -89,6 +90,21 @@ func (_c *CurrencyCreate) AddHouseholds(v ...*Household) *CurrencyCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddHouseholdIDs(ids...)
+}
+
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (_c *CurrencyCreate) AddRecurringSubscriptionIDs(ids ...int) *CurrencyCreate {
+	_c.mutation.AddRecurringSubscriptionIDs(ids...)
+	return _c
+}
+
+// AddRecurringSubscriptions adds the "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_c *CurrencyCreate) AddRecurringSubscriptions(v ...*RecurringSubscription) *CurrencyCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddRecurringSubscriptionIDs(ids...)
 }
 
 // Mutation returns the CurrencyMutation object of the builder.
@@ -221,6 +237,22 @@ func (_c *CurrencyCreate) createSpec() (*Currency, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.RecurringSubscriptionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

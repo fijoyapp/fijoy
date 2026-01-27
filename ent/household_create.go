@@ -13,6 +13,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -185,6 +186,21 @@ func (_c *HouseholdCreate) AddTransactionEntries(v ...*TransactionEntry) *Househ
 		ids[i] = v[i].ID
 	}
 	return _c.AddTransactionEntryIDs(ids...)
+}
+
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (_c *HouseholdCreate) AddRecurringSubscriptionIDs(ids ...int) *HouseholdCreate {
+	_c.mutation.AddRecurringSubscriptionIDs(ids...)
+	return _c
+}
+
+// AddRecurringSubscriptions adds the "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_c *HouseholdCreate) AddRecurringSubscriptions(v ...*RecurringSubscription) *HouseholdCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddRecurringSubscriptionIDs(ids...)
 }
 
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
@@ -460,6 +476,22 @@ func (_c *HouseholdCreate) createSpec() (*Household, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.RecurringSubscriptionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

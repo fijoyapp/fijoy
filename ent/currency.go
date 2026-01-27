@@ -34,16 +34,19 @@ type CurrencyEdges struct {
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
 	// Households holds the value of the households edge.
 	Households []*Household `json:"households,omitempty"`
+	// RecurringSubscriptions holds the value of the recurring_subscriptions edge.
+	RecurringSubscriptions []*RecurringSubscription `json:"recurring_subscriptions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [5]map[string]int
 
-	namedAccounts           map[string][]*Account
-	namedInvestments        map[string][]*Investment
-	namedTransactionEntries map[string][]*TransactionEntry
-	namedHouseholds         map[string][]*Household
+	namedAccounts               map[string][]*Account
+	namedInvestments            map[string][]*Investment
+	namedTransactionEntries     map[string][]*TransactionEntry
+	namedHouseholds             map[string][]*Household
+	namedRecurringSubscriptions map[string][]*RecurringSubscription
 }
 
 // AccountsOrErr returns the Accounts value or an error if the edge
@@ -80,6 +83,15 @@ func (e CurrencyEdges) HouseholdsOrErr() ([]*Household, error) {
 		return e.Households, nil
 	}
 	return nil, &NotLoadedError{edge: "households"}
+}
+
+// RecurringSubscriptionsOrErr returns the RecurringSubscriptions value or an error if the edge
+// was not loaded in eager-loading.
+func (e CurrencyEdges) RecurringSubscriptionsOrErr() ([]*RecurringSubscription, error) {
+	if e.loadedTypes[4] {
+		return e.RecurringSubscriptions, nil
+	}
+	return nil, &NotLoadedError{edge: "recurring_subscriptions"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -149,6 +161,11 @@ func (_m *Currency) QueryTransactionEntries() *TransactionEntryQuery {
 // QueryHouseholds queries the "households" edge of the Currency entity.
 func (_m *Currency) QueryHouseholds() *HouseholdQuery {
 	return NewCurrencyClient(_m.config).QueryHouseholds(_m)
+}
+
+// QueryRecurringSubscriptions queries the "recurring_subscriptions" edge of the Currency entity.
+func (_m *Currency) QueryRecurringSubscriptions() *RecurringSubscriptionQuery {
+	return NewCurrencyClient(_m.config).QueryRecurringSubscriptions(_m)
 }
 
 // Update returns a builder for updating this Currency.
@@ -273,6 +290,30 @@ func (_m *Currency) appendNamedHouseholds(name string, edges ...*Household) {
 		_m.Edges.namedHouseholds[name] = []*Household{}
 	} else {
 		_m.Edges.namedHouseholds[name] = append(_m.Edges.namedHouseholds[name], edges...)
+	}
+}
+
+// NamedRecurringSubscriptions returns the RecurringSubscriptions named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Currency) NamedRecurringSubscriptions(name string) ([]*RecurringSubscription, error) {
+	if _m.Edges.namedRecurringSubscriptions == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedRecurringSubscriptions[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Currency) appendNamedRecurringSubscriptions(name string, edges ...*RecurringSubscription) {
+	if _m.Edges.namedRecurringSubscriptions == nil {
+		_m.Edges.namedRecurringSubscriptions = make(map[string][]*RecurringSubscription)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedRecurringSubscriptions[name] = []*RecurringSubscription{}
+	} else {
+		_m.Edges.namedRecurringSubscriptions[name] = append(_m.Edges.namedRecurringSubscriptions[name], edges...)
 	}
 }
 

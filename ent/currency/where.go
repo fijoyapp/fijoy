@@ -215,6 +215,29 @@ func HasHouseholdsWith(preds ...predicate.Household) predicate.Currency {
 	})
 }
 
+// HasRecurringSubscriptions applies the HasEdge predicate on the "recurring_subscriptions" edge.
+func HasRecurringSubscriptions() predicate.Currency {
+	return predicate.Currency(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RecurringSubscriptionsTable, RecurringSubscriptionsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRecurringSubscriptionsWith applies the HasEdge predicate on the "recurring_subscriptions" edge with a given conditions (other predicates).
+func HasRecurringSubscriptionsWith(preds ...predicate.RecurringSubscription) predicate.Currency {
+	return predicate.Currency(func(s *sql.Selector) {
+		step := newRecurringSubscriptionsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Currency) predicate.Currency {
 	return predicate.Currency(sql.AndPredicates(predicates...))

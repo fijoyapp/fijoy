@@ -11,6 +11,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/schema"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
@@ -190,6 +191,56 @@ func init() {
 	investmentlotDescTransactionID := investmentlotFields[3].Descriptor()
 	// investmentlot.TransactionIDValidator is a validator for the "transaction_id" field. It is called by the builders before save.
 	investmentlot.TransactionIDValidator = investmentlotDescTransactionID.Validators[0].(func(int) error)
+	recurringsubscriptionMixin := schema.RecurringSubscription{}.Mixin()
+	recurringsubscription.Policy = privacy.NewPolicies(recurringsubscriptionMixin[1], schema.RecurringSubscription{})
+	recurringsubscription.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := recurringsubscription.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	recurringsubscriptionMixinFields0 := recurringsubscriptionMixin[0].Fields()
+	_ = recurringsubscriptionMixinFields0
+	recurringsubscriptionFields := schema.RecurringSubscription{}.Fields()
+	_ = recurringsubscriptionFields
+	// recurringsubscriptionDescCreateTime is the schema descriptor for create_time field.
+	recurringsubscriptionDescCreateTime := recurringsubscriptionMixinFields0[0].Descriptor()
+	// recurringsubscription.DefaultCreateTime holds the default value on creation for the create_time field.
+	recurringsubscription.DefaultCreateTime = recurringsubscriptionDescCreateTime.Default.(func() time.Time)
+	// recurringsubscriptionDescUpdateTime is the schema descriptor for update_time field.
+	recurringsubscriptionDescUpdateTime := recurringsubscriptionMixinFields0[1].Descriptor()
+	// recurringsubscription.DefaultUpdateTime holds the default value on creation for the update_time field.
+	recurringsubscription.DefaultUpdateTime = recurringsubscriptionDescUpdateTime.Default.(func() time.Time)
+	// recurringsubscription.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	recurringsubscription.UpdateDefaultUpdateTime = recurringsubscriptionDescUpdateTime.UpdateDefault.(func() time.Time)
+	// recurringsubscriptionDescName is the schema descriptor for name field.
+	recurringsubscriptionDescName := recurringsubscriptionFields[0].Descriptor()
+	// recurringsubscription.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	recurringsubscription.NameValidator = recurringsubscriptionDescName.Validators[0].(func(string) error)
+	// recurringsubscriptionDescIntervalCount is the schema descriptor for interval_count field.
+	recurringsubscriptionDescIntervalCount := recurringsubscriptionFields[2].Descriptor()
+	// recurringsubscription.DefaultIntervalCount holds the default value on creation for the interval_count field.
+	recurringsubscription.DefaultIntervalCount = recurringsubscriptionDescIntervalCount.Default.(int)
+	// recurringsubscription.IntervalCountValidator is a validator for the "interval_count" field. It is called by the builders before save.
+	recurringsubscription.IntervalCountValidator = recurringsubscriptionDescIntervalCount.Validators[0].(func(int) error)
+	// recurringsubscriptionDescActive is the schema descriptor for active field.
+	recurringsubscriptionDescActive := recurringsubscriptionFields[4].Descriptor()
+	// recurringsubscription.DefaultActive holds the default value on creation for the active field.
+	recurringsubscription.DefaultActive = recurringsubscriptionDescActive.Default.(bool)
+	// recurringsubscriptionDescCost is the schema descriptor for cost field.
+	recurringsubscriptionDescCost := recurringsubscriptionFields[6].Descriptor()
+	// recurringsubscription.DefaultCost holds the default value on creation for the cost field.
+	recurringsubscription.DefaultCost = recurringsubscriptionDescCost.Default.(func() decimal.Decimal)
+	// recurringsubscriptionDescCurrencyID is the schema descriptor for currency_id field.
+	recurringsubscriptionDescCurrencyID := recurringsubscriptionFields[8].Descriptor()
+	// recurringsubscription.CurrencyIDValidator is a validator for the "currency_id" field. It is called by the builders before save.
+	recurringsubscription.CurrencyIDValidator = recurringsubscriptionDescCurrencyID.Validators[0].(func(int) error)
+	// recurringsubscriptionDescUserID is the schema descriptor for user_id field.
+	recurringsubscriptionDescUserID := recurringsubscriptionFields[9].Descriptor()
+	// recurringsubscription.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	recurringsubscription.UserIDValidator = recurringsubscriptionDescUserID.Validators[0].(func(int) error)
 	transactionMixin := schema.Transaction{}.Mixin()
 	transaction.Policy = privacy.NewPolicies(transactionMixin[1], schema.Transaction{})
 	transaction.Hooks[0] = func(next ent.Mutator) ent.Mutator {

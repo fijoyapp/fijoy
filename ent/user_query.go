@@ -12,6 +12,7 @@ import (
 	"beavermoney.app/ent/account"
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/user"
 	"beavermoney.app/ent/userhousehold"
@@ -25,22 +26,24 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                     *QueryContext
-	order                   []user.OrderOption
-	inters                  []Interceptor
-	predicates              []predicate.User
-	withHouseholds          *HouseholdQuery
-	withAccounts            *AccountQuery
-	withTransactions        *TransactionQuery
-	withUserKeys            *UserKeyQuery
-	withUserHouseholds      *UserHouseholdQuery
-	loadTotal               []func(context.Context, []*User) error
-	modifiers               []func(*sql.Selector)
-	withNamedHouseholds     map[string]*HouseholdQuery
-	withNamedAccounts       map[string]*AccountQuery
-	withNamedTransactions   map[string]*TransactionQuery
-	withNamedUserKeys       map[string]*UserKeyQuery
-	withNamedUserHouseholds map[string]*UserHouseholdQuery
+	ctx                             *QueryContext
+	order                           []user.OrderOption
+	inters                          []Interceptor
+	predicates                      []predicate.User
+	withHouseholds                  *HouseholdQuery
+	withAccounts                    *AccountQuery
+	withTransactions                *TransactionQuery
+	withUserKeys                    *UserKeyQuery
+	withRecurringSubscriptions      *RecurringSubscriptionQuery
+	withUserHouseholds              *UserHouseholdQuery
+	loadTotal                       []func(context.Context, []*User) error
+	modifiers                       []func(*sql.Selector)
+	withNamedHouseholds             map[string]*HouseholdQuery
+	withNamedAccounts               map[string]*AccountQuery
+	withNamedTransactions           map[string]*TransactionQuery
+	withNamedUserKeys               map[string]*UserKeyQuery
+	withNamedRecurringSubscriptions map[string]*RecurringSubscriptionQuery
+	withNamedUserHouseholds         map[string]*UserHouseholdQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -158,6 +161,28 @@ func (_q *UserQuery) QueryUserKeys() *UserKeyQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(userkey.Table, userkey.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.UserKeysTable, user.UserKeysColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRecurringSubscriptions chains the current query on the "recurring_subscriptions" edge.
+func (_q *UserQuery) QueryRecurringSubscriptions() *RecurringSubscriptionQuery {
+	query := (&RecurringSubscriptionClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(recurringsubscription.Table, recurringsubscription.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RecurringSubscriptionsTable, user.RecurringSubscriptionsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -374,16 +399,17 @@ func (_q *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:             _q.config,
-		ctx:                _q.ctx.Clone(),
-		order:              append([]user.OrderOption{}, _q.order...),
-		inters:             append([]Interceptor{}, _q.inters...),
-		predicates:         append([]predicate.User{}, _q.predicates...),
-		withHouseholds:     _q.withHouseholds.Clone(),
-		withAccounts:       _q.withAccounts.Clone(),
-		withTransactions:   _q.withTransactions.Clone(),
-		withUserKeys:       _q.withUserKeys.Clone(),
-		withUserHouseholds: _q.withUserHouseholds.Clone(),
+		config:                     _q.config,
+		ctx:                        _q.ctx.Clone(),
+		order:                      append([]user.OrderOption{}, _q.order...),
+		inters:                     append([]Interceptor{}, _q.inters...),
+		predicates:                 append([]predicate.User{}, _q.predicates...),
+		withHouseholds:             _q.withHouseholds.Clone(),
+		withAccounts:               _q.withAccounts.Clone(),
+		withTransactions:           _q.withTransactions.Clone(),
+		withUserKeys:               _q.withUserKeys.Clone(),
+		withRecurringSubscriptions: _q.withRecurringSubscriptions.Clone(),
+		withUserHouseholds:         _q.withUserHouseholds.Clone(),
 		// clone intermediate query.
 		sql:       _q.sql.Clone(),
 		path:      _q.path,
@@ -432,6 +458,17 @@ func (_q *UserQuery) WithUserKeys(opts ...func(*UserKeyQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withUserKeys = query
+	return _q
+}
+
+// WithRecurringSubscriptions tells the query-builder to eager-load the nodes that are connected to
+// the "recurring_subscriptions" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithRecurringSubscriptions(opts ...func(*RecurringSubscriptionQuery)) *UserQuery {
+	query := (&RecurringSubscriptionClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withRecurringSubscriptions = query
 	return _q
 }
 
@@ -530,11 +567,12 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = _q.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			_q.withHouseholds != nil,
 			_q.withAccounts != nil,
 			_q.withTransactions != nil,
 			_q.withUserKeys != nil,
+			_q.withRecurringSubscriptions != nil,
 			_q.withUserHouseholds != nil,
 		}
 	)
@@ -587,6 +625,15 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	if query := _q.withRecurringSubscriptions; query != nil {
+		if err := _q.loadRecurringSubscriptions(ctx, query, nodes,
+			func(n *User) { n.Edges.RecurringSubscriptions = []*RecurringSubscription{} },
+			func(n *User, e *RecurringSubscription) {
+				n.Edges.RecurringSubscriptions = append(n.Edges.RecurringSubscriptions, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
 	if query := _q.withUserHouseholds; query != nil {
 		if err := _q.loadUserHouseholds(ctx, query, nodes,
 			func(n *User) { n.Edges.UserHouseholds = []*UserHousehold{} },
@@ -619,6 +666,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadUserKeys(ctx, query, nodes,
 			func(n *User) { n.appendNamedUserKeys(name) },
 			func(n *User, e *UserKey) { n.appendNamedUserKeys(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range _q.withNamedRecurringSubscriptions {
+		if err := _q.loadRecurringSubscriptions(ctx, query, nodes,
+			func(n *User) { n.appendNamedRecurringSubscriptions(name) },
+			func(n *User, e *RecurringSubscription) { n.appendNamedRecurringSubscriptions(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -773,6 +827,36 @@ func (_q *UserQuery) loadUserKeys(ctx context.Context, query *UserKeyQuery, node
 	}
 	query.Where(predicate.UserKey(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.UserKeysColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadRecurringSubscriptions(ctx context.Context, query *RecurringSubscriptionQuery, nodes []*User, init func(*User), assign func(*User, *RecurringSubscription)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(recurringsubscription.FieldUserID)
+	}
+	query.Where(predicate.RecurringSubscription(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.RecurringSubscriptionsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -965,6 +1049,20 @@ func (_q *UserQuery) WithNamedUserKeys(name string, opts ...func(*UserKeyQuery))
 		_q.withNamedUserKeys = make(map[string]*UserKeyQuery)
 	}
 	_q.withNamedUserKeys[name] = query
+	return _q
+}
+
+// WithNamedRecurringSubscriptions tells the query-builder to eager-load the nodes that are connected to the "recurring_subscriptions"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithNamedRecurringSubscriptions(name string, opts ...func(*RecurringSubscriptionQuery)) *UserQuery {
+	query := (&RecurringSubscriptionClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if _q.withNamedRecurringSubscriptions == nil {
+		_q.withNamedRecurringSubscriptions = make(map[string]*RecurringSubscriptionQuery)
+	}
+	_q.withNamedRecurringSubscriptions[name] = query
 	return _q
 }
 

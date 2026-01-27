@@ -85,6 +85,13 @@ func (Household) Edges() []ent.Edge {
 					entgql.SkipMutationUpdateInput,
 				),
 			),
+		edge.To("recurring_subscriptions", RecurringSubscription.Type).
+			Annotations(
+				entgql.Skip(
+					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
+				),
+			),
 	}
 }
 

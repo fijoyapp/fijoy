@@ -52,22 +52,25 @@ type HouseholdEdges struct {
 	TransactionCategories []*TransactionCategory `json:"transaction_categories,omitempty"`
 	// TransactionEntries holds the value of the transaction_entries edge.
 	TransactionEntries []*TransactionEntry `json:"transaction_entries,omitempty"`
+	// RecurringSubscriptions holds the value of the recurring_subscriptions edge.
+	RecurringSubscriptions []*RecurringSubscription `json:"recurring_subscriptions,omitempty"`
 	// UserHouseholds holds the value of the user_households edge.
 	UserHouseholds []*UserHousehold `json:"user_households,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 	// totalCount holds the count of the edges above.
-	totalCount [9]map[string]int
+	totalCount [10]map[string]int
 
-	namedUsers                 map[string][]*User
-	namedAccounts              map[string][]*Account
-	namedTransactions          map[string][]*Transaction
-	namedInvestments           map[string][]*Investment
-	namedInvestmentLots        map[string][]*InvestmentLot
-	namedTransactionCategories map[string][]*TransactionCategory
-	namedTransactionEntries    map[string][]*TransactionEntry
-	namedUserHouseholds        map[string][]*UserHousehold
+	namedUsers                  map[string][]*User
+	namedAccounts               map[string][]*Account
+	namedTransactions           map[string][]*Transaction
+	namedInvestments            map[string][]*Investment
+	namedInvestmentLots         map[string][]*InvestmentLot
+	namedTransactionCategories  map[string][]*TransactionCategory
+	namedTransactionEntries     map[string][]*TransactionEntry
+	namedRecurringSubscriptions map[string][]*RecurringSubscription
+	namedUserHouseholds         map[string][]*UserHousehold
 }
 
 // CurrencyOrErr returns the Currency value or an error if the edge
@@ -144,10 +147,19 @@ func (e HouseholdEdges) TransactionEntriesOrErr() ([]*TransactionEntry, error) {
 	return nil, &NotLoadedError{edge: "transaction_entries"}
 }
 
+// RecurringSubscriptionsOrErr returns the RecurringSubscriptions value or an error if the edge
+// was not loaded in eager-loading.
+func (e HouseholdEdges) RecurringSubscriptionsOrErr() ([]*RecurringSubscription, error) {
+	if e.loadedTypes[8] {
+		return e.RecurringSubscriptions, nil
+	}
+	return nil, &NotLoadedError{edge: "recurring_subscriptions"}
+}
+
 // UserHouseholdsOrErr returns the UserHouseholds value or an error if the edge
 // was not loaded in eager-loading.
 func (e HouseholdEdges) UserHouseholdsOrErr() ([]*UserHousehold, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.UserHouseholds, nil
 	}
 	return nil, &NotLoadedError{edge: "user_households"}
@@ -266,6 +278,11 @@ func (_m *Household) QueryTransactionCategories() *TransactionCategoryQuery {
 // QueryTransactionEntries queries the "transaction_entries" edge of the Household entity.
 func (_m *Household) QueryTransactionEntries() *TransactionEntryQuery {
 	return NewHouseholdClient(_m.config).QueryTransactionEntries(_m)
+}
+
+// QueryRecurringSubscriptions queries the "recurring_subscriptions" edge of the Household entity.
+func (_m *Household) QueryRecurringSubscriptions() *RecurringSubscriptionQuery {
+	return NewHouseholdClient(_m.config).QueryRecurringSubscriptions(_m)
 }
 
 // QueryUserHouseholds queries the "user_households" edge of the Household entity.
@@ -479,6 +496,30 @@ func (_m *Household) appendNamedTransactionEntries(name string, edges ...*Transa
 		_m.Edges.namedTransactionEntries[name] = []*TransactionEntry{}
 	} else {
 		_m.Edges.namedTransactionEntries[name] = append(_m.Edges.namedTransactionEntries[name], edges...)
+	}
+}
+
+// NamedRecurringSubscriptions returns the RecurringSubscriptions named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (_m *Household) NamedRecurringSubscriptions(name string) ([]*RecurringSubscription, error) {
+	if _m.Edges.namedRecurringSubscriptions == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := _m.Edges.namedRecurringSubscriptions[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (_m *Household) appendNamedRecurringSubscriptions(name string, edges ...*RecurringSubscription) {
+	if _m.Edges.namedRecurringSubscriptions == nil {
+		_m.Edges.namedRecurringSubscriptions = make(map[string][]*RecurringSubscription)
+	}
+	if len(edges) == 0 {
+		_m.Edges.namedRecurringSubscriptions[name] = []*RecurringSubscription{}
+	} else {
+		_m.Edges.namedRecurringSubscriptions[name] = append(_m.Edges.namedRecurringSubscriptions[name], edges...)
 	}
 }
 

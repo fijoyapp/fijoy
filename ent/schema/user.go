@@ -33,6 +33,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("accounts", Account.Type),
 		edge.To("transactions", Transaction.Type),
 		edge.To("user_keys", UserKey.Type),
+		edge.To("recurring_subscriptions", RecurringSubscription.Type),
 	}
 }
 

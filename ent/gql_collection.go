@@ -10,6 +10,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -281,6 +282,19 @@ func (_q *CurrencyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 			_q.WithNamedHouseholds(alias, func(wq *HouseholdQuery) {
 				*wq = *query
 			})
+
+		case "recurringSubscriptions":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RecurringSubscriptionClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, recurringsubscriptionImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedRecurringSubscriptions(alias, func(wq *RecurringSubscriptionQuery) {
+				*wq = *query
+			})
 		case "code":
 			if _, ok := fieldSeen[currency.FieldCode]; !ok {
 				selectedFields = append(selectedFields, currency.FieldCode)
@@ -452,6 +466,19 @@ func (_q *HouseholdQuery) collectField(ctx context.Context, oneNode bool, opCtx 
 				return err
 			}
 			_q.WithNamedTransactionEntries(alias, func(wq *TransactionEntryQuery) {
+				*wq = *query
+			})
+
+		case "recurringSubscriptions":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RecurringSubscriptionClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, recurringsubscriptionImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedRecurringSubscriptions(alias, func(wq *RecurringSubscriptionQuery) {
 				*wq = *query
 			})
 
@@ -846,6 +873,178 @@ func newInvestmentLotPaginateArgs(rv map[string]any) *investmentlotPaginateArgs 
 	}
 	if v, ok := rv[whereField].(*InvestmentLotWhereInput); ok {
 		args.opts = append(args.opts, WithInvestmentLotFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (_q *RecurringSubscriptionQuery) CollectFields(ctx context.Context, satisfies ...string) (*RecurringSubscriptionQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return _q, nil
+	}
+	if err := _q.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return _q, nil
+}
+
+func (_q *RecurringSubscriptionQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(recurringsubscription.Columns))
+		selectedFields = []string{recurringsubscription.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "household":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&HouseholdClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, householdImplementors)...); err != nil {
+				return err
+			}
+			_q.withHousehold = query
+			if _, ok := fieldSeen[recurringsubscription.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldHouseholdID)
+				fieldSeen[recurringsubscription.FieldHouseholdID] = struct{}{}
+			}
+
+		case "currency":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&CurrencyClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, currencyImplementors)...); err != nil {
+				return err
+			}
+			_q.withCurrency = query
+			if _, ok := fieldSeen[recurringsubscription.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldCurrencyID)
+				fieldSeen[recurringsubscription.FieldCurrencyID] = struct{}{}
+			}
+
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
+				return err
+			}
+			_q.withUser = query
+			if _, ok := fieldSeen[recurringsubscription.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldUserID)
+				fieldSeen[recurringsubscription.FieldUserID] = struct{}{}
+			}
+		case "createTime":
+			if _, ok := fieldSeen[recurringsubscription.FieldCreateTime]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldCreateTime)
+				fieldSeen[recurringsubscription.FieldCreateTime] = struct{}{}
+			}
+		case "updateTime":
+			if _, ok := fieldSeen[recurringsubscription.FieldUpdateTime]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldUpdateTime)
+				fieldSeen[recurringsubscription.FieldUpdateTime] = struct{}{}
+			}
+		case "householdID":
+			if _, ok := fieldSeen[recurringsubscription.FieldHouseholdID]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldHouseholdID)
+				fieldSeen[recurringsubscription.FieldHouseholdID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[recurringsubscription.FieldName]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldName)
+				fieldSeen[recurringsubscription.FieldName] = struct{}{}
+			}
+		case "interval":
+			if _, ok := fieldSeen[recurringsubscription.FieldInterval]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldInterval)
+				fieldSeen[recurringsubscription.FieldInterval] = struct{}{}
+			}
+		case "intervalCount":
+			if _, ok := fieldSeen[recurringsubscription.FieldIntervalCount]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldIntervalCount)
+				fieldSeen[recurringsubscription.FieldIntervalCount] = struct{}{}
+			}
+		case "startDate":
+			if _, ok := fieldSeen[recurringsubscription.FieldStartDate]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldStartDate)
+				fieldSeen[recurringsubscription.FieldStartDate] = struct{}{}
+			}
+		case "active":
+			if _, ok := fieldSeen[recurringsubscription.FieldActive]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldActive)
+				fieldSeen[recurringsubscription.FieldActive] = struct{}{}
+			}
+		case "icon":
+			if _, ok := fieldSeen[recurringsubscription.FieldIcon]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldIcon)
+				fieldSeen[recurringsubscription.FieldIcon] = struct{}{}
+			}
+		case "cost":
+			if _, ok := fieldSeen[recurringsubscription.FieldCost]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldCost)
+				fieldSeen[recurringsubscription.FieldCost] = struct{}{}
+			}
+		case "fxRate":
+			if _, ok := fieldSeen[recurringsubscription.FieldFxRate]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldFxRate)
+				fieldSeen[recurringsubscription.FieldFxRate] = struct{}{}
+			}
+		case "currencyID":
+			if _, ok := fieldSeen[recurringsubscription.FieldCurrencyID]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldCurrencyID)
+				fieldSeen[recurringsubscription.FieldCurrencyID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[recurringsubscription.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, recurringsubscription.FieldUserID)
+				fieldSeen[recurringsubscription.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		_q.Select(selectedFields...)
+	}
+	return nil
+}
+
+type recurringsubscriptionPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []RecurringSubscriptionPaginateOption
+}
+
+func newRecurringSubscriptionPaginateArgs(rv map[string]any) *recurringsubscriptionPaginateArgs {
+	args := &recurringsubscriptionPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*RecurringSubscriptionWhereInput); ok {
+		args.opts = append(args.opts, WithRecurringSubscriptionFilter(v.Filter))
 	}
 	return args
 }
@@ -1393,6 +1592,19 @@ func (_q *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 				return err
 			}
 			_q.WithNamedUserKeys(alias, func(wq *UserKeyQuery) {
+				*wq = *query
+			})
+
+		case "recurringSubscriptions":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RecurringSubscriptionClient{config: _q.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, recurringsubscriptionImplementors)...); err != nil {
+				return err
+			}
+			_q.WithNamedRecurringSubscriptions(alias, func(wq *RecurringSubscriptionQuery) {
 				*wq = *query
 			})
 

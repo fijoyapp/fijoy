@@ -12,6 +12,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -106,6 +107,21 @@ func (_u *CurrencyUpdate) AddHouseholds(v ...*Household) *CurrencyUpdate {
 	return _u.AddHouseholdIDs(ids...)
 }
 
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (_u *CurrencyUpdate) AddRecurringSubscriptionIDs(ids ...int) *CurrencyUpdate {
+	_u.mutation.AddRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// AddRecurringSubscriptions adds the "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *CurrencyUpdate) AddRecurringSubscriptions(v ...*RecurringSubscription) *CurrencyUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddRecurringSubscriptionIDs(ids...)
+}
+
 // Mutation returns the CurrencyMutation object of the builder.
 func (_u *CurrencyUpdate) Mutation() *CurrencyMutation {
 	return _u.mutation
@@ -193,6 +209,27 @@ func (_u *CurrencyUpdate) RemoveHouseholds(v ...*Household) *CurrencyUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveHouseholdIDs(ids...)
+}
+
+// ClearRecurringSubscriptions clears all "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *CurrencyUpdate) ClearRecurringSubscriptions() *CurrencyUpdate {
+	_u.mutation.ClearRecurringSubscriptions()
+	return _u
+}
+
+// RemoveRecurringSubscriptionIDs removes the "recurring_subscriptions" edge to RecurringSubscription entities by IDs.
+func (_u *CurrencyUpdate) RemoveRecurringSubscriptionIDs(ids ...int) *CurrencyUpdate {
+	_u.mutation.RemoveRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// RemoveRecurringSubscriptions removes "recurring_subscriptions" edges to RecurringSubscription entities.
+func (_u *CurrencyUpdate) RemoveRecurringSubscriptions(v ...*RecurringSubscription) *CurrencyUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveRecurringSubscriptionIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -433,6 +470,51 @@ func (_u *CurrencyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedRecurringSubscriptionsIDs(); len(nodes) > 0 && !_u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RecurringSubscriptionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -529,6 +611,21 @@ func (_u *CurrencyUpdateOne) AddHouseholds(v ...*Household) *CurrencyUpdateOne {
 	return _u.AddHouseholdIDs(ids...)
 }
 
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (_u *CurrencyUpdateOne) AddRecurringSubscriptionIDs(ids ...int) *CurrencyUpdateOne {
+	_u.mutation.AddRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// AddRecurringSubscriptions adds the "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *CurrencyUpdateOne) AddRecurringSubscriptions(v ...*RecurringSubscription) *CurrencyUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddRecurringSubscriptionIDs(ids...)
+}
+
 // Mutation returns the CurrencyMutation object of the builder.
 func (_u *CurrencyUpdateOne) Mutation() *CurrencyMutation {
 	return _u.mutation
@@ -616,6 +713,27 @@ func (_u *CurrencyUpdateOne) RemoveHouseholds(v ...*Household) *CurrencyUpdateOn
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveHouseholdIDs(ids...)
+}
+
+// ClearRecurringSubscriptions clears all "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *CurrencyUpdateOne) ClearRecurringSubscriptions() *CurrencyUpdateOne {
+	_u.mutation.ClearRecurringSubscriptions()
+	return _u
+}
+
+// RemoveRecurringSubscriptionIDs removes the "recurring_subscriptions" edge to RecurringSubscription entities by IDs.
+func (_u *CurrencyUpdateOne) RemoveRecurringSubscriptionIDs(ids ...int) *CurrencyUpdateOne {
+	_u.mutation.RemoveRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// RemoveRecurringSubscriptions removes "recurring_subscriptions" edges to RecurringSubscription entities.
+func (_u *CurrencyUpdateOne) RemoveRecurringSubscriptions(v ...*RecurringSubscription) *CurrencyUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveRecurringSubscriptionIDs(ids...)
 }
 
 // Where appends a list predicates to the CurrencyUpdate builder.
@@ -879,6 +997,51 @@ func (_u *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(household.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedRecurringSubscriptionsIDs(); len(nodes) > 0 && !_u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RecurringSubscriptionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
