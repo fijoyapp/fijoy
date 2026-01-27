@@ -169,11 +169,11 @@ const UserHouseholdHouseholdIdAccountsAccountIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/household': typeof UserHouseholdRouteRouteWithChildren
-  '/login': typeof LoginIndexRoute
+  '/login/': typeof LoginIndexRoute
   '/household/$householdId': typeof UserHouseholdHouseholdIdRouteRouteWithChildren
   '/household/new': typeof UserHouseholdNewRoute
   '/household/': typeof UserHouseholdIndexRoute
-  '/auth/callback': typeof AuthCallbackIndexRoute
+  '/auth/callback/': typeof AuthCallbackIndexRoute
   '/household/$householdId/accounts': typeof UserHouseholdHouseholdIdAccountsRouteRouteWithChildren
   '/household/$householdId/categories': typeof UserHouseholdHouseholdIdCategoriesRouteRouteWithChildren
   '/household/$householdId/investments': typeof UserHouseholdHouseholdIdInvestmentsRouteRouteWithChildren
@@ -241,11 +241,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/household'
-    | '/login'
+    | '/login/'
     | '/household/$householdId'
     | '/household/new'
     | '/household/'
-    | '/auth/callback'
+    | '/auth/callback/'
     | '/household/$householdId/accounts'
     | '/household/$householdId/categories'
     | '/household/$householdId/investments'
@@ -327,7 +327,7 @@ declare module '@tanstack/react-router' {
     '/login/': {
       id: '/login/'
       path: '/login'
-      fullPath: '/login'
+      fullPath: '/login/'
       preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -341,7 +341,7 @@ declare module '@tanstack/react-router' {
     '/auth/callback/': {
       id: '/auth/callback/'
       path: '/auth/callback'
-      fullPath: '/auth/callback'
+      fullPath: '/auth/callback/'
       preLoaderRoute: typeof AuthCallbackIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
