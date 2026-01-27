@@ -140,7 +140,7 @@ export function parseDateRangeFromURL(
  */
 export function calculateNextPaymentDate(params: {
   startDate: Date | string
-  interval: 'day' | 'week' | 'month' | 'year'
+  interval: 'week' | 'month' | 'year'
   intervalCount: number
 }): Date {
   const { startDate, interval, intervalCount } = params
@@ -160,18 +160,6 @@ export function calculateNextPaymentDate(params: {
   let nextDate: Date
 
   switch (interval) {
-    case 'day': {
-      // Calculate days since start
-      const daysSinceStart = Math.floor(
-        (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
-      )
-      const intervalDays = intervalCount
-      const periodsElapsed = Math.floor(daysSinceStart / intervalDays)
-      nextDate = new Date(start)
-      nextDate.setDate(start.getDate() + (periodsElapsed + 1) * intervalDays)
-      break
-    }
-
     case 'week': {
       // Calculate weeks since start
       const daysSinceStart = Math.floor(
