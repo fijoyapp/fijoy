@@ -170,7 +170,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "interval", Type: field.TypeEnum, Enums: []string{"day", "week", "month", "year"}},
 		{Name: "interval_count", Type: field.TypeInt, Default: 1},
-		{Name: "start_date", Type: field.TypeTime},
+		{Name: "start_date", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "date"}},
 		{Name: "active", Type: field.TypeBool, Default: true},
 		{Name: "icon", Type: field.TypeString, Nullable: true},
 		{Name: "cost", Type: field.TypeFloat64, SchemaType: map[string]string{"postgres": "numeric(36,18)"}},

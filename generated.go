@@ -21077,8 +21077,8 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 		}
 		return ec._Account(ctx, sel, obj)
 	default:
-		if obj, ok := obj.(graphql.Marshaler); ok {
-			return obj
+		if typedObj, ok := obj.(graphql.Marshaler); ok {
+			return typedObj
 		} else {
 			panic(fmt.Errorf("unexpected type %T; non-generated variants of Node must implement graphql.Marshaler", obj))
 		}

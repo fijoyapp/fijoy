@@ -25,7 +25,10 @@ func (RecurringSubscription) Fields() []ent.Field {
 		field.Enum("interval").
 			Values("day", "week", "month", "year"),
 		field.Int("interval_count").Positive().Default(1),
-		field.Time("start_date"),
+
+		field.Time("start_date").SchemaType(map[string]string{
+			dialect.Postgres: "date",
+		}),
 
 		field.Bool("active").Default(true),
 
