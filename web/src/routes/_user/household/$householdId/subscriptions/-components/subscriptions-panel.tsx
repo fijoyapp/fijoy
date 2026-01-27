@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
@@ -68,11 +68,11 @@ type SubscriptionsPanelProps = {
 }
 
 const SORT_OPTIONS = {
-  COST_HIGH: 'Cost (High to Low)',
-  COST_LOW: 'Cost (Low to High)',
-  NEXT_PAYMENT: 'Next Payment',
-  NAME_AZ: 'Name (A-Z)',
-  NAME_ZA: 'Name (Z-A)',
+  cost_high: 'Cost (High to Low)',
+  cost_low: 'Cost (Low to High)',
+  next_payment: 'Next Payment',
+  name_az: 'Name (A-Z)',
+  name_za: 'Name (Z-A)',
 } as const
 
 type SortOption = keyof typeof SORT_OPTIONS
@@ -83,8 +83,14 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
   const data = useFragment(SubscriptionsPanelFragment, fragmentRef)
   const { household } = useHousehold()
   const { formatCurrencyWithPrivacyMode } = useCurrency()
+  const navigate = useNavigate()
 
-  const [sortBy, setSortBy] = useState<SortOption>('COST_HIGH')
+  // Read sort_by from URL
+  const search = useSearch({
+    from: '/_user/household/$householdId/subscriptions',
+  })
+  const sortBy = search.sort_by
+
   const [summaryDisplay, setSummaryDisplay] =
     useState<SummaryDisplay>('monthly')
 
@@ -107,6 +113,17 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
       if (prev === 'monthly') return 'yearly'
       if (prev === 'yearly') return 'count'
       return 'monthly'
+    })
+  }
+
+  const handleSortChange = (newSortBy: string | null) => {
+    if (!newSortBy) return
+    navigate({
+      to: '.',
+      search: (prev) => ({
+        ...prev,
+        sort_by: newSortBy as SortOption,
+      }),
     })
   }
 
@@ -162,17 +179,17 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
 
       subscriptionsToSort.sort((a, b) => {
         switch (sortBy) {
-          case 'COST_HIGH': {
+          case 'cost_high': {
             const aCost = currency(a.cost).multiply(a.fxRate)
             const bCost = currency(b.cost).multiply(b.fxRate)
             return bCost.value - aCost.value
           }
-          case 'COST_LOW': {
+          case 'cost_low': {
             const aCost = currency(a.cost).multiply(a.fxRate)
             const bCost = currency(b.cost).multiply(b.fxRate)
             return aCost.value - bCost.value
           }
-          case 'NEXT_PAYMENT': {
+          case 'next_payment': {
             const aNext = calculateNextPaymentDate({
               startDate: a.startDate,
               interval: a.interval as 'day' | 'week' | 'month' | 'year',
@@ -185,9 +202,9 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
             })
             return aNext.getTime() - bNext.getTime()
           }
-          case 'NAME_AZ':
+          case 'name_az':
             return a.name.localeCompare(b.name)
-          case 'NAME_ZA':
+          case 'name_za':
             return b.name.localeCompare(a.name)
           default:
             return 0
@@ -286,7 +303,7 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
         <Select
           name="sort-subscriptions"
           value={sortBy}
-          onValueChange={(value) => setSortBy(value as SortOption)}
+          onValueChange={handleSortChange}
         >
           <SelectTrigger className="w-40">
             <SelectValue>{SORT_OPTIONS[sortBy]}</SelectValue>
