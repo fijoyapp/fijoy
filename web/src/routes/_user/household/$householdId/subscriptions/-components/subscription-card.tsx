@@ -60,7 +60,7 @@ export function SubscriptionCard({ fragmentRef }: SubscriptionCardProps) {
       // Calculate next payment date
       const nextDate = calculateNextPaymentDate({
         startDate: data.startDate,
-        interval: data.interval as 'week' | 'month' | 'year',
+        interval: data.interval,
         intervalCount: data.intervalCount,
       })
 

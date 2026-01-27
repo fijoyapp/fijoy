@@ -3,6 +3,7 @@ import { PlusIcon, RefreshCwIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
 import { graphql, useFragment, useMutation } from 'react-relay'
+import invariant from 'tiny-invariant'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -127,47 +128,47 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
     })
   }
 
+  invariant(
+    data.recurringSubscriptions,
+    'recurringSubscriptions connection must be defined',
+  )
+
   const { monthlyAverage, yearlyAverage, activeCount, sortedSubscriptions } =
     useMemo(() => {
       // Filter active subscriptions and remove nulls
-      const activeSubscriptions =
-        data.recurringSubscriptions.edges
-          ?.filter((edge) => edge?.node && edge.node.active)
-          .map((edge) => edge!.node!)
-          .filter((node) => node != null) ?? []
+      const edges = data.recurringSubscriptions.edges ?? []
+      const activeSubscriptions = edges
+        .filter((edge) => {
+          return edge?.node?.active
+        })
+        .map((edge) => {
+          invariant(edge?.node, 'subscription node must not be null')
+          return edge.node
+        })
 
-      // Calculate total monthly cost in household currency
-      let totalMonthly = currency(0)
-
-      for (const sub of activeSubscriptions) {
+      const getYearlyEquivalent = (sub: (typeof activeSubscriptions)[0]) => {
         const costInHouseholdCurrency = currency(sub.cost).multiply(sub.fxRate)
-
-        // Convert to monthly equivalent
-        let monthlyEquivalent: currency
         switch (sub.interval) {
           case 'week':
-            monthlyEquivalent = costInHouseholdCurrency
-              .multiply(sub.intervalCount)
-              .multiply(4.33)
-            break
+            return costInHouseholdCurrency
+              .divide(sub.intervalCount)
+              .multiply(52)
           case 'month':
-            monthlyEquivalent = costInHouseholdCurrency.multiply(
-              sub.intervalCount,
-            )
-            break
+            return costInHouseholdCurrency
+              .divide(sub.intervalCount)
+              .multiply(12)
           case 'year':
-            monthlyEquivalent = costInHouseholdCurrency
-              .multiply(sub.intervalCount)
-              .divide(12)
-            break
+            return costInHouseholdCurrency.divide(sub.intervalCount)
           default:
-            monthlyEquivalent = currency(0)
+            invariant(false, `unexpected interval type: ${sub.interval}`)
         }
-
-        totalMonthly = totalMonthly.add(monthlyEquivalent)
       }
+      // Calculate total yearly cost first, then divide for monthly
+      const yearlyTotal = activeSubscriptions.reduce((total, sub) => {
+        return total.add(getYearlyEquivalent(sub))
+      }, currency(0))
 
-      const yearlyTotal = totalMonthly.multiply(12)
+      const totalMonthly = yearlyTotal.divide(12)
 
       // Sort subscriptions
       const subscriptionsToSort = [...activeSubscriptions]
@@ -175,24 +176,20 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
       subscriptionsToSort.sort((a, b) => {
         switch (sortBy) {
           case 'cost_high': {
-            const aCost = currency(a.cost).multiply(a.fxRate)
-            const bCost = currency(b.cost).multiply(b.fxRate)
-            return bCost.value - aCost.value
+            return getYearlyEquivalent(b).value - getYearlyEquivalent(a).value
           }
           case 'cost_low': {
-            const aCost = currency(a.cost).multiply(a.fxRate)
-            const bCost = currency(b.cost).multiply(b.fxRate)
-            return aCost.value - bCost.value
+            return getYearlyEquivalent(a).value - getYearlyEquivalent(b).value
           }
           case 'next_payment': {
             const aNext = calculateNextPaymentDate({
               startDate: a.startDate,
-              interval: a.interval as 'week' | 'month' | 'year',
+              interval: a.interval,
               intervalCount: a.intervalCount,
             })
             const bNext = calculateNextPaymentDate({
               startDate: b.startDate,
-              interval: b.interval as 'week' | 'month' | 'year',
+              interval: b.interval,
               intervalCount: b.intervalCount,
             })
             return aNext.getTime() - bNext.getTime()
@@ -202,7 +199,7 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
           case 'name_za':
             return b.name.localeCompare(a.name)
           default:
-            return 0
+            invariant(false, `unexpected sort option: ${sortBy}`)
         }
       })
 
@@ -212,7 +209,7 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
         activeCount: activeSubscriptions.length,
         sortedSubscriptions: subscriptionsToSort,
       }
-    }, [data.recurringSubscriptions.edges, sortBy])
+    }, [data.recurringSubscriptions, sortBy])
 
   const summaryContent = useMemo(() => {
     switch (summaryDisplay) {

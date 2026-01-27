@@ -1,3 +1,4 @@
+import { RecurringSubscriptionInterval } from '@/routes/_user/household/$householdId/subscriptions/-components/__generated__/subscriptionCardFragment.graphql'
 import {
   format,
   parseISO,
@@ -140,7 +141,7 @@ export function parseDateRangeFromURL(
  */
 export function calculateNextPaymentDate(params: {
   startDate: Date | string
-  interval: 'week' | 'month' | 'year'
+  interval: RecurringSubscriptionInterval
   intervalCount: number
 }): Date {
   const { startDate, interval, intervalCount } = params
