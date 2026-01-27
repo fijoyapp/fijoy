@@ -1,3 +1,4 @@
+import { zodValidator } from '@tanstack/zod-adapter'
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import {
   loadQuery,
@@ -6,6 +7,7 @@ import {
 } from 'react-relay'
 import { Fragment } from 'react/jsx-runtime'
 import { ROOT_ID } from 'relay-runtime'
+import { z } from 'zod'
 
 import { PendingComponent } from '@/components/pending-component'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -18,10 +20,18 @@ import { subscriptionsQuery } from './-subscriptions-query'
 
 import type { SubscriptionsQuery } from './__generated__/SubscriptionsQuery.graphql'
 
+const SearchSchema = z.object({
+  sort_by: z
+    .enum(['cost_high', 'cost_low', 'next_payment', 'name_az', 'name_za'])
+    .optional()
+    .default('cost_high'),
+})
+
 export const Route = createFileRoute(
   '/_user/household/$householdId/subscriptions',
 )({
   component: RouteComponent,
+  validateSearch: zodValidator(SearchSchema),
   beforeLoad: () => {
     return loadQuery<SubscriptionsQuery>(
       environment,
