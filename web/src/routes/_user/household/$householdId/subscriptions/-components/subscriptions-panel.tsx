@@ -271,11 +271,11 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
         </ItemContent>
       </Item>
 
-      <div className="py-1"></div>
+      <div className="py-2"></div>
 
       {/* Sort Dropdown */}
-      <div className="flex items-center">
-        <Item size="xs">
+      <div className="flex items-center p-0">
+        <Item size="xs" className="py-0">
           <ItemTitle>
             {activeCount <= 1
               ? `${activeCount.toString()} subscription`
@@ -305,7 +305,7 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
         </Select>
       </div>
 
-      <div className="py-1"></div>
+      <div className="py-2"></div>
 
       {/* Subscriptions List */}
       <ItemGroup className="gap-0">
