@@ -91,7 +91,7 @@ func (r *queryResolver) InvestmentLots(ctx context.Context, after *entgql.Cursor
 
 // RecurringSubscriptions is the resolver for the recurringSubscriptions field.
 func (r *queryResolver) RecurringSubscriptions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.RecurringSubscriptionWhereInput) (*ent.RecurringSubscriptionConnection, error) {
-	panic(fmt.Errorf("not implemented: RecurringSubscriptions - recurringSubscriptions"))
+	return r.entClient.RecurringSubscription.Query().Paginate(ctx, after, first, before, last, ent.WithRecurringSubscriptionFilter(where.Filter))
 }
 
 // Transactions is the resolver for the transactions field.
@@ -116,12 +116,12 @@ func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehol
 
 // Cost is the resolver for the cost field.
 func (r *recurringSubscriptionResolver) Cost(ctx context.Context, obj *ent.RecurringSubscription) (string, error) {
-	panic(fmt.Errorf("not implemented: Cost - cost"))
+	return obj.Cost.String(), nil
 }
 
 // FxRate is the resolver for the fxRate field.
 func (r *recurringSubscriptionResolver) FxRate(ctx context.Context, obj *ent.RecurringSubscription) (string, error) {
-	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
+	return obj.FxRate.String(), nil
 }
 
 // Amount is the resolver for the amount field.
@@ -313,7 +313,17 @@ func (r *createInvestmentLotInputResolver) Price(ctx context.Context, obj *ent.C
 
 // Cost is the resolver for the cost field.
 func (r *createRecurringSubscriptionInputResolver) Cost(ctx context.Context, obj *ent.CreateRecurringSubscriptionInput, data *string) error {
-	panic(fmt.Errorf("not implemented: Cost - cost"))
+	if data == nil || *data == "" {
+		return nil
+	}
+
+	dec, err := decimal.NewFromString(*data)
+	if err != nil {
+		return fmt.Errorf("invalid decimal string for cost: %v", err)
+	}
+
+	obj.Cost = &dec
+	return nil
 }
 
 // Amount is the resolver for the amount field.
