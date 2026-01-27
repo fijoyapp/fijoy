@@ -1161,7 +1161,6 @@ type RecurringSubscriptionEdge {
 RecurringSubscriptionInterval is enum for the field interval
 """
 enum RecurringSubscriptionInterval @goModel(model: "beavermoney.app/ent/recurringsubscription.Interval") {
-  day
   week
   month
   year

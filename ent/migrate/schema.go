@@ -168,7 +168,7 @@ var (
 		{Name: "create_time", Type: field.TypeTime},
 		{Name: "update_time", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString},
-		{Name: "interval", Type: field.TypeEnum, Enums: []string{"day", "week", "month", "year"}},
+		{Name: "interval", Type: field.TypeEnum, Enums: []string{"week", "month", "year"}},
 		{Name: "interval_count", Type: field.TypeInt, Default: 1},
 		{Name: "start_date", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "date"}},
 		{Name: "active", Type: field.TypeBool, Default: true},
