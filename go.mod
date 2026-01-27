@@ -26,7 +26,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v1.0.0 // indirect
+	ariga.io/atlas v0.32.1-0.20250325101103-175b25e1c1b9 // indirect
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.2.1 // indirect
@@ -72,7 +72,6 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
@@ -90,5 +89,4 @@ require (
 	golang.org/x/sys v0.40.0 // indirect
 	golang.org/x/text v0.33.0 // indirect
 	golang.org/x/tools v0.41.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
