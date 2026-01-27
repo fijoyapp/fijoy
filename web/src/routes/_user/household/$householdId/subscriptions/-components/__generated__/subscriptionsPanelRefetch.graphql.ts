@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4b5925ec764b35b1ae402ff719750b78>>
+ * @generated SignedSource<<c8ab0ea0605cc3da6b3f1ac1e2e80f3b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -227,12 +227,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bdf4a4ece0fc9fc51570b342984f0c90",
+    "cacheID": "e32a56284687b042588f4cfb4cf62b20",
     "id": null,
     "metadata": {},
     "name": "subscriptionsPanelRefetch",
     "operationKind": "query",
-    "text": "query subscriptionsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n) {\n  ...subscriptionsPanelFragment_1G22uz\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n}\n\nfragment subscriptionsPanelFragment_1G22uz on Query {\n  recurringSubscriptions(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query subscriptionsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n) {\n  ...subscriptionsPanelFragment_1G22uz\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  id\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n}\n\nfragment subscriptionsPanelFragment_1G22uz on Query {\n  recurringSubscriptions(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
