@@ -1,4 +1,9 @@
-import { format, parseISO } from 'date-fns'
+import {
+  format,
+  parseISO,
+  formatDistanceToNow,
+  differenceInDays,
+} from 'date-fns'
 
 export const DATE_RANGE_PRESETS = {
   THIS_MONTH: 'THIS_MONTH',
@@ -127,4 +132,118 @@ export function parseDateRangeFromURL(
     const range = getDateRangeForPreset(fallbackPreset)
     return dateRangeToISO(range)
   }
+}
+
+/**
+ * Calculate next payment date for recurring subscription
+ * Handles day folding (e.g., Jan 31 → Feb 28)
+ */
+export function calculateNextPaymentDate(params: {
+  startDate: Date | string
+  interval: 'day' | 'week' | 'month' | 'year'
+  intervalCount: number
+}): Date {
+  const { startDate, interval, intervalCount } = params
+
+  // Parse start date
+  const start = typeof startDate === 'string' ? parseISO(startDate) : startDate
+
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+  // If start date is in the future, that's the next payment date
+  if (start >= today) {
+    return start
+  }
+
+  // Calculate next occurrence based on interval
+  let nextDate: Date
+
+  switch (interval) {
+    case 'day': {
+      // Calculate days since start
+      const daysSinceStart = Math.floor(
+        (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
+      )
+      const intervalDays = intervalCount
+      const periodsElapsed = Math.floor(daysSinceStart / intervalDays)
+      nextDate = new Date(start)
+      nextDate.setDate(start.getDate() + (periodsElapsed + 1) * intervalDays)
+      break
+    }
+
+    case 'week': {
+      // Calculate weeks since start
+      const daysSinceStart = Math.floor(
+        (today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
+      )
+      const intervalDays = intervalCount * 7
+      const periodsElapsed = Math.floor(daysSinceStart / intervalDays)
+      nextDate = new Date(start)
+      nextDate.setDate(start.getDate() + (periodsElapsed + 1) * intervalDays)
+      break
+    }
+
+    case 'month': {
+      // Calculate months since start
+      const yearsSinceStart = today.getFullYear() - start.getFullYear()
+      const monthsSinceStart =
+        yearsSinceStart * 12 + (today.getMonth() - start.getMonth())
+      const periodsElapsed = Math.floor(monthsSinceStart / intervalCount)
+
+      // Add periods to get next occurrence
+      const monthsToAdd = (periodsElapsed + 1) * intervalCount
+      nextDate = new Date(start)
+      nextDate.setMonth(start.getMonth() + monthsToAdd)
+
+      // Handle day folding (e.g., Jan 31 → Feb 28)
+      // If the day changed (folded backward), it means we overflowed
+      if (nextDate.getDate() !== start.getDate()) {
+        // Go to last day of the target month
+        nextDate = new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0)
+      }
+      break
+    }
+
+    case 'year': {
+      // Calculate years since start
+      const yearsSinceStart = today.getFullYear() - start.getFullYear()
+      const periodsElapsed = Math.floor(yearsSinceStart / intervalCount)
+
+      // Add periods to get next occurrence
+      const yearsToAdd = (periodsElapsed + 1) * intervalCount
+      nextDate = new Date(start)
+      nextDate.setFullYear(start.getFullYear() + yearsToAdd)
+
+      // Handle Feb 29 on non-leap years
+      if (start.getMonth() === 1 && start.getDate() === 29) {
+        if (nextDate.getMonth() !== 1) {
+          // Folded to March, go back to Feb 28
+          nextDate = new Date(nextDate.getFullYear(), 1, 28)
+        }
+      }
+      break
+    }
+
+    default:
+      throw new Error(`Unknown interval: ${interval}`)
+  }
+
+  return nextDate
+}
+
+/**
+ * Format payment date for display
+ * Returns "in X days" if within 7 days, otherwise formatted date
+ */
+export function formatNextPaymentDate(date: Date): string {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const daysUntil = differenceInDays(date, today)
+
+  if (daysUntil <= 7 && daysUntil >= 0) {
+    return formatDistanceToNow(date, { addSuffix: true })
+  }
+
+  return format(date, 'MMM d, yyyy')
 }

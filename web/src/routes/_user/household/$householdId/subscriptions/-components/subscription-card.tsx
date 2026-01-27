@@ -1,0 +1,98 @@
+import { useMemo } from 'react'
+import { graphql, useFragment } from 'react-relay'
+
+import { Avatar } from '@/components/ui/avatar'
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from '@/components/ui/item'
+import { useCurrency } from '@/hooks/use-currency'
+import { useHousehold } from '@/hooks/use-household'
+import {
+  calculateNextPaymentDate,
+  formatNextPaymentDate,
+} from '@/lib/date-range'
+import currency from 'currency.js'
+
+import type { subscriptionCardFragment$key } from './__generated__/subscriptionCardFragment.graphql'
+
+const SubscriptionCardFragment = graphql`
+  fragment subscriptionCardFragment on RecurringSubscription {
+    name
+    icon
+    cost
+    fxRate
+    interval
+    intervalCount
+    startDate
+  }
+`
+
+type SubscriptionCardProps = {
+  fragmentRef: subscriptionCardFragment$key
+}
+
+export function SubscriptionCard({ fragmentRef }: SubscriptionCardProps) {
+  const data = useFragment(SubscriptionCardFragment, fragmentRef)
+  const { household } = useHousehold()
+  const { formatCurrencyWithPrivacyMode } = useCurrency()
+
+  const { costInHouseholdCurrency, intervalText, nextPaymentDate } =
+    useMemo(() => {
+      // Convert cost to household currency
+      const cost = currency(data.cost).multiply(data.fxRate)
+
+      // Format interval text
+      const count = data.intervalCount
+      const interval = data.interval
+      const intervalText =
+        count === 1
+          ? `Every ${interval}`
+          : `Every ${count} ${interval}${count > 1 ? 's' : ''}`
+
+      // Calculate next payment date
+      const nextDate = calculateNextPaymentDate({
+        startDate: data.startDate,
+        interval: data.interval as 'day' | 'week' | 'month' | 'year',
+        intervalCount: data.intervalCount,
+      })
+
+      return {
+        costInHouseholdCurrency: cost,
+        intervalText,
+        nextPaymentDate: nextDate,
+      }
+    }, [
+      data.cost,
+      data.fxRate,
+      data.interval,
+      data.intervalCount,
+      data.startDate,
+    ])
+
+  return (
+    <Item>
+      <ItemMedia variant="image">
+        <Avatar>{data.icon || data.name.charAt(0).toUpperCase()}</Avatar>
+      </ItemMedia>
+      <ItemContent className="gap-px">
+        <ItemTitle>{data.name}</ItemTitle>
+        <ItemDescription>{intervalText}</ItemDescription>
+      </ItemContent>
+      <ItemContent className="items-end gap-px">
+        <ItemTitle className="font-mono">
+          {formatCurrencyWithPrivacyMode({
+            value: costInHouseholdCurrency,
+            currencyCode: household.currency.code,
+          })}
+        </ItemTitle>
+        <ItemDescription>
+          {formatNextPaymentDate(nextPaymentDate)}
+        </ItemDescription>
+      </ItemContent>
+    </Item>
+  )
+}
