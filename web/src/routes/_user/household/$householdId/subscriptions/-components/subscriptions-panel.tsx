@@ -145,11 +145,6 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
         // Convert to monthly equivalent
         let monthlyEquivalent: currency
         switch (sub.interval) {
-          case 'day':
-            monthlyEquivalent = costInHouseholdCurrency
-              .multiply(sub.intervalCount)
-              .multiply(30)
-            break
           case 'week':
             monthlyEquivalent = costInHouseholdCurrency
               .multiply(sub.intervalCount)
@@ -192,12 +187,12 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
           case 'next_payment': {
             const aNext = calculateNextPaymentDate({
               startDate: a.startDate,
-              interval: a.interval as 'day' | 'week' | 'month' | 'year',
+              interval: a.interval as 'week' | 'month' | 'year',
               intervalCount: a.intervalCount,
             })
             const bNext = calculateNextPaymentDate({
               startDate: b.startDate,
-              interval: b.interval as 'day' | 'week' | 'month' | 'year',
+              interval: b.interval as 'week' | 'month' | 'year',
               intervalCount: b.intervalCount,
             })
             return aNext.getTime() - bNext.getTime()

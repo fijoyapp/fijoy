@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ec447d4584e22446387a4a5841303734>>
+ * @generated SignedSource<<6491ba7a1ee9a63a8306cb7010ac8b70>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type RecurringSubscriptionInterval = "day" | "month" | "week" | "year" | "%future added value";
+export type RecurringSubscriptionInterval = "month" | "week" | "year" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type subscriptionCardFragment$data = {
   readonly cost: string;

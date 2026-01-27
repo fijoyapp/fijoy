@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<81e1ddb451a13a57f934a49648b8be55>>
+ * @generated SignedSource<<62ca2de9c01131bcc7182d9b7b412bfd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,7 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 export type InvestmentType = "crypto" | "stock" | "%future added value";
-export type RecurringSubscriptionInterval = "day" | "month" | "week" | "year" | "%future added value";
+export type RecurringSubscriptionInterval = "month" | "week" | "year" | "%future added value";
 export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
 export type UserHouseholdRole = "admin" | "member" | "%future added value";
 export type UserKeyProvider = "google" | "%future added value";
