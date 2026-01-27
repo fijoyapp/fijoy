@@ -271,15 +271,16 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
         </ItemContent>
       </Item>
 
+      <div className="py-2"></div>
+
       {/* Sort Dropdown */}
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground text-sm">Sort by:</span>
+      <div className="flex items-center justify-end">
         <Select
           name="sort-subscriptions"
           value={sortBy}
           onValueChange={(value) => setSortBy(value as SortOption)}
         >
-          <SelectTrigger size="sm" className="w-48">
+          <SelectTrigger size="sm" className="w-40">
             <SelectValue>{SORT_OPTIONS[sortBy]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -295,6 +296,8 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
           </SelectContent>
         </Select>
       </div>
+
+      <div className="py-2"></div>
 
       {/* Subscriptions List */}
       <ItemGroup className="gap-0">
