@@ -280,7 +280,7 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
           value={sortBy}
           onValueChange={(value) => setSortBy(value as SortOption)}
         >
-          <SelectTrigger size="sm" className="w-40">
+          <SelectTrigger className="w-40">
             <SelectValue>{SORT_OPTIONS[sortBy]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
