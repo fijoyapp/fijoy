@@ -231,6 +231,30 @@ func (f InvestmentLotMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InvestmentLotMutation", m)
 }
 
+// The RecurringSubscriptionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RecurringSubscriptionQueryRuleFunc func(context.Context, *ent.RecurringSubscriptionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RecurringSubscriptionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RecurringSubscriptionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RecurringSubscriptionQuery", q)
+}
+
+// The RecurringSubscriptionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RecurringSubscriptionMutationRuleFunc func(context.Context, *ent.RecurringSubscriptionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RecurringSubscriptionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RecurringSubscriptionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RecurringSubscriptionMutation", m)
+}
+
 // The TransactionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type TransactionQueryRuleFunc func(context.Context, *ent.TransactionQuery) error
@@ -420,6 +444,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.InvestmentLotQuery:
 		return q.Filter(), nil
+	case *ent.RecurringSubscriptionQuery:
+		return q.Filter(), nil
 	case *ent.TransactionQuery:
 		return q.Filter(), nil
 	case *ent.TransactionCategoryQuery:
@@ -448,6 +474,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.InvestmentMutation:
 		return m.Filter(), nil
 	case *ent.InvestmentLotMutation:
+		return m.Filter(), nil
+	case *ent.RecurringSubscriptionMutation:
 		return m.Filter(), nil
 	case *ent.TransactionMutation:
 		return m.Filter(), nil

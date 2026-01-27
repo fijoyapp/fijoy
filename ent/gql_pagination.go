@@ -14,6 +14,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -1348,6 +1349,255 @@ func (_m *InvestmentLot) ToEdge(order *InvestmentLotOrder) *InvestmentLotEdge {
 		order = DefaultInvestmentLotOrder
 	}
 	return &InvestmentLotEdge{
+		Node:   _m,
+		Cursor: order.Field.toCursor(_m),
+	}
+}
+
+// RecurringSubscriptionEdge is the edge representation of RecurringSubscription.
+type RecurringSubscriptionEdge struct {
+	Node   *RecurringSubscription `json:"node"`
+	Cursor Cursor                 `json:"cursor"`
+}
+
+// RecurringSubscriptionConnection is the connection containing edges to RecurringSubscription.
+type RecurringSubscriptionConnection struct {
+	Edges      []*RecurringSubscriptionEdge `json:"edges"`
+	PageInfo   PageInfo                     `json:"pageInfo"`
+	TotalCount int                          `json:"totalCount"`
+}
+
+func (c *RecurringSubscriptionConnection) build(nodes []*RecurringSubscription, pager *recurringsubscriptionPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *RecurringSubscription
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *RecurringSubscription {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *RecurringSubscription {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*RecurringSubscriptionEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &RecurringSubscriptionEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// RecurringSubscriptionPaginateOption enables pagination customization.
+type RecurringSubscriptionPaginateOption func(*recurringsubscriptionPager) error
+
+// WithRecurringSubscriptionOrder configures pagination ordering.
+func WithRecurringSubscriptionOrder(order *RecurringSubscriptionOrder) RecurringSubscriptionPaginateOption {
+	if order == nil {
+		order = DefaultRecurringSubscriptionOrder
+	}
+	o := *order
+	return func(pager *recurringsubscriptionPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultRecurringSubscriptionOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithRecurringSubscriptionFilter configures pagination filter.
+func WithRecurringSubscriptionFilter(filter func(*RecurringSubscriptionQuery) (*RecurringSubscriptionQuery, error)) RecurringSubscriptionPaginateOption {
+	return func(pager *recurringsubscriptionPager) error {
+		if filter == nil {
+			return errors.New("RecurringSubscriptionQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type recurringsubscriptionPager struct {
+	reverse bool
+	order   *RecurringSubscriptionOrder
+	filter  func(*RecurringSubscriptionQuery) (*RecurringSubscriptionQuery, error)
+}
+
+func newRecurringSubscriptionPager(opts []RecurringSubscriptionPaginateOption, reverse bool) (*recurringsubscriptionPager, error) {
+	pager := &recurringsubscriptionPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultRecurringSubscriptionOrder
+	}
+	return pager, nil
+}
+
+func (p *recurringsubscriptionPager) applyFilter(query *RecurringSubscriptionQuery) (*RecurringSubscriptionQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *recurringsubscriptionPager) toCursor(_m *RecurringSubscription) Cursor {
+	return p.order.Field.toCursor(_m)
+}
+
+func (p *recurringsubscriptionPager) applyCursors(query *RecurringSubscriptionQuery, after, before *Cursor) (*RecurringSubscriptionQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultRecurringSubscriptionOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *recurringsubscriptionPager) applyOrder(query *RecurringSubscriptionQuery) *RecurringSubscriptionQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultRecurringSubscriptionOrder.Field {
+		query = query.Order(DefaultRecurringSubscriptionOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *recurringsubscriptionPager) orderExpr(query *RecurringSubscriptionQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultRecurringSubscriptionOrder.Field {
+			b.Comma().Ident(DefaultRecurringSubscriptionOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to RecurringSubscription.
+func (_m *RecurringSubscriptionQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...RecurringSubscriptionPaginateOption,
+) (*RecurringSubscriptionConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newRecurringSubscriptionPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if _m, err = pager.applyFilter(_m); err != nil {
+		return nil, err
+	}
+	conn := &RecurringSubscriptionConnection{Edges: []*RecurringSubscriptionEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := _m.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if _m, err = pager.applyCursors(_m, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		_m.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := _m.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	_m = pager.applyOrder(_m)
+	nodes, err := _m.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// RecurringSubscriptionOrderField defines the ordering field of RecurringSubscription.
+type RecurringSubscriptionOrderField struct {
+	// Value extracts the ordering value from the given RecurringSubscription.
+	Value    func(*RecurringSubscription) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) recurringsubscription.OrderOption
+	toCursor func(*RecurringSubscription) Cursor
+}
+
+// RecurringSubscriptionOrder defines the ordering of RecurringSubscription.
+type RecurringSubscriptionOrder struct {
+	Direction OrderDirection                   `json:"direction"`
+	Field     *RecurringSubscriptionOrderField `json:"field"`
+}
+
+// DefaultRecurringSubscriptionOrder is the default ordering of RecurringSubscription.
+var DefaultRecurringSubscriptionOrder = &RecurringSubscriptionOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &RecurringSubscriptionOrderField{
+		Value: func(_m *RecurringSubscription) (ent.Value, error) {
+			return _m.ID, nil
+		},
+		column: recurringsubscription.FieldID,
+		toTerm: recurringsubscription.ByID,
+		toCursor: func(_m *RecurringSubscription) Cursor {
+			return Cursor{ID: _m.ID}
+		},
+	},
+}
+
+// ToEdge converts RecurringSubscription into RecurringSubscriptionEdge.
+func (_m *RecurringSubscription) ToEdge(order *RecurringSubscriptionOrder) *RecurringSubscriptionEdge {
+	if order == nil {
+		order = DefaultRecurringSubscriptionOrder
+	}
+	return &RecurringSubscriptionEdge{
 		Node:   _m,
 		Cursor: order.Field.toCursor(_m),
 	}

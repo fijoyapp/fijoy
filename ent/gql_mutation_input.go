@@ -7,6 +7,7 @@ import (
 
 	"beavermoney.app/ent/account"
 	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transactioncategory"
 	"github.com/shopspring/decimal"
 )
@@ -229,6 +230,92 @@ func (c *InvestmentLotUpdate) SetInput(i UpdateInvestmentLotInput) *InvestmentLo
 
 // SetInput applies the change-set in the UpdateInvestmentLotInput on the InvestmentLotUpdateOne builder.
 func (c *InvestmentLotUpdateOne) SetInput(i UpdateInvestmentLotInput) *InvestmentLotUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateRecurringSubscriptionInput represents a mutation input for creating recurringsubscriptions.
+type CreateRecurringSubscriptionInput struct {
+	Name          string
+	Interval      recurringsubscription.Interval
+	IntervalCount *int
+	StartDate     time.Time
+	Active        *bool
+	Icon          *string
+	Cost          *decimal.Decimal
+	CurrencyID    int
+}
+
+// Mutate applies the CreateRecurringSubscriptionInput on the RecurringSubscriptionMutation builder.
+func (i *CreateRecurringSubscriptionInput) Mutate(m *RecurringSubscriptionMutation) {
+	m.SetName(i.Name)
+	m.SetInterval(i.Interval)
+	if v := i.IntervalCount; v != nil {
+		m.SetIntervalCount(*v)
+	}
+	m.SetStartDate(i.StartDate)
+	if v := i.Active; v != nil {
+		m.SetActive(*v)
+	}
+	if v := i.Icon; v != nil {
+		m.SetIcon(*v)
+	}
+	if v := i.Cost; v != nil {
+		m.SetCost(*v)
+	}
+	m.SetCurrencyID(i.CurrencyID)
+}
+
+// SetInput applies the change-set in the CreateRecurringSubscriptionInput on the RecurringSubscriptionCreate builder.
+func (c *RecurringSubscriptionCreate) SetInput(i CreateRecurringSubscriptionInput) *RecurringSubscriptionCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateRecurringSubscriptionInput represents a mutation input for updating recurringsubscriptions.
+type UpdateRecurringSubscriptionInput struct {
+	Name          *string
+	Interval      *recurringsubscription.Interval
+	IntervalCount *int
+	StartDate     *time.Time
+	Active        *bool
+	ClearIcon     bool
+	Icon          *string
+}
+
+// Mutate applies the UpdateRecurringSubscriptionInput on the RecurringSubscriptionMutation builder.
+func (i *UpdateRecurringSubscriptionInput) Mutate(m *RecurringSubscriptionMutation) {
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Interval; v != nil {
+		m.SetInterval(*v)
+	}
+	if v := i.IntervalCount; v != nil {
+		m.SetIntervalCount(*v)
+	}
+	if v := i.StartDate; v != nil {
+		m.SetStartDate(*v)
+	}
+	if v := i.Active; v != nil {
+		m.SetActive(*v)
+	}
+	if i.ClearIcon {
+		m.ClearIcon()
+	}
+	if v := i.Icon; v != nil {
+		m.SetIcon(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateRecurringSubscriptionInput on the RecurringSubscriptionUpdate builder.
+func (c *RecurringSubscriptionUpdate) SetInput(i UpdateRecurringSubscriptionInput) *RecurringSubscriptionUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateRecurringSubscriptionInput on the RecurringSubscriptionUpdateOne builder.
+func (c *RecurringSubscriptionUpdateOne) SetInput(i UpdateRecurringSubscriptionInput) *RecurringSubscriptionUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

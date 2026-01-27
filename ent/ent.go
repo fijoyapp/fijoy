@@ -14,6 +14,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -83,17 +84,18 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			account.Table:             account.ValidColumn,
-			currency.Table:            currency.ValidColumn,
-			household.Table:           household.ValidColumn,
-			investment.Table:          investment.ValidColumn,
-			investmentlot.Table:       investmentlot.ValidColumn,
-			transaction.Table:         transaction.ValidColumn,
-			transactioncategory.Table: transactioncategory.ValidColumn,
-			transactionentry.Table:    transactionentry.ValidColumn,
-			user.Table:                user.ValidColumn,
-			userhousehold.Table:       userhousehold.ValidColumn,
-			userkey.Table:             userkey.ValidColumn,
+			account.Table:               account.ValidColumn,
+			currency.Table:              currency.ValidColumn,
+			household.Table:             household.ValidColumn,
+			investment.Table:            investment.ValidColumn,
+			investmentlot.Table:         investmentlot.ValidColumn,
+			recurringsubscription.Table: recurringsubscription.ValidColumn,
+			transaction.Table:           transaction.ValidColumn,
+			transactioncategory.Table:   transactioncategory.ValidColumn,
+			transactionentry.Table:      transactionentry.ValidColumn,
+			user.Table:                  user.ValidColumn,
+			userhousehold.Table:         userhousehold.ValidColumn,
+			userkey.Table:               userkey.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

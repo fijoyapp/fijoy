@@ -16,6 +16,7 @@ import (
 	"beavermoney.app/ent"
 	"beavermoney.app/ent/account"
 	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/userhousehold"
 	"beavermoney.app/ent/userkey"
@@ -52,14 +53,17 @@ type ResolverRoot interface {
 	InvestmentLot() InvestmentLotResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	RecurringSubscription() RecurringSubscriptionResolver
 	TransactionEntry() TransactionEntryResolver
 	AccountWhereInput() AccountWhereInputResolver
 	CreateAccountInput() CreateAccountInputResolver
 	CreateInvestmentInput() CreateInvestmentInputResolver
 	CreateInvestmentLotInput() CreateInvestmentLotInputResolver
+	CreateRecurringSubscriptionInput() CreateRecurringSubscriptionInputResolver
 	CreateTransactionEntryInput() CreateTransactionEntryInputResolver
 	InvestmentLotWhereInput() InvestmentLotWhereInputResolver
 	InvestmentWhereInput() InvestmentWhereInputResolver
+	RecurringSubscriptionWhereInput() RecurringSubscriptionWhereInputResolver
 	TransactionEntryWhereInput() TransactionEntryWhereInputResolver
 	UpdateInvestmentInput() UpdateInvestmentInputResolver
 	UpdateInvestmentLotInput() UpdateInvestmentLotInputResolver
@@ -124,12 +128,13 @@ type ComplexityRoot struct {
 	}
 
 	Currency struct {
-		Accounts           func(childComplexity int) int
-		Code               func(childComplexity int) int
-		Households         func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		Investments        func(childComplexity int) int
-		TransactionEntries func(childComplexity int) int
+		Accounts               func(childComplexity int) int
+		Code                   func(childComplexity int) int
+		Households             func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		Investments            func(childComplexity int) int
+		RecurringSubscriptions func(childComplexity int) int
+		TransactionEntries     func(childComplexity int) int
 	}
 
 	FinancialReport struct {
@@ -143,21 +148,22 @@ type ComplexityRoot struct {
 	}
 
 	Household struct {
-		Accounts              func(childComplexity int) int
-		CreateTime            func(childComplexity int) int
-		Currency              func(childComplexity int) int
-		CurrencyID            func(childComplexity int) int
-		ID                    func(childComplexity int) int
-		InvestmentLots        func(childComplexity int) int
-		Investments           func(childComplexity int) int
-		Locale                func(childComplexity int) int
-		Name                  func(childComplexity int) int
-		TransactionCategories func(childComplexity int) int
-		TransactionEntries    func(childComplexity int) int
-		Transactions          func(childComplexity int) int
-		UpdateTime            func(childComplexity int) int
-		UserHouseholds        func(childComplexity int) int
-		Users                 func(childComplexity int) int
+		Accounts               func(childComplexity int) int
+		CreateTime             func(childComplexity int) int
+		Currency               func(childComplexity int) int
+		CurrencyID             func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		InvestmentLots         func(childComplexity int) int
+		Investments            func(childComplexity int) int
+		Locale                 func(childComplexity int) int
+		Name                   func(childComplexity int) int
+		RecurringSubscriptions func(childComplexity int) int
+		TransactionCategories  func(childComplexity int) int
+		TransactionEntries     func(childComplexity int) int
+		Transactions           func(childComplexity int) int
+		UpdateTime             func(childComplexity int) int
+		UserHouseholds         func(childComplexity int) int
+		Users                  func(childComplexity int) int
 	}
 
 	Investment struct {
@@ -252,22 +258,54 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Accounts              func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AccountWhereInput) int
-		CryptoQuote           func(childComplexity int, symbol string) int
-		Currencies            func(childComplexity int) int
-		FinancialReport       func(childComplexity int, period TimePeriodInput) int
-		FxRate                func(childComplexity int, from string, to string, datetime time.Time) int
-		Households            func(childComplexity int) int
-		InvestmentLots        func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentLotWhereInput) int
-		Investments           func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) int
-		NetWorthOverTime      func(childComplexity int, period TimePeriodInput) int
-		Node                  func(childComplexity int, id int) int
-		Nodes                 func(childComplexity int, ids []int) int
-		StockQuote            func(childComplexity int, symbol string) int
-		TransactionCategories func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.TransactionCategoryWhereInput) int
-		TransactionEntries    func(childComplexity int) int
-		Transactions          func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) int
-		UserHouseholds        func(childComplexity int) int
+		Accounts               func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AccountWhereInput) int
+		CryptoQuote            func(childComplexity int, symbol string) int
+		Currencies             func(childComplexity int) int
+		FinancialReport        func(childComplexity int, period TimePeriodInput) int
+		FxRate                 func(childComplexity int, from string, to string, datetime time.Time) int
+		Households             func(childComplexity int) int
+		InvestmentLots         func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentLotWhereInput) int
+		Investments            func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) int
+		NetWorthOverTime       func(childComplexity int, period TimePeriodInput) int
+		Node                   func(childComplexity int, id int) int
+		Nodes                  func(childComplexity int, ids []int) int
+		RecurringSubscriptions func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.RecurringSubscriptionWhereInput) int
+		StockQuote             func(childComplexity int, symbol string) int
+		TransactionCategories  func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.TransactionCategoryWhereInput) int
+		TransactionEntries     func(childComplexity int) int
+		Transactions           func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) int
+		UserHouseholds         func(childComplexity int) int
+	}
+
+	RecurringSubscription struct {
+		Active        func(childComplexity int) int
+		Cost          func(childComplexity int) int
+		CreateTime    func(childComplexity int) int
+		Currency      func(childComplexity int) int
+		CurrencyID    func(childComplexity int) int
+		FxRate        func(childComplexity int) int
+		Household     func(childComplexity int) int
+		HouseholdID   func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Icon          func(childComplexity int) int
+		Interval      func(childComplexity int) int
+		IntervalCount func(childComplexity int) int
+		Name          func(childComplexity int) int
+		StartDate     func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
+		User          func(childComplexity int) int
+		UserID        func(childComplexity int) int
+	}
+
+	RecurringSubscriptionConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	RecurringSubscriptionEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	StockQuoteResult struct {
@@ -345,16 +383,17 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Accounts       func(childComplexity int) int
-		CreateTime     func(childComplexity int) int
-		Email          func(childComplexity int) int
-		Households     func(childComplexity int) int
-		ID             func(childComplexity int) int
-		Name           func(childComplexity int) int
-		Transactions   func(childComplexity int) int
-		UpdateTime     func(childComplexity int) int
-		UserHouseholds func(childComplexity int) int
-		UserKeys       func(childComplexity int) int
+		Accounts               func(childComplexity int) int
+		CreateTime             func(childComplexity int) int
+		Email                  func(childComplexity int) int
+		Households             func(childComplexity int) int
+		ID                     func(childComplexity int) int
+		Name                   func(childComplexity int) int
+		RecurringSubscriptions func(childComplexity int) int
+		Transactions           func(childComplexity int) int
+		UpdateTime             func(childComplexity int) int
+		UserHouseholds         func(childComplexity int) int
+		UserKeys               func(childComplexity int) int
 	}
 
 	UserHousehold struct {
@@ -427,6 +466,7 @@ type QueryResolver interface {
 	Households(ctx context.Context) ([]*ent.Household, error)
 	Investments(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentWhereInput) (*ent.InvestmentConnection, error)
 	InvestmentLots(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.InvestmentLotWhereInput) (*ent.InvestmentLotConnection, error)
+	RecurringSubscriptions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.RecurringSubscriptionWhereInput) (*ent.RecurringSubscriptionConnection, error)
 	Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error)
 	TransactionCategories(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.TransactionCategoryWhereInput) (*ent.TransactionCategoryConnection, error)
 	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
@@ -436,6 +476,10 @@ type QueryResolver interface {
 	CryptoQuote(ctx context.Context, symbol string) (*CryptoQuoteResult, error)
 	FinancialReport(ctx context.Context, period TimePeriodInput) (*FinancialReport, error)
 	NetWorthOverTime(ctx context.Context, period TimePeriodInput) ([]*NetWorthDataPoint, error)
+}
+type RecurringSubscriptionResolver interface {
+	Cost(ctx context.Context, obj *ent.RecurringSubscription) (string, error)
+	FxRate(ctx context.Context, obj *ent.RecurringSubscription) (string, error)
 }
 type TransactionEntryResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntry) (string, error)
@@ -477,6 +521,9 @@ type CreateInvestmentInputResolver interface {
 type CreateInvestmentLotInputResolver interface {
 	Amount(ctx context.Context, obj *ent.CreateInvestmentLotInput, data string) error
 	Price(ctx context.Context, obj *ent.CreateInvestmentLotInput, data string) error
+}
+type CreateRecurringSubscriptionInputResolver interface {
+	Cost(ctx context.Context, obj *ent.CreateRecurringSubscriptionInput, data *string) error
 }
 type CreateTransactionEntryInputResolver interface {
 	Amount(ctx context.Context, obj *ent.CreateTransactionEntryInput, data string) error
@@ -524,6 +571,24 @@ type InvestmentWhereInputResolver interface {
 	ValueGte(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
 	ValueLt(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
 	ValueLte(ctx context.Context, obj *ent.InvestmentWhereInput, data *string) error
+}
+type RecurringSubscriptionWhereInputResolver interface {
+	Cost(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	CostNeq(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	CostIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error
+	CostNotIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error
+	CostGt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	CostGte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	CostLt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	CostLte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	FxRate(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	FxRateNeq(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	FxRateIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error
+	FxRateNotIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error
+	FxRateGt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	FxRateGte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	FxRateLt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
+	FxRateLte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error
 }
 type TransactionEntryWhereInputResolver interface {
 	Amount(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error
@@ -814,6 +879,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Currency.Investments(childComplexity), true
+	case "Currency.recurringSubscriptions":
+		if e.complexity.Currency.RecurringSubscriptions == nil {
+			break
+		}
+
+		return e.complexity.Currency.RecurringSubscriptions(childComplexity), true
 	case "Currency.transactionEntries":
 		if e.complexity.Currency.TransactionEntries == nil {
 			break
@@ -918,6 +989,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Household.Name(childComplexity), true
+	case "Household.recurringSubscriptions":
+		if e.complexity.Household.RecurringSubscriptions == nil {
+			break
+		}
+
+		return e.complexity.Household.RecurringSubscriptions(childComplexity), true
 	case "Household.transactionCategories":
 		if e.complexity.Household.TransactionCategories == nil {
 			break
@@ -1492,6 +1569,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]int)), true
+	case "Query.recurringSubscriptions":
+		if e.complexity.Query.RecurringSubscriptions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_recurringSubscriptions_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RecurringSubscriptions(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int), args["where"].(*ent.RecurringSubscriptionWhereInput)), true
 	case "Query.stockQuote":
 		if e.complexity.Query.StockQuote == nil {
 			break
@@ -1537,6 +1625,141 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.UserHouseholds(childComplexity), true
+
+	case "RecurringSubscription.active":
+		if e.complexity.RecurringSubscription.Active == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.Active(childComplexity), true
+	case "RecurringSubscription.cost":
+		if e.complexity.RecurringSubscription.Cost == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.Cost(childComplexity), true
+	case "RecurringSubscription.createTime":
+		if e.complexity.RecurringSubscription.CreateTime == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.CreateTime(childComplexity), true
+	case "RecurringSubscription.currency":
+		if e.complexity.RecurringSubscription.Currency == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.Currency(childComplexity), true
+	case "RecurringSubscription.currencyID":
+		if e.complexity.RecurringSubscription.CurrencyID == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.CurrencyID(childComplexity), true
+	case "RecurringSubscription.fxRate":
+		if e.complexity.RecurringSubscription.FxRate == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.FxRate(childComplexity), true
+	case "RecurringSubscription.household":
+		if e.complexity.RecurringSubscription.Household == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.Household(childComplexity), true
+	case "RecurringSubscription.householdID":
+		if e.complexity.RecurringSubscription.HouseholdID == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.HouseholdID(childComplexity), true
+	case "RecurringSubscription.id":
+		if e.complexity.RecurringSubscription.ID == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.ID(childComplexity), true
+	case "RecurringSubscription.icon":
+		if e.complexity.RecurringSubscription.Icon == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.Icon(childComplexity), true
+	case "RecurringSubscription.interval":
+		if e.complexity.RecurringSubscription.Interval == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.Interval(childComplexity), true
+	case "RecurringSubscription.intervalCount":
+		if e.complexity.RecurringSubscription.IntervalCount == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.IntervalCount(childComplexity), true
+	case "RecurringSubscription.name":
+		if e.complexity.RecurringSubscription.Name == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.Name(childComplexity), true
+	case "RecurringSubscription.startDate":
+		if e.complexity.RecurringSubscription.StartDate == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.StartDate(childComplexity), true
+	case "RecurringSubscription.updateTime":
+		if e.complexity.RecurringSubscription.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.UpdateTime(childComplexity), true
+	case "RecurringSubscription.user":
+		if e.complexity.RecurringSubscription.User == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.User(childComplexity), true
+	case "RecurringSubscription.userID":
+		if e.complexity.RecurringSubscription.UserID == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscription.UserID(childComplexity), true
+
+	case "RecurringSubscriptionConnection.edges":
+		if e.complexity.RecurringSubscriptionConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscriptionConnection.Edges(childComplexity), true
+	case "RecurringSubscriptionConnection.pageInfo":
+		if e.complexity.RecurringSubscriptionConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscriptionConnection.PageInfo(childComplexity), true
+	case "RecurringSubscriptionConnection.totalCount":
+		if e.complexity.RecurringSubscriptionConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscriptionConnection.TotalCount(childComplexity), true
+
+	case "RecurringSubscriptionEdge.cursor":
+		if e.complexity.RecurringSubscriptionEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscriptionEdge.Cursor(childComplexity), true
+	case "RecurringSubscriptionEdge.node":
+		if e.complexity.RecurringSubscriptionEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.RecurringSubscriptionEdge.Node(childComplexity), true
 
 	case "StockQuoteResult.currency":
 		if e.complexity.StockQuoteResult.Currency == nil {
@@ -1882,6 +2105,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.Name(childComplexity), true
+	case "User.recurringSubscriptions":
+		if e.complexity.User.RecurringSubscriptions == nil {
+			break
+		}
+
+		return e.complexity.User.RecurringSubscriptions(childComplexity), true
 	case "User.transactions":
 		if e.complexity.User.Transactions == nil {
 			break
@@ -2016,6 +2245,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateInvestmentInput,
 		ec.unmarshalInputCreateInvestmentInputCustom,
 		ec.unmarshalInputCreateInvestmentLotInput,
+		ec.unmarshalInputCreateRecurringSubscriptionInput,
 		ec.unmarshalInputCreateTransactionCategoryInput,
 		ec.unmarshalInputCreateTransactionEntryInput,
 		ec.unmarshalInputCreateTransactionInput,
@@ -2025,6 +2255,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputInvestmentLotWhereInput,
 		ec.unmarshalInputInvestmentWhereInput,
 		ec.unmarshalInputMoveInvestmentInputCustom,
+		ec.unmarshalInputRecurringSubscriptionWhereInput,
 		ec.unmarshalInputSellInvestmentInputCustom,
 		ec.unmarshalInputTimePeriodInput,
 		ec.unmarshalInputTransactionCategoryWhereInput,
@@ -2035,6 +2266,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateHouseholdInput,
 		ec.unmarshalInputUpdateInvestmentInput,
 		ec.unmarshalInputUpdateInvestmentLotInput,
+		ec.unmarshalInputUpdateRecurringSubscriptionInput,
 		ec.unmarshalInputUserHouseholdWhereInput,
 		ec.unmarshalInputUserKeyWhereInput,
 		ec.unmarshalInputUserWhereInput,
@@ -2442,6 +2674,37 @@ func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs 
 		return nil, err
 	}
 	args["ids"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_recurringSubscriptions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "after", ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor)
+	if err != nil {
+		return nil, err
+	}
+	args["after"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "first", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
+	}
+	args["first"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "before", ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor)
+	if err != nil {
+		return nil, err
+	}
+	args["before"] = arg2
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "last", ec.unmarshalOInt2ᚖint)
+	if err != nil {
+		return nil, err
+	}
+	args["last"] = arg3
+	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "where", ec.unmarshalORecurringSubscriptionWhereInput2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInput)
+	if err != nil {
+		return nil, err
+	}
+	args["where"] = arg4
 	return args, nil
 }
 
@@ -2975,6 +3238,8 @@ func (ec *executionContext) fieldContext_Account_household(_ context.Context, fi
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -3020,6 +3285,8 @@ func (ec *executionContext) fieldContext_Account_currency(_ context.Context, fie
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Currency_recurringSubscriptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -3069,6 +3336,8 @@ func (ec *executionContext) fieldContext_Account_user(_ context.Context, field g
 				return ec.fieldContext_User_transactions(ctx, field)
 			case "userKeys":
 				return ec.fieldContext_User_userKeys(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_User_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -4134,10 +4403,77 @@ func (ec *executionContext) fieldContext_Currency_households(_ context.Context, 
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Currency_recurringSubscriptions(ctx context.Context, field graphql.CollectedField, obj *ent.Currency) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Currency_recurringSubscriptions,
+		func(ctx context.Context) (any, error) {
+			return obj.RecurringSubscriptions(ctx)
+		},
+		nil,
+		ec.marshalORecurringSubscription2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Currency_recurringSubscriptions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RecurringSubscription_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_RecurringSubscription_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_RecurringSubscription_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_RecurringSubscription_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_RecurringSubscription_name(ctx, field)
+			case "interval":
+				return ec.fieldContext_RecurringSubscription_interval(ctx, field)
+			case "intervalCount":
+				return ec.fieldContext_RecurringSubscription_intervalCount(ctx, field)
+			case "startDate":
+				return ec.fieldContext_RecurringSubscription_startDate(ctx, field)
+			case "active":
+				return ec.fieldContext_RecurringSubscription_active(ctx, field)
+			case "icon":
+				return ec.fieldContext_RecurringSubscription_icon(ctx, field)
+			case "cost":
+				return ec.fieldContext_RecurringSubscription_cost(ctx, field)
+			case "fxRate":
+				return ec.fieldContext_RecurringSubscription_fxRate(ctx, field)
+			case "currencyID":
+				return ec.fieldContext_RecurringSubscription_currencyID(ctx, field)
+			case "userID":
+				return ec.fieldContext_RecurringSubscription_userID(ctx, field)
+			case "household":
+				return ec.fieldContext_RecurringSubscription_household(ctx, field)
+			case "currency":
+				return ec.fieldContext_RecurringSubscription_currency(ctx, field)
+			case "user":
+				return ec.fieldContext_RecurringSubscription_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecurringSubscription", field.Name)
 		},
 	}
 	return fc, nil
@@ -4576,6 +4912,8 @@ func (ec *executionContext) fieldContext_Household_currency(_ context.Context, f
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Currency_recurringSubscriptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -4625,6 +4963,8 @@ func (ec *executionContext) fieldContext_Household_users(_ context.Context, fiel
 				return ec.fieldContext_User_transactions(ctx, field)
 			case "userKeys":
 				return ec.fieldContext_User_userKeys(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_User_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -4979,6 +5319,71 @@ func (ec *executionContext) fieldContext_Household_transactionEntries(_ context.
 				return ec.fieldContext_TransactionEntry_transaction(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type TransactionEntry", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Household_recurringSubscriptions(ctx context.Context, field graphql.CollectedField, obj *ent.Household) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Household_recurringSubscriptions,
+		func(ctx context.Context) (any, error) {
+			return obj.RecurringSubscriptions(ctx)
+		},
+		nil,
+		ec.marshalORecurringSubscription2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Household_recurringSubscriptions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Household",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RecurringSubscription_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_RecurringSubscription_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_RecurringSubscription_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_RecurringSubscription_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_RecurringSubscription_name(ctx, field)
+			case "interval":
+				return ec.fieldContext_RecurringSubscription_interval(ctx, field)
+			case "intervalCount":
+				return ec.fieldContext_RecurringSubscription_intervalCount(ctx, field)
+			case "startDate":
+				return ec.fieldContext_RecurringSubscription_startDate(ctx, field)
+			case "active":
+				return ec.fieldContext_RecurringSubscription_active(ctx, field)
+			case "icon":
+				return ec.fieldContext_RecurringSubscription_icon(ctx, field)
+			case "cost":
+				return ec.fieldContext_RecurringSubscription_cost(ctx, field)
+			case "fxRate":
+				return ec.fieldContext_RecurringSubscription_fxRate(ctx, field)
+			case "currencyID":
+				return ec.fieldContext_RecurringSubscription_currencyID(ctx, field)
+			case "userID":
+				return ec.fieldContext_RecurringSubscription_userID(ctx, field)
+			case "household":
+				return ec.fieldContext_RecurringSubscription_household(ctx, field)
+			case "currency":
+				return ec.fieldContext_RecurringSubscription_currency(ctx, field)
+			case "user":
+				return ec.fieldContext_RecurringSubscription_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecurringSubscription", field.Name)
 		},
 	}
 	return fc, nil
@@ -5500,6 +5905,8 @@ func (ec *executionContext) fieldContext_Investment_household(_ context.Context,
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -5545,6 +5952,8 @@ func (ec *executionContext) fieldContext_Investment_currency(_ context.Context, 
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Currency_recurringSubscriptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -6115,6 +6524,8 @@ func (ec *executionContext) fieldContext_InvestmentLot_household(_ context.Conte
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -6484,6 +6895,8 @@ func (ec *executionContext) fieldContext_Mutation_createHousehold(ctx context.Co
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -7483,6 +7896,8 @@ func (ec *executionContext) fieldContext_Query_currencies(_ context.Context, fie
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Currency_recurringSubscriptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -7542,6 +7957,8 @@ func (ec *executionContext) fieldContext_Query_households(_ context.Context, fie
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -7643,6 +8060,55 @@ func (ec *executionContext) fieldContext_Query_investmentLots(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_investmentLots_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_recurringSubscriptions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_recurringSubscriptions,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Query().RecurringSubscriptions(ctx, fc.Args["after"].(*entgql.Cursor[int]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[int]), fc.Args["last"].(*int), fc.Args["where"].(*ent.RecurringSubscriptionWhereInput))
+		},
+		nil,
+		ec.marshalNRecurringSubscriptionConnection2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionConnection,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_recurringSubscriptions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_RecurringSubscriptionConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_RecurringSubscriptionConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_RecurringSubscriptionConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecurringSubscriptionConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_recurringSubscriptions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -8210,6 +8676,770 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _RecurringSubscription_id(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_id,
+		func(ctx context.Context) (any, error) {
+			return obj.ID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_createTime(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_createTime,
+		func(ctx context.Context) (any, error) {
+			return obj.CreateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_createTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_updateTime(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_updateTime,
+		func(ctx context.Context) (any, error) {
+			return obj.UpdateTime, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_householdID(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_householdID,
+		func(ctx context.Context) (any, error) {
+			return obj.HouseholdID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_householdID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_name(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_name,
+		func(ctx context.Context) (any, error) {
+			return obj.Name, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_interval(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_interval,
+		func(ctx context.Context) (any, error) {
+			return obj.Interval, nil
+		},
+		nil,
+		ec.marshalNRecurringSubscriptionInterval2beavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_interval(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type RecurringSubscriptionInterval does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_intervalCount(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_intervalCount,
+		func(ctx context.Context) (any, error) {
+			return obj.IntervalCount, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_intervalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_startDate(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_startDate,
+		func(ctx context.Context) (any, error) {
+			return obj.StartDate, nil
+		},
+		nil,
+		ec.marshalNTime2timeᚐTime,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_startDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_active(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_active,
+		func(ctx context.Context) (any, error) {
+			return obj.Active, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_active(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_icon(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_icon,
+		func(ctx context.Context) (any, error) {
+			return obj.Icon, nil
+		},
+		nil,
+		ec.marshalOString2string,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_icon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_cost(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_cost,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.RecurringSubscription().Cost(ctx, obj)
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_cost(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_fxRate(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_fxRate,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.RecurringSubscription().FxRate(ctx, obj)
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_fxRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_currencyID(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_currencyID,
+		func(ctx context.Context) (any, error) {
+			return obj.CurrencyID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_currencyID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_userID(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_userID,
+		func(ctx context.Context) (any, error) {
+			return obj.UserID, nil
+		},
+		nil,
+		ec.marshalNID2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_userID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_household(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_household,
+		func(ctx context.Context) (any, error) {
+			return obj.Household(ctx)
+		},
+		nil,
+		ec.marshalNHousehold2ᚖbeavermoneyᚗappᚋentᚐHousehold,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_household(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Household_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Household_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Household_updateTime(ctx, field)
+			case "name":
+				return ec.fieldContext_Household_name(ctx, field)
+			case "locale":
+				return ec.fieldContext_Household_locale(ctx, field)
+			case "currencyID":
+				return ec.fieldContext_Household_currencyID(ctx, field)
+			case "currency":
+				return ec.fieldContext_Household_currency(ctx, field)
+			case "users":
+				return ec.fieldContext_Household_users(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Household_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_Household_transactions(ctx, field)
+			case "investments":
+				return ec.fieldContext_Household_investments(ctx, field)
+			case "investmentLots":
+				return ec.fieldContext_Household_investmentLots(ctx, field)
+			case "transactionCategories":
+				return ec.fieldContext_Household_transactionCategories(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_Household_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Household", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_currency(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_currency,
+		func(ctx context.Context) (any, error) {
+			return obj.Currency(ctx)
+		},
+		nil,
+		ec.marshalNCurrency2ᚖbeavermoneyᚗappᚋentᚐCurrency,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Currency_id(ctx, field)
+			case "code":
+				return ec.fieldContext_Currency_code(ctx, field)
+			case "accounts":
+				return ec.fieldContext_Currency_accounts(ctx, field)
+			case "investments":
+				return ec.fieldContext_Currency_investments(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Currency_transactionEntries(ctx, field)
+			case "households":
+				return ec.fieldContext_Currency_households(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Currency_recurringSubscriptions(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscription_user(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscription) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscription_user,
+		func(ctx context.Context) (any, error) {
+			return obj.User(ctx)
+		},
+		nil,
+		ec.marshalNUser2ᚖbeavermoneyᚗappᚋentᚐUser,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscription_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscription",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_User_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_User_updateTime(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "households":
+				return ec.fieldContext_User_households(ctx, field)
+			case "accounts":
+				return ec.fieldContext_User_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_User_transactions(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_User_recurringSubscriptions(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_User_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscriptionConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscriptionConnection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscriptionConnection_edges,
+		func(ctx context.Context) (any, error) {
+			return obj.Edges, nil
+		},
+		nil,
+		ec.marshalORecurringSubscriptionEdge2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionEdge,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscriptionConnection_edges(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscriptionConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_RecurringSubscriptionEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_RecurringSubscriptionEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecurringSubscriptionEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscriptionConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscriptionConnection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscriptionConnection_pageInfo,
+		func(ctx context.Context) (any, error) {
+			return obj.PageInfo, nil
+		},
+		nil,
+		ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscriptionConnection_pageInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscriptionConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscriptionConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscriptionConnection) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscriptionConnection_totalCount,
+		func(ctx context.Context) (any, error) {
+			return obj.TotalCount, nil
+		},
+		nil,
+		ec.marshalNInt2int,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscriptionConnection_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscriptionConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscriptionEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscriptionEdge) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscriptionEdge_node,
+		func(ctx context.Context) (any, error) {
+			return obj.Node, nil
+		},
+		nil,
+		ec.marshalORecurringSubscription2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscription,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscriptionEdge_node(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscriptionEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RecurringSubscription_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_RecurringSubscription_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_RecurringSubscription_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_RecurringSubscription_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_RecurringSubscription_name(ctx, field)
+			case "interval":
+				return ec.fieldContext_RecurringSubscription_interval(ctx, field)
+			case "intervalCount":
+				return ec.fieldContext_RecurringSubscription_intervalCount(ctx, field)
+			case "startDate":
+				return ec.fieldContext_RecurringSubscription_startDate(ctx, field)
+			case "active":
+				return ec.fieldContext_RecurringSubscription_active(ctx, field)
+			case "icon":
+				return ec.fieldContext_RecurringSubscription_icon(ctx, field)
+			case "cost":
+				return ec.fieldContext_RecurringSubscription_cost(ctx, field)
+			case "fxRate":
+				return ec.fieldContext_RecurringSubscription_fxRate(ctx, field)
+			case "currencyID":
+				return ec.fieldContext_RecurringSubscription_currencyID(ctx, field)
+			case "userID":
+				return ec.fieldContext_RecurringSubscription_userID(ctx, field)
+			case "household":
+				return ec.fieldContext_RecurringSubscription_household(ctx, field)
+			case "currency":
+				return ec.fieldContext_RecurringSubscription_currency(ctx, field)
+			case "user":
+				return ec.fieldContext_RecurringSubscription_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecurringSubscription", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RecurringSubscriptionEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.RecurringSubscriptionEdge) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_RecurringSubscriptionEdge_cursor,
+		func(ctx context.Context) (any, error) {
+			return obj.Cursor, nil
+		},
+		nil,
+		ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_RecurringSubscriptionEdge_cursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RecurringSubscriptionEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _StockQuoteResult_symbol(ctx context.Context, field graphql.CollectedField, obj *StockQuoteResult) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -8629,6 +9859,8 @@ func (ec *executionContext) fieldContext_Transaction_user(_ context.Context, fie
 				return ec.fieldContext_User_transactions(ctx, field)
 			case "userKeys":
 				return ec.fieldContext_User_userKeys(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_User_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -8690,6 +9922,8 @@ func (ec *executionContext) fieldContext_Transaction_household(_ context.Context
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -9142,6 +10376,8 @@ func (ec *executionContext) fieldContext_TransactionCategory_household(_ context
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -9864,6 +11100,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_household(_ context.Co
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -9978,6 +11216,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_currency(_ context.Con
 				return ec.fieldContext_Currency_transactionEntries(ctx, field)
 			case "households":
 				return ec.fieldContext_Currency_households(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Currency_recurringSubscriptions(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Currency", field.Name)
 		},
@@ -10239,6 +11479,8 @@ func (ec *executionContext) fieldContext_User_households(_ context.Context, fiel
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -10414,6 +11656,71 @@ func (ec *executionContext) fieldContext_User_userKeys(_ context.Context, field 
 				return ec.fieldContext_UserKey_user(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserKey", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_recurringSubscriptions(ctx context.Context, field graphql.CollectedField, obj *ent.User) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_User_recurringSubscriptions,
+		func(ctx context.Context) (any, error) {
+			return obj.RecurringSubscriptions(ctx)
+		},
+		nil,
+		ec.marshalORecurringSubscription2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_User_recurringSubscriptions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RecurringSubscription_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_RecurringSubscription_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_RecurringSubscription_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_RecurringSubscription_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_RecurringSubscription_name(ctx, field)
+			case "interval":
+				return ec.fieldContext_RecurringSubscription_interval(ctx, field)
+			case "intervalCount":
+				return ec.fieldContext_RecurringSubscription_intervalCount(ctx, field)
+			case "startDate":
+				return ec.fieldContext_RecurringSubscription_startDate(ctx, field)
+			case "active":
+				return ec.fieldContext_RecurringSubscription_active(ctx, field)
+			case "icon":
+				return ec.fieldContext_RecurringSubscription_icon(ctx, field)
+			case "cost":
+				return ec.fieldContext_RecurringSubscription_cost(ctx, field)
+			case "fxRate":
+				return ec.fieldContext_RecurringSubscription_fxRate(ctx, field)
+			case "currencyID":
+				return ec.fieldContext_RecurringSubscription_currencyID(ctx, field)
+			case "userID":
+				return ec.fieldContext_RecurringSubscription_userID(ctx, field)
+			case "household":
+				return ec.fieldContext_RecurringSubscription_household(ctx, field)
+			case "currency":
+				return ec.fieldContext_RecurringSubscription_currency(ctx, field)
+			case "user":
+				return ec.fieldContext_RecurringSubscription_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecurringSubscription", field.Name)
 		},
 	}
 	return fc, nil
@@ -10682,6 +11989,8 @@ func (ec *executionContext) fieldContext_UserHousehold_user(_ context.Context, f
 				return ec.fieldContext_User_transactions(ctx, field)
 			case "userKeys":
 				return ec.fieldContext_User_userKeys(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_User_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -10743,6 +12052,8 @@ func (ec *executionContext) fieldContext_UserHousehold_household(_ context.Conte
 				return ec.fieldContext_Household_transactionCategories(ctx, field)
 			case "transactionEntries":
 				return ec.fieldContext_Household_transactionEntries(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_Household_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_Household_userHouseholds(ctx, field)
 			}
@@ -10968,6 +12279,8 @@ func (ec *executionContext) fieldContext_UserKey_user(_ context.Context, field g
 				return ec.fieldContext_User_transactions(ctx, field)
 			case "userKeys":
 				return ec.fieldContext_User_userKeys(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_User_recurringSubscriptions(ctx, field)
 			case "userHouseholds":
 				return ec.fieldContext_User_userHouseholds(ctx, field)
 			}
@@ -13602,6 +14915,84 @@ func (ec *executionContext) unmarshalInputCreateInvestmentLotInput(ctx context.C
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateRecurringSubscriptionInput(ctx context.Context, obj any) (ent.CreateRecurringSubscriptionInput, error) {
+	var it ent.CreateRecurringSubscriptionInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "interval", "intervalCount", "startDate", "active", "icon", "cost", "currencyID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "interval":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("interval"))
+			data, err := ec.unmarshalNRecurringSubscriptionInterval2beavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Interval = data
+		case "intervalCount":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCount"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCount = data
+		case "startDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDate = data
+		case "active":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
+		case "cost":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cost"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateRecurringSubscriptionInput().Cost(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "currencyID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyID"))
+			data, err := ec.unmarshalNID2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrencyID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateTransactionCategoryInput(ctx context.Context, obj any) (ent.CreateTransactionCategoryInput, error) {
 	var it ent.CreateTransactionCategoryInput
 	asMap := map[string]any{}
@@ -13772,7 +15163,7 @@ func (ec *executionContext) unmarshalInputCurrencyWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "code", "codeNEQ", "codeIn", "codeNotIn", "codeGT", "codeGTE", "codeLT", "codeLTE", "codeContains", "codeHasPrefix", "codeHasSuffix", "codeEqualFold", "codeContainsFold", "hasAccounts", "hasAccountsWith", "hasInvestments", "hasInvestmentsWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasHouseholds", "hasHouseholdsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "code", "codeNEQ", "codeIn", "codeNotIn", "codeGT", "codeGTE", "codeLT", "codeLTE", "codeContains", "codeHasPrefix", "codeHasSuffix", "codeEqualFold", "codeContainsFold", "hasAccounts", "hasAccountsWith", "hasInvestments", "hasInvestmentsWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasHouseholds", "hasHouseholdsWith", "hasRecurringSubscriptions", "hasRecurringSubscriptionsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -14003,6 +15394,20 @@ func (ec *executionContext) unmarshalInputCurrencyWhereInput(ctx context.Context
 				return it, err
 			}
 			it.HasHouseholdsWith = data
+		case "hasRecurringSubscriptions":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasRecurringSubscriptions"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasRecurringSubscriptions = data
+		case "hasRecurringSubscriptionsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasRecurringSubscriptionsWith"))
+			data, err := ec.unmarshalORecurringSubscriptionWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasRecurringSubscriptionsWith = data
 		}
 	}
 
@@ -14016,7 +15421,7 @@ func (ec *executionContext) unmarshalInputHouseholdWhereInput(ctx context.Contex
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "locale", "localeNEQ", "localeIn", "localeNotIn", "localeGT", "localeGTE", "localeLT", "localeLTE", "localeContains", "localeHasPrefix", "localeHasSuffix", "localeEqualFold", "localeContainsFold", "currencyID", "currencyIDNEQ", "currencyIDIn", "currencyIDNotIn", "hasCurrency", "hasCurrencyWith", "hasUsers", "hasUsersWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasInvestments", "hasInvestmentsWith", "hasInvestmentLots", "hasInvestmentLotsWith", "hasTransactionCategories", "hasTransactionCategoriesWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "locale", "localeNEQ", "localeIn", "localeNotIn", "localeGT", "localeGTE", "localeLT", "localeLTE", "localeContains", "localeHasPrefix", "localeHasSuffix", "localeEqualFold", "localeContainsFold", "currencyID", "currencyIDNEQ", "currencyIDIn", "currencyIDNotIn", "hasCurrency", "hasCurrencyWith", "hasUsers", "hasUsersWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasInvestments", "hasInvestmentsWith", "hasInvestmentLots", "hasInvestmentLotsWith", "hasTransactionCategories", "hasTransactionCategoriesWith", "hasTransactionEntries", "hasTransactionEntriesWith", "hasRecurringSubscriptions", "hasRecurringSubscriptionsWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -14534,6 +15939,20 @@ func (ec *executionContext) unmarshalInputHouseholdWhereInput(ctx context.Contex
 				return it, err
 			}
 			it.HasTransactionEntriesWith = data
+		case "hasRecurringSubscriptions":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasRecurringSubscriptions"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasRecurringSubscriptions = data
+		case "hasRecurringSubscriptionsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasRecurringSubscriptionsWith"))
+			data, err := ec.unmarshalORecurringSubscriptionWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasRecurringSubscriptionsWith = data
 		case "hasUserHouseholds":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserHouseholds"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -15847,6 +17266,835 @@ func (ec *executionContext) unmarshalInputMoveInvestmentInputCustom(ctx context.
 				return it, err
 			}
 			it.Fees = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRecurringSubscriptionWhereInput(ctx context.Context, obj any) (ent.RecurringSubscriptionWhereInput, error) {
+	var it ent.RecurringSubscriptionWhereInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "householdID", "householdIDNEQ", "householdIDIn", "householdIDNotIn", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "interval", "intervalNEQ", "intervalIn", "intervalNotIn", "intervalCount", "intervalCountNEQ", "intervalCountIn", "intervalCountNotIn", "intervalCountGT", "intervalCountGTE", "intervalCountLT", "intervalCountLTE", "startDate", "startDateNEQ", "startDateIn", "startDateNotIn", "startDateGT", "startDateGTE", "startDateLT", "startDateLTE", "active", "activeNEQ", "icon", "iconNEQ", "iconIn", "iconNotIn", "iconGT", "iconGTE", "iconLT", "iconLTE", "iconContains", "iconHasPrefix", "iconHasSuffix", "iconIsNil", "iconNotNil", "iconEqualFold", "iconContainsFold", "cost", "costNEQ", "costIn", "costNotIn", "costGT", "costGTE", "costLT", "costLTE", "fxRate", "fxRateNEQ", "fxRateIn", "fxRateNotIn", "fxRateGT", "fxRateGTE", "fxRateLT", "fxRateLTE", "currencyID", "currencyIDNEQ", "currencyIDIn", "currencyIDNotIn", "userID", "userIDNEQ", "userIDIn", "userIDNotIn", "hasHousehold", "hasHouseholdWith", "hasCurrency", "hasCurrencyWith", "hasUser", "hasUserWith"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalORecurringSubscriptionWhereInput2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalORecurringSubscriptionWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalORecurringSubscriptionWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "createTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTime = data
+		case "createTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNEQ = data
+		case "createTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeIn = data
+		case "createTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeNotIn = data
+		case "createTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGT = data
+		case "createTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeGTE = data
+		case "createTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLT = data
+		case "createTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreateTimeLTE = data
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTime = data
+		case "updateTimeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNEQ = data
+		case "updateTimeIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeIn = data
+		case "updateTimeNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeNotIn = data
+		case "updateTimeGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGT = data
+		case "updateTimeGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeGTE = data
+		case "updateTimeLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLT = data
+		case "updateTimeLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTimeLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdateTimeLTE = data
+		case "householdID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdID = data
+		case "householdIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNEQ = data
+		case "householdIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDIn = data
+		case "householdIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("householdIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HouseholdIDNotIn = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "nameNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNEQ = data
+		case "nameIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameIn = data
+		case "nameNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNotIn = data
+		case "nameGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameGT = data
+		case "nameGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameGTE = data
+		case "nameLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameLT = data
+		case "nameLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameLTE = data
+		case "nameContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameContains = data
+		case "nameHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameHasPrefix = data
+		case "nameHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameHasSuffix = data
+		case "nameEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameEqualFold = data
+		case "nameContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameContainsFold = data
+		case "interval":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("interval"))
+			data, err := ec.unmarshalORecurringSubscriptionInterval2ᚖbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Interval = data
+		case "intervalNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalNEQ"))
+			data, err := ec.unmarshalORecurringSubscriptionInterval2ᚖbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalNEQ = data
+		case "intervalIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalIn"))
+			data, err := ec.unmarshalORecurringSubscriptionInterval2ᚕbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐIntervalᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalIn = data
+		case "intervalNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalNotIn"))
+			data, err := ec.unmarshalORecurringSubscriptionInterval2ᚕbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐIntervalᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalNotIn = data
+		case "intervalCount":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCount"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCount = data
+		case "intervalCountNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCountNEQ"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCountNEQ = data
+		case "intervalCountIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCountIn"))
+			data, err := ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCountIn = data
+		case "intervalCountNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCountNotIn"))
+			data, err := ec.unmarshalOInt2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCountNotIn = data
+		case "intervalCountGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCountGT"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCountGT = data
+		case "intervalCountGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCountGTE"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCountGTE = data
+		case "intervalCountLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCountLT"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCountLT = data
+		case "intervalCountLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCountLTE"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCountLTE = data
+		case "startDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDate = data
+		case "startDateNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDateNEQ = data
+		case "startDateIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDateIn = data
+		case "startDateNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDateNotIn = data
+		case "startDateGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDateGT = data
+		case "startDateGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDateGTE = data
+		case "startDateLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDateLT = data
+		case "startDateLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDateLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDateLTE = data
+		case "active":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
+		case "activeNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("activeNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ActiveNEQ = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
+		case "iconNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconNEQ = data
+		case "iconIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconIn = data
+		case "iconNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconNotIn = data
+		case "iconGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconGT = data
+		case "iconGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconGTE = data
+		case "iconLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconLT = data
+		case "iconLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconLTE = data
+		case "iconContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconContains = data
+		case "iconHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconHasPrefix = data
+		case "iconHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconHasSuffix = data
+		case "iconIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconIsNil = data
+		case "iconNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconNotNil = data
+		case "iconEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconEqualFold = data
+		case "iconContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IconContainsFold = data
+		case "cost":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cost"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().Cost(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "costNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().CostNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "costIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().CostIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "costNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().CostNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "costGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().CostGt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "costGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().CostGte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "costLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().CostLt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "costLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("costLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().CostLte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRate"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRate(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRateNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRateNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRateNeq(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRateIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRateIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRateIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRateNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRateNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRateNotIn(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRateGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRateGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRateGt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRateGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRateGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRateGte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRateLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRateLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRateLt(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "fxRateLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("fxRateLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.RecurringSubscriptionWhereInput().FxRateLte(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "currencyID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrencyID = data
+		case "currencyIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrencyIDNEQ = data
+		case "currencyIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrencyIDIn = data
+		case "currencyIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currencyIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrencyIDNotIn = data
+		case "userID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "userIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDNEQ = data
+		case "userIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDIn = data
+		case "userIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserIDNotIn = data
+		case "hasHousehold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHousehold"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHousehold = data
+		case "hasHouseholdWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasHouseholdWith"))
+			data, err := ec.unmarshalOHouseholdWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐHouseholdWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasHouseholdWith = data
+		case "hasCurrency":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCurrency"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasCurrency = data
+		case "hasCurrencyWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasCurrencyWith"))
+			data, err := ec.unmarshalOCurrencyWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐCurrencyWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasCurrencyWith = data
+		case "hasUser":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUser"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasUser = data
+		case "hasUserWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserWith"))
+			data, err := ec.unmarshalOUserWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐUserWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasUserWith = data
 		}
 	}
 
@@ -17609,6 +19857,75 @@ func (ec *executionContext) unmarshalInputUpdateInvestmentLotInput(ctx context.C
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateRecurringSubscriptionInput(ctx context.Context, obj any) (ent.UpdateRecurringSubscriptionInput, error) {
+	var it ent.UpdateRecurringSubscriptionInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "interval", "intervalCount", "startDate", "active", "icon", "clearIcon"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "interval":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("interval"))
+			data, err := ec.unmarshalORecurringSubscriptionInterval2ᚖbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Interval = data
+		case "intervalCount":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intervalCount"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntervalCount = data
+		case "startDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("startDate"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StartDate = data
+		case "active":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("active"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Active = data
+		case "icon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("icon"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Icon = data
+		case "clearIcon":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearIcon"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearIcon = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUserHouseholdWhereInput(ctx context.Context, obj any) (ent.UserHouseholdWhereInput, error) {
 	var it ent.UserHouseholdWhereInput
 	asMap := map[string]any{}
@@ -18223,7 +20540,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasHouseholds", "hasHouseholdsWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasUserKeys", "hasUserKeysWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "createTime", "createTimeNEQ", "createTimeIn", "createTimeNotIn", "createTimeGT", "createTimeGTE", "createTimeLT", "createTimeLTE", "updateTime", "updateTimeNEQ", "updateTimeIn", "updateTimeNotIn", "updateTimeGT", "updateTimeGTE", "updateTimeLT", "updateTimeLTE", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasHouseholds", "hasHouseholdsWith", "hasAccounts", "hasAccountsWith", "hasTransactions", "hasTransactionsWith", "hasUserKeys", "hasUserKeysWith", "hasRecurringSubscriptions", "hasRecurringSubscriptionsWith", "hasUserHouseholds", "hasUserHouseholdsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -18657,6 +20974,20 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.HasUserKeysWith = data
+		case "hasRecurringSubscriptions":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasRecurringSubscriptions"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasRecurringSubscriptions = data
+		case "hasRecurringSubscriptionsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasRecurringSubscriptionsWith"))
+			data, err := ec.unmarshalORecurringSubscriptionWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasRecurringSubscriptionsWith = data
 		case "hasUserHouseholds":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserHouseholds"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -18715,6 +21046,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Transaction(ctx, sel, obj)
+	case *ent.RecurringSubscription:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._RecurringSubscription(ctx, sel, obj)
 	case *ent.InvestmentLot:
 		if obj == nil {
 			return graphql.Null
@@ -19585,6 +21921,39 @@ func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet,
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "recurringSubscriptions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Currency_recurringSubscriptions(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20117,6 +22486,39 @@ func (ec *executionContext) _Household(ctx context.Context, sel ast.SelectionSet
 					}
 				}()
 				res = ec._Household_transactionEntries(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "recurringSubscriptions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Household_recurringSubscriptions(ctx, field, obj)
 				return res
 			}
 
@@ -21423,6 +23825,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "recurringSubscriptions":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_recurringSubscriptions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "transactions":
 			field := field
 
@@ -21623,6 +24047,364 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var recurringSubscriptionImplementors = []string{"RecurringSubscription", "Node"}
+
+func (ec *executionContext) _RecurringSubscription(ctx context.Context, sel ast.SelectionSet, obj *ent.RecurringSubscription) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recurringSubscriptionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecurringSubscription")
+		case "id":
+			out.Values[i] = ec._RecurringSubscription_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createTime":
+			out.Values[i] = ec._RecurringSubscription_createTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "updateTime":
+			out.Values[i] = ec._RecurringSubscription_updateTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "householdID":
+			out.Values[i] = ec._RecurringSubscription_householdID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._RecurringSubscription_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "interval":
+			out.Values[i] = ec._RecurringSubscription_interval(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "intervalCount":
+			out.Values[i] = ec._RecurringSubscription_intervalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "startDate":
+			out.Values[i] = ec._RecurringSubscription_startDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "active":
+			out.Values[i] = ec._RecurringSubscription_active(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "icon":
+			out.Values[i] = ec._RecurringSubscription_icon(ctx, field, obj)
+		case "cost":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._RecurringSubscription_cost(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "fxRate":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._RecurringSubscription_fxRate(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "currencyID":
+			out.Values[i] = ec._RecurringSubscription_currencyID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "userID":
+			out.Values[i] = ec._RecurringSubscription_userID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "household":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._RecurringSubscription_household(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "currency":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._RecurringSubscription_currency(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "user":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._RecurringSubscription_user(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var recurringSubscriptionConnectionImplementors = []string{"RecurringSubscriptionConnection"}
+
+func (ec *executionContext) _RecurringSubscriptionConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.RecurringSubscriptionConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recurringSubscriptionConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecurringSubscriptionConnection")
+		case "edges":
+			out.Values[i] = ec._RecurringSubscriptionConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._RecurringSubscriptionConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._RecurringSubscriptionConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var recurringSubscriptionEdgeImplementors = []string{"RecurringSubscriptionEdge"}
+
+func (ec *executionContext) _RecurringSubscriptionEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.RecurringSubscriptionEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, recurringSubscriptionEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RecurringSubscriptionEdge")
+		case "node":
+			out.Values[i] = ec._RecurringSubscriptionEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._RecurringSubscriptionEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22661,6 +25443,39 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._User_userKeys(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "recurringSubscriptions":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_recurringSubscriptions(ctx, field, obj)
 				return res
 			}
 
@@ -23989,6 +26804,45 @@ func (ec *executionContext) marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPag
 	return ec._PageInfo(ctx, sel, &v)
 }
 
+func (ec *executionContext) marshalNRecurringSubscription2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscription(ctx context.Context, sel ast.SelectionSet, v *ent.RecurringSubscription) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RecurringSubscription(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecurringSubscriptionConnection2beavermoneyᚗappᚋentᚐRecurringSubscriptionConnection(ctx context.Context, sel ast.SelectionSet, v ent.RecurringSubscriptionConnection) graphql.Marshaler {
+	return ec._RecurringSubscriptionConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecurringSubscriptionConnection2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionConnection(ctx context.Context, sel ast.SelectionSet, v *ent.RecurringSubscriptionConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RecurringSubscriptionConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNRecurringSubscriptionInterval2beavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx context.Context, v any) (recurringsubscription.Interval, error) {
+	var res recurringsubscription.Interval
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNRecurringSubscriptionInterval2beavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx context.Context, sel ast.SelectionSet, v recurringsubscription.Interval) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNRecurringSubscriptionWhereInput2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInput(ctx context.Context, v any) (*ent.RecurringSubscriptionWhereInput, error) {
+	res, err := ec.unmarshalInputRecurringSubscriptionWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNSellInvestmentInputCustom2beavermoneyᚗappᚐSellInvestmentInputCustom(ctx context.Context, v any) (SellInvestmentInputCustom, error) {
 	res, err := ec.unmarshalInputSellInvestmentInputCustom(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -24979,6 +27833,42 @@ func (ec *executionContext) marshalOID2ᚖint(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) unmarshalOInt2ᚕintᚄ(ctx context.Context, v any) ([]int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]int, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNInt2int(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOInt2ᚕintᚄ(ctx context.Context, sel ast.SelectionSet, v []int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNInt2int(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v any) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -25339,6 +28229,215 @@ func (ec *executionContext) marshalONode2beavermoneyᚗappᚋentᚐNoder(ctx con
 		return graphql.Null
 	}
 	return ec._Node(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORecurringSubscription2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.RecurringSubscription) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecurringSubscription2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscription(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalORecurringSubscription2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscription(ctx context.Context, sel ast.SelectionSet, v *ent.RecurringSubscription) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RecurringSubscription(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORecurringSubscriptionEdge2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.RecurringSubscriptionEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalORecurringSubscriptionEdge2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalORecurringSubscriptionEdge2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionEdge(ctx context.Context, sel ast.SelectionSet, v *ent.RecurringSubscriptionEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RecurringSubscriptionEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalORecurringSubscriptionInterval2ᚕbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐIntervalᚄ(ctx context.Context, v any) ([]recurringsubscription.Interval, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]recurringsubscription.Interval, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNRecurringSubscriptionInterval2beavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalORecurringSubscriptionInterval2ᚕbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐIntervalᚄ(ctx context.Context, sel ast.SelectionSet, v []recurringsubscription.Interval) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNRecurringSubscriptionInterval2beavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalORecurringSubscriptionInterval2ᚖbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx context.Context, v any) (*recurringsubscription.Interval, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(recurringsubscription.Interval)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalORecurringSubscriptionInterval2ᚖbeavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx context.Context, sel ast.SelectionSet, v *recurringsubscription.Interval) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalORecurringSubscriptionWhereInput2ᚕᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInputᚄ(ctx context.Context, v any) ([]*ent.RecurringSubscriptionWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*ent.RecurringSubscriptionWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNRecurringSubscriptionWhereInput2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalORecurringSubscriptionWhereInput2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionWhereInput(ctx context.Context, v any) (*ent.RecurringSubscriptionWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputRecurringSubscriptionWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOStockQuoteResult2ᚖbeavermoneyᚗappᚐStockQuoteResult(ctx context.Context, sel ast.SelectionSet, v *StockQuoteResult) graphql.Marshaler {

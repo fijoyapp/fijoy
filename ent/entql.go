@@ -9,6 +9,7 @@ import (
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -24,7 +25,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 11)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 12)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   account.Table,
@@ -127,6 +128,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   recurringsubscription.Table,
+			Columns: recurringsubscription.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: recurringsubscription.FieldID,
+			},
+		},
+		Type: "RecurringSubscription",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			recurringsubscription.FieldCreateTime:    {Type: field.TypeTime, Column: recurringsubscription.FieldCreateTime},
+			recurringsubscription.FieldUpdateTime:    {Type: field.TypeTime, Column: recurringsubscription.FieldUpdateTime},
+			recurringsubscription.FieldHouseholdID:   {Type: field.TypeInt, Column: recurringsubscription.FieldHouseholdID},
+			recurringsubscription.FieldName:          {Type: field.TypeString, Column: recurringsubscription.FieldName},
+			recurringsubscription.FieldInterval:      {Type: field.TypeEnum, Column: recurringsubscription.FieldInterval},
+			recurringsubscription.FieldIntervalCount: {Type: field.TypeInt, Column: recurringsubscription.FieldIntervalCount},
+			recurringsubscription.FieldStartDate:     {Type: field.TypeTime, Column: recurringsubscription.FieldStartDate},
+			recurringsubscription.FieldActive:        {Type: field.TypeBool, Column: recurringsubscription.FieldActive},
+			recurringsubscription.FieldIcon:          {Type: field.TypeString, Column: recurringsubscription.FieldIcon},
+			recurringsubscription.FieldCost:          {Type: field.TypeFloat64, Column: recurringsubscription.FieldCost},
+			recurringsubscription.FieldFxRate:        {Type: field.TypeFloat64, Column: recurringsubscription.FieldFxRate},
+			recurringsubscription.FieldCurrencyID:    {Type: field.TypeInt, Column: recurringsubscription.FieldCurrencyID},
+			recurringsubscription.FieldUserID:        {Type: field.TypeInt, Column: recurringsubscription.FieldUserID},
+		},
+	}
+	graph.Nodes[6] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transaction.Table,
 			Columns: transaction.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -145,7 +172,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transaction.FieldCategoryID:  {Type: field.TypeInt, Column: transaction.FieldCategoryID},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transactioncategory.Table,
 			Columns: transactioncategory.Columns,
@@ -165,7 +192,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transactioncategory.FieldIsImmutable: {Type: field.TypeBool, Column: transactioncategory.FieldIsImmutable},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   transactionentry.Table,
 			Columns: transactionentry.Columns,
@@ -185,7 +212,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			transactionentry.FieldTransactionID: {Type: field.TypeInt, Column: transactionentry.FieldTransactionID},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -202,7 +229,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldName:       {Type: field.TypeString, Column: user.FieldName},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userhousehold.Table,
 			Columns: userhousehold.Columns,
@@ -220,7 +247,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			userhousehold.FieldRole:        {Type: field.TypeEnum, Column: userhousehold.FieldRole},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   userkey.Table,
 			Columns: userkey.Columns,
@@ -347,6 +374,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Household",
 	)
 	graph.MustAddE(
+		"recurring_subscriptions",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   currency.RecurringSubscriptionsTable,
+			Columns: []string{currency.RecurringSubscriptionsColumn},
+			Bidi:    false,
+		},
+		"Currency",
+		"RecurringSubscription",
+	)
+	graph.MustAddE(
 		"currency",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -443,6 +482,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"TransactionEntry",
 	)
 	graph.MustAddE(
+		"recurring_subscriptions",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+		},
+		"Household",
+		"RecurringSubscription",
+	)
+	graph.MustAddE(
 		"user_households",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -537,6 +588,42 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"InvestmentLot",
 		"Transaction",
+	)
+	graph.MustAddE(
+		"household",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   recurringsubscription.HouseholdTable,
+			Columns: []string{recurringsubscription.HouseholdColumn},
+			Bidi:    false,
+		},
+		"RecurringSubscription",
+		"Household",
+	)
+	graph.MustAddE(
+		"currency",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   recurringsubscription.CurrencyTable,
+			Columns: []string{recurringsubscription.CurrencyColumn},
+			Bidi:    false,
+		},
+		"RecurringSubscription",
+		"Currency",
+	)
+	graph.MustAddE(
+		"user",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   recurringsubscription.UserTable,
+			Columns: []string{recurringsubscription.UserColumn},
+			Bidi:    false,
+		},
+		"RecurringSubscription",
+		"User",
 	)
 	graph.MustAddE(
 		"user",
@@ -717,6 +804,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"UserKey",
+	)
+	graph.MustAddE(
+		"recurring_subscriptions",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RecurringSubscriptionsTable,
+			Columns: []string{user.RecurringSubscriptionsColumn},
+			Bidi:    false,
+		},
+		"User",
+		"RecurringSubscription",
 	)
 	graph.MustAddE(
 		"user_households",
@@ -1041,6 +1140,20 @@ func (f *CurrencyFilter) WhereHasHouseholdsWith(preds ...predicate.Household) {
 	})))
 }
 
+// WhereHasRecurringSubscriptions applies a predicate to check if query has an edge recurring_subscriptions.
+func (f *CurrencyFilter) WhereHasRecurringSubscriptions() {
+	f.Where(entql.HasEdge("recurring_subscriptions"))
+}
+
+// WhereHasRecurringSubscriptionsWith applies a predicate to check if query has an edge recurring_subscriptions with a given conditions (other predicates).
+func (f *CurrencyFilter) WhereHasRecurringSubscriptionsWith(preds ...predicate.RecurringSubscription) {
+	f.Where(entql.HasEdgeWith("recurring_subscriptions", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (_q *HouseholdQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
@@ -1212,6 +1325,20 @@ func (f *HouseholdFilter) WhereHasTransactionEntries() {
 // WhereHasTransactionEntriesWith applies a predicate to check if query has an edge transaction_entries with a given conditions (other predicates).
 func (f *HouseholdFilter) WhereHasTransactionEntriesWith(preds ...predicate.TransactionEntry) {
 	f.Where(entql.HasEdgeWith("transaction_entries", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasRecurringSubscriptions applies a predicate to check if query has an edge recurring_subscriptions.
+func (f *HouseholdFilter) WhereHasRecurringSubscriptions() {
+	f.Where(entql.HasEdge("recurring_subscriptions"))
+}
+
+// WhereHasRecurringSubscriptionsWith applies a predicate to check if query has an edge recurring_subscriptions with a given conditions (other predicates).
+func (f *HouseholdFilter) WhereHasRecurringSubscriptionsWith(preds ...predicate.RecurringSubscription) {
+	f.Where(entql.HasEdgeWith("recurring_subscriptions", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1501,6 +1628,153 @@ func (f *InvestmentLotFilter) WhereHasTransactionWith(preds ...predicate.Transac
 }
 
 // addPredicate implements the predicateAdder interface.
+func (_q *RecurringSubscriptionQuery) addPredicate(pred func(s *sql.Selector)) {
+	_q.predicates = append(_q.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the RecurringSubscriptionQuery builder.
+func (_q *RecurringSubscriptionQuery) Filter() *RecurringSubscriptionFilter {
+	return &RecurringSubscriptionFilter{config: _q.config, predicateAdder: _q}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *RecurringSubscriptionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the RecurringSubscriptionMutation builder.
+func (m *RecurringSubscriptionMutation) Filter() *RecurringSubscriptionFilter {
+	return &RecurringSubscriptionFilter{config: m.config, predicateAdder: m}
+}
+
+// RecurringSubscriptionFilter provides a generic filtering capability at runtime for RecurringSubscriptionQuery.
+type RecurringSubscriptionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *RecurringSubscriptionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *RecurringSubscriptionFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(recurringsubscription.FieldID))
+}
+
+// WhereCreateTime applies the entql time.Time predicate on the create_time field.
+func (f *RecurringSubscriptionFilter) WhereCreateTime(p entql.TimeP) {
+	f.Where(p.Field(recurringsubscription.FieldCreateTime))
+}
+
+// WhereUpdateTime applies the entql time.Time predicate on the update_time field.
+func (f *RecurringSubscriptionFilter) WhereUpdateTime(p entql.TimeP) {
+	f.Where(p.Field(recurringsubscription.FieldUpdateTime))
+}
+
+// WhereHouseholdID applies the entql int predicate on the household_id field.
+func (f *RecurringSubscriptionFilter) WhereHouseholdID(p entql.IntP) {
+	f.Where(p.Field(recurringsubscription.FieldHouseholdID))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *RecurringSubscriptionFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(recurringsubscription.FieldName))
+}
+
+// WhereInterval applies the entql string predicate on the interval field.
+func (f *RecurringSubscriptionFilter) WhereInterval(p entql.StringP) {
+	f.Where(p.Field(recurringsubscription.FieldInterval))
+}
+
+// WhereIntervalCount applies the entql int predicate on the interval_count field.
+func (f *RecurringSubscriptionFilter) WhereIntervalCount(p entql.IntP) {
+	f.Where(p.Field(recurringsubscription.FieldIntervalCount))
+}
+
+// WhereStartDate applies the entql time.Time predicate on the start_date field.
+func (f *RecurringSubscriptionFilter) WhereStartDate(p entql.TimeP) {
+	f.Where(p.Field(recurringsubscription.FieldStartDate))
+}
+
+// WhereActive applies the entql bool predicate on the active field.
+func (f *RecurringSubscriptionFilter) WhereActive(p entql.BoolP) {
+	f.Where(p.Field(recurringsubscription.FieldActive))
+}
+
+// WhereIcon applies the entql string predicate on the icon field.
+func (f *RecurringSubscriptionFilter) WhereIcon(p entql.StringP) {
+	f.Where(p.Field(recurringsubscription.FieldIcon))
+}
+
+// WhereCost applies the entql float64 predicate on the cost field.
+func (f *RecurringSubscriptionFilter) WhereCost(p entql.Float64P) {
+	f.Where(p.Field(recurringsubscription.FieldCost))
+}
+
+// WhereFxRate applies the entql float64 predicate on the fx_rate field.
+func (f *RecurringSubscriptionFilter) WhereFxRate(p entql.Float64P) {
+	f.Where(p.Field(recurringsubscription.FieldFxRate))
+}
+
+// WhereCurrencyID applies the entql int predicate on the currency_id field.
+func (f *RecurringSubscriptionFilter) WhereCurrencyID(p entql.IntP) {
+	f.Where(p.Field(recurringsubscription.FieldCurrencyID))
+}
+
+// WhereUserID applies the entql int predicate on the user_id field.
+func (f *RecurringSubscriptionFilter) WhereUserID(p entql.IntP) {
+	f.Where(p.Field(recurringsubscription.FieldUserID))
+}
+
+// WhereHasHousehold applies a predicate to check if query has an edge household.
+func (f *RecurringSubscriptionFilter) WhereHasHousehold() {
+	f.Where(entql.HasEdge("household"))
+}
+
+// WhereHasHouseholdWith applies a predicate to check if query has an edge household with a given conditions (other predicates).
+func (f *RecurringSubscriptionFilter) WhereHasHouseholdWith(preds ...predicate.Household) {
+	f.Where(entql.HasEdgeWith("household", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasCurrency applies a predicate to check if query has an edge currency.
+func (f *RecurringSubscriptionFilter) WhereHasCurrency() {
+	f.Where(entql.HasEdge("currency"))
+}
+
+// WhereHasCurrencyWith applies a predicate to check if query has an edge currency with a given conditions (other predicates).
+func (f *RecurringSubscriptionFilter) WhereHasCurrencyWith(preds ...predicate.Currency) {
+	f.Where(entql.HasEdgeWith("currency", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasUser applies a predicate to check if query has an edge user.
+func (f *RecurringSubscriptionFilter) WhereHasUser() {
+	f.Where(entql.HasEdge("user"))
+}
+
+// WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
+func (f *RecurringSubscriptionFilter) WhereHasUserWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (_q *TransactionQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
 }
@@ -1529,7 +1803,7 @@ type TransactionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransactionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1674,7 +1948,7 @@ type TransactionCategoryFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransactionCategoryFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1777,7 +2051,7 @@ type TransactionEntryFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *TransactionEntryFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1908,7 +2182,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1995,6 +2269,20 @@ func (f *UserFilter) WhereHasUserKeysWith(preds ...predicate.UserKey) {
 	})))
 }
 
+// WhereHasRecurringSubscriptions applies a predicate to check if query has an edge recurring_subscriptions.
+func (f *UserFilter) WhereHasRecurringSubscriptions() {
+	f.Where(entql.HasEdge("recurring_subscriptions"))
+}
+
+// WhereHasRecurringSubscriptionsWith applies a predicate to check if query has an edge recurring_subscriptions with a given conditions (other predicates).
+func (f *UserFilter) WhereHasRecurringSubscriptionsWith(preds ...predicate.RecurringSubscription) {
+	f.Where(entql.HasEdgeWith("recurring_subscriptions", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // WhereHasUserHouseholds applies a predicate to check if query has an edge user_households.
 func (f *UserFilter) WhereHasUserHouseholds() {
 	f.Where(entql.HasEdge("user_households"))
@@ -2038,7 +2326,7 @@ type UserHouseholdFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserHouseholdFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2131,7 +2419,7 @@ type UserKeyFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserKeyFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

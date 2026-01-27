@@ -41,6 +41,8 @@ const (
 	EdgeTransactionCategories = "transaction_categories"
 	// EdgeTransactionEntries holds the string denoting the transaction_entries edge name in mutations.
 	EdgeTransactionEntries = "transaction_entries"
+	// EdgeRecurringSubscriptions holds the string denoting the recurring_subscriptions edge name in mutations.
+	EdgeRecurringSubscriptions = "recurring_subscriptions"
 	// EdgeUserHouseholds holds the string denoting the user_households edge name in mutations.
 	EdgeUserHouseholds = "user_households"
 	// Table holds the table name of the household in the database.
@@ -99,6 +101,13 @@ const (
 	TransactionEntriesInverseTable = "transaction_entries"
 	// TransactionEntriesColumn is the table column denoting the transaction_entries relation/edge.
 	TransactionEntriesColumn = "household_id"
+	// RecurringSubscriptionsTable is the table that holds the recurring_subscriptions relation/edge.
+	RecurringSubscriptionsTable = "recurring_subscriptions"
+	// RecurringSubscriptionsInverseTable is the table name for the RecurringSubscription entity.
+	// It exists in this package in order to avoid circular dependency with the "recurringsubscription" package.
+	RecurringSubscriptionsInverseTable = "recurring_subscriptions"
+	// RecurringSubscriptionsColumn is the table column denoting the recurring_subscriptions relation/edge.
+	RecurringSubscriptionsColumn = "household_id"
 	// UserHouseholdsTable is the table that holds the user_households relation/edge.
 	UserHouseholdsTable = "user_households"
 	// UserHouseholdsInverseTable is the table name for the UserHousehold entity.
@@ -294,6 +303,20 @@ func ByTransactionEntries(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOptio
 	}
 }
 
+// ByRecurringSubscriptionsCount orders the results by recurring_subscriptions count.
+func ByRecurringSubscriptionsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRecurringSubscriptionsStep(), opts...)
+	}
+}
+
+// ByRecurringSubscriptions orders the results by recurring_subscriptions terms.
+func ByRecurringSubscriptions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRecurringSubscriptionsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByUserHouseholdsCount orders the results by user_households count.
 func ByUserHouseholdsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -361,6 +384,13 @@ func newTransactionEntriesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(TransactionEntriesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, TransactionEntriesTable, TransactionEntriesColumn),
+	)
+}
+func newRecurringSubscriptionsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RecurringSubscriptionsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RecurringSubscriptionsTable, RecurringSubscriptionsColumn),
 	)
 }
 func newUserHouseholdsStep() *sqlgraph.Step {

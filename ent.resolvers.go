@@ -89,6 +89,11 @@ func (r *queryResolver) InvestmentLots(ctx context.Context, after *entgql.Cursor
 	return r.entClient.InvestmentLot.Query().Paginate(ctx, after, first, before, last, ent.WithInvestmentLotFilter(where.Filter))
 }
 
+// RecurringSubscriptions is the resolver for the recurringSubscriptions field.
+func (r *queryResolver) RecurringSubscriptions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.RecurringSubscriptionWhereInput) (*ent.RecurringSubscriptionConnection, error) {
+	panic(fmt.Errorf("not implemented: RecurringSubscriptions - recurringSubscriptions"))
+}
+
 // Transactions is the resolver for the transactions field.
 func (r *queryResolver) Transactions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, orderBy *ent.TransactionOrder, where *ent.TransactionWhereInput) (*ent.TransactionConnection, error) {
 	return r.entClient.Transaction.Query().Paginate(ctx, after, first, before, last, ent.WithTransactionOrder(orderBy), ent.WithTransactionFilter(where.Filter))
@@ -107,6 +112,16 @@ func (r *queryResolver) TransactionEntries(ctx context.Context) ([]*ent.Transact
 // UserHouseholds is the resolver for the userHouseholds field.
 func (r *queryResolver) UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error) {
 	return r.entClient.UserHousehold.Query().All(ctx)
+}
+
+// Cost is the resolver for the cost field.
+func (r *recurringSubscriptionResolver) Cost(ctx context.Context, obj *ent.RecurringSubscription) (string, error) {
+	panic(fmt.Errorf("not implemented: Cost - cost"))
+}
+
+// FxRate is the resolver for the fxRate field.
+func (r *recurringSubscriptionResolver) FxRate(ctx context.Context, obj *ent.RecurringSubscription) (string, error) {
+	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
 }
 
 // Amount is the resolver for the amount field.
@@ -294,6 +309,11 @@ func (r *createInvestmentLotInputResolver) Price(ctx context.Context, obj *ent.C
 
 	obj.Price = dec
 	return nil
+}
+
+// Cost is the resolver for the cost field.
+func (r *createRecurringSubscriptionInputResolver) Cost(ctx context.Context, obj *ent.CreateRecurringSubscriptionInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Cost - cost"))
 }
 
 // Amount is the resolver for the amount field.
@@ -507,6 +527,86 @@ func (r *investmentWhereInputResolver) ValueLte(ctx context.Context, obj *ent.In
 	panic(fmt.Errorf("not implemented: ValueLte - valueLTE"))
 }
 
+// Cost is the resolver for the cost field.
+func (r *recurringSubscriptionWhereInputResolver) Cost(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Cost - cost"))
+}
+
+// CostNeq is the resolver for the costNEQ field.
+func (r *recurringSubscriptionWhereInputResolver) CostNeq(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostNeq - costNEQ"))
+}
+
+// CostIn is the resolver for the costIn field.
+func (r *recurringSubscriptionWhereInputResolver) CostIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: CostIn - costIn"))
+}
+
+// CostNotIn is the resolver for the costNotIn field.
+func (r *recurringSubscriptionWhereInputResolver) CostNotIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: CostNotIn - costNotIn"))
+}
+
+// CostGt is the resolver for the costGT field.
+func (r *recurringSubscriptionWhereInputResolver) CostGt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostGt - costGT"))
+}
+
+// CostGte is the resolver for the costGTE field.
+func (r *recurringSubscriptionWhereInputResolver) CostGte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostGte - costGTE"))
+}
+
+// CostLt is the resolver for the costLT field.
+func (r *recurringSubscriptionWhereInputResolver) CostLt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostLt - costLT"))
+}
+
+// CostLte is the resolver for the costLTE field.
+func (r *recurringSubscriptionWhereInputResolver) CostLte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostLte - costLTE"))
+}
+
+// FxRate is the resolver for the fxRate field.
+func (r *recurringSubscriptionWhereInputResolver) FxRate(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
+}
+
+// FxRateNeq is the resolver for the fxRateNEQ field.
+func (r *recurringSubscriptionWhereInputResolver) FxRateNeq(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateNeq - fxRateNEQ"))
+}
+
+// FxRateIn is the resolver for the fxRateIn field.
+func (r *recurringSubscriptionWhereInputResolver) FxRateIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: FxRateIn - fxRateIn"))
+}
+
+// FxRateNotIn is the resolver for the fxRateNotIn field.
+func (r *recurringSubscriptionWhereInputResolver) FxRateNotIn(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: FxRateNotIn - fxRateNotIn"))
+}
+
+// FxRateGt is the resolver for the fxRateGT field.
+func (r *recurringSubscriptionWhereInputResolver) FxRateGt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateGt - fxRateGT"))
+}
+
+// FxRateGte is the resolver for the fxRateGTE field.
+func (r *recurringSubscriptionWhereInputResolver) FxRateGte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateGte - fxRateGTE"))
+}
+
+// FxRateLt is the resolver for the fxRateLT field.
+func (r *recurringSubscriptionWhereInputResolver) FxRateLt(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateLt - fxRateLT"))
+}
+
+// FxRateLte is the resolver for the fxRateLTE field.
+func (r *recurringSubscriptionWhereInputResolver) FxRateLte(ctx context.Context, obj *ent.RecurringSubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateLte - fxRateLTE"))
+}
+
 // Amount is the resolver for the amount field.
 func (r *transactionEntryWhereInputResolver) Amount(ctx context.Context, obj *ent.TransactionEntryWhereInput, data *string) error {
 	panic(fmt.Errorf("not implemented: Amount - amount"))
@@ -574,6 +674,11 @@ func (r *Resolver) InvestmentLot() InvestmentLotResolver { return &investmentLot
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// RecurringSubscription returns RecurringSubscriptionResolver implementation.
+func (r *Resolver) RecurringSubscription() RecurringSubscriptionResolver {
+	return &recurringSubscriptionResolver{r}
+}
+
 // TransactionEntry returns TransactionEntryResolver implementation.
 func (r *Resolver) TransactionEntry() TransactionEntryResolver { return &transactionEntryResolver{r} }
 
@@ -597,6 +702,11 @@ func (r *Resolver) CreateInvestmentLotInput() CreateInvestmentLotInputResolver {
 	return &createInvestmentLotInputResolver{r}
 }
 
+// CreateRecurringSubscriptionInput returns CreateRecurringSubscriptionInputResolver implementation.
+func (r *Resolver) CreateRecurringSubscriptionInput() CreateRecurringSubscriptionInputResolver {
+	return &createRecurringSubscriptionInputResolver{r}
+}
+
 // CreateTransactionEntryInput returns CreateTransactionEntryInputResolver implementation.
 func (r *Resolver) CreateTransactionEntryInput() CreateTransactionEntryInputResolver {
 	return &createTransactionEntryInputResolver{r}
@@ -610,6 +720,11 @@ func (r *Resolver) InvestmentLotWhereInput() InvestmentLotWhereInputResolver {
 // InvestmentWhereInput returns InvestmentWhereInputResolver implementation.
 func (r *Resolver) InvestmentWhereInput() InvestmentWhereInputResolver {
 	return &investmentWhereInputResolver{r}
+}
+
+// RecurringSubscriptionWhereInput returns RecurringSubscriptionWhereInputResolver implementation.
+func (r *Resolver) RecurringSubscriptionWhereInput() RecurringSubscriptionWhereInputResolver {
+	return &recurringSubscriptionWhereInputResolver{r}
 }
 
 // TransactionEntryWhereInput returns TransactionEntryWhereInputResolver implementation.
@@ -631,14 +746,141 @@ type accountResolver struct{ *Resolver }
 type investmentResolver struct{ *Resolver }
 type investmentLotResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type recurringSubscriptionResolver struct{ *Resolver }
 type transactionEntryResolver struct{ *Resolver }
 type accountWhereInputResolver struct{ *Resolver }
 type createAccountInputResolver struct{ *Resolver }
 type createInvestmentInputResolver struct{ *Resolver }
 type createInvestmentLotInputResolver struct{ *Resolver }
+type createRecurringSubscriptionInputResolver struct{ *Resolver }
 type createTransactionEntryInputResolver struct{ *Resolver }
 type investmentLotWhereInputResolver struct{ *Resolver }
 type investmentWhereInputResolver struct{ *Resolver }
+type recurringSubscriptionWhereInputResolver struct{ *Resolver }
 type transactionEntryWhereInputResolver struct{ *Resolver }
 type updateInvestmentInputResolver struct{ *Resolver }
 type updateInvestmentLotInputResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *queryResolver) Subscriptions(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.SubscriptionWhereInput) (*ent.SubscriptionConnection, error) {
+	panic(fmt.Errorf("not implemented: Subscriptions - subscriptions"))
+}
+func (r *subscriptionResolver) ID(ctx context.Context) (<-chan int, error) {
+	panic(fmt.Errorf("not implemented: ID - id"))
+}
+func (r *subscriptionResolver) CreateTime(ctx context.Context) (<-chan *time.Time, error) {
+	panic(fmt.Errorf("not implemented: CreateTime - createTime"))
+}
+func (r *subscriptionResolver) UpdateTime(ctx context.Context) (<-chan *time.Time, error) {
+	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+}
+func (r *subscriptionResolver) HouseholdID(ctx context.Context) (<-chan int, error) {
+	panic(fmt.Errorf("not implemented: HouseholdID - householdID"))
+}
+func (r *subscriptionResolver) Name(ctx context.Context) (<-chan string, error) {
+	panic(fmt.Errorf("not implemented: Name - name"))
+}
+func (r *subscriptionResolver) Interval(ctx context.Context) (<-chan subscription.Interval, error) {
+	panic(fmt.Errorf("not implemented: Interval - interval"))
+}
+func (r *subscriptionResolver) IntervalCount(ctx context.Context) (<-chan int, error) {
+	panic(fmt.Errorf("not implemented: IntervalCount - intervalCount"))
+}
+func (r *subscriptionResolver) StartDate(ctx context.Context) (<-chan *time.Time, error) {
+	panic(fmt.Errorf("not implemented: StartDate - startDate"))
+}
+func (r *subscriptionResolver) Active(ctx context.Context) (<-chan bool, error) {
+	panic(fmt.Errorf("not implemented: Active - active"))
+}
+func (r *subscriptionResolver) Icon(ctx context.Context) (<-chan *string, error) {
+	panic(fmt.Errorf("not implemented: Icon - icon"))
+}
+func (r *subscriptionResolver) Cost(ctx context.Context) (<-chan string, error) {
+	panic(fmt.Errorf("not implemented: Cost - cost"))
+}
+func (r *subscriptionResolver) FxRate(ctx context.Context) (<-chan string, error) {
+	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
+}
+func (r *subscriptionResolver) CurrencyID(ctx context.Context) (<-chan int, error) {
+	panic(fmt.Errorf("not implemented: CurrencyID - currencyID"))
+}
+func (r *subscriptionResolver) UserID(ctx context.Context) (<-chan int, error) {
+	panic(fmt.Errorf("not implemented: UserID - userID"))
+}
+func (r *subscriptionResolver) Household(ctx context.Context) (<-chan *ent.Household, error) {
+	panic(fmt.Errorf("not implemented: Household - household"))
+}
+func (r *subscriptionResolver) Currency(ctx context.Context) (<-chan *ent.Currency, error) {
+	panic(fmt.Errorf("not implemented: Currency - currency"))
+}
+func (r *subscriptionResolver) User(ctx context.Context) (<-chan *ent.User, error) {
+	panic(fmt.Errorf("not implemented: User - user"))
+}
+func (r *createSubscriptionInputResolver) Cost(ctx context.Context, obj *ent.CreateSubscriptionInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Cost - cost"))
+}
+func (r *subscriptionWhereInputResolver) Cost(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: Cost - cost"))
+}
+func (r *subscriptionWhereInputResolver) CostNeq(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostNeq - costNEQ"))
+}
+func (r *subscriptionWhereInputResolver) CostIn(ctx context.Context, obj *ent.SubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: CostIn - costIn"))
+}
+func (r *subscriptionWhereInputResolver) CostNotIn(ctx context.Context, obj *ent.SubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: CostNotIn - costNotIn"))
+}
+func (r *subscriptionWhereInputResolver) CostGt(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostGt - costGT"))
+}
+func (r *subscriptionWhereInputResolver) CostGte(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostGte - costGTE"))
+}
+func (r *subscriptionWhereInputResolver) CostLt(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostLt - costLT"))
+}
+func (r *subscriptionWhereInputResolver) CostLte(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: CostLte - costLTE"))
+}
+func (r *subscriptionWhereInputResolver) FxRate(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRate - fxRate"))
+}
+func (r *subscriptionWhereInputResolver) FxRateNeq(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateNeq - fxRateNEQ"))
+}
+func (r *subscriptionWhereInputResolver) FxRateIn(ctx context.Context, obj *ent.SubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: FxRateIn - fxRateIn"))
+}
+func (r *subscriptionWhereInputResolver) FxRateNotIn(ctx context.Context, obj *ent.SubscriptionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: FxRateNotIn - fxRateNotIn"))
+}
+func (r *subscriptionWhereInputResolver) FxRateGt(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateGt - fxRateGT"))
+}
+func (r *subscriptionWhereInputResolver) FxRateGte(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateGte - fxRateGTE"))
+}
+func (r *subscriptionWhereInputResolver) FxRateLt(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateLt - fxRateLT"))
+}
+func (r *subscriptionWhereInputResolver) FxRateLte(ctx context.Context, obj *ent.SubscriptionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: FxRateLte - fxRateLTE"))
+}
+func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
+func (r *Resolver) CreateSubscriptionInput() CreateSubscriptionInputResolver {
+	return &createSubscriptionInputResolver{r}
+}
+func (r *Resolver) SubscriptionWhereInput() SubscriptionWhereInputResolver {
+	return &subscriptionWhereInputResolver{r}
+}
+type subscriptionResolver struct{ *Resolver }
+type createSubscriptionInputResolver struct{ *Resolver }
+type subscriptionWhereInputResolver struct{ *Resolver }
+*/

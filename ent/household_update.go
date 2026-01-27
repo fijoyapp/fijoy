@@ -14,6 +14,7 @@ import (
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -196,6 +197,21 @@ func (_u *HouseholdUpdate) AddTransactionEntries(v ...*TransactionEntry) *Househ
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (_u *HouseholdUpdate) AddRecurringSubscriptionIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.AddRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// AddRecurringSubscriptions adds the "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *HouseholdUpdate) AddRecurringSubscriptions(v ...*RecurringSubscription) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddRecurringSubscriptionIDs(ids...)
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
 func (_u *HouseholdUpdate) AddUserHouseholdIDs(ids ...int) *HouseholdUpdate {
 	_u.mutation.AddUserHouseholdIDs(ids...)
@@ -367,6 +383,27 @@ func (_u *HouseholdUpdate) RemoveTransactionEntries(v ...*TransactionEntry) *Hou
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearRecurringSubscriptions clears all "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *HouseholdUpdate) ClearRecurringSubscriptions() *HouseholdUpdate {
+	_u.mutation.ClearRecurringSubscriptions()
+	return _u
+}
+
+// RemoveRecurringSubscriptionIDs removes the "recurring_subscriptions" edge to RecurringSubscription entities by IDs.
+func (_u *HouseholdUpdate) RemoveRecurringSubscriptionIDs(ids ...int) *HouseholdUpdate {
+	_u.mutation.RemoveRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// RemoveRecurringSubscriptions removes "recurring_subscriptions" edges to RecurringSubscription entities.
+func (_u *HouseholdUpdate) RemoveRecurringSubscriptions(v ...*RecurringSubscription) *HouseholdUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveRecurringSubscriptionIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -838,6 +875,51 @@ func (_u *HouseholdUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedRecurringSubscriptionsIDs(); len(nodes) > 0 && !_u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RecurringSubscriptionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _u.mutation.UserHouseholdsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -1063,6 +1145,21 @@ func (_u *HouseholdUpdateOne) AddTransactionEntries(v ...*TransactionEntry) *Hou
 	return _u.AddTransactionEntryIDs(ids...)
 }
 
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (_u *HouseholdUpdateOne) AddRecurringSubscriptionIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.AddRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// AddRecurringSubscriptions adds the "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *HouseholdUpdateOne) AddRecurringSubscriptions(v ...*RecurringSubscription) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddRecurringSubscriptionIDs(ids...)
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by IDs.
 func (_u *HouseholdUpdateOne) AddUserHouseholdIDs(ids ...int) *HouseholdUpdateOne {
 	_u.mutation.AddUserHouseholdIDs(ids...)
@@ -1234,6 +1331,27 @@ func (_u *HouseholdUpdateOne) RemoveTransactionEntries(v ...*TransactionEntry) *
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveTransactionEntryIDs(ids...)
+}
+
+// ClearRecurringSubscriptions clears all "recurring_subscriptions" edges to the RecurringSubscription entity.
+func (_u *HouseholdUpdateOne) ClearRecurringSubscriptions() *HouseholdUpdateOne {
+	_u.mutation.ClearRecurringSubscriptions()
+	return _u
+}
+
+// RemoveRecurringSubscriptionIDs removes the "recurring_subscriptions" edge to RecurringSubscription entities by IDs.
+func (_u *HouseholdUpdateOne) RemoveRecurringSubscriptionIDs(ids ...int) *HouseholdUpdateOne {
+	_u.mutation.RemoveRecurringSubscriptionIDs(ids...)
+	return _u
+}
+
+// RemoveRecurringSubscriptions removes "recurring_subscriptions" edges to RecurringSubscription entities.
+func (_u *HouseholdUpdateOne) RemoveRecurringSubscriptions(v ...*RecurringSubscription) *HouseholdUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveRecurringSubscriptionIDs(ids...)
 }
 
 // ClearUserHouseholds clears all "user_households" edges to the UserHousehold entity.
@@ -1728,6 +1846,51 @@ func (_u *HouseholdUpdateOne) sqlSave(ctx context.Context) (_node *Household, er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(transactionentry.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedRecurringSubscriptionsIDs(); len(nodes) > 0 && !_u.mutation.RecurringSubscriptionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RecurringSubscriptionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   household.RecurringSubscriptionsTable,
+			Columns: []string{household.RecurringSubscriptionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(recurringsubscription.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

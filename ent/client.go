@@ -16,6 +16,7 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -43,6 +44,8 @@ type Client struct {
 	Investment *InvestmentClient
 	// InvestmentLot is the client for interacting with the InvestmentLot builders.
 	InvestmentLot *InvestmentLotClient
+	// RecurringSubscription is the client for interacting with the RecurringSubscription builders.
+	RecurringSubscription *RecurringSubscriptionClient
 	// Transaction is the client for interacting with the Transaction builders.
 	Transaction *TransactionClient
 	// TransactionCategory is the client for interacting with the TransactionCategory builders.
@@ -71,6 +74,7 @@ func (c *Client) init() {
 	c.Household = NewHouseholdClient(c.config)
 	c.Investment = NewInvestmentClient(c.config)
 	c.InvestmentLot = NewInvestmentLotClient(c.config)
+	c.RecurringSubscription = NewRecurringSubscriptionClient(c.config)
 	c.Transaction = NewTransactionClient(c.config)
 	c.TransactionCategory = NewTransactionCategoryClient(c.config)
 	c.TransactionEntry = NewTransactionEntryClient(c.config)
@@ -167,19 +171,20 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		Account:             NewAccountClient(cfg),
-		Currency:            NewCurrencyClient(cfg),
-		Household:           NewHouseholdClient(cfg),
-		Investment:          NewInvestmentClient(cfg),
-		InvestmentLot:       NewInvestmentLotClient(cfg),
-		Transaction:         NewTransactionClient(cfg),
-		TransactionCategory: NewTransactionCategoryClient(cfg),
-		TransactionEntry:    NewTransactionEntryClient(cfg),
-		User:                NewUserClient(cfg),
-		UserHousehold:       NewUserHouseholdClient(cfg),
-		UserKey:             NewUserKeyClient(cfg),
+		ctx:                   ctx,
+		config:                cfg,
+		Account:               NewAccountClient(cfg),
+		Currency:              NewCurrencyClient(cfg),
+		Household:             NewHouseholdClient(cfg),
+		Investment:            NewInvestmentClient(cfg),
+		InvestmentLot:         NewInvestmentLotClient(cfg),
+		RecurringSubscription: NewRecurringSubscriptionClient(cfg),
+		Transaction:           NewTransactionClient(cfg),
+		TransactionCategory:   NewTransactionCategoryClient(cfg),
+		TransactionEntry:      NewTransactionEntryClient(cfg),
+		User:                  NewUserClient(cfg),
+		UserHousehold:         NewUserHouseholdClient(cfg),
+		UserKey:               NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -197,19 +202,20 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		Account:             NewAccountClient(cfg),
-		Currency:            NewCurrencyClient(cfg),
-		Household:           NewHouseholdClient(cfg),
-		Investment:          NewInvestmentClient(cfg),
-		InvestmentLot:       NewInvestmentLotClient(cfg),
-		Transaction:         NewTransactionClient(cfg),
-		TransactionCategory: NewTransactionCategoryClient(cfg),
-		TransactionEntry:    NewTransactionEntryClient(cfg),
-		User:                NewUserClient(cfg),
-		UserHousehold:       NewUserHouseholdClient(cfg),
-		UserKey:             NewUserKeyClient(cfg),
+		ctx:                   ctx,
+		config:                cfg,
+		Account:               NewAccountClient(cfg),
+		Currency:              NewCurrencyClient(cfg),
+		Household:             NewHouseholdClient(cfg),
+		Investment:            NewInvestmentClient(cfg),
+		InvestmentLot:         NewInvestmentLotClient(cfg),
+		RecurringSubscription: NewRecurringSubscriptionClient(cfg),
+		Transaction:           NewTransactionClient(cfg),
+		TransactionCategory:   NewTransactionCategoryClient(cfg),
+		TransactionEntry:      NewTransactionEntryClient(cfg),
+		User:                  NewUserClient(cfg),
+		UserHousehold:         NewUserHouseholdClient(cfg),
+		UserKey:               NewUserKeyClient(cfg),
 	}, nil
 }
 
@@ -240,8 +246,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Account, c.Currency, c.Household, c.Investment, c.InvestmentLot,
-		c.Transaction, c.TransactionCategory, c.TransactionEntry, c.User,
-		c.UserHousehold, c.UserKey,
+		c.RecurringSubscription, c.Transaction, c.TransactionCategory,
+		c.TransactionEntry, c.User, c.UserHousehold, c.UserKey,
 	} {
 		n.Use(hooks...)
 	}
@@ -252,8 +258,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Account, c.Currency, c.Household, c.Investment, c.InvestmentLot,
-		c.Transaction, c.TransactionCategory, c.TransactionEntry, c.User,
-		c.UserHousehold, c.UserKey,
+		c.RecurringSubscription, c.Transaction, c.TransactionCategory,
+		c.TransactionEntry, c.User, c.UserHousehold, c.UserKey,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -272,6 +278,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Investment.mutate(ctx, m)
 	case *InvestmentLotMutation:
 		return c.InvestmentLot.mutate(ctx, m)
+	case *RecurringSubscriptionMutation:
+		return c.RecurringSubscription.mutate(ctx, m)
 	case *TransactionMutation:
 		return c.Transaction.mutate(ctx, m)
 	case *TransactionCategoryMutation:
@@ -675,6 +683,22 @@ func (c *CurrencyClient) QueryHouseholds(_m *Currency) *HouseholdQuery {
 	return query
 }
 
+// QueryRecurringSubscriptions queries the recurring_subscriptions edge of a Currency.
+func (c *CurrencyClient) QueryRecurringSubscriptions(_m *Currency) *RecurringSubscriptionQuery {
+	query := (&RecurringSubscriptionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(currency.Table, currency.FieldID, id),
+			sqlgraph.To(recurringsubscription.Table, recurringsubscription.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, currency.RecurringSubscriptionsTable, currency.RecurringSubscriptionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *CurrencyClient) Hooks() []Hook {
 	return c.hooks.Currency
@@ -929,6 +953,22 @@ func (c *HouseholdClient) QueryTransactionEntries(_m *Household) *TransactionEnt
 			sqlgraph.From(household.Table, household.FieldID, id),
 			sqlgraph.To(transactionentry.Table, transactionentry.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, household.TransactionEntriesTable, household.TransactionEntriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryRecurringSubscriptions queries the recurring_subscriptions edge of a Household.
+func (c *HouseholdClient) QueryRecurringSubscriptions(_m *Household) *RecurringSubscriptionQuery {
+	query := (&RecurringSubscriptionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(household.Table, household.FieldID, id),
+			sqlgraph.To(recurringsubscription.Table, recurringsubscription.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, household.RecurringSubscriptionsTable, household.RecurringSubscriptionsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1355,6 +1395,188 @@ func (c *InvestmentLotClient) mutate(ctx context.Context, m *InvestmentLotMutati
 		return (&InvestmentLotDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown InvestmentLot mutation op: %q", m.Op())
+	}
+}
+
+// RecurringSubscriptionClient is a client for the RecurringSubscription schema.
+type RecurringSubscriptionClient struct {
+	config
+}
+
+// NewRecurringSubscriptionClient returns a client for the RecurringSubscription from the given config.
+func NewRecurringSubscriptionClient(c config) *RecurringSubscriptionClient {
+	return &RecurringSubscriptionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `recurringsubscription.Hooks(f(g(h())))`.
+func (c *RecurringSubscriptionClient) Use(hooks ...Hook) {
+	c.hooks.RecurringSubscription = append(c.hooks.RecurringSubscription, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `recurringsubscription.Intercept(f(g(h())))`.
+func (c *RecurringSubscriptionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RecurringSubscription = append(c.inters.RecurringSubscription, interceptors...)
+}
+
+// Create returns a builder for creating a RecurringSubscription entity.
+func (c *RecurringSubscriptionClient) Create() *RecurringSubscriptionCreate {
+	mutation := newRecurringSubscriptionMutation(c.config, OpCreate)
+	return &RecurringSubscriptionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RecurringSubscription entities.
+func (c *RecurringSubscriptionClient) CreateBulk(builders ...*RecurringSubscriptionCreate) *RecurringSubscriptionCreateBulk {
+	return &RecurringSubscriptionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RecurringSubscriptionClient) MapCreateBulk(slice any, setFunc func(*RecurringSubscriptionCreate, int)) *RecurringSubscriptionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RecurringSubscriptionCreateBulk{err: fmt.Errorf("calling to RecurringSubscriptionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RecurringSubscriptionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RecurringSubscriptionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RecurringSubscription.
+func (c *RecurringSubscriptionClient) Update() *RecurringSubscriptionUpdate {
+	mutation := newRecurringSubscriptionMutation(c.config, OpUpdate)
+	return &RecurringSubscriptionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RecurringSubscriptionClient) UpdateOne(_m *RecurringSubscription) *RecurringSubscriptionUpdateOne {
+	mutation := newRecurringSubscriptionMutation(c.config, OpUpdateOne, withRecurringSubscription(_m))
+	return &RecurringSubscriptionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RecurringSubscriptionClient) UpdateOneID(id int) *RecurringSubscriptionUpdateOne {
+	mutation := newRecurringSubscriptionMutation(c.config, OpUpdateOne, withRecurringSubscriptionID(id))
+	return &RecurringSubscriptionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RecurringSubscription.
+func (c *RecurringSubscriptionClient) Delete() *RecurringSubscriptionDelete {
+	mutation := newRecurringSubscriptionMutation(c.config, OpDelete)
+	return &RecurringSubscriptionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RecurringSubscriptionClient) DeleteOne(_m *RecurringSubscription) *RecurringSubscriptionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RecurringSubscriptionClient) DeleteOneID(id int) *RecurringSubscriptionDeleteOne {
+	builder := c.Delete().Where(recurringsubscription.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RecurringSubscriptionDeleteOne{builder}
+}
+
+// Query returns a query builder for RecurringSubscription.
+func (c *RecurringSubscriptionClient) Query() *RecurringSubscriptionQuery {
+	return &RecurringSubscriptionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRecurringSubscription},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RecurringSubscription entity by its id.
+func (c *RecurringSubscriptionClient) Get(ctx context.Context, id int) (*RecurringSubscription, error) {
+	return c.Query().Where(recurringsubscription.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RecurringSubscriptionClient) GetX(ctx context.Context, id int) *RecurringSubscription {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryHousehold queries the household edge of a RecurringSubscription.
+func (c *RecurringSubscriptionClient) QueryHousehold(_m *RecurringSubscription) *HouseholdQuery {
+	query := (&HouseholdClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recurringsubscription.Table, recurringsubscription.FieldID, id),
+			sqlgraph.To(household.Table, household.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recurringsubscription.HouseholdTable, recurringsubscription.HouseholdColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryCurrency queries the currency edge of a RecurringSubscription.
+func (c *RecurringSubscriptionClient) QueryCurrency(_m *RecurringSubscription) *CurrencyQuery {
+	query := (&CurrencyClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recurringsubscription.Table, recurringsubscription.FieldID, id),
+			sqlgraph.To(currency.Table, currency.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recurringsubscription.CurrencyTable, recurringsubscription.CurrencyColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUser queries the user edge of a RecurringSubscription.
+func (c *RecurringSubscriptionClient) QueryUser(_m *RecurringSubscription) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(recurringsubscription.Table, recurringsubscription.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, recurringsubscription.UserTable, recurringsubscription.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RecurringSubscriptionClient) Hooks() []Hook {
+	hooks := c.hooks.RecurringSubscription
+	return append(hooks[:len(hooks):len(hooks)], recurringsubscription.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *RecurringSubscriptionClient) Interceptors() []Interceptor {
+	return c.inters.RecurringSubscription
+}
+
+func (c *RecurringSubscriptionClient) mutate(ctx context.Context, m *RecurringSubscriptionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RecurringSubscriptionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RecurringSubscriptionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RecurringSubscriptionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RecurringSubscriptionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown RecurringSubscription mutation op: %q", m.Op())
 	}
 }
 
@@ -2108,6 +2330,22 @@ func (c *UserClient) QueryUserKeys(_m *User) *UserKeyQuery {
 	return query
 }
 
+// QueryRecurringSubscriptions queries the recurring_subscriptions edge of a User.
+func (c *UserClient) QueryRecurringSubscriptions(_m *User) *RecurringSubscriptionQuery {
+	query := (&RecurringSubscriptionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(recurringsubscription.Table, recurringsubscription.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RecurringSubscriptionsTable, user.RecurringSubscriptionsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUserHouseholds queries the user_households edge of a User.
 func (c *UserClient) QueryUserHouseholds(_m *User) *UserHouseholdQuery {
 	query := (&UserHouseholdClient{config: c.config}).Query()
@@ -2469,12 +2707,13 @@ func (c *UserKeyClient) mutate(ctx context.Context, m *UserKeyMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Account, Currency, Household, Investment, InvestmentLot, Transaction,
-		TransactionCategory, TransactionEntry, User, UserHousehold, UserKey []ent.Hook
+		Account, Currency, Household, Investment, InvestmentLot, RecurringSubscription,
+		Transaction, TransactionCategory, TransactionEntry, User, UserHousehold,
+		UserKey []ent.Hook
 	}
 	inters struct {
-		Account, Currency, Household, Investment, InvestmentLot, Transaction,
-		TransactionCategory, TransactionEntry, User, UserHousehold,
+		Account, Currency, Household, Investment, InvestmentLot, RecurringSubscription,
+		Transaction, TransactionCategory, TransactionEntry, User, UserHousehold,
 		UserKey []ent.Interceptor
 	}
 )

@@ -15,6 +15,7 @@ import (
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
 	"beavermoney.app/ent/predicate"
+	"beavermoney.app/ent/recurringsubscription"
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
@@ -35,17 +36,18 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAccount             = "Account"
-	TypeCurrency            = "Currency"
-	TypeHousehold           = "Household"
-	TypeInvestment          = "Investment"
-	TypeInvestmentLot       = "InvestmentLot"
-	TypeTransaction         = "Transaction"
-	TypeTransactionCategory = "TransactionCategory"
-	TypeTransactionEntry    = "TransactionEntry"
-	TypeUser                = "User"
-	TypeUserHousehold       = "UserHousehold"
-	TypeUserKey             = "UserKey"
+	TypeAccount               = "Account"
+	TypeCurrency              = "Currency"
+	TypeHousehold             = "Household"
+	TypeInvestment            = "Investment"
+	TypeInvestmentLot         = "InvestmentLot"
+	TypeRecurringSubscription = "RecurringSubscription"
+	TypeTransaction           = "Transaction"
+	TypeTransactionCategory   = "TransactionCategory"
+	TypeTransactionEntry      = "TransactionEntry"
+	TypeUser                  = "User"
+	TypeUserHousehold         = "UserHousehold"
+	TypeUserKey               = "UserKey"
 )
 
 // AccountMutation represents an operation that mutates the Account nodes in the graph.
@@ -1355,26 +1357,29 @@ func (m *AccountMutation) ResetEdge(name string) error {
 // CurrencyMutation represents an operation that mutates the Currency nodes in the graph.
 type CurrencyMutation struct {
 	config
-	op                         Op
-	typ                        string
-	id                         *int
-	code                       *string
-	clearedFields              map[string]struct{}
-	accounts                   map[int]struct{}
-	removedaccounts            map[int]struct{}
-	clearedaccounts            bool
-	investments                map[int]struct{}
-	removedinvestments         map[int]struct{}
-	clearedinvestments         bool
-	transaction_entries        map[int]struct{}
-	removedtransaction_entries map[int]struct{}
-	clearedtransaction_entries bool
-	households                 map[int]struct{}
-	removedhouseholds          map[int]struct{}
-	clearedhouseholds          bool
-	done                       bool
-	oldValue                   func(context.Context) (*Currency, error)
-	predicates                 []predicate.Currency
+	op                             Op
+	typ                            string
+	id                             *int
+	code                           *string
+	clearedFields                  map[string]struct{}
+	accounts                       map[int]struct{}
+	removedaccounts                map[int]struct{}
+	clearedaccounts                bool
+	investments                    map[int]struct{}
+	removedinvestments             map[int]struct{}
+	clearedinvestments             bool
+	transaction_entries            map[int]struct{}
+	removedtransaction_entries     map[int]struct{}
+	clearedtransaction_entries     bool
+	households                     map[int]struct{}
+	removedhouseholds              map[int]struct{}
+	clearedhouseholds              bool
+	recurring_subscriptions        map[int]struct{}
+	removedrecurring_subscriptions map[int]struct{}
+	clearedrecurring_subscriptions bool
+	done                           bool
+	oldValue                       func(context.Context) (*Currency, error)
+	predicates                     []predicate.Currency
 }
 
 var _ ent.Mutation = (*CurrencyMutation)(nil)
@@ -1727,6 +1732,60 @@ func (m *CurrencyMutation) ResetHouseholds() {
 	m.removedhouseholds = nil
 }
 
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by ids.
+func (m *CurrencyMutation) AddRecurringSubscriptionIDs(ids ...int) {
+	if m.recurring_subscriptions == nil {
+		m.recurring_subscriptions = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.recurring_subscriptions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRecurringSubscriptions clears the "recurring_subscriptions" edge to the RecurringSubscription entity.
+func (m *CurrencyMutation) ClearRecurringSubscriptions() {
+	m.clearedrecurring_subscriptions = true
+}
+
+// RecurringSubscriptionsCleared reports if the "recurring_subscriptions" edge to the RecurringSubscription entity was cleared.
+func (m *CurrencyMutation) RecurringSubscriptionsCleared() bool {
+	return m.clearedrecurring_subscriptions
+}
+
+// RemoveRecurringSubscriptionIDs removes the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (m *CurrencyMutation) RemoveRecurringSubscriptionIDs(ids ...int) {
+	if m.removedrecurring_subscriptions == nil {
+		m.removedrecurring_subscriptions = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.recurring_subscriptions, ids[i])
+		m.removedrecurring_subscriptions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRecurringSubscriptions returns the removed IDs of the "recurring_subscriptions" edge to the RecurringSubscription entity.
+func (m *CurrencyMutation) RemovedRecurringSubscriptionsIDs() (ids []int) {
+	for id := range m.removedrecurring_subscriptions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RecurringSubscriptionsIDs returns the "recurring_subscriptions" edge IDs in the mutation.
+func (m *CurrencyMutation) RecurringSubscriptionsIDs() (ids []int) {
+	for id := range m.recurring_subscriptions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRecurringSubscriptions resets all changes to the "recurring_subscriptions" edge.
+func (m *CurrencyMutation) ResetRecurringSubscriptions() {
+	m.recurring_subscriptions = nil
+	m.clearedrecurring_subscriptions = false
+	m.removedrecurring_subscriptions = nil
+}
+
 // Where appends a list predicates to the CurrencyMutation builder.
 func (m *CurrencyMutation) Where(ps ...predicate.Currency) {
 	m.predicates = append(m.predicates, ps...)
@@ -1860,7 +1919,7 @@ func (m *CurrencyMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *CurrencyMutation) AddedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.accounts != nil {
 		edges = append(edges, currency.EdgeAccounts)
 	}
@@ -1872,6 +1931,9 @@ func (m *CurrencyMutation) AddedEdges() []string {
 	}
 	if m.households != nil {
 		edges = append(edges, currency.EdgeHouseholds)
+	}
+	if m.recurring_subscriptions != nil {
+		edges = append(edges, currency.EdgeRecurringSubscriptions)
 	}
 	return edges
 }
@@ -1904,13 +1966,19 @@ func (m *CurrencyMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case currency.EdgeRecurringSubscriptions:
+		ids := make([]ent.Value, 0, len(m.recurring_subscriptions))
+		for id := range m.recurring_subscriptions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *CurrencyMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.removedaccounts != nil {
 		edges = append(edges, currency.EdgeAccounts)
 	}
@@ -1922,6 +1990,9 @@ func (m *CurrencyMutation) RemovedEdges() []string {
 	}
 	if m.removedhouseholds != nil {
 		edges = append(edges, currency.EdgeHouseholds)
+	}
+	if m.removedrecurring_subscriptions != nil {
+		edges = append(edges, currency.EdgeRecurringSubscriptions)
 	}
 	return edges
 }
@@ -1954,13 +2025,19 @@ func (m *CurrencyMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case currency.EdgeRecurringSubscriptions:
+		ids := make([]ent.Value, 0, len(m.removedrecurring_subscriptions))
+		for id := range m.removedrecurring_subscriptions {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *CurrencyMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 4)
+	edges := make([]string, 0, 5)
 	if m.clearedaccounts {
 		edges = append(edges, currency.EdgeAccounts)
 	}
@@ -1972,6 +2049,9 @@ func (m *CurrencyMutation) ClearedEdges() []string {
 	}
 	if m.clearedhouseholds {
 		edges = append(edges, currency.EdgeHouseholds)
+	}
+	if m.clearedrecurring_subscriptions {
+		edges = append(edges, currency.EdgeRecurringSubscriptions)
 	}
 	return edges
 }
@@ -1988,6 +2068,8 @@ func (m *CurrencyMutation) EdgeCleared(name string) bool {
 		return m.clearedtransaction_entries
 	case currency.EdgeHouseholds:
 		return m.clearedhouseholds
+	case currency.EdgeRecurringSubscriptions:
+		return m.clearedrecurring_subscriptions
 	}
 	return false
 }
@@ -2016,6 +2098,9 @@ func (m *CurrencyMutation) ResetEdge(name string) error {
 	case currency.EdgeHouseholds:
 		m.ResetHouseholds()
 		return nil
+	case currency.EdgeRecurringSubscriptions:
+		m.ResetRecurringSubscriptions()
+		return nil
 	}
 	return fmt.Errorf("unknown Currency edge %s", name)
 }
@@ -2023,43 +2108,46 @@ func (m *CurrencyMutation) ResetEdge(name string) error {
 // HouseholdMutation represents an operation that mutates the Household nodes in the graph.
 type HouseholdMutation struct {
 	config
-	op                            Op
-	typ                           string
-	id                            *int
-	create_time                   *time.Time
-	update_time                   *time.Time
-	name                          *string
-	locale                        *string
-	clearedFields                 map[string]struct{}
-	currency                      *int
-	clearedcurrency               bool
-	users                         map[int]struct{}
-	removedusers                  map[int]struct{}
-	clearedusers                  bool
-	accounts                      map[int]struct{}
-	removedaccounts               map[int]struct{}
-	clearedaccounts               bool
-	transactions                  map[int]struct{}
-	removedtransactions           map[int]struct{}
-	clearedtransactions           bool
-	investments                   map[int]struct{}
-	removedinvestments            map[int]struct{}
-	clearedinvestments            bool
-	investment_lots               map[int]struct{}
-	removedinvestment_lots        map[int]struct{}
-	clearedinvestment_lots        bool
-	transaction_categories        map[int]struct{}
-	removedtransaction_categories map[int]struct{}
-	clearedtransaction_categories bool
-	transaction_entries           map[int]struct{}
-	removedtransaction_entries    map[int]struct{}
-	clearedtransaction_entries    bool
-	user_households               map[int]struct{}
-	removeduser_households        map[int]struct{}
-	cleareduser_households        bool
-	done                          bool
-	oldValue                      func(context.Context) (*Household, error)
-	predicates                    []predicate.Household
+	op                             Op
+	typ                            string
+	id                             *int
+	create_time                    *time.Time
+	update_time                    *time.Time
+	name                           *string
+	locale                         *string
+	clearedFields                  map[string]struct{}
+	currency                       *int
+	clearedcurrency                bool
+	users                          map[int]struct{}
+	removedusers                   map[int]struct{}
+	clearedusers                   bool
+	accounts                       map[int]struct{}
+	removedaccounts                map[int]struct{}
+	clearedaccounts                bool
+	transactions                   map[int]struct{}
+	removedtransactions            map[int]struct{}
+	clearedtransactions            bool
+	investments                    map[int]struct{}
+	removedinvestments             map[int]struct{}
+	clearedinvestments             bool
+	investment_lots                map[int]struct{}
+	removedinvestment_lots         map[int]struct{}
+	clearedinvestment_lots         bool
+	transaction_categories         map[int]struct{}
+	removedtransaction_categories  map[int]struct{}
+	clearedtransaction_categories  bool
+	transaction_entries            map[int]struct{}
+	removedtransaction_entries     map[int]struct{}
+	clearedtransaction_entries     bool
+	recurring_subscriptions        map[int]struct{}
+	removedrecurring_subscriptions map[int]struct{}
+	clearedrecurring_subscriptions bool
+	user_households                map[int]struct{}
+	removeduser_households         map[int]struct{}
+	cleareduser_households         bool
+	done                           bool
+	oldValue                       func(context.Context) (*Household, error)
+	predicates                     []predicate.Household
 }
 
 var _ ent.Mutation = (*HouseholdMutation)(nil)
@@ -2745,6 +2833,60 @@ func (m *HouseholdMutation) ResetTransactionEntries() {
 	m.removedtransaction_entries = nil
 }
 
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by ids.
+func (m *HouseholdMutation) AddRecurringSubscriptionIDs(ids ...int) {
+	if m.recurring_subscriptions == nil {
+		m.recurring_subscriptions = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.recurring_subscriptions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRecurringSubscriptions clears the "recurring_subscriptions" edge to the RecurringSubscription entity.
+func (m *HouseholdMutation) ClearRecurringSubscriptions() {
+	m.clearedrecurring_subscriptions = true
+}
+
+// RecurringSubscriptionsCleared reports if the "recurring_subscriptions" edge to the RecurringSubscription entity was cleared.
+func (m *HouseholdMutation) RecurringSubscriptionsCleared() bool {
+	return m.clearedrecurring_subscriptions
+}
+
+// RemoveRecurringSubscriptionIDs removes the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (m *HouseholdMutation) RemoveRecurringSubscriptionIDs(ids ...int) {
+	if m.removedrecurring_subscriptions == nil {
+		m.removedrecurring_subscriptions = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.recurring_subscriptions, ids[i])
+		m.removedrecurring_subscriptions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRecurringSubscriptions returns the removed IDs of the "recurring_subscriptions" edge to the RecurringSubscription entity.
+func (m *HouseholdMutation) RemovedRecurringSubscriptionsIDs() (ids []int) {
+	for id := range m.removedrecurring_subscriptions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RecurringSubscriptionsIDs returns the "recurring_subscriptions" edge IDs in the mutation.
+func (m *HouseholdMutation) RecurringSubscriptionsIDs() (ids []int) {
+	for id := range m.recurring_subscriptions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRecurringSubscriptions resets all changes to the "recurring_subscriptions" edge.
+func (m *HouseholdMutation) ResetRecurringSubscriptions() {
+	m.recurring_subscriptions = nil
+	m.clearedrecurring_subscriptions = false
+	m.removedrecurring_subscriptions = nil
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by ids.
 func (m *HouseholdMutation) AddUserHouseholdIDs(ids ...int) {
 	if m.user_households == nil {
@@ -3003,7 +3145,7 @@ func (m *HouseholdMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *HouseholdMutation) AddedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.currency != nil {
 		edges = append(edges, household.EdgeCurrency)
 	}
@@ -3027,6 +3169,9 @@ func (m *HouseholdMutation) AddedEdges() []string {
 	}
 	if m.transaction_entries != nil {
 		edges = append(edges, household.EdgeTransactionEntries)
+	}
+	if m.recurring_subscriptions != nil {
+		edges = append(edges, household.EdgeRecurringSubscriptions)
 	}
 	if m.user_households != nil {
 		edges = append(edges, household.EdgeUserHouseholds)
@@ -3084,6 +3229,12 @@ func (m *HouseholdMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case household.EdgeRecurringSubscriptions:
+		ids := make([]ent.Value, 0, len(m.recurring_subscriptions))
+		for id := range m.recurring_subscriptions {
+			ids = append(ids, id)
+		}
+		return ids
 	case household.EdgeUserHouseholds:
 		ids := make([]ent.Value, 0, len(m.user_households))
 		for id := range m.user_households {
@@ -3096,7 +3247,7 @@ func (m *HouseholdMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *HouseholdMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.removedusers != nil {
 		edges = append(edges, household.EdgeUsers)
 	}
@@ -3117,6 +3268,9 @@ func (m *HouseholdMutation) RemovedEdges() []string {
 	}
 	if m.removedtransaction_entries != nil {
 		edges = append(edges, household.EdgeTransactionEntries)
+	}
+	if m.removedrecurring_subscriptions != nil {
+		edges = append(edges, household.EdgeRecurringSubscriptions)
 	}
 	if m.removeduser_households != nil {
 		edges = append(edges, household.EdgeUserHouseholds)
@@ -3170,6 +3324,12 @@ func (m *HouseholdMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case household.EdgeRecurringSubscriptions:
+		ids := make([]ent.Value, 0, len(m.removedrecurring_subscriptions))
+		for id := range m.removedrecurring_subscriptions {
+			ids = append(ids, id)
+		}
+		return ids
 	case household.EdgeUserHouseholds:
 		ids := make([]ent.Value, 0, len(m.removeduser_households))
 		for id := range m.removeduser_households {
@@ -3182,7 +3342,7 @@ func (m *HouseholdMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *HouseholdMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 9)
+	edges := make([]string, 0, 10)
 	if m.clearedcurrency {
 		edges = append(edges, household.EdgeCurrency)
 	}
@@ -3206,6 +3366,9 @@ func (m *HouseholdMutation) ClearedEdges() []string {
 	}
 	if m.clearedtransaction_entries {
 		edges = append(edges, household.EdgeTransactionEntries)
+	}
+	if m.clearedrecurring_subscriptions {
+		edges = append(edges, household.EdgeRecurringSubscriptions)
 	}
 	if m.cleareduser_households {
 		edges = append(edges, household.EdgeUserHouseholds)
@@ -3233,6 +3396,8 @@ func (m *HouseholdMutation) EdgeCleared(name string) bool {
 		return m.clearedtransaction_categories
 	case household.EdgeTransactionEntries:
 		return m.clearedtransaction_entries
+	case household.EdgeRecurringSubscriptions:
+		return m.clearedrecurring_subscriptions
 	case household.EdgeUserHouseholds:
 		return m.cleareduser_households
 	}
@@ -3277,6 +3442,9 @@ func (m *HouseholdMutation) ResetEdge(name string) error {
 		return nil
 	case household.EdgeTransactionEntries:
 		m.ResetTransactionEntries()
+		return nil
+	case household.EdgeRecurringSubscriptions:
+		m.ResetRecurringSubscriptions()
 		return nil
 	case household.EdgeUserHouseholds:
 		m.ResetUserHouseholds()
@@ -5347,6 +5515,1250 @@ func (m *InvestmentLotMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown InvestmentLot edge %s", name)
+}
+
+// RecurringSubscriptionMutation represents an operation that mutates the RecurringSubscription nodes in the graph.
+type RecurringSubscriptionMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int
+	create_time       *time.Time
+	update_time       *time.Time
+	name              *string
+	interval          *recurringsubscription.Interval
+	interval_count    *int
+	addinterval_count *int
+	start_date        *time.Time
+	active            *bool
+	icon              *string
+	cost              *decimal.Decimal
+	addcost           *decimal.Decimal
+	fx_rate           *decimal.Decimal
+	addfx_rate        *decimal.Decimal
+	clearedFields     map[string]struct{}
+	household         *int
+	clearedhousehold  bool
+	currency          *int
+	clearedcurrency   bool
+	user              *int
+	cleareduser       bool
+	done              bool
+	oldValue          func(context.Context) (*RecurringSubscription, error)
+	predicates        []predicate.RecurringSubscription
+}
+
+var _ ent.Mutation = (*RecurringSubscriptionMutation)(nil)
+
+// recurringsubscriptionOption allows management of the mutation configuration using functional options.
+type recurringsubscriptionOption func(*RecurringSubscriptionMutation)
+
+// newRecurringSubscriptionMutation creates new mutation for the RecurringSubscription entity.
+func newRecurringSubscriptionMutation(c config, op Op, opts ...recurringsubscriptionOption) *RecurringSubscriptionMutation {
+	m := &RecurringSubscriptionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRecurringSubscription,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRecurringSubscriptionID sets the ID field of the mutation.
+func withRecurringSubscriptionID(id int) recurringsubscriptionOption {
+	return func(m *RecurringSubscriptionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RecurringSubscription
+		)
+		m.oldValue = func(ctx context.Context) (*RecurringSubscription, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RecurringSubscription.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRecurringSubscription sets the old RecurringSubscription of the mutation.
+func withRecurringSubscription(node *RecurringSubscription) recurringsubscriptionOption {
+	return func(m *RecurringSubscriptionMutation) {
+		m.oldValue = func(context.Context) (*RecurringSubscription, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RecurringSubscriptionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RecurringSubscriptionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RecurringSubscriptionMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RecurringSubscriptionMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RecurringSubscription.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *RecurringSubscriptionMutation) SetCreateTime(t time.Time) {
+	m.create_time = &t
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *RecurringSubscriptionMutation) CreateTime() (r time.Time, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldCreateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *RecurringSubscriptionMutation) ResetCreateTime() {
+	m.create_time = nil
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *RecurringSubscriptionMutation) SetUpdateTime(t time.Time) {
+	m.update_time = &t
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *RecurringSubscriptionMutation) UpdateTime() (r time.Time, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldUpdateTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *RecurringSubscriptionMutation) ResetUpdateTime() {
+	m.update_time = nil
+}
+
+// SetHouseholdID sets the "household_id" field.
+func (m *RecurringSubscriptionMutation) SetHouseholdID(i int) {
+	m.household = &i
+}
+
+// HouseholdID returns the value of the "household_id" field in the mutation.
+func (m *RecurringSubscriptionMutation) HouseholdID() (r int, exists bool) {
+	v := m.household
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHouseholdID returns the old "household_id" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldHouseholdID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHouseholdID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHouseholdID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHouseholdID: %w", err)
+	}
+	return oldValue.HouseholdID, nil
+}
+
+// ResetHouseholdID resets all changes to the "household_id" field.
+func (m *RecurringSubscriptionMutation) ResetHouseholdID() {
+	m.household = nil
+}
+
+// SetName sets the "name" field.
+func (m *RecurringSubscriptionMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *RecurringSubscriptionMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *RecurringSubscriptionMutation) ResetName() {
+	m.name = nil
+}
+
+// SetInterval sets the "interval" field.
+func (m *RecurringSubscriptionMutation) SetInterval(r recurringsubscription.Interval) {
+	m.interval = &r
+}
+
+// Interval returns the value of the "interval" field in the mutation.
+func (m *RecurringSubscriptionMutation) Interval() (r recurringsubscription.Interval, exists bool) {
+	v := m.interval
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInterval returns the old "interval" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldInterval(ctx context.Context) (v recurringsubscription.Interval, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInterval is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInterval requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInterval: %w", err)
+	}
+	return oldValue.Interval, nil
+}
+
+// ResetInterval resets all changes to the "interval" field.
+func (m *RecurringSubscriptionMutation) ResetInterval() {
+	m.interval = nil
+}
+
+// SetIntervalCount sets the "interval_count" field.
+func (m *RecurringSubscriptionMutation) SetIntervalCount(i int) {
+	m.interval_count = &i
+	m.addinterval_count = nil
+}
+
+// IntervalCount returns the value of the "interval_count" field in the mutation.
+func (m *RecurringSubscriptionMutation) IntervalCount() (r int, exists bool) {
+	v := m.interval_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIntervalCount returns the old "interval_count" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldIntervalCount(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIntervalCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIntervalCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIntervalCount: %w", err)
+	}
+	return oldValue.IntervalCount, nil
+}
+
+// AddIntervalCount adds i to the "interval_count" field.
+func (m *RecurringSubscriptionMutation) AddIntervalCount(i int) {
+	if m.addinterval_count != nil {
+		*m.addinterval_count += i
+	} else {
+		m.addinterval_count = &i
+	}
+}
+
+// AddedIntervalCount returns the value that was added to the "interval_count" field in this mutation.
+func (m *RecurringSubscriptionMutation) AddedIntervalCount() (r int, exists bool) {
+	v := m.addinterval_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetIntervalCount resets all changes to the "interval_count" field.
+func (m *RecurringSubscriptionMutation) ResetIntervalCount() {
+	m.interval_count = nil
+	m.addinterval_count = nil
+}
+
+// SetStartDate sets the "start_date" field.
+func (m *RecurringSubscriptionMutation) SetStartDate(t time.Time) {
+	m.start_date = &t
+}
+
+// StartDate returns the value of the "start_date" field in the mutation.
+func (m *RecurringSubscriptionMutation) StartDate() (r time.Time, exists bool) {
+	v := m.start_date
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartDate returns the old "start_date" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldStartDate(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartDate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartDate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartDate: %w", err)
+	}
+	return oldValue.StartDate, nil
+}
+
+// ResetStartDate resets all changes to the "start_date" field.
+func (m *RecurringSubscriptionMutation) ResetStartDate() {
+	m.start_date = nil
+}
+
+// SetActive sets the "active" field.
+func (m *RecurringSubscriptionMutation) SetActive(b bool) {
+	m.active = &b
+}
+
+// Active returns the value of the "active" field in the mutation.
+func (m *RecurringSubscriptionMutation) Active() (r bool, exists bool) {
+	v := m.active
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldActive returns the old "active" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldActive(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldActive is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldActive requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldActive: %w", err)
+	}
+	return oldValue.Active, nil
+}
+
+// ResetActive resets all changes to the "active" field.
+func (m *RecurringSubscriptionMutation) ResetActive() {
+	m.active = nil
+}
+
+// SetIcon sets the "icon" field.
+func (m *RecurringSubscriptionMutation) SetIcon(s string) {
+	m.icon = &s
+}
+
+// Icon returns the value of the "icon" field in the mutation.
+func (m *RecurringSubscriptionMutation) Icon() (r string, exists bool) {
+	v := m.icon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIcon returns the old "icon" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldIcon(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIcon is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIcon requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIcon: %w", err)
+	}
+	return oldValue.Icon, nil
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (m *RecurringSubscriptionMutation) ClearIcon() {
+	m.icon = nil
+	m.clearedFields[recurringsubscription.FieldIcon] = struct{}{}
+}
+
+// IconCleared returns if the "icon" field was cleared in this mutation.
+func (m *RecurringSubscriptionMutation) IconCleared() bool {
+	_, ok := m.clearedFields[recurringsubscription.FieldIcon]
+	return ok
+}
+
+// ResetIcon resets all changes to the "icon" field.
+func (m *RecurringSubscriptionMutation) ResetIcon() {
+	m.icon = nil
+	delete(m.clearedFields, recurringsubscription.FieldIcon)
+}
+
+// SetCost sets the "cost" field.
+func (m *RecurringSubscriptionMutation) SetCost(d decimal.Decimal) {
+	m.cost = &d
+	m.addcost = nil
+}
+
+// Cost returns the value of the "cost" field in the mutation.
+func (m *RecurringSubscriptionMutation) Cost() (r decimal.Decimal, exists bool) {
+	v := m.cost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCost returns the old "cost" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldCost(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCost is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCost requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCost: %w", err)
+	}
+	return oldValue.Cost, nil
+}
+
+// AddCost adds d to the "cost" field.
+func (m *RecurringSubscriptionMutation) AddCost(d decimal.Decimal) {
+	if m.addcost != nil {
+		*m.addcost = m.addcost.Add(d)
+	} else {
+		m.addcost = &d
+	}
+}
+
+// AddedCost returns the value that was added to the "cost" field in this mutation.
+func (m *RecurringSubscriptionMutation) AddedCost() (r decimal.Decimal, exists bool) {
+	v := m.addcost
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCost resets all changes to the "cost" field.
+func (m *RecurringSubscriptionMutation) ResetCost() {
+	m.cost = nil
+	m.addcost = nil
+}
+
+// SetFxRate sets the "fx_rate" field.
+func (m *RecurringSubscriptionMutation) SetFxRate(d decimal.Decimal) {
+	m.fx_rate = &d
+	m.addfx_rate = nil
+}
+
+// FxRate returns the value of the "fx_rate" field in the mutation.
+func (m *RecurringSubscriptionMutation) FxRate() (r decimal.Decimal, exists bool) {
+	v := m.fx_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFxRate returns the old "fx_rate" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldFxRate(ctx context.Context) (v decimal.Decimal, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFxRate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFxRate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFxRate: %w", err)
+	}
+	return oldValue.FxRate, nil
+}
+
+// AddFxRate adds d to the "fx_rate" field.
+func (m *RecurringSubscriptionMutation) AddFxRate(d decimal.Decimal) {
+	if m.addfx_rate != nil {
+		*m.addfx_rate = m.addfx_rate.Add(d)
+	} else {
+		m.addfx_rate = &d
+	}
+}
+
+// AddedFxRate returns the value that was added to the "fx_rate" field in this mutation.
+func (m *RecurringSubscriptionMutation) AddedFxRate() (r decimal.Decimal, exists bool) {
+	v := m.addfx_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFxRate resets all changes to the "fx_rate" field.
+func (m *RecurringSubscriptionMutation) ResetFxRate() {
+	m.fx_rate = nil
+	m.addfx_rate = nil
+}
+
+// SetCurrencyID sets the "currency_id" field.
+func (m *RecurringSubscriptionMutation) SetCurrencyID(i int) {
+	m.currency = &i
+}
+
+// CurrencyID returns the value of the "currency_id" field in the mutation.
+func (m *RecurringSubscriptionMutation) CurrencyID() (r int, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrencyID returns the old "currency_id" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldCurrencyID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrencyID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrencyID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrencyID: %w", err)
+	}
+	return oldValue.CurrencyID, nil
+}
+
+// ResetCurrencyID resets all changes to the "currency_id" field.
+func (m *RecurringSubscriptionMutation) ResetCurrencyID() {
+	m.currency = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *RecurringSubscriptionMutation) SetUserID(i int) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *RecurringSubscriptionMutation) UserID() (r int, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the RecurringSubscription entity.
+// If the RecurringSubscription object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RecurringSubscriptionMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *RecurringSubscriptionMutation) ResetUserID() {
+	m.user = nil
+}
+
+// ClearHousehold clears the "household" edge to the Household entity.
+func (m *RecurringSubscriptionMutation) ClearHousehold() {
+	m.clearedhousehold = true
+	m.clearedFields[recurringsubscription.FieldHouseholdID] = struct{}{}
+}
+
+// HouseholdCleared reports if the "household" edge to the Household entity was cleared.
+func (m *RecurringSubscriptionMutation) HouseholdCleared() bool {
+	return m.clearedhousehold
+}
+
+// HouseholdIDs returns the "household" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// HouseholdID instead. It exists only for internal usage by the builders.
+func (m *RecurringSubscriptionMutation) HouseholdIDs() (ids []int) {
+	if id := m.household; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetHousehold resets all changes to the "household" edge.
+func (m *RecurringSubscriptionMutation) ResetHousehold() {
+	m.household = nil
+	m.clearedhousehold = false
+}
+
+// ClearCurrency clears the "currency" edge to the Currency entity.
+func (m *RecurringSubscriptionMutation) ClearCurrency() {
+	m.clearedcurrency = true
+	m.clearedFields[recurringsubscription.FieldCurrencyID] = struct{}{}
+}
+
+// CurrencyCleared reports if the "currency" edge to the Currency entity was cleared.
+func (m *RecurringSubscriptionMutation) CurrencyCleared() bool {
+	return m.clearedcurrency
+}
+
+// CurrencyIDs returns the "currency" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// CurrencyID instead. It exists only for internal usage by the builders.
+func (m *RecurringSubscriptionMutation) CurrencyIDs() (ids []int) {
+	if id := m.currency; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetCurrency resets all changes to the "currency" edge.
+func (m *RecurringSubscriptionMutation) ResetCurrency() {
+	m.currency = nil
+	m.clearedcurrency = false
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *RecurringSubscriptionMutation) ClearUser() {
+	m.cleareduser = true
+	m.clearedFields[recurringsubscription.FieldUserID] = struct{}{}
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *RecurringSubscriptionMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *RecurringSubscriptionMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *RecurringSubscriptionMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Where appends a list predicates to the RecurringSubscriptionMutation builder.
+func (m *RecurringSubscriptionMutation) Where(ps ...predicate.RecurringSubscription) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RecurringSubscriptionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RecurringSubscriptionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RecurringSubscription, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RecurringSubscriptionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RecurringSubscriptionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RecurringSubscription).
+func (m *RecurringSubscriptionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RecurringSubscriptionMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.create_time != nil {
+		fields = append(fields, recurringsubscription.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, recurringsubscription.FieldUpdateTime)
+	}
+	if m.household != nil {
+		fields = append(fields, recurringsubscription.FieldHouseholdID)
+	}
+	if m.name != nil {
+		fields = append(fields, recurringsubscription.FieldName)
+	}
+	if m.interval != nil {
+		fields = append(fields, recurringsubscription.FieldInterval)
+	}
+	if m.interval_count != nil {
+		fields = append(fields, recurringsubscription.FieldIntervalCount)
+	}
+	if m.start_date != nil {
+		fields = append(fields, recurringsubscription.FieldStartDate)
+	}
+	if m.active != nil {
+		fields = append(fields, recurringsubscription.FieldActive)
+	}
+	if m.icon != nil {
+		fields = append(fields, recurringsubscription.FieldIcon)
+	}
+	if m.cost != nil {
+		fields = append(fields, recurringsubscription.FieldCost)
+	}
+	if m.fx_rate != nil {
+		fields = append(fields, recurringsubscription.FieldFxRate)
+	}
+	if m.currency != nil {
+		fields = append(fields, recurringsubscription.FieldCurrencyID)
+	}
+	if m.user != nil {
+		fields = append(fields, recurringsubscription.FieldUserID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RecurringSubscriptionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case recurringsubscription.FieldCreateTime:
+		return m.CreateTime()
+	case recurringsubscription.FieldUpdateTime:
+		return m.UpdateTime()
+	case recurringsubscription.FieldHouseholdID:
+		return m.HouseholdID()
+	case recurringsubscription.FieldName:
+		return m.Name()
+	case recurringsubscription.FieldInterval:
+		return m.Interval()
+	case recurringsubscription.FieldIntervalCount:
+		return m.IntervalCount()
+	case recurringsubscription.FieldStartDate:
+		return m.StartDate()
+	case recurringsubscription.FieldActive:
+		return m.Active()
+	case recurringsubscription.FieldIcon:
+		return m.Icon()
+	case recurringsubscription.FieldCost:
+		return m.Cost()
+	case recurringsubscription.FieldFxRate:
+		return m.FxRate()
+	case recurringsubscription.FieldCurrencyID:
+		return m.CurrencyID()
+	case recurringsubscription.FieldUserID:
+		return m.UserID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RecurringSubscriptionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case recurringsubscription.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case recurringsubscription.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case recurringsubscription.FieldHouseholdID:
+		return m.OldHouseholdID(ctx)
+	case recurringsubscription.FieldName:
+		return m.OldName(ctx)
+	case recurringsubscription.FieldInterval:
+		return m.OldInterval(ctx)
+	case recurringsubscription.FieldIntervalCount:
+		return m.OldIntervalCount(ctx)
+	case recurringsubscription.FieldStartDate:
+		return m.OldStartDate(ctx)
+	case recurringsubscription.FieldActive:
+		return m.OldActive(ctx)
+	case recurringsubscription.FieldIcon:
+		return m.OldIcon(ctx)
+	case recurringsubscription.FieldCost:
+		return m.OldCost(ctx)
+	case recurringsubscription.FieldFxRate:
+		return m.OldFxRate(ctx)
+	case recurringsubscription.FieldCurrencyID:
+		return m.OldCurrencyID(ctx)
+	case recurringsubscription.FieldUserID:
+		return m.OldUserID(ctx)
+	}
+	return nil, fmt.Errorf("unknown RecurringSubscription field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RecurringSubscriptionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case recurringsubscription.FieldCreateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case recurringsubscription.FieldUpdateTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case recurringsubscription.FieldHouseholdID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHouseholdID(v)
+		return nil
+	case recurringsubscription.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case recurringsubscription.FieldInterval:
+		v, ok := value.(recurringsubscription.Interval)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInterval(v)
+		return nil
+	case recurringsubscription.FieldIntervalCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIntervalCount(v)
+		return nil
+	case recurringsubscription.FieldStartDate:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartDate(v)
+		return nil
+	case recurringsubscription.FieldActive:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetActive(v)
+		return nil
+	case recurringsubscription.FieldIcon:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIcon(v)
+		return nil
+	case recurringsubscription.FieldCost:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCost(v)
+		return nil
+	case recurringsubscription.FieldFxRate:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFxRate(v)
+		return nil
+	case recurringsubscription.FieldCurrencyID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrencyID(v)
+		return nil
+	case recurringsubscription.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RecurringSubscription field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RecurringSubscriptionMutation) AddedFields() []string {
+	var fields []string
+	if m.addinterval_count != nil {
+		fields = append(fields, recurringsubscription.FieldIntervalCount)
+	}
+	if m.addcost != nil {
+		fields = append(fields, recurringsubscription.FieldCost)
+	}
+	if m.addfx_rate != nil {
+		fields = append(fields, recurringsubscription.FieldFxRate)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RecurringSubscriptionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case recurringsubscription.FieldIntervalCount:
+		return m.AddedIntervalCount()
+	case recurringsubscription.FieldCost:
+		return m.AddedCost()
+	case recurringsubscription.FieldFxRate:
+		return m.AddedFxRate()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RecurringSubscriptionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case recurringsubscription.FieldIntervalCount:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIntervalCount(v)
+		return nil
+	case recurringsubscription.FieldCost:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCost(v)
+		return nil
+	case recurringsubscription.FieldFxRate:
+		v, ok := value.(decimal.Decimal)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFxRate(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RecurringSubscription numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RecurringSubscriptionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(recurringsubscription.FieldIcon) {
+		fields = append(fields, recurringsubscription.FieldIcon)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RecurringSubscriptionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RecurringSubscriptionMutation) ClearField(name string) error {
+	switch name {
+	case recurringsubscription.FieldIcon:
+		m.ClearIcon()
+		return nil
+	}
+	return fmt.Errorf("unknown RecurringSubscription nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RecurringSubscriptionMutation) ResetField(name string) error {
+	switch name {
+	case recurringsubscription.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case recurringsubscription.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case recurringsubscription.FieldHouseholdID:
+		m.ResetHouseholdID()
+		return nil
+	case recurringsubscription.FieldName:
+		m.ResetName()
+		return nil
+	case recurringsubscription.FieldInterval:
+		m.ResetInterval()
+		return nil
+	case recurringsubscription.FieldIntervalCount:
+		m.ResetIntervalCount()
+		return nil
+	case recurringsubscription.FieldStartDate:
+		m.ResetStartDate()
+		return nil
+	case recurringsubscription.FieldActive:
+		m.ResetActive()
+		return nil
+	case recurringsubscription.FieldIcon:
+		m.ResetIcon()
+		return nil
+	case recurringsubscription.FieldCost:
+		m.ResetCost()
+		return nil
+	case recurringsubscription.FieldFxRate:
+		m.ResetFxRate()
+		return nil
+	case recurringsubscription.FieldCurrencyID:
+		m.ResetCurrencyID()
+		return nil
+	case recurringsubscription.FieldUserID:
+		m.ResetUserID()
+		return nil
+	}
+	return fmt.Errorf("unknown RecurringSubscription field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RecurringSubscriptionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.household != nil {
+		edges = append(edges, recurringsubscription.EdgeHousehold)
+	}
+	if m.currency != nil {
+		edges = append(edges, recurringsubscription.EdgeCurrency)
+	}
+	if m.user != nil {
+		edges = append(edges, recurringsubscription.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RecurringSubscriptionMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case recurringsubscription.EdgeHousehold:
+		if id := m.household; id != nil {
+			return []ent.Value{*id}
+		}
+	case recurringsubscription.EdgeCurrency:
+		if id := m.currency; id != nil {
+			return []ent.Value{*id}
+		}
+	case recurringsubscription.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RecurringSubscriptionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RecurringSubscriptionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RecurringSubscriptionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedhousehold {
+		edges = append(edges, recurringsubscription.EdgeHousehold)
+	}
+	if m.clearedcurrency {
+		edges = append(edges, recurringsubscription.EdgeCurrency)
+	}
+	if m.cleareduser {
+		edges = append(edges, recurringsubscription.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RecurringSubscriptionMutation) EdgeCleared(name string) bool {
+	switch name {
+	case recurringsubscription.EdgeHousehold:
+		return m.clearedhousehold
+	case recurringsubscription.EdgeCurrency:
+		return m.clearedcurrency
+	case recurringsubscription.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RecurringSubscriptionMutation) ClearEdge(name string) error {
+	switch name {
+	case recurringsubscription.EdgeHousehold:
+		m.ClearHousehold()
+		return nil
+	case recurringsubscription.EdgeCurrency:
+		m.ClearCurrency()
+		return nil
+	case recurringsubscription.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown RecurringSubscription unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RecurringSubscriptionMutation) ResetEdge(name string) error {
+	switch name {
+	case recurringsubscription.EdgeHousehold:
+		m.ResetHousehold()
+		return nil
+	case recurringsubscription.EdgeCurrency:
+		m.ResetCurrency()
+		return nil
+	case recurringsubscription.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown RecurringSubscription edge %s", name)
 }
 
 // TransactionMutation represents an operation that mutates the Transaction nodes in the graph.
@@ -8011,32 +9423,35 @@ func (m *TransactionEntryMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                     Op
-	typ                    string
-	id                     *int
-	create_time            *time.Time
-	update_time            *time.Time
-	email                  *string
-	name                   *string
-	clearedFields          map[string]struct{}
-	households             map[int]struct{}
-	removedhouseholds      map[int]struct{}
-	clearedhouseholds      bool
-	accounts               map[int]struct{}
-	removedaccounts        map[int]struct{}
-	clearedaccounts        bool
-	transactions           map[int]struct{}
-	removedtransactions    map[int]struct{}
-	clearedtransactions    bool
-	user_keys              map[int]struct{}
-	removeduser_keys       map[int]struct{}
-	cleareduser_keys       bool
-	user_households        map[int]struct{}
-	removeduser_households map[int]struct{}
-	cleareduser_households bool
-	done                   bool
-	oldValue               func(context.Context) (*User, error)
-	predicates             []predicate.User
+	op                             Op
+	typ                            string
+	id                             *int
+	create_time                    *time.Time
+	update_time                    *time.Time
+	email                          *string
+	name                           *string
+	clearedFields                  map[string]struct{}
+	households                     map[int]struct{}
+	removedhouseholds              map[int]struct{}
+	clearedhouseholds              bool
+	accounts                       map[int]struct{}
+	removedaccounts                map[int]struct{}
+	clearedaccounts                bool
+	transactions                   map[int]struct{}
+	removedtransactions            map[int]struct{}
+	clearedtransactions            bool
+	user_keys                      map[int]struct{}
+	removeduser_keys               map[int]struct{}
+	cleareduser_keys               bool
+	recurring_subscriptions        map[int]struct{}
+	removedrecurring_subscriptions map[int]struct{}
+	clearedrecurring_subscriptions bool
+	user_households                map[int]struct{}
+	removeduser_households         map[int]struct{}
+	cleareduser_households         bool
+	done                           bool
+	oldValue                       func(context.Context) (*User, error)
+	predicates                     []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -8497,6 +9912,60 @@ func (m *UserMutation) ResetUserKeys() {
 	m.removeduser_keys = nil
 }
 
+// AddRecurringSubscriptionIDs adds the "recurring_subscriptions" edge to the RecurringSubscription entity by ids.
+func (m *UserMutation) AddRecurringSubscriptionIDs(ids ...int) {
+	if m.recurring_subscriptions == nil {
+		m.recurring_subscriptions = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.recurring_subscriptions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRecurringSubscriptions clears the "recurring_subscriptions" edge to the RecurringSubscription entity.
+func (m *UserMutation) ClearRecurringSubscriptions() {
+	m.clearedrecurring_subscriptions = true
+}
+
+// RecurringSubscriptionsCleared reports if the "recurring_subscriptions" edge to the RecurringSubscription entity was cleared.
+func (m *UserMutation) RecurringSubscriptionsCleared() bool {
+	return m.clearedrecurring_subscriptions
+}
+
+// RemoveRecurringSubscriptionIDs removes the "recurring_subscriptions" edge to the RecurringSubscription entity by IDs.
+func (m *UserMutation) RemoveRecurringSubscriptionIDs(ids ...int) {
+	if m.removedrecurring_subscriptions == nil {
+		m.removedrecurring_subscriptions = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.recurring_subscriptions, ids[i])
+		m.removedrecurring_subscriptions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRecurringSubscriptions returns the removed IDs of the "recurring_subscriptions" edge to the RecurringSubscription entity.
+func (m *UserMutation) RemovedRecurringSubscriptionsIDs() (ids []int) {
+	for id := range m.removedrecurring_subscriptions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RecurringSubscriptionsIDs returns the "recurring_subscriptions" edge IDs in the mutation.
+func (m *UserMutation) RecurringSubscriptionsIDs() (ids []int) {
+	for id := range m.recurring_subscriptions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRecurringSubscriptions resets all changes to the "recurring_subscriptions" edge.
+func (m *UserMutation) ResetRecurringSubscriptions() {
+	m.recurring_subscriptions = nil
+	m.clearedrecurring_subscriptions = false
+	m.removedrecurring_subscriptions = nil
+}
+
 // AddUserHouseholdIDs adds the "user_households" edge to the UserHousehold entity by ids.
 func (m *UserMutation) AddUserHouseholdIDs(ids ...int) {
 	if m.user_households == nil {
@@ -8735,7 +10204,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.households != nil {
 		edges = append(edges, user.EdgeHouseholds)
 	}
@@ -8747,6 +10216,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.user_keys != nil {
 		edges = append(edges, user.EdgeUserKeys)
+	}
+	if m.recurring_subscriptions != nil {
+		edges = append(edges, user.EdgeRecurringSubscriptions)
 	}
 	if m.user_households != nil {
 		edges = append(edges, user.EdgeUserHouseholds)
@@ -8782,6 +10254,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeRecurringSubscriptions:
+		ids := make([]ent.Value, 0, len(m.recurring_subscriptions))
+		for id := range m.recurring_subscriptions {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeUserHouseholds:
 		ids := make([]ent.Value, 0, len(m.user_households))
 		for id := range m.user_households {
@@ -8794,7 +10272,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedhouseholds != nil {
 		edges = append(edges, user.EdgeHouseholds)
 	}
@@ -8806,6 +10284,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removeduser_keys != nil {
 		edges = append(edges, user.EdgeUserKeys)
+	}
+	if m.removedrecurring_subscriptions != nil {
+		edges = append(edges, user.EdgeRecurringSubscriptions)
 	}
 	if m.removeduser_households != nil {
 		edges = append(edges, user.EdgeUserHouseholds)
@@ -8841,6 +10322,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeRecurringSubscriptions:
+		ids := make([]ent.Value, 0, len(m.removedrecurring_subscriptions))
+		for id := range m.removedrecurring_subscriptions {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeUserHouseholds:
 		ids := make([]ent.Value, 0, len(m.removeduser_households))
 		for id := range m.removeduser_households {
@@ -8853,7 +10340,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedhouseholds {
 		edges = append(edges, user.EdgeHouseholds)
 	}
@@ -8865,6 +10352,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.cleareduser_keys {
 		edges = append(edges, user.EdgeUserKeys)
+	}
+	if m.clearedrecurring_subscriptions {
+		edges = append(edges, user.EdgeRecurringSubscriptions)
 	}
 	if m.cleareduser_households {
 		edges = append(edges, user.EdgeUserHouseholds)
@@ -8884,6 +10374,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedtransactions
 	case user.EdgeUserKeys:
 		return m.cleareduser_keys
+	case user.EdgeRecurringSubscriptions:
+		return m.clearedrecurring_subscriptions
 	case user.EdgeUserHouseholds:
 		return m.cleareduser_households
 	}
@@ -8913,6 +10405,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeUserKeys:
 		m.ResetUserKeys()
+		return nil
+	case user.EdgeRecurringSubscriptions:
+		m.ResetRecurringSubscriptions()
 		return nil
 	case user.EdgeUserHouseholds:
 		m.ResetUserHouseholds()
