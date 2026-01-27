@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6c4e1a1c99f4209112d5a55e5cc71554>>
+ * @generated SignedSource<<ec447d4584e22446387a4a5841303734>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type subscriptionCardFragment$data = {
   readonly cost: string;
   readonly fxRate: string;
   readonly icon: string | null | undefined;
+  readonly id: string;
   readonly interval: RecurringSubscriptionInterval;
   readonly intervalCount: number;
   readonly name: string;
@@ -32,6 +33,13 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "subscriptionCardFragment",
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -86,6 +94,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "e1ac51f1349cdccef8b479521777aff4";
+(node as any).hash = "781768d37d3ca6a3658f6d1ab0d63b37";
 
 export default node;

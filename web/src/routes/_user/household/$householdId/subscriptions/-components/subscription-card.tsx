@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { graphql, useFragment } from 'react-relay'
 
-import { Avatar } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Item,
   ItemContent,
@@ -18,9 +18,13 @@ import {
 import currency from 'currency.js'
 
 import type { subscriptionCardFragment$key } from './__generated__/subscriptionCardFragment.graphql'
+import { Link } from '@tanstack/react-router'
+import { getLogoDomainURL } from '@/lib/logo'
+import { cn } from '@/lib/utils'
 
 const SubscriptionCardFragment = graphql`
   fragment subscriptionCardFragment on RecurringSubscription {
+    id
     name
     icon
     cost
@@ -74,25 +78,48 @@ export function SubscriptionCard({ fragmentRef }: SubscriptionCardProps) {
     ])
 
   return (
-    <Item>
-      <ItemMedia variant="image">
-        <Avatar>{data.icon || data.name.charAt(0).toUpperCase()}</Avatar>
-      </ItemMedia>
-      <ItemContent className="gap-px">
-        <ItemTitle>{data.name}</ItemTitle>
-        <ItemDescription>{intervalText}</ItemDescription>
-      </ItemContent>
-      <ItemContent className="items-end gap-px">
-        <ItemTitle className="font-mono">
-          {formatCurrencyWithPrivacyMode({
-            value: costInHouseholdCurrency,
-            currencyCode: household.currency.code,
-          })}
-        </ItemTitle>
-        <ItemDescription>
-          {formatNextPaymentDate(nextPaymentDate)}
-        </ItemDescription>
-      </ItemContent>
-    </Item>
+    <Item
+      render={
+        <Link
+          className="no-underline!"
+          from="/household/$householdId/"
+          to="/household/$householdId/subscriptions/$subscriptionId"
+          search={(prev) => ({ ...prev })}
+          activeOptions={{ exact: true }}
+          params={{ subscriptionId: data.id }}
+        >
+          {({ isActive }) => (
+            <>
+              <ItemMedia variant="image">
+                <Avatar className="">
+                  <AvatarImage
+                    src={getLogoDomainURL(data.icon || '')}
+                    alt={data.icon || 'unknown logo'}
+                  />
+                  <AvatarFallback>{data.name}</AvatarFallback>
+                </Avatar>
+              </ItemMedia>
+              <ItemContent className="gap-px">
+                <ItemTitle className={cn(isActive && 'font-semibold')}>
+                  {data.name}
+                </ItemTitle>
+                <ItemDescription>{intervalText}</ItemDescription>
+              </ItemContent>
+              <ItemContent className="items-end gap-px">
+                <ItemTitle className="font-mono">
+                  {formatCurrencyWithPrivacyMode({
+                    value: costInHouseholdCurrency,
+                    currencyCode: household.currency.code,
+                  })}
+                </ItemTitle>
+                <ItemDescription>
+                  {formatNextPaymentDate(nextPaymentDate)}
+                </ItemDescription>
+              </ItemContent>
+            </>
+          )}
+        </Link>
+      }
+    />
   )
 }

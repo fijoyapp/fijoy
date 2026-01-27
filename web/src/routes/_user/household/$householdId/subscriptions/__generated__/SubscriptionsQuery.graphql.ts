@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aeabeeb71022f43356ad08b23ff3ed2a>>
+ * @generated SignedSource<<a918488a44310dff5bd7f3118cf1e6d1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -196,12 +196,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d140226fcf7aa86157969804f42bc57d",
+    "cacheID": "542d39c36e3aac0305d7b4cc024d31e6",
     "id": null,
     "metadata": {},
     "name": "SubscriptionsQuery",
     "operationKind": "query",
-    "text": "query SubscriptionsQuery {\n  ...subscriptionsPanelFragment\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n}\n\nfragment subscriptionsPanelFragment on Query {\n  recurringSubscriptions(first: 50) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query SubscriptionsQuery {\n  ...subscriptionsPanelFragment\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  id\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n}\n\nfragment subscriptionsPanelFragment on Query {\n  recurringSubscriptions(first: 50) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
