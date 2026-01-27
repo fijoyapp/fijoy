@@ -1,5 +1,6 @@
 import { LinkOptions } from '@tanstack/react-router'
 import {
+  AppWindowMacIcon,
   CreditCardIcon,
   LucideIcon,
   ReceiptIcon,
@@ -104,5 +105,20 @@ export const NAV: Array<{
       }),
     },
     icon: TagIcon,
+  },
+  {
+    name: 'Subscriptions',
+    link: {
+      to: '/household/$householdId/subscriptions',
+      activeOptions: {
+        exact: false,
+        includeSearch: false,
+      },
+      search: (prev) => ({
+        ...prev,
+        showNewTransaction: prev.showNewTransaction,
+      }),
+    },
+    icon: AppWindowMacIcon,
   },
 ]
