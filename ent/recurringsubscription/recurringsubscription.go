@@ -139,7 +139,6 @@ type Interval string
 
 // Interval values.
 const (
-	IntervalDay   Interval = "day"
 	IntervalWeek  Interval = "week"
 	IntervalMonth Interval = "month"
 	IntervalYear  Interval = "year"
@@ -152,7 +151,7 @@ func (i Interval) String() string {
 // IntervalValidator is a validator for the "interval" field enum values. It is called by the builders before save.
 func IntervalValidator(i Interval) error {
 	switch i {
-	case IntervalDay, IntervalWeek, IntervalMonth, IntervalYear:
+	case IntervalWeek, IntervalMonth, IntervalYear:
 		return nil
 	default:
 		return fmt.Errorf("recurringsubscription: invalid enum value for interval field: %q", i)

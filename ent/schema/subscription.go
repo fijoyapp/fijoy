@@ -23,7 +23,7 @@ func (RecurringSubscription) Fields() []ent.Field {
 		field.String("name").NotEmpty(),
 
 		field.Enum("interval").
-			Values("day", "week", "month", "year"),
+			Values("week", "month", "year"),
 		field.Int("interval_count").Positive().Default(1),
 
 		field.Time("start_date").SchemaType(map[string]string{
