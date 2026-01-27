@@ -322,13 +322,10 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
       {/* Subscriptions List */}
       <ItemGroup className="gap-0">
         {sortedSubscriptions.map((subscription, index) => (
-          <>
+          <Fragment key={subscription.id}>
             {index > 0 && <ItemSeparator className="my-1" />}
-            <SubscriptionCard
-              key={subscription.id}
-              fragmentRef={subscription}
-            />
-          </>
+            <SubscriptionCard fragmentRef={subscription} />
+          </Fragment>
         ))}
         {sortedSubscriptions.length === 0 && (
           <div className="text-muted-foreground py-8 text-center text-sm">
