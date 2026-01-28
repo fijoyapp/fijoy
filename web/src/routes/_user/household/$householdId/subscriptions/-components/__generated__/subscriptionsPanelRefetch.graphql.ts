@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c8ab0ea0605cc3da6b3f1ac1e2e80f3b>>
+ * @generated SignedSource<<fa0b3d6b3f9b5f56a5b58ac904ff546c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -46,7 +46,14 @@ v1 = [
     "name": "first",
     "variableName": "count"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -104,13 +111,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
+                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -165,6 +166,25 @@ return {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "icon",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Currency",
+                    "kind": "LinkedField",
+                    "name": "currency",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "code",
+                        "storageKey": null
+                      },
+                      (v2/*: any*/)
+                    ],
                     "storageKey": null
                   },
                   {
@@ -227,12 +247,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e32a56284687b042588f4cfb4cf62b20",
+    "cacheID": "18d9ad58d4f7815706a8a81b5cf9a776",
     "id": null,
     "metadata": {},
     "name": "subscriptionsPanelRefetch",
     "operationKind": "query",
-    "text": "query subscriptionsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n) {\n  ...subscriptionsPanelFragment_1G22uz\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  id\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n}\n\nfragment subscriptionsPanelFragment_1G22uz on Query {\n  recurringSubscriptions(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query subscriptionsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n) {\n  ...subscriptionsPanelFragment_1G22uz\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  id\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n  currency {\n    code\n    id\n  }\n}\n\nfragment subscriptionsPanelFragment_1G22uz on Query {\n  recurringSubscriptions(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

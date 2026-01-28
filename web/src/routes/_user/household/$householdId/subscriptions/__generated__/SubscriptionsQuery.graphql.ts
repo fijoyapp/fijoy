@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a918488a44310dff5bd7f3118cf1e6d1>>
+ * @generated SignedSource<<51b2fc80820aa427241855a45ffabe94>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,7 +26,14 @@ var v0 = [
     "name": "first",
     "value": 50
   }
-];
+],
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -73,13 +80,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -134,6 +135,25 @@ return {
                     "args": null,
                     "kind": "ScalarField",
                     "name": "icon",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "Currency",
+                    "kind": "LinkedField",
+                    "name": "currency",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "code",
+                        "storageKey": null
+                      },
+                      (v1/*: any*/)
+                    ],
                     "storageKey": null
                   },
                   {
@@ -196,12 +216,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "542d39c36e3aac0305d7b4cc024d31e6",
+    "cacheID": "5a83948039c9b2139959c03d43d42ac3",
     "id": null,
     "metadata": {},
     "name": "SubscriptionsQuery",
     "operationKind": "query",
-    "text": "query SubscriptionsQuery {\n  ...subscriptionsPanelFragment\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  id\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n}\n\nfragment subscriptionsPanelFragment on Query {\n  recurringSubscriptions(first: 50) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query SubscriptionsQuery {\n  ...subscriptionsPanelFragment\n}\n\nfragment subscriptionCardFragment on RecurringSubscription {\n  id\n  name\n  icon\n  cost\n  fxRate\n  interval\n  intervalCount\n  startDate\n  currency {\n    code\n    id\n  }\n}\n\nfragment subscriptionsPanelFragment on Query {\n  recurringSubscriptions(first: 50) {\n    edges {\n      node {\n        id\n        active\n        cost\n        fxRate\n        interval\n        intervalCount\n        startDate\n        name\n        ...subscriptionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();
