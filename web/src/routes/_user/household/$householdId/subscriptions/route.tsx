@@ -24,7 +24,7 @@ const SearchSchema = z.object({
   sort_by: z
     .enum(['cost_high', 'cost_low', 'next_payment', 'name_az', 'name_za'])
     .optional()
-    .default('cost_high'),
+    .default('next_payment'),
 })
 
 export const Route = createFileRoute(
