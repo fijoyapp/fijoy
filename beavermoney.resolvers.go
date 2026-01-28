@@ -356,6 +356,48 @@ func (r *mutationResolver) CreateTransactionCategory(ctx context.Context, input 
 	}, nil
 }
 
+// CreateRecurringSubscription is the resolver for the createRecurringSubscription field.
+func (r *mutationResolver) CreateRecurringSubscription(ctx context.Context, input ent.CreateRecurringSubscriptionInput) (*ent.RecurringSubscriptionEdge, error) {
+	client := ent.FromContext(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+	userID := contextkeys.GetUserID(ctx)
+
+	currency, err := client.Currency.Get(ctx, input.CurrencyID)
+	if err != nil {
+		return nil, fmt.Errorf("currency not found: %w", err)
+	}
+
+	household, err := r.entClient.Household.Query().Where(
+		household.IDEQ(householdID),
+	).WithCurrency().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	fxRate := decimal.NewFromInt(1)
+	if currency.ID != household.Edges.Currency.ID {
+		fxRate, err = r.fxrateClient.GetRate(ctx, currency.Code, household.Edges.Currency.Code, time.Now())
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	subscription, err := client.RecurringSubscription.Create().
+		SetHouseholdID(householdID).
+		SetInput(input).
+		SetFxRate(fxRate).
+		SetUserID(userID).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ent.RecurringSubscriptionEdge{
+		Node:   subscription,
+		Cursor: gqlutil.EncodeCursor(subscription.ID),
+	}, nil
+}
+
 // CreateExpense is the resolver for the createExpense field.
 func (r *mutationResolver) CreateExpense(ctx context.Context, input CreateExpenseInputCustom) (*ent.TransactionEdge, error) {
 	client := ent.FromContext(ctx)

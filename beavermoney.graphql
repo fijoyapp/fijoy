@@ -45,6 +45,9 @@ type Mutation {
   createTransactionCategory(
     input: CreateTransactionCategoryInput!
   ): TransactionCategoryEdge!
+  createRecurringSubscription(
+    input: CreateRecurringSubscriptionInput!
+  ): RecurringSubscriptionEdge!
 
   # Transaction mutations
   createExpense(input: CreateExpenseInputCustom!): TransactionEdge!
