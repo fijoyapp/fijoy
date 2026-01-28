@@ -409,38 +409,6 @@ export function NewSubscription({ fragmentRef }: NewSubscriptionProps) {
               }}
             />
             <form.Field
-              name="cost"
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Cost</FieldLabel>
-                    <FieldDescription>
-                      How much does this subscription cost per interval?
-                    </FieldDescription>
-                    <CurrencyInput
-                      id={field.name}
-                      name={field.name}
-                      placeholder="Please enter a number"
-                      onValueChange={(e) => {
-                        field.handleChange(e.floatValue!)
-                      }}
-                      value={field.state.value}
-                      locale={household.locale}
-                      currency={currencyCode}
-                      onBlur={field.handleBlur}
-                      aria-invalid={isInvalid}
-                      allowNegative={false}
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                )
-              }}
-            />
-            <form.Field
               name="currencyCode"
               children={(field) => {
                 const isInvalid =
@@ -475,6 +443,38 @@ export function NewSubscription({ fragmentRef }: NewSubscriptionProps) {
                         </ComboboxList>
                       </ComboboxContent>
                     </Combobox>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                )
+              }}
+            />
+            <form.Field
+              name="cost"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Cost</FieldLabel>
+                    <FieldDescription>
+                      How much does this subscription cost per interval?
+                    </FieldDescription>
+                    <CurrencyInput
+                      id={field.name}
+                      name={field.name}
+                      placeholder="Please enter a number"
+                      onValueChange={(e) => {
+                        field.handleChange(e.floatValue!)
+                      }}
+                      value={field.state.value}
+                      locale={household.locale}
+                      currency={currencyCode}
+                      onBlur={field.handleBlur}
+                      aria-invalid={isInvalid}
+                      allowNegative={false}
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
