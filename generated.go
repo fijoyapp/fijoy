@@ -223,17 +223,18 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		BuyInvestment             func(childComplexity int, input BuyInvestmentInputCustom) int
-		CreateAccount             func(childComplexity int, input ent.CreateAccountInput) int
-		CreateExpense             func(childComplexity int, input CreateExpenseInputCustom) int
-		CreateHousehold           func(childComplexity int, input ent.CreateHouseholdInput) int
-		CreateIncome              func(childComplexity int, input CreateIncomeInputCustom) int
-		CreateInvestment          func(childComplexity int, input CreateInvestmentInputCustom) int
-		CreateTransactionCategory func(childComplexity int, input ent.CreateTransactionCategoryInput) int
-		CreateTransfer            func(childComplexity int, input CreateTransferInputCustom) int
-		MoveInvestment            func(childComplexity int, input MoveInvestmentInputCustom) int
-		Refresh                   func(childComplexity int) int
-		SellInvestment            func(childComplexity int, input SellInvestmentInputCustom) int
+		BuyInvestment               func(childComplexity int, input BuyInvestmentInputCustom) int
+		CreateAccount               func(childComplexity int, input ent.CreateAccountInput) int
+		CreateExpense               func(childComplexity int, input CreateExpenseInputCustom) int
+		CreateHousehold             func(childComplexity int, input ent.CreateHouseholdInput) int
+		CreateIncome                func(childComplexity int, input CreateIncomeInputCustom) int
+		CreateInvestment            func(childComplexity int, input CreateInvestmentInputCustom) int
+		CreateRecurringSubscription func(childComplexity int, input ent.CreateRecurringSubscriptionInput) int
+		CreateTransactionCategory   func(childComplexity int, input ent.CreateTransactionCategoryInput) int
+		CreateTransfer              func(childComplexity int, input CreateTransferInputCustom) int
+		MoveInvestment              func(childComplexity int, input MoveInvestmentInputCustom) int
+		Refresh                     func(childComplexity int) int
+		SellInvestment              func(childComplexity int, input SellInvestmentInputCustom) int
 	}
 
 	NetWorthBreakdown struct {
@@ -450,6 +451,7 @@ type MutationResolver interface {
 	CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error)
 	CreateInvestment(ctx context.Context, input CreateInvestmentInputCustom) (*ent.InvestmentEdge, error)
 	CreateTransactionCategory(ctx context.Context, input ent.CreateTransactionCategoryInput) (*ent.TransactionCategoryEdge, error)
+	CreateRecurringSubscription(ctx context.Context, input ent.CreateRecurringSubscriptionInput) (*ent.RecurringSubscriptionEdge, error)
 	CreateExpense(ctx context.Context, input CreateExpenseInputCustom) (*ent.TransactionEdge, error)
 	CreateIncome(ctx context.Context, input CreateIncomeInputCustom) (*ent.TransactionEdge, error)
 	CreateTransfer(ctx context.Context, input CreateTransferInputCustom) (*ent.TransactionEdge, error)
@@ -1332,6 +1334,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.CreateInvestment(childComplexity, args["input"].(CreateInvestmentInputCustom)), true
+	case "Mutation.createRecurringSubscription":
+		if e.complexity.Mutation.CreateRecurringSubscription == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createRecurringSubscription_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateRecurringSubscription(childComplexity, args["input"].(ent.CreateRecurringSubscriptionInput)), true
 	case "Mutation.createTransactionCategory":
 		if e.complexity.Mutation.CreateTransactionCategory == nil {
 			break
@@ -2446,6 +2459,17 @@ func (ec *executionContext) field_Mutation_createInvestment_args(ctx context.Con
 	var err error
 	args := map[string]any{}
 	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateInvestmentInputCustom2beavermoneyᚗappᚐCreateInvestmentInputCustom)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createRecurringSubscription_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateRecurringSubscriptionInput2beavermoneyᚗappᚋentᚐCreateRecurringSubscriptionInput)
 	if err != nil {
 		return nil, err
 	}
@@ -7052,6 +7076,53 @@ func (ec *executionContext) fieldContext_Mutation_createTransactionCategory(ctx 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createTransactionCategory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createRecurringSubscription(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_createRecurringSubscription,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().CreateRecurringSubscription(ctx, fc.Args["input"].(ent.CreateRecurringSubscriptionInput))
+		},
+		nil,
+		ec.marshalNRecurringSubscriptionEdge2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionEdge,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createRecurringSubscription(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_RecurringSubscriptionEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_RecurringSubscriptionEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RecurringSubscriptionEdge", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createRecurringSubscription_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -23427,6 +23498,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createRecurringSubscription":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createRecurringSubscription(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createExpense":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createExpense(ctx, field)
@@ -26358,6 +26436,11 @@ func (ec *executionContext) unmarshalNCreateInvestmentLotInput2ᚖbeavermoneyᚗ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateRecurringSubscriptionInput2beavermoneyᚗappᚋentᚐCreateRecurringSubscriptionInput(ctx context.Context, v any) (ent.CreateRecurringSubscriptionInput, error) {
+	res, err := ec.unmarshalInputCreateRecurringSubscriptionInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateTransactionCategoryInput2beavermoneyᚗappᚋentᚐCreateTransactionCategoryInput(ctx context.Context, v any) (ent.CreateTransactionCategoryInput, error) {
 	res, err := ec.unmarshalInputCreateTransactionCategoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -26826,6 +26909,20 @@ func (ec *executionContext) marshalNRecurringSubscriptionConnection2ᚖbeavermon
 		return graphql.Null
 	}
 	return ec._RecurringSubscriptionConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRecurringSubscriptionEdge2beavermoneyᚗappᚋentᚐRecurringSubscriptionEdge(ctx context.Context, sel ast.SelectionSet, v ent.RecurringSubscriptionEdge) graphql.Marshaler {
+	return ec._RecurringSubscriptionEdge(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRecurringSubscriptionEdge2ᚖbeavermoneyᚗappᚋentᚐRecurringSubscriptionEdge(ctx context.Context, sel ast.SelectionSet, v *ent.RecurringSubscriptionEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RecurringSubscriptionEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNRecurringSubscriptionInterval2beavermoneyᚗappᚋentᚋrecurringsubscriptionᚐInterval(ctx context.Context, v any) (recurringsubscription.Interval, error) {
