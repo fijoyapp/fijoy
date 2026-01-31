@@ -6,7 +6,7 @@ web:
   pnpm dev
 
 server:
-  go run ./cmd/server/main.go
+  go tool air
 
 merge-graphql:
   watchexec -w ent.graphql -w beavermoney.graphql --shell=bash '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
