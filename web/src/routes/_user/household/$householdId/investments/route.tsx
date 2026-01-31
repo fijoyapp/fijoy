@@ -1,3 +1,4 @@
+import { zodValidator } from '@tanstack/zod-adapter'
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import {
   loadQuery,
@@ -5,20 +6,29 @@ import {
   useSubscribeToInvalidationState,
 } from 'react-relay'
 import { Fragment } from 'react/jsx-runtime'
-import { InvestmentsPanel } from './-components/investments-panel'
-import { useDualPaneDisplay } from '@/hooks/use-screen-size'
-import { environment } from '@/environment'
-import { PendingComponent } from '@/components/pending-component'
-import { Separator } from '@/components/ui/separator'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { InvestmentsQuery } from './__generated__/InvestmentsQuery.graphql'
-import { investmentsQuery } from './-investments-query'
 import { ROOT_ID } from 'relay-runtime'
+import { z } from 'zod'
+
+import { PendingComponent } from '@/components/pending-component'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Separator } from '@/components/ui/separator'
+import { environment } from '@/environment'
+import { useDualPaneDisplay } from '@/hooks/use-screen-size'
+
+import { InvestmentsPanel } from './-components/investments-panel'
+import { investmentsQuery } from './-investments-query'
+
+import type { InvestmentsQuery } from './__generated__/InvestmentsQuery.graphql'
+
+const SearchSchema = z.object({
+  group_by: z.enum(['account', 'symbol']).optional().default('account'),
+})
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments',
 )({
   component: RouteComponent,
+  validateSearch: zodValidator(SearchSchema),
   beforeLoad: () => {
     return loadQuery<InvestmentsQuery>(
       environment,

@@ -26,12 +26,27 @@ import {
   ItemSeparator,
   ItemTitle,
 } from '@/components/ui/item'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { PlusIcon, RefreshCwIcon } from 'lucide-react'
+
+const GROUP_BY_OPTIONS = {
+  account: 'By Account',
+  symbol: 'By Symbol',
+} as const
+
+type GroupByOption = keyof typeof GROUP_BY_OPTIONS
 
 const InvestmentsPanelFragment = graphql`
   fragment investmentsPanelFragment on Query
@@ -71,6 +86,23 @@ type InvestmentsPanelProps = {
 export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
   const data = useFragment(InvestmentsPanelFragment, fragmentRef)
   const environment = useRelayEnvironment()
+  const navigate = useNavigate()
+
+  const search = useSearch({
+    from: '/_user/household/$householdId/investments',
+  })
+  const groupByOption = search.group_by
+
+  const handleGroupByChange = (newGroupBy: string | null) => {
+    if (!newGroupBy) return
+    navigate({
+      to: '.',
+      search: (prev) => ({
+        ...prev,
+        group_by: newGroupBy as GroupByOption,
+      }),
+    })
+  }
 
   const [commitRefreshMutation, isRefreshInFlight] =
     useMutation<investmentsPanelRefreshMutation>(
@@ -109,9 +141,12 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
     () =>
       groupBy(data.investments.edges, (investment) => {
         invariant(investment?.node, 'Investment node is null')
+        if (groupByOption === 'symbol') {
+          return investment.node.name
+        }
         return investment.node.account.id
       }),
-    [data.investments],
+    [data.investments, groupByOption],
   )
 
   const { household } = useHousehold()
@@ -160,19 +195,50 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         </ItemContent>
       </Item>
       <div className="py-2"></div>
+
+      {/* Group By Dropdown */}
+      <div className="flex items-center justify-end p-0">
+        <Select
+          name="group-investments"
+          value={groupByOption}
+          onValueChange={handleGroupByChange}
+        >
+          <SelectTrigger className="w-32">
+            <SelectValue>{GROUP_BY_OPTIONS[groupByOption]}</SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {(
+                Object.entries(GROUP_BY_OPTIONS) as [GroupByOption, string][]
+              ).map(([value, label]) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="py-2"></div>
+
       <Accordion
+        key={groupByOption}
         multiple
         className="w-full"
         defaultValue={Object.keys(groupedInvestments)}
       >
-        {map(groupedInvestments, (investments, _) => {
+        {map(groupedInvestments, (investments, groupKey) => {
           invariant(investments[0]?.node, 'Investment node is null')
-          const account = investments[0].node.account
+          const groupLabel =
+            groupByOption === 'symbol'
+              ? investments[0].node.name
+              : investments[0].node.account.name
 
           return (
-            <AccordionItem value={account.id} key={account.id}>
+            <AccordionItem value={groupKey} key={groupKey}>
               <AccordionTrigger className="cursor-pointer justify-normal gap-2 hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-0">
-                <span>{account.name}</span>
+                <span>{groupLabel}</span>
                 <span className="grow"></span>
                 <span className="mr-3 font-mono">
                   {formatCurrencyWithPrivacyMode({
