@@ -94,22 +94,38 @@ const formSchema = z.object({
   locale: z.string().min(1, 'Locale is required.'),
 })
 
-const LOCALE_OPTIONS = [
-  { value: 'en-CA', label: 'English (Canada)', flag: '🇨🇦' },
-  { value: 'en-US', label: 'English (United States)', flag: '🇺🇸' },
-  { value: 'en-GB', label: 'English (United Kingdom)', flag: '🇬🇧' },
-  { value: 'en-AU', label: 'English (Australia)', flag: '🇦🇺' },
-  { value: 'fr-CA', label: 'French (Canada)', flag: '🇨🇦' },
-  { value: 'fr-FR', label: 'French (France)', flag: '🇫🇷' },
-  { value: 'de-DE', label: 'German (Germany)', flag: '🇩🇪' },
-  { value: 'es-ES', label: 'Spanish (Spain)', flag: '🇪🇸' },
-  { value: 'es-MX', label: 'Spanish (Mexico)', flag: '🇲🇽' },
-  { value: 'pt-BR', label: 'Portuguese (Brazil)', flag: '🇧🇷' },
-  { value: 'ja-JP', label: 'Japanese (Japan)', flag: '🇯🇵' },
-  { value: 'zh-CN', label: 'Chinese (China)', flag: '🇨🇳' },
-  { value: 'zh-TW', label: 'Chinese (Taiwan)', flag: '🇹🇼' },
-  { value: 'ko-KR', label: 'Korean (South Korea)', flag: '🇰🇷' },
+const SUPPORTED_LOCALE_CODES = [
+  'en-CA',
+  'en-US',
+  'en-GB',
+  'en-AU',
+  'fr-CA',
+  'fr-FR',
+  'de-DE',
+  'es-ES',
+  'es-MX',
+  'pt-BR',
+  'ja-JP',
+  'zh-CN',
+  'zh-TW',
+  'ko-KR',
 ] as const
+
+const languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
+const regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
+
+function getLocaleDisplayName(locale: string): string {
+  const [, region] = locale.split('-')
+  const languageName = languageNames.of(locale) ?? locale
+  const regionName = region ? regionNames.of(region) : null
+  return regionName ? `${languageName} (${regionName})` : languageName
+}
+
+// Create locale options with value/label for Combobox
+const LOCALE_OPTIONS = SUPPORTED_LOCALE_CODES.map((code) => ({
+  value: code,
+  label: getLocaleDisplayName(code),
+}))
 
 function RouteComponent() {
   const queryRef = Route.useLoaderData()
@@ -174,7 +190,10 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
 
       match(result)
         .with({ status: 'success' }, ({ data: resultData }) => {
-          invariant(resultData.createHousehold, 'No data returned from mutation')
+          invariant(
+            resultData.createHousehold,
+            'No data returned from mutation',
+          )
 
           form.reset()
           navigate({
@@ -296,9 +315,6 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
-                const selectedLocale = LOCALE_OPTIONS.find(
-                  (l) => l.value === field.state.value,
-                )
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Locale</FieldLabel>
@@ -306,7 +322,7 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
                       Determines date and number formatting
                     </FieldDescription>
                     <Combobox
-                      items={LOCALE_OPTIONS.map((l) => l.value)}
+                      items={LOCALE_OPTIONS}
                       value={field.state.value}
                       onValueChange={(value) => {
                         field.handleChange(value || '')
@@ -318,26 +334,15 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
                         placeholder="Select a locale"
                         onBlur={field.handleBlur}
                         aria-invalid={isInvalid}
-                        displayValue={() =>
-                          selectedLocale
-                            ? `${selectedLocale.flag} ${selectedLocale.label}`
-                            : ''
-                        }
                       />
                       <ComboboxContent>
                         <ComboboxEmpty>No locale found.</ComboboxEmpty>
                         <ComboboxList>
-                          {(item: string) => {
-                            const locale = LOCALE_OPTIONS.find(
-                              (l) => l.value === item,
-                            )
-                            return (
-                              <ComboboxItem key={item} value={item}>
-                                <span className="mr-2">{locale?.flag}</span>
-                                {locale?.label}
-                              </ComboboxItem>
-                            )
-                          }}
+                          {(item: { value: string; label: string }) => (
+                            <ComboboxItem key={item.value} value={item}>
+                              {item.label}
+                            </ComboboxItem>
+                          )}
                         </ComboboxList>
                       </ComboboxContent>
                     </Combobox>
