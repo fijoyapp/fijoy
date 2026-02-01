@@ -19,7 +19,10 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	obj *FinancialReport,
 	categoryType transactioncategory.Type,
 ) ([]*CategoryTypeAggregate, error) {
-	_, span := r.tracer.Start(ctx, "financialReportResolver.TotalExpenses")
+	_, span := r.tracer.Start(
+		ctx,
+		"financialReportResolver.aggregateByCategoryType",
+	)
 	defer span.End()
 
 	householdID := contextkeys.GetHouseholdID(ctx)
