@@ -10,11 +10,11 @@ import (
 	"time"
 
 	sentryotel "github.com/getsentry/sentry-go/otel"
+	gqlgen_opentelemetry "github.com/zhevron/gqlgen-opentelemetry"
 	"go.opentelemetry.io/otel"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	"github.com/charmbracelet/log"
-	"github.com/ravilushqa/otelgqlgen"
 
 	_ "beavermoney.app/ent/runtime"
 	"github.com/go-chi/httprate"
@@ -171,7 +171,7 @@ func main() {
 			otel.Tracer("beavermoney-server"),
 		),
 	)
-	gqlHandler.Use(otelgqlgen.Middleware())
+	gqlHandler.Use(gqlgen_opentelemetry.Tracer{})
 	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
 
 	r.Group(func(r chi.Router) {
