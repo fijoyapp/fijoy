@@ -45,7 +45,7 @@ func (r *financialReportResolver) TotalIncome(ctx context.Context, obj *Financia
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	_, span:= r.tracer.Start(ctx, "financialReportResolver.TotalIncome",
+	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.TotalIncome",
 		trace.WithAttributes(
 		attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
@@ -70,7 +70,7 @@ func (r *financialReportResolver) TotalExpenses(ctx context.Context, obj *Financ
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	_, span:= r.tracer.Start(ctx, "financialReportResolver.TotalExpenses",
+	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.TotalExpenses",
 		trace.WithAttributes(
 		attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),

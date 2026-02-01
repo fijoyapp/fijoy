@@ -19,7 +19,7 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	obj *FinancialReport,
 	categoryType transactioncategory.Type,
 ) ([]*CategoryTypeAggregate, error) {
-	_, span := r.tracer.Start(
+	ctx, span := r.tracer.Start(
 		ctx,
 		"financialReportResolver.aggregateByCategoryType",
 	)
