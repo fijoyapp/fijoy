@@ -60,12 +60,6 @@ func (_u *CurrencyUpdate) AppendLocales(v []string) *CurrencyUpdate {
 	return _u
 }
 
-// ClearLocales clears the value of the "locales" field.
-func (_u *CurrencyUpdate) ClearLocales() *CurrencyUpdate {
-	_u.mutation.ClearLocales()
-	return _u
-}
-
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
 func (_u *CurrencyUpdate) AddAccountIDs(ids ...int) *CurrencyUpdate {
 	_u.mutation.AddAccountIDs(ids...)
@@ -316,9 +310,6 @@ func (_u *CurrencyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, currency.FieldLocales, value)
 		})
-	}
-	if _u.mutation.LocalesCleared() {
-		_spec.ClearField(currency.FieldLocales, field.TypeJSON)
 	}
 	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -590,12 +581,6 @@ func (_u *CurrencyUpdateOne) SetLocales(v []string) *CurrencyUpdateOne {
 // AppendLocales appends value to the "locales" field.
 func (_u *CurrencyUpdateOne) AppendLocales(v []string) *CurrencyUpdateOne {
 	_u.mutation.AppendLocales(v)
-	return _u
-}
-
-// ClearLocales clears the value of the "locales" field.
-func (_u *CurrencyUpdateOne) ClearLocales() *CurrencyUpdateOne {
-	_u.mutation.ClearLocales()
 	return _u
 }
 
@@ -879,9 +864,6 @@ func (_u *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err 
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, currency.FieldLocales, value)
 		})
-	}
-	if _u.mutation.LocalesCleared() {
-		_spec.ClearField(currency.FieldLocales, field.TypeJSON)
 	}
 	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

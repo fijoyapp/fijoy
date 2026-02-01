@@ -155,6 +155,9 @@ func (_c *CurrencyCreate) check() error {
 			return &ValidationError{Name: "code", err: fmt.Errorf(`ent: validator failed for field "Currency.code": %w`, err)}
 		}
 	}
+	if _, ok := _c.mutation.Locales(); !ok {
+		return &ValidationError{Name: "locales", err: errors.New(`ent: missing required field "Currency.locales"`)}
+	}
 	return nil
 }
 
@@ -346,12 +349,6 @@ func (u *CurrencyUpsert) UpdateLocales() *CurrencyUpsert {
 	return u
 }
 
-// ClearLocales clears the value of the "locales" field.
-func (u *CurrencyUpsert) ClearLocales() *CurrencyUpsert {
-	u.SetNull(currency.FieldLocales)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -417,13 +414,6 @@ func (u *CurrencyUpsertOne) SetLocales(v []string) *CurrencyUpsertOne {
 func (u *CurrencyUpsertOne) UpdateLocales() *CurrencyUpsertOne {
 	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateLocales()
-	})
-}
-
-// ClearLocales clears the value of the "locales" field.
-func (u *CurrencyUpsertOne) ClearLocales() *CurrencyUpsertOne {
-	return u.Update(func(s *CurrencyUpsert) {
-		s.ClearLocales()
 	})
 }
 
@@ -655,13 +645,6 @@ func (u *CurrencyUpsertBulk) SetLocales(v []string) *CurrencyUpsertBulk {
 func (u *CurrencyUpsertBulk) UpdateLocales() *CurrencyUpsertBulk {
 	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateLocales()
-	})
-}
-
-// ClearLocales clears the value of the "locales" field.
-func (u *CurrencyUpsertBulk) ClearLocales() *CurrencyUpsertBulk {
-	return u.Update(func(s *CurrencyUpsert) {
-		s.ClearLocales()
 	})
 }
 

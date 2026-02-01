@@ -1563,24 +1563,10 @@ func (m *CurrencyMutation) AppendedLocales() ([]string, bool) {
 	return m.appendlocales, true
 }
 
-// ClearLocales clears the value of the "locales" field.
-func (m *CurrencyMutation) ClearLocales() {
-	m.locales = nil
-	m.appendlocales = nil
-	m.clearedFields[currency.FieldLocales] = struct{}{}
-}
-
-// LocalesCleared returns if the "locales" field was cleared in this mutation.
-func (m *CurrencyMutation) LocalesCleared() bool {
-	_, ok := m.clearedFields[currency.FieldLocales]
-	return ok
-}
-
 // ResetLocales resets all changes to the "locales" field.
 func (m *CurrencyMutation) ResetLocales() {
 	m.locales = nil
 	m.appendlocales = nil
-	delete(m.clearedFields, currency.FieldLocales)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by ids.
@@ -1971,11 +1957,7 @@ func (m *CurrencyMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *CurrencyMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(currency.FieldLocales) {
-		fields = append(fields, currency.FieldLocales)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1988,11 +1970,6 @@ func (m *CurrencyMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *CurrencyMutation) ClearField(name string) error {
-	switch name {
-	case currency.FieldLocales:
-		m.ClearLocales()
-		return nil
-	}
 	return fmt.Errorf("unknown Currency nullable field %s", name)
 }
 
