@@ -9,6 +9,10 @@ import (
 	"strconv"
 	"time"
 
+	sentryotel "github.com/getsentry/sentry-go/otel"
+	"go.opentelemetry.io/otel"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+
 	"github.com/charmbracelet/log"
 	"github.com/ravilushqa/otelgqlgen"
 
@@ -65,6 +69,12 @@ func main() {
 		logger.Error("Sentry initialization failed", "err", err)
 	}
 	defer sentry.Flush(time.Second)
+
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
+	)
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
 
 	meter := sentry.NewMeter(context.Background())
 
