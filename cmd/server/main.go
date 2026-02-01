@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/log"
+	"github.com/ravilushqa/otelgqlgen"
 
 	_ "beavermoney.app/ent/runtime"
 	"github.com/go-chi/httprate"
@@ -159,6 +160,7 @@ func main() {
 			meter,
 		),
 	)
+	gqlHandler.Use(otelgqlgen.Middleware())
 	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
 
 	r.Group(func(r chi.Router) {
