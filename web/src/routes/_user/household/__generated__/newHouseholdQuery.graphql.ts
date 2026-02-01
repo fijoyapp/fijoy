@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2dff4cc19461865147c58de9134aed7a>>
+ * @generated SignedSource<<ebd1133b0e77beca89b2d6aca378f928>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -62,6 +62,13 @@ const node: ConcreteRequest = {
             "kind": "ScalarField",
             "name": "code",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "locales",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -69,12 +76,12 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "dc4b1545606d3c3579dba8076d0df537",
+    "cacheID": "df6e059dd7b87777d0180d65b9360ee8",
     "id": null,
     "metadata": {},
     "name": "newHouseholdQuery",
     "operationKind": "query",
-    "text": "query newHouseholdQuery {\n  ...newHouseholdFragment\n}\n\nfragment newHouseholdFragment on Query {\n  currencies {\n    id\n    code\n  }\n}\n"
+    "text": "query newHouseholdQuery {\n  ...newHouseholdFragment\n}\n\nfragment newHouseholdFragment on Query {\n  currencies {\n    id\n    code\n    locales\n  }\n}\n"
   }
 };
 

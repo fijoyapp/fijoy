@@ -304,6 +304,7 @@ input CreateTransactionInput {
 type Currency implements Node {
   id: ID!
   code: String!
+  locales: [String!]
   accounts: [Account!]
   investments: [Investment!]
   transactionEntries: [TransactionEntry!]

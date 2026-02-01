@@ -61,7 +61,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Currency",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			currency.FieldCode: {Type: field.TypeString, Column: currency.FieldCode},
+			currency.FieldCode:    {Type: field.TypeString, Column: currency.FieldCode},
+			currency.FieldLocales: {Type: field.TypeJSON, Column: currency.FieldLocales},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -1082,6 +1083,11 @@ func (f *CurrencyFilter) WhereID(p entql.IntP) {
 // WhereCode applies the entql string predicate on the code field.
 func (f *CurrencyFilter) WhereCode(p entql.StringP) {
 	f.Where(p.Field(currency.FieldCode))
+}
+
+// WhereLocales applies the entql json.RawMessage predicate on the locales field.
+func (f *CurrencyFilter) WhereLocales(p entql.BytesP) {
+	f.Where(p.Field(currency.FieldLocales))
 }
 
 // WhereHasAccounts applies a predicate to check if query has an edge accounts.

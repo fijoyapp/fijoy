@@ -16,6 +16,7 @@ import (
 	"beavermoney.app/ent/transactionentry"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -44,6 +45,24 @@ func (_u *CurrencyUpdate) SetNillableCode(v *string) *CurrencyUpdate {
 	if v != nil {
 		_u.SetCode(*v)
 	}
+	return _u
+}
+
+// SetLocales sets the "locales" field.
+func (_u *CurrencyUpdate) SetLocales(v []string) *CurrencyUpdate {
+	_u.mutation.SetLocales(v)
+	return _u
+}
+
+// AppendLocales appends value to the "locales" field.
+func (_u *CurrencyUpdate) AppendLocales(v []string) *CurrencyUpdate {
+	_u.mutation.AppendLocales(v)
+	return _u
+}
+
+// ClearLocales clears the value of the "locales" field.
+func (_u *CurrencyUpdate) ClearLocales() *CurrencyUpdate {
+	_u.mutation.ClearLocales()
 	return _u
 }
 
@@ -289,6 +308,17 @@ func (_u *CurrencyUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(currency.FieldCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Locales(); ok {
+		_spec.SetField(currency.FieldLocales, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedLocales(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, currency.FieldLocales, value)
+		})
+	}
+	if _u.mutation.LocalesCleared() {
+		_spec.ClearField(currency.FieldLocales, field.TypeJSON)
 	}
 	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -548,6 +578,24 @@ func (_u *CurrencyUpdateOne) SetNillableCode(v *string) *CurrencyUpdateOne {
 	if v != nil {
 		_u.SetCode(*v)
 	}
+	return _u
+}
+
+// SetLocales sets the "locales" field.
+func (_u *CurrencyUpdateOne) SetLocales(v []string) *CurrencyUpdateOne {
+	_u.mutation.SetLocales(v)
+	return _u
+}
+
+// AppendLocales appends value to the "locales" field.
+func (_u *CurrencyUpdateOne) AppendLocales(v []string) *CurrencyUpdateOne {
+	_u.mutation.AppendLocales(v)
+	return _u
+}
+
+// ClearLocales clears the value of the "locales" field.
+func (_u *CurrencyUpdateOne) ClearLocales() *CurrencyUpdateOne {
+	_u.mutation.ClearLocales()
 	return _u
 }
 
@@ -823,6 +871,17 @@ func (_u *CurrencyUpdateOne) sqlSave(ctx context.Context) (_node *Currency, err 
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(currency.FieldCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Locales(); ok {
+		_spec.SetField(currency.FieldLocales, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedLocales(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, currency.FieldLocales, value)
+		})
+	}
+	if _u.mutation.LocalesCleared() {
+		_spec.ClearField(currency.FieldLocales, field.TypeJSON)
 	}
 	if _u.mutation.AccountsCleared() {
 		edge := &sqlgraph.EdgeSpec{

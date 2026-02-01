@@ -1361,6 +1361,8 @@ type CurrencyMutation struct {
 	typ                            string
 	id                             *int
 	code                           *string
+	locales                        *[]string
+	appendlocales                  []string
 	clearedFields                  map[string]struct{}
 	accounts                       map[int]struct{}
 	removedaccounts                map[int]struct{}
@@ -1514,6 +1516,71 @@ func (m *CurrencyMutation) OldCode(ctx context.Context) (v string, err error) {
 // ResetCode resets all changes to the "code" field.
 func (m *CurrencyMutation) ResetCode() {
 	m.code = nil
+}
+
+// SetLocales sets the "locales" field.
+func (m *CurrencyMutation) SetLocales(s []string) {
+	m.locales = &s
+	m.appendlocales = nil
+}
+
+// Locales returns the value of the "locales" field in the mutation.
+func (m *CurrencyMutation) Locales() (r []string, exists bool) {
+	v := m.locales
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocales returns the old "locales" field's value of the Currency entity.
+// If the Currency object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CurrencyMutation) OldLocales(ctx context.Context) (v []string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocales is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocales requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocales: %w", err)
+	}
+	return oldValue.Locales, nil
+}
+
+// AppendLocales adds s to the "locales" field.
+func (m *CurrencyMutation) AppendLocales(s []string) {
+	m.appendlocales = append(m.appendlocales, s...)
+}
+
+// AppendedLocales returns the list of values that were appended to the "locales" field in this mutation.
+func (m *CurrencyMutation) AppendedLocales() ([]string, bool) {
+	if len(m.appendlocales) == 0 {
+		return nil, false
+	}
+	return m.appendlocales, true
+}
+
+// ClearLocales clears the value of the "locales" field.
+func (m *CurrencyMutation) ClearLocales() {
+	m.locales = nil
+	m.appendlocales = nil
+	m.clearedFields[currency.FieldLocales] = struct{}{}
+}
+
+// LocalesCleared returns if the "locales" field was cleared in this mutation.
+func (m *CurrencyMutation) LocalesCleared() bool {
+	_, ok := m.clearedFields[currency.FieldLocales]
+	return ok
+}
+
+// ResetLocales resets all changes to the "locales" field.
+func (m *CurrencyMutation) ResetLocales() {
+	m.locales = nil
+	m.appendlocales = nil
+	delete(m.clearedFields, currency.FieldLocales)
 }
 
 // AddAccountIDs adds the "accounts" edge to the Account entity by ids.
@@ -1820,9 +1887,12 @@ func (m *CurrencyMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CurrencyMutation) Fields() []string {
-	fields := make([]string, 0, 1)
+	fields := make([]string, 0, 2)
 	if m.code != nil {
 		fields = append(fields, currency.FieldCode)
+	}
+	if m.locales != nil {
+		fields = append(fields, currency.FieldLocales)
 	}
 	return fields
 }
@@ -1834,6 +1904,8 @@ func (m *CurrencyMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case currency.FieldCode:
 		return m.Code()
+	case currency.FieldLocales:
+		return m.Locales()
 	}
 	return nil, false
 }
@@ -1845,6 +1917,8 @@ func (m *CurrencyMutation) OldField(ctx context.Context, name string) (ent.Value
 	switch name {
 	case currency.FieldCode:
 		return m.OldCode(ctx)
+	case currency.FieldLocales:
+		return m.OldLocales(ctx)
 	}
 	return nil, fmt.Errorf("unknown Currency field %s", name)
 }
@@ -1860,6 +1934,13 @@ func (m *CurrencyMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCode(v)
+		return nil
+	case currency.FieldLocales:
+		v, ok := value.([]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocales(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Currency field %s", name)
@@ -1890,7 +1971,11 @@ func (m *CurrencyMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *CurrencyMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(currency.FieldLocales) {
+		fields = append(fields, currency.FieldLocales)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1903,6 +1988,11 @@ func (m *CurrencyMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *CurrencyMutation) ClearField(name string) error {
+	switch name {
+	case currency.FieldLocales:
+		m.ClearLocales()
+		return nil
+	}
 	return fmt.Errorf("unknown Currency nullable field %s", name)
 }
 
@@ -1912,6 +2002,9 @@ func (m *CurrencyMutation) ResetField(name string) error {
 	switch name {
 	case currency.FieldCode:
 		m.ResetCode()
+		return nil
+	case currency.FieldLocales:
+		m.ResetLocales()
 		return nil
 	}
 	return fmt.Errorf("unknown Currency field %s", name)
