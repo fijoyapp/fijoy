@@ -208,11 +208,6 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
   const selectedCurrency = data.currencies.find((c) => c.code === currencyCode)
   const availableLocales = selectedCurrency?.locales ?? []
 
-  const localeOptions = availableLocales.map((locale) => ({
-    value: locale,
-    label: getLocaleDisplayName(locale, currencyCode),
-  }))
-
   return (
     <Card className="w-full max-w-lg">
       <CardHeader className="text-center">
@@ -323,11 +318,14 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
                     </FieldDescription>
                     <Combobox
                       key={currencyCode}
-                      items={localeOptions}
+                      items={availableLocales}
                       value={field.state.value}
-                      onValueChange={(value) => {
-                        console.log(value)
-                        field.handleChange(value || '')
+                      onValueChange={(value: string | null) => {
+                        field.handleChange(value ?? '')
+                      }}
+                      itemToStringLabel={(item: string | null) => {
+                        if (!item || !currencyCode) return ''
+                        return getLocaleDisplayName(item, currencyCode)
                       }}
                     >
                       <ComboboxInput
@@ -340,9 +338,9 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
                       <ComboboxContent>
                         <ComboboxEmpty>No locale found.</ComboboxEmpty>
                         <ComboboxList>
-                          {(item: { value: string; label: string }) => (
-                            <ComboboxItem key={item.value} value={item}>
-                              {item.label}
+                          {(item: string) => (
+                            <ComboboxItem key={item} value={item}>
+                              {getLocaleDisplayName(item, currencyCode)}
                             </ComboboxItem>
                           )}
                         </ComboboxList>
