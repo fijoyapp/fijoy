@@ -149,7 +149,7 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
   const form = useForm({
     defaultValues: {
       name: '',
-      currencyCode: 'CAD',
+      currencyCode: '',
       locale: '',
     },
     validators: {
