@@ -152,12 +152,12 @@ func main() {
 	)
 	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
 
-	r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator(tokenAuth))
 		r.Use(auth.Middleware(entClient))
 
+		r.Handle("/", playground.Handler("GraphQL playground", "/query"))
 		r.Handle("/query", gqlHandler)
 	})
 
