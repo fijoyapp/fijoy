@@ -162,7 +162,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 flex flex-col gap-2 lg:absolute">
+      <div className="fixed right-4 bottom-4 flex flex-col items-end gap-2 lg:absolute">
         <Button
           variant="outline"
           nativeButton={true}
@@ -178,8 +178,8 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
           to={'/household/$householdId/investments/new'}
           search={(prev) => ({ ...prev })}
         >
-          <Button nativeButton={true} className="rounded-full" size="icon-xl">
-            <PlusIcon />
+          <Button nativeButton={true} className="rounded-full" size="lg">
+            New Investment <PlusIcon />
           </Button>
         </Link>
       </div>

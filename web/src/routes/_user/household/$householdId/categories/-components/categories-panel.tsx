@@ -142,8 +142,8 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
           to={'/household/$householdId/categories/new'}
           search={identity}
         >
-          <Button nativeButton={true} size="icon-xl" className="rounded-full">
-            <PlusIcon />
+          <Button nativeButton={true} size="lg" className="rounded-full">
+            New Category <PlusIcon />
           </Button>
         </Link>
       </div>

@@ -151,7 +151,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 flex flex-col gap-2 lg:absolute">
+      <div className="fixed right-4 bottom-4 flex flex-col items-end gap-2 lg:absolute">
         <Button
           variant="outline"
           nativeButton={true}
@@ -167,8 +167,8 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           search={(prev) => ({ ...prev })}
           to={'/household/$householdId/accounts/new'}
         >
-          <Button nativeButton={true} size="icon-xl" className="rounded-full">
-            <PlusIcon />
+          <Button nativeButton={true} size="lg" className="rounded-full">
+            New Account <PlusIcon />
           </Button>
         </Link>
       </div>

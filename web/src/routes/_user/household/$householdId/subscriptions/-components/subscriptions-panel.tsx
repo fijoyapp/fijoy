@@ -246,7 +246,7 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 flex flex-col gap-2 lg:absolute">
+      <div className="fixed right-4 bottom-4 flex flex-col items-end gap-2 lg:absolute">
         <Button
           variant="outline"
           nativeButton={true}
@@ -262,8 +262,8 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
           search={(prev) => ({ ...prev })}
           to={'/household/$householdId/subscriptions/new'}
         >
-          <Button nativeButton={true} size="icon-xl" className="rounded-full">
-            <PlusIcon />
+          <Button nativeButton={true} size="lg" className="rounded-full">
+            New Subscription <PlusIcon />
           </Button>
         </Link>
       </div>
