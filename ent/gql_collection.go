@@ -300,6 +300,11 @@ func (_q *CurrencyQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				selectedFields = append(selectedFields, currency.FieldCode)
 				fieldSeen[currency.FieldCode] = struct{}{}
 			}
+		case "locales":
+			if _, ok := fieldSeen[currency.FieldLocales]; !ok {
+				selectedFields = append(selectedFields, currency.FieldLocales)
+				fieldSeen[currency.FieldLocales] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

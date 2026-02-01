@@ -14,6 +14,8 @@ const (
 	FieldID = "id"
 	// FieldCode holds the string denoting the code field in the database.
 	FieldCode = "code"
+	// FieldLocales holds the string denoting the locales field in the database.
+	FieldLocales = "locales"
 	// EdgeAccounts holds the string denoting the accounts edge name in mutations.
 	EdgeAccounts = "accounts"
 	// EdgeInvestments holds the string denoting the investments edge name in mutations.
@@ -67,6 +69,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldCode,
+	FieldLocales,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

@@ -17,6 +17,7 @@ type Currency struct {
 func (Currency) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("code").NotEmpty().Unique(),
+		field.Strings("locales").Optional(),
 	}
 }
 

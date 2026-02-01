@@ -133,6 +133,7 @@ type ComplexityRoot struct {
 		Households             func(childComplexity int) int
 		ID                     func(childComplexity int) int
 		Investments            func(childComplexity int) int
+		Locales                func(childComplexity int) int
 		RecurringSubscriptions func(childComplexity int) int
 		TransactionEntries     func(childComplexity int) int
 	}
@@ -881,6 +882,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Currency.Investments(childComplexity), true
+	case "Currency.locales":
+		if e.complexity.Currency.Locales == nil {
+			break
+		}
+
+		return e.complexity.Currency.Locales(childComplexity), true
 	case "Currency.recurringSubscriptions":
 		if e.complexity.Currency.RecurringSubscriptions == nil {
 			break
@@ -3301,6 +3308,8 @@ func (ec *executionContext) fieldContext_Account_currency(_ context.Context, fie
 				return ec.fieldContext_Currency_id(ctx, field)
 			case "code":
 				return ec.fieldContext_Currency_code(ctx, field)
+			case "locales":
+				return ec.fieldContext_Currency_locales(ctx, field)
 			case "accounts":
 				return ec.fieldContext_Currency_accounts(ctx, field)
 			case "investments":
@@ -4186,6 +4195,35 @@ func (ec *executionContext) fieldContext_Currency_code(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Currency_locales(ctx context.Context, field graphql.CollectedField, obj *ent.Currency) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Currency_locales,
+		func(ctx context.Context) (any, error) {
+			return obj.Locales, nil
+		},
+		nil,
+		ec.marshalOString2ᚕstringᚄ,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Currency_locales(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Currency",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Currency_accounts(ctx context.Context, field graphql.CollectedField, obj *ent.Currency) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -4928,6 +4966,8 @@ func (ec *executionContext) fieldContext_Household_currency(_ context.Context, f
 				return ec.fieldContext_Currency_id(ctx, field)
 			case "code":
 				return ec.fieldContext_Currency_code(ctx, field)
+			case "locales":
+				return ec.fieldContext_Currency_locales(ctx, field)
 			case "accounts":
 				return ec.fieldContext_Currency_accounts(ctx, field)
 			case "investments":
@@ -5968,6 +6008,8 @@ func (ec *executionContext) fieldContext_Investment_currency(_ context.Context, 
 				return ec.fieldContext_Currency_id(ctx, field)
 			case "code":
 				return ec.fieldContext_Currency_code(ctx, field)
+			case "locales":
+				return ec.fieldContext_Currency_locales(ctx, field)
 			case "accounts":
 				return ec.fieldContext_Currency_accounts(ctx, field)
 			case "investments":
@@ -7959,6 +8001,8 @@ func (ec *executionContext) fieldContext_Query_currencies(_ context.Context, fie
 				return ec.fieldContext_Currency_id(ctx, field)
 			case "code":
 				return ec.fieldContext_Currency_code(ctx, field)
+			case "locales":
+				return ec.fieldContext_Currency_locales(ctx, field)
 			case "accounts":
 				return ec.fieldContext_Currency_accounts(ctx, field)
 			case "investments":
@@ -9244,6 +9288,8 @@ func (ec *executionContext) fieldContext_RecurringSubscription_currency(_ contex
 				return ec.fieldContext_Currency_id(ctx, field)
 			case "code":
 				return ec.fieldContext_Currency_code(ctx, field)
+			case "locales":
+				return ec.fieldContext_Currency_locales(ctx, field)
 			case "accounts":
 				return ec.fieldContext_Currency_accounts(ctx, field)
 			case "investments":
@@ -11279,6 +11325,8 @@ func (ec *executionContext) fieldContext_TransactionEntry_currency(_ context.Con
 				return ec.fieldContext_Currency_id(ctx, field)
 			case "code":
 				return ec.fieldContext_Currency_code(ctx, field)
+			case "locales":
+				return ec.fieldContext_Currency_locales(ctx, field)
 			case "accounts":
 				return ec.fieldContext_Currency_accounts(ctx, field)
 			case "investments":
@@ -21860,6 +21908,8 @@ func (ec *executionContext) _Currency(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "locales":
+			out.Values[i] = ec._Currency_locales(ctx, field, obj)
 		case "accounts":
 			field := field
 

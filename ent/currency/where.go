@@ -123,6 +123,16 @@ func CodeContainsFold(v string) predicate.Currency {
 	return predicate.Currency(sql.FieldContainsFold(FieldCode, v))
 }
 
+// LocalesIsNil applies the IsNil predicate on the "locales" field.
+func LocalesIsNil() predicate.Currency {
+	return predicate.Currency(sql.FieldIsNull(FieldLocales))
+}
+
+// LocalesNotNil applies the NotNil predicate on the "locales" field.
+func LocalesNotNil() predicate.Currency {
+	return predicate.Currency(sql.FieldNotNull(FieldLocales))
+}
+
 // HasAccounts applies the HasEdge predicate on the "accounts" edge.
 func HasAccounts() predicate.Currency {
 	return predicate.Currency(func(s *sql.Selector) {

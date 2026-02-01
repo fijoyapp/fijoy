@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7e94524782b96bbb21731d25ce81bd80>>
+ * @generated SignedSource<<b6775122827d1b52c532ccaa2abee84e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ export type newHouseholdFragment$data = {
   readonly currencies: ReadonlyArray<{
     readonly code: string;
     readonly id: string;
+    readonly locales: ReadonlyArray<string> | null | undefined;
   }>;
   readonly " $fragmentType": "newHouseholdFragment";
 };
@@ -49,6 +50,13 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "code",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "locales",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -58,6 +66,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "9fbfaaefb9b04cd15e3ee60c59487302";
+(node as any).hash = "77676ca64e56f48cf04ed47100c4d110";
 
 export default node;

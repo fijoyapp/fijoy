@@ -32,6 +32,12 @@ func (_c *CurrencyCreate) SetCode(v string) *CurrencyCreate {
 	return _c
 }
 
+// SetLocales sets the "locales" field.
+func (_c *CurrencyCreate) SetLocales(v []string) *CurrencyCreate {
+	_c.mutation.SetLocales(v)
+	return _c
+}
+
 // AddAccountIDs adds the "accounts" edge to the Account entity by IDs.
 func (_c *CurrencyCreate) AddAccountIDs(ids ...int) *CurrencyCreate {
 	_c.mutation.AddAccountIDs(ids...)
@@ -180,6 +186,10 @@ func (_c *CurrencyCreate) createSpec() (*Currency, *sqlgraph.CreateSpec) {
 		_spec.SetField(currency.FieldCode, field.TypeString, value)
 		_node.Code = value
 	}
+	if value, ok := _c.mutation.Locales(); ok {
+		_spec.SetField(currency.FieldLocales, field.TypeJSON, value)
+		_node.Locales = value
+	}
 	if nodes := _c.mutation.AccountsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -324,6 +334,24 @@ func (u *CurrencyUpsert) UpdateCode() *CurrencyUpsert {
 	return u
 }
 
+// SetLocales sets the "locales" field.
+func (u *CurrencyUpsert) SetLocales(v []string) *CurrencyUpsert {
+	u.Set(currency.FieldLocales, v)
+	return u
+}
+
+// UpdateLocales sets the "locales" field to the value that was provided on create.
+func (u *CurrencyUpsert) UpdateLocales() *CurrencyUpsert {
+	u.SetExcluded(currency.FieldLocales)
+	return u
+}
+
+// ClearLocales clears the value of the "locales" field.
+func (u *CurrencyUpsert) ClearLocales() *CurrencyUpsert {
+	u.SetNull(currency.FieldLocales)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -375,6 +403,27 @@ func (u *CurrencyUpsertOne) SetCode(v string) *CurrencyUpsertOne {
 func (u *CurrencyUpsertOne) UpdateCode() *CurrencyUpsertOne {
 	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateCode()
+	})
+}
+
+// SetLocales sets the "locales" field.
+func (u *CurrencyUpsertOne) SetLocales(v []string) *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.SetLocales(v)
+	})
+}
+
+// UpdateLocales sets the "locales" field to the value that was provided on create.
+func (u *CurrencyUpsertOne) UpdateLocales() *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.UpdateLocales()
+	})
+}
+
+// ClearLocales clears the value of the "locales" field.
+func (u *CurrencyUpsertOne) ClearLocales() *CurrencyUpsertOne {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.ClearLocales()
 	})
 }
 
@@ -592,6 +641,27 @@ func (u *CurrencyUpsertBulk) SetCode(v string) *CurrencyUpsertBulk {
 func (u *CurrencyUpsertBulk) UpdateCode() *CurrencyUpsertBulk {
 	return u.Update(func(s *CurrencyUpsert) {
 		s.UpdateCode()
+	})
+}
+
+// SetLocales sets the "locales" field.
+func (u *CurrencyUpsertBulk) SetLocales(v []string) *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.SetLocales(v)
+	})
+}
+
+// UpdateLocales sets the "locales" field to the value that was provided on create.
+func (u *CurrencyUpsertBulk) UpdateLocales() *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.UpdateLocales()
+	})
+}
+
+// ClearLocales clears the value of the "locales" field.
+func (u *CurrencyUpsertBulk) ClearLocales() *CurrencyUpsertBulk {
+	return u.Update(func(s *CurrencyUpsert) {
+		s.ClearLocales()
 	})
 }
 

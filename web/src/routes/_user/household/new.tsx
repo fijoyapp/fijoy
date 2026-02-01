@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useForm } from '@tanstack/react-form'
+import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { graphql, ROOT_ID } from 'relay-runtime'
@@ -59,6 +59,7 @@ const newHouseholdFragment = graphql`
     currencies {
       id
       code
+      locales
     }
   }
 `
@@ -94,38 +95,25 @@ const formSchema = z.object({
   locale: z.string().min(1, 'Locale is required.'),
 })
 
-const SUPPORTED_LOCALE_CODES = [
-  'en-CA',
-  'en-US',
-  'en-GB',
-  'en-AU',
-  'fr-CA',
-  'fr-FR',
-  'de-DE',
-  'es-ES',
-  'es-MX',
-  'pt-BR',
-  'ja-JP',
-  'zh-CN',
-  'zh-TW',
-  'ko-KR',
-] as const
-
 const languageNames = new Intl.DisplayNames(['en'], { type: 'language' })
 const regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
 
-function getLocaleDisplayName(locale: string): string {
+function getLocaleDisplayName(locale: string, currencyCode: string): string {
   const [, region] = locale.split('-')
   const languageName = languageNames.of(locale) ?? locale
   const regionName = region ? regionNames.of(region) : null
-  return regionName ? `${languageName} (${regionName})` : languageName
-}
+  const localeName = regionName
+    ? `${languageName} (${regionName})`
+    : languageName
 
-// Create locale options with value/label for Combobox
-const LOCALE_OPTIONS = SUPPORTED_LOCALE_CODES.map((code) => ({
-  value: code,
-  label: getLocaleDisplayName(code),
-}))
+  // Show a preview of currency formatting
+  const currencyPreview = new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currencyCode,
+  }).format(1234.56)
+
+  return `${localeName} – ${currencyPreview}`
+}
 
 function RouteComponent() {
   const queryRef = Route.useLoaderData()
@@ -162,7 +150,7 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
     defaultValues: {
       name: '',
       currencyCode: 'CAD',
-      locale: 'en-CA',
+      locale: '',
     },
     validators: {
       onSubmit: formSchema,
@@ -212,6 +200,18 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
         .exhaustive()
     },
   })
+
+  const currencyCode = useStore(
+    form.store,
+    (state) => state.values.currencyCode,
+  )
+  const selectedCurrency = data.currencies.find((c) => c.code === currencyCode)
+  const availableLocales = selectedCurrency?.locales ?? []
+
+  const localeOptions = availableLocales.map((locale) => ({
+    value: locale,
+    label: getLocaleDisplayName(locale, currencyCode),
+  }))
 
   return (
     <Card className="w-full max-w-lg">
@@ -322,9 +322,11 @@ function NewHouseholdForm({ fragmentRef }: NewHouseholdFormProps) {
                       Determines date and number formatting
                     </FieldDescription>
                     <Combobox
-                      items={LOCALE_OPTIONS}
+                      key={currencyCode}
+                      items={localeOptions}
                       value={field.state.value}
                       onValueChange={(value) => {
+                        console.log(value)
                         field.handleChange(value || '')
                       }}
                     >

@@ -7,56 +7,30 @@ import (
 	"beavermoney.app/ent"
 	"beavermoney.app/ent/currency"
 	"entgo.io/ent/dialect/sql"
-	"github.com/samber/lo"
 )
 
-// StandardCurrencies is a list of commonly used currency codes
-// that should be available in the database.
-var StandardCurrencies = []string{
-	// Major currencies
-	"USD", // US Dollar
-	"EUR", // Euro
-	"GBP", // British Pound
-	"JPY", // Japanese Yen
-	"CNY", // Chinese Yuan
-	"CHF", // Swiss Franc
-	"CAD", // Canadian Dollar
-	"AUD", // Australian Dollar
-	"NZD", // New Zealand Dollar
-	"SEK", // Swedish Krona
-	"NOK", // Norwegian Krone
-	"DKK", // Danish Krone
-	"SGD", // Singapore Dollar
-	"HKD", // Hong Kong Dollar
-	"KRW", // South Korean Won
-	"INR", // Indian Rupee
-	"MXN", // Mexican Peso
-	"BRL", // Brazilian Real
-	"ZAR", // South African Rand
-	"RUB", // Russian Ruble
-	"TRY", // Turkish Lira
-	"PLN", // Polish Zloty
-	"THB", // Thai Baht
-	"MYR", // Malaysian Ringgit
-	"IDR", // Indonesian Rupiah
-	"PHP", // Philippine Peso
-	"CZK", // Czech Koruna
-	"HUF", // Hungarian Forint
-	"ILS", // Israeli Shekel
-	"CLP", // Chilean Peso
-	"ARS", // Argentine Peso
-	"COP", // Colombian Peso
-	"PEN", // Peruvian Sol
-	"AED", // UAE Dirham
-	"SAR", // Saudi Riyal
-	"EGP", // Egyptian Pound
-	"VND", // Vietnamese Dong
-	"PKR", // Pakistani Rupee
-	"BDT", // Bangladeshi Taka
-	"NGN", // Nigerian Naira
-	"KES", // Kenyan Shilling
-	"UAH", // Ukrainian Hryvnia
-	"TWD", // Taiwan Dollar
+// CurrencyWithLocales represents a currency code with its associated locales.
+type CurrencyWithLocales struct {
+	Code    string
+	Locales []string
+}
+
+// StandardCurrencies is a list of the 10 most popular currencies
+// with their associated locales.
+var StandardCurrencies = []CurrencyWithLocales{
+	{Code: "USD", Locales: []string{"en-US"}},
+	{
+		Code:    "EUR",
+		Locales: []string{"de-DE", "fr-FR", "es-ES", "it-IT", "nl-NL"},
+	},
+	{Code: "GBP", Locales: []string{"en-GB"}},
+	{Code: "JPY", Locales: []string{"ja-JP"}},
+	{Code: "CNY", Locales: []string{"zh-CN"}},
+	{Code: "CAD", Locales: []string{"en-CA", "fr-CA"}},
+	{Code: "AUD", Locales: []string{"en-AU"}},
+	{Code: "KRW", Locales: []string{"ko-KR"}},
+	{Code: "INR", Locales: []string{"en-IN", "hi-IN"}},
+	{Code: "BRL", Locales: []string{"pt-BR"}},
 }
 
 // setupCurrencies ensures all standard currencies exist in the database.
@@ -68,13 +42,12 @@ func setupCurrencies(
 ) error {
 	logger.Info("Setting up currencies", "count", len(StandardCurrencies))
 
-	// Deduplicate currency codes to ensure no duplicates
-	uniqueCurrencies := lo.Uniq(StandardCurrencies)
-
 	// Batch create/upsert currencies
-	bulk := make([]*ent.CurrencyCreate, len(uniqueCurrencies))
-	for i, code := range uniqueCurrencies {
-		bulk[i] = client.Currency.Create().SetCode(code)
+	bulk := make([]*ent.CurrencyCreate, len(StandardCurrencies))
+	for i, curr := range StandardCurrencies {
+		bulk[i] = client.Currency.Create().
+			SetCode(curr.Code).
+			SetLocales(curr.Locales)
 	}
 
 	err := client.Currency.CreateBulk(bulk...).
@@ -88,6 +61,6 @@ func setupCurrencies(
 		return err
 	}
 
-	logger.Info("Currencies setup completed", "count", len(uniqueCurrencies))
+	logger.Info("Currencies setup completed", "count", len(StandardCurrencies))
 	return nil
 }

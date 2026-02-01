@@ -54,6 +54,7 @@ var (
 	CurrenciesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "code", Type: field.TypeString, Unique: true},
+		{Name: "locales", Type: field.TypeJSON, Nullable: true},
 	}
 	// CurrenciesTable holds the schema information for the "currencies" table.
 	CurrenciesTable = &schema.Table{
