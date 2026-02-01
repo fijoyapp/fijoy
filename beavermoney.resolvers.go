@@ -45,7 +45,7 @@ func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *Fina
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	_, span:= r.tracer.Start(ctx, "financialReportResolver.IncomeBreakdown",
+	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.IncomeBreakdown",
 		trace.WithAttributes(
 		attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
@@ -61,7 +61,7 @@ func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *Fi
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	_, span:= r.tracer.Start(ctx, "financialReportResolver.ExpensesBreakdown",
+	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.ExpensesBreakdown",
 		trace.WithAttributes(
 		attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
@@ -74,7 +74,17 @@ func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *Fi
 
 // TransactionCount is the resolver for the transactionCount field.
 func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *FinancialReport) (int, error) {
+	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.TransactionCount",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
 	client := r.entClient
 
 	query := client.Transaction.Query().
@@ -112,8 +122,16 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 
 // CreateHousehold is the resolver for the createHousehold field.
 func (r *mutationResolver) CreateHousehold(ctx context.Context, input ent.CreateHouseholdInput) (*ent.Household, error) {
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateHousehold",
+		trace.WithAttributes(
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	// Create the household with a privacy bypass context since the user doesn't have
 	// a household context yet
@@ -150,10 +168,19 @@ func (r *mutationResolver) CreateHousehold(ctx context.Context, input ent.Create
 
 // CreateAccount is the resolver for the createAccount field.
 func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAccountInput) (*ent.AccountEdge, error) {
-	now := time.Now()
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateAccount",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	now := time.Now()
+	client := ent.FromContext(ctx)
 	zero := decimal.NewFromInt(0)
 
 	household, err := r.entClient.Household.Query().Where(
@@ -231,10 +258,19 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 
 // CreateInvestment is the resolver for the createInvestment field.
 func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInvestmentInputCustom) (*ent.InvestmentEdge, error) {
-	now := time.Now()
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateInvestment",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	now := time.Now()
+	client := ent.FromContext(ctx)
 	zero := decimal.NewFromInt(0)
 
 	account, err := client.Account.Query().Where(account.IDEQ(input.Input.AccountID)).WithCurrency().Only(ctx)
@@ -335,8 +371,18 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 
 // CreateTransactionCategory is the resolver for the createTransactionCategory field.
 func (r *mutationResolver) CreateTransactionCategory(ctx context.Context, input ent.CreateTransactionCategoryInput) (*ent.TransactionCategoryEdge, error) {
-	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateTransactionCategory",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	category, err := client.TransactionCategory.Create().
 		SetHouseholdID(householdID).
@@ -354,9 +400,18 @@ func (r *mutationResolver) CreateTransactionCategory(ctx context.Context, input 
 
 // CreateRecurringSubscription is the resolver for the createRecurringSubscription field.
 func (r *mutationResolver) CreateRecurringSubscription(ctx context.Context, input ent.CreateRecurringSubscriptionInput) (*ent.RecurringSubscriptionEdge, error) {
-	client := ent.FromContext(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
 	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateRecurringSubscription",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	currency, err := client.Currency.Get(ctx, input.CurrencyID)
 	if err != nil {
@@ -396,9 +451,18 @@ func (r *mutationResolver) CreateRecurringSubscription(ctx context.Context, inpu
 
 // CreateExpense is the resolver for the createExpense field.
 func (r *mutationResolver) CreateExpense(ctx context.Context, input CreateExpenseInputCustom) (*ent.TransactionEdge, error) {
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateExpense",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	account, err := client.Account.Get(ctx, input.TransactionEntry.AccountID)
 	if err != nil {
@@ -477,9 +541,18 @@ func (r *mutationResolver) CreateExpense(ctx context.Context, input CreateExpens
 
 // CreateIncome is the resolver for the createIncome field.
 func (r *mutationResolver) CreateIncome(ctx context.Context, input CreateIncomeInputCustom) (*ent.TransactionEdge, error) {
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateIncome",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	// Validate account belongs to household
 	account, err := client.Account.Get(ctx, input.TransactionEntry.AccountID)
@@ -562,9 +635,18 @@ func (r *mutationResolver) CreateIncome(ctx context.Context, input CreateIncomeI
 
 // CreateTransfer is the resolver for the createTransfer field.
 func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTransferInputCustom) (*ent.TransactionEdge, error) {
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateTransfer",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	// Validate we have at least 2 transaction entries
 	if len(input.TransactionEntries) < 2 {
@@ -660,9 +742,18 @@ func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTrans
 
 // BuyInvestment is the resolver for the buyInvestment field.
 func (r *mutationResolver) BuyInvestment(ctx context.Context, input BuyInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.BuyInvestment",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	// Validate account belongs to household
 	account, err := client.Account.Get(ctx, input.TransactionEntry.AccountID)
@@ -771,9 +862,18 @@ func (r *mutationResolver) BuyInvestment(ctx context.Context, input BuyInvestmen
 
 // SellInvestment is the resolver for the sellInvestment field.
 func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.SellInvestment",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	// Validate account belongs to household
 	account, err := client.Account.Get(ctx, input.TransactionEntry.AccountID)
@@ -882,9 +982,18 @@ func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestm
 
 // MoveInvestment is the resolver for the moveInvestment field.
 func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestmentInputCustom) (*ent.TransactionEdge, error) {
-	client := ent.FromContext(ctx)
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.MoveInvestment",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 
 	// Validate we have exactly 2 lots (from and to)
 	if len(input.InvestmentLots) != 2 {
@@ -1047,8 +1156,18 @@ func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestm
 
 // Refresh is the resolver for the refresh field.
 func (r *mutationResolver) Refresh(ctx context.Context) (bool, error) {
-	client := ent.FromContext(ctx)
+	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "mutationResolver.Refresh",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	client := ent.FromContext(ctx)
 	now := time.Now()
 
 	// Get household with currency
@@ -1212,6 +1331,17 @@ func (r *mutationResolver) Refresh(ctx context.Context) (bool, error) {
 
 // FxRate is the resolver for the fxRate field.
 func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error) {
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "queryResolver.FxRate",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
 	rate, err := r.fxrateClient.GetRate(ctx, from, to, datetime)
 	if err != nil {
 		return "", err
@@ -1222,6 +1352,17 @@ func (r *queryResolver) FxRate(ctx context.Context, from string, to string, date
 
 // StockQuote is the resolver for the stockQuote field.
 func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQuoteResult, error) {
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "queryResolver.StockQuote",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
 	stockQuote, err := r.marketClient.StockQuote(ctx, symbol)
 	if err != nil {
 		return nil, err
@@ -1238,6 +1379,17 @@ func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQu
 
 // CryptoQuote is the resolver for the cryptoQuote field.
 func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*CryptoQuoteResult, error) {
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	ctx, span:= r.tracer.Start(ctx, "queryResolver.CryptoQuote",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
 	cryptoQuote, err := r.marketClient.CryptoQuote(ctx, symbol)
 	if err != nil {
 		return nil, err
@@ -1254,6 +1406,17 @@ func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*Crypto
 
 // FinancialReport is the resolver for the financialReport field.
 func (r *queryResolver) FinancialReport(ctx context.Context, period TimePeriodInput) (*FinancialReport, error) {
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	_, span:= r.tracer.Start(ctx, "queryResolver.FinancialReport",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
 	// Parse time period
 	start, end := parseTimePeriod(period)
 
