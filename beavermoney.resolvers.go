@@ -26,6 +26,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // BalanceInHouseholdCurrency is the resolver for the balanceInHouseholdCurrency field.
@@ -40,11 +42,33 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 
 // IncomeBreakdown is the resolver for the incomeBreakdown field.
 func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *FinancialReport) (*CategoryTypeAggregate, error) {
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	_, span:= r.tracer.Start(ctx, "financialReportResolver.IncomeBreakdown",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
 	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeIncome)
 }
 
 // ExpensesBreakdown is the resolver for the expensesBreakdown field.
 func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *FinancialReport) (*CategoryTypeAggregate, error) {
+	userID := contextkeys.GetUserID(ctx)
+	householdID := contextkeys.GetHouseholdID(ctx)
+
+	_, span:= r.tracer.Start(ctx, "financialReportResolver.ExpensesBreakdown",
+		trace.WithAttributes(
+		attribute.Int("householdID", householdID),
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
 	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeExpense)
 }
 
