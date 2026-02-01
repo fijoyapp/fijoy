@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<11423df445f9265a166526ded7c80bd8>>
+ * @generated SignedSource<<8074027f730c430cac775766525c6087>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -286,8 +286,8 @@ return {
             "args": null,
             "concreteType": "CategoryTypeAggregate",
             "kind": "LinkedField",
-            "name": "incomeByCategoryType",
-            "plural": true,
+            "name": "incomeBreakdown",
+            "plural": false,
             "selections": (v7/*: any*/),
             "storageKey": null
           },
@@ -296,23 +296,9 @@ return {
             "args": null,
             "concreteType": "CategoryTypeAggregate",
             "kind": "LinkedField",
-            "name": "expensesByCategoryType",
-            "plural": true,
+            "name": "expensesBreakdown",
+            "plural": false,
             "selections": (v7/*: any*/),
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "totalIncome",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "totalExpenses",
             "storageKey": null
           }
         ],
@@ -321,16 +307,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "aba2261a67513f9adc9dc783d0b63c0a",
+    "cacheID": "5365efbe0f28f30d947d055d3d920acd",
     "id": null,
     "metadata": {},
     "name": "categoriesPanelRefetch",
     "operationKind": "query",
-    "text": "query categoriesPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n  $endDate: Time!\n  $startDate: Time!\n) {\n  ...categoriesPanelFragment_41eAbc\n}\n\nfragment categoriesPanelFragment_41eAbc on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    incomeByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesByCategoryType {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n    ...financialSummaryCardsFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n  icon\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesByCategoryType {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n"
+    "text": "query categoriesPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n  $endDate: Time!\n  $startDate: Time!\n) {\n  ...categoriesPanelFragment_41eAbc\n}\n\nfragment categoriesPanelFragment_41eAbc on Query {\n  transactionCategories(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        type\n        ...categoryCardCategoryFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    incomeBreakdown {\n      categoryType\n      total\n      transactionCount\n    }\n    expensesBreakdown {\n      categoryType\n      total\n      transactionCount\n    }\n    ...categoryCardFinancialReportFragment\n    ...financialSummaryCardsFragment\n  }\n}\n\nfragment categoryCardCategoryFragment on TransactionCategory {\n  id\n  name\n  type\n  icon\n}\n\nfragment categoryCardFinancialReportFragment on FinancialReport {\n  incomeBreakdown {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n  expensesBreakdown {\n    categories {\n      category {\n        id\n      }\n      total\n      transactionCount\n    }\n  }\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  incomeBreakdown {\n    total\n  }\n  expensesBreakdown {\n    total\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8c94e2269d150fffeed2773883356056";
+(node as any).hash = "ab7273302aa950d86e7ac694b02ce678";
 
 export default node;

@@ -26,8 +26,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 )
 
 // BalanceInHouseholdCurrency is the resolver for the balanceInHouseholdCurrency field.
@@ -40,63 +38,13 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 	return obj.Value.Mul(obj.FxRate).String(), nil
 }
 
-// TotalIncome is the resolver for the totalIncome field.
-func (r *financialReportResolver) TotalIncome(ctx context.Context, obj *FinancialReport) (string, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.TotalIncome",
-		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	aggregates, err := r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeIncome)
-	if err != nil {
-		return "0", err
-	}
-
-	if len(aggregates) == 0 {
-		return "0", nil
-	}
-
-	return aggregates[0].Total, nil
-}
-
-// TotalExpenses is the resolver for the totalExpenses field.
-func (r *financialReportResolver) TotalExpenses(ctx context.Context, obj *FinancialReport) (string, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.TotalExpenses",
-		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	aggregates, err := r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeExpense)
-	if err != nil {
-		return "0", err
-	}
-
-	if len(aggregates) == 0 {
-		return "0", nil
-	}
-
-	return aggregates[0].Total, nil
-}
-
-// IncomeByCategoryType is the resolver for the incomeByCategoryType field.
-func (r *financialReportResolver) IncomeByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
+// IncomeBreakdown is the resolver for the incomeBreakdown field.
+func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *FinancialReport) (*CategoryTypeAggregate, error) {
 	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeIncome)
 }
 
-// ExpensesByCategoryType is the resolver for the expensesByCategoryType field.
-func (r *financialReportResolver) ExpensesByCategoryType(ctx context.Context, obj *FinancialReport) ([]*CategoryTypeAggregate, error) {
+// ExpensesBreakdown is the resolver for the expensesBreakdown field.
+func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *FinancialReport) (*CategoryTypeAggregate, error) {
 	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeExpense)
 }
 

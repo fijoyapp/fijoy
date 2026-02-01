@@ -38,7 +38,7 @@ const categoryCardCategoryFragment = graphql`
 
 const categoryCardFinancialReportFragment = graphql`
   fragment categoryCardFinancialReportFragment on FinancialReport {
-    incomeByCategoryType {
+    incomeBreakdown {
       categories {
         category {
           id
@@ -47,7 +47,7 @@ const categoryCardFinancialReportFragment = graphql`
         transactionCount
       }
     }
-    expensesByCategoryType {
+    expensesBreakdown {
       categories {
         category {
           id
@@ -78,8 +78,10 @@ export function CategoryCard({
 
   // Look up this category's aggregate data
   const { total, transactionCount } = useMemo(() => {
-    const categoryAgg = financialReport.incomeByCategoryType
-      .concat(financialReport.expensesByCategoryType)
+    const categoryAgg = [
+      financialReport.incomeBreakdown,
+      financialReport.expensesBreakdown,
+    ]
       .flatMap((typeAgg) => typeAgg.categories)
       .find((c) => c.category.id === category.id)
 

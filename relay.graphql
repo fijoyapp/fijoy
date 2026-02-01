@@ -259,10 +259,8 @@ type Mutation {
 }
 
 type FinancialReport {
-  totalIncome: String!
-  totalExpenses: String!
-  incomeByCategoryType: [CategoryTypeAggregate!]!
-  expensesByCategoryType: [CategoryTypeAggregate!]!
+  incomeBreakdown: CategoryTypeAggregate!
+  expensesBreakdown: CategoryTypeAggregate!
   transactionCount: Int!
   startDate: Time!
   endDate: Time!

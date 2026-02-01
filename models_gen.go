@@ -61,13 +61,11 @@ type CryptoQuoteResult struct {
 }
 
 type FinancialReport struct {
-	TotalIncome            string                   `json:"totalIncome"`
-	TotalExpenses          string                   `json:"totalExpenses"`
-	IncomeByCategoryType   []*CategoryTypeAggregate `json:"incomeByCategoryType"`
-	ExpensesByCategoryType []*CategoryTypeAggregate `json:"expensesByCategoryType"`
-	TransactionCount       int                      `json:"transactionCount"`
-	StartDate              time.Time                `json:"startDate"`
-	EndDate                time.Time                `json:"endDate"`
+	IncomeBreakdown   *CategoryTypeAggregate `json:"incomeBreakdown"`
+	ExpensesBreakdown *CategoryTypeAggregate `json:"expensesBreakdown"`
+	TransactionCount  int                    `json:"transactionCount"`
+	StartDate         time.Time              `json:"startDate"`
+	EndDate           time.Time              `json:"endDate"`
 }
 
 type MoveInvestmentInputCustom struct {

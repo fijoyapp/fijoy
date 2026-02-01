@@ -18,7 +18,7 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	ctx context.Context,
 	obj *FinancialReport,
 	categoryType transactioncategory.Type,
-) ([]*CategoryTypeAggregate, error) {
+) (*CategoryTypeAggregate, error) {
 	ctx, span := r.tracer.Start(
 		ctx,
 		"financialReportResolver.aggregateByCategoryType",
@@ -103,7 +103,7 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	}
 
 	if len(res) == 0 {
-		return []*CategoryTypeAggregate{}, nil
+		return &CategoryTypeAggregate{}, nil
 	}
 
 	// Aggregate by category (converting currencies)
@@ -182,13 +182,11 @@ func (r *financialReportResolver) aggregateByCategoryType(
 		grandCount += data.count
 	}
 
-	return []*CategoryTypeAggregate{
-		{
-			CategoryType:     categoryType,
-			Total:            grandTotal.String(),
-			TransactionCount: grandCount,
-			Categories:       categoryAggregates,
-		},
+	return &CategoryTypeAggregate{
+		CategoryType:     categoryType,
+		Total:            grandTotal.String(),
+		TransactionCount: grandCount,
+		Categories:       categoryAggregates,
 	}, nil
 }
 

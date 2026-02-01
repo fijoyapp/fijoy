@@ -14,8 +14,12 @@ import type { financialSummaryCardsFragment$key } from './__generated__/financia
 
 const FinancialSummaryCardsFragment = graphql`
   fragment financialSummaryCardsFragment on FinancialReport {
-    totalIncome
-    totalExpenses
+    incomeBreakdown {
+      total
+    }
+    expensesBreakdown {
+      total
+    }
   }
 `
 
@@ -31,8 +35,8 @@ export function FinancialSummaryCards({
   const { formatCurrencyWithPrivacyMode } = useCurrency()
 
   const { totalIncome, totalExpenses, net, savingRate } = useMemo(() => {
-    const income = currency(data.totalIncome)
-    const expenses = currency(data.totalExpenses)
+    const income = currency(data.incomeBreakdown.total)
+    const expenses = currency(data.expensesBreakdown.total)
     const netAmount = income.subtract(expenses)
 
     return {
@@ -44,7 +48,7 @@ export function FinancialSummaryCards({
           ? ':('
           : `${((netAmount.value / income.value) * 100).toFixed(2)}%`,
     }
-  }, [data.totalIncome, data.totalExpenses])
+  }, [data.incomeBreakdown, data.expensesBreakdown])
 
   return (
     <div className="grid grid-cols-2 gap-4">

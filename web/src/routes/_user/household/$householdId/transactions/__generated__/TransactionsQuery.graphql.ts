@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f235b18c838a0be62ed0de7d457743b>>
+ * @generated SignedSource<<83e402b86de11ed48eb8b65c27b644ef>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -972,7 +972,16 @@ v10 = {
     (v7/*: any*/)
   ],
   "storageKey": null
-};
+},
+v11 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "total",
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -1214,15 +1223,21 @@ return {
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "totalIncome",
+            "concreteType": "CategoryTypeAggregate",
+            "kind": "LinkedField",
+            "name": "incomeBreakdown",
+            "plural": false,
+            "selections": (v11/*: any*/),
             "storageKey": null
           },
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "totalExpenses",
+            "concreteType": "CategoryTypeAggregate",
+            "kind": "LinkedField",
+            "name": "expensesBreakdown",
+            "plural": false,
+            "selections": (v11/*: any*/),
             "storageKey": null
           }
         ],
@@ -1231,12 +1246,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3629b76295fbad14a6a9c9aa198f54a2",
+    "cacheID": "624af311d4ce3e7a8badbe21c816d52c",
     "id": null,
     "metadata": {},
     "name": "TransactionsQuery",
     "operationKind": "query",
-    "text": "query TransactionsQuery(\n  $where: TransactionWhereInput\n  $startDate: Time!\n  $endDate: Time!\n) {\n  ...transactionsPanelFragment_7P6yy\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  totalIncome\n  totalExpenses\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    icon\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment_7P6yy on Query {\n  ...transactionsListFragment_3FC4Qo\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    ...financialSummaryCardsFragment\n  }\n}\n"
+    "text": "query TransactionsQuery(\n  $where: TransactionWhereInput\n  $startDate: Time!\n  $endDate: Time!\n) {\n  ...transactionsPanelFragment_7P6yy\n}\n\nfragment financialSummaryCardsFragment on FinancialReport {\n  incomeBreakdown {\n    total\n  }\n  expensesBreakdown {\n    total\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  datetime\n  category {\n    name\n    type\n    icon\n    id\n  }\n  investmentLots {\n    id\n    amount\n    price\n    investment {\n      name\n      symbol\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n  transactionEntries {\n    id\n    amount\n    account {\n      name\n      currency {\n        code\n        id\n      }\n      id\n    }\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Query {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n\nfragment transactionsPanelFragment_7P6yy on Query {\n  ...transactionsListFragment_3FC4Qo\n  financialReport(period: {startDate: $startDate, endDate: $endDate}) {\n    ...financialSummaryCardsFragment\n  }\n}\n"
   }
 };
 })();

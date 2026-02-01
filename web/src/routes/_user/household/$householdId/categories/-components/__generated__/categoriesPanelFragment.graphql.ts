@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<acb375cce798dd48a626d0a715dec4d6>>
+ * @generated SignedSource<<bc0704a2ec6f0bb2e098108ccca25ecf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,16 +13,16 @@ export type TransactionCategoryType = "expense" | "income" | "investment" | "set
 import { FragmentRefs } from "relay-runtime";
 export type categoriesPanelFragment$data = {
   readonly financialReport: {
-    readonly expensesByCategoryType: ReadonlyArray<{
+    readonly expensesBreakdown: {
       readonly categoryType: TransactionCategoryType;
       readonly total: string;
       readonly transactionCount: number;
-    }>;
-    readonly incomeByCategoryType: ReadonlyArray<{
+    };
+    readonly incomeBreakdown: {
       readonly categoryType: TransactionCategoryType;
       readonly total: string;
       readonly transactionCount: number;
-    }>;
+    };
     readonly " $fragmentSpreads": FragmentRefs<"categoryCardFinancialReportFragment" | "financialSummaryCardsFragment">;
   };
   readonly transactionCategories: {
@@ -239,8 +239,8 @@ return {
           "args": null,
           "concreteType": "CategoryTypeAggregate",
           "kind": "LinkedField",
-          "name": "incomeByCategoryType",
-          "plural": true,
+          "name": "incomeBreakdown",
+          "plural": false,
           "selections": (v1/*: any*/),
           "storageKey": null
         },
@@ -249,8 +249,8 @@ return {
           "args": null,
           "concreteType": "CategoryTypeAggregate",
           "kind": "LinkedField",
-          "name": "expensesByCategoryType",
-          "plural": true,
+          "name": "expensesBreakdown",
+          "plural": false,
           "selections": (v1/*: any*/),
           "storageKey": null
         },
@@ -273,6 +273,6 @@ return {
 };
 })();
 
-(node as any).hash = "8c94e2269d150fffeed2773883356056";
+(node as any).hash = "ab7273302aa950d86e7ac694b02ce678";
 
 export default node;

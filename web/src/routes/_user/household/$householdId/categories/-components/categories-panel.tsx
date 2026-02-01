@@ -52,12 +52,12 @@ const CategoriesPanelFragment = graphql`
       }
     }
     financialReport(period: { startDate: $startDate, endDate: $endDate }) {
-      incomeByCategoryType {
+      incomeBreakdown {
         categoryType
         total
         transactionCount
       }
-      expensesByCategoryType {
+      expensesBreakdown {
         categoryType
         total
         transactionCount
@@ -98,19 +98,16 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
     const typeMap = new Map<string, { total: string; count: number }>()
 
     // Process income categories
-    data.financialReport.incomeByCategoryType.forEach((agg) => {
-      typeMap.set(agg.categoryType, {
-        total: agg.total,
-        count: agg.transactionCount,
-      })
+    const incomeBreakdown = data.financialReport.incomeBreakdown
+    typeMap.set(incomeBreakdown.categoryType, {
+      total: incomeBreakdown.total,
+      count: incomeBreakdown.transactionCount,
     })
 
-    // Process expense categories
-    data.financialReport.expensesByCategoryType.forEach((agg) => {
-      typeMap.set(agg.categoryType, {
-        total: agg.total,
-        count: agg.transactionCount,
-      })
+    const expensesBreakdown = data.financialReport.expensesBreakdown
+    typeMap.set(expensesBreakdown.categoryType, {
+      total: expensesBreakdown.total,
+      count: expensesBreakdown.transactionCount,
     })
 
     return typeMap

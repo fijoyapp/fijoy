@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d1428a8d098f8cec7b7fea2c64c508f9>>
+ * @generated SignedSource<<ae2a458d4d7e8fea6fed322cdfb78703>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,8 +11,12 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type financialSummaryCardsFragment$data = {
-  readonly totalExpenses: string;
-  readonly totalIncome: string;
+  readonly expensesBreakdown: {
+    readonly total: string;
+  };
+  readonly incomeBreakdown: {
+    readonly total: string;
+  };
   readonly " $fragmentType": "financialSummaryCardsFragment";
 };
 export type financialSummaryCardsFragment$key = {
@@ -20,7 +24,17 @@ export type financialSummaryCardsFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"financialSummaryCardsFragment">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "total",
+    "storageKey": null
+  }
+];
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -29,22 +43,29 @@ const node: ReaderFragment = {
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "totalIncome",
+      "concreteType": "CategoryTypeAggregate",
+      "kind": "LinkedField",
+      "name": "incomeBreakdown",
+      "plural": false,
+      "selections": (v0/*: any*/),
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "totalExpenses",
+      "concreteType": "CategoryTypeAggregate",
+      "kind": "LinkedField",
+      "name": "expensesBreakdown",
+      "plural": false,
+      "selections": (v0/*: any*/),
       "storageKey": null
     }
   ],
   "type": "FinancialReport",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "1290e12d8c455cc231cc04bc422a93f7";
+(node as any).hash = "f4870b160f5dc3a4da116c4b39ac7d02";
 
 export default node;
