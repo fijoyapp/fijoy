@@ -23,7 +23,6 @@ import {
 import invariant from 'tiny-invariant'
 import { Rnd } from 'react-rnd'
 import { z } from 'zod'
-import { useState, useEffect } from 'react'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
 import { MobileFabNav } from '@/components/mobile-fab-nav'
