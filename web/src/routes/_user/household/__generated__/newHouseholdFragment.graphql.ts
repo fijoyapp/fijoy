@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b6775122827d1b52c532ccaa2abee84e>>
+ * @generated SignedSource<<7e753cfaf1bb9ca094d0f173a29d7157>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type newHouseholdFragment$data = {
   readonly currencies: ReadonlyArray<{
     readonly code: string;
     readonly id: string;
-    readonly locales: ReadonlyArray<string> | null | undefined;
+    readonly locales: ReadonlyArray<string>;
   }>;
   readonly " $fragmentType": "newHouseholdFragment";
 };

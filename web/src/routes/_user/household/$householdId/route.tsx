@@ -44,10 +44,7 @@ import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { HouseholdProvider } from '@/hooks/use-household'
-import {
-  LOCAL_STORAGE_HOUSEHOLD_ID_KEY,
-  LOCAL_STORAGE_RND_POSITION_KEY,
-} from '@/constant'
+import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 import { useTheme } from '@/components/theme-provider'
 import { PendingComponent } from '@/components/pending-component'
 import { environment } from '@/environment'
@@ -128,16 +125,6 @@ function RouteComponent() {
 
   const { isPrivacyModeEnabled, togglePrivacyMode } = usePrivacyMode()
   const { setTheme } = useTheme()
-
-  // State for Rnd position (desktop only)
-  const [rndPosition, setRndPosition] = useState<RndPosition>(
-    getRndPositionFromStorage,
-  )
-
-  // Update localStorage when position changes
-  useEffect(() => {
-    saveRndPositionToStorage(rndPosition)
-  }, [rndPosition])
 
   const setLogTransactionOpen = (open: boolean) => {
     navigate({
@@ -232,22 +219,6 @@ function RouteComponent() {
         {/* Desktop: Resizable & Draggable New Transaction Form */}
         {!isMobile && (
           <Rnd
-            position={{ x: rndPosition.x, y: rndPosition.y }}
-            size={{ width: rndPosition.width, height: 'auto' }}
-            onDragStop={(_e, d) => {
-              setRndPosition((prev) => ({
-                ...prev,
-                x: d.x,
-                y: d.y,
-              }))
-            }}
-            onResizeStop={(_e, _direction, ref, _delta, position) => {
-              setRndPosition({
-                x: position.x,
-                y: position.y,
-                width: parseInt(ref.style.width),
-              })
-            }}
             enableResizing={{
               top: false,
               right: false,
@@ -258,8 +229,12 @@ function RouteComponent() {
               bottomLeft: false,
               topLeft: false,
             }}
-            minWidth={400}
-            maxWidth={1200}
+            default={{
+              x: window.innerWidth / 2 - 300,
+              y: window.innerHeight / 2 - 400,
+              width: '420',
+              height: 'auto',
+            }}
             bounds="window"
             dragHandleClassName="drag-handle"
             style={{ zIndex: 50 }}
@@ -294,32 +269,4 @@ function RouteComponent() {
       </SidebarProvider>
     </HouseholdProvider>
   )
-}
-
-type RndPosition = {
-  x: number
-  y: number
-  width: number
-}
-
-const getDefaultRndPosition = (): RndPosition => ({
-  x: window.innerWidth - 700,
-  y: 80,
-  width: 650,
-})
-
-const getRndPositionFromStorage = (): RndPosition => {
-  const stored = localStorage.getItem(LOCAL_STORAGE_RND_POSITION_KEY)
-  if (stored) {
-    try {
-      return JSON.parse(stored) as RndPosition
-    } catch {
-      return getDefaultRndPosition()
-    }
-  }
-  return getDefaultRndPosition()
-}
-
-const saveRndPositionToStorage = (position: RndPosition) => {
-  localStorage.setItem(LOCAL_STORAGE_RND_POSITION_KEY, JSON.stringify(position))
 }
