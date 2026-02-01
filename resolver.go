@@ -8,6 +8,7 @@ import (
 	"beavermoney.app/internal/market"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/getsentry/sentry-go"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // This file will not be regenerated automatically.
@@ -21,6 +22,7 @@ type Resolver struct {
 	fxrateClient *fxrate.Client
 	marketClient *market.Client
 	meter        sentry.Meter
+	tracer       trace.Tracer
 }
 
 // NewSchema creates a graphql executable schema.
@@ -30,6 +32,7 @@ func NewSchema(
 	fxrateClient *fxrate.Client,
 	marketClient *market.Client,
 	meter sentry.Meter,
+	tracer trace.Tracer,
 ) graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{
 		Resolvers: &Resolver{
@@ -38,6 +41,7 @@ func NewSchema(
 			fxrateClient,
 			marketClient,
 			meter,
+			tracer,
 		},
 	})
 }

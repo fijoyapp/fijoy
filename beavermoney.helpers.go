@@ -19,7 +19,11 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	obj *FinancialReport,
 	categoryType transactioncategory.Type,
 ) ([]*CategoryTypeAggregate, error) {
+	_, span := r.tracer.Start(ctx, "financialReportResolver.TotalExpenses")
+	defer span.End()
+
 	householdID := contextkeys.GetHouseholdID(ctx)
+
 	client := r.entClient
 
 	// Get household currency

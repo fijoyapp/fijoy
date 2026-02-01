@@ -168,6 +168,7 @@ func main() {
 			fxrateClient,
 			marketClient,
 			meter,
+			otel.Tracer("beavermoney-server"),
 		),
 	)
 	gqlHandler.Use(otelgqlgen.Middleware())
