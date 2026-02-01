@@ -7,6 +7,7 @@ import (
 	"beavermoney.app/internal/fxrate"
 	"beavermoney.app/internal/market"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/getsentry/sentry-go"
 )
 
 // This file will not be regenerated automatically.
@@ -19,6 +20,7 @@ type Resolver struct {
 	entClient    *ent.Client
 	fxrateClient *fxrate.Client
 	marketClient *market.Client
+	meter        sentry.Meter
 }
 
 // NewSchema creates a graphql executable schema.
@@ -27,8 +29,15 @@ func NewSchema(
 	entClient *ent.Client,
 	fxrateClient *fxrate.Client,
 	marketClient *market.Client,
+	meter sentry.Meter,
 ) graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{
-		Resolvers: &Resolver{logger, entClient, fxrateClient, marketClient},
+		Resolvers: &Resolver{
+			logger,
+			entClient,
+			fxrateClient,
+			marketClient,
+			meter,
+		},
 	})
 }

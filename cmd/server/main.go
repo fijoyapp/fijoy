@@ -55,6 +55,7 @@ func main() {
 		// Set TracesSampleRate to 1.0 to capture 100%
 		// of transactions for tracing.
 		// We recommend adjusting this value in production,
+		EnableTracing:    true,
 		TracesSampleRate: 1.0,
 		// Enable structured logs to Sentry
 		EnableLogs:     true,
@@ -63,6 +64,8 @@ func main() {
 		logger.Error("Sentry initialization failed", "err", err)
 	}
 	defer sentry.Flush(time.Second)
+
+	meter := sentry.NewMeter(context.Background())
 
 	sentryMiddleware := sentryhttp.New(sentryhttp.Options{
 		Repanic: true,
@@ -148,7 +151,13 @@ func main() {
 
 	// Setup GQL
 	gqlHandler := handler.NewDefaultServer(
-		beavermoney.NewSchema(logger, entClient, fxrateClient, marketClient),
+		beavermoney.NewSchema(
+			logger,
+			entClient,
+			fxrateClient,
+			marketClient,
+			meter,
+		),
 	)
 	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
 
