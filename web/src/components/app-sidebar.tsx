@@ -13,12 +13,6 @@ import { appSidebarFragment$key } from './__generated__/appSidebarFragment.graph
 import { useFragment } from 'react-relay'
 import { NAV } from '@/constant'
 
-const user = {
-  name: 'Joey',
-  email: 'joey@itsjoeoui.com',
-  avatar: '/avatars/shadcn.jpg',
-}
-
 type AppSidebarProps = {
   fragmentRef: appSidebarFragment$key
 } & React.ComponentProps<typeof Sidebar>
@@ -26,6 +20,7 @@ type AppSidebarProps = {
 const appSidebarFragment = graphql`
   fragment appSidebarFragment on Query {
     ...householdSwitcherFragment
+    ...navUserFragment
   }
 `
 
@@ -42,7 +37,7 @@ export function AppSidebar({ fragmentRef, ...props }: AppSidebarProps) {
         {/* <NavMain items={data.navMain} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser fragmentRef={data} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

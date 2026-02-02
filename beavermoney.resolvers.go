@@ -45,9 +45,9 @@ func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *Fina
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.IncomeBreakdown",
+	ctx, span := r.tracer.Start(ctx, "financialReportResolver.IncomeBreakdown",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -61,9 +61,9 @@ func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *Fi
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.ExpensesBreakdown",
+	ctx, span := r.tracer.Start(ctx, "financialReportResolver.ExpensesBreakdown",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -77,9 +77,9 @@ func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *Fin
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "financialReportResolver.TransactionCount",
+	ctx, span := r.tracer.Start(ctx, "financialReportResolver.TransactionCount",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -124,7 +124,7 @@ func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *
 func (r *mutationResolver) CreateHousehold(ctx context.Context, input ent.CreateHouseholdInput) (*ent.Household, error) {
 	userID := contextkeys.GetUserID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateHousehold",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateHousehold",
 		trace.WithAttributes(
 			attribute.Int("userID", userID),
 		),
@@ -171,9 +171,9 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateAccount",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateAccount",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -261,9 +261,9 @@ func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInv
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateInvestment",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateInvestment",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -374,9 +374,9 @@ func (r *mutationResolver) CreateTransactionCategory(ctx context.Context, input 
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateTransactionCategory",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateTransactionCategory",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -403,9 +403,9 @@ func (r *mutationResolver) CreateRecurringSubscription(ctx context.Context, inpu
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateRecurringSubscription",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateRecurringSubscription",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -454,9 +454,9 @@ func (r *mutationResolver) CreateExpense(ctx context.Context, input CreateExpens
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateExpense",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateExpense",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -544,9 +544,9 @@ func (r *mutationResolver) CreateIncome(ctx context.Context, input CreateIncomeI
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateIncome",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateIncome",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -638,9 +638,9 @@ func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTrans
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.CreateTransfer",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.CreateTransfer",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -745,9 +745,9 @@ func (r *mutationResolver) BuyInvestment(ctx context.Context, input BuyInvestmen
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.BuyInvestment",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.BuyInvestment",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -865,9 +865,9 @@ func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestm
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.SellInvestment",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.SellInvestment",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -985,9 +985,9 @@ func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestm
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.MoveInvestment",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.MoveInvestment",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -1159,9 +1159,9 @@ func (r *mutationResolver) Refresh(ctx context.Context) (bool, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "mutationResolver.Refresh",
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.Refresh",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -1329,14 +1329,28 @@ func (r *mutationResolver) Refresh(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
+// Self is the resolver for the self field.
+func (r *queryResolver) Self(ctx context.Context) (*ent.User, error) {
+	userID := contextkeys.GetUserID(ctx)
+
+	ctx, span := r.tracer.Start(ctx, "queryResolver.Self",
+		trace.WithAttributes(
+			attribute.Int("userID", userID),
+		),
+	)
+	defer span.End()
+
+	return r.entClient.User.Get(ctx, userID)
+}
+
 // FxRate is the resolver for the fxRate field.
 func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "queryResolver.FxRate",
+	ctx, span := r.tracer.Start(ctx, "queryResolver.FxRate",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -1355,9 +1369,9 @@ func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQu
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "queryResolver.StockQuote",
+	ctx, span := r.tracer.Start(ctx, "queryResolver.StockQuote",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -1382,9 +1396,9 @@ func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*Crypto
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	ctx, span:= r.tracer.Start(ctx, "queryResolver.CryptoQuote",
+	ctx, span := r.tracer.Start(ctx, "queryResolver.CryptoQuote",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)
@@ -1409,9 +1423,9 @@ func (r *queryResolver) FinancialReport(ctx context.Context, period TimePeriodIn
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
-	_, span:= r.tracer.Start(ctx, "queryResolver.FinancialReport",
+	_, span := r.tracer.Start(ctx, "queryResolver.FinancialReport",
 		trace.WithAttributes(
-		attribute.Int("householdID", householdID),
+			attribute.Int("householdID", householdID),
 			attribute.Int("userID", userID),
 		),
 	)

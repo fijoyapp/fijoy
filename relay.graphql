@@ -69,6 +69,7 @@ type Investment implements Node {
 }
 
 type Query {
+  self: User!
   fxRate(from: String!, to: String!, datetime: Time!): String!
   stockQuote(symbol: String!): StockQuoteResult
   cryptoQuote(symbol: String!): CryptoQuoteResult

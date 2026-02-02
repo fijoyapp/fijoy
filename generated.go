@@ -270,6 +270,7 @@ type ComplexityRoot struct {
 		Node                   func(childComplexity int, id int) int
 		Nodes                  func(childComplexity int, ids []int) int
 		RecurringSubscriptions func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.RecurringSubscriptionWhereInput) int
+		Self                   func(childComplexity int) int
 		StockQuote             func(childComplexity int, symbol string) int
 		TransactionCategories  func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.TransactionCategoryWhereInput) int
 		TransactionEntries     func(childComplexity int) int
@@ -470,6 +471,7 @@ type QueryResolver interface {
 	TransactionCategories(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.TransactionCategoryWhereInput) (*ent.TransactionCategoryConnection, error)
 	TransactionEntries(ctx context.Context) ([]*ent.TransactionEntry, error)
 	UserHouseholds(ctx context.Context) ([]*ent.UserHousehold, error)
+	Self(ctx context.Context) (*ent.User, error)
 	FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error)
 	StockQuote(ctx context.Context, symbol string) (*StockQuoteResult, error)
 	CryptoQuote(ctx context.Context, symbol string) (*CryptoQuoteResult, error)
@@ -1584,6 +1586,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.RecurringSubscriptions(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int), args["where"].(*ent.RecurringSubscriptionWhereInput)), true
+	case "Query.self":
+		if e.complexity.Query.Self == nil {
+			break
+		}
+
+		return e.complexity.Query.Self(childComplexity), true
 	case "Query.stockQuote":
 		if e.complexity.Query.StockQuote == nil {
 			break
@@ -8351,6 +8359,59 @@ func (ec *executionContext) fieldContext_Query_userHouseholds(_ context.Context,
 				return ec.fieldContext_UserHousehold_household(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserHousehold", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_self(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Query_self,
+		func(ctx context.Context) (any, error) {
+			return ec.resolvers.Query().Self(ctx)
+		},
+		nil,
+		ec.marshalNUser2ᚖbeavermoneyᚗappᚋentᚐUser,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Query_self(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_User_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_User_updateTime(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "households":
+				return ec.fieldContext_User_households(ctx, field)
+			case "accounts":
+				return ec.fieldContext_User_accounts(ctx, field)
+			case "transactions":
+				return ec.fieldContext_User_transactions(ctx, field)
+			case "userKeys":
+				return ec.fieldContext_User_userKeys(ctx, field)
+			case "recurringSubscriptions":
+				return ec.fieldContext_User_recurringSubscriptions(ctx, field)
+			case "userHouseholds":
+				return ec.fieldContext_User_userHouseholds(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -23916,6 +23977,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "self":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_self(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "fxRate":
 			field := field
 
@@ -27044,6 +27127,10 @@ func (ec *executionContext) marshalNTransactionOrderField2ᚖbeavermoneyᚗapp�
 func (ec *executionContext) unmarshalNTransactionWhereInput2ᚖbeavermoneyᚗappᚋentᚐTransactionWhereInput(ctx context.Context, v any) (*ent.TransactionWhereInput, error) {
 	res, err := ec.unmarshalInputTransactionWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUser2beavermoneyᚗappᚋentᚐUser(ctx context.Context, sel ast.SelectionSet, v ent.User) graphql.Marshaler {
+	return ec._User(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNUser2ᚖbeavermoneyᚗappᚋentᚐUser(ctx context.Context, sel ast.SelectionSet, v *ent.User) graphql.Marshaler {
