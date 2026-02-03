@@ -249,6 +249,7 @@ const IconPicker = React.forwardRef<
           }, 1)
         }
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [open, onOpenChange, virtualizer],
     )
 
@@ -258,6 +259,7 @@ const IconPicker = React.forwardRef<
         setIsOpen(false)
         setSearch('')
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [handleValueChange],
     )
 
@@ -271,6 +273,7 @@ const IconPicker = React.forwardRef<
 
         virtualizer.scrollToOffset(0)
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [virtualizer],
     )
 
