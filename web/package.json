@@ -23,6 +23,7 @@
     "@tanstack/react-form": "^1.28.0",
     "@tanstack/react-router": "^1.157.18",
     "@tanstack/react-router-devtools": "^1.157.18",
+    "@tanstack/react-store": "^0.8.0",
     "@tanstack/react-virtual": "^3.13.18",
     "@tanstack/router-plugin": "^1.157.18",
     "@tanstack/zod-adapter": "^1.157.18",

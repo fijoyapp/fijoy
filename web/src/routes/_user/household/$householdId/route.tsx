@@ -77,7 +77,7 @@ const searchSchema = z.object({
     .enum(['expense', 'income', 'transfer', 'buy', 'sell', 'move'])
     .nullable()
     .default(null),
-  command_default_value: z.string().optional(),
+  command_open: z.boolean().optional().default(false),
 })
 
 export const Route = createFileRoute('/_user/household/$householdId')({

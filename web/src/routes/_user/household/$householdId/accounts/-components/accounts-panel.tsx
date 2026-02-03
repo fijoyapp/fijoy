@@ -33,6 +33,7 @@ import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
 import { Button } from '@/components/ui/button'
 import { ACCOUNT_TYPE_LIST } from '@/constant'
+import { commandStore } from '@/store'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query
@@ -163,12 +164,19 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
         </Button>
         <Link
-          from={'/household/$householdId/accounts'}
-          search={(prev) => ({ ...prev })}
-          to={'/household/$householdId/accounts/new'}
+          to={'.'}
+          search={(prev) => ({
+            ...prev,
+            command_open: true,
+          })}
         >
-          <Button nativeButton={true} size="lg" className="rounded-full">
-            New Account <PlusIcon />
+          <Button
+            nativeButton={true}
+            size="icon-xl"
+            className="rounded-full"
+            onClick={() => commandStore.setState('New ')}
+          >
+            <PlusIcon />
           </Button>
         </Link>
       </div>

@@ -7,16 +7,18 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
+import { commandStore } from '@/store'
 import {
   LinkOptions,
   useNavigate,
   useParams,
   useSearch,
 } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useStore } from '@tanstack/react-store'
+import { random } from 'lodash-es'
+import { useCallback, useEffect } from 'react'
 
 export function CommandMenu() {
-  const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const { householdId } = useParams({ from: '/_user/household/$householdId' })
 
@@ -24,7 +26,25 @@ export function CommandMenu() {
     from: '/_user/household/$householdId',
   })
 
-  const [value, setValue] = useState(search.command_default_value ?? '')
+  const open = search.command_open
+  const setOpen = useCallback(
+    (val: boolean | ((v: boolean) => boolean)) => {
+      const commandOpen = typeof val === 'function' ? val(open) : val
+      navigate({
+        to: '.',
+        search: (old) => ({
+          ...old,
+          command_open: commandOpen,
+        }),
+      })
+    },
+    [navigate, open],
+  )
+
+  const value = useStore(commandStore, (state) => state)
+  const setValue = useCallback((value: string) => {
+    commandStore.setState(value)
+  }, [])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -35,11 +55,10 @@ export function CommandMenu() {
     }
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [])
+  }, [setOpen])
 
   const handleSelect = (opts: LinkOptions) => {
     navigate(opts)
-    setOpen(false)
     setValue('')
   }
 
@@ -47,6 +66,7 @@ export function CommandMenu() {
     <CommandDialog open={open} onOpenChange={setOpen}>
       <Command>
         <CommandInput
+          id={String(open) + String(random())}
           placeholder="Type a command or search..."
           value={value}
           onValueChange={setValue}
@@ -54,65 +74,17 @@ export function CommandMenu() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
 
-          <CommandGroup heading="Create">
-            <CommandItem
-              onSelect={() =>
-                handleSelect({
-                  to: '/household/$householdId/transactions/new',
-                  params: { householdId },
-                })
-              }
-            >
-              New Transaction
-            </CommandItem>
-            <CommandItem
-              onSelect={() =>
-                handleSelect({
-                  to: '/household/$householdId/accounts/new',
-                  params: { householdId },
-                })
-              }
-            >
-              New Account
-            </CommandItem>
-            <CommandItem
-              onSelect={() =>
-                handleSelect({
-                  to: '/household/$householdId/investments/new',
-                  params: { householdId },
-                })
-              }
-            >
-              New Investment
-            </CommandItem>
-            <CommandItem
-              onSelect={() =>
-                handleSelect({
-                  to: '/household/$householdId/categories/new',
-                  params: { householdId },
-                })
-              }
-            >
-              New Category
-            </CommandItem>
-            <CommandItem
-              onSelect={() =>
-                handleSelect({
-                  to: '/household/$householdId/subscriptions/new',
-                  params: { householdId },
-                })
-              }
-            >
-              New Subscription
-            </CommandItem>
-          </CommandGroup>
-
           <CommandGroup heading="Navigate">
             <CommandItem
               onSelect={() =>
                 handleSelect({
                   to: '/household/$householdId/transactions',
                   params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
                 })
               }
             >
@@ -123,6 +95,11 @@ export function CommandMenu() {
                 handleSelect({
                   to: '/household/$householdId/accounts',
                   params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
                 })
               }
             >
@@ -133,6 +110,11 @@ export function CommandMenu() {
                 handleSelect({
                   to: '/household/$householdId/investments',
                   params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
                 })
               }
             >
@@ -143,6 +125,11 @@ export function CommandMenu() {
                 handleSelect({
                   to: '/household/$householdId/categories',
                   params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
                 })
               }
             >
@@ -153,10 +140,93 @@ export function CommandMenu() {
                 handleSelect({
                   to: '/household/$householdId/subscriptions',
                   params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
                 })
               }
             >
               Subscriptions
+            </CommandItem>
+          </CommandGroup>
+
+          <CommandGroup heading="Create">
+            <CommandItem
+              onSelect={() =>
+                handleSelect({
+                  to: '/household/$householdId/transactions/new',
+                  params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
+                })
+              }
+            >
+              New Transaction
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                handleSelect({
+                  to: '/household/$householdId/accounts/new',
+                  params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
+                })
+              }
+            >
+              New Account
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                handleSelect({
+                  to: '/household/$householdId/investments/new',
+                  params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
+                })
+              }
+            >
+              New Investment
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                handleSelect({
+                  to: '/household/$householdId/categories/new',
+                  params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
+                })
+              }
+            >
+              New Category
+            </CommandItem>
+            <CommandItem
+              onSelect={() =>
+                handleSelect({
+                  to: '/household/$householdId/subscriptions/new',
+                  params: { householdId },
+                  search: (prev) => ({
+                    ...prev,
+                    command_default_value: '',
+                    command_open: false,
+                  }),
+                })
+              }
+            >
+              New Subscription
             </CommandItem>
           </CommandGroup>
         </CommandList>
