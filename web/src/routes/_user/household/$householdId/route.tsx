@@ -73,7 +73,10 @@ const routeHouseholdIdQuery = graphql`
 `
 
 const searchSchema = z.object({
-  showNewTransaction: z.boolean().optional().default(false),
+  log_type: z
+    .enum(['expense', 'income', 'transfer', 'buy', 'sell', 'move'])
+    .nullable()
+    .default(null),
 })
 
 export const Route = createFileRoute('/_user/household/$householdId')({
@@ -128,7 +131,7 @@ function RouteComponent() {
   const setLogTransactionOpen = (open: boolean) => {
     navigate({
       to: '.',
-      search: (prev) => ({ ...prev, showNewTransaction: open }),
+      search: (prev) => ({ ...prev, log_type: open ? 'expense' : null }),
     })
   }
   const router = useRouter()
@@ -207,11 +210,11 @@ function RouteComponent() {
           </div>
         </SidebarInset>
         <MobileFabNav />
-        {isMobile && search.showNewTransaction && (
+        {isMobile && search.log_type && (
           <Navigate
             from={'/household/$householdId'}
             to={'/household/$householdId/transactions/new'}
-            search={(prev) => ({ ...prev, showNewTransaction: false })}
+            search={(prev) => ({ ...prev, log_type: 'expense' })}
           />
         )}
 
@@ -241,7 +244,7 @@ function RouteComponent() {
             <Item
               className={cn(
                 'bg-muted h-full w-full gap-0 overflow-hidden p-0 shadow-2xl',
-                search.showNewTransaction ? 'block' : 'hidden',
+                search.log_type ? 'block' : 'hidden',
               )}
             >
               {/* Drag Handle Header */}

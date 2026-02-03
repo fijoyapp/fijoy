@@ -1,5 +1,4 @@
 import { graphql, useFragment } from 'react-relay'
-import { useState } from 'react'
 import { NewExpense } from './new-expense'
 import { NewIncome } from './new-income'
 import { NewTransfer } from './new-transfer'
@@ -10,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Item } from '@/components/ui/item'
 import { logTransactionFragment$key } from './__generated__/logTransactionFragment.graphql'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 
 const logTransactionFragment = graphql`
   fragment logTransactionFragment on Query {
@@ -36,7 +36,21 @@ type NewTransactionProps = {
 
 export function LogTransaction({ fragmentRef }: NewTransactionProps) {
   const data = useFragment(logTransactionFragment, fragmentRef)
-  const [selectedType, setSelectedType] = useState<TransactionType>('expense')
+  const search = useSearch({
+    from: '/_user/household/$householdId',
+  })
+  const navigate = useNavigate()
+  const selectedType = search.log_type
+
+  const setSelectedType = (type: TransactionType) => {
+    navigate({
+      to: '.',
+      search: (prev) => ({
+        ...prev,
+        log_type: type,
+      }),
+    })
+  }
 
   return (
     <Item className="bg-muted h-full w-full gap-0 p-0">

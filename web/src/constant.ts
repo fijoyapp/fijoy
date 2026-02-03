@@ -56,7 +56,6 @@ export const NAV: Array<{
       },
       search: (prev) => ({
         ...prev,
-        showNewTransaction: prev.showNewTransaction,
       }),
     },
     icon: ReceiptIcon,
@@ -71,7 +70,6 @@ export const NAV: Array<{
       },
       search: (prev) => ({
         ...prev,
-        showNewTransaction: prev.showNewTransaction,
       }),
     },
     icon: CreditCardIcon,
@@ -86,7 +84,6 @@ export const NAV: Array<{
       },
       search: (prev) => ({
         ...prev,
-        showNewTransaction: prev.showNewTransaction,
       }),
     },
     icon: TrendingUpIcon,
@@ -101,7 +98,6 @@ export const NAV: Array<{
       },
       search: (prev) => ({
         ...prev,
-        showNewTransaction: prev.showNewTransaction,
       }),
     },
     icon: TagIcon,
@@ -116,7 +112,6 @@ export const NAV: Array<{
       },
       search: (prev) => ({
         ...prev,
-        showNewTransaction: prev.showNewTransaction,
       }),
     },
     icon: AppWindowMacIcon,

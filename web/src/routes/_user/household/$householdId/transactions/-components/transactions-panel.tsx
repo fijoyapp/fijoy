@@ -67,7 +67,7 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
   return (
     <Fragment>
       <div className="fixed right-4 bottom-4 lg:absolute">
-        <Link to={'.'} search={{ ...search, showNewTransaction: true }}>
+        <Link to={'.'} search={{ ...search, log_type: 'expense' }}>
           <Button nativeButton={true} size="lg" className="rounded-full">
             New Transaction
             <PlusIcon />

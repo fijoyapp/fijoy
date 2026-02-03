@@ -1,7 +1,7 @@
 import { PendingComponent } from '@/components/pending-component'
 import { Item } from '@/components/ui/item'
 import { environment } from '@/environment'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import {
   loadQuery,
   usePreloadedQuery,
@@ -10,6 +10,8 @@ import {
 import { graphql, ROOT_ID } from 'relay-runtime'
 import { LogTransaction } from './-components/log-transaction'
 import { type newTransactionQuery } from './__generated__/newTransactionQuery.graphql'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { identity } from 'lodash-es'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/transactions/new',
@@ -48,6 +50,11 @@ function RouteComponent() {
       { fetchPolicy: 'network-only' },
     )
   })
+
+  const isMobile = useIsMobile()
+  if (!isMobile) {
+    return <Navigate to=".." search={identity} />
+  }
 
   return (
     <div className="flex max-h-full w-full">
