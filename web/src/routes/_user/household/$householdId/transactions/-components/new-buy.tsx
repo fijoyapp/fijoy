@@ -6,7 +6,7 @@ import { useFragment, useMutation } from 'react-relay'
 import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import type { newBuyMutation } from './__generated__/newBuyMutation.graphql'
 import type { newBuyFragment$key } from './__generated__/newBuyFragment.graphql'
 
@@ -225,7 +225,7 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
   )
 
   // Update totalPaid when shares or pricePerShare changes
-  useMemo(() => {
+  useEffect(() => {
     if (shares && pricePerShare) {
       const computed = currency(shares).multiply(pricePerShare)
       form.setFieldValue('totalPaid', computed.value)

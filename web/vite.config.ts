@@ -20,7 +20,11 @@ const config = defineConfig({
       autoCodeSplitting: true,
       routeFileIgnorePattern: '^(__generated__|-)',
     }),
-    viteReact(),
+    viteReact({
+      babel: {
+        plugins: ['babel-plugin-react-compiler'],
+      },
+    }),
   ],
 })
 
