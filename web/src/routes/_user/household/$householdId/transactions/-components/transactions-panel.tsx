@@ -1,6 +1,6 @@
 import { fetchQuery, graphql } from 'relay-runtime'
 import { useFragment } from 'react-relay'
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { parseISO } from 'date-fns'
 import { TransactionsList } from './transactions-list'
 import type { transactionsPanelFragment$key } from './__generated__/transactionsPanelFragment.graphql'
@@ -11,8 +11,7 @@ import { TransactionsQuery } from '../__generated__/TransactionsQuery.graphql'
 import { transactionsQuery } from '../-transactions-query'
 import { parseDateRangeFromURL } from '@/lib/date-range'
 import { Fragment } from 'react/jsx-runtime'
-import { PlusIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { PlusButton } from '@/components/plus-button'
 
 const transactionsPanelFragment = graphql`
   fragment transactionsPanelFragment on Query
@@ -67,12 +66,7 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
   return (
     <Fragment>
       <div className="fixed right-4 bottom-4 lg:absolute">
-        <Link to={'.'} search={{ ...search, log_type: 'expense' }}>
-          <Button nativeButton={true} size="lg" className="rounded-full">
-            New Transaction
-            <PlusIcon />
-          </Button>
-        </Link>
+        <PlusButton />
       </div>
       <FinancialSummaryCards fragmentRef={data.financialReport} />
       <div className="py-2"></div>

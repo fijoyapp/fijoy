@@ -1,5 +1,5 @@
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import { PlusIcon, RefreshCwIcon } from 'lucide-react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { RefreshCwIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
 import { graphql, useFragment, useMutation } from 'react-relay'
@@ -31,6 +31,7 @@ import { SubscriptionCard } from './subscription-card'
 
 import type { subscriptionsPanelFragment$key } from './__generated__/subscriptionsPanelFragment.graphql'
 import type { subscriptionsPanelRefreshMutation } from './__generated__/subscriptionsPanelRefreshMutation.graphql'
+import { PlusButton } from '@/components/plus-button'
 
 const SubscriptionsPanelFragment = graphql`
   fragment subscriptionsPanelFragment on Query
@@ -257,15 +258,7 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
         >
           <RefreshCwIcon className={isRefreshing ? 'animate-spin' : ''} />
         </Button>
-        <Link
-          from={'/household/$householdId/subscriptions'}
-          search={(prev) => ({ ...prev })}
-          to={'/household/$householdId/subscriptions/new'}
-        >
-          <Button nativeButton={true} size="lg" className="rounded-full">
-            New Subscription <PlusIcon />
-          </Button>
-        </Link>
+        <PlusButton />
       </div>
 
       {/* Summary Card */}

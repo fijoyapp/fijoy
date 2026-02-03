@@ -38,8 +38,9 @@ import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
 import { Button } from '@/components/ui/button'
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
-import { PlusIcon, RefreshCwIcon } from 'lucide-react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { RefreshCwIcon } from 'lucide-react'
+import { PlusButton } from '@/components/plus-button'
 
 const GROUP_BY_OPTIONS = {
   account: 'By Account',
@@ -173,15 +174,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
         >
           <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
         </Button>
-        <Link
-          from={'/household/$householdId/investments'}
-          to={'/household/$householdId/investments/new'}
-          search={(prev) => ({ ...prev })}
-        >
-          <Button nativeButton={true} className="rounded-full" size="lg">
-            New Investment <PlusIcon />
-          </Button>
-        </Link>
+        <PlusButton />
       </div>
       <Item variant="outline" className="">
         <ItemContent>

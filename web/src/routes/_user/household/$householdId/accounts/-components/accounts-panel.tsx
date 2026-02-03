@@ -8,8 +8,7 @@ import { useMemo, useState } from 'react'
 import currency from 'currency.js'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons'
-import { PlusIcon, RefreshCwIcon } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { RefreshCwIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import { match } from 'ts-pattern'
 import { AccountCard } from './account-card'
@@ -33,7 +32,7 @@ import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
 import { Button } from '@/components/ui/button'
 import { ACCOUNT_TYPE_LIST } from '@/constant'
-import { commandStore } from '@/store'
+import { PlusButton } from '@/components/plus-button'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Query
@@ -163,22 +162,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         >
           <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
         </Button>
-        <Link
-          to={'.'}
-          search={(prev) => ({
-            ...prev,
-            command_open: true,
-          })}
-        >
-          <Button
-            nativeButton={true}
-            size="icon-xl"
-            className="rounded-full"
-            onClick={() => commandStore.setState('New ')}
-          >
-            <PlusIcon />
-          </Button>
-        </Link>
+        <PlusButton />
       </div>
       <Item variant="outline" className="cursor-pointer" onClick={cycleDisplay}>
         <ItemContent>

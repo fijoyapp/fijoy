@@ -82,7 +82,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -97,7 +96,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -112,7 +110,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -127,7 +124,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -142,7 +138,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -160,8 +155,8 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
+                    log_type: 'expense',
                   }),
                 })
               }
@@ -175,7 +170,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -190,7 +184,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -205,7 +198,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })
@@ -220,7 +212,6 @@ export function CommandMenu() {
                   params: { householdId },
                   search: (prev) => ({
                     ...prev,
-                    command_default_value: '',
                     command_open: false,
                   }),
                 })

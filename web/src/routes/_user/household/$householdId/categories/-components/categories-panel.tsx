@@ -2,7 +2,7 @@ import { fetchQuery, graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
 import { useFragment } from 'react-relay'
-import { capitalize, groupBy, identity, map } from 'lodash-es'
+import { capitalize, groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
@@ -20,9 +20,7 @@ import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useHousehold } from '@/hooks/use-household'
 import { CATEGORY_TYPE_LIST } from '@/constant'
-import { Button } from '@/components/ui/button'
-import { Link, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
 import { DateRangeFilter } from './date-range-filter'
 import { useSearch } from '@tanstack/react-router'
 import { FinancialSummaryCards } from '@/components/financial-summary-cards'
@@ -31,6 +29,7 @@ import { CategoriesQuery } from '../__generated__/CategoriesQuery.graphql'
 import { environment } from '@/environment'
 import { categoriesQuery } from '../-categories-query'
 import { parseDateRangeFromURL } from '@/lib/date-range'
+import { PlusButton } from '@/components/plus-button'
 
 const CategoriesPanelFragment = graphql`
   fragment categoriesPanelFragment on Query
@@ -134,15 +133,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
   return (
     <Fragment>
       <div className="fixed right-4 bottom-4 lg:absolute">
-        <Link
-          from={'/household/$householdId/categories'}
-          to={'/household/$householdId/categories/new'}
-          search={identity}
-        >
-          <Button nativeButton={true} size="lg" className="rounded-full">
-            New Category <PlusIcon />
-          </Button>
-        </Link>
+        <PlusButton />
       </div>
       <FinancialSummaryCards fragmentRef={data.financialReport} />
       <div className="py-2"></div>
