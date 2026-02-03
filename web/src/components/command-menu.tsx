@@ -16,19 +16,31 @@ import {
 } from '@tanstack/react-router'
 import { useStore } from '@tanstack/react-store'
 import { random } from 'lodash-es'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export function CommandMenu() {
   const navigate = useNavigate()
   const { householdId } = useParams({ from: '/_user/household/$householdId' })
 
+  const [shouldClearValue, setShouldClearValue] = useState(false)
+
   const search = useSearch({
     from: '/_user/household/$householdId',
   })
 
+  const value = useStore(commandStore, (state) => state)
+  const setValue = useCallback((value: string) => {
+    commandStore.setState(value)
+  }, [])
+
   const open = search.command_open
   const setOpen = useCallback(
     (val: boolean | ((v: boolean) => boolean)) => {
+      if (shouldClearValue) {
+        setValue('')
+        setShouldClearValue(false)
+      }
+
       const commandOpen = typeof val === 'function' ? val(open) : val
       navigate({
         to: '.',
@@ -38,13 +50,8 @@ export function CommandMenu() {
         }),
       })
     },
-    [navigate, open],
+    [navigate, open, shouldClearValue, setValue, setShouldClearValue],
   )
-
-  const value = useStore(commandStore, (state) => state)
-  const setValue = useCallback((value: string) => {
-    commandStore.setState(value)
-  }, [])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -59,7 +66,7 @@ export function CommandMenu() {
 
   const handleSelect = (opts: LinkOptions) => {
     navigate(opts)
-    setValue('')
+    setShouldClearValue(true)
   }
 
   return (
