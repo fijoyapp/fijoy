@@ -24,7 +24,7 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getLogoTickerURL } from '@/lib/logo'
+import { useLogo } from '@/hooks/use-logo'
 import { cn } from '@/lib/utils'
 import { Fragment } from 'react/jsx-runtime'
 import { Separator } from '@/components/ui/separator'
@@ -228,6 +228,8 @@ function InvestmentLotCard({
   isLast: boolean
 }) {
   const { formatCurrency } = useCurrency()
+
+  const { getLogoTickerURL } = useLogo()
 
   return (
     <Item

@@ -41,7 +41,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getLogoDomainURL } from '@/lib/logo'
+import { useLogo } from '@/hooks/use-logo'
 
 const formSchema = z.object({
   name: z
@@ -95,6 +95,7 @@ export function NewAccount({ fragmentRef }: NewAccountProps) {
     useMutation<newAccountMutation>(newAccountMutation)
 
   const { household } = useHousehold()
+  const { getLogoDomainURL } = useLogo()
 
   const form = useForm({
     defaultValues: {

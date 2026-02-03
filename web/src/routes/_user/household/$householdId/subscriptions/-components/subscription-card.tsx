@@ -18,7 +18,7 @@ import currency from 'currency.js'
 
 import type { subscriptionCardFragment$key } from './__generated__/subscriptionCardFragment.graphql'
 import { Link } from '@tanstack/react-router'
-import { getLogoDomainURL } from '@/lib/logo'
+import { useLogo } from '@/hooks/use-logo'
 import { cn } from '@/lib/utils'
 
 const SubscriptionCardFragment = graphql`
@@ -44,6 +44,7 @@ type SubscriptionCardProps = {
 export function SubscriptionCard({ fragmentRef }: SubscriptionCardProps) {
   const data = useFragment(SubscriptionCardFragment, fragmentRef)
   const { formatCurrencyWithPrivacyMode } = useCurrency()
+  const { getLogoDomainURL } = useLogo()
 
   const { intervalText, nextPaymentDate } = useMemo(() => {
     // Convert cost to household currency

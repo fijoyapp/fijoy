@@ -47,11 +47,7 @@ import {
   ItemTitle,
 } from '@/components/ui/item'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  getLogoTickerURL,
-  getLogoCryptoURL,
-  getLogoDomainURL,
-} from '@/lib/logo'
+import { useLogo } from '@/hooks/use-logo'
 import { useCurrency } from '@/hooks/use-currency'
 import { cn } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
@@ -167,6 +163,7 @@ export function NewInvestment({
   const navigate = useNavigate()
 
   const { formatCurrency, formatCurrencyWithPrivacyMode } = useCurrency()
+  const { getLogoTickerURL, getLogoCryptoURL, getLogoDomainURL } = useLogo()
 
   const [commitMutation, isMutationInFlight] =
     useMutation<newInvestmentMutation>(newInvestmentMutation)
