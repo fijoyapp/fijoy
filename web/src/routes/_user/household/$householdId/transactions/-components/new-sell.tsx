@@ -45,7 +45,7 @@ import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useLogo } from '@/hooks/use-logo'
+import { getLogoDomainURL } from '@/lib/logo'
 import { useCurrency } from '@/hooks/use-currency'
 
 const formSchema = z.object({
@@ -122,7 +122,6 @@ export function NewSell({ fragmentRef }: NewSellProps) {
 
   const { household } = useHousehold()
   const { formatCurrencyWithPrivacyMode } = useCurrency()
-  const { getLogoDomainURL } = useLogo()
 
   // Filter accounts - only investment accounts
   const investmentAccounts =

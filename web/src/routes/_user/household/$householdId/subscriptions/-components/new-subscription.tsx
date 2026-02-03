@@ -46,7 +46,7 @@ import { useHousehold } from '@/hooks/use-household'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useLogo } from '@/hooks/use-logo'
+import { getLogoDomainURL } from '@/lib/logo'
 
 const SUBSCRIPTION_INTERVALS = ['week', 'month', 'year'] as const
 
@@ -111,7 +111,6 @@ export function NewSubscription({ fragmentRef }: NewSubscriptionProps) {
     useMutation<newSubscriptionMutation>(newSubscriptionMutation)
 
   const { household } = useHousehold()
-  const { getLogoDomainURL } = useLogo()
 
   const form = useForm({
     defaultValues: {

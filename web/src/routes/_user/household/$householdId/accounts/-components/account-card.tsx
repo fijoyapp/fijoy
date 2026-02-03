@@ -13,7 +13,7 @@ import {
 import { useCurrency } from '@/hooks/use-currency'
 import { getPrettyTime } from '@/lib/time'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useLogo } from '@/hooks/use-logo'
+import { getLogoDomainURL } from '@/lib/logo'
 
 const accountCardFragment = graphql`
   fragment accountCardFragment on Account {
@@ -40,7 +40,6 @@ export function AccountCard({ fragmentRef }: AccountCardProps) {
   const data = useFragment(accountCardFragment, fragmentRef)
 
   const { formatCurrencyWithPrivacyMode } = useCurrency()
-  const { getLogoDomainURL } = useLogo()
 
   return (
     <Item

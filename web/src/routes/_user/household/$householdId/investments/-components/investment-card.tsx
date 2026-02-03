@@ -13,7 +13,7 @@ import {
 import { useCurrency } from '@/hooks/use-currency'
 import { getPrettyTime } from '@/lib/time'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useLogo } from '@/hooks/use-logo'
+import { getLogoTickerURL } from '@/lib/logo'
 
 const investmentCardFragment = graphql`
   fragment investmentCardFragment on Investment {
@@ -38,7 +38,6 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
   const data = useFragment(investmentCardFragment, fragmentRef)
 
   const { formatCurrencyWithPrivacyMode, formatCurrency } = useCurrency()
-  const { getLogoTickerURL } = useLogo()
 
   return (
     <Item
