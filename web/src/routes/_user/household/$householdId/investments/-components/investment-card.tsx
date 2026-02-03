@@ -74,8 +74,8 @@ export function InvestmentCard({ fragmentRef }: InvestmentCardProps) {
                 </ItemDescription>
               </ItemContent>
               <ItemContent className="items-end gap-px">
-                <ItemTitle className="font-mono">
-                  <span>
+                <ItemTitle className="">
+                  <span className="tabular-nums">
                     {formatCurrencyWithPrivacyMode({
                       value: data.value,
                       currencyCode: data.currency.code,

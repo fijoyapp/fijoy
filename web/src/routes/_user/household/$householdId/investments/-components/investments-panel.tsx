@@ -186,7 +186,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
       <Item variant="outline" className="">
         <ItemContent>
           <ItemDescription>Total Investment</ItemDescription>
-          <ItemTitle className="text-2xl">
+          <ItemTitle className="text-xl tabular-nums">
             {formatCurrencyWithPrivacyMode({
               value: totalInvestment,
               currencyCode: household.currency.code,
@@ -240,7 +240,7 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
               <AccordionTrigger className="cursor-pointer justify-normal gap-2 hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-0">
                 <span>{groupLabel}</span>
                 <span className="grow"></span>
-                <span className="mr-3 font-mono">
+                <span className="mr-3 tabular-nums">
                   {formatCurrencyWithPrivacyMode({
                     value: investments
                       .map((investment) => {

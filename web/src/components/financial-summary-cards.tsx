@@ -55,7 +55,7 @@ export function FinancialSummaryCards({
       <Item variant="outline" className="">
         <ItemContent>
           <ItemDescription>Total Income</ItemDescription>
-          <ItemTitle className="text-xl">
+          <ItemTitle className="text-xl tabular-nums">
             {formatCurrencyWithPrivacyMode({
               value: totalIncome,
               currencyCode: household.currency.code,
@@ -66,7 +66,7 @@ export function FinancialSummaryCards({
       <Item variant="outline" className="">
         <ItemContent>
           <ItemDescription>Total Expenses</ItemDescription>
-          <ItemTitle className="text-xl">
+          <ItemTitle className="text-xl tabular-nums">
             {formatCurrencyWithPrivacyMode({
               value: totalExpenses,
               currencyCode: household.currency.code,
@@ -77,7 +77,7 @@ export function FinancialSummaryCards({
       <Item variant="outline" className="">
         <ItemContent>
           <ItemDescription>Net</ItemDescription>
-          <ItemTitle className="text-xl">
+          <ItemTitle className="text-xl tabular-nums">
             {formatCurrencyWithPrivacyMode({
               value: net,
               currencyCode: household.currency.code,
@@ -88,7 +88,7 @@ export function FinancialSummaryCards({
       <Item variant="outline" className="">
         <ItemContent>
           <ItemDescription>Saving Rate</ItemDescription>
-          <ItemTitle className="text-xl">{savingRate}</ItemTitle>
+          <ItemTitle className="text-xl tabular-nums">{savingRate}</ItemTitle>
         </ItemContent>
       </Item>
     </div>

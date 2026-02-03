@@ -276,7 +276,9 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
       >
         <ItemContent>
           <ItemDescription>{summaryContent.label}</ItemDescription>
-          <ItemTitle className="text-2xl">{summaryContent.value}</ItemTitle>
+          <ItemTitle className="text-xl tabular-nums">
+            {summaryContent.value}
+          </ItemTitle>
         </ItemContent>
       </Item>
 

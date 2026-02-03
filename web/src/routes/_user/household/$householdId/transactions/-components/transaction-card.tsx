@@ -191,17 +191,17 @@ function TransactionEntryCard({
           icon: data.category.icon,
         })}
       </ItemMedia>
-      <ItemContent className="">
-        <ItemTitle className="line-clamp-1">
-          <span>{data.category.name}</span>
+      <ItemContent className="gap-px">
+        <ItemTitle className="">
+          <span className="">{data.category.name}</span>
         </ItemTitle>
         <ItemDescription>
           {new Date(data.datetime).toLocaleDateString()}
         </ItemDescription>
       </ItemContent>
-      <ItemContent className="flex-none items-end">
-        <ItemTitle className="line-clamp-1">
-          <span className="">
+      <ItemContent className="items-end gap-px">
+        <ItemTitle className="">
+          <span className="tabular-nums">
             {formatCurrency({
               value: transactionEntry.amount,
               currencyCode: transactionEntry.account.currency.code,
@@ -247,17 +247,17 @@ function InvestmentLotCard({
           <AvatarFallback>{investmentLot.investment.symbol}</AvatarFallback>
         </Avatar>
       </ItemMedia>
-      <ItemContent className="">
-        <ItemTitle className="line-clamp-1">
+      <ItemContent className="gap-px">
+        <ItemTitle className="">
           <span>{data.category.name}</span>
         </ItemTitle>
         <ItemDescription>
           {new Date(data.datetime).toLocaleDateString()}
         </ItemDescription>
       </ItemContent>
-      <ItemContent className="flex-none items-end">
-        <ItemTitle className="line-clamp-1">
-          <span className="">
+      <ItemContent className="items-end gap-px">
+        <ItemTitle className="">
+          <span className="tabular-nums">
             {formatCurrency({
               value: currency(investmentLot.price).multiply(
                 currency(investmentLot.amount),

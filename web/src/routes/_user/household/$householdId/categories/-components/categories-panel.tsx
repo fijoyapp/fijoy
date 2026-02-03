@@ -169,7 +169,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
                 <span>{capitalize(type)}</span>
                 <span className="grow"></span>
                 {typeAggregate && (
-                  <span className="mr-3 font-mono">
+                  <span className="mr-3 tabular-nums">
                     {formatCurrencyWithPrivacyMode({
                       value: currency(typeAggregate.total),
                       currencyCode: household.currency.code,

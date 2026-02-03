@@ -119,7 +119,7 @@ export function CategoryCard({
               </ItemContent>
               {total && (
                 <ItemContent className="items-end gap-px">
-                  <ItemTitle className="font-mono">
+                  <ItemTitle className="tabular-nums">
                     <span>
                       {formatCurrencyWithPrivacyMode({
                         value: currency(total),

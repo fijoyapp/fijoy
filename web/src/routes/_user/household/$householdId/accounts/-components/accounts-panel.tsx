@@ -177,7 +177,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           <ItemDescription>
             {displayOptions[displayIndex].label}
           </ItemDescription>
-          <ItemTitle className="text-2xl">
+          <ItemTitle className="text-xl tabular-nums">
             {formatCurrencyWithPrivacyMode({
               value: displayOptions[displayIndex].value,
               currencyCode: household.currency.code,
@@ -202,7 +202,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
               <AccordionTrigger className="cursor-pointer justify-normal gap-2 hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-0">
                 <span>{capitalize(type)}</span>
                 <span className="grow"></span>
-                <span className="mr-3 font-mono">
+                <span className="text-md mr-3 tracking-wide tabular-nums">
                   {formatCurrencyWithPrivacyMode({
                     value: accounts
                       .map((account) => {

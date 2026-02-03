@@ -106,7 +106,7 @@ export function SubscriptionCard({ fragmentRef }: SubscriptionCardProps) {
                 <ItemDescription>{intervalText}</ItemDescription>
               </ItemContent>
               <ItemContent className="items-end gap-px">
-                <ItemTitle className="font-mono">
+                <ItemTitle className="tabular-nums">
                   {formatCurrencyWithPrivacyMode({
                     value: data.cost,
                     currencyCode: data.currency.code,
