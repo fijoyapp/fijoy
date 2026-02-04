@@ -8,10 +8,8 @@ import {
   RefreshCwIcon,
 } from 'lucide-react'
 import {
-  Navigate,
   Outlet,
   createFileRoute,
-  useMatch,
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
@@ -113,11 +111,6 @@ function RouteComponent() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
 
-  const isOnMobileTransactionNewPage = useMatch({
-    from: '/_user/household/$householdId/transactions/new',
-    shouldThrow: false,
-  })
-
   useSubscribeToInvalidationState([ROOT_ID], () => {
     return loadQuery<routeHouseholdIdQuery>(
       environment,
@@ -217,13 +210,6 @@ function RouteComponent() {
           </div>
         </SidebarInset>
         <MobileFabNav />
-        {isMobile && search.log_type && !isOnMobileTransactionNewPage && (
-          <Navigate
-            from={'/household/$householdId'}
-            to={'/household/$householdId/transactions/new'}
-            search={(prev) => ({ ...prev, log_type: 'expense' })}
-          />
-        )}
 
         {/* Desktop: Resizable & Draggable New Transaction Form */}
         {!isMobile && (
