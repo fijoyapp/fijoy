@@ -11,7 +11,7 @@ import {
   Navigate,
   Outlet,
   createFileRoute,
-  useMatchRoute,
+  useMatch,
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
@@ -113,10 +113,9 @@ function RouteComponent() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
 
-  const matchRoute = useMatchRoute()
-  const isOnMobileTransactionNewPage = matchRoute({
-    to: '/household/$householdId/transactions/new',
-    fuzzy: true,
+  const isOnMobileTransactionNewPage = useMatch({
+    from: '/_user/household/$householdId/transactions/new',
+    shouldThrow: false,
   })
 
   useSubscribeToInvalidationState([ROOT_ID], () => {
