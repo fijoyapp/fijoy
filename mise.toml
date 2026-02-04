@@ -1,4 +1,5 @@
 [tools]
+air = "latest"
 atlas = "latest"
 docker-compose = "latest"
 "github:casey/just" = "latest"

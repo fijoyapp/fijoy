@@ -1,3 +1,12 @@
+[[tools.air]]
+version = "1.64.5"
+backend = "aqua:air-verse/air"
+"platforms.linux-arm64" = { checksum = "sha256:16127a32d4732b5d60ebf14dc6b407bec3045608bafe8e15caec8bbacdc5b208", url = "https://github.com/air-verse/air/releases/download/v1.64.5/air_1.64.5_linux_arm64.tar.gz"}
+"platforms.linux-x64" = { checksum = "sha256:2318802038baead95775b871ea7b6dd40d7e1af2f1bb63f590e86465544bb993", url = "https://github.com/air-verse/air/releases/download/v1.64.5/air_1.64.5_linux_amd64.tar.gz"}
+"platforms.macos-arm64" = { checksum = "sha256:094938fe307ef1f09637117925bd4bce1d84ec8fbe9a8b1e07dbcd7eb9def4f7", url = "https://github.com/air-verse/air/releases/download/v1.64.5/air_1.64.5_darwin_arm64.tar.gz"}
+"platforms.macos-x64" = { checksum = "sha256:793704d06fa3a42955d335010bb70bd33893db834d12173f25afca06d08be9ef", url = "https://github.com/air-verse/air/releases/download/v1.64.5/air_1.64.5_darwin_amd64.tar.gz"}
+"platforms.windows-x64" = { checksum = "sha256:6ce5cd2fc0bb4b26e753818d9f8a27523434f9538348b0e14397e37bfe636e4a", url = "https://github.com/air-verse/air/releases/download/v1.64.5/air_1.64.5_windows_amd64.tar.gz"}
+
 [[tools.atlas]]
 version = "1.0.0"
 backend = "aqua:ariga/atlas"
