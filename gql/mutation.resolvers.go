@@ -17,109 +17,17 @@ import (
 	"beavermoney.app/ent/household"
 	"beavermoney.app/ent/investment"
 	"beavermoney.app/ent/investmentlot"
-	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/userhousehold"
 	"beavermoney.app/gql/model"
 	"beavermoney.app/internal/contextkeys"
 	"beavermoney.app/internal/gqlutil"
 	"beavermoney.app/internal/seed"
-	"entgo.io/ent/dialect/sql"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
-
-// BalanceInHouseholdCurrency is the resolver for the balanceInHouseholdCurrency field.
-func (r *accountResolver) BalanceInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error) {
-	return obj.Balance.Mul(obj.FxRate).String(), nil
-}
-
-// ValueInHouseholdCurrency is the resolver for the valueInHouseholdCurrency field.
-func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent.Account) (string, error) {
-	return obj.Value.Mul(obj.FxRate).String(), nil
-}
-
-// IncomeBreakdown is the resolver for the incomeBreakdown field.
-func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *model.FinancialReport) (*model.CategoryTypeAggregate, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span := r.tracer.Start(ctx, "financialReportResolver.IncomeBreakdown",
-		trace.WithAttributes(
-			attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeIncome)
-}
-
-// ExpensesBreakdown is the resolver for the expensesBreakdown field.
-func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *model.FinancialReport) (*model.CategoryTypeAggregate, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span := r.tracer.Start(ctx, "financialReportResolver.ExpensesBreakdown",
-		trace.WithAttributes(
-			attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	return r.aggregateByCategoryType(ctx, obj, transactioncategory.TypeExpense)
-}
-
-// TransactionCount is the resolver for the transactionCount field.
-func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *model.FinancialReport) (int, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span := r.tracer.Start(ctx, "financialReportResolver.TransactionCount",
-		trace.WithAttributes(
-			attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	client := r.entClient
-
-	query := client.Transaction.Query().
-		Modify(func(s *sql.Selector) {
-			// Filter by household
-			s.Where(sql.EQ(s.C(transaction.FieldHouseholdID), householdID))
-
-			// Apply time filters
-			if !obj.StartDate.IsZero() {
-				s.Where(sql.GTE(s.C(transaction.FieldDatetime), obj.StartDate))
-			}
-			if !obj.EndDate.IsZero() {
-				s.Where(sql.LT(s.C(transaction.FieldDatetime), obj.EndDate))
-			}
-		})
-
-	count, err := query.Count(ctx)
-	if err != nil {
-		r.logger.Error("Failed to count transactions", "error", err)
-		return 0, err
-	}
-
-	return count, nil
-}
-
-// ValueInHouseholdCurrency is the resolver for the valueInHouseholdCurrency field.
-func (r *investmentResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent.Investment) (string, error) {
-	account, err := obj.QueryAccount().Only(ctx)
-	if err != nil {
-		return "", err
-	}
-
-	return obj.Value.Mul(account.FxRate).String(), nil
-}
 
 // CreateHousehold is the resolver for the createHousehold field.
 func (r *mutationResolver) CreateHousehold(ctx context.Context, input ent.CreateHouseholdInput) (*ent.Household, error) {
@@ -1330,127 +1238,7 @@ func (r *mutationResolver) Refresh(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
-// Self is the resolver for the self field.
-func (r *queryResolver) Self(ctx context.Context) (*ent.User, error) {
-	userID := contextkeys.GetUserID(ctx)
-
-	ctx, span := r.tracer.Start(ctx, "queryResolver.Self",
-		trace.WithAttributes(
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	return r.entClient.User.Get(ctx, userID)
-}
-
-// FxRate is the resolver for the fxRate field.
-func (r *queryResolver) FxRate(ctx context.Context, from string, to string, datetime time.Time) (string, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span := r.tracer.Start(ctx, "queryResolver.FxRate",
-		trace.WithAttributes(
-			attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	rate, err := r.fxrateClient.GetRate(ctx, from, to, datetime)
-	if err != nil {
-		return "", err
-	}
-
-	return rate.String(), nil
-}
-
-// StockQuote is the resolver for the stockQuote field.
-func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*model.StockQuoteResult, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span := r.tracer.Start(ctx, "queryResolver.StockQuote",
-		trace.WithAttributes(
-			attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	stockQuote, err := r.marketClient.StockQuote(ctx, symbol)
-	if err != nil {
-		return nil, err
-	}
-
-	return &model.StockQuoteResult{
-		Symbol:       symbol,
-		Name:         stockQuote.Name,
-		Exchange:     stockQuote.Exchange,
-		Currency:     stockQuote.Currency,
-		CurrentPrice: stockQuote.CurrentPrice.String(),
-	}, nil
-}
-
-// CryptoQuote is the resolver for the cryptoQuote field.
-func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*model.CryptoQuoteResult, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	ctx, span := r.tracer.Start(ctx, "queryResolver.CryptoQuote",
-		trace.WithAttributes(
-			attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	cryptoQuote, err := r.marketClient.CryptoQuote(ctx, symbol)
-	if err != nil {
-		return nil, err
-	}
-
-	return &model.CryptoQuoteResult{
-		Symbol:       symbol,
-		Name:         cryptoQuote.Name,
-		Exchange:     cryptoQuote.Exchange,
-		Currency:     cryptoQuote.Currency,
-		CurrentPrice: cryptoQuote.CurrentPrice.String(),
-	}, nil
-}
-
-// FinancialReport is the resolver for the financialReport field.
-func (r *queryResolver) FinancialReport(ctx context.Context, period model.TimePeriodInput) (*model.FinancialReport, error) {
-	userID := contextkeys.GetUserID(ctx)
-	householdID := contextkeys.GetHouseholdID(ctx)
-
-	_, span := r.tracer.Start(ctx, "queryResolver.FinancialReport",
-		trace.WithAttributes(
-			attribute.Int("householdID", householdID),
-			attribute.Int("userID", userID),
-		),
-	)
-	defer span.End()
-
-	// Parse time period
-	start, end := parseTimePeriod(period)
-
-	return &model.FinancialReport{
-		StartDate: start,
-		EndDate:   end,
-	}, nil
-}
-
-// NetWorthOverTime is the resolver for the netWorthOverTime field.
-func (r *queryResolver) NetWorthOverTime(ctx context.Context, period model.TimePeriodInput) ([]*model.NetWorthDataPoint, error) {
-	panic(fmt.Errorf("not implemented: NetWorthOverTime - netWorthOverTime"))
-}
-
-// FinancialReport returns FinancialReportResolver implementation.
-func (r *Resolver) FinancialReport() FinancialReportResolver { return &financialReportResolver{r} }
-
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
-type financialReportResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }

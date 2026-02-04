@@ -1,0 +1,8 @@
+extend type Account {
+  balanceInHouseholdCurrency: String!
+  valueInHouseholdCurrency: String!
+}
+
+extend type Investment {
+  valueInHouseholdCurrency: String!
+}

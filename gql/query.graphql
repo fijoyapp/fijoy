@@ -1,0 +1,67 @@
+extend type Query {
+  self: User!
+  fxRate(from: String!, to: String!, datetime: Time!): String!
+  stockQuote(symbol: String!): StockQuoteResult
+  cryptoQuote(symbol: String!): CryptoQuoteResult
+
+  financialReport(period: TimePeriodInput!): FinancialReport!
+  netWorthOverTime(period: TimePeriodInput!): [NetWorthDataPoint!]!
+}
+
+input TimePeriodInput {
+  startDate: Time!
+  endDate: Time!
+}
+
+type StockQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
+type CryptoQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
+type FinancialReport {
+  incomeBreakdown: CategoryTypeAggregate!
+  expensesBreakdown: CategoryTypeAggregate!
+
+  transactionCount: Int!
+
+  startDate: Time!
+  endDate: Time!
+}
+
+type CategoryTypeAggregate {
+  categoryType: TransactionCategoryType!
+  total: String!
+  transactionCount: Int!
+  categories: [CategoryAggregate!]!
+}
+
+type CategoryAggregate {
+  category: TransactionCategory!
+  total: String!
+  transactionCount: Int!
+}
+
+type NetWorthBreakdown {
+  liquidity: String!
+  investment: String!
+  property: String!
+  receivable: String!
+  liability: String!
+}
+
+type NetWorthDataPoint {
+  date: Time!
+  netWorth: String!
+  breakdown: NetWorthBreakdown!
+}

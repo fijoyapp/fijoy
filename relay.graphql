@@ -11,8 +11,6 @@ directive @goModel(
 ) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 
 type Account implements Node {
-  balanceInHouseholdCurrency: String!
-  valueInHouseholdCurrency: String!
   id: ID!
   createTime: Time!
   updateTime: Time!
@@ -30,311 +28,8 @@ type Account implements Node {
   user: User!
   transactionEntries: [TransactionEntry!]
   investments: [Investment!]
-}
-
-type StockQuoteResult {
-  symbol: String!
-  name: String!
-  exchange: String!
-  currency: String!
-  currentPrice: String!
-}
-
-type CryptoQuoteResult {
-  symbol: String!
-  name: String!
-  exchange: String!
-  currency: String!
-  currentPrice: String!
-}
-
-type Investment implements Node {
+  balanceInHouseholdCurrency: String!
   valueInHouseholdCurrency: String!
-  id: ID!
-  createTime: Time!
-  updateTime: Time!
-  householdID: ID!
-  name: String!
-  type: InvestmentType!
-  symbol: String!
-  amount: String!
-  quote: String!
-  value: String!
-  accountID: ID!
-  currencyID: ID!
-  account: Account!
-  household: Household!
-  currency: Currency!
-  investmentLots: [InvestmentLot!]
-}
-
-type Query {
-  self: User!
-  fxRate(from: String!, to: String!, datetime: Time!): String!
-  stockQuote(symbol: String!): StockQuoteResult
-  cryptoQuote(symbol: String!): CryptoQuoteResult
-  financialReport(period: TimePeriodInput!): FinancialReport!
-  netWorthOverTime(period: TimePeriodInput!): [NetWorthDataPoint!]!
-  """
-  Fetches an object given its ID.
-  """
-  node(
-    """
-    ID of the object.
-    """
-    id: ID!
-  ): Node
-  """
-  Lookup nodes by a list of IDs.
-  """
-  nodes(
-    """
-    The list of node IDs.
-    """
-    ids: [ID!]!
-  ): [Node]!
-  accounts(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for Accounts returned from the connection.
-    """
-    where: AccountWhereInput
-  ): AccountConnection!
-  currencies: [Currency!]!
-  households: [Household!]!
-  investments(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for Investments returned from the connection.
-    """
-    where: InvestmentWhereInput
-  ): InvestmentConnection!
-  investmentLots(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for InvestmentLots returned from the connection.
-    """
-    where: InvestmentLotWhereInput
-  ): InvestmentLotConnection!
-  recurringSubscriptions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for RecurringSubscriptions returned from the connection.
-    """
-    where: RecurringSubscriptionWhereInput
-  ): RecurringSubscriptionConnection!
-  transactions(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Ordering options for Transactions returned from the connection.
-    """
-    orderBy: TransactionOrder
-    """
-    Filtering options for Transactions returned from the connection.
-    """
-    where: TransactionWhereInput
-  ): TransactionConnection!
-  transactionCategories(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: Cursor
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    """
-    Filtering options for TransactionCategories returned from the connection.
-    """
-    where: TransactionCategoryWhereInput
-  ): TransactionCategoryConnection!
-  transactionEntries: [TransactionEntry!]!
-  userHouseholds: [UserHousehold!]!
-}
-
-input CreateInvestmentInputCustom {
-  input: CreateInvestmentInput!
-  costBasis: String!
-}
-
-type Mutation {
-  createHousehold(input: CreateHouseholdInput!): Household!
-  createAccount(input: CreateAccountInput!): AccountEdge!
-  createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
-  createTransactionCategory(
-    input: CreateTransactionCategoryInput!
-  ): TransactionCategoryEdge!
-  createRecurringSubscription(
-    input: CreateRecurringSubscriptionInput!
-  ): RecurringSubscriptionEdge!
-  createExpense(input: CreateExpenseInputCustom!): TransactionEdge!
-  createIncome(input: CreateIncomeInputCustom!): TransactionEdge!
-  createTransfer(input: CreateTransferInputCustom!): TransactionEdge!
-  buyInvestment(input: BuyInvestmentInputCustom!): TransactionEdge!
-  sellInvestment(input: SellInvestmentInputCustom!): TransactionEdge!
-  moveInvestment(input: MoveInvestmentInputCustom!): TransactionEdge!
-  refresh: Boolean!
-}
-
-type FinancialReport {
-  incomeBreakdown: CategoryTypeAggregate!
-  expensesBreakdown: CategoryTypeAggregate!
-  transactionCount: Int!
-  startDate: Time!
-  endDate: Time!
-}
-
-type CategoryTypeAggregate {
-  categoryType: TransactionCategoryType!
-  total: String!
-  transactionCount: Int!
-  categories: [CategoryAggregate!]!
-}
-
-type CategoryAggregate {
-  category: TransactionCategory!
-  total: String!
-  transactionCount: Int!
-}
-
-input TimePeriodInput {
-  startDate: Time!
-  endDate: Time!
-}
-
-type NetWorthBreakdown {
-  liquidity: String!
-  investment: String!
-  property: String!
-  receivable: String!
-  liability: String!
-}
-
-type NetWorthDataPoint {
-  date: Time!
-  netWorth: String!
-  breakdown: NetWorthBreakdown!
-}
-
-input CreateExpenseInputCustom {
-  transaction: CreateTransactionInput!
-  transactionEntry: CreateTransactionEntryInput!
-  fees: [CreateTransactionEntryInput!]! = []
-}
-
-input CreateIncomeInputCustom {
-  transaction: CreateTransactionInput!
-  transactionEntry: CreateTransactionEntryInput!
-  fees: [CreateTransactionEntryInput!]! = []
-}
-
-input CreateTransferInputCustom {
-  transaction: CreateTransactionInput!
-  transactionEntries: [CreateTransactionEntryInput!]!
-  fees: [CreateTransactionEntryInput!]! = []
-}
-
-input BuyInvestmentInputCustom {
-  transaction: CreateTransactionInput!
-  transactionEntry: CreateTransactionEntryInput!
-  investmentLot: CreateInvestmentLotInput!
-  fees: [CreateTransactionEntryInput!]! = []
-}
-
-input SellInvestmentInputCustom {
-  transaction: CreateTransactionInput!
-  transactionEntry: CreateTransactionEntryInput!
-  investmentLot: CreateInvestmentLotInput!
-  fees: [CreateTransactionEntryInput!]! = []
-}
-
-input MoveInvestmentInputCustom {
-  transaction: CreateTransactionInput!
-  investmentLots: [CreateInvestmentLotInput!]!
-  fees: [CreateTransactionEntryInput!]! = []
 }
 
 """
@@ -861,6 +556,26 @@ input HouseholdWhereInput {
   hasUserHouseholdsWith: [UserHouseholdWhereInput!]
 }
 
+type Investment implements Node {
+  id: ID!
+  createTime: Time!
+  updateTime: Time!
+  householdID: ID!
+  name: String!
+  type: InvestmentType!
+  symbol: String!
+  amount: String!
+  quote: String!
+  value: String!
+  accountID: ID!
+  currencyID: ID!
+  account: Account!
+  household: Household!
+  currency: Currency!
+  investmentLots: [InvestmentLot!]
+  valueInHouseholdCurrency: String!
+}
+
 """
 A connection to a list of items.
 """
@@ -1250,6 +965,173 @@ type PageInfo {
   When paginating forwards, the cursor to continue.
   """
   endCursor: Cursor
+}
+
+type Query {
+  """
+  Fetches an object given its ID.
+  """
+  node(
+    """
+    ID of the object.
+    """
+    id: ID!
+  ): Node
+  """
+  Lookup nodes by a list of IDs.
+  """
+  nodes(
+    """
+    The list of node IDs.
+    """
+    ids: [ID!]!
+  ): [Node]!
+  accounts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for Accounts returned from the connection.
+    """
+    where: AccountWhereInput
+  ): AccountConnection!
+  currencies: [Currency!]!
+  households: [Household!]!
+  investments(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for Investments returned from the connection.
+    """
+    where: InvestmentWhereInput
+  ): InvestmentConnection!
+  investmentLots(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for InvestmentLots returned from the connection.
+    """
+    where: InvestmentLotWhereInput
+  ): InvestmentLotConnection!
+  recurringSubscriptions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for RecurringSubscriptions returned from the connection.
+    """
+    where: RecurringSubscriptionWhereInput
+  ): RecurringSubscriptionConnection!
+  transactions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Ordering options for Transactions returned from the connection.
+    """
+    orderBy: TransactionOrder
+    """
+    Filtering options for Transactions returned from the connection.
+    """
+    where: TransactionWhereInput
+  ): TransactionConnection!
+  transactionCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    """
+    Filtering options for TransactionCategories returned from the connection.
+    """
+    where: TransactionCategoryWhereInput
+  ): TransactionCategoryConnection!
+  transactionEntries: [TransactionEntry!]!
+  userHouseholds: [UserHousehold!]!
+  self: User!
+  fxRate(from: String!, to: String!, datetime: Time!): String!
+  stockQuote(symbol: String!): StockQuoteResult
+  cryptoQuote(symbol: String!): CryptoQuoteResult
+  financialReport(period: TimePeriodInput!): FinancialReport!
+  netWorthOverTime(period: TimePeriodInput!): [NetWorthDataPoint!]!
 }
 
 type RecurringSubscription implements Node {
@@ -2289,6 +2171,124 @@ input UserWhereInput {
   """
   hasUserHouseholds: Boolean
   hasUserHouseholdsWith: [UserHouseholdWhereInput!]
+}
+
+type Mutation {
+  createHousehold(input: CreateHouseholdInput!): Household!
+  createAccount(input: CreateAccountInput!): AccountEdge!
+  createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
+  createTransactionCategory(
+    input: CreateTransactionCategoryInput!
+  ): TransactionCategoryEdge!
+  createRecurringSubscription(
+    input: CreateRecurringSubscriptionInput!
+  ): RecurringSubscriptionEdge!
+  createExpense(input: CreateExpenseInputCustom!): TransactionEdge!
+  createIncome(input: CreateIncomeInputCustom!): TransactionEdge!
+  createTransfer(input: CreateTransferInputCustom!): TransactionEdge!
+  buyInvestment(input: BuyInvestmentInputCustom!): TransactionEdge!
+  sellInvestment(input: SellInvestmentInputCustom!): TransactionEdge!
+  moveInvestment(input: MoveInvestmentInputCustom!): TransactionEdge!
+  refresh: Boolean!
+}
+
+input CreateInvestmentInputCustom {
+  input: CreateInvestmentInput!
+  costBasis: String!
+}
+
+input CreateExpenseInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+input CreateIncomeInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+input CreateTransferInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntries: [CreateTransactionEntryInput!]!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+input BuyInvestmentInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  investmentLot: CreateInvestmentLotInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+input SellInvestmentInputCustom {
+  transaction: CreateTransactionInput!
+  transactionEntry: CreateTransactionEntryInput!
+  investmentLot: CreateInvestmentLotInput!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+input MoveInvestmentInputCustom {
+  transaction: CreateTransactionInput!
+  investmentLots: [CreateInvestmentLotInput!]!
+  fees: [CreateTransactionEntryInput!]! = []
+}
+
+input TimePeriodInput {
+  startDate: Time!
+  endDate: Time!
+}
+
+type StockQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
+type CryptoQuoteResult {
+  symbol: String!
+  name: String!
+  exchange: String!
+  currency: String!
+  currentPrice: String!
+}
+
+type FinancialReport {
+  incomeBreakdown: CategoryTypeAggregate!
+  expensesBreakdown: CategoryTypeAggregate!
+  transactionCount: Int!
+  startDate: Time!
+  endDate: Time!
+}
+
+type CategoryTypeAggregate {
+  categoryType: TransactionCategoryType!
+  total: String!
+  transactionCount: Int!
+  categories: [CategoryAggregate!]!
+}
+
+type CategoryAggregate {
+  category: TransactionCategory!
+  total: String!
+  transactionCount: Int!
+}
+
+type NetWorthBreakdown {
+  liquidity: String!
+  investment: String!
+  property: String!
+  receivable: String!
+  liability: String!
+}
+
+type NetWorthDataPoint {
+  date: Time!
+  netWorth: String!
+  breakdown: NetWorthBreakdown!
 }
 
 schema {
