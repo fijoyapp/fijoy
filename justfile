@@ -6,7 +6,7 @@ web:
   pnpm dev
 
 server:
-  go tool air
+  air
 
 merge-graphql:
   watchexec -w ./gql -e graphql --shell=bash '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
