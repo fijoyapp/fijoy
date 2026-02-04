@@ -22,7 +22,7 @@ compose argument:
   docker-compose -f docker-compose.dev.yml '{{argument}}'
 
 migrate-hash:
-  atlas migrate hash --dir file://ent/migrate/migrations
+  atlas migrate hash --dir file://ent/migrate/migrations --dir-format=golang-migrate
 
 migrate name:
   go run -mod=mod ent/migrate/main.go {{name}}
