@@ -11,6 +11,7 @@ import {
   Navigate,
   Outlet,
   createFileRoute,
+  useMatchRoute,
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
@@ -112,6 +113,12 @@ function RouteComponent() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
 
+  const matchRoute = useMatchRoute()
+  const isOnMobileTransactionNewPage = matchRoute({
+    to: '/household/$householdId/transactions/new',
+    fuzzy: true,
+  })
+
   useSubscribeToInvalidationState([ROOT_ID], () => {
     return loadQuery<routeHouseholdIdQuery>(
       environment,
@@ -211,7 +218,7 @@ function RouteComponent() {
           </div>
         </SidebarInset>
         <MobileFabNav />
-        {isMobile && search.log_type && (
+        {isMobile && search.log_type && !isOnMobileTransactionNewPage && (
           <Navigate
             from={'/household/$householdId'}
             to={'/household/$householdId/transactions/new'}

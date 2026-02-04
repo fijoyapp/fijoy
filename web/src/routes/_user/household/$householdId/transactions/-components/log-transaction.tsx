@@ -38,10 +38,12 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
   const data = useFragment(logTransactionFragment, fragmentRef)
   const search = useSearch({
     from: '/_user/household/$householdId',
+    select: (s) => ({
+      logType: s.log_type,
+    }),
   })
   const navigate = useNavigate()
-  const selectedType = search.log_type
-
+  const selectedType = search.logType
   const setSelectedType = (type: TransactionType) => {
     navigate({
       to: '.',
