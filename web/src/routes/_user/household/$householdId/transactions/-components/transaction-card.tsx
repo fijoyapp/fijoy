@@ -28,6 +28,7 @@ import { getLogoTickerURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'
 import { Fragment } from 'react/jsx-runtime'
 import { Separator } from '@/components/ui/separator'
+import { format } from 'date-fns'
 
 const transactionCardFragment = graphql`
   fragment transactionCardFragment on Transaction {
@@ -196,7 +197,7 @@ function TransactionEntryCard({
           <span className="">{data.category.name}</span>
         </ItemTitle>
         <ItemDescription>
-          {new Date(data.datetime).toLocaleDateString()}
+          {format(new Date(data.datetime), 'LLL d, iiii')}
         </ItemDescription>
       </ItemContent>
       <ItemContent className="items-end gap-px">
@@ -252,7 +253,7 @@ function InvestmentLotCard({
           <span>{data.category.name}</span>
         </ItemTitle>
         <ItemDescription>
-          {new Date(data.datetime).toLocaleDateString()}
+          {format(new Date(data.datetime), 'LLL d, iiii')}
         </ItemDescription>
       </ItemContent>
       <ItemContent className="items-end gap-px">
