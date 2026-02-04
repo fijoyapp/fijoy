@@ -10,8 +10,8 @@ import * as prettier from "prettier";
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(path.dirname(__filename)); // get the name of the directory
-console.log("Merging GraphQL files from:", `${__dirname}/*.graphql`);
-const loadedFiles = loadFilesSync(`${__dirname}/*.graphql`);
+console.log("Merging GraphQL files from:", `${__dirname}/gql/*.graphql`);
+const loadedFiles = loadFilesSync(`${__dirname}/gql/*.graphql`);
 const typeDefs = mergeTypeDefs(loadedFiles);
 const printedTypeDefs = print(typeDefs);
 const formattedTypeDefs = await prettier.format(printedTypeDefs, {

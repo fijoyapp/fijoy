@@ -1,4 +1,4 @@
-package beavermoney
+package gql
 
 // This file will be automatically regenerated based on the schema, any resolver
 // implementations

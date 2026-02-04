@@ -1,4 +1,4 @@
-package beavermoney
+package gql
 
 // This file will be automatically regenerated based on the schema, any resolver
 // implementations
@@ -20,6 +20,7 @@ import (
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/userhousehold"
+	"beavermoney.app/gql/model"
 	"beavermoney.app/internal/contextkeys"
 	"beavermoney.app/internal/gqlutil"
 	"beavermoney.app/internal/seed"
@@ -41,7 +42,7 @@ func (r *accountResolver) ValueInHouseholdCurrency(ctx context.Context, obj *ent
 }
 
 // IncomeBreakdown is the resolver for the incomeBreakdown field.
-func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *FinancialReport) (*CategoryTypeAggregate, error) {
+func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *model.FinancialReport) (*model.CategoryTypeAggregate, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -57,7 +58,7 @@ func (r *financialReportResolver) IncomeBreakdown(ctx context.Context, obj *Fina
 }
 
 // ExpensesBreakdown is the resolver for the expensesBreakdown field.
-func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *FinancialReport) (*CategoryTypeAggregate, error) {
+func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *model.FinancialReport) (*model.CategoryTypeAggregate, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -73,7 +74,7 @@ func (r *financialReportResolver) ExpensesBreakdown(ctx context.Context, obj *Fi
 }
 
 // TransactionCount is the resolver for the transactionCount field.
-func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *FinancialReport) (int, error) {
+func (r *financialReportResolver) TransactionCount(ctx context.Context, obj *model.FinancialReport) (int, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -257,7 +258,7 @@ func (r *mutationResolver) CreateAccount(ctx context.Context, input ent.CreateAc
 }
 
 // CreateInvestment is the resolver for the createInvestment field.
-func (r *mutationResolver) CreateInvestment(ctx context.Context, input CreateInvestmentInputCustom) (*ent.InvestmentEdge, error) {
+func (r *mutationResolver) CreateInvestment(ctx context.Context, input model.CreateInvestmentInputCustom) (*ent.InvestmentEdge, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -450,7 +451,7 @@ func (r *mutationResolver) CreateRecurringSubscription(ctx context.Context, inpu
 }
 
 // CreateExpense is the resolver for the createExpense field.
-func (r *mutationResolver) CreateExpense(ctx context.Context, input CreateExpenseInputCustom) (*ent.TransactionEdge, error) {
+func (r *mutationResolver) CreateExpense(ctx context.Context, input model.CreateExpenseInputCustom) (*ent.TransactionEdge, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -540,7 +541,7 @@ func (r *mutationResolver) CreateExpense(ctx context.Context, input CreateExpens
 }
 
 // CreateIncome is the resolver for the createIncome field.
-func (r *mutationResolver) CreateIncome(ctx context.Context, input CreateIncomeInputCustom) (*ent.TransactionEdge, error) {
+func (r *mutationResolver) CreateIncome(ctx context.Context, input model.CreateIncomeInputCustom) (*ent.TransactionEdge, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -634,7 +635,7 @@ func (r *mutationResolver) CreateIncome(ctx context.Context, input CreateIncomeI
 }
 
 // CreateTransfer is the resolver for the createTransfer field.
-func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTransferInputCustom) (*ent.TransactionEdge, error) {
+func (r *mutationResolver) CreateTransfer(ctx context.Context, input model.CreateTransferInputCustom) (*ent.TransactionEdge, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -741,7 +742,7 @@ func (r *mutationResolver) CreateTransfer(ctx context.Context, input CreateTrans
 }
 
 // BuyInvestment is the resolver for the buyInvestment field.
-func (r *mutationResolver) BuyInvestment(ctx context.Context, input BuyInvestmentInputCustom) (*ent.TransactionEdge, error) {
+func (r *mutationResolver) BuyInvestment(ctx context.Context, input model.BuyInvestmentInputCustom) (*ent.TransactionEdge, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -861,7 +862,7 @@ func (r *mutationResolver) BuyInvestment(ctx context.Context, input BuyInvestmen
 }
 
 // SellInvestment is the resolver for the sellInvestment field.
-func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestmentInputCustom) (*ent.TransactionEdge, error) {
+func (r *mutationResolver) SellInvestment(ctx context.Context, input model.SellInvestmentInputCustom) (*ent.TransactionEdge, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -981,7 +982,7 @@ func (r *mutationResolver) SellInvestment(ctx context.Context, input SellInvestm
 }
 
 // MoveInvestment is the resolver for the moveInvestment field.
-func (r *mutationResolver) MoveInvestment(ctx context.Context, input MoveInvestmentInputCustom) (*ent.TransactionEdge, error) {
+func (r *mutationResolver) MoveInvestment(ctx context.Context, input model.MoveInvestmentInputCustom) (*ent.TransactionEdge, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -1365,7 +1366,7 @@ func (r *queryResolver) FxRate(ctx context.Context, from string, to string, date
 }
 
 // StockQuote is the resolver for the stockQuote field.
-func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQuoteResult, error) {
+func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*model.StockQuoteResult, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -1382,7 +1383,7 @@ func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQu
 		return nil, err
 	}
 
-	return &StockQuoteResult{
+	return &model.StockQuoteResult{
 		Symbol:       symbol,
 		Name:         stockQuote.Name,
 		Exchange:     stockQuote.Exchange,
@@ -1392,7 +1393,7 @@ func (r *queryResolver) StockQuote(ctx context.Context, symbol string) (*StockQu
 }
 
 // CryptoQuote is the resolver for the cryptoQuote field.
-func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*CryptoQuoteResult, error) {
+func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*model.CryptoQuoteResult, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -1409,7 +1410,7 @@ func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*Crypto
 		return nil, err
 	}
 
-	return &CryptoQuoteResult{
+	return &model.CryptoQuoteResult{
 		Symbol:       symbol,
 		Name:         cryptoQuote.Name,
 		Exchange:     cryptoQuote.Exchange,
@@ -1419,7 +1420,7 @@ func (r *queryResolver) CryptoQuote(ctx context.Context, symbol string) (*Crypto
 }
 
 // FinancialReport is the resolver for the financialReport field.
-func (r *queryResolver) FinancialReport(ctx context.Context, period TimePeriodInput) (*FinancialReport, error) {
+func (r *queryResolver) FinancialReport(ctx context.Context, period model.TimePeriodInput) (*model.FinancialReport, error) {
 	userID := contextkeys.GetUserID(ctx)
 	householdID := contextkeys.GetHouseholdID(ctx)
 
@@ -1434,14 +1435,14 @@ func (r *queryResolver) FinancialReport(ctx context.Context, period TimePeriodIn
 	// Parse time period
 	start, end := parseTimePeriod(period)
 
-	return &FinancialReport{
+	return &model.FinancialReport{
 		StartDate: start,
 		EndDate:   end,
 	}, nil
 }
 
 // NetWorthOverTime is the resolver for the netWorthOverTime field.
-func (r *queryResolver) NetWorthOverTime(ctx context.Context, period TimePeriodInput) ([]*NetWorthDataPoint, error) {
+func (r *queryResolver) NetWorthOverTime(ctx context.Context, period model.TimePeriodInput) ([]*model.NetWorthDataPoint, error) {
 	panic(fmt.Errorf("not implemented: NetWorthOverTime - netWorthOverTime"))
 }
 

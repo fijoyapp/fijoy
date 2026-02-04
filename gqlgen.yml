@@ -1,12 +1,21 @@
 # schema tells gqlgen where the GraphQL schema is located.
 schema:
-  - ent.graphql
-  - beavermoney.graphql
+  - ./gql/*.graphql
+
+exec:
+  package: gql
+  layout: single-file
+  filename: ./gql/generated.go
+
+model:
+  filename: ./gql/model/models_gen.go
+  package: model
 
 # resolver reports where the resolver implementations go.
 resolver:
+  package: gql
   layout: follow-schema
-  dir: .
+  dir: ./gql
 
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.

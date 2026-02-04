@@ -1,4 +1,4 @@
-package beavermoney
+package gql
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
 	"beavermoney.app/ent/transactionentry"
+	"beavermoney.app/gql/model"
 	"beavermoney.app/internal/contextkeys"
 	"entgo.io/ent/dialect/sql"
 	"github.com/shopspring/decimal"
@@ -16,9 +17,9 @@ import (
 
 func (r *financialReportResolver) aggregateByCategoryType(
 	ctx context.Context,
-	obj *FinancialReport,
+	obj *model.FinancialReport,
 	categoryType transactioncategory.Type,
-) (*CategoryTypeAggregate, error) {
+) (*model.CategoryTypeAggregate, error) {
 	ctx, span := r.tracer.Start(
 		ctx,
 		"financialReportResolver.aggregateByCategoryType",
@@ -103,7 +104,7 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	}
 
 	if len(res) == 0 {
-		return &CategoryTypeAggregate{}, nil
+		return &model.CategoryTypeAggregate{}, nil
 	}
 
 	// Aggregate by category (converting currencies)
@@ -161,7 +162,7 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	}
 
 	// Build CategoryAggregate list
-	categoryAggregates := make([]*CategoryAggregate, 0, len(categories))
+	categoryAggregates := make([]*model.CategoryAggregate, 0, len(categories))
 	grandTotal := decimal.NewFromInt(0)
 	grandCount := 0
 
@@ -172,17 +173,20 @@ func (r *financialReportResolver) aggregateByCategoryType(
 			total = total.Abs()
 		}
 
-		categoryAggregates = append(categoryAggregates, &CategoryAggregate{
-			Category:         cat,
-			Total:            total.String(),
-			TransactionCount: data.count,
-		})
+		categoryAggregates = append(
+			categoryAggregates,
+			&model.CategoryAggregate{
+				Category:         cat,
+				Total:            total.String(),
+				TransactionCount: data.count,
+			},
+		)
 
 		grandTotal = grandTotal.Add(total)
 		grandCount += data.count
 	}
 
-	return &CategoryTypeAggregate{
+	return &model.CategoryTypeAggregate{
 		CategoryType:     categoryType,
 		Total:            grandTotal.String(),
 		TransactionCount: grandCount,
@@ -190,7 +194,7 @@ func (r *financialReportResolver) aggregateByCategoryType(
 	}, nil
 }
 
-func parseTimePeriod(period TimePeriodInput) (time.Time, time.Time) {
+func parseTimePeriod(period model.TimePeriodInput) (time.Time, time.Time) {
 	// If dates provided, use them directly (client sends UTC)
 	if !period.StartDate.IsZero() && !period.EndDate.IsZero() {
 		return period.StartDate, period.EndDate

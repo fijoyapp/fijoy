@@ -17,9 +17,9 @@ import (
 	"github.com/charmbracelet/log"
 
 	_ "beavermoney.app/ent/runtime"
+	"beavermoney.app/gql"
 	"github.com/go-chi/httprate"
 
-	"beavermoney.app"
 	"beavermoney.app/cmd/server/auth"
 	"beavermoney.app/cmd/server/config"
 	"beavermoney.app/cmd/server/database"
@@ -162,7 +162,7 @@ func main() {
 
 	// Setup GQL
 	gqlHandler := handler.NewDefaultServer(
-		beavermoney.NewSchema(
+		gql.NewSchema(
 			logger,
 			entClient,
 			fxrateClient,

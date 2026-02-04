@@ -1,4 +1,4 @@
-generated.go
+./gql/generated.go
 
 ent/*
 !ent/schema/

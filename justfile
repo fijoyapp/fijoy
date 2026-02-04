@@ -9,7 +9,7 @@ server:
   go tool air
 
 merge-graphql:
-  watchexec -w ent.graphql -w beavermoney.graphql --shell=bash '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
+  watchexec -w ./gql -e graphql --shell=bash '(rm relay.graphql || true) && node ./scripts/merge-graphql.js'
 
 relay-watch:
   watchexec --exts tsx,ts -w web 'just relay'

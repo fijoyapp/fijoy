@@ -1,4 +1,4 @@
-package beavermoney
+package gql
 
 import (
 	"log/slog"
