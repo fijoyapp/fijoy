@@ -5,6 +5,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -43,6 +44,7 @@ func (Transaction) Edges() []ent.Edge {
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
 			),
 		edge.From("household", Household.Type).
@@ -54,6 +56,7 @@ func (Transaction) Edges() []ent.Edge {
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
 			),
 		edge.From("category", TransactionCategory.Type).
@@ -66,13 +69,17 @@ func (Transaction) Edges() []ent.Edge {
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
+				entsql.OnDelete(entsql.Cascade),
 			),
 		edge.To("investment_lots", InvestmentLot.Type).
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
+				entsql.OnDelete(entsql.Cascade),
 			),
 	}
 }
@@ -86,7 +93,7 @@ func (Transaction) Indexes() []ent.Index {
 func (Transaction) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.Mutations(entgql.MutationCreate()),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 		entgql.QueryField(),
 	}
 }
@@ -158,7 +165,7 @@ func (TransactionCategory) Indexes() []ent.Index {
 func (TransactionCategory) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.Mutations(entgql.MutationCreate()),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 		entgql.QueryField(),
 	}
 }
@@ -207,6 +214,7 @@ func (TransactionEntry) Edges() []ent.Edge {
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
 			),
 		edge.From("account", Account.Type).
@@ -223,6 +231,7 @@ func (TransactionEntry) Edges() []ent.Edge {
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
 			),
 		edge.From("transaction", Transaction.Type).
@@ -234,6 +243,7 @@ func (TransactionEntry) Edges() []ent.Edge {
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
 			),
 	}
@@ -241,7 +251,7 @@ func (TransactionEntry) Edges() []ent.Edge {
 
 func (TransactionEntry) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Mutations(entgql.MutationCreate()),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 		entgql.QueryField(),
 	}
 }

@@ -10,6 +10,7 @@ import {
 import {
   Outlet,
   createFileRoute,
+  stripSearchParams,
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
@@ -51,6 +52,9 @@ import { LogTransaction } from './transactions/-components/log-transaction'
 import { zodValidator } from '@tanstack/zod-adapter'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
+import { EditTransactionDialog } from './transactions/-components/edit-transaction-dialog'
+import { Suspense } from 'react'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 
 const routeHouseholdIdQuery = graphql`
   query routeHouseholdIdQuery {
@@ -77,12 +81,22 @@ const searchSchema = z.object({
     .nullable()
     .default(null),
   command_open: z.boolean().optional().default(false),
+  edit_transaction_id: z.string().nullable().default(null),
 })
+
+const defaultValues = {
+  log_type: null,
+  command_open: false,
+  edit_transaction_id: null,
+}
 
 export const Route = createFileRoute('/_user/household/$householdId')({
   component: RouteComponent,
   validateSearch: zodValidator(searchSchema),
   staleTime: Infinity,
+  search: {
+    middlewares: [stripSearchParams(defaultValues)],
+  },
   loader: async ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
     await fetchQuery<routeHouseholdIdQuery>(
@@ -210,6 +224,26 @@ function RouteComponent() {
           </div>
         </SidebarInset>
         <MobileFabNav />
+
+        {search.edit_transaction_id && (
+          <Dialog
+            open={true}
+            onOpenChange={() =>
+              navigate({
+                to: '.',
+                search: (prev) => ({ ...prev, edit_transaction_id: null }),
+              })
+            }
+          >
+            <DialogContent>
+              <Suspense fallback={<PendingComponent />}>
+                <EditTransactionDialog
+                  transactionId={search.edit_transaction_id}
+                />
+              </Suspense>
+            </DialogContent>
+          </Dialog>
+        )}
 
         {/* Desktop: Resizable & Draggable New Transaction Form */}
         {!isMobile && (

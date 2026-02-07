@@ -28,6 +28,7 @@ func (Investment) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
 			}).
+			Immutable().
 			Annotations(entgql.Type("String")).
 			DefaultFunc(func() decimal.Decimal {
 				return decimal.NewFromInt(0)
@@ -48,6 +49,7 @@ func (Investment) Fields() []ent.Field {
 			SchemaType(map[string]string{
 				dialect.Postgres: "numeric(36,18)",
 			}).
+			Immutable().
 			Annotations(
 				entgql.Type("String"),
 				entgql.Skip(
@@ -181,6 +183,7 @@ func (InvestmentLot) Edges() []ent.Edge {
 			Annotations(
 				entgql.Skip(
 					entgql.SkipMutationCreateInput,
+					entgql.SkipMutationUpdateInput,
 				),
 			),
 	}
