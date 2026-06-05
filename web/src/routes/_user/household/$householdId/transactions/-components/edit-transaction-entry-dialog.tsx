@@ -271,7 +271,6 @@ export function EditTransactionEntryDialog({
                     }
                     onBlur={field.handleBlur}
                     aria-invalid={isInvalid}
-                    decimalScale={8}
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
