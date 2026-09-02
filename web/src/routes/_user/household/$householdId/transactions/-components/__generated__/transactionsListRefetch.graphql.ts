@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8d0f78e42acfde7b088c7be818c18736>>
+ * @generated SignedSource<<622a1b875e58f7f5373e17fcabb8ac23>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -1263,17 +1263,24 @@ v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "amount",
+  "name": "datetime",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "amount",
   "storageKey": null
 },
 v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": "HouseholdCurrency",
@@ -1292,13 +1299,6 @@ v11 = {
   ],
   "storageKey": null
 },
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "datetime",
-  "storageKey": null
-},
 v13 = {
   "alias": null,
   "args": null,
@@ -1307,7 +1307,7 @@ v13 = {
   "name": "category",
   "plural": false,
   "selections": [
-    (v10/*: any*/),
+    (v11/*: any*/),
     (v7/*: any*/)
   ],
   "storageKey": null
@@ -1405,6 +1405,7 @@ return {
                         "plural": false,
                         "selections": [
                           (v7/*: any*/),
+                          (v9/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -1414,7 +1415,7 @@ return {
                             "plural": true,
                             "selections": [
                               (v7/*: any*/),
-                              (v9/*: any*/),
+                              (v10/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -1423,8 +1424,8 @@ return {
                                 "name": "account",
                                 "plural": false,
                                 "selections": [
-                                  (v10/*: any*/),
                                   (v11/*: any*/),
+                                  (v12/*: any*/),
                                   (v7/*: any*/)
                                 ],
                                 "storageKey": null
@@ -1453,7 +1454,7 @@ return {
                                     "name": "category",
                                     "plural": false,
                                     "selections": [
-                                      (v10/*: any*/),
+                                      (v11/*: any*/),
                                       {
                                         "alias": null,
                                         "args": null,
@@ -1472,7 +1473,7 @@ return {
                                     ],
                                     "storageKey": null
                                   },
-                                  (v12/*: any*/)
+                                  (v9/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -1488,7 +1489,7 @@ return {
                             "plural": true,
                             "selections": [
                               (v7/*: any*/),
-                              (v9/*: any*/),
+                              (v10/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -1504,7 +1505,7 @@ return {
                                 "name": "investment",
                                 "plural": false,
                                 "selections": [
-                                  (v10/*: any*/),
+                                  (v11/*: any*/),
                                   {
                                     "alias": null,
                                     "args": null,
@@ -1512,7 +1513,7 @@ return {
                                     "name": "symbol",
                                     "storageKey": null
                                   },
-                                  (v11/*: any*/),
+                                  (v12/*: any*/),
                                   (v7/*: any*/)
                                 ],
                                 "storageKey": null
@@ -1527,7 +1528,7 @@ return {
                                 "selections": [
                                   (v7/*: any*/),
                                   (v13/*: any*/),
-                                  (v12/*: any*/)
+                                  (v9/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -1611,16 +1612,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "779fd5f9dc792b0944eb3a7230aaed03",
+    "cacheID": "c98e1f701f050213e9bc70eaaf3edbae",
     "id": null,
     "metadata": {},
     "name": "transactionsListRefetch",
     "operationKind": "query",
-    "text": "query transactionsListRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n  $where: TransactionWhereInput\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...transactionsListFragment_mjR8k\n    id\n  }\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  transactionEntries {\n    id\n    amount\n    ...transactionEntryCardFragment\n  }\n  investmentLots {\n    id\n    amount\n    ...investmentLotCardFragment\n  }\n  category {\n    name\n    id\n  }\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionsListFragment_mjR8k on Household {\n  transactions(first: $count, after: $cursor, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n  id\n}\n"
+    "text": "query transactionsListRefetch(\n  $count: Int = 20\n  $cursor: Cursor\n  $where: TransactionWhereInput\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...transactionsListFragment_mjR8k\n    id\n  }\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  transactionEntries {\n    id\n    amount\n    ...transactionEntryCardFragment\n  }\n  investmentLots {\n    id\n    amount\n    ...investmentLotCardFragment\n  }\n  category {\n    name\n    id\n  }\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionsListFragment_mjR8k on Household {\n  transactions(first: $count, after: $cursor, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        datetime\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7c3de690e863f79e44a33900028dfdf8";
+(node as any).hash = "084b7068f88998e50ddce9162ae90f9b";
 
 export default node;

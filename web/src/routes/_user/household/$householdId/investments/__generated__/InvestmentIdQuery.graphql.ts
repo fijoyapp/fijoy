@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<25eea4afc609648353e0d2e39cf14fed>>
+ * @generated SignedSource<<833cdfbcc03722799e620c836800a44a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -1487,6 +1487,7 @@ return {
                     "plural": false,
                     "selections": [
                       (v4/*: any*/),
+                      (v11/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -1684,12 +1685,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "16db1338d4b557e3dff0d5e749eda03c",
+    "cacheID": "c34b6122b158e0347b84bc8d3907f88c",
     "id": null,
     "metadata": {},
     "name": "InvestmentIdQuery",
     "operationKind": "query",
-    "text": "query InvestmentIdQuery(\n  $id: ID!\n  $where: TransactionWhereInput\n) {\n  node(id: $id) {\n    __typename\n    ... on Investment {\n      ...investmentCardFragment\n      ...InvestmentIdDetailFragment\n    }\n    id\n  }\n  household {\n    ...transactionsListFragment_3FC4Qo\n    id\n  }\n}\n\nfragment InvestmentIdDetailFragment on Investment {\n  householdCurrency {\n    code\n    id\n  }\n  costBasis\n  averageCost\n  unrealizedReturn\n  unrealizedReturnPercent\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  amount\n  value\n  unrealizedReturn\n  unrealizedReturnPercent\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  transactionEntries {\n    id\n    amount\n    ...transactionEntryCardFragment\n  }\n  investmentLots {\n    id\n    amount\n    ...investmentLotCardFragment\n  }\n  category {\n    name\n    id\n  }\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Household {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n  id\n}\n"
+    "text": "query InvestmentIdQuery(\n  $id: ID!\n  $where: TransactionWhereInput\n) {\n  node(id: $id) {\n    __typename\n    ... on Investment {\n      ...investmentCardFragment\n      ...InvestmentIdDetailFragment\n    }\n    id\n  }\n  household {\n    ...transactionsListFragment_3FC4Qo\n    id\n  }\n}\n\nfragment InvestmentIdDetailFragment on Investment {\n  householdCurrency {\n    code\n    id\n  }\n  costBasis\n  averageCost\n  unrealizedReturn\n  unrealizedReturnPercent\n}\n\nfragment investmentCardFragment on Investment {\n  id\n  name\n  symbol\n  quote\n  updateTime\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  amount\n  value\n  unrealizedReturn\n  unrealizedReturnPercent\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionCardFragment on Transaction {\n  id\n  transactionEntries {\n    id\n    amount\n    ...transactionEntryCardFragment\n  }\n  investmentLots {\n    id\n    amount\n    ...investmentLotCardFragment\n  }\n  category {\n    name\n    id\n  }\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionsListFragment_3FC4Qo on Household {\n  transactions(first: 20, where: $where, orderBy: {field: DATETIME, direction: DESC}) {\n    edges {\n      node {\n        id\n        datetime\n        ...transactionCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n  id\n}\n"
   }
 };
 })();

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1bf950f4ff84b7f933c012a06754d27d>>
+ * @generated SignedSource<<5ad7b1b043af1c76e003ff7660bb7494>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type transactionsListFragment$data = {
     readonly __id: string;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly datetime: any;
         readonly id: string;
         readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment">;
       } | null | undefined;
@@ -134,6 +135,13 @@ return {
               "selections": [
                 (v1/*: any*/),
                 {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "datetime",
+                  "storageKey": null
+                },
+                {
                   "args": null,
                   "kind": "FragmentSpread",
                   "name": "transactionCardFragment"
@@ -205,6 +213,6 @@ return {
 };
 })();
 
-(node as any).hash = "7c3de690e863f79e44a33900028dfdf8";
+(node as any).hash = "084b7068f88998e50ddce9162ae90f9b";
 
 export default node;
