@@ -9,7 +9,14 @@ import { TransactionCard } from './transaction-card'
 import type { transactionsListFragment$key } from './__generated__/transactionsListFragment.graphql'
 import { ItemGroup } from '@/components/ui/item'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
-import { format, isSameDay, parseISO, startOfDay, startOfToday, subDays } from 'date-fns'
+import {
+  format,
+  isSameDay,
+  parseISO,
+  startOfDay,
+  startOfToday,
+  subDays,
+} from 'date-fns'
 const transactionsListFragment = graphql`
   fragment transactionsListFragment on Household
   @argumentDefinitions(
@@ -83,7 +90,7 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
     <Fragment>
       {groups.map((group) => (
         <Fragment key={group.date.toISOString()}>
-          <div className="text-muted-foreground border-t border-border px-1 pt-3 pb-1.5 text-xs/relaxed font-medium tracking-[0.02em] first:border-t-0 first:pt-0">
+          <div className="text-muted-foreground border-border border-t px-1 pt-3 pb-1.5 text-xs/relaxed font-medium tracking-[0.02em] first:border-t-0 first:pt-0">
             {formatDateHeader(group.date)}
           </div>
           <ItemGroup>

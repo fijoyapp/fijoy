@@ -54,9 +54,7 @@ import {
   setDisplayCurrencyId,
 } from '@/hooks/display-currency-store'
 import { UserProvider } from '@/hooks/use-user'
-import {
-  LOCAL_STORAGE_HOUSEHOLD_ID_KEY,
-} from '@/constant'
+import { LOCAL_STORAGE_HOUSEHOLD_ID_KEY } from '@/constant'
 import {
   clearHouseholdScopedStorage,
   isMembershipRevokedError,
@@ -216,7 +214,6 @@ function RouteComponent() {
       { fetchPolicy: 'network-only' },
     ).subscribe({})
   })
-
 
   return (
     <UserProvider userRef={data.user}>
