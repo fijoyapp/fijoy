@@ -22,9 +22,10 @@ import { commitLocalUpdate, fetchQuery, graphql } from 'relay-runtime'
 import {
   loadQuery,
   usePreloadedQuery,
+  useSubscribeToInvalidationState,
 } from 'react-relay'
-import { Rnd } from 'react-rnd'
 import { z } from 'zod'
+import { Rnd } from 'react-rnd'
 import { useCallback } from 'react'
 import { useStore } from '@tanstack/react-store'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
@@ -173,6 +174,7 @@ export const Route = createFileRoute('/_user/household/$householdId')({
 })
 
 function RouteComponent() {
+  const params = Route.useParams()
   const queryRef = Route.useLoaderData()
   const data = usePreloadedQuery<routeHouseholdIdQuery>(
     routeHouseholdIdQuery,
@@ -205,6 +207,15 @@ function RouteComponent() {
     },
     [router],
   )
+
+  useSubscribeToInvalidationState([params.householdId], () => {
+    fetchQuery(
+      environment,
+      routeHouseholdIdQuery,
+      { viewUserIds: readViewUserIds(params.householdId) },
+      { fetchPolicy: 'network-only' },
+    ).subscribe({})
+  })
 
 
   return (
