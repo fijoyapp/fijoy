@@ -22,11 +22,10 @@ import { commitLocalUpdate, fetchQuery, graphql } from 'relay-runtime'
 import {
   loadQuery,
   usePreloadedQuery,
-  useSubscribeToInvalidationState,
 } from 'react-relay'
 import { Rnd } from 'react-rnd'
 import { z } from 'zod'
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useStore } from '@tanstack/react-store'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
@@ -56,7 +55,6 @@ import {
 import { UserProvider } from '@/hooks/use-user'
 import {
   LOCAL_STORAGE_HOUSEHOLD_ID_KEY,
-  SESSION_STORAGE_PRIVACY_DIALOG_KEY,
 } from '@/constant'
 import {
   clearHouseholdScopedStorage,
@@ -80,11 +78,10 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import Hotkeys from './-components/hotkeys'
 import type { editTransactionDialogQuery } from './transactions/-components/__generated__/editTransactionDialogQuery.graphql'
 import { NotFoundError } from '@/components/not-found-error'
-import { PrivacyAlertDialog } from '@/components/privacy-alert-dialog'
-import { identity } from 'lodash-es'
 import { UserHouseholdProvider } from '@/hooks/use-user-household'
 import { GenericError } from '@/components/generic-error'
 
+import { identity } from 'lodash-es'
 import { ViewScopeSwitcher } from './-components/view-scope-switcher'
 
 const routeHouseholdIdQuery = graphql`
@@ -176,7 +173,6 @@ export const Route = createFileRoute('/_user/household/$householdId')({
 })
 
 function RouteComponent() {
-  const params = Route.useParams()
   const queryRef = Route.useLoaderData()
   const data = usePreloadedQuery<routeHouseholdIdQuery>(
     routeHouseholdIdQuery,
@@ -210,41 +206,6 @@ function RouteComponent() {
     [router],
   )
 
-  const shouldShowDialog =
-    typeof window !== 'undefined' &&
-    !sessionStorage.getItem(SESSION_STORAGE_PRIVACY_DIALOG_KEY)
-
-  const [showPrivacyDialog, setShowPrivacyDialog] = useState(shouldShowDialog)
-
-  useSubscribeToInvalidationState([params.householdId], () => {
-    fetchQuery(
-      environment,
-      routeHouseholdIdQuery,
-      { viewUserIds: readViewUserIds(params.householdId) },
-      { fetchPolicy: 'network-only' },
-    ).subscribe({})
-  })
-
-  const handlePrivacyChoice = (enablePrivacy: boolean) => {
-    if (enablePrivacy !== isPrivacyModeEnabled) {
-      togglePrivacyMode()
-    }
-
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem(SESSION_STORAGE_PRIVACY_DIALOG_KEY, 'true')
-    }
-
-    setShowPrivacyDialog(false)
-  }
-
-  if (showPrivacyDialog) {
-    return (
-      <PrivacyAlertDialog
-        open={showPrivacyDialog}
-        onPrivacyChoice={handlePrivacyChoice}
-      />
-    )
-  }
 
   return (
     <UserProvider userRef={data.user}>

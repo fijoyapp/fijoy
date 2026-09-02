@@ -18,8 +18,6 @@ export const LOCAL_STORAGE_RND_POSITION_KEY = 'rndPosition'
 export const LOCAL_STORAGE_DISPLAY_CURRENCY_ID_KEY = 'displayCurrencyId'
 export const LOCAL_STORAGE_VIEW_USER_IDS_KEY = 'viewUserIds'
 
-export const SESSION_STORAGE_PRIVACY_DIALOG_KEY = 'privacyDialog'
-
 export const ACCOUNT_TYPE_LIST = [
   'liquidity',
   'investment',
