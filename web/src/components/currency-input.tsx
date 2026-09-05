@@ -1,18 +1,18 @@
 import { cn } from '@/lib/utils'
-import { useState, useCallback, ComponentPropsWithoutRef } from 'react'
+import { useState, useCallback, type ComponentPropsWithoutRef } from 'react'
 import { useCurrencyConfig } from '@/hooks/use-currency-config'
 
-type CurrencyInputProps = {
+type CurrencyInputProps = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'value' | 'onChange' | 'type' | 'inputMode'
+> & {
   locale: string
   currency: string
   value?: string | number
   decimalScale?: number
   allowNegative?: boolean
   onValueChange?: (values: { floatValue?: number; value: string }) => void
-  onFocus?: React.FocusEventHandler<HTMLInputElement>
-  onBlur?: React.FocusEventHandler<HTMLInputElement>
-  className?: string
-} & ComponentPropsWithoutRef<'input'>
+}
 
 function valueToRaw(value: string | number | undefined): string {
   if (value == null) return ''
@@ -80,17 +80,18 @@ export function CurrencyInput({
     [validate, onValueChange],
   )
 
-  const symbolClass =
-    'select-none text-sm md:text-xs/relaxed text-muted-foreground'
-
   return (
     <div
       className={cn(
-        'bg-input/20 dark:bg-input/30 border-input focus-within:border-ring focus-within:ring-ring/30 has-[aria-invalid=true]:ring-destructive/20 dark:has-[aria-invalid=true]:ring-destructive/40 has-[aria-invalid=true]:border-destructive dark:has-[aria-invalid=true]:border-destructive/50 placeholder:text-muted-foreground flex h-7 w-full min-w-0 items-center rounded-md border py-0.5 text-sm transition-colors outline-none focus-within:ring-[2px] has-[:disabled]:pointer-events-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[aria-invalid=true]:ring-[2px] md:text-xs/relaxed',
+        'bg-input/20 dark:bg-input/30 border-input focus-within:border-ring focus-within:ring-ring/30 has-[aria-invalid=true]:ring-destructive/20 dark:has-[aria-invalid=true]:ring-destructive/40 has-[aria-invalid=true]:border-destructive dark:has-[aria-invalid=true]:border-destructive/50 placeholder:text-muted-foreground flex h-7 w-full min-w-0 items-center rounded-md border py-0.5 text-sm transition-colors outline-none focus-within:ring-2 has-[:disabled]:pointer-events-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[aria-invalid=true]:ring-2 md:text-xs/relaxed',
         className,
       )}
     >
-      {prefix && <span className={cn('pr-1 pl-2', symbolClass)}>{prefix}</span>}
+      {prefix && (
+        <span className="text-muted-foreground pr-1 pl-2 text-sm select-none md:text-xs/relaxed">
+          {prefix}
+        </span>
+      )}
       <input
         data-slot="input"
         type="text"
@@ -104,7 +105,11 @@ export function CurrencyInput({
         )}
         {...props}
       />
-      {suffix && <span className={cn('pr-2 pl-1', symbolClass)}>{suffix}</span>}
+      {suffix && (
+        <span className="text-muted-foreground pr-2 pl-1 text-sm select-none md:text-xs/relaxed">
+          {suffix}
+        </span>
+      )}
     </div>
   )
 }

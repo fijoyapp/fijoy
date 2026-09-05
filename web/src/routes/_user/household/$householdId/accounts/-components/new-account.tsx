@@ -455,6 +455,7 @@ export function NewAccount() {
                       onBlur={field.handleBlur}
                       aria-invalid={isInvalid}
                       allowNegative={true}
+                      decimalScale={2}
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
