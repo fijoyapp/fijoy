@@ -1,55 +1,127 @@
-import { NumericFormat } from 'react-number-format'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useCurrencyConfig } from '@/hooks/use-currency-config'
 
-type CurrencyInputProps = React.ComponentProps<typeof NumericFormat> & {
+type CurrencyInputProps = {
   locale: string
   currency: string
+  value?: string | number
+  decimalScale?: number
+  allowNegative?: boolean
+  onValueChange?: (values: { floatValue?: number; value: string }) => void
+  onFocus?: React.FocusEventHandler<HTMLInputElement>
+  onBlur?: React.FocusEventHandler<HTMLInputElement>
+  className?: string
+  id?: string
+  name?: string
+  placeholder?: string
+  disabled?: boolean
+  'aria-invalid'?: boolean
+}
+
+function valueToRaw(value: string | number | undefined): string {
+  if (value == null) return ''
+  if (typeof value === 'string') return value
+  if (value === 0) return ''
+  return String(value)
 }
 
 export function CurrencyInput({
   className,
   locale,
   currency,
+  decimalScale = 2,
+  allowNegative = false,
   onFocus,
   onBlur,
   onValueChange,
-  ...props
+  value,
+  id,
+  name,
+  placeholder,
+  disabled,
+  'aria-invalid': ariaInvalid,
 }: CurrencyInputProps) {
-  const [isFocused, setIsFocused] = useState(false)
-  const [isEditingDecimal, setIsEditingDecimal] = useState(false)
+  const { prefix, suffix, decimalSeparator } = useCurrencyConfig(
+    locale,
+    currency,
+  )
 
-  const { prefix, suffix, thousandSeparator, decimalSeparator } =
-    useCurrencyConfig(locale, currency)
+  const [rawValue, setRawValue] = useState(() => valueToRaw(value))
+
+  const validate = useCallback(
+    (raw: string): string => {
+      let cleaned = ''
+      let hasDecimal = false
+      let digitsAfterDecimal = 0
+
+      for (const ch of raw) {
+        if (ch === '-' && allowNegative && cleaned === '') {
+          cleaned += '-'
+          continue
+        }
+
+        if (ch >= '0' && ch <= '9') {
+          if (hasDecimal && digitsAfterDecimal >= decimalScale) continue
+          if (hasDecimal) digitsAfterDecimal++
+          cleaned += ch
+          continue
+        }
+
+        if (ch === decimalSeparator && !hasDecimal) {
+          hasDecimal = true
+          cleaned += ch
+          continue
+        }
+      }
+
+      return cleaned
+    },
+    [decimalSeparator, decimalScale, allowNegative],
+  )
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const cleaned = validate(e.target.value)
+      setRawValue(cleaned)
+
+      const floatValue = cleaned === '' ? undefined : parseFloat(cleaned)
+      onValueChange?.({ floatValue, value: cleaned })
+    },
+    [validate, onValueChange],
+  )
+
+  const symbolClass =
+    'select-none text-sm md:text-xs/relaxed text-muted-foreground'
 
   return (
-    <NumericFormat
-      data-slot="input"
-      inputMode="decimal"
-      thousandSeparator={thousandSeparator}
-      decimalSeparator={decimalSeparator}
-      prefix={prefix}
-      suffix={suffix}
-      decimalScale={2}
-      fixedDecimalScale={isFocused && isEditingDecimal}
-      onValueChange={(values, sourceInfo) => {
-        setIsEditingDecimal(values.value.includes('.'))
-        onValueChange?.(values, sourceInfo)
-      }}
-      onFocus={(e) => {
-        setIsFocused(true)
-        onFocus?.(e)
-      }}
-      onBlur={(e) => {
-        setIsFocused(false)
-        onBlur?.(e)
-      }}
+    <div
       className={cn(
-        'bg-input/20 dark:bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 file:text-foreground placeholder:text-muted-foreground h-7 w-full min-w-0 rounded-md border px-2 py-0.5 text-sm transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-xs/relaxed file:font-medium focus-visible:ring-[2px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:ring-[2px] md:text-xs/relaxed',
+        'bg-input/20 dark:bg-input/30 border-input focus-within:border-ring focus-within:ring-ring/30 has-[aria-invalid=true]:ring-destructive/20 dark:has-[aria-invalid=true]:ring-destructive/40 has-[aria-invalid=true]:border-destructive dark:has-[aria-invalid=true]:border-destructive/50 placeholder:text-muted-foreground flex h-7 w-full min-w-0 items-center rounded-md border py-0.5 text-sm transition-colors outline-none focus-within:ring-[2px] has-[:disabled]:pointer-events-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 has-[aria-invalid=true]:ring-[2px] md:text-xs/relaxed',
         className,
       )}
-      {...props}
-    />
+    >
+      {prefix && <span className={cn('pr-1 pl-2', symbolClass)}>{prefix}</span>}
+      <input
+        data-slot="input"
+        type="text"
+        inputMode={allowNegative ? 'numeric' : 'decimal'}
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        disabled={disabled}
+        aria-invalid={ariaInvalid}
+        value={rawValue}
+        onChange={handleChange}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        className={cn(
+          'min-w-0 flex-1 border-none bg-transparent px-0 py-0.5 text-sm outline-none md:text-xs/relaxed',
+          !prefix && 'pl-2',
+          !suffix && 'pr-2',
+        )}
+      />
+      {suffix && <span className={cn('pr-2 pl-1', symbolClass)}>{suffix}</span>}
+    </div>
   )
 }

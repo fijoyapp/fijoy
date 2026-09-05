@@ -40,7 +40,6 @@
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.6",
     "react-intersection-observer": "^10.0.3",
-    "react-number-format": "^5.4.5",
     "react-relay": "^20.1.1",
     "react-rnd": "^10.5.3",
     "recharts": "3.8.0",
