@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, ComponentPropsWithoutRef } from 'react'
 import { useCurrencyConfig } from '@/hooks/use-currency-config'
 
 type CurrencyInputProps = {
@@ -12,12 +12,7 @@ type CurrencyInputProps = {
   onFocus?: React.FocusEventHandler<HTMLInputElement>
   onBlur?: React.FocusEventHandler<HTMLInputElement>
   className?: string
-  id?: string
-  name?: string
-  placeholder?: string
-  disabled?: boolean
-  'aria-invalid'?: boolean
-}
+} & ComponentPropsWithoutRef<'input'>
 
 function valueToRaw(value: string | number | undefined): string {
   if (value == null) return ''
@@ -32,15 +27,9 @@ export function CurrencyInput({
   currency,
   decimalScale = 2,
   allowNegative = false,
-  onFocus,
-  onBlur,
   onValueChange,
   value,
-  id,
-  name,
-  placeholder,
-  disabled,
-  'aria-invalid': ariaInvalid,
+  ...props
 }: CurrencyInputProps) {
   const { prefix, suffix, decimalSeparator } = useCurrencyConfig(
     locale,
@@ -106,20 +95,14 @@ export function CurrencyInput({
         data-slot="input"
         type="text"
         inputMode={allowNegative ? 'numeric' : 'decimal'}
-        id={id}
-        name={name}
-        placeholder={placeholder}
-        disabled={disabled}
-        aria-invalid={ariaInvalid}
         value={rawValue}
         onChange={handleChange}
-        onFocus={onFocus}
-        onBlur={onBlur}
         className={cn(
           'min-w-0 flex-1 border-none bg-transparent px-0 py-0.5 text-sm outline-none md:text-xs/relaxed',
           !prefix && 'pl-2',
           !suffix && 'pr-2',
         )}
+        {...props}
       />
       {suffix && <span className={cn('pr-2 pl-1', symbolClass)}>{suffix}</span>}
     </div>
