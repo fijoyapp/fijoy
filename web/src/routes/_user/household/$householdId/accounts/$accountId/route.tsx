@@ -157,9 +157,7 @@ function RouteComponent() {
           params: { householdId: params.householdId },
           search: (prev) => ({
             accounts_group_by: prev.accounts_group_by as
-              | 'type'
-              | 'category'
-              | undefined,
+              'type' | 'category' | undefined,
           }),
         })
         toast.success('Account deleted!')
@@ -185,9 +183,7 @@ function RouteComponent() {
           params: { householdId: params.householdId },
           search: (prev) => ({
             accounts_group_by: prev.accounts_group_by as
-              | 'type'
-              | 'category'
-              | undefined,
+              'type' | 'category' | undefined,
           }),
         })
         toast.success('Account archived!')

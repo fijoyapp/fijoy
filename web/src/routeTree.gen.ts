@@ -10,37 +10,37 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as LoginIndexRouteImport } from './routes/login.index'
 import { Route as UserHouseholdRouteRouteImport } from './routes/_user/household/route'
-import { Route as AuthCallbackIndexRouteImport } from './routes/auth.callback.index'
+import { Route as LoginIndexRouteImport } from './routes/login.index'
 import { Route as UserHouseholdIndexRouteImport } from './routes/_user/household/index'
-import { Route as UserHouseholdNewRouteImport } from './routes/_user/household/new'
 import { Route as UserHouseholdHouseholdIdRouteRouteImport } from './routes/_user/household/$householdId/route'
+import { Route as UserHouseholdNewRouteImport } from './routes/_user/household/new'
+import { Route as AuthCallbackIndexRouteImport } from './routes/auth.callback.index'
 import { Route as UserHouseholdHouseholdIdIndexRouteImport } from './routes/_user/household/$householdId/index'
-import { Route as UserHouseholdHouseholdIdTransactionsRouteRouteImport } from './routes/_user/household/$householdId/transactions/route'
-import { Route as UserHouseholdHouseholdIdSubscriptionsRouteRouteImport } from './routes/_user/household/$householdId/subscriptions/route'
-import { Route as UserHouseholdHouseholdIdSettingsRouteRouteImport } from './routes/_user/household/$householdId/settings/route'
-import { Route as UserHouseholdHouseholdIdInvestmentsRouteRouteImport } from './routes/_user/household/$householdId/investments/route'
-import { Route as UserHouseholdHouseholdIdCategoriesRouteRouteImport } from './routes/_user/household/$householdId/categories/route'
 import { Route as UserHouseholdHouseholdIdAccountsRouteRouteImport } from './routes/_user/household/$householdId/accounts/route'
-import { Route as UserHouseholdHouseholdIdTransactionsIndexRouteImport } from './routes/_user/household/$householdId/transactions/index'
-import { Route as UserHouseholdHouseholdIdSubscriptionsIndexRouteImport } from './routes/_user/household/$householdId/subscriptions/index'
-import { Route as UserHouseholdHouseholdIdSettingsIndexRouteImport } from './routes/_user/household/$householdId/settings/index'
-import { Route as UserHouseholdHouseholdIdInvestmentsIndexRouteImport } from './routes/_user/household/$householdId/investments/index'
-import { Route as UserHouseholdHouseholdIdCategoriesIndexRouteImport } from './routes/_user/household/$householdId/categories/index'
+import { Route as UserHouseholdHouseholdIdCategoriesRouteRouteImport } from './routes/_user/household/$householdId/categories/route'
+import { Route as UserHouseholdHouseholdIdInvestmentsRouteRouteImport } from './routes/_user/household/$householdId/investments/route'
+import { Route as UserHouseholdHouseholdIdSettingsRouteRouteImport } from './routes/_user/household/$householdId/settings/route'
+import { Route as UserHouseholdHouseholdIdSubscriptionsRouteRouteImport } from './routes/_user/household/$householdId/subscriptions/route'
+import { Route as UserHouseholdHouseholdIdTransactionsRouteRouteImport } from './routes/_user/household/$householdId/transactions/route'
 import { Route as UserHouseholdHouseholdIdAccountsIndexRouteImport } from './routes/_user/household/$householdId/accounts/index'
-import { Route as UserHouseholdHouseholdIdTransactionsNewRouteImport } from './routes/_user/household/$householdId/transactions/new'
-import { Route as UserHouseholdHouseholdIdSubscriptionsNewRouteImport } from './routes/_user/household/$householdId/subscriptions/new'
-import { Route as UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRouteImport } from './routes/_user/household/$householdId/subscriptions/$subscriptionId'
-import { Route as UserHouseholdHouseholdIdSettingsMembersRouteImport } from './routes/_user/household/$householdId/settings/members'
-import { Route as UserHouseholdHouseholdIdSettingsGeneralRouteImport } from './routes/_user/household/$householdId/settings/general'
-import { Route as UserHouseholdHouseholdIdSettingsAccountsRouteImport } from './routes/_user/household/$householdId/settings/accounts'
-import { Route as UserHouseholdHouseholdIdInvestmentsNewRouteImport } from './routes/_user/household/$householdId/investments/new'
-import { Route as UserHouseholdHouseholdIdInvestmentsInvestmentIdRouteImport } from './routes/_user/household/$householdId/investments/$investmentId'
-import { Route as UserHouseholdHouseholdIdCategoriesNewRouteImport } from './routes/_user/household/$householdId/categories/new'
-import { Route as UserHouseholdHouseholdIdCategoriesCategoryIdRouteImport } from './routes/_user/household/$householdId/categories/$categoryId'
-import { Route as UserHouseholdHouseholdIdAccountsNewRouteImport } from './routes/_user/household/$householdId/accounts/new'
 import { Route as UserHouseholdHouseholdIdAccountsAccountIdRouteRouteImport } from './routes/_user/household/$householdId/accounts/$accountId/route'
+import { Route as UserHouseholdHouseholdIdAccountsNewRouteImport } from './routes/_user/household/$householdId/accounts/new'
+import { Route as UserHouseholdHouseholdIdCategoriesIndexRouteImport } from './routes/_user/household/$householdId/categories/index'
+import { Route as UserHouseholdHouseholdIdCategoriesCategoryIdRouteImport } from './routes/_user/household/$householdId/categories/$categoryId'
+import { Route as UserHouseholdHouseholdIdCategoriesNewRouteImport } from './routes/_user/household/$householdId/categories/new'
+import { Route as UserHouseholdHouseholdIdInvestmentsIndexRouteImport } from './routes/_user/household/$householdId/investments/index'
+import { Route as UserHouseholdHouseholdIdInvestmentsInvestmentIdRouteImport } from './routes/_user/household/$householdId/investments/$investmentId'
+import { Route as UserHouseholdHouseholdIdInvestmentsNewRouteImport } from './routes/_user/household/$householdId/investments/new'
+import { Route as UserHouseholdHouseholdIdSettingsIndexRouteImport } from './routes/_user/household/$householdId/settings/index'
+import { Route as UserHouseholdHouseholdIdSettingsAccountsRouteImport } from './routes/_user/household/$householdId/settings/accounts'
+import { Route as UserHouseholdHouseholdIdSettingsGeneralRouteImport } from './routes/_user/household/$householdId/settings/general'
+import { Route as UserHouseholdHouseholdIdSettingsMembersRouteImport } from './routes/_user/household/$householdId/settings/members'
+import { Route as UserHouseholdHouseholdIdSubscriptionsIndexRouteImport } from './routes/_user/household/$householdId/subscriptions/index'
+import { Route as UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRouteImport } from './routes/_user/household/$householdId/subscriptions/$subscriptionId'
+import { Route as UserHouseholdHouseholdIdSubscriptionsNewRouteImport } from './routes/_user/household/$householdId/subscriptions/new'
+import { Route as UserHouseholdHouseholdIdTransactionsIndexRouteImport } from './routes/_user/household/$householdId/transactions/index'
+import { Route as UserHouseholdHouseholdIdTransactionsNewRouteImport } from './routes/_user/household/$householdId/transactions/new'
 import { Route as UserHouseholdHouseholdIdAccountsAccountIdIndexRouteImport } from './routes/_user/household/$householdId/accounts/$accountId/index'
 import { Route as UserHouseholdHouseholdIdAccountsAccountIdEditRouteImport } from './routes/_user/household/$householdId/accounts/$accountId/edit'
 
@@ -49,29 +49,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginIndexRoute = LoginIndexRouteImport.update({
-  id: '/login/',
-  path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const UserHouseholdRouteRoute = UserHouseholdRouteRouteImport.update({
   id: '/_user/household',
   path: '/household',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthCallbackIndexRoute = AuthCallbackIndexRouteImport.update({
-  id: '/auth/callback/',
-  path: '/auth/callback/',
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UserHouseholdIndexRoute = UserHouseholdIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => UserHouseholdRouteRoute,
-} as any)
-const UserHouseholdNewRoute = UserHouseholdNewRouteImport.update({
-  id: '/new',
-  path: '/new',
   getParentRoute: () => UserHouseholdRouteRoute,
 } as any)
 const UserHouseholdHouseholdIdRouteRoute =
@@ -80,40 +70,20 @@ const UserHouseholdHouseholdIdRouteRoute =
     path: '/$householdId',
     getParentRoute: () => UserHouseholdRouteRoute,
   } as any)
+const UserHouseholdNewRoute = UserHouseholdNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => UserHouseholdRouteRoute,
+} as any)
+const AuthCallbackIndexRoute = AuthCallbackIndexRouteImport.update({
+  id: '/auth/callback/',
+  path: '/auth/callback/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UserHouseholdHouseholdIdIndexRoute =
   UserHouseholdHouseholdIdIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdTransactionsRouteRoute =
-  UserHouseholdHouseholdIdTransactionsRouteRouteImport.update({
-    id: '/transactions',
-    path: '/transactions',
-    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdSubscriptionsRouteRoute =
-  UserHouseholdHouseholdIdSubscriptionsRouteRouteImport.update({
-    id: '/subscriptions',
-    path: '/subscriptions',
-    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdSettingsRouteRoute =
-  UserHouseholdHouseholdIdSettingsRouteRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdInvestmentsRouteRoute =
-  UserHouseholdHouseholdIdInvestmentsRouteRouteImport.update({
-    id: '/investments',
-    path: '/investments',
-    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdCategoriesRouteRoute =
-  UserHouseholdHouseholdIdCategoriesRouteRouteImport.update({
-    id: '/categories',
-    path: '/categories',
     getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
   } as any)
 const UserHouseholdHouseholdIdAccountsRouteRoute =
@@ -122,35 +92,35 @@ const UserHouseholdHouseholdIdAccountsRouteRoute =
     path: '/accounts',
     getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdTransactionsIndexRoute =
-  UserHouseholdHouseholdIdTransactionsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => UserHouseholdHouseholdIdTransactionsRouteRoute,
+const UserHouseholdHouseholdIdCategoriesRouteRoute =
+  UserHouseholdHouseholdIdCategoriesRouteRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdSubscriptionsIndexRoute =
-  UserHouseholdHouseholdIdSubscriptionsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => UserHouseholdHouseholdIdSubscriptionsRouteRoute,
+const UserHouseholdHouseholdIdInvestmentsRouteRoute =
+  UserHouseholdHouseholdIdInvestmentsRouteRouteImport.update({
+    id: '/investments',
+    path: '/investments',
+    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdSettingsIndexRoute =
-  UserHouseholdHouseholdIdSettingsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
+const UserHouseholdHouseholdIdSettingsRouteRoute =
+  UserHouseholdHouseholdIdSettingsRouteRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdInvestmentsIndexRoute =
-  UserHouseholdHouseholdIdInvestmentsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => UserHouseholdHouseholdIdInvestmentsRouteRoute,
+const UserHouseholdHouseholdIdSubscriptionsRouteRoute =
+  UserHouseholdHouseholdIdSubscriptionsRouteRouteImport.update({
+    id: '/subscriptions',
+    path: '/subscriptions',
+    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdCategoriesIndexRoute =
-  UserHouseholdHouseholdIdCategoriesIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => UserHouseholdHouseholdIdCategoriesRouteRoute,
+const UserHouseholdHouseholdIdTransactionsRouteRoute =
+  UserHouseholdHouseholdIdTransactionsRouteRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => UserHouseholdHouseholdIdRouteRoute,
   } as any)
 const UserHouseholdHouseholdIdAccountsIndexRoute =
   UserHouseholdHouseholdIdAccountsIndexRouteImport.update({
@@ -158,58 +128,22 @@ const UserHouseholdHouseholdIdAccountsIndexRoute =
     path: '/',
     getParentRoute: () => UserHouseholdHouseholdIdAccountsRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdTransactionsNewRoute =
-  UserHouseholdHouseholdIdTransactionsNewRouteImport.update({
+const UserHouseholdHouseholdIdAccountsAccountIdRouteRoute =
+  UserHouseholdHouseholdIdAccountsAccountIdRouteRouteImport.update({
+    id: '/$accountId',
+    path: '/$accountId',
+    getParentRoute: () => UserHouseholdHouseholdIdAccountsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdAccountsNewRoute =
+  UserHouseholdHouseholdIdAccountsNewRouteImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => UserHouseholdHouseholdIdTransactionsRouteRoute,
+    getParentRoute: () => UserHouseholdHouseholdIdAccountsRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdSubscriptionsNewRoute =
-  UserHouseholdHouseholdIdSubscriptionsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => UserHouseholdHouseholdIdSubscriptionsRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRoute =
-  UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRouteImport.update({
-    id: '/$subscriptionId',
-    path: '/$subscriptionId',
-    getParentRoute: () => UserHouseholdHouseholdIdSubscriptionsRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdSettingsMembersRoute =
-  UserHouseholdHouseholdIdSettingsMembersRouteImport.update({
-    id: '/members',
-    path: '/members',
-    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdSettingsGeneralRoute =
-  UserHouseholdHouseholdIdSettingsGeneralRouteImport.update({
-    id: '/general',
-    path: '/general',
-    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdSettingsAccountsRoute =
-  UserHouseholdHouseholdIdSettingsAccountsRouteImport.update({
-    id: '/accounts',
-    path: '/accounts',
-    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdInvestmentsNewRoute =
-  UserHouseholdHouseholdIdInvestmentsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => UserHouseholdHouseholdIdInvestmentsRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdInvestmentsInvestmentIdRoute =
-  UserHouseholdHouseholdIdInvestmentsInvestmentIdRouteImport.update({
-    id: '/$investmentId',
-    path: '/$investmentId',
-    getParentRoute: () => UserHouseholdHouseholdIdInvestmentsRouteRoute,
-  } as any)
-const UserHouseholdHouseholdIdCategoriesNewRoute =
-  UserHouseholdHouseholdIdCategoriesNewRouteImport.update({
-    id: '/new',
-    path: '/new',
+const UserHouseholdHouseholdIdCategoriesIndexRoute =
+  UserHouseholdHouseholdIdCategoriesIndexRouteImport.update({
+    id: '/',
+    path: '/',
     getParentRoute: () => UserHouseholdHouseholdIdCategoriesRouteRoute,
   } as any)
 const UserHouseholdHouseholdIdCategoriesCategoryIdRoute =
@@ -218,17 +152,83 @@ const UserHouseholdHouseholdIdCategoriesCategoryIdRoute =
     path: '/$categoryId',
     getParentRoute: () => UserHouseholdHouseholdIdCategoriesRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdAccountsNewRoute =
-  UserHouseholdHouseholdIdAccountsNewRouteImport.update({
+const UserHouseholdHouseholdIdCategoriesNewRoute =
+  UserHouseholdHouseholdIdCategoriesNewRouteImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => UserHouseholdHouseholdIdAccountsRouteRoute,
+    getParentRoute: () => UserHouseholdHouseholdIdCategoriesRouteRoute,
   } as any)
-const UserHouseholdHouseholdIdAccountsAccountIdRouteRoute =
-  UserHouseholdHouseholdIdAccountsAccountIdRouteRouteImport.update({
-    id: '/$accountId',
-    path: '/$accountId',
-    getParentRoute: () => UserHouseholdHouseholdIdAccountsRouteRoute,
+const UserHouseholdHouseholdIdInvestmentsIndexRoute =
+  UserHouseholdHouseholdIdInvestmentsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => UserHouseholdHouseholdIdInvestmentsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdInvestmentsInvestmentIdRoute =
+  UserHouseholdHouseholdIdInvestmentsInvestmentIdRouteImport.update({
+    id: '/$investmentId',
+    path: '/$investmentId',
+    getParentRoute: () => UserHouseholdHouseholdIdInvestmentsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdInvestmentsNewRoute =
+  UserHouseholdHouseholdIdInvestmentsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => UserHouseholdHouseholdIdInvestmentsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdSettingsIndexRoute =
+  UserHouseholdHouseholdIdSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdSettingsAccountsRoute =
+  UserHouseholdHouseholdIdSettingsAccountsRouteImport.update({
+    id: '/accounts',
+    path: '/accounts',
+    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdSettingsGeneralRoute =
+  UserHouseholdHouseholdIdSettingsGeneralRouteImport.update({
+    id: '/general',
+    path: '/general',
+    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdSettingsMembersRoute =
+  UserHouseholdHouseholdIdSettingsMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => UserHouseholdHouseholdIdSettingsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdSubscriptionsIndexRoute =
+  UserHouseholdHouseholdIdSubscriptionsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => UserHouseholdHouseholdIdSubscriptionsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRoute =
+  UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRouteImport.update({
+    id: '/$subscriptionId',
+    path: '/$subscriptionId',
+    getParentRoute: () => UserHouseholdHouseholdIdSubscriptionsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdSubscriptionsNewRoute =
+  UserHouseholdHouseholdIdSubscriptionsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => UserHouseholdHouseholdIdSubscriptionsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdTransactionsIndexRoute =
+  UserHouseholdHouseholdIdTransactionsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => UserHouseholdHouseholdIdTransactionsRouteRoute,
+  } as any)
+const UserHouseholdHouseholdIdTransactionsNewRoute =
+  UserHouseholdHouseholdIdTransactionsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => UserHouseholdHouseholdIdTransactionsRouteRoute,
   } as any)
 const UserHouseholdHouseholdIdAccountsAccountIdIndexRoute =
   UserHouseholdHouseholdIdAccountsAccountIdIndexRouteImport.update({
@@ -461,13 +461,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login/'
-      preLoaderRoute: typeof LoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_user/household': {
       id: '/_user/household'
       path: '/household'
@@ -475,11 +468,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/callback/': {
-      id: '/auth/callback/'
-      path: '/auth/callback'
-      fullPath: '/auth/callback/'
-      preLoaderRoute: typeof AuthCallbackIndexRouteImport
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login/'
+      preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_user/household/': {
@@ -489,13 +482,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdIndexRouteImport
       parentRoute: typeof UserHouseholdRouteRoute
     }
-    '/_user/household/new': {
-      id: '/_user/household/new'
-      path: '/new'
-      fullPath: '/household/new'
-      preLoaderRoute: typeof UserHouseholdNewRouteImport
-      parentRoute: typeof UserHouseholdRouteRoute
-    }
     '/_user/household/$householdId': {
       id: '/_user/household/$householdId'
       path: '/$householdId'
@@ -503,46 +489,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdHouseholdIdRouteRouteImport
       parentRoute: typeof UserHouseholdRouteRoute
     }
+    '/_user/household/new': {
+      id: '/_user/household/new'
+      path: '/new'
+      fullPath: '/household/new'
+      preLoaderRoute: typeof UserHouseholdNewRouteImport
+      parentRoute: typeof UserHouseholdRouteRoute
+    }
+    '/auth/callback/': {
+      id: '/auth/callback/'
+      path: '/auth/callback'
+      fullPath: '/auth/callback/'
+      preLoaderRoute: typeof AuthCallbackIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_user/household/$householdId/': {
       id: '/_user/household/$householdId/'
       path: '/'
       fullPath: '/household/$householdId/'
       preLoaderRoute: typeof UserHouseholdHouseholdIdIndexRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
-    }
-    '/_user/household/$householdId/transactions': {
-      id: '/_user/household/$householdId/transactions'
-      path: '/transactions'
-      fullPath: '/household/$householdId/transactions'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdTransactionsRouteRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
-    }
-    '/_user/household/$householdId/subscriptions': {
-      id: '/_user/household/$householdId/subscriptions'
-      path: '/subscriptions'
-      fullPath: '/household/$householdId/subscriptions'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
-    }
-    '/_user/household/$householdId/settings': {
-      id: '/_user/household/$householdId/settings'
-      path: '/settings'
-      fullPath: '/household/$householdId/settings'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsRouteRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
-    }
-    '/_user/household/$householdId/investments': {
-      id: '/_user/household/$householdId/investments'
-      path: '/investments'
-      fullPath: '/household/$householdId/investments'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
-    }
-    '/_user/household/$householdId/categories': {
-      id: '/_user/household/$householdId/categories'
-      path: '/categories'
-      fullPath: '/household/$householdId/categories'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdCategoriesRouteRouteImport
       parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
     }
     '/_user/household/$householdId/accounts': {
@@ -552,40 +517,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdHouseholdIdAccountsRouteRouteImport
       parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
     }
-    '/_user/household/$householdId/transactions/': {
-      id: '/_user/household/$householdId/transactions/'
-      path: '/'
-      fullPath: '/household/$householdId/transactions/'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdTransactionsIndexRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdTransactionsRouteRoute
+    '/_user/household/$householdId/categories': {
+      id: '/_user/household/$householdId/categories'
+      path: '/categories'
+      fullPath: '/household/$householdId/categories'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdCategoriesRouteRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
     }
-    '/_user/household/$householdId/subscriptions/': {
-      id: '/_user/household/$householdId/subscriptions/'
-      path: '/'
-      fullPath: '/household/$householdId/subscriptions/'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsIndexRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRoute
+    '/_user/household/$householdId/investments': {
+      id: '/_user/household/$householdId/investments'
+      path: '/investments'
+      fullPath: '/household/$householdId/investments'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
     }
-    '/_user/household/$householdId/settings/': {
-      id: '/_user/household/$householdId/settings/'
-      path: '/'
-      fullPath: '/household/$householdId/settings/'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsIndexRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
+    '/_user/household/$householdId/settings': {
+      id: '/_user/household/$householdId/settings'
+      path: '/settings'
+      fullPath: '/household/$householdId/settings'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsRouteRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
     }
-    '/_user/household/$householdId/investments/': {
-      id: '/_user/household/$householdId/investments/'
-      path: '/'
-      fullPath: '/household/$householdId/investments/'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsIndexRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRoute
+    '/_user/household/$householdId/subscriptions': {
+      id: '/_user/household/$householdId/subscriptions'
+      path: '/subscriptions'
+      fullPath: '/household/$householdId/subscriptions'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
     }
-    '/_user/household/$householdId/categories/': {
-      id: '/_user/household/$householdId/categories/'
-      path: '/'
-      fullPath: '/household/$householdId/categories/'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdCategoriesIndexRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdCategoriesRouteRoute
+    '/_user/household/$householdId/transactions': {
+      id: '/_user/household/$householdId/transactions'
+      path: '/transactions'
+      fullPath: '/household/$householdId/transactions'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdTransactionsRouteRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdRouteRoute
     }
     '/_user/household/$householdId/accounts/': {
       id: '/_user/household/$householdId/accounts/'
@@ -594,67 +559,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdHouseholdIdAccountsIndexRouteImport
       parentRoute: typeof UserHouseholdHouseholdIdAccountsRouteRoute
     }
-    '/_user/household/$householdId/transactions/new': {
-      id: '/_user/household/$householdId/transactions/new'
+    '/_user/household/$householdId/accounts/$accountId': {
+      id: '/_user/household/$householdId/accounts/$accountId'
+      path: '/$accountId'
+      fullPath: '/household/$householdId/accounts/$accountId'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdAccountsAccountIdRouteRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdAccountsRouteRoute
+    }
+    '/_user/household/$householdId/accounts/new': {
+      id: '/_user/household/$householdId/accounts/new'
       path: '/new'
-      fullPath: '/household/$householdId/transactions/new'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdTransactionsNewRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdTransactionsRouteRoute
+      fullPath: '/household/$householdId/accounts/new'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdAccountsNewRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdAccountsRouteRoute
     }
-    '/_user/household/$householdId/subscriptions/new': {
-      id: '/_user/household/$householdId/subscriptions/new'
-      path: '/new'
-      fullPath: '/household/$householdId/subscriptions/new'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsNewRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRoute
-    }
-    '/_user/household/$householdId/subscriptions/$subscriptionId': {
-      id: '/_user/household/$householdId/subscriptions/$subscriptionId'
-      path: '/$subscriptionId'
-      fullPath: '/household/$householdId/subscriptions/$subscriptionId'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRoute
-    }
-    '/_user/household/$householdId/settings/members': {
-      id: '/_user/household/$householdId/settings/members'
-      path: '/members'
-      fullPath: '/household/$householdId/settings/members'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsMembersRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
-    }
-    '/_user/household/$householdId/settings/general': {
-      id: '/_user/household/$householdId/settings/general'
-      path: '/general'
-      fullPath: '/household/$householdId/settings/general'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsGeneralRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
-    }
-    '/_user/household/$householdId/settings/accounts': {
-      id: '/_user/household/$householdId/settings/accounts'
-      path: '/accounts'
-      fullPath: '/household/$householdId/settings/accounts'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsAccountsRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
-    }
-    '/_user/household/$householdId/investments/new': {
-      id: '/_user/household/$householdId/investments/new'
-      path: '/new'
-      fullPath: '/household/$householdId/investments/new'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsNewRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRoute
-    }
-    '/_user/household/$householdId/investments/$investmentId': {
-      id: '/_user/household/$householdId/investments/$investmentId'
-      path: '/$investmentId'
-      fullPath: '/household/$householdId/investments/$investmentId'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsInvestmentIdRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRoute
-    }
-    '/_user/household/$householdId/categories/new': {
-      id: '/_user/household/$householdId/categories/new'
-      path: '/new'
-      fullPath: '/household/$householdId/categories/new'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdCategoriesNewRouteImport
+    '/_user/household/$householdId/categories/': {
+      id: '/_user/household/$householdId/categories/'
+      path: '/'
+      fullPath: '/household/$householdId/categories/'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdCategoriesIndexRouteImport
       parentRoute: typeof UserHouseholdHouseholdIdCategoriesRouteRoute
     }
     '/_user/household/$householdId/categories/$categoryId': {
@@ -664,19 +587,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserHouseholdHouseholdIdCategoriesCategoryIdRouteImport
       parentRoute: typeof UserHouseholdHouseholdIdCategoriesRouteRoute
     }
-    '/_user/household/$householdId/accounts/new': {
-      id: '/_user/household/$householdId/accounts/new'
+    '/_user/household/$householdId/categories/new': {
+      id: '/_user/household/$householdId/categories/new'
       path: '/new'
-      fullPath: '/household/$householdId/accounts/new'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdAccountsNewRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdAccountsRouteRoute
+      fullPath: '/household/$householdId/categories/new'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdCategoriesNewRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdCategoriesRouteRoute
     }
-    '/_user/household/$householdId/accounts/$accountId': {
-      id: '/_user/household/$householdId/accounts/$accountId'
-      path: '/$accountId'
-      fullPath: '/household/$householdId/accounts/$accountId'
-      preLoaderRoute: typeof UserHouseholdHouseholdIdAccountsAccountIdRouteRouteImport
-      parentRoute: typeof UserHouseholdHouseholdIdAccountsRouteRoute
+    '/_user/household/$householdId/investments/': {
+      id: '/_user/household/$householdId/investments/'
+      path: '/'
+      fullPath: '/household/$householdId/investments/'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsIndexRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRoute
+    }
+    '/_user/household/$householdId/investments/$investmentId': {
+      id: '/_user/household/$householdId/investments/$investmentId'
+      path: '/$investmentId'
+      fullPath: '/household/$householdId/investments/$investmentId'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsInvestmentIdRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRoute
+    }
+    '/_user/household/$householdId/investments/new': {
+      id: '/_user/household/$householdId/investments/new'
+      path: '/new'
+      fullPath: '/household/$householdId/investments/new'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdInvestmentsNewRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdInvestmentsRouteRoute
+    }
+    '/_user/household/$householdId/settings/': {
+      id: '/_user/household/$householdId/settings/'
+      path: '/'
+      fullPath: '/household/$householdId/settings/'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsIndexRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
+    }
+    '/_user/household/$householdId/settings/accounts': {
+      id: '/_user/household/$householdId/settings/accounts'
+      path: '/accounts'
+      fullPath: '/household/$householdId/settings/accounts'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsAccountsRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
+    }
+    '/_user/household/$householdId/settings/general': {
+      id: '/_user/household/$householdId/settings/general'
+      path: '/general'
+      fullPath: '/household/$householdId/settings/general'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsGeneralRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
+    }
+    '/_user/household/$householdId/settings/members': {
+      id: '/_user/household/$householdId/settings/members'
+      path: '/members'
+      fullPath: '/household/$householdId/settings/members'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSettingsMembersRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdSettingsRouteRoute
+    }
+    '/_user/household/$householdId/subscriptions/': {
+      id: '/_user/household/$householdId/subscriptions/'
+      path: '/'
+      fullPath: '/household/$householdId/subscriptions/'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsIndexRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRoute
+    }
+    '/_user/household/$householdId/subscriptions/$subscriptionId': {
+      id: '/_user/household/$householdId/subscriptions/$subscriptionId'
+      path: '/$subscriptionId'
+      fullPath: '/household/$householdId/subscriptions/$subscriptionId'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsSubscriptionIdRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRoute
+    }
+    '/_user/household/$householdId/subscriptions/new': {
+      id: '/_user/household/$householdId/subscriptions/new'
+      path: '/new'
+      fullPath: '/household/$householdId/subscriptions/new'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdSubscriptionsNewRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdSubscriptionsRouteRoute
+    }
+    '/_user/household/$householdId/transactions/': {
+      id: '/_user/household/$householdId/transactions/'
+      path: '/'
+      fullPath: '/household/$householdId/transactions/'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdTransactionsIndexRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdTransactionsRouteRoute
+    }
+    '/_user/household/$householdId/transactions/new': {
+      id: '/_user/household/$householdId/transactions/new'
+      path: '/new'
+      fullPath: '/household/$householdId/transactions/new'
+      preLoaderRoute: typeof UserHouseholdHouseholdIdTransactionsNewRouteImport
+      parentRoute: typeof UserHouseholdHouseholdIdTransactionsRouteRoute
     }
     '/_user/household/$householdId/accounts/$accountId/': {
       id: '/_user/household/$householdId/accounts/$accountId/'
