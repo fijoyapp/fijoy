@@ -302,7 +302,8 @@ function RouteComponent() {
               <AlertDialogTitle>Archive Account</AlertDialogTitle>
               <AlertDialogDescription>
                 This will archive the account and hide it from the main list.
-                Archive is only allowed when the account value is zero.
+                Archive is only allowed when the account value is zero. You can
+                unarchive it later in Settings → Accounts.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

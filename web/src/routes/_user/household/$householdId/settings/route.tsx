@@ -21,6 +21,15 @@ const SETTINGS_NAV = [
     }),
   },
   {
+    label: 'Accounts',
+    ...linkOptions({
+      from: '/household/$householdId/settings',
+      to: './accounts',
+      search: identity,
+      activeOptions: { exact: true, includeSearch: false },
+    }),
+  },
+  {
     label: 'Members',
     ...linkOptions({
       from: '/household/$householdId/settings',
@@ -75,11 +84,11 @@ function RouteComponent() {
                 key={label}
                 params={params}
                 className={cn(
-                  'text-muted-foreground -ml-px border-l-2 border-transparent py-0.5 pl-2.5 text-xs/relaxed font-medium transition-colors',
+                  'text-muted-foreground hover:bg-muted focus-visible:outline-ring px-2.5 py-1 text-xs/relaxed font-medium transition-colors focus-visible:outline-2',
                   '',
                 )}
                 activeProps={{
-                  className: 'font-semibold border-l-primary',
+                  className: 'bg-muted text-foreground font-semibold',
                 }}
               >
                 {label}

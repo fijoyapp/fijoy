@@ -484,6 +484,19 @@ func (r *mutationResolver) ArchiveAccount(ctx context.Context, id int) (bool, er
 	return true, nil
 }
 
+// UnarchiveAccount is the resolver for the unarchiveAccount field.
+func (r *mutationResolver) UnarchiveAccount(ctx context.Context, id int) (*ent.Account, error) {
+	ctx, span := r.tracer.Start(ctx, "mutationResolver.UnarchiveAccount",
+		trace.WithAttributes(
+			attribute.Int("householdID", contextkeys.GetHouseholdID(ctx)),
+			attribute.Int("userID", contextkeys.GetUserID(ctx)),
+		),
+	)
+	defer span.End()
+
+	return ent.FromContext(ctx).Account.UpdateOneID(id).SetArchived(false).Save(ctx)
+}
+
 // CreateInvestment is the resolver for the createInvestment field.
 func (r *mutationResolver) CreateInvestment(ctx context.Context, input model.CreateInvestmentInputCustom) (*ent.InvestmentEdge, error) {
 	userID := contextkeys.GetUserID(ctx)

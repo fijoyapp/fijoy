@@ -3444,6 +3444,7 @@ type Mutation {
   updateAccount(id: ID!, input: UpdateAccountInput!): AccountEdge!
   deleteAccount(id: ID!): DeleteAccountPayload!
   archiveAccount(id: ID!): Boolean!
+  unarchiveAccount(id: ID!): Account!
   createInvestment(input: CreateInvestmentInputCustom!): InvestmentEdge!
   createTransactionCategory(
     input: CreateTransactionCategoryInput!
