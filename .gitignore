@@ -182,6 +182,7 @@ dist
 .pnp.*
 
 .env
+.dev/
 tmp/
 
 .idea/

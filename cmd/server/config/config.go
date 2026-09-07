@@ -40,7 +40,7 @@ func Load() (*Config, error) {
 	isProd := os.Getenv("RAILWAY_PROJECT_NAME") != ""
 
 	if !isProd {
-		if err := godotenv.Load(); err != nil {
+		if err := godotenv.Load(); err != nil && !os.IsNotExist(err) {
 			return nil, err
 		}
 	}

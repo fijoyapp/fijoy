@@ -132,6 +132,9 @@ just compose up                  # Start PostgreSQL + Redis + Frankfurter
 just server                      # Go server with hot-reload (air), port 3000
 just web                         # Vite dev server, port 5173
 just dev                         # Watch: merge-graphql + relay-compiler
+just worktree-dev                # Shared infra + full app on worktree-specific ports
+just worktree-ready              # Wait for this worktree's app to become ready
+just worktree-url                # Print this worktree's frontend URL
 
 # Code generation
 just codegen                     # Ent + gqlgen
@@ -145,6 +148,19 @@ just migrate-hash                # Hash migrations with Atlas
 cd web && pnpm check             # Prettier + ESLint + TSC
 cd web && pnpm test              # Vitest
 ```
+
+## LOCAL PREVIEW
+
+For browser verification from any checkout or Codex worktree:
+
+1. Run `just worktree-dev` in a long-running terminal session.
+2. Wait for the command to print `READY`, or run `just worktree-ready` from another terminal.
+3. Read the exact frontend URL with `just worktree-url` and open it in the browser.
+4. Use the local development login when authentication is required.
+
+Each worktree gets stable, independent frontend and backend ports. PostgreSQL, Redis, and
+Frankfurter are shared through the `beavermoney` Docker Compose project. Do not assume
+ports 3000 or 5173, and do not start a second app process outside `just worktree-dev`.
 
 ## TECH STACK
 

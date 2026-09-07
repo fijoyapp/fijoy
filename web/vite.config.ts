@@ -11,7 +11,11 @@ const config = defineConfig({
   },
   plugins: [
     relay,
-    devtools(),
+    devtools({
+      eventBusConfig: {
+        port: Number(process.env.VITE_DEVTOOLS_PORT ?? 42069),
+      },
+    }),
     tailwindcss(),
     tanstackRouter({
       target: 'react',

@@ -11,6 +11,7 @@ import { environment } from '@/environment'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
 import { PrivacyModeProvider } from '@/hooks/use-privacy-mode'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { env } from '@/env'
 
 export const Route = createRootRoute({
   shellComponent: RootDocument,
@@ -24,6 +25,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <TooltipProvider>
           {children}
           <TanStackDevtools
+            eventBusConfig={{ port: env.VITE_DEVTOOLS_PORT }}
             config={{
               position: 'bottom-right',
             }}

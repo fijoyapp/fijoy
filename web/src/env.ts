@@ -10,6 +10,7 @@ export const env = createEnv({
 
   client: {
     VITE_SERVER_URL: z.string().min(1),
+    VITE_DEVTOOLS_PORT: z.coerce.number().int().positive().default(42069),
     VITE_LOGO_DEV_PUBLISHABLE_KEY: z.string().optional(),
     VITE_SENTRY_DSN: z.string().optional(),
   },
