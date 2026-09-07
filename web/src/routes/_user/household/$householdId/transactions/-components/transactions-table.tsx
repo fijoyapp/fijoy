@@ -6,16 +6,10 @@ import {
   ArrowDownIcon,
   ArrowUpIcon,
   Columns3Icon,
-  ArrowLeftRightIcon,
-  BanknoteArrowDownIcon,
-  BanknoteArrowUpIcon,
-  TrendingUpIcon,
-  WrenchIcon,
   WalletIcon,
   ListFilterIcon,
 } from 'lucide-react'
-import { dynamicIconImports, type IconName } from 'lucide-react/dynamic'
-import { CategoryIcon } from './category-icon'
+import { CategoryIcon } from '@/components/category-icon'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { getLogoDomainURL } from '@/lib/logo'
 import { format, isToday, isYesterday } from 'date-fns'
@@ -196,36 +190,9 @@ export function TransactionsTable({
       header: 'Transaction',
       cell: (transaction) => {
         const { category } = transaction
-        const TypeIcon =
-          category.type === 'income'
-            ? BanknoteArrowUpIcon
-            : category.type === 'expense'
-              ? BanknoteArrowDownIcon
-              : category.type === 'investment'
-                ? TrendingUpIcon
-                : category.type === 'setup'
-                  ? WrenchIcon
-                  : ArrowLeftRightIcon
         return (
           <div className="flex min-w-0 items-center gap-3">
-            <span
-              className={cn(
-                'bg-muted flex size-8 shrink-0 items-center justify-center',
-                category.type === 'expense' && 'text-destructive',
-                category.type === 'investment' && 'text-chart-investment',
-                category.type === 'income' && 'text-chart-net-worth',
-              )}
-              aria-hidden="true"
-            >
-              {category.icon && category.icon in dynamicIconImports ? (
-                <CategoryIcon
-                  name={category.icon as IconName}
-                  fallback={<TypeIcon className="size-4" />}
-                />
-              ) : (
-                <TypeIcon className="size-4" />
-              )}
-            </span>
+            <CategoryIcon type={category.type} icon={category.icon} />
             <div className="flex min-w-0 flex-col gap-0.5">
               <div className="flex items-center gap-2">
                 <Link
@@ -506,15 +473,15 @@ function AccountMovement({
 }) {
   return (
     <div
-      className="flex h-7 items-center gap-2"
+      className="flex h-8 items-center gap-2"
       title={`${account.name}${symbol ? ` · ${symbol}` : ''}`}
     >
-      <Avatar size="sm" className="size-5">
+      <Avatar>
         {account.icon && (
           <AvatarImage src={getLogoDomainURL(account.icon)} alt="" />
         )}
         <AvatarFallback>
-          <WalletIcon className="size-3" aria-hidden="true" />
+          <WalletIcon className="size-4" aria-hidden="true" />
         </AvatarFallback>
       </Avatar>
       <span className="block max-w-52 truncate">
