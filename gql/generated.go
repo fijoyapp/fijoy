@@ -333,6 +333,7 @@ type ComplexityRoot struct {
 		Refresh                     func(childComplexity int) int
 		RemoveHouseholdUser         func(childComplexity int, id int) int
 		SellInvestment              func(childComplexity int, input model.SellInvestmentInputCustom) int
+		UnarchiveAccount            func(childComplexity int, id int) int
 		UpdateAccount               func(childComplexity int, id int, input ent.UpdateAccountInput) int
 		UpdateHousehold             func(childComplexity int, id int, input ent.UpdateHouseholdInput) int
 		UpdateHouseholdCurrency     func(childComplexity int, id int, input ent.UpdateHouseholdCurrencyInput) int
@@ -644,6 +645,7 @@ type MutationResolver interface {
 	UpdateAccount(ctx context.Context, id int, input ent.UpdateAccountInput) (*ent.AccountEdge, error)
 	DeleteAccount(ctx context.Context, id int) (*model.DeleteAccountPayload, error)
 	ArchiveAccount(ctx context.Context, id int) (bool, error)
+	UnarchiveAccount(ctx context.Context, id int) (*ent.Account, error)
 	CreateInvestment(ctx context.Context, input model.CreateInvestmentInputCustom) (*ent.InvestmentEdge, error)
 	CreateTransactionCategory(ctx context.Context, input ent.CreateTransactionCategoryInput) (*ent.TransactionCategoryEdge, error)
 	UpdateTransactionCategory(ctx context.Context, id int, input ent.UpdateTransactionCategoryInput) (*ent.TransactionCategoryEdge, error)
@@ -2118,6 +2120,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.SellInvestment(childComplexity, args["input"].(model.SellInvestmentInputCustom)), true
+	case "Mutation.unarchiveAccount":
+		if e.complexity.Mutation.UnarchiveAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_unarchiveAccount_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UnarchiveAccount(childComplexity, args["id"].(int)), true
 	case "Mutation.updateAccount":
 		if e.complexity.Mutation.UpdateAccount == nil {
 			break
@@ -4168,6 +4181,17 @@ func (ec *executionContext) field_Mutation_sellInvestment_args(ctx context.Conte
 		return nil, err
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_unarchiveAccount_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "id", ec.unmarshalNID2int)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -10860,6 +10884,85 @@ func (ec *executionContext) fieldContext_Mutation_archiveAccount(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_archiveAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_unarchiveAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_unarchiveAccount,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UnarchiveAccount(ctx, fc.Args["id"].(int))
+		},
+		nil,
+		ec.marshalNAccount2ᚖbeavermoneyᚗappᚋentᚐAccount,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_unarchiveAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Account_id(ctx, field)
+			case "createTime":
+				return ec.fieldContext_Account_createTime(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Account_updateTime(ctx, field)
+			case "householdID":
+				return ec.fieldContext_Account_householdID(ctx, field)
+			case "name":
+				return ec.fieldContext_Account_name(ctx, field)
+			case "type":
+				return ec.fieldContext_Account_type(ctx, field)
+			case "balance":
+				return ec.fieldContext_Account_balance(ctx, field)
+			case "category":
+				return ec.fieldContext_Account_category(ctx, field)
+			case "icon":
+				return ec.fieldContext_Account_icon(ctx, field)
+			case "value":
+				return ec.fieldContext_Account_value(ctx, field)
+			case "householdCurrencyID":
+				return ec.fieldContext_Account_householdCurrencyID(ctx, field)
+			case "userID":
+				return ec.fieldContext_Account_userID(ctx, field)
+			case "archived":
+				return ec.fieldContext_Account_archived(ctx, field)
+			case "household":
+				return ec.fieldContext_Account_household(ctx, field)
+			case "householdCurrency":
+				return ec.fieldContext_Account_householdCurrency(ctx, field)
+			case "user":
+				return ec.fieldContext_Account_user(ctx, field)
+			case "transactionEntries":
+				return ec.fieldContext_Account_transactionEntries(ctx, field)
+			case "investments":
+				return ec.fieldContext_Account_investments(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_unarchiveAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -34373,6 +34476,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "unarchiveAccount":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_unarchiveAccount(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createInvestment":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createInvestment(ctx, field)
@@ -38371,6 +38481,10 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNAccount2beavermoneyᚗappᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v ent.Account) graphql.Marshaler {
+	return ec._Account(ctx, sel, &v)
+}
 
 func (ec *executionContext) marshalNAccount2ᚖbeavermoneyᚗappᚋentᚐAccount(ctx context.Context, sel ast.SelectionSet, v *ent.Account) graphql.Marshaler {
 	if v == nil {
