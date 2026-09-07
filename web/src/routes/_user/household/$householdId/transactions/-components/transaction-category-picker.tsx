@@ -1,10 +1,11 @@
+import { CategoryIcon } from './category-icon'
 import { SelectionRows } from './selection-rows'
 import {
   ArrowLeftRightIcon,
   BanknoteArrowDownIcon,
   BanknoteArrowUpIcon,
 } from 'lucide-react'
-import { DynamicIcon, iconNames } from 'lucide-react/dynamic'
+import { iconNames } from 'lucide-react/dynamic'
 import {
   Combobox,
   ComboboxContent,
@@ -72,10 +73,17 @@ export function TransactionCategoryPicker({
                 />
                 {category.icon &&
                 iconNames.some((name) => name === category.icon) ? (
-                  <DynamicIcon
+                  <CategoryIcon
                     name={category.icon as (typeof iconNames)[number]}
-                    className="size-4 shrink-0"
-                    aria-hidden="true"
+                    fallback={
+                      category.type === 'expense' ? (
+                        <BanknoteArrowDownIcon className="size-4" />
+                      ) : category.type === 'income' ? (
+                        <BanknoteArrowUpIcon className="size-4" />
+                      ) : (
+                        <ArrowLeftRightIcon className="size-4" />
+                      )
+                    }
                   />
                 ) : category.type === 'expense' ? (
                   <BanknoteArrowDownIcon
