@@ -462,11 +462,6 @@ export function NewMove({ fragmentRef }: NewMoveProps) {
                     <FieldLabel htmlFor={field.name}>
                       Price per Share
                     </FieldLabel>
-                    <FieldDescription>
-                      {fromInvestment
-                        ? `Currency: ${fromInvestment.currencyCode}`
-                        : 'Select from investment to see currency'}
-                    </FieldDescription>
                     <CurrencyInput
                       id={field.name}
                       name={field.name}

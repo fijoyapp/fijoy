@@ -20,7 +20,6 @@ import {
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -378,11 +377,6 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Amount</FieldLabel>
-                    <FieldDescription>
-                      {selectedAccount
-                        ? `Currency: ${selectedAccount.householdCurrency.code}`
-                        : 'Select an account to see currency'}
-                    </FieldDescription>
                     <CurrencyInput
                       id={field.name}
                       name={field.name}

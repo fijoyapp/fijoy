@@ -20,7 +20,6 @@ import {
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -460,11 +459,6 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
                     <FieldLabel htmlFor={field.name}>
                       Price per Share
                     </FieldLabel>
-                    <FieldDescription>
-                      {selectedAccount
-                        ? `Currency: ${selectedAccount.householdCurrency.code}`
-                        : 'Select an account to see currency'}
-                    </FieldDescription>
                     <CurrencyInput
                       id={field.name}
                       name={field.name}
@@ -498,11 +492,6 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Total Paid</FieldLabel>
-                    <FieldDescription>
-                      {selectedAccount
-                        ? `Currency: ${selectedAccount.householdCurrency.code}`
-                        : 'Computed from shares × price'}
-                    </FieldDescription>
                     <CurrencyInput
                       id={field.name}
                       name={field.name}

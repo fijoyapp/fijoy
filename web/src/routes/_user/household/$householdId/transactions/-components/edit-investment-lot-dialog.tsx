@@ -17,7 +17,6 @@ import {
 import { Button } from '@/components/ui/button'
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -372,11 +371,6 @@ export function EditInvestmentLotDialog({
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Price per Share</FieldLabel>
-                  <FieldDescription>
-                    {selectedAccount
-                      ? `Currency: ${selectedAccount.householdCurrency.code}`
-                      : 'Select an account to see currency'}
-                  </FieldDescription>
                   <CurrencyInput
                     id={field.name}
                     name={field.name}

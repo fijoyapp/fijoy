@@ -18,7 +18,6 @@ import {
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -522,11 +521,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>Amount</FieldLabel>
-                      <FieldDescription>
-                        {fromAccount
-                          ? `Currency: ${fromAccount.householdCurrency.code}`
-                          : 'Select from account to see currency'}
-                      </FieldDescription>
                       <CurrencyInput
                         id={field.name}
                         name={field.name}
@@ -570,11 +564,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                         <FieldLabel htmlFor={field.name}>
                           Debit Amount (From Account)
                         </FieldLabel>
-                        <FieldDescription>
-                          {fromAccount
-                            ? `Currency: ${fromAccount.householdCurrency.code}`
-                            : 'Select from account to see currency'}
-                        </FieldDescription>
                         <CurrencyInput
                           id={field.name}
                           name={field.name}
@@ -617,11 +606,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                         <FieldLabel htmlFor={field.name}>
                           Credit Amount (To Account)
                         </FieldLabel>
-                        <FieldDescription>
-                          {toAccount
-                            ? `Currency: ${toAccount.householdCurrency.code}`
-                            : 'Select to account to see currency'}
-                        </FieldDescription>
                         <CurrencyInput
                           id={field.name}
                           name={field.name}
