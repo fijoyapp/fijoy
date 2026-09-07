@@ -18,6 +18,9 @@ const state = vi.hoisted(() => ({
   inView: false,
   navigate: vi.fn(),
 }))
+vi.mock('@/env', () => ({
+  env: { VITE_SERVER_URL: 'https://api.example.test' },
+}))
 vi.mock('react-intersection-observer', () => ({
   useInView: () => ({ ref: () => {}, inView: state.inView }),
 }))
