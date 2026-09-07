@@ -1,3 +1,4 @@
+import { SelectionRows } from './selection-rows'
 import {
   ArrowLeftRightIcon,
   BanknoteArrowDownIcon,
@@ -43,7 +44,7 @@ export function TransactionCategoryPicker({
       <fieldset
         id={name}
         aria-invalid={invalid}
-        className="m-0 flex min-w-0 flex-wrap gap-2 border-0 p-0"
+        className="m-0 min-w-0 border-0 p-0"
         onBlur={(event) => {
           if (!event.currentTarget.contains(event.relatedTarget)) onBlur()
         }}
@@ -54,51 +55,53 @@ export function TransactionCategoryPicker({
             No categories available.
           </p>
         ) : (
-          categories.map((category) => (
-            <label
-              key={category.id}
-              className="border-input bg-background has-checked:border-primary has-focus-visible:outline-ring flex min-h-11 max-w-full min-w-0 cursor-pointer items-center gap-2 border p-3 has-focus-visible:outline-2 has-focus-visible:outline-offset-2"
-            >
-              <input
-                type="radio"
-                name={name}
-                value={category.id}
-                checked={value === category.id}
-                onChange={() => onValueChange(category.id)}
-                aria-invalid={invalid}
-                className="sr-only"
-              />
-              {category.icon &&
-              iconNames.some((name) => name === category.icon) ? (
-                <DynamicIcon
-                  name={category.icon as (typeof iconNames)[number]}
-                  className="size-5 shrink-0"
-                  aria-hidden="true"
-                />
-              ) : category.type === 'expense' ? (
-                <BanknoteArrowDownIcon
-                  className="size-5 shrink-0"
-                  aria-hidden="true"
-                />
-              ) : category.type === 'income' ? (
-                <BanknoteArrowUpIcon
-                  className="size-5 shrink-0"
-                  aria-hidden="true"
-                />
-              ) : (
-                <ArrowLeftRightIcon
-                  className="size-5 shrink-0"
-                  aria-hidden="true"
-                />
-              )}
-              <span
-                className="min-w-0 truncate text-xs leading-relaxed"
-                title={category.name}
+          <SelectionRows label="Categories">
+            {categories.map((category) => (
+              <label
+                key={category.id}
+                className="border-input bg-background has-checked:border-primary has-focus-visible:outline-ring flex min-h-9 max-w-64 min-w-0 cursor-pointer items-center gap-2 border px-2 py-1.5 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2"
               >
-                {category.name}
-              </span>
-            </label>
-          ))
+                <input
+                  type="radio"
+                  name={name}
+                  value={category.id}
+                  checked={value === category.id}
+                  onChange={() => onValueChange(category.id)}
+                  aria-invalid={invalid}
+                  className="sr-only"
+                />
+                {category.icon &&
+                iconNames.some((name) => name === category.icon) ? (
+                  <DynamicIcon
+                    name={category.icon as (typeof iconNames)[number]}
+                    className="size-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                ) : category.type === 'expense' ? (
+                  <BanknoteArrowDownIcon
+                    className="size-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                ) : category.type === 'income' ? (
+                  <BanknoteArrowUpIcon
+                    className="size-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <ArrowLeftRightIcon
+                    className="size-4 shrink-0"
+                    aria-hidden="true"
+                  />
+                )}
+                <span
+                  className="min-w-0 truncate text-xs leading-relaxed"
+                  title={category.name}
+                >
+                  {category.name}
+                </span>
+              </label>
+            ))}
+          </SelectionRows>
         )}
       </fieldset>
     )

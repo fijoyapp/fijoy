@@ -1,3 +1,4 @@
+import { SelectionRows } from './selection-rows'
 import { Tabs } from '@base-ui/react/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { graphql, useFragment } from 'react-relay'
@@ -132,40 +133,34 @@ export function TransactionAccountPicker({
   const renderGroups = (accountGroups: typeof groups) =>
     accountGroups.map((group) => (
       <div key={group.type} className="flex min-w-0 flex-col gap-0.5">
-        <ScrollArea className="w-full min-w-0 overflow-hidden [&_[data-slot=scroll-area-scrollbar]]:hidden">
-          <div
-            role="group"
-            aria-label={`${group.title} accounts`}
-            className="flex w-max gap-2"
-          >
-            {group.accounts.map((account) => (
-              <label
-                key={account.id}
-                className={cn(
-                  'border-input bg-background has-focus-visible:outline-ring flex min-h-11 w-52 shrink-0 cursor-pointer items-center border p-2 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2',
-                  value === account.id && 'border-primary',
-                )}
-              >
-                <input
-                  type="radio"
-                  name={name}
-                  value={account.id}
-                  checked={value === account.id}
-                  onChange={() => onValueChange(account.id)}
-                  onClick={() => {
-                    if (value === account.id) onValueChange(account.id)
-                  }}
-                  aria-invalid={invalid}
-                  className="sr-only"
-                />
-                <AccountDetails
-                  account={account}
-                  selected={value === account.id}
-                />
-              </label>
-            ))}
-          </div>
-        </ScrollArea>
+        <SelectionRows label={`${group.title} accounts`}>
+          {group.accounts.map((account) => (
+            <label
+              key={account.id}
+              className={cn(
+                'border-input bg-background has-focus-visible:outline-ring flex min-h-11 w-52 shrink-0 cursor-pointer items-center border p-2 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2',
+                value === account.id && 'border-primary',
+              )}
+            >
+              <input
+                type="radio"
+                name={name}
+                value={account.id}
+                checked={value === account.id}
+                onChange={() => onValueChange(account.id)}
+                onClick={() => {
+                  if (value === account.id) onValueChange(account.id)
+                }}
+                aria-invalid={invalid}
+                className="sr-only"
+              />
+              <AccountDetails
+                account={account}
+                selected={value === account.id}
+              />
+            </label>
+          ))}
+        </SelectionRows>
       </div>
     ))
 
