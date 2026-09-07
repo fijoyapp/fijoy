@@ -27,7 +27,6 @@ import {
   FieldSet,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Combobox,
   ComboboxContent,
@@ -515,18 +514,18 @@ export function NewExpense({ fragmentRef }: NewExpenseProps) {
                   children={(field) => {
                     return (
                       <Field orientation={'horizontal'}>
-                        <Checkbox
+                        <Button
+                          type="button"
                           id={field.name}
                           name={field.name}
-                          checked={field.state.value}
-                          onCheckedChange={(checked) =>
-                            field.handleChange(checked === true)
-                          }
+                          aria-pressed={field.state.value}
+                          variant="outline"
+                          onClick={() => field.handleChange(!field.state.value)}
                           onBlur={field.handleBlur}
-                        />
-                        <FieldLabel htmlFor={field.name}>
+                          className="aria-pressed:border-primary"
+                        >
                           Exclude from reports
-                        </FieldLabel>
+                        </Button>
                       </Field>
                     )
                   }}
