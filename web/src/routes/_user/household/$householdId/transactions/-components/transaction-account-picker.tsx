@@ -116,7 +116,7 @@ export function TransactionAccountPicker({
         aria-expanded={false}
         aria-label={`${label}: ${selected?.name ?? 'Select an account'}`}
         onClick={onExpand}
-        className="border-input bg-background focus-visible:outline-ring flex min-h-11 w-full items-center gap-3 border p-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="border-input bg-background focus-visible:outline-ring flex min-h-11 w-full items-center gap-2 border p-2 text-left focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {selected ? (
           <AccountDetails account={selected} />
