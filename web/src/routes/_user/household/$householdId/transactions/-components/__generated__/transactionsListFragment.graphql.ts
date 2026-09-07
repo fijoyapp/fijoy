@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5ad7b1b043af1c76e003ff7660bb7494>>
+ * @generated SignedSource<<fac85897cb5878a34d850161321bdcff>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,7 @@ export type transactionsListFragment$data = {
       readonly node: {
         readonly datetime: any;
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"transactionCardFragment" | "transactionsTableFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
     readonly pageInfo: {
@@ -59,6 +59,14 @@ return {
       "name": "cursor"
     },
     {
+      "defaultValue": {
+        "direction": "DESC",
+        "field": "DATETIME"
+      },
+      "kind": "LocalArgument",
+      "name": "orderBy"
+    },
+    {
       "defaultValue": null,
       "kind": "LocalArgument",
       "name": "where"
@@ -95,16 +103,14 @@ return {
   },
   "name": "transactionsListFragment",
   "selections": [
+    (v1/*: any*/),
     {
       "alias": "transactions",
       "args": [
         {
-          "kind": "Literal",
+          "kind": "Variable",
           "name": "orderBy",
-          "value": {
-            "direction": "DESC",
-            "field": "DATETIME"
-          }
+          "variableName": "orderBy"
         },
         {
           "kind": "Variable",
@@ -145,6 +151,11 @@ return {
                   "args": null,
                   "kind": "FragmentSpread",
                   "name": "transactionCardFragment"
+                },
+                {
+                  "args": null,
+                  "kind": "FragmentSpread",
+                  "name": "transactionsTableFragment"
                 },
                 {
                   "alias": null,
@@ -205,14 +216,13 @@ return {
         }
       ],
       "storageKey": null
-    },
-    (v1/*: any*/)
+    }
   ],
   "type": "Household",
   "abstractKey": null
 };
 })();
 
-(node as any).hash = "084b7068f88998e50ddce9162ae90f9b";
+(node as any).hash = "fc67c172af223de248475c40967efb22";
 
 export default node;

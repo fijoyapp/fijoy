@@ -1,12 +1,19 @@
+import { TransactionsTable } from './transactions-table'
+import { useIsMobile } from '@/hooks/use-mobile'
+import { useCallback, useEffect, useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { graphql } from 'relay-runtime'
 
-import { useMemo } from 'react'
-import { usePaginationFragment } from 'react-relay'
+import {
+  usePaginationFragment,
+  useSubscribeToInvalidationState,
+} from 'react-relay'
 import { useInView } from 'react-intersection-observer'
 import { Fragment } from 'react/jsx-runtime'
-import { useEffect } from 'react'
 import { TransactionCard } from './transaction-card'
+import type { transactionsListRefetch } from './__generated__/transactionsListRefetch.graphql'
 import type { transactionsListFragment$key } from './__generated__/transactionsListFragment.graphql'
+import { Button } from '@/components/ui/button'
 import { ItemGroup } from '@/components/ui/item'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
 import {
@@ -23,13 +30,18 @@ const transactionsListFragment = graphql`
     count: { type: "Int", defaultValue: 20 }
     cursor: { type: "Cursor" }
     where: { type: "TransactionWhereInput" }
+    orderBy: {
+      type: "TransactionOrder"
+      defaultValue: { field: DATETIME, direction: DESC }
+    }
   )
   @refetchable(queryName: "transactionsListRefetch") {
+    id
     transactions(
       first: $count
       after: $cursor
       where: $where
-      orderBy: { field: DATETIME, direction: DESC }
+      orderBy: $orderBy
     ) @connection(key: "transactionsList_transactions") {
       __id
       edges {
@@ -37,6 +49,7 @@ const transactionsListFragment = graphql`
           id
           datetime
           ...transactionCardFragment
+          ...transactionsTableFragment
         }
       }
       pageInfo {
@@ -52,39 +65,105 @@ type TransactionsListProps = {
 }
 
 export function TransactionsList({ fragmentRef }: TransactionsListProps) {
-  const { data, loadNext, hasNext, isLoadingNext } = usePaginationFragment(
-    transactionsListFragment,
-    fragmentRef,
+  const { data, loadNext, hasNext, isLoadingNext, refetch } =
+    usePaginationFragment<
+      transactionsListRefetch,
+      transactionsListFragment$key
+    >(transactionsListFragment, fragmentRef)
+
+  const isMobile = useIsMobile()
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [direction, setDirection] = useState<'ASC' | 'DESC'>('DESC')
+  const [isSorting, startTransition] = useTransition()
+  const changeSort = useCallback(
+    (nextDirection: 'ASC' | 'DESC') => {
+      startTransition(() => {
+        refetch(
+          {
+            orderBy: { field: 'DATETIME', direction: nextDirection },
+            cursor: null,
+            count: 20,
+          },
+          {
+            fetchPolicy: 'store-and-network',
+            onComplete: (error) => {
+              if (error)
+                toast.error('Could not sort transactions. Please try again.')
+              else setLoadError(null)
+            },
+          },
+        )
+        setDirection(nextDirection)
+      })
+    },
+    [refetch],
   )
+  useEffect(() => {
+    if (isMobile && direction !== 'DESC' && !isSorting) changeSort('DESC')
+  }, [isMobile, direction, isSorting, changeSort])
+
+  // Page-level invalidation refreshes DESC. Refresh the active ASC connection too.
+  useSubscribeToInvalidationState([data.id], () => {
+    if (direction !== 'ASC') return
+    startTransition(() => {
+      refetch(
+        {
+          cursor: null,
+          count: Math.max(20, data.transactions.edges?.length ?? 0),
+        },
+        { fetchPolicy: 'network-only' },
+      )
+    })
+  })
+
+  const loadMore = useCallback(() => {
+    if (isLoadingNext || isSorting || !hasNext) return
+    loadNext(isMobile ? 20 : 50, {
+      onComplete: (error) => {
+        setLoadError(error ? 'Could not load more transactions.' : null)
+      },
+    })
+  }, [loadNext, isMobile, isLoadingNext, isSorting, hasNext])
 
   useRegisterConnection(data.transactions.__id, NodeType.Transaction)
 
   const [ref, inView] = useInView()
 
   useEffect(() => {
-    if (inView && hasNext && !isLoadingNext) {
-      loadNext(20)
+    if (isMobile && inView && !loadError) {
+      loadMore()
     }
-  }, [inView, hasNext, isLoadingNext, loadNext])
+  }, [isMobile, inView, loadError, loadMore])
 
-  const groups = useMemo(() => {
-    const edges = data.transactions.edges ?? []
-    const result: { date: Date; edges: Array<(typeof edges)[number]> }[] = []
-
-    for (const edge of edges) {
-      if (!edge?.node?.datetime) continue
-      const date = startOfDay(parseISO(edge.node.datetime))
-      const last = result[result.length - 1]
-
-      if (last && isSameDay(last.date, date)) {
-        last.edges = [...last.edges, edge]
-      } else {
-        result.push({ date, edges: [edge] })
-      }
+  const transactions =
+    data.transactions.edges?.flatMap((edge) =>
+      edge?.node ? [edge.node] : [],
+    ) ?? []
+  const groups: { date: Date; transactions: typeof transactions }[] = []
+  if (isMobile) {
+    for (const transaction of transactions) {
+      const date = startOfDay(parseISO(transaction.datetime))
+      const last = groups[groups.length - 1]
+      if (last && isSameDay(last.date, date))
+        last.transactions.push(transaction)
+      else groups.push({ date, transactions: [transaction] })
     }
+  }
 
-    return result
-  }, [data.transactions.edges])
+  if (!isMobile) {
+    return (
+      <TransactionsTable
+        fragmentRef={transactions}
+        direction={direction}
+        onToggleSort={() => changeSort(direction === 'DESC' ? 'ASC' : 'DESC')}
+        isSorting={isSorting}
+        hasNext={hasNext}
+        isLoadingNext={isLoadingNext}
+        onLoadMore={loadMore}
+        loadError={loadError}
+      />
+    )
+  }
 
   return (
     <Fragment>
@@ -94,14 +173,28 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
             {formatDateHeader(group.date)}
           </div>
           <ItemGroup>
-            {group.edges.map((edge) => (
-              <Fragment key={edge!.node!.id}>
-                <TransactionCard fragmentRef={edge!.node!} />
-              </Fragment>
+            {group.transactions.map((transaction) => (
+              <TransactionCard key={transaction.id} fragmentRef={transaction} />
             ))}
           </ItemGroup>
         </Fragment>
       ))}
+      {loadError && (
+        <div
+          role="alert"
+          className="text-muted-foreground flex items-center justify-center gap-2 py-2 text-xs"
+        >
+          {loadError}
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isLoadingNext}
+            onClick={loadMore}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
       <div ref={ref}></div>
     </Fragment>
   )

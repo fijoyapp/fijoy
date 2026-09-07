@@ -108,7 +108,10 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
         onDateRangeChange={onDateRangeChange}
       />
       <div className="py-2"></div>
-      <TransactionsList fragmentRef={data} />
+      <TransactionsList
+        key={`${startDate}-${endDate}-${viewUserIds?.join(',') ?? 'all'}`}
+        fragmentRef={data}
+      />
     </Fragment>
   )
 }

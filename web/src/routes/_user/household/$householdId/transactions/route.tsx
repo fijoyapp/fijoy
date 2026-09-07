@@ -28,7 +28,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   return (
-    <HouseholdContentLayout>
+    <HouseholdContentLayout className="md:max-w-none">
       <Outlet />
     </HouseholdContentLayout>
   )
