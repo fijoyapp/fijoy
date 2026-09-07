@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7ec938fff9e2821dee746e83e009e164>>
+ * @generated SignedSource<<a5dce1ea6c99c9f50295cbab79eee54e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,12 +27,14 @@ export type newExpenseFragment$data = {
           readonly name: string;
         };
         readonly value: string;
+        readonly " $fragmentSpreads": FragmentRefs<"transactionAccountPickerBalanceFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
   readonly transactionCategories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly icon: string;
         readonly id: string;
         readonly name: string;
         readonly type: TransactionCategoryType;
@@ -66,6 +68,13 @@ v2 = {
   "args": null,
   "kind": "ScalarField",
   "name": "type",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "icon",
   "storageKey": null
 };
 return {
@@ -124,19 +133,18 @@ return {
                 (v0/*: any*/),
                 (v1/*: any*/),
                 (v2/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "icon",
-                  "storageKey": null
-                },
+                (v3/*: any*/),
                 {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
                   "name": "value",
                   "storageKey": null
+                },
+                {
+                  "args": null,
+                  "kind": "FragmentSpread",
+                  "name": "transactionAccountPickerBalanceFragment"
                 },
                 {
                   "alias": null,
@@ -203,7 +211,8 @@ return {
               "selections": [
                 (v0/*: any*/),
                 (v1/*: any*/),
-                (v2/*: any*/)
+                (v2/*: any*/),
+                (v3/*: any*/)
               ],
               "storageKey": null
             }
@@ -219,6 +228,6 @@ return {
 };
 })();
 
-(node as any).hash = "04af65a4bc4e5b4ca8842cedf78536a5";
+(node as any).hash = "a41479bfb7dc2d879b2a43fb790a2887";
 
 export default node;

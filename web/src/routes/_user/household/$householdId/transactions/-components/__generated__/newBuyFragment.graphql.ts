@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fdd2ba95e829c7ccfa4886c001b3715a>>
+ * @generated SignedSource<<c863f833be836496c0cbf21a833c24a5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -34,6 +34,7 @@ export type newBuyFragment$data = {
           readonly name: string;
         };
         readonly value: string;
+        readonly " $fragmentSpreads": FragmentRefs<"transactionAccountPickerBalanceFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -146,6 +147,11 @@ return {
                   "storageKey": null
                 },
                 {
+                  "args": null,
+                  "kind": "FragmentSpread",
+                  "name": "transactionAccountPickerBalanceFragment"
+                },
+                {
                   "alias": null,
                   "args": null,
                   "concreteType": "HouseholdCurrency",
@@ -247,6 +253,6 @@ return {
 };
 })();
 
-(node as any).hash = "a8b4dcbe7696fafb436a221c005cf5df";
+(node as any).hash = "45108eb58011da0f1e8964e09c901f37";
 
 export default node;

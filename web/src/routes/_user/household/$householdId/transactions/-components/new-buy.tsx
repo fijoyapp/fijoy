@@ -1,3 +1,5 @@
+import { TransactionAccountPicker } from './transaction-account-picker'
+import { TransactionInvestmentPicker } from './transaction-investment-picker'
 import { graphql } from 'relay-runtime'
 import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
@@ -77,6 +79,7 @@ const newBuyFragment = graphql`
           type
           icon
           value
+          ...transactionAccountPickerBalanceFragment
           householdCurrency {
             code
           }
@@ -283,74 +286,87 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Account</FieldLabel>
-                    <Combobox
-                      items={investmentAccounts.map((account) => account.id)}
-                      itemToStringLabel={(item) =>
-                        investmentAccounts.find((acc) => acc.id === item)
-                          ?.name || ''
-                      }
+                    <TransactionAccountPicker
+                      accounts={investmentAccounts}
+                      name={field.name}
+                      label="Account"
                       value={field.state.value}
                       onValueChange={(value) => {
-                        field.handleChange(value || '')
-                        // Reset investment when account changes
+                        field.handleChange(value)
                         form.setFieldValue('investmentId', '')
                       }}
+                      onBlur={field.handleBlur}
+                      invalid={isInvalid}
                     >
-                      <ComboboxInput
-                        data-1p-ignore
-                        id={field.name}
-                        name={field.name}
-                        placeholder="Select an account"
-                        onBlur={field.handleBlur}
-                        aria-invalid={isInvalid}
-                      />
-                      <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                          {(item: string) => {
-                            const account = investmentAccounts.find(
-                              (acc) => acc.id === item,
-                            )
-                            if (!account) return null
-                            return (
-                              <ComboboxItem key={item} value={item}>
-                                <Item size="xs" className="p-0">
-                                  <ItemMedia variant="image">
-                                    <Avatar className="size-6">
-                                      <AvatarImage
-                                        src={getLogoDomainURL(
-                                          account.icon || '',
-                                        )}
-                                        alt={account.icon || 'unknown logo'}
-                                      />
-                                      <AvatarFallback>
-                                        {account.name}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                  </ItemMedia>
-                                  <ItemContent>
-                                    <ItemTitle>{account.name}</ItemTitle>
-                                    <ItemDescription>
-                                      <span className="tabular-nums">
-                                        {formatCurrencyWithPrivacyMode({
-                                          value: account.value,
-                                          currencyCode:
-                                            account.householdCurrency.code,
-                                          liability:
-                                            account.type === 'liability',
-                                        })}
-                                      </span>
-                                      <span aria-hidden="true"> · </span>
-                                      {account.user.name}
-                                    </ItemDescription>
-                                  </ItemContent>
-                                </Item>
-                              </ComboboxItem>
-                            )
-                          }}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
+                      <Combobox
+                        items={investmentAccounts.map((account) => account.id)}
+                        itemToStringLabel={(item) =>
+                          investmentAccounts.find((acc) => acc.id === item)
+                            ?.name || ''
+                        }
+                        value={field.state.value}
+                        onValueChange={(value) => {
+                          field.handleChange(value || '')
+                          // Reset investment when account changes
+                          form.setFieldValue('investmentId', '')
+                        }}
+                      >
+                        <ComboboxInput
+                          data-1p-ignore
+                          id={field.name}
+                          name={field.name}
+                          placeholder="Select an account"
+                          onBlur={field.handleBlur}
+                          aria-invalid={isInvalid}
+                        />
+                        <ComboboxContent>
+                          <ComboboxEmpty>No items found.</ComboboxEmpty>
+                          <ComboboxList>
+                            {(item: string) => {
+                              const account = investmentAccounts.find(
+                                (acc) => acc.id === item,
+                              )
+                              if (!account) return null
+                              return (
+                                <ComboboxItem key={item} value={item}>
+                                  <Item size="xs" className="p-0">
+                                    <ItemMedia variant="image">
+                                      <Avatar className="size-6">
+                                        <AvatarImage
+                                          src={getLogoDomainURL(
+                                            account.icon || '',
+                                          )}
+                                          alt={account.icon || 'unknown logo'}
+                                        />
+                                        <AvatarFallback>
+                                          {account.name}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                    </ItemMedia>
+                                    <ItemContent>
+                                      <ItemTitle>{account.name}</ItemTitle>
+                                      <ItemDescription>
+                                        <span className="tabular-nums">
+                                          {formatCurrencyWithPrivacyMode({
+                                            value: account.value,
+                                            currencyCode:
+                                              account.householdCurrency.code,
+                                            liability:
+                                              account.type === 'liability',
+                                          })}
+                                        </span>
+                                        <span aria-hidden="true"> · </span>
+                                        {account.user.name}
+                                      </ItemDescription>
+                                    </ItemContent>
+                                  </Item>
+                                </ComboboxItem>
+                              )
+                            }}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
+                    </TransactionAccountPicker>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
@@ -367,48 +383,59 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Investment</FieldLabel>
-                    <Combobox
-                      items={availableInvestments.map((inv) => inv.id)}
-                      itemToStringLabel={(item) => {
-                        const inv = availableInvestments.find(
-                          (i) => i.id === item,
-                        )
-                        return inv ? `${inv.name} (${inv.symbol})` : ''
-                      }}
+                    <TransactionInvestmentPicker
+                      investments={availableInvestments}
+                      name={field.name}
+                      label="Investment"
                       value={field.state.value}
-                      onValueChange={(value) => {
-                        field.handleChange(value || '')
-                      }}
+                      onValueChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      invalid={isInvalid}
                       disabled={!selectedAccount}
                     >
-                      <ComboboxInput
-                        data-1p-ignore
-                        id={field.name}
-                        name={field.name}
-                        placeholder={
-                          selectedAccount
-                            ? 'Select an investment'
-                            : 'Select an account first'
-                        }
-                        onBlur={field.handleBlur}
-                        aria-invalid={isInvalid}
-                      />
-                      <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                          {(item: string) => {
-                            const inv = availableInvestments.find(
-                              (i) => i.id === item,
-                            )
-                            return (
-                              <ComboboxItem key={item} value={item}>
-                                {inv ? `${inv.name} (${inv.symbol})` : ''}
-                              </ComboboxItem>
-                            )
-                          }}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
+                      <Combobox
+                        items={availableInvestments.map((inv) => inv.id)}
+                        itemToStringLabel={(item) => {
+                          const inv = availableInvestments.find(
+                            (i) => i.id === item,
+                          )
+                          return inv ? `${inv.name} (${inv.symbol})` : ''
+                        }}
+                        value={field.state.value}
+                        onValueChange={(value) => {
+                          field.handleChange(value || '')
+                        }}
+                        disabled={!selectedAccount}
+                      >
+                        <ComboboxInput
+                          data-1p-ignore
+                          id={field.name}
+                          name={field.name}
+                          placeholder={
+                            selectedAccount
+                              ? 'Select an investment'
+                              : 'Select an account first'
+                          }
+                          onBlur={field.handleBlur}
+                          aria-invalid={isInvalid}
+                        />
+                        <ComboboxContent>
+                          <ComboboxEmpty>No items found.</ComboboxEmpty>
+                          <ComboboxList>
+                            {(item: string) => {
+                              const inv = availableInvestments.find(
+                                (i) => i.id === item,
+                              )
+                              return (
+                                <ComboboxItem key={item} value={item}>
+                                  {inv ? `${inv.name} (${inv.symbol})` : ''}
+                                </ComboboxItem>
+                              )
+                            }}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
+                    </TransactionInvestmentPicker>
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
