@@ -1,11 +1,5 @@
-import { CategoryIcon } from './category-icon'
+import { CategoryIcon } from '@/components/category-icon'
 import { SelectionRows } from './selection-rows'
-import {
-  ArrowLeftRightIcon,
-  BanknoteArrowDownIcon,
-  BanknoteArrowUpIcon,
-} from 'lucide-react'
-import { iconNames } from 'lucide-react/dynamic'
 import {
   Combobox,
   ComboboxContent,
@@ -71,36 +65,11 @@ export function TransactionCategoryPicker({
                   aria-invalid={invalid}
                   className="sr-only"
                 />
-                {category.icon &&
-                iconNames.some((name) => name === category.icon) ? (
-                  <CategoryIcon
-                    name={category.icon as (typeof iconNames)[number]}
-                    fallback={
-                      category.type === 'expense' ? (
-                        <BanknoteArrowDownIcon className="size-4" />
-                      ) : category.type === 'income' ? (
-                        <BanknoteArrowUpIcon className="size-4" />
-                      ) : (
-                        <ArrowLeftRightIcon className="size-4" />
-                      )
-                    }
-                  />
-                ) : category.type === 'expense' ? (
-                  <BanknoteArrowDownIcon
-                    className="size-4 shrink-0"
-                    aria-hidden="true"
-                  />
-                ) : category.type === 'income' ? (
-                  <BanknoteArrowUpIcon
-                    className="size-4 shrink-0"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <ArrowLeftRightIcon
-                    className="size-4 shrink-0"
-                    aria-hidden="true"
-                  />
-                )}
+                <CategoryIcon
+                  type={category.type}
+                  icon={category.icon}
+                  size="inline"
+                />
                 <span
                   className="min-w-0 truncate text-xs leading-relaxed"
                   title={category.name}

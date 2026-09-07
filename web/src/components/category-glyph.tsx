@@ -1,17 +1,20 @@
 import { useEffect, useSyncExternalStore, type ReactNode } from 'react'
 import { Icon, type IconNode } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { dynamicIconImports, type IconName } from 'lucide-react/dynamic'
 
 const icons = new Map<IconName, IconNode>()
 const pending = new Map<IconName, Promise<void>>()
 const listeners = new Map<IconName, Set<() => void>>()
 
-export function CategoryIcon({
+export function CategoryGlyph({
   name,
   fallback,
+  className,
 }: {
   name: IconName
   fallback: ReactNode
+  className?: string
 }) {
   const iconNode = useSyncExternalStore(
     (listener) => {
@@ -45,10 +48,13 @@ export function CategoryIcon({
 
   return (
     <span
-      className="flex size-4 shrink-0 items-center justify-center"
+      className={cn(
+        'flex size-4 shrink-0 items-center justify-center [&>svg]:size-full',
+        className,
+      )}
       aria-hidden="true"
     >
-      {iconNode ? <Icon iconNode={iconNode} className="size-4" /> : fallback}
+      {iconNode ? <Icon iconNode={iconNode} /> : fallback}
     </span>
   )
 }

@@ -1,18 +1,9 @@
+import { CategoryIcon } from '@/components/category-icon'
 import { graphql } from 'relay-runtime'
 import { useFragment } from 'react-relay'
 import { Link } from '@tanstack/react-router'
-import {
-  ArrowLeftRightIcon,
-  BanknoteArrowDownIcon,
-  BanknoteArrowUpIcon,
-  TrendingUpIcon,
-  WrenchIcon,
-} from 'lucide-react'
-import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
-import { match } from 'ts-pattern'
 import currency from 'currency.js'
 import { useMemo } from 'react'
-import type { TransactionCategoryType } from './__generated__/categoryCardFragment.graphql'
 import { cn } from '@/lib/utils'
 
 import { useCurrency } from '@/hooks/use-currency'
@@ -104,12 +95,7 @@ export function CategoryCard({
       params={{ categoryId: category.id }}
     >
       <div className="flex items-center gap-2">
-        <div className="size-6 shrink-0 overflow-hidden rounded-full [&>svg]:size-6 [&>svg]:p-1">
-          {getCategoryTypeIcon({
-            type: category.type,
-            icon: category.icon,
-          })}
-        </div>
+        <CategoryIcon type={category.type} icon={category.icon} size="sm" />
         <span className="min-w-0 truncate font-medium">{category.name}</span>
       </div>
       <div className="flex items-baseline gap-2">
@@ -131,67 +117,4 @@ export function CategoryCard({
       </div>
     </Link>
   )
-}
-
-function getCategoryTypeIcon({
-  type,
-  icon,
-}: {
-  type: TransactionCategoryType
-  icon: string | null | undefined
-}) {
-  // If custom icon is provided, use DynamicIcon
-  if (icon) {
-    return match(type)
-      .with('income', () => (
-        <DynamicIcon
-          name={icon as unknown as IconName}
-          className="size-10 bg-green-500/90 p-1.5 text-white"
-        />
-      ))
-      .with('expense', () => (
-        <DynamicIcon
-          name={icon as unknown as IconName}
-          className="size-10 bg-red-500/90 p-1.5 text-white"
-        />
-      ))
-      .with('transfer', () => (
-        <DynamicIcon
-          name={icon as unknown as IconName}
-          className="size-10 bg-orange-500/90 p-1.5 text-white"
-        />
-      ))
-      .with('setup', () => (
-        <DynamicIcon
-          name={icon as unknown as IconName}
-          className="size-10 bg-orange-500/90 p-1.5 text-white"
-        />
-      ))
-      .with('investment', () => (
-        <DynamicIcon
-          name={icon as unknown as IconName}
-          className="size-10 bg-blue-500/90 p-1.5 text-white"
-        />
-      ))
-      .otherwise(() => null)
-  }
-
-  // Fallback to default icons
-  return match(type)
-    .with('income', () => (
-      <BanknoteArrowUpIcon className="size-10 bg-green-500/90 p-1.5 text-white" />
-    ))
-    .with('expense', () => (
-      <BanknoteArrowDownIcon className="size-10 bg-red-500/90 p-1.5 text-white" />
-    ))
-    .with('transfer', () => (
-      <ArrowLeftRightIcon className="size-10 bg-orange-500/90 p-1.5 text-white" />
-    ))
-    .with('setup', () => (
-      <WrenchIcon className="size-10 bg-orange-500/90 p-1.5 text-white" />
-    ))
-    .with('investment', () => (
-      <TrendingUpIcon className="size-10 bg-blue-500/90 p-1.5 text-white" />
-    ))
-    .otherwise(() => null)
 }
