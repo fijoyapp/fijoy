@@ -12,7 +12,6 @@ import (
 	"time"
 
 	sentryotel "github.com/getsentry/sentry-go/otel"
-	gqlgen_opentelemetry "github.com/zhevron/gqlgen-opentelemetry"
 	"go.opentelemetry.io/otel"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
@@ -35,7 +34,6 @@ import (
 	"beavermoney.app/internal/seed"
 	"entgo.io/contrib/entgql"
 	entsql "entgo.io/ent/dialect/sql"
-	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
@@ -245,7 +243,7 @@ func main() {
 	r.Use(sentryMiddleware.Handle) // must be after Recoverer
 
 	// Setup GQL
-	gqlHandler := handler.NewDefaultServer(
+	gqlHandler := newGraphQLHandler(
 		gql.NewSchema(
 			logger,
 			entClient,
@@ -256,7 +254,6 @@ func main() {
 			otel.Tracer("beavermoney-server"),
 		),
 	)
-	gqlHandler.Use(gqlgen_opentelemetry.Tracer{})
 	gqlHandler.Use(entgql.Transactioner{TxOpener: entClient})
 
 	r.Group(func(r chi.Router) {
