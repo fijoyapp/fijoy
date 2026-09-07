@@ -63,7 +63,7 @@ export function TransactionInvestmentPicker({
             <label
               key={investment.id}
               className={cn(
-                'border-input bg-background has-focus-visible:outline-ring flex min-h-11 w-52 shrink-0 cursor-pointer items-center gap-2 border p-2 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2',
+                'border-input bg-background has-focus-visible:outline-ring flex min-h-11 w-max max-w-64 shrink-0 cursor-pointer items-center gap-2 border p-2 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2',
                 value === investment.id && 'border-primary',
               )}
             >
