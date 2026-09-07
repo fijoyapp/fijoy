@@ -19,8 +19,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -47,8 +45,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -82,7 +78,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.26.2"
+          go-version-file: "go.mod"
           cache-dependency-path: go.sum
 
       - name: Run golangci-lint check
@@ -106,7 +102,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: "1.26.2"
+          go-version-file: "go.mod"
           cache-dependency-path: go.sum
 
       - name: Run Go tests

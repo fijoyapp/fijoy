@@ -1,12 +1,7 @@
 import { createStore } from '@tanstack/store'
 
 export type LogTransactionType =
-  | 'expense'
-  | 'income'
-  | 'transfer'
-  | 'buy'
-  | 'sell'
-  | 'move'
+  'expense' | 'income' | 'transfer' | 'buy' | 'sell' | 'move'
 
 export type LogTransactionDefaults = {
   accountId?: string

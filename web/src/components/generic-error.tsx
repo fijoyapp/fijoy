@@ -39,7 +39,11 @@ export function GenericError(error: ErrorComponentProps) {
           <SearchXIcon />
         </EmptyMedia>
         <EmptyTitle>Something went wrong :(</EmptyTitle>
-        <EmptyDescription>{error.error.message}</EmptyDescription>
+        <EmptyDescription>
+          {error.error instanceof Error
+            ? error.error.message
+            : 'An unexpected error occurred. Please try again.'}
+        </EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="max-w-none flex-row justify-center">
         <Button

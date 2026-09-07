@@ -1,4 +1,3 @@
-import BeaverMoneyLogo from 'public/assets/logo.png'
 import { cn } from '@/lib/utils'
 
 interface LogoProps {
@@ -12,7 +11,7 @@ export function Logo({ size = 100, className = '' }: LogoProps) {
       width={size}
       height={size}
       className={cn('bg-transparent', className)}
-      src={BeaverMoneyLogo}
+      src="/assets/logo.png"
     />
   )
 }

@@ -12,7 +12,9 @@ import (
 	"time"
 
 	sentryotel "github.com/getsentry/sentry-go/otel"
+	sentryotlp "github.com/getsentry/sentry-go/otel/otlp"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	"github.com/charmbracelet/log"
@@ -155,19 +157,36 @@ func main() {
 		// We recommend adjusting this value in production,
 		EnableTracing:    true,
 		TracesSampleRate: 1.0,
-		// Enable structured logs to Sentry
-		EnableLogs:     true,
-		SendDefaultPII: true,
+		SendDefaultPII:   true,
+		Integrations: func(integrations []sentry.Integration) []sentry.Integration {
+			return append(integrations, sentryotel.NewOtelIntegration())
+		},
 	}); err != nil {
 		logger.Error("Sentry initialization failed", "err", err)
 	}
 	defer sentry.Flush(time.Second)
 
-	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
-	)
+	var traceOptions []sdktrace.TracerProviderOption
+	if cfg.SentryDSN != "" {
+		exporter, err := sentryotlp.NewTraceExporter(ctx, cfg.SentryDSN)
+		if err != nil {
+			logger.Error("Sentry trace exporter initialization failed", "err", err)
+		} else {
+			traceOptions = append(traceOptions, sdktrace.WithBatcher(exporter))
+		}
+	}
+	tp := sdktrace.NewTracerProvider(traceOptions...)
+	defer func() {
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := tp.Shutdown(shutdownCtx); err != nil {
+			logger.Error("Trace provider shutdown failed", "err", err)
+		}
+	}()
 	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+		propagation.TraceContext{}, propagation.Baggage{},
+	))
 
 	meter := sentry.NewMeter(context.Background())
 
@@ -239,7 +258,10 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Compress(5))
-	r.Use(httprate.LimitByIP(100, time.Minute))
+	r.Use(middleware.ClientIPFromRemoteAddr)
+	r.Use(httprate.LimitBy(100, time.Minute, func(req *http.Request) (string, error) {
+		return httprate.CanonicalizeIP(middleware.GetClientIP(req.Context())), nil
+	}))
 	r.Use(sentryMiddleware.Handle) // must be after Recoverer
 
 	// Setup GQL
@@ -279,13 +301,12 @@ func main() {
 					http.Error(res, "Invalid identity token", http.StatusUnauthorized)
 					return
 				}
-				claims := token.PrivateClaims()
+				var email, name, providerUserID string
+				emailErr := token.Get("email", &email)
+				providerUserIDErr := token.Get("provider_user_id", &providerUserID)
+				_ = token.Get("name", &name)
 
-				email, _ := claims["email"].(string)
-				name, _ := claims["name"].(string)
-				providerUserID, _ := claims["provider_user_id"].(string)
-
-				if email == "" || providerUserID == "" {
+				if emailErr != nil || providerUserIDErr != nil || email == "" || providerUserID == "" {
 					http.Error(res, "Identity token missing required claims", http.StatusBadRequest)
 					return
 				}
