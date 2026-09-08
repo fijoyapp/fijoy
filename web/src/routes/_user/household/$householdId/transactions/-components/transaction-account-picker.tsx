@@ -179,6 +179,7 @@ export function TransactionAccountPicker({
                           key={account.id}
                           value={account.id}
                           aria-label={account.name}
+                          closeOnClick
                           className="min-h-10 py-1.5"
                         >
                           <AccountDetails

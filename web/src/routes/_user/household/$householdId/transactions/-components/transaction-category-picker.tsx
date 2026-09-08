@@ -128,7 +128,7 @@ export function TransactionCategoryPicker({
             variant="outline"
             aria-invalid={invalid}
             aria-label={`Category: ${selected?.name ?? 'Select a category'}`}
-            className="h-auto min-h-9 w-full justify-between px-2 py-1.5 font-normal"
+            className="h-auto min-h-9 w-full justify-between px-2 py-1.5 text-left font-normal"
           />
         }
       >
@@ -158,6 +158,7 @@ export function TransactionCategoryPicker({
                     key={category.id}
                     value={category.id}
                     aria-label={category.name}
+                    closeOnClick
                     className="min-h-9"
                   >
                     <CategoryDetails category={category} />

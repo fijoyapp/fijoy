@@ -94,6 +94,7 @@ it('shows investment identity in desktop options and the selected trigger', () =
     screen.getByRole('menuitemradio', { name: 'Index Fund, IDX' }),
   )
 
+  expect(screen.queryByRole('menu')).toBeNull()
   expect(
     screen.getByRole('button', { name: 'Investment: Index Fund, IDX' }),
   ).toBeTruthy()

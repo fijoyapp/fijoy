@@ -84,7 +84,7 @@ export function TransactionInvestmentPicker({
               disabled={disabled}
               aria-invalid={invalid}
               aria-label={`${label}: ${selected ? `${selected.name}, ${selected.symbol}` : disabled ? disabledMessage : 'Select an investment'}`}
-              className="h-auto min-h-10 w-full justify-between px-2 py-1.5 font-normal"
+              className="h-auto min-h-10 w-full justify-between px-2 py-1.5 text-left font-normal"
             />
           }
         >
@@ -114,6 +114,7 @@ export function TransactionInvestmentPicker({
                       key={investment.id}
                       value={investment.id}
                       aria-label={`${investment.name}, ${investment.symbol}`}
+                      closeOnClick
                       className="min-h-10 py-1.5"
                     >
                       <InvestmentDetails investment={investment} />
