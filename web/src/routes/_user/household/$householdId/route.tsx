@@ -13,7 +13,6 @@ import {
   createFileRoute,
   redirect,
   stripSearchParams,
-  useNavigate,
   useRouter,
   useRouterState,
 } from '@tanstack/react-router'
@@ -70,12 +69,7 @@ import { SnapshotDialog } from './-components/snapshot-dialog'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useLogTransaction } from '@/hooks/use-log-transaction'
 import { cn } from '@/lib/utils'
-import { EditTransactionDialog } from './transactions/-components/edit-transaction-dialog'
-import { EditTransactionDialogQuery } from './transactions/-components/edit-transaction-dialog'
-import { Suspense } from 'react'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
 import Hotkeys from './-components/hotkeys'
-import type { editTransactionDialogQuery } from './transactions/-components/__generated__/editTransactionDialogQuery.graphql'
 import { NotFoundError } from '@/components/not-found-error'
 import { UserHouseholdProvider } from '@/hooks/use-user-household'
 import { GenericError } from '@/components/generic-error'
@@ -124,13 +118,10 @@ export const Route = createFileRoute('/_user/household/$householdId')({
   staleTime: Infinity,
   notFoundComponent: NotFoundError,
   errorComponent: GenericError,
-  loaderDeps: ({ search }) => ({
-    editTransactionId: search.edit_transaction_id,
-  }),
   search: {
     middlewares: [stripSearchParams(defaultValues)],
   },
-  loader: async ({ params, deps }) => {
+  loader: async ({ params }) => {
     localStorage.setItem(LOCAL_STORAGE_HOUSEHOLD_ID_KEY, params.householdId)
 
     const variables = {
@@ -152,15 +143,6 @@ export const Route = createFileRoute('/_user/household/$householdId')({
       throw error
     }
 
-    if (deps.editTransactionId) {
-      await fetchQuery<editTransactionDialogQuery>(
-        environment,
-        EditTransactionDialogQuery,
-        { transactionId: deps.editTransactionId },
-        { fetchPolicy: 'store-or-network' },
-      ).toPromise()
-    }
-
     return loadQuery<routeHouseholdIdQuery>(
       environment,
       routeHouseholdIdQuery,
@@ -178,8 +160,6 @@ function RouteComponent() {
     routeHouseholdIdQuery,
     queryRef,
   )
-  const search = Route.useSearch()
-  const navigate = useNavigate()
   const isMobile = useIsMobile()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { isPrivacyModeEnabled, togglePrivacyMode } = usePrivacyMode()
@@ -328,33 +308,6 @@ function RouteComponent() {
                   </div>
                 </SidebarInset>
                 <MobileFabNav />
-
-                {search.edit_transaction_id && (
-                  <Dialog
-                    open={search.edit_transaction_id !== null}
-                    onOpenChange={(open) => {
-                      if (!open) {
-                        navigate({
-                          to: '.',
-                          resetScroll: false,
-                          search: (prev) => ({
-                            ...prev,
-                            edit_transaction_id: null,
-                          }),
-                        })
-                      }
-                    }}
-                  >
-                    <DialogContent>
-                      <Suspense fallback={<PendingComponent />}>
-                        <EditTransactionDialog
-                          key={search.edit_transaction_id}
-                          transactionId={search.edit_transaction_id}
-                        />
-                      </Suspense>
-                    </DialogContent>
-                  </Dialog>
-                )}
 
                 {!isMobile && (
                   <FloatingLogTransactionWindow fragmentRef={data.household} />

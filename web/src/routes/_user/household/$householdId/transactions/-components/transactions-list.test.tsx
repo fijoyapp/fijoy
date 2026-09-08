@@ -9,7 +9,13 @@ import type { transactionsListFragment$key } from './__generated__/transactionsL
 const relay = vi.hoisted(() => ({
   loadNext: vi.fn(),
   refetch: vi.fn(),
+  loadEditQuery: vi.fn(),
+  disposeEditQuery: vi.fn(),
   invalidate: () => {},
+}))
+const router = vi.hoisted(() => ({
+  navigate: vi.fn(),
+  search: { edit_transaction_id: null as string | null },
 }))
 vi.mock('react-relay', () => ({
   usePaginationFragment: () => ({
@@ -22,6 +28,11 @@ vi.mock('react-relay', () => ({
   useSubscribeToInvalidationState: (_ids: string[], callback: () => void) => {
     relay.invalidate = callback
   },
+  useQueryLoader: () => [null, relay.loadEditQuery, relay.disposeEditQuery],
+}))
+vi.mock('@tanstack/react-router', () => ({
+  useNavigate: () => router.navigate,
+  useSearch: () => router.search,
 }))
 vi.mock('relay-runtime', () => ({ graphql: () => ({}) }))
 vi.mock('@/hooks/use-mobile', () => ({ useIsMobile: () => false }))
@@ -33,6 +44,13 @@ vi.mock('react-intersection-observer', () => ({
   useInView: () => [() => {}, false],
 }))
 vi.mock('./transaction-card', () => ({ TransactionCard: () => null }))
+vi.mock('./edit-transaction-dialog', () => ({
+  EditTransactionDialog: () => null,
+  EditTransactionDialogQuery: {},
+}))
+vi.mock('./transaction-dialog-preview', () => ({
+  TransactionDialogPreview: () => null,
+}))
 vi.mock('./transactions-table', () => ({
   TransactionsTable: (props: ComponentProps<typeof TransactionsTable>) => (
     <>
@@ -47,6 +65,7 @@ const fragmentRef = {} as transactionsListFragment$key
 afterEach(() => {
   cleanup()
   vi.clearAllMocks()
+  router.search.edit_transaction_id = null
 })
 
 it('sorts through Relay with a fresh cursor and refreshes the active ASC connection on invalidation', () => {
@@ -82,4 +101,14 @@ it('reports pagination failures and clears the error when retrying', () => {
   act(() => relay.loadNext.mock.calls[1][1].onComplete(null))
   expect(screen.queryByRole('alert')).toBeNull()
   expect(relay.loadNext).toHaveBeenCalledTimes(2)
+})
+
+it('loads a deep-linked transaction without reloading the page query', () => {
+  router.search.edit_transaction_id = 'transaction-1'
+  render(<TransactionsList fragmentRef={fragmentRef} />)
+
+  expect(relay.loadEditQuery).toHaveBeenCalledWith(
+    { transactionId: 'transaction-1' },
+    { fetchPolicy: 'store-or-network' },
+  )
 })

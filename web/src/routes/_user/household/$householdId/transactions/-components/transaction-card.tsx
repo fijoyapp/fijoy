@@ -32,9 +32,13 @@ const transactionCardFragment = graphql`
 
 type TransactionCardProps = {
   fragmentRef: transactionCardFragment$key
+  onPreload: (transactionId: string) => void
 }
 
-export function TransactionCard({ fragmentRef }: TransactionCardProps) {
+export function TransactionCard({
+  fragmentRef,
+  onPreload,
+}: TransactionCardProps) {
   const data = useFragment(transactionCardFragment, fragmentRef)
 
   const categoryName = data.category.name
@@ -89,6 +93,9 @@ export function TransactionCard({ fragmentRef }: TransactionCardProps) {
       to="."
       resetScroll={false}
       search={(search) => ({ ...search, edit_transaction_id: data.id })}
+      onPointerEnter={() => onPreload(data.id)}
+      onFocus={() => onPreload(data.id)}
+      onClick={() => onPreload(data.id)}
       className="border-border [a]:hover:bg-muted group/item focus-visible:border-ring focus-visible:ring-ring/50 flex w-full flex-wrap items-center rounded-md border text-xs/relaxed transition-colors duration-100 outline-none focus-visible:ring-[3px] [a]:transition-colors"
     >
       {sortedItems.map((item, index) =>

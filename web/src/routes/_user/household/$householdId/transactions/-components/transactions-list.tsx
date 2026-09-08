@@ -1,18 +1,30 @@
 import { TransactionsTable } from './transactions-table'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
 import { toast } from 'sonner'
 import { graphql } from 'relay-runtime'
 
 import {
   usePaginationFragment,
+  useQueryLoader,
   useSubscribeToInvalidationState,
 } from 'react-relay'
+import type { PreloadedQuery } from 'react-relay'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { ErrorBoundary } from '@sentry/react'
 import { useInView } from 'react-intersection-observer'
 import { Fragment } from 'react/jsx-runtime'
 import { TransactionCard } from './transaction-card'
 import type { transactionsListRefetch } from './__generated__/transactionsListRefetch.graphql'
 import type { transactionsListFragment$key } from './__generated__/transactionsListFragment.graphql'
+import type { editTransactionDialogQuery } from './__generated__/editTransactionDialogQuery.graphql'
 import { Button } from '@/components/ui/button'
 import { ItemGroup } from '@/components/ui/item'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
@@ -25,6 +37,21 @@ import {
   startOfToday,
   subDays,
 } from 'date-fns'
+import {
+  EditTransactionDialog,
+  EditTransactionDialogQuery,
+} from './edit-transaction-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { TransactionDialogPreview } from './transaction-dialog-preview'
+import type { transactionDialogPreviewFragment$key } from './__generated__/transactionDialogPreviewFragment.graphql'
+
 const transactionsListFragment = graphql`
   fragment transactionsListFragment on Household
   @argumentDefinitions(
@@ -50,6 +77,7 @@ const transactionsListFragment = graphql`
           id
           datetime
           ...transactionCardFragment
+          ...transactionDialogPreviewFragment
           ...transactionsTableFragment
         }
       }
@@ -73,9 +101,48 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
     >(transactionsListFragment, fragmentRef)
 
   const isMobile = useIsMobile()
+  const search = useSearch({
+    from: '/_user/household/$householdId/transactions',
+  })
+  const navigate = useNavigate()
+  const [editQueryRef, loadEditQuery, disposeEditQuery] =
+    useQueryLoader<editTransactionDialogQuery>(EditTransactionDialogQuery)
+  const loadedTransactionIdRef = useRef<string | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [direction, setDirection] = useState<'ASC' | 'DESC'>('DESC')
   const [isSorting, startTransition] = useTransition()
+  const preloadTransaction = useCallback(
+    (transactionId: string) => {
+      if (loadedTransactionIdRef.current === transactionId) return
+
+      loadedTransactionIdRef.current = transactionId
+      loadEditQuery({ transactionId }, { fetchPolicy: 'store-or-network' })
+    },
+    [loadEditQuery],
+  )
+  const openTransaction = useCallback(
+    (transactionId: string) => {
+      preloadTransaction(transactionId)
+      navigate({
+        to: '.',
+        resetScroll: false,
+        search: (previous) => ({
+          ...previous,
+          edit_transaction_id: transactionId,
+        }),
+      })
+    },
+    [navigate, preloadTransaction],
+  )
+  useEffect(() => {
+    if (search.edit_transaction_id) {
+      preloadTransaction(search.edit_transaction_id)
+      return
+    }
+
+    loadedTransactionIdRef.current = null
+    disposeEditQuery()
+  }, [disposeEditQuery, preloadTransaction, search.edit_transaction_id])
   const changeSort = useCallback(
     (nextDirection: 'ASC' | 'DESC') => {
       startTransition(() => {
@@ -151,22 +218,20 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
     }
   }
 
-  if (!isMobile) {
-    return (
-      <TransactionsTable
-        fragmentRef={transactions}
-        direction={direction}
-        onToggleSort={() => changeSort(direction === 'DESC' ? 'ASC' : 'DESC')}
-        isSorting={isSorting}
-        hasNext={hasNext}
-        isLoadingNext={isLoadingNext}
-        onLoadMore={loadMore}
-        loadError={loadError}
-      />
-    )
-  }
-
-  return (
+  const list = !isMobile ? (
+    <TransactionsTable
+      fragmentRef={transactions}
+      direction={direction}
+      onToggleSort={() => changeSort(direction === 'DESC' ? 'ASC' : 'DESC')}
+      isSorting={isSorting}
+      hasNext={hasNext}
+      isLoadingNext={isLoadingNext}
+      onLoadMore={loadMore}
+      loadError={loadError}
+      onOpenTransaction={openTransaction}
+      onPreloadTransaction={preloadTransaction}
+    />
+  ) : (
     <ScrollArea className="min-h-0 min-w-0 flex-1">
       <div className="min-w-0 pr-2">
         {groups.map((group) => (
@@ -179,6 +244,7 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
                 <TransactionCard
                   key={transaction.id}
                   fragmentRef={transaction}
+                  onPreload={preloadTransaction}
                 />
               ))}
             </ItemGroup>
@@ -203,6 +269,91 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
         <div ref={ref}></div>
       </div>
     </ScrollArea>
+  )
+
+  return (
+    <>
+      {list}
+      <TransactionDetailDialog
+        transactionId={search.edit_transaction_id}
+        queryRef={editQueryRef}
+        previewRef={
+          transactions.find(
+            (transaction) => transaction.id === search.edit_transaction_id,
+          ) ?? null
+        }
+        onClose={() => {
+          navigate({
+            to: '.',
+            resetScroll: false,
+            search: (previous) => ({
+              ...previous,
+              edit_transaction_id: null,
+            }),
+          })
+        }}
+      />
+    </>
+  )
+}
+
+type TransactionDetailDialogProps = {
+  transactionId: string | null
+  queryRef: PreloadedQuery<editTransactionDialogQuery> | null | undefined
+  previewRef: transactionDialogPreviewFragment$key | null
+  onClose: () => void
+}
+
+function TransactionDetailDialog({
+  transactionId,
+  queryRef,
+  previewRef,
+  onClose,
+}: TransactionDetailDialogProps) {
+  const matchingQueryRef =
+    transactionId === queryRef?.variables.transactionId ? queryRef : null
+
+  return (
+    <Dialog
+      open={transactionId !== null}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+    >
+      <DialogContent>
+        <ErrorBoundary
+          key={transactionId ?? 'closed'}
+          fallback={
+            <>
+              <DialogHeader>
+                <DialogTitle>Could not load transaction</DialogTitle>
+                <DialogDescription>
+                  Close the dialog and try opening the transaction again.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={onClose}>
+                  Close
+                </Button>
+              </DialogFooter>
+            </>
+          }
+        >
+          {matchingQueryRef ? (
+            <Suspense
+              fallback={<TransactionDialogPreview fragmentRef={previewRef} />}
+            >
+              <EditTransactionDialog
+                key={transactionId}
+                queryRef={matchingQueryRef}
+              />
+            </Suspense>
+          ) : (
+            <TransactionDialogPreview fragmentRef={previewRef} />
+          )}
+        </ErrorBoundary>
+      </DialogContent>
+    </Dialog>
   )
 }
 
