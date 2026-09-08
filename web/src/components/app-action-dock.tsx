@@ -38,7 +38,7 @@ export function AppActionDock({
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-40 md:hidden">
+    <div className="pointer-events-none fixed right-[var(--safe-area-inset-right)] bottom-[calc(var(--safe-area-inset-bottom)+0.75rem)] left-[var(--safe-area-inset-left)] z-40 md:hidden">
       <nav
         aria-label="Quick actions"
         className="bg-background/90 ring-foreground/15 pointer-events-auto mx-auto grid h-14 w-[90%] grid-cols-[1fr_1.15fr_1fr] overflow-hidden rounded-none ring-1 backdrop-blur-xl"
@@ -124,7 +124,7 @@ export function MobileActionDockSpacer() {
   return (
     <div
       aria-hidden="true"
-      className="h-[calc(5rem+env(safe-area-inset-bottom))] shrink-0 md:hidden"
+      className="h-[calc(5rem+var(--safe-area-inset-bottom))] shrink-0 md:hidden"
     />
   )
 }

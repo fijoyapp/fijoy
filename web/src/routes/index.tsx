@@ -34,7 +34,7 @@ function FeatureCard({
 
 function App() {
   return (
-    <div className="bg-background flex min-h-svh flex-col px-6 py-12">
+    <div className="bg-background flex min-h-[var(--safe-viewport-height)] flex-col px-6 py-12">
       <main className="flex flex-1 flex-col items-center justify-center gap-12 text-center">
         {/* Logo and Branding */}
         <div className="flex flex-col items-center gap-6">
