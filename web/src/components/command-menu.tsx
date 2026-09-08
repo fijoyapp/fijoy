@@ -65,7 +65,7 @@ export function CommandMenu() {
   }
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
+    <CommandDialog className="sm:max-w-80" open={open} onOpenChange={setOpen}>
       <Command>
         <CommandInput
           id={String(open) + String(random())}
