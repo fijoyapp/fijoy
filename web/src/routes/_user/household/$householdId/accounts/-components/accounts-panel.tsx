@@ -1,28 +1,47 @@
-import { commitLocalUpdate, graphql } from 'relay-runtime'
-import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
-import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
-import { capitalize, groupBy, map } from 'lodash-es'
-import { Fragment, Suspense } from 'react'
-import { useMemo, useState } from 'react'
+import {
+  useNavigate,
+  useParams,
+  useRouter,
+  useSearch,
+} from '@tanstack/react-router'
 import currency from 'currency.js'
-import { ChevronDownIcon, ChevronUpIcon, RefreshCwIcon } from 'lucide-react'
+import { capitalize, groupBy } from 'lodash-es'
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  RefreshCwIcon,
+  SearchIcon,
+} from 'lucide-react'
+import { Fragment, Suspense, useMemo, useState } from 'react'
+import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
+import { commitLocalUpdate, graphql } from 'relay-runtime'
 import { toast } from 'sonner'
+import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
-import { AccountCard } from './account-card'
+
+import {
+  ACCOUNT_TYPE_ACCENT_CLASSES,
+  formatPercentageWithPrivacyMode,
+} from './account-ledger-utils'
+import { AccountLedgerRow } from './account-ledger-row'
 import { NetWorthChart } from './net-worth-chart'
-import type { accountsPanelRefreshMutation } from './__generated__/accountsPanelRefreshMutation.graphql'
 import type { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
+import type { accountsPanelRefreshMutation } from './__generated__/accountsPanelRefreshMutation.graphql'
+import { PlusButton } from '@/components/plus-button'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
 } from '@/components/ui/accordion'
-
-import { useCurrency } from '@/hooks/use-currency'
-import { cn } from '@/lib/utils'
-import { useHousehold } from '@/hooks/use-household'
-import { useDisplayCurrency } from '@/hooks/use-display-currency'
+import { Button } from '@/components/ui/button'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from '@/components/ui/empty'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -31,23 +50,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Button } from '@/components/ui/button'
-import {
-  useNavigate,
-  useParams,
-  useRouter,
-  useSearch,
-} from '@tanstack/react-router'
-import {
-  ACCOUNT_TYPE_LIST,
-  ACCOUNT_CATEGORY_LABEL,
-  ACCOUNT_CATEGORY_APPLICABLE_TYPES,
-} from '@/constant'
-import { PlusButton } from '@/components/plus-button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Input } from '@/components/ui/input'
-import { SearchIcon } from 'lucide-react'
+import {
+  ACCOUNT_CATEGORY_APPLICABLE_TYPES,
+  ACCOUNT_CATEGORY_LABEL,
+  ACCOUNT_TYPE_LIST,
+} from '@/constant'
+import { useCurrency } from '@/hooks/use-currency'
+import { useDisplayCurrency } from '@/hooks/use-display-currency'
+import { useHousehold } from '@/hooks/use-household'
+import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
+import { cn } from '@/lib/utils'
 
 const AccountsPanelFragment = graphql`
   fragment accountsPanelFragment on Household
@@ -70,10 +84,13 @@ const AccountsPanelFragment = graphql`
           category
           name
           value
+          latestTransaction {
+            datetime
+          }
           householdCurrency {
             code
           }
-          ...accountCardFragment
+          ...accountLedgerRowFragment
         }
       }
     }
@@ -86,27 +103,36 @@ const AccountsPanelRefreshMutation = graphql`
   }
 `
 
+const GROUP_BY_OPTIONS = {
+  type: 'By type',
+  category: 'By category',
+} as const
+
+const SORT_OPTIONS = {
+  value_desc: 'Largest first',
+  updated_desc: 'Recently active',
+  name_asc: 'Name A–Z',
+} as const
+
 type AccountsListPageProps = {
   fragmentRef: accountsPanelFragment$key
 }
 
-const GROUP_BY_OPTIONS = {
-  type: 'By Type',
-  category: 'By Category',
-} as const
-
 type GroupByOption = keyof typeof GROUP_BY_OPTIONS
+type SortOption = keyof typeof SORT_OPTIONS
 
 export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const data = useFragment(AccountsPanelFragment, fragmentRef)
   const environment = useRelayEnvironment()
-  const { household: _household } = useHousehold()
+  const { household } = useHousehold()
   const {
     displayCurrencyCode,
     nextDisplayCurrencyCode,
     cycleDisplayCurrency,
     convert,
   } = useDisplayCurrency()
+  const { isPrivacyModeEnabled } = usePrivacyMode()
+  const { formatCurrencyWithPrivacyMode } = useCurrency()
   const navigate = useNavigate()
   const router = useRouter()
   const { householdId } = useParams({
@@ -116,44 +142,56 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
     from: '/_user/household/$householdId/accounts',
   })
   const groupByOption = search.accounts_group_by as GroupByOption
-
-  const handleGroupByChange = (newGroupBy: string | null) => {
-    if (!newGroupBy) return
-    navigate({
-      to: '.',
-      search: (prev) => ({
-        ...prev,
-        accounts_group_by: newGroupBy as GroupByOption,
-      }),
-    })
-  }
+  const sortOption = search.accounts_sort_by as SortOption
 
   useRegisterConnection(data.accounts.__id, NodeType.Account)
 
   const [commitRefreshMutation, isRefreshInFlight] =
     useMutation<accountsPanelRefreshMutation>(AccountsPanelRefreshMutation)
-
   const [displayIndex, setDisplayIndex] = useState(0)
   const [searchFilter, setSearchFilter] = useState('')
 
-  const { formatCurrencyWithPrivacyMode } = useCurrency()
+  const handleGroupByChange = (newGroupBy: string | null) => {
+    if (!newGroupBy) return
+    navigate({
+      to: '.',
+      search: (previous) => ({
+        ...previous,
+        accounts_group_by: newGroupBy as GroupByOption,
+      }),
+    })
+  }
+
+  const handleSortChange = (newSortOption: string | null) => {
+    if (!newSortOption) return
+    navigate({
+      to: '.',
+      search: (previous) => ({
+        ...previous,
+        accounts_sort_by: newSortOption as SortOption,
+      }),
+    })
+  }
 
   const handleRefresh = () => {
     commitRefreshMutation({
       variables: {},
-      onCompleted: (data, errors) => {
-        const result = { status: 'success' as const, data, errors }
+      onCompleted: (refreshData, errors) => {
+        const result = {
+          status: 'success' as const,
+          data: refreshData,
+          errors,
+        }
         match(result)
           .with({ status: 'success', errors: null }, () => {
-            // Invalidate the Relay store to refetch all queries
             commitLocalUpdate(environment, (store) => {
               store.invalidateStore()
             })
             toast.success('Accounts refreshed successfully!')
           })
-          .with({ status: 'success' }, ({ errors }) => {
+          .with({ status: 'success' }, ({ errors: refreshErrors }) => {
             toast.error(
-              `Refresh failed: ${errors?.[0]?.message ?? 'Unknown error'}`,
+              `Refresh failed: ${refreshErrors?.[0]?.message ?? 'Unknown error'}`,
             )
           })
           .exhaustive()
@@ -164,32 +202,106 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
     })
   }
 
+  const accountItems = useMemo(
+    () =>
+      (data.accounts.edges ?? []).map((edge) => {
+        invariant(edge?.node, 'Account node is null')
+        return {
+          node: edge.node,
+          displayValue: convert(
+            edge.node.value,
+            edge.node.householdCurrency.code,
+          ),
+        }
+      }),
+    [data.accounts.edges, convert],
+  )
+
   const groupedAccounts = useMemo(() => {
     if (groupByOption === 'category') {
-      const eligible = (data.accounts.edges ?? []).filter((edge) => {
-        invariant(edge?.node, 'Account node is null')
-        return ACCOUNT_CATEGORY_APPLICABLE_TYPES.has(edge.node.type)
-      })
-      return groupBy(eligible, (edge) => {
-        invariant(edge?.node, 'Account node is null')
-        return edge.node.category ?? 'taxable'
-      })
+      const eligible = accountItems.filter(({ node }) =>
+        ACCOUNT_CATEGORY_APPLICABLE_TYPES.has(node.type),
+      )
+      return groupBy(eligible, ({ node }) => node.category ?? 'taxable')
     }
-    return groupBy(data.accounts.edges, (edge) => {
-      invariant(edge?.node, 'Account node is null')
-      return edge.node.type
-    })
-  }, [data.accounts, groupByOption])
+
+    return groupBy(accountItems, ({ node }) => node.type)
+  }, [accountItems, groupByOption])
 
   const groupKeys = useMemo(() => {
     if (groupByOption === 'category') {
       const keys = Object.keys(groupedAccounts)
-      const categorized = keys.filter((k) => k !== 'taxable').sort()
+      const categorized = keys.filter((key) => key !== 'taxable').sort()
       const taxable = keys.includes('taxable') ? ['taxable'] : []
       return [...categorized, ...taxable]
     }
-    return ACCOUNT_TYPE_LIST.filter((t) => t in groupedAccounts)
+
+    return ACCOUNT_TYPE_LIST.filter((type) => type in groupedAccounts)
   }, [groupedAccounts, groupByOption])
+
+  const visibleGroups = useMemo(() => {
+    const filterLower = searchFilter.trim().toLocaleLowerCase(household.locale)
+
+    return groupKeys
+      .map((key) => {
+        const accounts = groupedAccounts[key].filter(({ node }) => {
+          if (!filterLower) return true
+          return node.name
+            .toLocaleLowerCase(household.locale)
+            .includes(filterLower)
+        })
+
+        accounts.sort((accountA, accountB) => {
+          switch (sortOption) {
+            case 'value_desc':
+              return (
+                Math.abs(accountB.displayValue.value) -
+                Math.abs(accountA.displayValue.value)
+              )
+            case 'updated_desc': {
+              const timeA = accountA.node.latestTransaction
+                ? Date.parse(accountA.node.latestTransaction.datetime)
+                : 0
+              const timeB = accountB.node.latestTransaction
+                ? Date.parse(accountB.node.latestTransaction.datetime)
+                : 0
+              return timeB - timeA
+            }
+            case 'name_asc':
+              return accountA.node.name.localeCompare(
+                accountB.node.name,
+                household.locale,
+              )
+            default:
+              invariant(false, `Unexpected account sort: ${sortOption}`)
+          }
+        })
+
+        return { key, accounts }
+      })
+      .filter(({ accounts }) => accounts.length > 0)
+  }, [groupKeys, groupedAccounts, household.locale, searchFilter, sortOption])
+
+  const displayOptions = useMemo(() => {
+    let assets = currency(0)
+    let liabilities = currency(0)
+
+    for (const account of accountItems) {
+      if (account.node.type === 'liability') {
+        liabilities = liabilities.add(account.displayValue)
+      } else {
+        assets = assets.add(account.displayValue)
+      }
+    }
+
+    return [
+      { label: 'Net Worth', value: assets.add(liabilities) },
+      { label: 'Assets', value: assets },
+      { label: 'Liabilities', value: liabilities },
+    ]
+  }, [accountItems])
+
+  const assetsTotal = Math.abs(displayOptions[1].value.value)
 
   const getGroupLabel = (key: string) => {
     if (groupByOption === 'category') {
@@ -198,38 +310,6 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
     }
     return capitalize(key)
   }
-
-  const displayOptions = useMemo(() => {
-    const assets = (data.accounts.edges ?? [])
-      .filter((edge) => {
-        invariant(edge?.node, 'Account node is null')
-        return edge.node.type !== 'liability'
-      })
-      .map((edge) => {
-        invariant(edge?.node, 'Account node is null')
-        return convert(edge.node.value, edge.node.householdCurrency.code)
-      })
-      .reduce((a, b) => a.add(b), currency(0))
-
-    const liabilities = (data.accounts.edges ?? [])
-      .filter((edge) => {
-        invariant(edge?.node, 'Account node is null')
-        return edge.node.type === 'liability'
-      })
-      .map((edge) => {
-        invariant(edge?.node, 'Account node is null')
-        return convert(edge.node.value, edge.node.householdCurrency.code)
-      })
-      .reduce((a, b) => a.add(b), currency(0))
-
-    const netWorth = assets.add(liabilities) // liabilities are negative
-
-    return [
-      { label: 'Net Worth', value: netWorth },
-      { label: 'Assets', value: assets },
-      { label: 'Liabilities', value: liabilities },
-    ]
-  }, [data.accounts, convert])
 
   const formattedDisplayValue = formatCurrencyWithPrivacyMode({
     value: displayOptions[displayIndex].value,
@@ -253,17 +333,20 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           variant="outline"
           nativeButton={true}
           size="icon-lg"
-          className="bg-background dark:bg-card size-10 [&_svg:not([class*='size-'])]:size-5"
+          className="bg-background size-10 [&_svg:not([class*='size-'])]:size-5"
           onClick={handleRefresh}
           disabled={isRefreshInFlight}
+          aria-label="Refresh accounts"
         >
           <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
         </Button>
         <PlusButton
           to="/household/$householdId/accounts/new"
           params={{ householdId }}
+          aria-label="Add account"
         />
       </div>
+
       <div className="flex flex-col gap-1">
         <div className="flex gap-3">
           {displayOptions.map((option, index) => (
@@ -296,163 +379,269 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
           </div>
         )}
       </div>
-      <div className="py-2"></div>
-      <Suspense
-        fallback={
-          <div className="flex w-full flex-col items-stretch gap-0 rounded-md border border-transparent">
-            <div className="flex gap-1 py-px">
-              <Skeleton className="h-5 w-16 rounded-md" />
-              <Skeleton className="h-5 w-12 rounded-md" />
-              <Skeleton className="h-5 w-16 rounded-md" />
-              <Skeleton className="h-5 w-20 rounded-md" />
-              <Skeleton className="h-5 w-18 rounded-md" />
-              <Skeleton className="h-5 w-14 rounded-md" />
-            </div>
-            <div className="py-1"></div>
-            <Skeleton className="h-44 w-full rounded-md" />
-            <div className="flex items-center gap-2 pt-1 pb-2.5">
-              <Skeleton className="h-4 w-28" />
-              <div className="grow"></div>
-              <div className="flex gap-0.5">
-                <Skeleton className="h-5 w-7 rounded-md" />
-                <Skeleton className="h-5 w-7 rounded-md" />
-                <Skeleton className="h-5 w-7 rounded-md" />
-                <Skeleton className="h-5 w-7 rounded-md" />
-                <Skeleton className="h-5 w-7 rounded-md" />
-              </div>
-            </div>
-          </div>
-        }
-      >
+
+      <div className="py-2" />
+      <Suspense fallback={<NetWorthChartSkeleton />}>
         <NetWorthChart />
       </Suspense>
-      <div className="py-2"></div>
-      <div className="flex items-center gap-2">
+      <div className="py-2" />
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <SearchIcon className="text-muted-foreground/50 absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2" />
           <Input
-            placeholder="Filter accounts..."
+            placeholder="Filter accounts"
             value={searchFilter}
-            onChange={(e) => setSearchFilter(e.target.value)}
-            className="max-w-64 pl-8 text-xs"
+            onChange={(event) => setSearchFilter(event.target.value)}
+            className="w-full pl-8 text-xs sm:max-w-64"
+            aria-label="Filter accounts"
           />
         </div>
-        <Select
-          name="group-accounts"
-          value={groupByOption}
-          onValueChange={handleGroupByChange}
-        >
-          <SelectTrigger className="h-7 w-32">
-            <SelectValue>{GROUP_BY_OPTIONS[groupByOption]}</SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {(
-                Object.entries(GROUP_BY_OPTIONS) as [GroupByOption, string][]
-              ).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="py-2"></div>
-      <Accordion
-        key={groupByOption}
-        multiple
-        className="w-full"
-        defaultValue={[...groupKeys]}
-      >
-        {map(groupKeys, (key) => {
-          const filterLower = searchFilter.toLowerCase()
-          const accounts = groupedAccounts[key]
-            .filter((account) => {
-              if (!filterLower) return true
-              invariant(account?.node, 'Account node is null')
-              return account.node.name.toLowerCase().includes(filterLower)
-            })
-            .sort((a, b) =>
-              (a?.node?.name ?? '').localeCompare(b?.node?.name ?? ''),
-            )
-
-          if (accounts.length === 0) return null
-          const isLiabilityGroup =
-            groupByOption === 'type' && key === 'liability'
-          return (
-            <AccordionItem
-              value={key}
-              key={key}
-              className="data-open:bg-transparent"
+        <div className="grid grid-cols-2 gap-2 sm:flex">
+          <Select
+            name="sort-accounts"
+            value={sortOption}
+            onValueChange={handleSortChange}
+          >
+            <SelectTrigger
+              className="w-full sm:w-36"
+              aria-label="Sort accounts"
             >
-              <AccordionTrigger className="bg-muted/60 flex cursor-pointer items-center justify-normal gap-2 hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-0">
-                <span>{getGroupLabel(key)}</span>
-                <span className="grow"></span>
-                <span className="mr-3 text-sm font-semibold tracking-wide tabular-nums">
-                  {formatCurrencyWithPrivacyMode({
-                    value: accounts
-                      .map((account) => {
-                        invariant(account?.node, 'Account node is null')
-                        return convert(
-                          account.node.value,
-                          account.node.householdCurrency.code,
-                        )
-                      })
-                      .reduce((a, b) => a.add(b), currency(0)),
+              <SelectValue>{SORT_OPTIONS[sortOption]}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {(Object.entries(SORT_OPTIONS) as [SortOption, string][]).map(
+                  ([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select
+            name="group-accounts"
+            value={groupByOption}
+            onValueChange={handleGroupByChange}
+          >
+            <SelectTrigger
+              className="w-full sm:w-32"
+              aria-label="Group accounts"
+            >
+              <SelectValue>{GROUP_BY_OPTIONS[groupByOption]}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {(
+                  Object.entries(GROUP_BY_OPTIONS) as [GroupByOption, string][]
+                ).map(([value, label]) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="py-2" />
+      {visibleGroups.length > 0 ? (
+        <Accordion
+          key={groupByOption}
+          multiple
+          className="ring-foreground/10 overflow-visible border-0 ring-1"
+          defaultValue={visibleGroups.map(({ key }) => key)}
+        >
+          {visibleGroups.map(({ key, accounts }) => {
+            const groupTotal = accounts.reduce(
+              (total, account) => total.add(account.displayValue),
+              currency(0),
+            )
+            const isLiabilityGroup = accounts.every(
+              ({ node }) => node.type === 'liability',
+            )
+            const groupShare = assetsTotal
+              ? (Math.abs(groupTotal.value) / assetsTotal) * 100
+              : 0
+            const groupTypes = new Set(accounts.map(({ node }) => node.type))
+            const groupAccentClass =
+              groupTypes.size === 1
+                ? (ACCOUNT_TYPE_ACCENT_CLASSES[[...groupTypes][0]] ??
+                  'bg-chart-2')
+                : 'bg-chart-2'
+            const groupShareLabel = `${formatPercentageWithPrivacyMode(
+              groupShare,
+              household.locale,
+              isPrivacyModeEnabled,
+            )} of assets`
+
+            return (
+              <AccordionItem
+                value={key}
+                key={key}
+                className="data-open:bg-transparent"
+              >
+                <AccountGroupTrigger
+                  label={getGroupLabel(key)}
+                  total={formatCurrencyWithPrivacyMode({
+                    value: groupTotal,
                     currencyCode: displayCurrencyCode,
                     liability: isLiabilityGroup,
                   })}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="-mx-2 pb-0">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                  {accounts.map((account) => {
-                    invariant(account?.node, 'Account node is null')
-                    return (
-                      <AccountCard
-                        className="rounded-none"
+                  share={groupShare}
+                  shareLabel={groupShareLabel}
+                  accentClass={groupAccentClass}
+                  hideAllocation={isPrivacyModeEnabled}
+                />
+                <AccordionContent className="-mx-2 pb-0">
+                  <AccountLedgerColumnHeader
+                    displayCurrencyCode={displayCurrencyCode}
+                  />
+                  <div
+                    role="list"
+                    aria-label={`${getGroupLabel(key)} accounts`}
+                  >
+                    {accounts.map((account) => (
+                      <AccountLedgerRow
                         key={account.node.id}
                         fragmentRef={account.node}
+                        displayValue={account.displayValue}
+                        displayCurrencyCode={displayCurrencyCode}
+                        share={
+                          (isLiabilityGroup ? assetsTotal : groupTotal.value)
+                            ? (Math.abs(account.displayValue.value) /
+                                Math.abs(
+                                  isLiabilityGroup
+                                    ? assetsTotal
+                                    : groupTotal.value,
+                                )) *
+                              100
+                            : 0
+                        }
                       />
-                    )
-                  })}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          )
-        })}
-      </Accordion>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            )
+          })}
+        </Accordion>
+      ) : (
+        <Empty className="border py-10">
+          <EmptyHeader>
+            <EmptyTitle>No accounts found</EmptyTitle>
+            <EmptyDescription>
+              {searchFilter
+                ? `No account names match “${searchFilter}”.`
+                : 'Add an account to start building your balance sheet.'}
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
     </Fragment>
   )
 }
 
-function AccordionTrigger({
-  className,
-  children,
-  ...props
-}: AccordionPrimitive.Trigger.Props) {
+function NetWorthChartSkeleton() {
   return (
-    <AccordionPrimitive.Header className="flex">
-      <AccordionPrimitive.Trigger
-        data-slot="accordion-trigger"
-        className={cn(
-          '**:data-[slot=accordion-trigger-icon]:text-muted-foreground group/accordion-trigger flex flex-1 items-start justify-between gap-6 border border-transparent p-2 text-left text-sm/relaxed font-semibold transition-all outline-none hover:underline disabled:pointer-events-none disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4',
-          className,
-        )}
-        {...props}
-      >
-        <ChevronDownIcon
-          strokeWidth={2}
-          data-slot="accordion-trigger-icon"
-          className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden"
-        />
-        <ChevronUpIcon
-          strokeWidth={2}
-          data-slot="accordion-trigger-icon"
-          className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline"
-        />
-        {children}
+    <div className="flex w-full flex-col items-stretch gap-0 rounded-md border border-transparent">
+      <div className="flex gap-1 py-px">
+        <Skeleton className="h-5 w-16 rounded-md" />
+        <Skeleton className="h-5 w-12 rounded-md" />
+        <Skeleton className="h-5 w-16 rounded-md" />
+        <Skeleton className="h-5 w-20 rounded-md" />
+        <Skeleton className="h-5 w-18 rounded-md" />
+        <Skeleton className="h-5 w-14 rounded-md" />
+      </div>
+      <div className="py-1" />
+      <Skeleton className="h-44 w-full rounded-md" />
+      <div className="flex items-center gap-2 pt-1 pb-2.5">
+        <Skeleton className="h-4 w-28" />
+        <div className="grow" />
+        <div className="flex gap-0.5">
+          <Skeleton className="h-5 w-7 rounded-md" />
+          <Skeleton className="h-5 w-7 rounded-md" />
+          <Skeleton className="h-5 w-7 rounded-md" />
+          <Skeleton className="h-5 w-7 rounded-md" />
+          <Skeleton className="h-5 w-7 rounded-md" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AccountLedgerColumnHeader({
+  displayCurrencyCode,
+}: {
+  displayCurrencyCode: string
+}) {
+  return (
+    <div className="bg-muted/30 text-muted-foreground hidden grid-cols-[minmax(13rem,1.45fr)_minmax(5rem,0.45fr)_minmax(7rem,0.65fr)_minmax(8rem,0.7fr)_minmax(8rem,0.75fr)_minmax(8rem,0.8fr)] gap-x-4 border-t px-3 py-1.5 text-[0.625rem] font-medium tracking-[0.04em] uppercase lg:grid">
+      <span>Account</span>
+      <span>Owner</span>
+      <span>Updated</span>
+      <span className="text-right">Original</span>
+      <span className="text-right">Value ({displayCurrencyCode})</span>
+      <span className="text-right">Share</span>
+    </div>
+  )
+}
+
+type AccountGroupTriggerProps = {
+  label: string
+  total: string
+  share: number
+  shareLabel: string
+  accentClass: string
+  hideAllocation: boolean
+}
+
+function AccountGroupTrigger({
+  label,
+  total,
+  share,
+  shareLabel,
+  accentClass,
+  hideAllocation,
+}: AccountGroupTriggerProps) {
+  const allocationWidth = hideAllocation ? 0 : Math.min(100, Math.max(0, share))
+
+  return (
+    <AccordionPrimitive.Header className="sticky top-0 z-10 flex">
+      <AccordionPrimitive.Trigger className="group/account-group bg-muted hover:bg-input focus-visible:border-ring focus-visible:ring-ring/30 dark:bg-card relative grid min-h-11 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 border border-transparent py-1.5 pr-10 pl-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50">
+        <span className="flex min-w-0 items-center gap-2">
+          <span
+            aria-hidden="true"
+            className={cn('size-2 shrink-0', accentClass)}
+          />
+          <span className="truncate text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
+            {label}
+          </span>
+        </span>
+        <span className="row-span-2 text-right text-base leading-none font-semibold tracking-tight tabular-nums lg:text-sm">
+          {total}
+        </span>
+        <span className="text-muted-foreground absolute top-1/2 right-3 flex size-5 -translate-y-1/2 items-center justify-center">
+          <ChevronDownIcon className="pointer-events-none size-4 group-aria-expanded/account-group:hidden" />
+          <ChevronUpIcon className="pointer-events-none hidden size-4 group-aria-expanded/account-group:block" />
+        </span>
+        <span className="col-span-2 col-start-1 flex min-w-0 items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="bg-border block h-1 min-w-0 flex-1 overflow-hidden"
+          >
+            <span
+              className={cn('block h-full', accentClass)}
+              style={{ width: `${allocationWidth}%` }}
+            />
+          </span>
+          <span className="text-muted-foreground shrink-0 text-[0.625rem] tabular-nums">
+            {shareLabel}
+          </span>
+        </span>
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   )

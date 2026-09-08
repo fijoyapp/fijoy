@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0c10fb7cc4930de1a5e04177e33da356>>
+ * @generated SignedSource<<7e3e59ab2e1489319fae036671156a16>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -165,6 +165,25 @@ return {
                       {
                         "alias": null,
                         "args": null,
+                        "concreteType": "Transaction",
+                        "kind": "LinkedField",
+                        "name": "latestTransaction",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "datetime",
+                            "storageKey": null
+                          },
+                          (v2/*: any*/)
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
                         "concreteType": "HouseholdCurrency",
                         "kind": "LinkedField",
                         "name": "householdCurrency",
@@ -191,20 +210,8 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "concreteType": "Transaction",
-                        "kind": "LinkedField",
-                        "name": "latestTransaction",
-                        "plural": false,
-                        "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "datetime",
-                            "storageKey": null
-                          },
-                          (v2/*: any*/)
-                        ],
+                        "kind": "ScalarField",
+                        "name": "balance",
                         "storageKey": null
                       },
                       {
@@ -218,13 +225,6 @@ return {
                           (v3/*: any*/),
                           (v2/*: any*/)
                         ],
-                        "storageKey": null
-                      },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "balance",
                         "storageKey": null
                       },
                       {
@@ -305,12 +305,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "c603bd87529e014917b3c07dd13f4bd7",
+    "cacheID": "545e28ef6e4974fd72afee65c687ef94",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery(\n  $viewUserIds: [ID!]\n) {\n  household {\n    ...accountsPanelFragment_3rIbPZ\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment accountsPanelFragment_3rIbPZ on Household {\n  accounts(first: 50, where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        category\n        name\n        value\n        householdCurrency {\n          code\n          id\n        }\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query accountsQuery(\n  $viewUserIds: [ID!]\n) {\n  household {\n    ...accountsPanelFragment_3rIbPZ\n    id\n  }\n}\n\nfragment accountLedgerRowFragment on Account {\n  id\n  name\n  type\n  icon\n  value\n  balance\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n}\n\nfragment accountsPanelFragment_3rIbPZ on Household {\n  accounts(first: 50, where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        category\n        name\n        value\n        latestTransaction {\n          datetime\n          id\n        }\n        householdCurrency {\n          code\n          id\n        }\n        ...accountLedgerRowFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();

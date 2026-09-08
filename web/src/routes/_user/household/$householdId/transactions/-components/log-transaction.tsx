@@ -12,6 +12,8 @@ import { logTransactionFragment$key } from './__generated__/logTransactionFragme
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useHotkey } from '@tanstack/react-hotkeys'
 import invariant from 'tiny-invariant'
+
+import { focusInitialTransactionControl } from './transaction-focus'
 import { useLogTransaction } from '@/hooks/use-log-transaction'
 import type { LogTransactionType } from '@/hooks/log-transaction-store'
 import { cn } from '@/lib/utils'
@@ -95,11 +97,9 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      const firstInput = panelRef.current?.querySelector<HTMLElement>(
-        'input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled]), [contenteditable="true"]',
-      )
-
-      firstInput?.focus()
+      if (panelRef.current) {
+        focusInitialTransactionControl(panelRef.current)
+      }
     })
 
     return () => cancelAnimationFrame(frame)

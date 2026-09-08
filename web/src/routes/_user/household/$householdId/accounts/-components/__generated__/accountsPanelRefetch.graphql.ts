@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2d277186140934dc1a4664d58dcffd93>>
+ * @generated SignedSource<<2accb059d1d1f18ae9b641fa44805d92>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -225,6 +225,25 @@ return {
                           {
                             "alias": null,
                             "args": null,
+                            "concreteType": "Transaction",
+                            "kind": "LinkedField",
+                            "name": "latestTransaction",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": null,
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "datetime",
+                                "storageKey": null
+                              },
+                              (v6/*: any*/)
+                            ],
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
                             "concreteType": "HouseholdCurrency",
                             "kind": "LinkedField",
                             "name": "householdCurrency",
@@ -251,20 +270,8 @@ return {
                           {
                             "alias": null,
                             "args": null,
-                            "concreteType": "Transaction",
-                            "kind": "LinkedField",
-                            "name": "latestTransaction",
-                            "plural": false,
-                            "selections": [
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "datetime",
-                                "storageKey": null
-                              },
-                              (v6/*: any*/)
-                            ],
+                            "kind": "ScalarField",
+                            "name": "balance",
                             "storageKey": null
                           },
                           {
@@ -278,13 +285,6 @@ return {
                               (v8/*: any*/),
                               (v6/*: any*/)
                             ],
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "balance",
                             "storageKey": null
                           },
                           (v5/*: any*/)
@@ -362,16 +362,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9bd0065ff6e47c88d162972312ab0afc",
+    "cacheID": "18e017451f680123b183866aca4b805c",
     "id": null,
     "metadata": {},
     "name": "accountsPanelRefetch",
     "operationKind": "query",
-    "text": "query accountsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n  $viewUserIds: [ID!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...accountsPanelFragment_2mcrba\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment accountsPanelFragment_2mcrba on Household {\n  accounts(first: $count, after: $cursor, where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        category\n        name\n        value\n        householdCurrency {\n          code\n          id\n        }\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query accountsPanelRefetch(\n  $count: Int = 50\n  $cursor: Cursor\n  $viewUserIds: [ID!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...accountsPanelFragment_2mcrba\n    id\n  }\n}\n\nfragment accountLedgerRowFragment on Account {\n  id\n  name\n  type\n  icon\n  value\n  balance\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n}\n\nfragment accountsPanelFragment_2mcrba on Household {\n  accounts(first: $count, after: $cursor, where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        category\n        name\n        value\n        latestTransaction {\n          datetime\n          id\n        }\n        householdCurrency {\n          code\n          id\n        }\n        ...accountLedgerRowFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ed7e99ad4694c35984d8312cded10c49";
+(node as any).hash = "afb11ef57f391bb667d623d16700e6be";
 
 export default node;
