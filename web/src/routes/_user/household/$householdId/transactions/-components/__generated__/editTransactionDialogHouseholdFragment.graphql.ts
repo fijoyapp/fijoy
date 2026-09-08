@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<814f7388114597aa7f66adc5fd33289d>>
+ * @generated SignedSource<<bdddd4a1ae7165120aacbf58271e698a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -57,7 +57,13 @@ v1 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "viewUserIds"
+    }
+  ],
   "kind": "Fragment",
   "metadata": null,
   "name": "editTransactionDialogHouseholdFragment",
@@ -66,11 +72,20 @@ return {
       "alias": null,
       "args": [
         {
-          "kind": "Literal",
-          "name": "where",
-          "value": {
-            "archived": false
-          }
+          "fields": [
+            {
+              "kind": "Literal",
+              "name": "archived",
+              "value": false
+            },
+            {
+              "kind": "Variable",
+              "name": "userIDIn",
+              "variableName": "viewUserIds"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "where"
         }
       ],
       "concreteType": "AccountConnection",
@@ -174,7 +189,7 @@ return {
           "storageKey": null
         }
       ],
-      "storageKey": "accounts(where:{\"archived\":false})"
+      "storageKey": null
     }
   ],
   "type": "Household",
@@ -182,6 +197,6 @@ return {
 };
 })();
 
-(node as any).hash = "0c6693a2349d4558369f4e630206c1fb";
+(node as any).hash = "7487a6aaedbfaf315948cafe4f5eb14e";
 
 export default node;

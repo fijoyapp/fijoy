@@ -76,8 +76,9 @@ const formSchema = z.object({
 })
 
 const newInvestmentFragment = graphql`
-  fragment newInvestmentFragment on Household {
-    accounts(where: { archived: false }) {
+  fragment newInvestmentFragment on Household
+  @argumentDefinitions(viewUserIds: { type: "[ID!]" }) {
+    accounts(where: { archived: false, userIDIn: $viewUserIds }) {
       edges {
         node {
           id
@@ -248,6 +249,15 @@ export function NewInvestment({
         .exhaustive()
     },
   })
+
+  const selectedAccountId = form.state.values.accountId
+  const accountSelectionAvailable =
+    !selectedAccountId ||
+    investmentAccounts.some((account) => account.id === selectedAccountId)
+
+  useEffect(() => {
+    if (!accountSelectionAvailable) form.setFieldValue('accountId', '')
+  }, [accountSelectionAvailable, form])
 
   useEffect(() => {
     form.validateField('symbol', 'change')

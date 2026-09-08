@@ -141,9 +141,8 @@ const editTransactionDialogCategoriesFragment = graphql`
       edges {
         node {
           id
-          name
           type
-          icon
+          ...transactionCategoryPickerFragment
         }
       }
     }
@@ -151,8 +150,9 @@ const editTransactionDialogCategoriesFragment = graphql`
 `
 
 const editTransactionDialogHouseholdFragment = graphql`
-  fragment editTransactionDialogHouseholdFragment on Household {
-    accounts(where: { archived: false }) {
+  fragment editTransactionDialogHouseholdFragment on Household
+  @argumentDefinitions(viewUserIds: { type: "[ID!]" }) {
+    accounts(where: { archived: false, userIDIn: $viewUserIds }) {
       edges {
         node {
           id
@@ -178,7 +178,7 @@ const editTransactionDialogHouseholdFragment = graphql`
 `
 
 export const EditTransactionDialogQuery = graphql`
-  query editTransactionDialogQuery($transactionId: ID!) {
+  query editTransactionDialogQuery($transactionId: ID!, $viewUserIds: [ID!]) {
     node(id: $transactionId) {
       __typename
       ... on Transaction {
@@ -188,6 +188,7 @@ export const EditTransactionDialogQuery = graphql`
     ...editTransactionDialogCategoriesFragment
     household {
       ...editTransactionDialogHouseholdFragment
+        @arguments(viewUserIds: $viewUserIds)
     }
   }
 `

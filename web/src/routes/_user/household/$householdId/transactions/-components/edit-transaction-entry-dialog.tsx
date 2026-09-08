@@ -42,6 +42,7 @@ import { getLogoDomainURL } from '@/lib/logo'
 import { useCurrency } from '@/hooks/use-currency'
 import { useHousehold } from '@/hooks/use-household'
 import { useDisplayCurrency } from '@/hooks/use-display-currency'
+import { useEffect } from 'react'
 
 const editTransactionEntryDialogUpdateMutation = graphql`
   mutation editTransactionEntryDialogUpdateMutation(
@@ -145,6 +146,15 @@ export function EditTransactionEntryDialog({
         .exhaustive()
     },
   })
+
+  const selectedAccountId = form.state.values.accountId
+  const accountSelectionAvailable =
+    !selectedAccountId ||
+    accounts.some((account) => account.id === selectedAccountId)
+
+  useEffect(() => {
+    if (!accountSelectionAvailable) form.setFieldValue('accountId', '')
+  }, [accountSelectionAvailable, form])
 
   const accountById = new Map(accounts.map((a) => [a.id, a]))
 

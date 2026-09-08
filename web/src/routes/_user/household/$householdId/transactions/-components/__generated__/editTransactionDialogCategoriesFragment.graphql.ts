@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7d90756950c141879727d548740f95c1>>
+ * @generated SignedSource<<99a201ece2f27d88cbdd3c271aca81fb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,10 +15,9 @@ export type editTransactionDialogCategoriesFragment$data = {
   readonly transactionCategories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly icon: string;
         readonly id: string;
-        readonly name: string;
         readonly type: TransactionCategoryType;
+        readonly " $fragmentSpreads": FragmentRefs<"transactionCategoryPickerFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -70,22 +69,30 @@ const node: ReaderFragment = {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
-                  "name": "name",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
                   "name": "type",
                   "storageKey": null
                 },
                 {
-                  "alias": null,
+                  "kind": "InlineDataFragmentSpread",
+                  "name": "transactionCategoryPickerFragment",
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "name",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "icon",
+                      "storageKey": null
+                    }
+                  ],
                   "args": null,
-                  "kind": "ScalarField",
-                  "name": "icon",
-                  "storageKey": null
+                  "argumentDefinitions": []
                 }
               ],
               "storageKey": null
@@ -101,6 +108,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "1727d8a460b3b4f14396119d78988822";
+(node as any).hash = "04e18dbcd599dbbe098408c9a9ea017e";
 
 export default node;

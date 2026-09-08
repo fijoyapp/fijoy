@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import { useState } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TransactionInvestmentPicker } from './transaction-investment-picker'
@@ -12,6 +18,10 @@ vi.mock('@/hooks/use-mobile', () => ({
 vi.mock('@/lib/logo', () => ({
   getLogoCryptoURL: () => '',
   getLogoTickerURL: () => '',
+}))
+vi.mock('relay-runtime', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('relay-runtime')>()),
+  readInlineData: (_fragment: unknown, fragmentRef: unknown) => fragmentRef,
 }))
 vi.mock('@/components/selection-rows', () => ({
   SelectionRows: ({ children }: { children: React.ReactNode }) => (
@@ -49,16 +59,14 @@ function Picker() {
   const [value, setValue] = useState('')
   return (
     <TransactionInvestmentPicker
-      investments={investments}
+      investments={investments as never}
       name="investment"
       label="Investment"
       value={value}
       onValueChange={setValue}
       onBlur={() => undefined}
       invalid={false}
-    >
-      <div>Desktop picker</div>
-    </TransactionInvestmentPicker>
+    />
   )
 }
 
@@ -98,4 +106,28 @@ it('shows investment identity in desktop options and the selected trigger', () =
   expect(
     screen.getByRole('button', { name: 'Investment: Index Fund, IDX' }),
   ).toBeTruthy()
+})
+
+it('clears an investment selection that falls outside the current view scope', async () => {
+  const onValueChange = vi.fn()
+  const commonProps = {
+    name: 'investment',
+    label: 'Investment',
+    value: 'index-fund',
+    onValueChange,
+    onBlur: vi.fn(),
+    invalid: false,
+  }
+  const { rerender } = render(
+    <TransactionInvestmentPicker
+      investments={investments as never}
+      {...commonProps}
+    />,
+  )
+
+  expect(onValueChange).not.toHaveBeenCalled()
+
+  rerender(<TransactionInvestmentPicker investments={[]} {...commonProps} />)
+
+  await waitFor(() => expect(onValueChange).toHaveBeenCalledWith(''))
 })

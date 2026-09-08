@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f278db285e349959a8e3d0ff326bce0c>>
+ * @generated SignedSource<<0d7ff8d6805aeddbc9ca0754a56ad370>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,7 +45,13 @@ var v0 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "viewUserIds"
+    }
+  ],
   "kind": "Fragment",
   "metadata": null,
   "name": "newInvestmentFragment",
@@ -54,11 +60,20 @@ return {
       "alias": null,
       "args": [
         {
-          "kind": "Literal",
-          "name": "where",
-          "value": {
-            "archived": false
-          }
+          "fields": [
+            {
+              "kind": "Literal",
+              "name": "archived",
+              "value": false
+            },
+            {
+              "kind": "Variable",
+              "name": "userIDIn",
+              "variableName": "viewUserIds"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "where"
         }
       ],
       "concreteType": "AccountConnection",
@@ -148,7 +163,7 @@ return {
           "storageKey": null
         }
       ],
-      "storageKey": "accounts(where:{\"archived\":false})"
+      "storageKey": null
     }
   ],
   "type": "Household",
@@ -156,6 +171,6 @@ return {
 };
 })();
 
-(node as any).hash = "3489a6279d6c738b2bdbad59b1803e08";
+(node as any).hash = "3b7ba133bbef9b5bcb790b02eacbe4f2";
 
 export default node;

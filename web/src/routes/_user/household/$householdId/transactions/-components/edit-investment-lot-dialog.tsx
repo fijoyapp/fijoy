@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import * as z from 'zod'
 import { match } from 'ts-pattern'
 import currency from 'currency.js'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import type { editInvestmentLotDialogUpdateMutation } from './__generated__/editInvestmentLotDialogUpdateMutation.graphql'
 
@@ -172,6 +172,16 @@ export function EditInvestmentLotDialog({
   })
 
   const selectedAccountId = form.state.values.accountId
+  const accountSelectionAvailable =
+    !selectedAccountId ||
+    investmentAccounts.some((account) => account.id === selectedAccountId)
+
+  useEffect(() => {
+    if (accountSelectionAvailable) return
+    form.setFieldValue('accountId', '')
+    form.setFieldValue('investmentId', '')
+  }, [accountSelectionAvailable, form])
+
   const selectedAccount = investmentAccounts.find(
     (acc) => acc.id === selectedAccountId,
   )
