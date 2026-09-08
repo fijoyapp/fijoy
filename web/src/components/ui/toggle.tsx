@@ -1,8 +1,10 @@
+'use client'
+
 import { Toggle as TogglePrimitive } from '@base-ui/react/toggle'
 import type { VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
 
 import { toggleVariants } from '@/components/ui/toggle-variants'
-import { cn } from '@/lib/utils'
 
 function Toggle({
   className,
@@ -19,4 +21,5 @@ function Toggle({
   )
 }
 
-export { Toggle }
+// eslint-disable-next-line react-refresh/only-export-components
+export { Toggle, toggleVariants }
