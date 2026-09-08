@@ -24,6 +24,7 @@ import {
   ACCOUNT_TYPE_ACCENT_CLASSES,
   calculateAllocationPercentage,
   formatPercentageWithPrivacyMode,
+  getAccountGroupAllocation,
 } from './account-ledger-utils'
 import { AccountLedgerRow } from './account-ledger-row'
 import { NetWorthChart } from './net-worth-chart'
@@ -303,7 +304,6 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   }, [accountItems])
 
   const assetsTotal = Math.abs(displayOptions[1].value.value)
-  const liabilitiesTotal = Math.abs(displayOptions[2].value.value)
 
   const getGroupLabel = (key: string) => {
     if (groupByOption === 'category') {
@@ -465,14 +465,8 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
             const isLiabilityGroup = accounts.every(
               ({ node }) => node.type === 'liability',
             )
-            const allocationTotal = isLiabilityGroup
-              ? liabilitiesTotal
-              : assetsTotal
-            const allocationBasis = isLiabilityGroup ? 'liabilities' : 'assets'
-            const groupShare = calculateAllocationPercentage(
-              groupTotal.value,
-              allocationTotal,
-            )
+            const { share: groupShare, basis: allocationBasis } =
+              getAccountGroupAllocation(groupTotal.value, assetsTotal)
             const groupTypes = new Set(accounts.map(({ node }) => node.type))
             const groupAccentClass =
               groupTypes.size === 1

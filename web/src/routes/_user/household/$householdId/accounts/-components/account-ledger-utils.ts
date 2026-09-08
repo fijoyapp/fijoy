@@ -27,3 +27,13 @@ export function calculateAllocationPercentage(value: number, total: number) {
     return 0
   return (Math.abs(value) / Math.abs(total)) * 100
 }
+
+export function getAccountGroupAllocation(
+  groupValue: number,
+  totalAssets: number,
+) {
+  return {
+    share: calculateAllocationPercentage(groupValue, totalAssets),
+    basis: 'assets' as const,
+  }
+}
