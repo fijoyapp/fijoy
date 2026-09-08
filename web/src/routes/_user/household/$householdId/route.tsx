@@ -239,9 +239,9 @@ function RouteComponent() {
             <DisplayCurrencyProvider householdRef={data.household}>
               <Hotkeys />
               <CommandMenu />
-              <SidebarProvider>
+              <SidebarProvider className="h-dvh min-h-0 overflow-hidden">
                 <AppSidebar fragmentRef={data} />
-                <SidebarInset>
+                <SidebarInset className="h-dvh min-h-0 overflow-hidden">
                   <header className="bg-background sticky top-0 z-10 flex h-10 shrink-0 items-stretch border-b transition-[width,height] ease-linear">
                     <SidebarTrigger className="cursor-pointer border-r" />
                     <div className="flex flex-1 items-center px-3">
@@ -338,15 +338,15 @@ function RouteComponent() {
                       </Button>
                     </div>
                   </header>
-                  <div className="flex flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                     <Outlet />
                   </div>
+                  <AppActionDock
+                    isMobile={isMobile}
+                    isRefreshing={isRefreshInFlight}
+                    onRefresh={handleRefreshAccountData}
+                  />
                 </SidebarInset>
-                <AppActionDock
-                  isMobile={isMobile}
-                  isRefreshing={isRefreshInFlight}
-                  onRefresh={handleRefreshAccountData}
-                />
 
                 {!isMobile && (
                   <FloatingLogTransactionWindow fragmentRef={data.household} />

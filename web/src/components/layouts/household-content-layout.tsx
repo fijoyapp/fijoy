@@ -13,7 +13,7 @@ function HouseholdContentLayout({
   className,
 }: HouseholdContentLayoutProps) {
   return (
-    <ScrollArea className="h-[calc(100vh-48px)] overflow-y-auto">
+    <ScrollArea className="h-full min-h-0 overflow-y-auto">
       <div className={cn('mx-auto max-w-5xl p-4', className)}>{children}</div>
     </ScrollArea>
   )
