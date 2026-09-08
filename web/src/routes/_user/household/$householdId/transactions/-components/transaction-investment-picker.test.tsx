@@ -5,6 +5,10 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { TransactionInvestmentPicker } from './transaction-investment-picker'
 
 vi.mock('@/hooks/use-mobile', () => ({ useIsMobile: () => true }))
+vi.mock('@/lib/logo', () => ({
+  getLogoCryptoURL: () => '',
+  getLogoTickerURL: () => '',
+}))
 vi.mock('./selection-rows', () => ({
   SelectionRows: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
