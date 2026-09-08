@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f28e752cc5b5e475ed2c70567a92d73b>>
+ * @generated SignedSource<<470843d748c6a0490c339a6e37a31edc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,7 +18,6 @@ export type transactionDialogPreviewFragment$data = {
     readonly type: TransactionCategoryType;
   };
   readonly datetime: any;
-  readonly description: string | null | undefined;
   readonly excludeFromReports: boolean;
   readonly investmentLots: ReadonlyArray<{
     readonly amount: string;
@@ -27,6 +26,7 @@ export type transactionDialogPreviewFragment$data = {
       readonly householdCurrency: {
         readonly code: string;
       };
+      readonly name: string;
       readonly symbol: string;
     };
     readonly price: string;
@@ -99,13 +99,6 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "datetime",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "description",
       "storageKey": null
     },
     {
@@ -192,6 +185,7 @@ return {
           "name": "investment",
           "plural": false,
           "selections": [
+            (v0/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -212,6 +206,6 @@ return {
 };
 })();
 
-(node as any).hash = "a6d1507d31054c1c692435b07712156e";
+(node as any).hash = "66e33a5b6aed83dbd50dceba8751788a";
 
 export default node;
