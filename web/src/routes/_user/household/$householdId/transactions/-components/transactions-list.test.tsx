@@ -16,6 +16,7 @@ const relay = vi.hoisted(() => ({
 const router = vi.hoisted(() => ({
   navigate: vi.fn(),
   search: { edit_transaction_id: null as string | null },
+  searchFrom: undefined as string | undefined,
 }))
 vi.mock('react-relay', () => ({
   usePaginationFragment: () => ({
@@ -32,7 +33,13 @@ vi.mock('react-relay', () => ({
 }))
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => router.navigate,
-  useSearch: () => router.search,
+  useSearch: (options?: {
+    from?: string
+    select?: (search: typeof router.search) => unknown
+  }) => {
+    router.searchFrom = options?.from
+    return options?.select ? options.select(router.search) : router.search
+  },
 }))
 vi.mock('relay-runtime', () => ({ graphql: () => ({}) }))
 vi.mock('@/hooks/use-mobile', () => ({ useIsMobile: () => false }))
@@ -66,6 +73,13 @@ afterEach(() => {
   cleanup()
   vi.clearAllMocks()
   router.search.edit_transaction_id = null
+  router.searchFrom = undefined
+})
+
+it('reads dialog search state from the shared household route', () => {
+  render(<TransactionsList fragmentRef={fragmentRef} />)
+
+  expect(router.searchFrom).toBe('/_user/household/$householdId')
 })
 
 it('sorts through Relay with a fresh cursor and refreshes the active ASC connection on invalidation', () => {

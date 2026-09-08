@@ -74,10 +74,12 @@ export function CurrencyInput({
       const cleaned = validate(e.target.value)
       setRawValue(cleaned)
 
-      const floatValue = cleaned === '' ? undefined : parseFloat(cleaned)
+      const normalizedValue = cleaned.replace(decimalSeparator, '.')
+      const floatValue =
+        cleaned === '' ? undefined : parseFloat(normalizedValue)
       onValueChange?.({ floatValue, value: cleaned })
     },
-    [validate, onValueChange],
+    [decimalSeparator, validate, onValueChange],
   )
 
   return (
@@ -95,7 +97,7 @@ export function CurrencyInput({
       <input
         data-slot="input"
         type="text"
-        inputMode={allowNegative ? 'numeric' : 'decimal'}
+        inputMode="decimal"
         value={rawValue}
         onChange={handleChange}
         className={cn(

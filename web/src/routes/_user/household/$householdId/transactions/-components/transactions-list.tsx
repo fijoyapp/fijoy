@@ -101,8 +101,9 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
     >(transactionsListFragment, fragmentRef)
 
   const isMobile = useIsMobile()
-  const search = useSearch({
-    from: '/_user/household/$householdId/transactions',
+  const editTransactionId = useSearch({
+    from: '/_user/household/$householdId',
+    select: (search) => search.edit_transaction_id,
   })
   const navigate = useNavigate()
   const [editQueryRef, loadEditQuery, disposeEditQuery] =
@@ -135,14 +136,14 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
     [navigate, preloadTransaction],
   )
   useEffect(() => {
-    if (search.edit_transaction_id) {
-      preloadTransaction(search.edit_transaction_id)
+    if (editTransactionId) {
+      preloadTransaction(editTransactionId)
       return
     }
 
     loadedTransactionIdRef.current = null
     disposeEditQuery()
-  }, [disposeEditQuery, preloadTransaction, search.edit_transaction_id])
+  }, [disposeEditQuery, editTransactionId, preloadTransaction])
   const changeSort = useCallback(
     (nextDirection: 'ASC' | 'DESC') => {
       startTransition(() => {
@@ -275,11 +276,11 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
     <>
       {list}
       <TransactionDetailDialog
-        transactionId={search.edit_transaction_id}
+        transactionId={editTransactionId}
         queryRef={editQueryRef}
         previewRef={
           transactions.find(
-            (transaction) => transaction.id === search.edit_transaction_id,
+            (transaction) => transaction.id === editTransactionId,
           ) ?? null
         }
         onClose={() => {
