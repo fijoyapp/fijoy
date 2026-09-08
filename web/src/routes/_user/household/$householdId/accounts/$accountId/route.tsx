@@ -12,7 +12,6 @@ import {
   Trash2Icon,
   AlertTriangleIcon,
   MoreHorizontalIcon,
-  PlusIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { match } from 'ts-pattern'
@@ -22,7 +21,6 @@ import { PendingComponent } from '@/components/pending-component'
 import { Separator } from '@/components/ui/separator'
 import { CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { useLogTransaction } from '@/hooks/use-log-transaction'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,7 +77,6 @@ const RouteAccountIdQuery = graphql`
 const RouteAccountIdFragment = graphql`
   fragment routeAccountIdFragment on Account {
     id
-    type
     archived
   }
 `
@@ -102,7 +99,6 @@ function RouteComponent() {
   const params = Route.useParams()
   const queryRef = Route.useLoaderData()
   const navigate = useNavigate()
-  const { open: openLogTransaction } = useLogTransaction()
 
   const data = usePreloadedQuery<routeAccountIdQuery>(
     RouteAccountIdQuery,
@@ -244,22 +240,6 @@ function RouteComponent() {
 
         <div className="min-h-0 flex-1 overflow-y-auto">
           <Outlet />
-        </div>
-
-        <div className="fixed right-4 bottom-4 z-20 lg:absolute">
-          <Button
-            nativeButton={true}
-            size="icon-lg"
-            className="size-10 [&_svg:not([class*='size-'])]:size-5"
-            onClick={() =>
-              openLogTransaction(
-                accountData.type === 'investment' ? 'buy' : 'expense',
-                { accountId: accountData.id },
-              )
-            }
-          >
-            <PlusIcon />
-          </Button>
         </div>
 
         {/* Delete Alert Dialog */}

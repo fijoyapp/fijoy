@@ -1,17 +1,14 @@
-import { commitLocalUpdate, graphql } from 'relay-runtime'
+import { graphql } from 'relay-runtime'
 import invariant from 'tiny-invariant'
 import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
-import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
+import { useFragment } from 'react-relay'
 import { groupBy, map } from 'lodash-es'
 import { Fragment } from 'react/jsx-runtime'
 import { useMemo } from 'react'
 import currency from 'currency.js'
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
-import { toast } from 'sonner'
-import { match } from 'ts-pattern'
 import { InvestmentCard } from './investment-card'
 import type { investmentsPanelFragment$key } from './__generated__/investmentsPanelFragment.graphql'
-import type { investmentsPanelRefreshMutation } from './__generated__/investmentsPanelRefreshMutation.graphql'
 import {
   Accordion,
   AccordionContent,
@@ -29,10 +26,8 @@ import { useCurrency } from '@/hooks/use-currency'
 import { useHousehold } from '@/hooks/use-household'
 import { useDisplayCurrency } from '@/hooks/use-display-currency'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
-import { RefreshCwIcon } from 'lucide-react'
-import { PlusButton } from '@/components/plus-button'
+import { PageAddButton } from '@/components/page-add-button'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
 
 const GROUP_BY_OPTIONS = {
@@ -76,12 +71,6 @@ const InvestmentsPanelFragment = graphql`
   }
 `
 
-const InvestmentsPanelRefreshMutation = graphql`
-  mutation investmentsPanelRefreshMutation {
-    refresh
-  }
-`
-
 type InvestmentsPanelProps = {
   fragmentRef: investmentsPanelFragment$key
 }
@@ -90,7 +79,6 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
   const data = useFragment(InvestmentsPanelFragment, fragmentRef)
   const { household: _household } = useHousehold()
   const { displayCurrencyCode, convert } = useDisplayCurrency()
-  const environment = useRelayEnvironment()
   const navigate = useNavigate()
   const { householdId } = useParams({
     from: '/_user/household/$householdId',
@@ -111,40 +99,9 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
     })
   }
 
-  const [commitRefreshMutation, isRefreshInFlight] =
-    useMutation<investmentsPanelRefreshMutation>(
-      InvestmentsPanelRefreshMutation,
-    )
-
   useRegisterConnection(data.investments.__id, NodeType.Investment)
 
   const { formatCurrencyWithPrivacyMode } = useCurrency()
-
-  const handleRefresh = () => {
-    commitRefreshMutation({
-      variables: {},
-      onCompleted: (data, errors) => {
-        const result = { status: 'success' as const, data, errors }
-        match(result)
-          .with({ status: 'success', errors: null }, () => {
-            // Invalidate the Relay store to refetch all queries
-            commitLocalUpdate(environment, (store) => {
-              store.invalidateStore()
-            })
-            toast.success('Investments refreshed successfully!')
-          })
-          .with({ status: 'success' }, ({ errors }) => {
-            toast.error(
-              `Refresh failed: ${errors?.[0]?.message ?? 'Unknown error'}`,
-            )
-          })
-          .exhaustive()
-      },
-      onError: (error) => {
-        toast.error(`Refresh failed: ${error.message}`)
-      },
-    })
-  }
 
   const groupedInvestments = useMemo(
     () =>
@@ -175,32 +132,23 @@ export function InvestmentsPanel({ fragmentRef }: InvestmentsPanelProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 z-20 flex flex-col items-end gap-2 lg:absolute">
-        <Button
-          variant="outline"
-          size="icon-lg"
-          nativeButton={true}
-          className="bg-background dark:bg-card size-10 [&_svg:not([class*='size-'])]:size-5"
-          onClick={handleRefresh}
-          disabled={isRefreshInFlight}
-        >
-          <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
-        </Button>
-        <PlusButton
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-[0.6875rem] font-medium tracking-wider uppercase">
+            Total Investment
+          </span>
+          <div className="text-3xl font-semibold tracking-tight tabular-nums">
+            {formatCurrencyWithPrivacyMode({
+              value: totalInvestment,
+              currencyCode: displayCurrencyCode,
+            })}
+          </div>
+        </div>
+        <PageAddButton
+          label="Add investment"
           to="/household/$householdId/investments/new"
           params={{ householdId }}
         />
-      </div>
-      <div className="flex flex-col gap-1">
-        <span className="text-[0.6875rem] font-medium tracking-wider uppercase">
-          Total Investment
-        </span>
-        <div className="text-3xl font-semibold tracking-tight tabular-nums">
-          {formatCurrencyWithPrivacyMode({
-            value: totalInvestment,
-            currencyCode: displayCurrencyCode,
-          })}
-        </div>
       </div>
       <div className="py-2"></div>
 

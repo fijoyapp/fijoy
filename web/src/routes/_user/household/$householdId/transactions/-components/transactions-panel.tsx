@@ -1,7 +1,6 @@
 import { fetchQuery, graphql } from 'relay-runtime'
 import { useFragment, useRelayEnvironment } from 'react-relay'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
 import { TransactionsList } from './transactions-list'
 import type { transactionsPanelFragment$key } from './__generated__/transactionsPanelFragment.graphql'
 import type { transactionsPanelRefetchQuery } from './__generated__/transactionsPanelRefetchQuery.graphql'
@@ -10,8 +9,6 @@ import { DateRangeFilter } from '../../categories/-components/date-range-filter'
 import { FinancialSummaryCards } from '@/components/financial-summary-cards'
 import { parseDateRangeFromURL } from '@/lib/date-range'
 import { useHousehold } from '@/hooks/use-household'
-import { Button } from '@/components/ui/button'
-import { useLogTransaction } from '@/hooks/use-log-transaction'
 import { useHouseholdViewScope } from '@/hooks/use-household-view-scope'
 import { parseISO } from 'date-fns'
 import type { TransactionWhereInput } from './__generated__/transactionsListRefetch.graphql'
@@ -48,7 +45,6 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
   const navigate = useNavigate()
   const environment = useRelayEnvironment()
   const { household } = useHousehold()
-  const { open: openLogTransaction } = useLogTransaction()
   const { viewUserIds } = useHouseholdViewScope()
 
   const data = useFragment(transactionsPanelFragment, fragmentRef)
@@ -89,16 +85,6 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-      <div className="fixed right-4 bottom-4 z-20 lg:absolute">
-        <Button
-          nativeButton={true}
-          size="icon-lg"
-          className="size-10 [&_svg:not([class*='size-'])]:size-5"
-          onClick={() => openLogTransaction('expense')}
-        >
-          <PlusIcon />
-        </Button>
-      </div>
       <FinancialSummaryCards fragmentRef={data.financialReport} />
       <div className="shrink-0 py-2"></div>
       <DateRangeFilter

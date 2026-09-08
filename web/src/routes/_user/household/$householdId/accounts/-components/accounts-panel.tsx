@@ -7,18 +7,11 @@ import {
 } from '@tanstack/react-router'
 import currency from 'currency.js'
 import { capitalize, groupBy } from 'lodash-es'
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  RefreshCwIcon,
-  SearchIcon,
-} from 'lucide-react'
+import { ChevronDownIcon, ChevronUpIcon, SearchIcon } from 'lucide-react'
 import { Fragment, Suspense, useMemo, useState } from 'react'
-import { useFragment, useMutation, useRelayEnvironment } from 'react-relay'
+import { useFragment, useRelayEnvironment } from 'react-relay'
 import { commitLocalUpdate, graphql } from 'relay-runtime'
-import { toast } from 'sonner'
 import invariant from 'tiny-invariant'
-import { match } from 'ts-pattern'
 
 import {
   ACCOUNT_TYPE_ACCENT_CLASSES,
@@ -29,14 +22,12 @@ import {
 import { AccountLedgerRow } from './account-ledger-row'
 import { NetWorthChart } from './net-worth-chart'
 import type { accountsPanelFragment$key } from './__generated__/accountsPanelFragment.graphql'
-import type { accountsPanelRefreshMutation } from './__generated__/accountsPanelRefreshMutation.graphql'
-import { PlusButton } from '@/components/plus-button'
+import { PageAddButton } from '@/components/page-add-button'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
 } from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button'
 import {
   Empty,
   EmptyDescription,
@@ -99,12 +90,6 @@ const AccountsPanelFragment = graphql`
   }
 `
 
-const AccountsPanelRefreshMutation = graphql`
-  mutation accountsPanelRefreshMutation {
-    refresh
-  }
-`
-
 const GROUP_BY_OPTIONS = {
   type: 'By type',
   category: 'By category',
@@ -148,8 +133,6 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   useRegisterConnection(data.accounts.__id, NodeType.Account)
 
-  const [commitRefreshMutation, isRefreshInFlight] =
-    useMutation<accountsPanelRefreshMutation>(AccountsPanelRefreshMutation)
   const [displayIndex, setDisplayIndex] = useState(0)
   const [searchFilter, setSearchFilter] = useState('')
 
@@ -172,35 +155,6 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
         ...previous,
         accounts_sort_by: newSortOption as SortOption,
       }),
-    })
-  }
-
-  const handleRefresh = () => {
-    commitRefreshMutation({
-      variables: {},
-      onCompleted: (refreshData, errors) => {
-        const result = {
-          status: 'success' as const,
-          data: refreshData,
-          errors,
-        }
-        match(result)
-          .with({ status: 'success', errors: null }, () => {
-            commitLocalUpdate(environment, (store) => {
-              store.invalidateStore()
-            })
-            toast.success('Accounts refreshed successfully!')
-          })
-          .with({ status: 'success' }, ({ errors: refreshErrors }) => {
-            toast.error(
-              `Refresh failed: ${refreshErrors?.[0]?.message ?? 'Unknown error'}`,
-            )
-          })
-          .exhaustive()
-      },
-      onError: (error) => {
-        toast.error(`Refresh failed: ${error.message}`)
-      },
     })
   }
 
@@ -330,56 +284,44 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 z-20 flex flex-col items-end gap-2 lg:absolute">
-        <Button
-          variant="outline"
-          nativeButton={true}
-          size="icon-lg"
-          className="bg-background size-10 [&_svg:not([class*='size-'])]:size-5"
-          onClick={handleRefresh}
-          disabled={isRefreshInFlight}
-          aria-label="Refresh accounts"
-        >
-          <RefreshCwIcon className={isRefreshInFlight ? 'animate-spin' : ''} />
-        </Button>
-        <PlusButton
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex gap-3">
+            {displayOptions.map((option, index) => (
+              <button
+                key={option.label}
+                type="button"
+                onClick={() => setDisplayIndex(index)}
+                className={cn(
+                  'cursor-pointer text-[0.6875rem] font-medium tracking-wider uppercase transition-colors',
+                  index === displayIndex ? '' : 'text-muted-foreground',
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          {nextDisplayCurrencyCode ? (
+            <button
+              type="button"
+              onClick={handleCycleDisplayCurrency}
+              title={`Switch to ${nextDisplayCurrencyCode}`}
+              aria-label={`${displayOptions[displayIndex].label}: ${formattedDisplayValue}. Displayed in ${displayCurrencyCode}. Switch to ${nextDisplayCurrencyCode}.`}
+              className="focus-visible:ring-ring/30 -mx-1 w-fit cursor-pointer px-1 text-left text-3xl font-semibold tracking-tight tabular-nums outline-none focus-visible:ring-2"
+            >
+              {formattedDisplayValue}
+            </button>
+          ) : (
+            <div className="text-3xl font-semibold tracking-tight tabular-nums">
+              {formattedDisplayValue}
+            </div>
+          )}
+        </div>
+        <PageAddButton
+          label="Add account"
           to="/household/$householdId/accounts/new"
           params={{ householdId }}
-          aria-label="Add account"
         />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <div className="flex gap-3">
-          {displayOptions.map((option, index) => (
-            <button
-              key={option.label}
-              type="button"
-              onClick={() => setDisplayIndex(index)}
-              className={cn(
-                'cursor-pointer text-[0.6875rem] font-medium tracking-wider uppercase transition-colors',
-                index === displayIndex ? '' : 'text-muted-foreground',
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-        {nextDisplayCurrencyCode ? (
-          <button
-            type="button"
-            onClick={handleCycleDisplayCurrency}
-            title={`Switch to ${nextDisplayCurrencyCode}`}
-            aria-label={`${displayOptions[displayIndex].label}: ${formattedDisplayValue}. Displayed in ${displayCurrencyCode}. Switch to ${nextDisplayCurrencyCode}.`}
-            className="focus-visible:ring-ring/30 -mx-1 w-fit cursor-pointer px-1 text-left text-3xl font-semibold tracking-tight tabular-nums outline-none focus-visible:ring-2"
-          >
-            {formattedDisplayValue}
-          </button>
-        ) : (
-          <div className="text-3xl font-semibold tracking-tight tabular-nums">
-            {formattedDisplayValue}
-          </div>
-        )}
       </div>
 
       <div className="py-2" />

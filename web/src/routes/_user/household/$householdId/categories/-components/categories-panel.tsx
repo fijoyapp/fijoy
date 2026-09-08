@@ -30,7 +30,7 @@ import { parseISO } from 'date-fns'
 import type { categoriesPanelRefetch } from './__generated__/categoriesPanelRefetch.graphql'
 import categoriesPanelRefetchNode from './__generated__/categoriesPanelRefetch.graphql'
 import { parseDateRangeFromURL } from '@/lib/date-range'
-import { PlusButton } from '@/components/plus-button'
+import { PageAddButton } from '@/components/page-add-button'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
 
 const CategoriesPanelFragment = graphql`
@@ -160,19 +160,20 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 z-20 lg:absolute">
-        <PlusButton
+      <FinancialSummaryCards fragmentRef={financialReport} />
+      <div className="py-2"></div>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <DateRangeFilter
+          startDate={startDate}
+          endDate={endDate}
+          onDateRangeChange={onDateRangeChange}
+        />
+        <PageAddButton
+          label="Add category"
           to="/household/$householdId/categories/new"
           params={{ householdId }}
         />
       </div>
-      <FinancialSummaryCards fragmentRef={financialReport} />
-      <div className="py-2"></div>
-      <DateRangeFilter
-        startDate={startDate}
-        endDate={endDate}
-        onDateRangeChange={onDateRangeChange}
-      />
       <div className="py-2"></div>
       <CategoriesSankey fragmentRef={financialReport} />
       <div className="py-2"></div>

@@ -20,6 +20,7 @@ import { toast } from 'sonner'
 import { commitLocalUpdate, fetchQuery, graphql } from 'relay-runtime'
 import {
   loadQuery,
+  useMutation,
   usePreloadedQuery,
   useSubscribeToInvalidationState,
 } from 'react-relay'
@@ -28,8 +29,9 @@ import { Rnd } from 'react-rnd'
 import { useCallback } from 'react'
 import { useStore } from '@tanstack/react-store'
 import type { routeHouseholdIdQuery } from './__generated__/routeHouseholdIdQuery.graphql'
+import type { routeRefreshAccountDataMutation } from './__generated__/routeRefreshAccountDataMutation.graphql'
 import { AppSidebar } from '@/components/app-sidebar'
-import { MobileFabNav } from '@/components/mobile-fab-nav'
+import { AppActionDock } from '@/components/app-action-dock'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -102,6 +104,12 @@ const routeHouseholdIdQuery = graphql`
   }
 `
 
+const RouteRefreshAccountDataMutation = graphql`
+  mutation routeRefreshAccountDataMutation {
+    refresh
+  }
+`
+
 const searchSchema = z.object({
   command_open: z.boolean().optional().default(false),
   edit_transaction_id: z.string().nullable().default(null),
@@ -166,6 +174,10 @@ function RouteComponent() {
   const { setTheme } = useTheme()
   const router = useRouter()
   const isOnSettingsPage = pathname.includes('/settings')
+  const [commitRefresh, isRefreshInFlight] =
+    useMutation<routeRefreshAccountDataMutation>(
+      RouteRefreshAccountDataMutation,
+    )
 
   const currencies = (data.household.householdCurrencies ?? []).filter(
     (hc) => hc.important,
@@ -185,6 +197,30 @@ function RouteComponent() {
     },
     [router],
   )
+
+  const handleRefreshAccountData = useCallback(() => {
+    commitRefresh({
+      variables: {},
+      updater: (store, response) => {
+        if (response?.refresh) {
+          store.get(params.householdId)?.invalidateRecord()
+        }
+      },
+      onCompleted: (response, errors) => {
+        if (errors?.length || !response?.refresh) {
+          toast.error(
+            `Sync failed: ${errors?.[0]?.message ?? 'No data was refreshed'}`,
+          )
+          return
+        }
+
+        toast.success('Account data refreshed.')
+      },
+      onError: (error) => {
+        toast.error(`Sync failed: ${error.message}`)
+      },
+    })
+  }, [commitRefresh, params.householdId])
 
   useSubscribeToInvalidationState([params.householdId], () => {
     fetchQuery(
@@ -253,18 +289,17 @@ function RouteComponent() {
                       <div className="border-y-0">
                         <SnapshotDialog fragmentRef={data.household} />
                       </div>
-                      <div className="border-y-0">
+                      <div className="hidden border-y-0 md:block">
                         <Button
                           variant="ghost"
                           className="size-10 shrink-0 cursor-pointer rounded-none border-0 bg-clip-border"
-                          onClick={() => {
-                            commitLocalUpdate(environment, (store) => {
-                              store.invalidateStore()
-                            })
-                            router.invalidate()
-                          }}
+                          onClick={handleRefreshAccountData}
+                          disabled={isRefreshInFlight}
+                          aria-label="Refresh account data"
                         >
-                          <RefreshCwIcon />
+                          <RefreshCwIcon
+                            className={isRefreshInFlight ? 'animate-spin' : ''}
+                          />
                         </Button>
                       </div>
                       <DropdownMenu>
@@ -303,11 +338,15 @@ function RouteComponent() {
                       </Button>
                     </div>
                   </header>
-                  <div className="flex flex-1 flex-col">
+                  <div className="flex flex-1 flex-col pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">
                     <Outlet />
                   </div>
                 </SidebarInset>
-                <MobileFabNav />
+                <AppActionDock
+                  isMobile={isMobile}
+                  isRefreshing={isRefreshInFlight}
+                  onRefresh={handleRefreshAccountData}
+                />
 
                 {!isMobile && (
                   <FloatingLogTransactionWindow fragmentRef={data.household} />

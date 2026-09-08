@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7a7af7bcc569318067303d74c498247c>>
+ * @generated SignedSource<<2b216957ebd69ca5790148775c27c977>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,12 +9,10 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type AccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type routeAccountIdFragment$data = {
   readonly archived: boolean;
   readonly id: string;
-  readonly type: AccountType;
   readonly " $fragmentType": "routeAccountIdFragment";
 };
 export type routeAccountIdFragment$key = {
@@ -39,13 +37,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "type",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "archived",
       "storageKey": null
     }
@@ -54,6 +45,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "e6d196c17915b1fa883199fe9d5e33fb";
+(node as any).hash = "48ed5144d5b701c6508979d5c4914492";
 
 export default node;

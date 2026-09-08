@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c106681c8223f2336e8ef993c3a31baa>>
+ * @generated SignedSource<<4af81964040ea98e7b535ae5b05286e7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -213,12 +213,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bd572b10d311cff30ebb32b44bbdc09d",
+    "cacheID": "968881913c991cb773fcf0df8f6c9fb2",
     "id": null,
     "metadata": {},
     "name": "routeAccountIdQuery",
     "operationKind": "query",
-    "text": "query routeAccountIdQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ... on Account {\n      ...accountCardFragment\n      ...routeAccountIdFragment\n    }\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment routeAccountIdFragment on Account {\n  id\n  type\n  archived\n}\n"
+    "text": "query routeAccountIdQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ... on Account {\n      ...accountCardFragment\n      ...routeAccountIdFragment\n    }\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment routeAccountIdFragment on Account {\n  id\n  archived\n}\n"
   }
 };
 })();

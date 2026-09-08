@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bfb77fce8874b00d9dfa0bd93f60569c>>
+ * @generated SignedSource<<111f636ebebd25504911167e677a9d80>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type accountsPanelRefreshMutation$variables = Record<PropertyKey, never>;
-export type accountsPanelRefreshMutation$data = {
+export type routeRefreshAccountDataMutation$variables = Record<PropertyKey, never>;
+export type routeRefreshAccountDataMutation$data = {
   readonly refresh: boolean;
 };
-export type accountsPanelRefreshMutation = {
-  response: accountsPanelRefreshMutation$data;
-  variables: accountsPanelRefreshMutation$variables;
+export type routeRefreshAccountDataMutation = {
+  response: routeRefreshAccountDataMutation$data;
+  variables: routeRefreshAccountDataMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -33,7 +33,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "accountsPanelRefreshMutation",
+    "name": "routeRefreshAccountDataMutation",
     "selections": (v0/*: any*/),
     "type": "Mutation",
     "abstractKey": null
@@ -42,20 +42,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "accountsPanelRefreshMutation",
+    "name": "routeRefreshAccountDataMutation",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "1116a6184fdc01e57802156d79b74b7c",
+    "cacheID": "f868b032477e700bd3a5114e9b15f087",
     "id": null,
     "metadata": {},
-    "name": "accountsPanelRefreshMutation",
+    "name": "routeRefreshAccountDataMutation",
     "operationKind": "mutation",
-    "text": "mutation accountsPanelRefreshMutation {\n  refresh\n}\n"
+    "text": "mutation routeRefreshAccountDataMutation {\n  refresh\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1d1beabbb43fb3faf2c5035a3eddb2c7";
+(node as any).hash = "02a030ad4648da7d20867c8b07f34c37";
 
 export default node;

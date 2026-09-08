@@ -22,7 +22,7 @@ import currency from 'currency.js'
 import { SubscriptionCard } from './subscription-card'
 
 import type { subscriptionsPanelFragment$key } from './__generated__/subscriptionsPanelFragment.graphql'
-import { PlusButton } from '@/components/plus-button'
+import { PageAddButton } from '@/components/page-add-button'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
 
 const SubscriptionsPanelFragment = graphql`
@@ -186,38 +186,38 @@ export function SubscriptionsPanel({ fragmentRef }: SubscriptionsPanelProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 z-20 flex flex-col items-end gap-2 lg:absolute">
-        <PlusButton
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-[0.6875rem] font-medium tracking-wider uppercase">
+            Monthly Spend
+          </span>
+          <div className="text-3xl font-semibold tracking-tight tabular-nums">
+            {formatCurrencyWithPrivacyMode({
+              value: monthlyAverage,
+              currencyCode: displayCurrencyCode,
+            })}
+          </div>
+          <div className="text-muted-foreground mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs tabular-nums">
+            <span>
+              {formatCurrencyWithPrivacyMode({
+                value: yearlyAverage,
+                currencyCode: displayCurrencyCode,
+              })}{' '}
+              <span className="text-muted-foreground/60">yearly</span>
+            </span>
+            <span>
+              {activeCount}{' '}
+              <span className="text-muted-foreground/60">
+                {activeCount === 1 ? 'subscription' : 'subscriptions'}
+              </span>
+            </span>
+          </div>
+        </div>
+        <PageAddButton
+          label="Add subscription"
           to="/household/$householdId/subscriptions/new"
           params={{ householdId }}
         />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <span className="text-[0.6875rem] font-medium tracking-wider uppercase">
-          Monthly Spend
-        </span>
-        <div className="text-3xl font-semibold tracking-tight tabular-nums">
-          {formatCurrencyWithPrivacyMode({
-            value: monthlyAverage,
-            currencyCode: displayCurrencyCode,
-          })}
-        </div>
-        <div className="text-muted-foreground mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs tabular-nums">
-          <span>
-            {formatCurrencyWithPrivacyMode({
-              value: yearlyAverage,
-              currencyCode: displayCurrencyCode,
-            })}{' '}
-            <span className="text-muted-foreground/60">yearly</span>
-          </span>
-          <span>
-            {activeCount}{' '}
-            <span className="text-muted-foreground/60">
-              {activeCount === 1 ? 'subscription' : 'subscriptions'}
-            </span>
-          </span>
-        </div>
       </div>
 
       <div className="py-2"></div>
