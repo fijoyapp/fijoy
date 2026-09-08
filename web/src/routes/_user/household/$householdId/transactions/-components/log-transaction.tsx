@@ -106,8 +106,11 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
   }, [selectedType])
 
   return (
-    <Item ref={panelRef} className="bg-muted h-full w-full gap-0 p-0">
-      <div className="flex w-full items-center gap-3 px-4 py-3">
+    <Item
+      ref={panelRef}
+      className="h-full min-h-0 w-full flex-col flex-nowrap items-stretch gap-0 overflow-hidden p-0"
+    >
+      <div className="bg-muted flex w-full shrink-0 items-center gap-3 px-4 py-3">
         <div
           role="group"
           aria-label="Transaction kind"
@@ -152,12 +155,14 @@ export function LogTransaction({ fragmentRef }: NewTransactionProps) {
         </ScrollArea>
       </div>
 
-      {selectedType === 'expense' && <NewExpense fragmentRef={data} />}
-      {selectedType === 'income' && <NewIncome fragmentRef={data} />}
-      {selectedType === 'transfer' && <NewTransfer fragmentRef={data} />}
-      {selectedType === 'buy' && <NewBuy fragmentRef={data} />}
-      {selectedType === 'sell' && <NewSell fragmentRef={data} />}
-      {selectedType === 'move' && <NewMove fragmentRef={data} />}
+      <ScrollArea className="min-h-0 w-full flex-1 [&_[data-slot=scroll-area-viewport]]:overscroll-contain">
+        {selectedType === 'expense' && <NewExpense fragmentRef={data} />}
+        {selectedType === 'income' && <NewIncome fragmentRef={data} />}
+        {selectedType === 'transfer' && <NewTransfer fragmentRef={data} />}
+        {selectedType === 'buy' && <NewBuy fragmentRef={data} />}
+        {selectedType === 'sell' && <NewSell fragmentRef={data} />}
+        {selectedType === 'move' && <NewMove fragmentRef={data} />}
+      </ScrollArea>
     </Item>
   )
 }
