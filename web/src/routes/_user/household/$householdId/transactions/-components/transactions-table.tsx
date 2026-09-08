@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { graphql, useFragment } from 'react-relay'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -85,6 +85,8 @@ type Props = {
   isLoadingNext: boolean
   loadError: string | null
   onLoadMore: () => void
+  onOpenTransaction: (transactionId: string) => void
+  onPreloadTransaction: (transactionId: string) => void
 }
 
 const LABELS = {
@@ -105,9 +107,10 @@ export function TransactionsTable({
   isLoadingNext,
   onLoadMore,
   loadError,
+  onOpenTransaction,
+  onPreloadTransaction,
 }: Props) {
   const transactions = useFragment(fragment, fragmentRef)
-  const navigate = useNavigate()
   const { formatCurrencyWithPrivacyMode } = useCurrency()
   const { isPrivacyModeEnabled } = usePrivacyMode()
   const { household } = useHousehold()
@@ -203,6 +206,8 @@ export function TransactionsTable({
                     ...search,
                     edit_transaction_id: transaction.id,
                   })}
+                  onFocus={() => onPreloadTransaction(transaction.id)}
+                  onClick={() => onPreloadTransaction(transaction.id)}
                   className="focus-visible:outline-ring block min-w-0 truncate text-sm font-medium focus-visible:outline-2"
                   title={category.name}
                 >
@@ -402,6 +407,7 @@ export function TransactionsTable({
               <tr
                 key={transaction.id}
                 className="hover:bg-muted/50 focus-within:bg-muted cursor-pointer transition-colors duration-100 motion-reduce:transition-none"
+                onPointerEnter={() => onPreloadTransaction(transaction.id)}
                 onClick={(event) => {
                   if (
                     (event.target instanceof Element &&
@@ -410,14 +416,7 @@ export function TransactionsTable({
                   )
                     return
                   if (isSorting) return
-                  navigate({
-                    to: '.',
-                    resetScroll: false,
-                    search: (search) => ({
-                      ...search,
-                      edit_transaction_id: transaction.id,
-                    }),
-                  })
+                  onOpenTransaction(transaction.id)
                 }}
               >
                 {visibleColumns.map((column) => (

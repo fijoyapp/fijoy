@@ -108,6 +108,8 @@ const defaults = {
   hasNext: true,
   isLoadingNext: false,
   onLoadMore: vi.fn(),
+  onOpenTransaction: vi.fn(),
+  onPreloadTransaction: vi.fn(),
 }
 afterEach(() => {
   cleanup()
@@ -127,12 +129,10 @@ it('keeps transfer legs and investment quantities separate with their currencies
   expect(within(buy).getAllByRole('cell')[3].textContent).toBe(
     '-1500 USD+10 AAPL @ 150 USD',
   )
+  fireEvent.pointerEnter(transfer)
+  expect(defaults.onPreloadTransaction).toHaveBeenCalledWith('transfer')
   fireEvent.click(within(transfer).getByText('Checking'))
-  const navigation = state.navigate.mock.calls[0][0]
-  expect(navigation.search({ start: '2026-09-01' })).toEqual({
-    start: '2026-09-01',
-    edit_transaction_id: 'transfer',
-  })
+  expect(defaults.onOpenTransaction).toHaveBeenCalledWith('transfer')
 })
 
 it('masks both cash amounts and investment quantities in privacy mode', () => {

@@ -1,9 +1,10 @@
 import {
   graphql,
   useFragment,
-  useLazyLoadQuery,
   useMutation,
+  usePreloadedQuery,
 } from 'react-relay'
+import type { PreloadedQuery } from 'react-relay'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -207,32 +208,30 @@ const formSchema = z.object({
 })
 
 type EditTransactionDialogProps = {
-  transactionId: string
+  queryRef: PreloadedQuery<editTransactionDialogQuery>
 }
 
 export function EditTransactionDialog({
-  transactionId,
+  queryRef,
 }: EditTransactionDialogProps) {
-  const queryRef = useLazyLoadQuery<editTransactionDialogQuery>(
+  const queryData = usePreloadedQuery<editTransactionDialogQuery>(
     EditTransactionDialogQuery,
-    {
-      transactionId,
-    },
+    queryRef,
   )
 
-  invariant(queryRef.node?.__typename === 'Transaction')
+  invariant(queryData.node?.__typename === 'Transaction')
   const transaction = useFragment<editTransactionDialogTransactionFragment$key>(
     editTransactionDialogTransactionFragment,
-    queryRef.node,
+    queryData.node,
   )
   const categoriesData =
     useFragment<editTransactionDialogCategoriesFragment$key>(
       editTransactionDialogCategoriesFragment,
-      queryRef,
+      queryData,
     )
   const householdData = useFragment<editTransactionDialogHouseholdFragment$key>(
     editTransactionDialogHouseholdFragment,
-    queryRef.household,
+    queryData.household,
   )
 
   const navigate = useNavigate()
