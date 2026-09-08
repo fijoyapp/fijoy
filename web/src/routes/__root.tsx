@@ -9,6 +9,7 @@ import '../styles.css'
 import { RelayEnvironmentProvider } from 'react-relay'
 import { environment } from '@/environment'
 import { TailwindIndicator } from '@/components/tailwind-indicator'
+import { PwaUpdatePrompt } from '@/components/pwa-update-prompt'
 import { PrivacyModeProvider } from '@/hooks/use-privacy-mode'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { env } from '@/env'
@@ -37,6 +38,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             ]}
           />
           <TailwindIndicator />
+          <PwaUpdatePrompt />
           <Toaster position={isMobile ? 'top-right' : 'bottom-right'} />
         </TooltipProvider>
       </PrivacyModeProvider>
