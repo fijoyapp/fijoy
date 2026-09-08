@@ -222,7 +222,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 flex flex-col items-end gap-2 lg:absolute">
+      <div className="fixed right-4 bottom-4 z-20 flex flex-col items-end gap-2 lg:absolute">
         <Button
           variant="outline"
           nativeButton={true}

@@ -11,6 +11,17 @@ import { useCurrency } from '@/hooks/use-currency'
 import { getLogoDomainURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'
 import { newestActivityFirst } from '@/lib/sort-by-update-time'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const balanceFragment = graphql`
   fragment transactionAccountPickerBalanceFragment on Account {
@@ -58,7 +69,6 @@ export function TransactionAccountPicker({
   onValueChange,
   onBlur,
   invalid,
-  children,
   expanded: controlledExpanded,
   onExpand,
   disabled = false,
@@ -119,7 +129,74 @@ export function TransactionAccountPicker({
     groups.find((group) => preferredTypes?.includes(group.type))?.type ??
     groups[0]?.type
 
-  if (!isMobile) return children
+  if (!isMobile) {
+    return (
+      <DropdownMenu
+        onOpenChange={(open) => {
+          if (!open) onBlur()
+        }}
+      >
+        <DropdownMenuTrigger
+          render={
+            <Button
+              id={name}
+              name={name}
+              type="button"
+              variant="outline"
+              disabled={disabled}
+              aria-invalid={invalid}
+              aria-label={`${label}: ${selected?.name ?? (disabled ? 'Select a source account first' : 'Select an account')}`}
+              className="h-12 w-full justify-start gap-2 p-2 text-left font-normal"
+            />
+          }
+        >
+          {selected ? (
+            <AccountDetails account={selected} />
+          ) : (
+            <span className="text-muted-foreground min-w-0 flex-1 truncate text-left">
+              {disabled ? 'Select a source account first' : 'Select an account'}
+            </span>
+          )}
+          <ChevronDownIcon data-icon="inline-end" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="max-h-none overflow-hidden p-0">
+          <ScrollArea className="max-h-80 [&_[data-slot=scroll-area-viewport]]:max-h-80">
+            <div className="p-1">
+              {groups.map((group, index) => (
+                <div key={group.type}>
+                  {index > 0 ? <DropdownMenuSeparator /> : null}
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>{group.title}</DropdownMenuLabel>
+                    <DropdownMenuRadioGroup
+                      value={value}
+                      onValueChange={(nextValue) => {
+                        if (typeof nextValue === 'string')
+                          onValueChange(nextValue)
+                      }}
+                    >
+                      {group.accounts.map((account) => (
+                        <DropdownMenuRadioItem
+                          key={account.id}
+                          value={account.id}
+                          aria-label={account.name}
+                          className="min-h-10 py-1.5"
+                        >
+                          <AccountDetails
+                            account={account}
+                            selected={value === account.id}
+                          />
+                        </DropdownMenuRadioItem>
+                      ))}
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuGroup>
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
 
   if (!expanded || disabled) {
     return (

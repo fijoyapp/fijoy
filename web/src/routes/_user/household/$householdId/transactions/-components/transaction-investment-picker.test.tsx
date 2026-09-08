@@ -4,7 +4,11 @@ import { useState } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TransactionInvestmentPicker } from './transaction-investment-picker'
 
-vi.mock('@/hooks/use-mobile', () => ({ useIsMobile: () => true }))
+const mobileState = vi.hoisted(() => ({ value: true }))
+
+vi.mock('@/hooks/use-mobile', () => ({
+  useIsMobile: () => mobileState.value,
+}))
 vi.mock('@/lib/logo', () => ({
   getLogoCryptoURL: () => '',
   getLogoTickerURL: () => '',
@@ -58,7 +62,10 @@ function Picker() {
   )
 }
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  mobileState.value = true
+})
 
 it('collapses to the selected investment and expands when clicked', () => {
   render(<Picker />)
@@ -71,4 +78,23 @@ it('collapses to the selected investment and expands when clicked', () => {
 
   fireEvent.click(summary)
   expect(screen.getByRole('radio', { name: /Bitcoin/ })).not.toBeNull()
+})
+
+it('shows investment identity in desktop options and the selected trigger', () => {
+  mobileState.value = false
+  render(<Picker />)
+
+  fireEvent.click(
+    screen.getByRole('button', {
+      name: 'Investment: Select an investment',
+    }),
+  )
+  expect(document.querySelector('[data-slot="scroll-area"]')).not.toBeNull()
+  fireEvent.click(
+    screen.getByRole('menuitemradio', { name: 'Index Fund, IDX' }),
+  )
+
+  expect(
+    screen.getByRole('button', { name: 'Investment: Index Fund, IDX' }),
+  ).toBeTruthy()
 })

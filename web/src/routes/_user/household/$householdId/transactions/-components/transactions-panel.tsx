@@ -89,7 +89,7 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-      <div className="fixed right-4 bottom-4 lg:absolute">
+      <div className="fixed right-4 bottom-4 z-20 lg:absolute">
         <Button
           nativeButton={true}
           size="icon-lg"
