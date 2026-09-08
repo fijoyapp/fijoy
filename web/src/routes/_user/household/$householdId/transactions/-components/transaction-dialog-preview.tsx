@@ -236,7 +236,7 @@ export function TransactionDialogPreview({
           <FieldGroup>
             <PreviewField label="Description" />
             <PreviewField label="Date" />
-            <PreviewField label="Category" />
+            <PreviewField label="Category" controlClassName="h-9" />
             <FieldSet data-slot="transaction-dialog-preview-field">
               <FieldLegend variant="label">Options</FieldLegend>
               <FieldGroup data-slot="checkbox-group">
@@ -261,11 +261,19 @@ export function TransactionDialogPreview({
   )
 }
 
-function PreviewField({ label }: { label: string }) {
+function PreviewField({
+  label,
+  controlClassName = 'h-7',
+}: {
+  label: string
+  controlClassName?: string
+}) {
   return (
     <Field data-slot="transaction-dialog-preview-field">
       <FieldLabel>{label}</FieldLabel>
-      <Skeleton className="h-7 w-full motion-reduce:animate-none" />
+      <Skeleton
+        className={cn('w-full motion-reduce:animate-none', controlClassName)}
+      />
     </Field>
   )
 }

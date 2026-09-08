@@ -109,6 +109,9 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
   const [editQueryRef, loadEditQuery, disposeEditQuery] =
     useQueryLoader<editTransactionDialogQuery>(EditTransactionDialogQuery)
   const loadedTransactionIdRef = useRef<string | null>(null)
+  const [retainedTransactionId, setRetainedTransactionId] = useState<
+    string | null
+  >(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [direction, setDirection] = useState<'ASC' | 'DESC'>('DESC')
   const [isSorting, startTransition] = useTransition()
@@ -117,6 +120,7 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
       if (loadedTransactionIdRef.current === transactionId) return
 
       loadedTransactionIdRef.current = transactionId
+      setRetainedTransactionId(transactionId)
       loadEditQuery({ transactionId }, { fetchPolicy: 'store-or-network' })
     },
     [loadEditQuery],
@@ -138,12 +142,15 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
   useEffect(() => {
     if (editTransactionId) {
       preloadTransaction(editTransactionId)
-      return
     }
+  }, [editTransactionId, preloadTransaction])
 
+  const finishClosingTransaction = useCallback(() => {
+    if (editTransactionId) return
     loadedTransactionIdRef.current = null
+    setRetainedTransactionId(null)
     disposeEditQuery()
-  }, [disposeEditQuery, editTransactionId, preloadTransaction])
+  }, [disposeEditQuery, editTransactionId])
   const changeSort = useCallback(
     (nextDirection: 'ASC' | 'DESC') => {
       startTransition(() => {
@@ -277,10 +284,12 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
       {list}
       <TransactionDetailDialog
         transactionId={editTransactionId}
+        retainedTransactionId={editTransactionId ?? retainedTransactionId}
         queryRef={editQueryRef}
         previewRef={
           transactions.find(
-            (transaction) => transaction.id === editTransactionId,
+            (transaction) =>
+              transaction.id === (editTransactionId ?? retainedTransactionId),
           ) ?? null
         }
         onClose={() => {
@@ -293,6 +302,7 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
             }),
           })
         }}
+        onCloseComplete={finishClosingTransaction}
       />
     </>
   )
@@ -300,19 +310,25 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
 
 type TransactionDetailDialogProps = {
   transactionId: string | null
+  retainedTransactionId: string | null
   queryRef: PreloadedQuery<editTransactionDialogQuery> | null | undefined
   previewRef: transactionDialogPreviewFragment$key | null
   onClose: () => void
+  onCloseComplete: () => void
 }
 
 function TransactionDetailDialog({
   transactionId,
+  retainedTransactionId,
   queryRef,
   previewRef,
   onClose,
+  onCloseComplete,
 }: TransactionDetailDialogProps) {
   const matchingQueryRef =
-    transactionId === queryRef?.variables.transactionId ? queryRef : null
+    retainedTransactionId === queryRef?.variables.transactionId
+      ? queryRef
+      : null
 
   return (
     <Dialog
@@ -320,10 +336,13 @@ function TransactionDetailDialog({
       onOpenChange={(open) => {
         if (!open) onClose()
       }}
+      onOpenChangeComplete={(open) => {
+        if (!open) onCloseComplete()
+      }}
     >
       <DialogContent>
         <ErrorBoundary
-          key={transactionId ?? 'closed'}
+          key={retainedTransactionId ?? 'closed'}
           fallback={
             <>
               <DialogHeader>
@@ -345,7 +364,7 @@ function TransactionDetailDialog({
               fallback={<TransactionDialogPreview fragmentRef={previewRef} />}
             >
               <EditTransactionDialog
-                key={transactionId}
+                key={retainedTransactionId}
                 queryRef={matchingQueryRef}
               />
             </Suspense>

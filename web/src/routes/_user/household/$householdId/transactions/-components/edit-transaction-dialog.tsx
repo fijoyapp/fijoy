@@ -49,14 +49,6 @@ import {
   FieldSet,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
 import { Calendar } from '@/components/ui/calendar'
 import {
   DropdownMenu,
@@ -75,6 +67,7 @@ import currency from 'currency.js'
 import { Separator } from '@/components/ui/separator'
 import { identity } from 'lodash-es'
 import { NodeType, useDeleteNode } from '@/lib/relay'
+import { TransactionCategoryPicker } from './transaction-category-picker'
 
 const editTransactionDialogUpdateMutation = graphql`
   mutation editTransactionDialogUpdateMutation(
@@ -150,6 +143,7 @@ const editTransactionDialogCategoriesFragment = graphql`
           id
           name
           type
+          icon
         }
       }
     }
@@ -585,36 +579,14 @@ export function EditTransactionDialog({
                 return (
                   <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Category</FieldLabel>
-                    <Combobox
-                      items={allCategories.map((cat) => cat.id)}
-                      itemToStringLabel={(item) =>
-                        allCategories.find((cat) => cat.id === item)?.name || ''
-                      }
+                    <TransactionCategoryPicker
+                      categories={allCategories}
+                      name={field.name}
                       value={field.state.value}
-                      onValueChange={(value) => {
-                        field.handleChange(value || '')
-                      }}
-                    >
-                      <ComboboxInput
-                        data-1p-ignore
-                        id={field.name}
-                        name={field.name}
-                        placeholder="Select a category"
-                        onBlur={field.handleBlur}
-                        aria-invalid={isInvalid}
-                      />
-                      <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList>
-                          {(item: string) => (
-                            <ComboboxItem key={item} value={item}>
-                              {allCategories.find((cat) => cat.id === item)
-                                ?.name || ''}
-                            </ComboboxItem>
-                          )}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
+                      onValueChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      invalid={isInvalid}
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}

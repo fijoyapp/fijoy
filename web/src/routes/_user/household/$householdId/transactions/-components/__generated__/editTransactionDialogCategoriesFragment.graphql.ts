@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e9a4237083d4cf1f0210f251183490e0>>
+ * @generated SignedSource<<7d90756950c141879727d548740f95c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type editTransactionDialogCategoriesFragment$data = {
   readonly transactionCategories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly icon: string;
         readonly id: string;
         readonly name: string;
         readonly type: TransactionCategoryType;
@@ -78,6 +79,13 @@ const node: ReaderFragment = {
                   "kind": "ScalarField",
                   "name": "type",
                   "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "icon",
+                  "storageKey": null
                 }
               ],
               "storageKey": null
@@ -93,6 +101,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "ee2b2330155fc9bf2be1b9723033748d";
+(node as any).hash = "1727d8a460b3b4f14396119d78988822";
 
 export default node;

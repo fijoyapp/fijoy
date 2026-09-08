@@ -1,4 +1,4 @@
-import { SelectionRows } from './selection-rows'
+import { SelectionRows } from '@/components/selection-rows'
 import { Tabs } from '@base-ui/react/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { graphql, useFragment } from 'react-relay'

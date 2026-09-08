@@ -13,7 +13,7 @@ vi.mock('@/lib/logo', () => ({
   getLogoCryptoURL: () => '',
   getLogoTickerURL: () => '',
 }))
-vi.mock('./selection-rows', () => ({
+vi.mock('@/components/selection-rows', () => ({
   SelectionRows: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
