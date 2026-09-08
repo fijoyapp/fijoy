@@ -2,14 +2,14 @@ import { useMemo } from 'react'
 import { graphql, useFragment } from 'react-relay'
 import { ResponsiveSankey, type CustomSankeyLayerProps } from '@nivo/sankey'
 import currency from 'currency.js'
+import { InfoIcon } from 'lucide-react'
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
 import { Item } from '@/components/ui/item'
-import { useDisplayCurrency } from '@/hooks/use-display-currency'
-
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { useCurrency } from '@/hooks/use-currency'
+import { useDisplayCurrency } from '@/hooks/use-display-currency'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import type { categoriesSankeyFragment$key } from './__generated__/categoriesSankeyFragment.graphql'
-import { InfoIcon } from 'lucide-react'
 
 const CategoriesSankeyFragment = graphql`
   fragment categoriesSankeyFragment on FinancialReport {
@@ -370,34 +370,36 @@ export function CategoriesSankey({ fragmentRef }: CategoriesSankeyProps) {
   return (
     <Item
       variant="outline"
-      className="flex-col items-stretch gap-0 overflow-x-auto px-0 py-0"
+      className="flex-col items-stretch gap-0 overflow-hidden px-0 py-0"
     >
-      <div
-        className="min-w-120"
-        style={{ height: Math.max(360, sankeyData.nodes.length * 32) }}
-      >
-        <ResponsiveSankey
-          data={sankeyData}
-          margin={{ top: 32, right: 128, bottom: 32, left: 128 }}
-          align="justify"
-          sort="auto"
-          colors={(node) => (node as NivoNode).nodeColor}
-          nodeOpacity={1}
-          nodeHoverOpacity={1}
-          nodeThickness={10}
-          nodeSpacing={32}
-          nodeBorderWidth={0}
-          nodeBorderRadius={2}
-          linkOpacity={0.4}
-          linkHoverOpacity={0.4}
-          linkContract={2}
-          linkBlendMode="normal"
-          enableLinkGradient
-          enableLabels={false}
-          isInteractive={false}
-          layers={['links', 'nodes', customLabels]}
-        />
-      </div>
+      <ScrollArea scrollbars="horizontal" className="w-full">
+        <div
+          className="min-w-120"
+          style={{ height: Math.max(360, sankeyData.nodes.length * 32) }}
+        >
+          <ResponsiveSankey
+            data={sankeyData}
+            margin={{ top: 32, right: 128, bottom: 32, left: 128 }}
+            align="justify"
+            sort="auto"
+            colors={(node) => (node as NivoNode).nodeColor}
+            nodeOpacity={1}
+            nodeHoverOpacity={1}
+            nodeThickness={10}
+            nodeSpacing={32}
+            nodeBorderWidth={0}
+            nodeBorderRadius={2}
+            linkOpacity={0.4}
+            linkHoverOpacity={0.4}
+            linkContract={2}
+            linkBlendMode="normal"
+            enableLinkGradient
+            enableLabels={false}
+            isInteractive={false}
+            layers={['links', 'nodes', customLabels]}
+          />
+        </div>
+      </ScrollArea>
     </Item>
   )
 }
