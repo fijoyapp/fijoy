@@ -38,7 +38,7 @@ export function AppActionDock({
   }
 
   return (
-    <div className="bg-background fixed inset-x-0 bottom-0 z-40 md:hidden">
+    <div className="bg-background z-40 shrink-0 md:hidden">
       <nav
         aria-label="Quick actions"
         className="border-border bg-background grid h-14 grid-cols-3 border-t"
@@ -59,8 +59,8 @@ export function AppActionDock({
           <DropdownMenuContent
             side="top"
             align="start"
-            sideOffset={12}
-            className="w-[min(18rem,calc(100vw-2rem))] rounded-none p-1 shadow-none"
+            sideOffset={8}
+            className="w-44 rounded-none p-1 shadow-none"
           >
             <div className="text-muted-foreground px-2 pt-1 pb-2 text-[0.625rem] tracking-wider uppercase">
               Go to
