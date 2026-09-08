@@ -32,7 +32,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import {
+  useNavigate,
+  useParams,
+  useRouter,
+  useSearch,
+} from '@tanstack/react-router'
 import {
   ACCOUNT_TYPE_LIST,
   ACCOUNT_CATEGORY_LABEL,
@@ -96,8 +101,14 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   const data = useFragment(AccountsPanelFragment, fragmentRef)
   const environment = useRelayEnvironment()
   const { household: _household } = useHousehold()
-  const { displayCurrencyCode, convert } = useDisplayCurrency()
+  const {
+    displayCurrencyCode,
+    nextDisplayCurrencyCode,
+    cycleDisplayCurrency,
+    convert,
+  } = useDisplayCurrency()
   const navigate = useNavigate()
+  const router = useRouter()
   const { householdId } = useParams({
     from: '/_user/household/$householdId',
   })
@@ -220,6 +231,21 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
     ]
   }, [data.accounts, convert])
 
+  const formattedDisplayValue = formatCurrencyWithPrivacyMode({
+    value: displayOptions[displayIndex].value,
+    currencyCode: displayCurrencyCode,
+    liability: displayIndex === 2,
+  })
+
+  const handleCycleDisplayCurrency = () => {
+    if (!cycleDisplayCurrency()) return
+
+    commitLocalUpdate(environment, (store) => {
+      store.invalidateStore()
+    })
+    router.invalidate()
+  }
+
   return (
     <Fragment>
       <div className="fixed right-4 bottom-4 z-20 flex flex-col items-end gap-2 lg:absolute">
@@ -254,13 +280,21 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
             </button>
           ))}
         </div>
-        <div className="text-3xl font-semibold tracking-tight tabular-nums">
-          {formatCurrencyWithPrivacyMode({
-            value: displayOptions[displayIndex].value,
-            currencyCode: displayCurrencyCode,
-            liability: displayIndex === 2, // Show liability formatting for Total Liabilities
-          })}
-        </div>
+        {nextDisplayCurrencyCode ? (
+          <button
+            type="button"
+            onClick={handleCycleDisplayCurrency}
+            title={`Switch to ${nextDisplayCurrencyCode}`}
+            aria-label={`${displayOptions[displayIndex].label}: ${formattedDisplayValue}. Displayed in ${displayCurrencyCode}. Switch to ${nextDisplayCurrencyCode}.`}
+            className="focus-visible:ring-ring/30 -mx-1 w-fit cursor-pointer px-1 text-left text-3xl font-semibold tracking-tight tabular-nums outline-none focus-visible:ring-2"
+          >
+            {formattedDisplayValue}
+          </button>
+        ) : (
+          <div className="text-3xl font-semibold tracking-tight tabular-nums">
+            {formattedDisplayValue}
+          </div>
+        )}
       </div>
       <div className="py-2"></div>
       <Suspense

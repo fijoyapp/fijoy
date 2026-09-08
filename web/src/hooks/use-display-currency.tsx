@@ -3,7 +3,10 @@ import { graphql, useFragment } from 'react-relay'
 import { useStore } from '@tanstack/react-store'
 import currency from 'currency.js'
 import type { useDisplayCurrencyFragment$key } from './__generated__/useDisplayCurrencyFragment.graphql'
-import { displayCurrencyIdStore } from './display-currency-store'
+import {
+  displayCurrencyIdStore,
+  setDisplayCurrencyId,
+} from './display-currency-store'
 import { identity } from 'lodash-es'
 import invariant from 'tiny-invariant'
 import { useUserHousehold } from './use-user-household'
@@ -59,18 +62,36 @@ export const useDisplayCurrency = () => {
 
   const { userHousehold } = useUserHousehold()
 
-  const displayCurrencyCode = useMemo(() => {
+  const displayCurrencies = useMemo(() => {
     invariant(data.householdCurrencies, 'householdCurrencies is required')
 
+    return data.householdCurrencies.filter((currency) => currency.important)
+  }, [data.householdCurrencies])
+
+  const displayCurrencyCode = useMemo(() => {
     if (storedId) {
-      const hc = data.householdCurrencies.find(
-        (c) => c.id === storedId && c.important,
-      )
+      const hc = displayCurrencies.find((currency) => currency.id === storedId)
       if (hc) return hc.code
     }
 
     return userHousehold.householdCurrency.code
-  }, [data.householdCurrencies, storedId, userHousehold.householdCurrency.code])
+  }, [displayCurrencies, storedId, userHousehold.householdCurrency.code])
+
+  const nextDisplayCurrency = useMemo(() => {
+    if (displayCurrencies.length < 2) return null
+
+    const currentIndex = displayCurrencies.findIndex(
+      (currency) => currency.code === displayCurrencyCode,
+    )
+    return displayCurrencies[(currentIndex + 1) % displayCurrencies.length]
+  }, [displayCurrencies, displayCurrencyCode])
+
+  const cycleDisplayCurrency = useCallback(() => {
+    if (!nextDisplayCurrency) return false
+
+    setDisplayCurrencyId(nextDisplayCurrency.id)
+    return true
+  }, [nextDisplayCurrency])
 
   const rateMap = useMemo(() => {
     invariant(data.householdRates, 'householdRates is required')
@@ -99,5 +120,10 @@ export const useDisplayCurrency = () => {
     [displayCurrencyCode, rateMap],
   )
 
-  return { displayCurrencyCode, convert }
+  return {
+    displayCurrencyCode,
+    nextDisplayCurrencyCode: nextDisplayCurrency?.code ?? null,
+    cycleDisplayCurrency,
+    convert,
+  }
 }
