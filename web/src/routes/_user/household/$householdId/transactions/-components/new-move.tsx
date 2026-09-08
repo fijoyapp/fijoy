@@ -26,14 +26,6 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
 import { useHousehold } from '@/hooks/use-household'
 import { useUser } from '@/hooks/use-user'
 import { useDefaultOwnerUserID } from '@/hooks/use-default-owner-user-id'
@@ -71,12 +63,8 @@ const newMoveFragment = graphql`
           }
           investments {
             id
-            name
             symbol
-            type
-            latestTransaction {
-              datetime
-            }
+            ...transactionInvestmentPickerFragment
           }
         }
       }
@@ -306,49 +294,7 @@ export function NewMove({ fragmentRef }: NewMoveProps) {
                       }}
                       onBlur={field.handleBlur}
                       invalid={isInvalid}
-                    >
-                      <Combobox
-                        items={allInvestments.map((inv) => inv.id)}
-                        itemToStringLabel={(item) => {
-                          const inv = allInvestments.find((i) => i.id === item)
-                          return inv
-                            ? `${inv.symbol} - ${inv.name} (${inv.accountName})`
-                            : ''
-                        }}
-                        value={field.state.value}
-                        onValueChange={(value) => {
-                          field.handleChange(value || '')
-                          // Reset toInvestmentId when fromInvestmentId changes
-                          form.setFieldValue('toInvestmentId', '')
-                        }}
-                      >
-                        <ComboboxInput
-                          data-1p-ignore
-                          id={field.name}
-                          name={field.name}
-                          placeholder="Select investment to move from"
-                          onBlur={field.handleBlur}
-                          aria-invalid={isInvalid}
-                        />
-                        <ComboboxContent>
-                          <ComboboxEmpty>No investments found.</ComboboxEmpty>
-                          <ComboboxList>
-                            {(item: string) => {
-                              const inv = allInvestments.find(
-                                (i) => i.id === item,
-                              )
-                              return (
-                                <ComboboxItem key={item} value={item}>
-                                  {inv
-                                    ? `${inv.symbol} - ${inv.name} (${inv.accountName})`
-                                    : ''}
-                                </ComboboxItem>
-                              )
-                            }}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
-                    </TransactionInvestmentPicker>
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
@@ -395,55 +341,7 @@ export function NewMove({ fragmentRef }: NewMoveProps) {
                       invalid={isInvalid}
                       disabled={!fromInvestment}
                       disabledMessage="Select from investment first"
-                    >
-                      <Combobox
-                        items={toInvestments.map((inv) => inv.id)}
-                        itemToStringLabel={(item) => {
-                          const inv = toInvestments.find((i) => i.id === item)
-                          return inv
-                            ? `${inv.symbol} - ${inv.name} (${inv.accountName})`
-                            : ''
-                        }}
-                        value={field.state.value}
-                        onValueChange={(value) => {
-                          field.handleChange(value || '')
-                        }}
-                        disabled={!fromInvestment}
-                      >
-                        <ComboboxInput
-                          data-1p-ignore
-                          id={field.name}
-                          name={field.name}
-                          placeholder={
-                            fromInvestment
-                              ? 'Select investment to move to'
-                              : 'Select from investment first'
-                          }
-                          onBlur={field.handleBlur}
-                          aria-invalid={isInvalid}
-                          disabled={!fromInvestment}
-                        />
-                        <ComboboxContent>
-                          <ComboboxEmpty>
-                            No matching investments found.
-                          </ComboboxEmpty>
-                          <ComboboxList>
-                            {(item: string) => {
-                              const inv = toInvestments.find(
-                                (i) => i.id === item,
-                              )
-                              return (
-                                <ComboboxItem key={item} value={item}>
-                                  {inv
-                                    ? `${inv.symbol} - ${inv.name} (${inv.accountName})`
-                                    : ''}
-                                </ComboboxItem>
-                              )
-                            }}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
-                    </TransactionInvestmentPicker>
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}

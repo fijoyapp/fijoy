@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<21989f527739f2996bf2d2e19ad2c02a>>
+ * @generated SignedSource<<1e42c4942eec92f16b540dfc3f0315a6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -42,17 +42,24 @@ v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "type",
   "storageKey": null
 },
 v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "type",
+  "name": "name",
   "storageKey": null
 },
 v4 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "icon",
+  "storageKey": null
+},
+v5 = {
   "alias": null,
   "args": null,
   "concreteType": "Transaction",
@@ -69,13 +76,6 @@ v4 = {
     },
     (v1/*: any*/)
   ],
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "icon",
   "storageKey": null
 };
 return {
@@ -170,14 +170,6 @@ return {
                       (v2/*: any*/),
                       (v3/*: any*/),
                       (v4/*: any*/),
-                      (v5/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "value",
-                        "storageKey": null
-                      },
                       {
                         "alias": null,
                         "args": null,
@@ -204,19 +196,7 @@ return {
                         ],
                         "storageKey": null
                       },
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "User",
-                        "kind": "LinkedField",
-                        "name": "user",
-                        "plural": false,
-                        "selections": [
-                          (v2/*: any*/),
-                          (v1/*: any*/)
-                        ],
-                        "storageKey": null
-                      },
+                      (v5/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -226,7 +206,7 @@ return {
                         "plural": true,
                         "selections": [
                           (v1/*: any*/),
-                          (v2/*: any*/),
+                          (v3/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -234,9 +214,16 @@ return {
                             "name": "symbol",
                             "storageKey": null
                           },
-                          (v3/*: any*/),
-                          (v4/*: any*/)
+                          (v2/*: any*/),
+                          (v5/*: any*/)
                         ],
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "value",
                         "storageKey": null
                       }
                     ],
@@ -275,7 +262,7 @@ return {
                       (v1/*: any*/),
                       (v2/*: any*/),
                       (v3/*: any*/),
-                      (v5/*: any*/)
+                      (v4/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -292,12 +279,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "f3679c5f8bf7a03bc6bee0fadf0a4ecb",
+    "cacheID": "a7cb1e6cbc5567991673c222e4009f91",
     "id": null,
     "metadata": {},
     "name": "newTransactionQuery",
     "operationKind": "query",
-    "text": "query newTransactionQuery(\n  $viewUserIds: [ID!]\n) {\n  household {\n    ...logTransactionFragment_3rIbPZ\n    id\n  }\n}\n\nfragment logTransactionFragment_3rIbPZ on Household {\n  ...newExpenseFragment_3rIbPZ\n  ...newIncomeFragment_3rIbPZ\n  ...newTransferFragment_3rIbPZ\n  ...newBuyFragment_3rIbPZ\n  ...newSellFragment_3rIbPZ\n  ...newMoveFragment_3rIbPZ\n}\n\nfragment newBuyFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        latestTransaction {\n          datetime\n          id\n        }\n        icon\n        value\n        ...transactionAccountPickerBalanceFragment\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n          type\n          latestTransaction {\n            datetime\n            id\n          }\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newExpenseFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        latestTransaction {\n          datetime\n          id\n        }\n        icon\n        value\n        ...transactionAccountPickerBalanceFragment\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        latestTransaction {\n          datetime\n          id\n        }\n        icon\n        value\n        ...transactionAccountPickerBalanceFragment\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n      }\n    }\n  }\n}\n\nfragment newMoveFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        value\n        householdCurrency {\n          code\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n          type\n          latestTransaction {\n            datetime\n            id\n          }\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newSellFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        latestTransaction {\n          datetime\n          id\n        }\n        icon\n        value\n        ...transactionAccountPickerBalanceFragment\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n          type\n          latestTransaction {\n            datetime\n            id\n          }\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransferFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        latestTransaction {\n          datetime\n          id\n        }\n        icon\n        value\n        ...transactionAccountPickerBalanceFragment\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n      }\n    }\n  }\n}\n\nfragment transactionAccountPickerBalanceFragment on Account {\n  balance\n}\n"
+    "text": "query newTransactionQuery(\n  $viewUserIds: [ID!]\n) {\n  household {\n    ...logTransactionFragment_3rIbPZ\n    id\n  }\n}\n\nfragment logTransactionFragment_3rIbPZ on Household {\n  ...newExpenseFragment_3rIbPZ\n  ...newIncomeFragment_3rIbPZ\n  ...newTransferFragment_3rIbPZ\n  ...newBuyFragment_3rIbPZ\n  ...newSellFragment_3rIbPZ\n  ...newMoveFragment_3rIbPZ\n}\n\nfragment newBuyFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        ...transactionAccountPickerFragment\n        householdCurrency {\n          code\n          id\n        }\n        investments {\n          id\n          ...transactionInvestmentPickerFragment\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newExpenseFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        ...transactionAccountPickerFragment\n        householdCurrency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        type\n        ...transactionCategoryPickerFragment\n      }\n    }\n  }\n}\n\nfragment newIncomeFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        ...transactionAccountPickerFragment\n        householdCurrency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        type\n        ...transactionCategoryPickerFragment\n      }\n    }\n  }\n}\n\nfragment newMoveFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        value\n        householdCurrency {\n          code\n          id\n        }\n        investments {\n          id\n          symbol\n          ...transactionInvestmentPickerFragment\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newSellFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        ...transactionAccountPickerFragment\n        householdCurrency {\n          code\n          id\n        }\n        investments {\n          id\n          ...transactionInvestmentPickerFragment\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment newTransferFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        ...transactionAccountPickerFragment\n        householdCurrency {\n          code\n          id\n        }\n      }\n    }\n  }\n  transactionCategories {\n    edges {\n      node {\n        id\n        type\n        ...transactionCategoryPickerFragment\n      }\n    }\n  }\n}\n\nfragment transactionAccountPickerFragment on Account {\n  name\n  icon\n  balance\n  householdCurrency {\n    code\n    id\n  }\n  latestTransaction {\n    datetime\n    id\n  }\n}\n\nfragment transactionCategoryPickerFragment on TransactionCategory {\n  name\n  icon\n}\n\nfragment transactionInvestmentPickerFragment on Investment {\n  name\n  symbol\n  type\n  latestTransaction {\n    datetime\n    id\n  }\n}\n"
   }
 };
 })();

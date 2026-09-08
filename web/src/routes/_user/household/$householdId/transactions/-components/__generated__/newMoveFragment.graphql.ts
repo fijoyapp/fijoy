@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e850516fa51cc43bc46582eb689b1229>>
+ * @generated SignedSource<<3cc764182490b1b25aa3cb097dc043b1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,6 @@
 
 import { ReaderFragment } from 'relay-runtime';
 export type AccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
-export type InvestmentType = "crypto" | "stock" | "%future added value";
 export type TransactionCategoryType = "expense" | "income" | "investment" | "setup" | "transfer" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type newMoveFragment$data = {
@@ -23,12 +22,8 @@ export type newMoveFragment$data = {
         readonly id: string;
         readonly investments: ReadonlyArray<{
           readonly id: string;
-          readonly latestTransaction: {
-            readonly datetime: any;
-          } | null | undefined;
-          readonly name: string;
           readonly symbol: string;
-          readonly type: InvestmentType;
+          readonly " $fragmentSpreads": FragmentRefs<"transactionInvestmentPickerFragment">;
         }> | null | undefined;
         readonly name: string;
         readonly type: AccountType;
@@ -72,6 +67,13 @@ v2 = {
   "args": null,
   "kind": "ScalarField",
   "name": "type",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "symbol",
   "storageKey": null
 };
 return {
@@ -164,32 +166,35 @@ return {
                   "plural": true,
                   "selections": [
                     (v0/*: any*/),
-                    (v1/*: any*/),
+                    (v3/*: any*/),
                     {
-                      "alias": null,
-                      "args": null,
-                      "kind": "ScalarField",
-                      "name": "symbol",
-                      "storageKey": null
-                    },
-                    (v2/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "Transaction",
-                      "kind": "LinkedField",
-                      "name": "latestTransaction",
-                      "plural": false,
+                      "kind": "InlineDataFragmentSpread",
+                      "name": "transactionInvestmentPickerFragment",
                       "selections": [
+                        (v1/*: any*/),
+                        (v3/*: any*/),
+                        (v2/*: any*/),
                         {
                           "alias": null,
                           "args": null,
-                          "kind": "ScalarField",
-                          "name": "datetime",
+                          "concreteType": "Transaction",
+                          "kind": "LinkedField",
+                          "name": "latestTransaction",
+                          "plural": false,
+                          "selections": [
+                            {
+                              "alias": null,
+                              "args": null,
+                              "kind": "ScalarField",
+                              "name": "datetime",
+                              "storageKey": null
+                            }
+                          ],
                           "storageKey": null
                         }
                       ],
-                      "storageKey": null
+                      "args": null,
+                      "argumentDefinitions": []
                     }
                   ],
                   "storageKey": null
@@ -245,6 +250,6 @@ return {
 };
 })();
 
-(node as any).hash = "bf48bb99fadedefa3d257f7bce820de9";
+(node as any).hash = "9111e75d37ca9f6a51d6524de4fb68ff";
 
 export default node;

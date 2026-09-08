@@ -17,6 +17,10 @@ vi.mock('@/components/selection-rows', () => ({
 vi.mock('@/components/category-icon', () => ({
   CategoryIcon: () => <span aria-hidden="true" />,
 }))
+vi.mock('relay-runtime', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('relay-runtime')>()),
+  readInlineData: (_fragment: unknown, fragmentRef: unknown) => fragmentRef,
+}))
 
 const categories = [
   { id: 'groceries', name: 'Groceries', type: 'expense' },
@@ -27,7 +31,7 @@ function Picker() {
   const [value, setValue] = useState('')
   return (
     <TransactionCategoryPicker
-      categories={categories}
+      categories={categories as never}
       name="category"
       value={value}
       onValueChange={setValue}

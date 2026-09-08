@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<21dae84c58ed87b6dd3286cb15c7bb58>>
+ * @generated SignedSource<<a88ce957be90ba7d16724ac49c32f9a9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type newInvestmentQuery$variables = Record<PropertyKey, never>;
+export type newInvestmentQuery$variables = {
+  viewUserIds?: ReadonlyArray<string> | null | undefined;
+};
 export type newInvestmentQuery$data = {
   readonly household: {
     readonly " $fragmentSpreads": FragmentRefs<"newInvestmentFragment">;
@@ -23,28 +25,35 @@ export type newInvestmentQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "viewUserIds"
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v2 = [
+v3 = [
   {
     "kind": "Literal",
     "name": "symbol",
     "value": ""
   }
 ],
-v3 = [
+v4 = [
   {
     "alias": null,
     "args": null,
@@ -66,7 +75,7 @@ v3 = [
     "name": "exchange",
     "storageKey": null
   },
-  (v1/*: any*/),
+  (v2/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -77,7 +86,7 @@ v3 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "newInvestmentQuery",
@@ -91,7 +100,13 @@ return {
         "plural": false,
         "selections": [
           {
-            "args": null,
+            "args": [
+              {
+                "kind": "Variable",
+                "name": "viewUserIds",
+                "variableName": "viewUserIds"
+              }
+            ],
             "kind": "FragmentSpread",
             "name": "newInvestmentFragment"
           }
@@ -114,7 +129,7 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "newInvestmentQuery",
     "selections": [
@@ -130,11 +145,20 @@ return {
             "alias": null,
             "args": [
               {
-                "kind": "Literal",
-                "name": "where",
-                "value": {
-                  "archived": false
-                }
+                "fields": [
+                  {
+                    "kind": "Literal",
+                    "name": "archived",
+                    "value": false
+                  },
+                  {
+                    "kind": "Variable",
+                    "name": "userIDIn",
+                    "variableName": "viewUserIds"
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "where"
               }
             ],
             "concreteType": "AccountConnection",
@@ -158,7 +182,7 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v0/*: any*/),
+                      (v1/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -166,7 +190,7 @@ return {
                         "name": "type",
                         "storageKey": null
                       },
-                      (v1/*: any*/),
+                      (v2/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -196,7 +220,7 @@ return {
                             "name": "code",
                             "storageKey": null
                           },
-                          (v0/*: any*/)
+                          (v1/*: any*/)
                         ],
                         "storageKey": null
                       },
@@ -208,8 +232,8 @@ return {
                         "name": "user",
                         "plural": false,
                         "selections": [
-                          (v1/*: any*/),
-                          (v0/*: any*/)
+                          (v2/*: any*/),
+                          (v1/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -220,45 +244,45 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "accounts(where:{\"archived\":false})"
+            "storageKey": null
           },
-          (v0/*: any*/)
+          (v1/*: any*/)
         ],
         "storageKey": null
       },
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "StockQuoteResult",
         "kind": "LinkedField",
         "name": "stockQuote",
         "plural": false,
-        "selections": (v3/*: any*/),
+        "selections": (v4/*: any*/),
         "storageKey": "stockQuote(symbol:\"\")"
       },
       {
         "alias": null,
-        "args": (v2/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "CryptoQuoteResult",
         "kind": "LinkedField",
         "name": "cryptoQuote",
         "plural": false,
-        "selections": (v3/*: any*/),
+        "selections": (v4/*: any*/),
         "storageKey": "cryptoQuote(symbol:\"\")"
       }
     ]
   },
   "params": {
-    "cacheID": "d23ab37876aa1a978fb98af03fb50fc5",
+    "cacheID": "1d810242ad5cef50ed0a107d8e491352",
     "id": null,
     "metadata": {},
     "name": "newInvestmentQuery",
     "operationKind": "query",
-    "text": "query newInvestmentQuery {\n  household {\n    ...newInvestmentFragment\n    id\n  }\n  ...newInvestmentStockQuoteFragment\n  ...newInvestmentCryptoQuoteFragment\n}\n\nfragment newInvestmentCryptoQuoteFragment on Query {\n  cryptoQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n\nfragment newInvestmentFragment on Household {\n  accounts(where: {archived: false}) {\n    edges {\n      node {\n        id\n        type\n        name\n        icon\n        value\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n\nfragment newInvestmentStockQuoteFragment on Query {\n  stockQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n"
+    "text": "query newInvestmentQuery(\n  $viewUserIds: [ID!]\n) {\n  household {\n    ...newInvestmentFragment_3rIbPZ\n    id\n  }\n  ...newInvestmentStockQuoteFragment\n  ...newInvestmentCryptoQuoteFragment\n}\n\nfragment newInvestmentCryptoQuoteFragment on Query {\n  cryptoQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n\nfragment newInvestmentFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        name\n        icon\n        value\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n      }\n    }\n  }\n}\n\nfragment newInvestmentStockQuoteFragment on Query {\n  stockQuote(symbol: \"\") {\n    currentPrice\n    symbol\n    exchange\n    name\n    currency\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a767ce92434925fc02e70d5833890286";
+(node as any).hash = "a7af99fb4b124b48425c3aa8b2379f49";
 
 export default node;

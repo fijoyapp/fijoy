@@ -51,6 +51,7 @@ import {
 } from '@/components/ui/dialog'
 import { TransactionDialogPreview } from './transaction-dialog-preview'
 import type { transactionDialogPreviewFragment$key } from './__generated__/transactionDialogPreviewFragment.graphql'
+import { useHouseholdViewScope } from '@/hooks/use-household-view-scope'
 
 const transactionsListFragment = graphql`
   fragment transactionsListFragment on Household
@@ -106,9 +107,10 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
     select: (search) => search.edit_transaction_id,
   })
   const navigate = useNavigate()
+  const { viewUserIds } = useHouseholdViewScope()
   const [editQueryRef, loadEditQuery, disposeEditQuery] =
     useQueryLoader<editTransactionDialogQuery>(EditTransactionDialogQuery)
-  const loadedTransactionIdRef = useRef<string | null>(null)
+  const loadedEditKeyRef = useRef<string | null>(null)
   const [retainedTransactionId, setRetainedTransactionId] = useState<
     string | null
   >(null)
@@ -117,13 +119,18 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
   const [isSorting, startTransition] = useTransition()
   const preloadTransaction = useCallback(
     (transactionId: string) => {
-      if (loadedTransactionIdRef.current === transactionId) return
+      const scopeKey = viewUserIds?.join(',') ?? 'all'
+      const editKey = `${transactionId}:${scopeKey}`
+      if (loadedEditKeyRef.current === editKey) return
 
-      loadedTransactionIdRef.current = transactionId
+      loadedEditKeyRef.current = editKey
       setRetainedTransactionId(transactionId)
-      loadEditQuery({ transactionId }, { fetchPolicy: 'store-or-network' })
+      loadEditQuery(
+        { transactionId, viewUserIds },
+        { fetchPolicy: 'store-or-network' },
+      )
     },
-    [loadEditQuery],
+    [loadEditQuery, viewUserIds],
   )
   const openTransaction = useCallback(
     (transactionId: string) => {
@@ -147,7 +154,7 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
 
   const finishClosingTransaction = useCallback(() => {
     if (editTransactionId) return
-    loadedTransactionIdRef.current = null
+    loadedEditKeyRef.current = null
     setRetainedTransactionId(null)
     disposeEditQuery()
   }, [disposeEditQuery, editTransactionId])

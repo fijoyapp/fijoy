@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<47fd37c6cd8a52032dbc114862be2607>>
+ * @generated SignedSource<<4a3411396da708eee9ecde8fc7d3bd0d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type editTransactionDialogQuery$variables = {
   transactionId: string;
+  viewUserIds?: ReadonlyArray<string> | null | undefined;
 };
 export type editTransactionDialogQuery$data = {
   readonly household: {
@@ -38,6 +39,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "transactionId"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "viewUserIds"
   }
 ],
 v1 = [
@@ -178,7 +184,13 @@ return {
         "plural": false,
         "selections": [
           {
-            "args": null,
+            "args": [
+              {
+                "kind": "Variable",
+                "name": "viewUserIds",
+                "variableName": "viewUserIds"
+              }
+            ],
             "kind": "FragmentSpread",
             "name": "editTransactionDialogHouseholdFragment"
           }
@@ -396,8 +408,8 @@ return {
                 "plural": false,
                 "selections": [
                   (v3/*: any*/),
-                  (v6/*: any*/),
                   (v7/*: any*/),
+                  (v6/*: any*/),
                   (v12/*: any*/)
                 ],
                 "storageKey": null
@@ -420,11 +432,20 @@ return {
             "alias": null,
             "args": [
               {
-                "kind": "Literal",
-                "name": "where",
-                "value": {
-                  "archived": false
-                }
+                "fields": [
+                  {
+                    "kind": "Literal",
+                    "name": "archived",
+                    "value": false
+                  },
+                  {
+                    "kind": "Variable",
+                    "name": "userIDIn",
+                    "variableName": "viewUserIds"
+                  }
+                ],
+                "kind": "ObjectValue",
+                "name": "where"
               }
             ],
             "concreteType": "AccountConnection",
@@ -491,7 +512,7 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "accounts(where:{\"archived\":false})"
+            "storageKey": null
           },
           (v3/*: any*/)
         ],
@@ -500,16 +521,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "613c9f0f59d36cea950496f8652d806f",
+    "cacheID": "a8fb4831fbb11fa0abb3846b81812804",
     "id": null,
     "metadata": {},
     "name": "editTransactionDialogQuery",
     "operationKind": "query",
-    "text": "query editTransactionDialogQuery(\n  $transactionId: ID!\n) {\n  node(id: $transactionId) {\n    __typename\n    ... on Transaction {\n      ...editTransactionDialogTransactionFragment\n    }\n    id\n  }\n  ...editTransactionDialogCategoriesFragment\n  household {\n    ...editTransactionDialogHouseholdFragment\n    id\n  }\n}\n\nfragment editTransactionDialogCategoriesFragment on Query {\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogHouseholdFragment on Household {\n  accounts(where: {archived: false}) {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n        value\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n        }\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogTransactionFragment on Transaction {\n  id\n  description\n  datetime\n  categoryID\n  excludeFromReports\n  category {\n    id\n    name\n    type\n  }\n  investmentLots {\n    ...investmentLotCardFragment\n    id\n    amount\n    price\n    investment {\n      id\n      account {\n        id\n      }\n    }\n  }\n  transactionEntries {\n    ...transactionEntryCardFragment\n    id\n    amount\n    account {\n      id\n    }\n  }\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n"
+    "text": "query editTransactionDialogQuery(\n  $transactionId: ID!\n  $viewUserIds: [ID!]\n) {\n  node(id: $transactionId) {\n    __typename\n    ... on Transaction {\n      ...editTransactionDialogTransactionFragment\n    }\n    id\n  }\n  ...editTransactionDialogCategoriesFragment\n  household {\n    ...editTransactionDialogHouseholdFragment_3rIbPZ\n    id\n  }\n}\n\nfragment editTransactionDialogCategoriesFragment on Query {\n  transactionCategories {\n    edges {\n      node {\n        id\n        type\n        ...transactionCategoryPickerFragment\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogHouseholdFragment_3rIbPZ on Household {\n  accounts(where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n        value\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n        }\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogTransactionFragment on Transaction {\n  id\n  description\n  datetime\n  categoryID\n  excludeFromReports\n  category {\n    id\n    name\n    type\n  }\n  investmentLots {\n    ...investmentLotCardFragment\n    id\n    amount\n    price\n    investment {\n      id\n      account {\n        id\n      }\n    }\n  }\n  transactionEntries {\n    ...transactionEntryCardFragment\n    id\n    amount\n    account {\n      id\n    }\n  }\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionCategoryPickerFragment on TransactionCategory {\n  name\n  icon\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2f83451edb6c34b490fcc8dfe71e4883";
+(node as any).hash = "c36df89390cc010258edf1525eb864e1";
 
 export default node;

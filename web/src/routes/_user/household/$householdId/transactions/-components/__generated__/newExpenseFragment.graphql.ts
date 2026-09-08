@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cf5f6f6cd1e93a7a3febdeebefbc29ba>>
+ * @generated SignedSource<<112486fd56abc65af2be787c5d019edd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,28 +19,18 @@ export type newExpenseFragment$data = {
         readonly householdCurrency: {
           readonly code: string;
         };
-        readonly icon: string | null | undefined;
         readonly id: string;
-        readonly latestTransaction: {
-          readonly datetime: any;
-        } | null | undefined;
-        readonly name: string;
         readonly type: AccountType;
-        readonly user: {
-          readonly name: string;
-        };
-        readonly value: string;
-        readonly " $fragmentSpreads": FragmentRefs<"transactionAccountPickerBalanceFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"transactionAccountPickerFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
   readonly transactionCategories: {
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly icon: string;
         readonly id: string;
-        readonly name: string;
         readonly type: TransactionCategoryType;
+        readonly " $fragmentSpreads": FragmentRefs<"transactionCategoryPickerFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -63,14 +53,14 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "type",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "type",
+  "name": "name",
   "storageKey": null
 },
 v3 = {
@@ -78,6 +68,24 @@ v3 = {
   "args": null,
   "kind": "ScalarField",
   "name": "icon",
+  "storageKey": null
+},
+v4 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "HouseholdCurrency",
+  "kind": "LinkedField",
+  "name": "householdCurrency",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "code",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -135,68 +143,43 @@ return {
               "selections": [
                 (v0/*: any*/),
                 (v1/*: any*/),
-                (v2/*: any*/),
                 {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "Transaction",
-                  "kind": "LinkedField",
-                  "name": "latestTransaction",
-                  "plural": false,
+                  "kind": "InlineDataFragmentSpread",
+                  "name": "transactionAccountPickerFragment",
                   "selections": [
+                    (v2/*: any*/),
+                    (v3/*: any*/),
                     {
                       "alias": null,
                       "args": null,
                       "kind": "ScalarField",
-                      "name": "datetime",
+                      "name": "balance",
                       "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                },
-                (v3/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "value",
-                  "storageKey": null
-                },
-                {
-                  "args": null,
-                  "kind": "FragmentSpread",
-                  "name": "transactionAccountPickerBalanceFragment"
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "HouseholdCurrency",
-                  "kind": "LinkedField",
-                  "name": "householdCurrency",
-                  "plural": false,
-                  "selections": [
+                    },
+                    (v4/*: any*/),
                     {
                       "alias": null,
                       "args": null,
-                      "kind": "ScalarField",
-                      "name": "code",
+                      "concreteType": "Transaction",
+                      "kind": "LinkedField",
+                      "name": "latestTransaction",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "datetime",
+                          "storageKey": null
+                        }
+                      ],
                       "storageKey": null
                     }
                   ],
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
                   "args": null,
-                  "concreteType": "User",
-                  "kind": "LinkedField",
-                  "name": "user",
-                  "plural": false,
-                  "selections": [
-                    (v1/*: any*/)
-                  ],
-                  "storageKey": null
-                }
+                  "argumentDefinitions": []
+                },
+                (v4/*: any*/)
               ],
               "storageKey": null
             }
@@ -232,8 +215,16 @@ return {
               "selections": [
                 (v0/*: any*/),
                 (v1/*: any*/),
-                (v2/*: any*/),
-                (v3/*: any*/)
+                {
+                  "kind": "InlineDataFragmentSpread",
+                  "name": "transactionCategoryPickerFragment",
+                  "selections": [
+                    (v2/*: any*/),
+                    (v3/*: any*/)
+                  ],
+                  "args": null,
+                  "argumentDefinitions": []
+                }
               ],
               "storageKey": null
             }
@@ -249,6 +240,6 @@ return {
 };
 })();
 
-(node as any).hash = "3bd6415f62bfe87b23b89b3c0bf86292";
+(node as any).hash = "4d6e961930db563119f2a19fe940c7b3";
 
 export default node;

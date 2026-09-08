@@ -18,6 +18,9 @@ const router = vi.hoisted(() => ({
   search: { edit_transaction_id: null as string | null },
   searchFrom: undefined as string | undefined,
 }))
+const viewScope = vi.hoisted(() => ({
+  viewUserIds: null as string[] | null,
+}))
 vi.mock('react-relay', () => ({
   usePaginationFragment: () => ({
     data: { id: 'household', transactions: { __id: 'connection', edges: [] } },
@@ -43,6 +46,9 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 vi.mock('relay-runtime', () => ({ graphql: () => ({}) }))
 vi.mock('@/hooks/use-mobile', () => ({ useIsMobile: () => false }))
+vi.mock('@/hooks/use-household-view-scope', () => ({
+  useHouseholdViewScope: () => viewScope,
+}))
 vi.mock('@/lib/relay', () => ({
   NodeType: { Transaction: 'Transaction' },
   useRegisterConnection: () => {},
@@ -74,6 +80,7 @@ afterEach(() => {
   vi.clearAllMocks()
   router.search.edit_transaction_id = null
   router.searchFrom = undefined
+  viewScope.viewUserIds = null
 })
 
 it('reads dialog search state from the shared household route', () => {
@@ -122,7 +129,37 @@ it('loads a deep-linked transaction without reloading the page query', () => {
   render(<TransactionsList fragmentRef={fragmentRef} />)
 
   expect(relay.loadEditQuery).toHaveBeenCalledWith(
-    { transactionId: 'transaction-1' },
+    { transactionId: 'transaction-1', viewUserIds: null },
     { fetchPolicy: 'store-or-network' },
   )
+})
+
+it('scopes edit-dialog account choices to the selected household members', () => {
+  router.search.edit_transaction_id = 'transaction-1'
+  viewScope.viewUserIds = ['user-1', 'user-2']
+
+  render(<TransactionsList fragmentRef={fragmentRef} />)
+
+  expect(relay.loadEditQuery).toHaveBeenCalledWith(
+    {
+      transactionId: 'transaction-1',
+      viewUserIds: ['user-1', 'user-2'],
+    },
+    { fetchPolicy: 'store-or-network' },
+  )
+})
+
+it('reloads an open edit dialog when the household view scope changes', () => {
+  router.search.edit_transaction_id = 'transaction-1'
+  viewScope.viewUserIds = ['user-1']
+  const { rerender } = render(<TransactionsList fragmentRef={fragmentRef} />)
+
+  viewScope.viewUserIds = ['user-2']
+  rerender(<TransactionsList fragmentRef={fragmentRef} />)
+
+  expect(relay.loadEditQuery).toHaveBeenLastCalledWith(
+    { transactionId: 'transaction-1', viewUserIds: ['user-2'] },
+    { fetchPolicy: 'store-or-network' },
+  )
+  expect(relay.loadEditQuery).toHaveBeenCalledTimes(2)
 })

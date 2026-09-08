@@ -27,21 +27,6 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from '@/components/ui/item'
 import { useHousehold } from '@/hooks/use-household'
 import { useUser } from '@/hooks/use-user'
 import { useDefaultOwnerUserID } from '@/hooks/use-default-owner-user-id'
@@ -50,9 +35,6 @@ import { OwnerSelect } from '../../-components/owner-select'
 import { CurrencyInput } from '@/components/currency-input'
 import { commitMutationResult } from '@/lib/relay'
 import { Calendar } from '@/components/ui/calendar'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getLogoDomainURL } from '@/lib/logo'
-import { useCurrency } from '@/hooks/use-currency'
 import { useDisplayCurrency } from '@/hooks/use-display-currency'
 
 const formSchema = z.object({
@@ -75,28 +57,14 @@ const newBuyFragment = graphql`
       edges {
         node {
           id
-          name
           type
-          latestTransaction {
-            datetime
-          }
-          icon
-          value
-          ...transactionAccountPickerBalanceFragment
+          ...transactionAccountPickerFragment
           householdCurrency {
             code
           }
-          user {
-            name
-          }
           investments {
             id
-            name
-            symbol
-            type
-            latestTransaction {
-              datetime
-            }
+            ...transactionInvestmentPickerFragment
           }
         }
       }
@@ -146,8 +114,6 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
 
   const ownerOptions = useHouseholdMembers()
   const defaultOwnerUserID = useDefaultOwnerUserID(user.id)
-  const { formatCurrencyWithPrivacyMode } = useCurrency()
-
   // Filter accounts - only investment accounts
   const investmentAccounts =
     data.accounts.edges
@@ -306,76 +272,7 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
                       }}
                       onBlur={field.handleBlur}
                       invalid={isInvalid}
-                    >
-                      <Combobox
-                        items={investmentAccounts.map((account) => account.id)}
-                        itemToStringLabel={(item) =>
-                          investmentAccounts.find((acc) => acc.id === item)
-                            ?.name || ''
-                        }
-                        value={field.state.value}
-                        onValueChange={(value) => {
-                          field.handleChange(value || '')
-                          // Reset investment when account changes
-                          form.setFieldValue('investmentId', '')
-                        }}
-                      >
-                        <ComboboxInput
-                          data-1p-ignore
-                          id={field.name}
-                          name={field.name}
-                          placeholder="Select an account"
-                          onBlur={field.handleBlur}
-                          aria-invalid={isInvalid}
-                        />
-                        <ComboboxContent>
-                          <ComboboxEmpty>No items found.</ComboboxEmpty>
-                          <ComboboxList>
-                            {(item: string) => {
-                              const account = investmentAccounts.find(
-                                (acc) => acc.id === item,
-                              )
-                              if (!account) return null
-                              return (
-                                <ComboboxItem key={item} value={item}>
-                                  <Item size="xs" className="p-0">
-                                    <ItemMedia variant="image">
-                                      <Avatar className="size-6">
-                                        <AvatarImage
-                                          src={getLogoDomainURL(
-                                            account.icon || '',
-                                          )}
-                                          alt={account.icon || 'unknown logo'}
-                                        />
-                                        <AvatarFallback>
-                                          {account.name}
-                                        </AvatarFallback>
-                                      </Avatar>
-                                    </ItemMedia>
-                                    <ItemContent>
-                                      <ItemTitle>{account.name}</ItemTitle>
-                                      <ItemDescription>
-                                        <span className="tabular-nums">
-                                          {formatCurrencyWithPrivacyMode({
-                                            value: account.value,
-                                            currencyCode:
-                                              account.householdCurrency.code,
-                                            liability:
-                                              account.type === 'liability',
-                                          })}
-                                        </span>
-                                        <span aria-hidden="true"> · </span>
-                                        {account.user.name}
-                                      </ItemDescription>
-                                    </ItemContent>
-                                  </Item>
-                                </ComboboxItem>
-                              )
-                            }}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
-                    </TransactionAccountPicker>
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
@@ -401,50 +298,7 @@ export function NewBuy({ fragmentRef }: NewBuyProps) {
                       onBlur={field.handleBlur}
                       invalid={isInvalid}
                       disabled={!selectedAccount}
-                    >
-                      <Combobox
-                        items={availableInvestments.map((inv) => inv.id)}
-                        itemToStringLabel={(item) => {
-                          const inv = availableInvestments.find(
-                            (i) => i.id === item,
-                          )
-                          return inv ? `${inv.name} (${inv.symbol})` : ''
-                        }}
-                        value={field.state.value}
-                        onValueChange={(value) => {
-                          field.handleChange(value || '')
-                        }}
-                        disabled={!selectedAccount}
-                      >
-                        <ComboboxInput
-                          data-1p-ignore
-                          id={field.name}
-                          name={field.name}
-                          placeholder={
-                            selectedAccount
-                              ? 'Select an investment'
-                              : 'Select an account first'
-                          }
-                          onBlur={field.handleBlur}
-                          aria-invalid={isInvalid}
-                        />
-                        <ComboboxContent>
-                          <ComboboxEmpty>No items found.</ComboboxEmpty>
-                          <ComboboxList>
-                            {(item: string) => {
-                              const inv = availableInvestments.find(
-                                (i) => i.id === item,
-                              )
-                              return (
-                                <ComboboxItem key={item} value={item}>
-                                  {inv ? `${inv.name} (${inv.symbol})` : ''}
-                                </ComboboxItem>
-                              )
-                            }}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
-                    </TransactionInvestmentPicker>
+                    />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}

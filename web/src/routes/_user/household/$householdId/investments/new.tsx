@@ -11,16 +11,17 @@ import {
 import { PendingComponent } from '@/components/pending-component'
 import { environment } from '@/environment'
 import { type newInvestmentQuery } from './__generated__/newInvestmentQuery.graphql'
+import { readViewUserIds } from '@/hooks/view-scope-store'
 
 export const Route = createFileRoute(
   '/_user/household/$householdId/investments/new',
 )({
   component: RouteComponent,
-  loader: () => {
+  loader: ({ params }) => {
     return loadQuery<newInvestmentQuery>(
       environment,
       newInvestmentQuery,
-      {},
+      { viewUserIds: readViewUserIds(params.householdId) },
       { fetchPolicy: 'store-or-network' },
     )
   },
@@ -28,9 +29,9 @@ export const Route = createFileRoute(
 })
 
 const newInvestmentQuery = graphql`
-  query newInvestmentQuery {
+  query newInvestmentQuery($viewUserIds: [ID!]) {
     household {
-      ...newInvestmentFragment
+      ...newInvestmentFragment @arguments(viewUserIds: $viewUserIds)
     }
     ...newInvestmentStockQuoteFragment
     ...newInvestmentCryptoQuoteFragment
@@ -50,7 +51,7 @@ function RouteComponent() {
     fetchQuery(
       environment,
       newInvestmentQuery,
-      {},
+      { viewUserIds: readViewUserIds(params.householdId) },
       { fetchPolicy: 'network-only' },
     ).subscribe({})
   })

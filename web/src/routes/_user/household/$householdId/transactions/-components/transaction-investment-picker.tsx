@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChartNoAxesCombinedIcon, ChevronDownIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { SelectionRows } from '@/components/selection-rows'
@@ -6,6 +6,9 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { getLogoCryptoURL, getLogoTickerURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'
 import { newestActivityFirst } from '@/lib/sort-by-update-time'
+import { graphql } from 'react-relay'
+import { readInlineData } from 'relay-runtime'
+import type { transactionInvestmentPickerFragment$key } from './__generated__/transactionInvestmentPickerFragment.graphql'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -17,12 +20,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-type Investment = {
+const investmentFragment = graphql`
+  fragment transactionInvestmentPickerFragment on Investment @inline {
+    name
+    symbol
+    type
+    latestTransaction {
+      datetime
+    }
+  }
+`
+
+type Investment = transactionInvestmentPickerFragment$key & {
   id: string
-  name: string
-  symbol: string
-  type: string
-  latestTransaction?: { datetime: string } | null
   accountName?: string
 }
 
@@ -36,7 +46,6 @@ type Props = {
   invalid: boolean
   disabled?: boolean
   disabledMessage?: string
-  children: ReactNode
 }
 
 export function TransactionInvestmentPicker({
@@ -55,10 +64,21 @@ export function TransactionInvestmentPicker({
   const expanded = !value || editing
   const summaryRef = useRef<HTMLButtonElement>(null)
   const wasExpanded = useRef(expanded)
-  const orderedInvestments = newestActivityFirst(investments)
+  const orderedInvestments = newestActivityFirst(
+    investments.map((investment) => {
+      const latestTransaction = investmentData(investment).latestTransaction
+      return {
+        investment,
+        latestTransaction: latestTransaction
+          ? { datetime: latestTransaction.datetime }
+          : latestTransaction,
+      }
+    }),
+  ).map(({ investment }) => investment)
   const selected = orderedInvestments.find(
     (investment) => investment.id === value,
   )
+  const selectionAvailable = !value || selected !== undefined
 
   useEffect(() => {
     if (isMobile && wasExpanded.current && !expanded) {
@@ -66,6 +86,10 @@ export function TransactionInvestmentPicker({
     }
     wasExpanded.current = expanded
   }, [expanded, isMobile])
+
+  useEffect(() => {
+    if (!selectionAvailable) onValueChange('')
+  }, [onValueChange, selectionAvailable])
 
   if (!isMobile) {
     return (
@@ -83,7 +107,7 @@ export function TransactionInvestmentPicker({
               variant="outline"
               disabled={disabled}
               aria-invalid={invalid}
-              aria-label={`${label}: ${selected ? `${selected.name}, ${selected.symbol}` : disabled ? disabledMessage : 'Select an investment'}`}
+              aria-label={`${label}: ${selected ? `${investmentData(selected).name}, ${investmentData(selected).symbol}` : disabled ? disabledMessage : 'Select an investment'}`}
               className="h-auto min-h-10 w-full justify-between px-2 py-1.5 text-left font-normal"
             />
           }
@@ -113,7 +137,7 @@ export function TransactionInvestmentPicker({
                     <DropdownMenuRadioItem
                       key={investment.id}
                       value={investment.id}
-                      aria-label={`${investment.name}, ${investment.symbol}`}
+                      aria-label={`${investmentData(investment).name}, ${investmentData(investment).symbol}`}
                       closeOnClick
                       className="min-h-10 py-1.5"
                     >
@@ -136,7 +160,7 @@ export function TransactionInvestmentPicker({
         type="button"
         id={name}
         aria-expanded={false}
-        aria-label={`${label}: ${selected.name}`}
+        aria-label={`${label}: ${investmentData(selected).name}`}
         onClick={() => setEditing(true)}
         className="border-input bg-background focus-visible:outline-ring flex min-h-11 w-full items-center gap-2 border p-2 text-left focus-visible:outline-2 focus-visible:outline-offset-2"
       >
@@ -196,14 +220,15 @@ export function TransactionInvestmentPicker({
 }
 
 function InvestmentDetails({ investment }: { investment: Investment }) {
+  const data = investmentData(investment)
   return (
     <>
       <Avatar size="sm">
         <AvatarImage
           src={
-            investment.type === 'crypto'
-              ? getLogoCryptoURL(investment.symbol)
-              : getLogoTickerURL(investment.symbol)
+            data.type === 'crypto'
+              ? getLogoCryptoURL(data.symbol)
+              : getLogoTickerURL(data.symbol)
           }
           alt=""
         />
@@ -212,17 +237,24 @@ function InvestmentDetails({ investment }: { investment: Investment }) {
         </AvatarFallback>
       </Avatar>
       <span className="flex min-w-0 flex-1 flex-col text-xs leading-4">
-        <span className="truncate" title={investment.name}>
-          {investment.name}
+        <span className="truncate" title={data.name}>
+          {data.name}
         </span>
         <span
           className="text-muted-foreground truncate"
           title={investment.accountName}
         >
-          {investment.symbol}
+          {data.symbol}
           {investment.accountName ? ` · ${investment.accountName}` : ''}
         </span>
       </span>
     </>
+  )
+}
+
+function investmentData(investment: Investment) {
+  return readInlineData<transactionInvestmentPickerFragment$key>(
+    investmentFragment,
+    investment,
   )
 }

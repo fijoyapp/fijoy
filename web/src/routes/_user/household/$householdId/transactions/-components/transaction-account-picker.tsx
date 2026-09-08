@@ -1,9 +1,10 @@
 import { SelectionRows } from '@/components/selection-rows'
 import { Tabs } from '@base-ui/react/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { graphql, useFragment } from 'react-relay'
-import type { transactionAccountPickerBalanceFragment$key } from './__generated__/transactionAccountPickerBalanceFragment.graphql'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { graphql } from 'react-relay'
+import type { transactionAccountPickerFragment$key } from './__generated__/transactionAccountPickerFragment.graphql'
+import { readInlineData } from 'relay-runtime'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronDownIcon, WalletIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -23,19 +24,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-const balanceFragment = graphql`
-  fragment transactionAccountPickerBalanceFragment on Account {
+const accountFragment = graphql`
+  fragment transactionAccountPickerFragment on Account @inline {
+    name
+    icon
     balance
+    householdCurrency {
+      code
+    }
+    latestTransaction {
+      datetime
+    }
   }
 `
 
-type Account = transactionAccountPickerBalanceFragment$key & {
+type Account = transactionAccountPickerFragment$key & {
   id: string
-  name: string
   type: string
-  latestTransaction?: { datetime: string } | null
-  icon?: string | null
-  householdCurrency: { code: string }
 }
 
 type TransactionAccountPickerProps = {
@@ -46,7 +51,6 @@ type TransactionAccountPickerProps = {
   onValueChange: (value: string) => void
   onBlur: () => void
   invalid: boolean
-  children: ReactNode
   expanded?: boolean
   onExpand?: () => void
   disabled?: boolean
@@ -92,13 +96,18 @@ export function TransactionAccountPicker({
     wasExpanded.current = expanded
   }, [expanded, isMobile])
   const selected = accounts.find((account) => account.id === value)
+  const selectionAvailable = !value || selected !== undefined
+
+  useEffect(() => {
+    if (!selectionAvailable) onValueChange('')
+  }, [onValueChange, selectionAvailable])
 
   const preferredTypeSet = new Set(preferredTypes)
   const groups = ACCOUNT_TYPES.map(([type, title], typeIndex) => ({
     type,
     title,
     typeIndex,
-    accounts: newestActivityFirst(
+    accounts: newestAccountsFirst(
       accounts.filter((account) => account.type === type),
     ),
   }))
@@ -114,8 +123,8 @@ export function TransactionAccountPicker({
           ? 0
           : 1
         : 0
-      const aActivityTime = a.accounts[0]?.latestTransaction?.datetime ?? ''
-      const bActivityTime = b.accounts[0]?.latestTransaction?.datetime ?? ''
+      const aActivityTime = accountActivityTime(a.accounts[0])
+      const bActivityTime = accountActivityTime(b.accounts[0])
       return (
         aPreferred - bPreferred ||
         bActivityTime.localeCompare(aActivityTime) ||
@@ -145,7 +154,7 @@ export function TransactionAccountPicker({
               variant="outline"
               disabled={disabled}
               aria-invalid={invalid}
-              aria-label={`${label}: ${selected?.name ?? (disabled ? 'Select a source account first' : 'Select an account')}`}
+              aria-label={`${label}: ${selected ? accountData(selected).name : disabled ? 'Select a source account first' : 'Select an account'}`}
               className="h-12 w-full justify-start gap-2 p-2 text-left font-normal"
             />
           }
@@ -178,7 +187,7 @@ export function TransactionAccountPicker({
                         <DropdownMenuRadioItem
                           key={account.id}
                           value={account.id}
-                          aria-label={account.name}
+                          aria-label={accountData(account).name}
                           closeOnClick
                           className="min-h-10 py-1.5"
                         >
@@ -207,7 +216,7 @@ export function TransactionAccountPicker({
         id={name}
         disabled={disabled}
         aria-expanded={false}
-        aria-label={`${label}: ${selected?.name ?? 'Select an account'}`}
+        aria-label={`${label}: ${selected ? accountData(selected).name : 'Select an account'}`}
         onClick={() => {
           if (isControlled) onExpand?.()
           else setEditing(true)
@@ -325,6 +334,27 @@ export function TransactionAccountPicker({
   )
 }
 
+function newestAccountsFirst(accounts: ReadonlyArray<Account>): Account[] {
+  return newestActivityFirst(
+    accounts.map((account) => ({
+      account,
+      latestTransaction: accountData(account).latestTransaction,
+    })),
+  ).map(({ account }) => account)
+}
+
+function accountActivityTime(account: Account | undefined): string {
+  if (!account) return ''
+  return accountData(account).latestTransaction?.datetime ?? ''
+}
+
+function accountData(account: Account) {
+  return readInlineData<transactionAccountPickerFragment$key>(
+    accountFragment,
+    account,
+  )
+}
+
 function AccountDetails({
   account,
   selected = false,
@@ -332,21 +362,19 @@ function AccountDetails({
   account: Account
   selected?: boolean
 }) {
-  const { balance } = useFragment(balanceFragment, account)
+  const data = accountData(account)
   const { formatCurrencyWithPrivacyMode } = useCurrency()
   return (
     <span className="flex min-w-0 flex-1 items-center gap-2">
       <Avatar size="sm">
-        {account.icon && (
-          <AvatarImage src={getLogoDomainURL(account.icon)} alt="" />
-        )}
+        {data.icon && <AvatarImage src={getLogoDomainURL(data.icon)} alt="" />}
         <AvatarFallback>
           <WalletIcon className="size-4" aria-hidden="true" />
         </AvatarFallback>
       </Avatar>
       <span className="flex min-w-0 flex-1 flex-col text-xs leading-4">
-        <span className="truncate" title={account.name}>
-          {account.name}
+        <span className="truncate" title={data.name}>
+          {data.name}
         </span>
         <span
           className={cn(
@@ -355,11 +383,11 @@ function AccountDetails({
           )}
         >
           {formatCurrencyWithPrivacyMode({
-            value: balance,
-            currencyCode: account.householdCurrency.code,
+            value: data.balance,
+            currencyCode: data.householdCurrency.code,
             liability: account.type === 'liability',
           })}
-          <span> {account.householdCurrency.code}</span>
+          <span> {data.householdCurrency.code}</span>
         </span>
       </span>
     </span>
