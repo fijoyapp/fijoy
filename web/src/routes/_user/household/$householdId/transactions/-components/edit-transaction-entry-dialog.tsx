@@ -132,6 +132,9 @@ export function EditTransactionEntryDialog({
                 accountID: formData.accountId,
               },
             },
+            updater: (store) => {
+              store.get(household.id)?.invalidateRecord()
+            },
           },
         )
 

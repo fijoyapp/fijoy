@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<112486fd56abc65af2be787c5d019edd>>
+ * @generated SignedSource<<ca58dd8d3c1b09a154cd18dd14b9db9f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -87,6 +87,24 @@ v4 = {
     }
   ],
   "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Transaction",
+  "kind": "LinkedField",
+  "name": "latestTransaction",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "datetime",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
 };
 return {
   "argumentDefinitions": [
@@ -157,24 +175,7 @@ return {
                       "storageKey": null
                     },
                     (v4/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "Transaction",
-                      "kind": "LinkedField",
-                      "name": "latestTransaction",
-                      "plural": false,
-                      "selections": [
-                        {
-                          "alias": null,
-                          "args": null,
-                          "kind": "ScalarField",
-                          "name": "datetime",
-                          "storageKey": null
-                        }
-                      ],
-                      "storageKey": null
-                    }
+                    (v5/*: any*/)
                   ],
                   "args": null,
                   "argumentDefinitions": []
@@ -220,7 +221,8 @@ return {
                   "name": "transactionCategoryPickerFragment",
                   "selections": [
                     (v2/*: any*/),
-                    (v3/*: any*/)
+                    (v3/*: any*/),
+                    (v5/*: any*/)
                   ],
                   "args": null,
                   "argumentDefinitions": []

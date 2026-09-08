@@ -1,18 +1,37 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import { useState } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TransactionCategoryPicker } from './transaction-category-picker'
 
 const mobileState = vi.hoisted(() => ({ value: true }))
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockReturnValue({
+    matches: false,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+  }),
+})
+vi.stubGlobal(
+  'ResizeObserver',
+  class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  },
+)
+Element.prototype.scrollIntoView = vi.fn()
+
 vi.mock('@/hooks/use-mobile', () => ({
   useIsMobile: () => mobileState.value,
-}))
-vi.mock('@/components/selection-rows', () => ({
-  SelectionRows: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
 }))
 vi.mock('@/components/category-icon', () => ({
   CategoryIcon: () => <span aria-hidden="true" />,
@@ -26,6 +45,15 @@ const categories = [
   { id: 'groceries', name: 'Groceries', type: 'expense' },
   { id: 'transport', name: 'Transport', type: 'expense' },
 ]
+
+const manyCategories = Array.from({ length: 6 }, (_, index) => ({
+  id: `category-${index + 1}`,
+  name: `Category ${index + 1}`,
+  type: 'expense',
+  latestTransaction: {
+    datetime: `2026-09-0${index + 1}T00:00:00Z`,
+  },
+}))
 
 function Picker() {
   const [value, setValue] = useState('')
@@ -46,29 +74,63 @@ afterEach(() => {
   mobileState.value = true
 })
 
-it('collapses to the selected category and expands when clicked', () => {
+it('opens a searchable mobile drawer and closes after selection', async () => {
   render(<Picker />)
 
-  fireEvent.click(screen.getByRole('radio', { name: 'Groceries' }))
-  const summary = screen.getByRole('button', { name: 'Category: Groceries' })
-  expect(screen.queryByRole('radio', { name: 'Transport' })).toBeNull()
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Category: Select a category' }),
+  )
+  expect(await screen.findByRole('dialog')).toBeTruthy()
 
-  fireEvent.click(summary)
-  expect(screen.getByRole('radio', { name: 'Transport' })).not.toBeNull()
+  const search = screen.getByRole('combobox', { name: 'Search category' })
+  fireEvent.change(search, { target: { value: 'Transport' } })
+  expect(screen.queryByText('Groceries')).toBeNull()
+  fireEvent.click(screen.getByText('Transport'))
+
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+  expect(
+    screen.getByRole('button', { name: 'Category: Transport' }),
+  ).toBeTruthy()
 })
 
-it('shows the full category display in desktop options and the selected trigger', () => {
+it('searches desktop categories and shows the selected trigger', () => {
   mobileState.value = false
   render(<Picker />)
 
   fireEvent.click(
     screen.getByRole('button', { name: 'Category: Select a category' }),
   )
-  expect(document.querySelector('[data-slot="scroll-area"]')).not.toBeNull()
-  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Groceries' }))
+  fireEvent.change(screen.getByRole('combobox', { name: 'Search category' }), {
+    target: { value: 'Groceries' },
+  })
+  expect(screen.queryByText('Transport')).toBeNull()
+  fireEvent.click(screen.getByText('Groceries'))
 
-  expect(screen.queryByRole('menu')).toBeNull()
+  expect(screen.queryByRole('combobox')).toBeNull()
   expect(
     screen.getByRole('button', { name: 'Category: Groceries' }),
   ).toBeTruthy()
+})
+
+it('keeps every category in recency order in the desktop search', () => {
+  mobileState.value = false
+  render(
+    <TransactionCategoryPicker
+      categories={manyCategories as never}
+      name="category"
+      value=""
+      onValueChange={() => undefined}
+      onBlur={() => undefined}
+      invalid={false}
+    />,
+  )
+
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Category: Select a category' }),
+  )
+
+  const options = screen.getAllByRole('option')
+  expect(options).toHaveLength(6)
+  expect(options[0]?.textContent).toContain('Category 6')
+  expect(options[5]?.textContent).toContain('Category 1')
 })
