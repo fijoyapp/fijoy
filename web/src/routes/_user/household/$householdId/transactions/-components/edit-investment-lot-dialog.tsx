@@ -156,6 +156,9 @@ export function EditInvestmentLotDialog({
                 investmentID: formData.investmentId,
               },
             },
+            updater: (store) => {
+              store.get(household.id)?.invalidateRecord()
+            },
           },
         )
 

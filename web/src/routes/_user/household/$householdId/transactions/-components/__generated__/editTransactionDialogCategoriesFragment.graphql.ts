@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99a201ece2f27d88cbdd3c271aca81fb>>
+ * @generated SignedSource<<2664d17d2ebff80aba09b2e08d91c66d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -88,6 +88,24 @@ const node: ReaderFragment = {
                       "args": null,
                       "kind": "ScalarField",
                       "name": "icon",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "Transaction",
+                      "kind": "LinkedField",
+                      "name": "latestTransaction",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "datetime",
+                          "storageKey": null
+                        }
+                      ],
                       "storageKey": null
                     }
                   ],

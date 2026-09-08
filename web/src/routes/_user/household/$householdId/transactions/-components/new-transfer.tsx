@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { TransactionAccountPicker } from './transaction-account-picker'
 import { TransactionCategoryPicker } from './transaction-category-picker'
 import { graphql } from 'relay-runtime'
@@ -221,13 +220,6 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
 
   const toAccountId = useStore(form.store, (state) => state.values.toAccountId)
 
-  const [editingAccount, setEditingAccount] = useState<
-    'fromAccountId' | 'toAccountId' | null
-  >(null)
-  const activeAccountPicker = !fromAccountId
-    ? 'fromAccountId'
-    : (editingAccount ?? (!toAccountId ? 'toAccountId' : null))
-
   const fromAccount = availableAccounts.find((acc) => acc.id === fromAccountId)
   const toAccount = availableAccounts.find((acc) => acc.id === toAccountId)
 
@@ -305,14 +297,11 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                       value={field.state.value}
                       onValueChange={(value) => {
                         field.handleChange(value)
-                        setEditingAccount(null)
                         if (value === toAccountId)
                           form.setFieldValue('toAccountId', '')
                       }}
                       onBlur={field.handleBlur}
                       invalid={isInvalid}
-                      expanded={activeAccountPicker === 'fromAccountId'}
-                      onExpand={() => setEditingAccount('fromAccountId')}
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -354,12 +343,9 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                       value={field.state.value}
                       onValueChange={(value) => {
                         field.handleChange(value)
-                        setEditingAccount(null)
                       }}
                       onBlur={field.handleBlur}
                       invalid={isInvalid}
-                      expanded={activeAccountPicker === 'toAccountId'}
-                      onExpand={() => setEditingAccount('toAccountId')}
                       disabled={!fromAccountId}
                     />
                     {isInvalid && (

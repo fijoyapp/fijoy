@@ -3,11 +3,15 @@ import { ResponsiveSelectionPicker } from '@/components/responsive-selection-pic
 import { graphql } from 'react-relay'
 import { readInlineData } from 'relay-runtime'
 import type { transactionCategoryPickerFragment$key } from './__generated__/transactionCategoryPickerFragment.graphql'
+import { newestActivityFirst } from '@/lib/sort-by-update-time'
 
 const categoryFragment = graphql`
   fragment transactionCategoryPickerFragment on TransactionCategory @inline {
     name
     icon
+    latestTransaction {
+      datetime
+    }
   }
 `
 
@@ -33,9 +37,21 @@ export function TransactionCategoryPicker({
   onBlur,
   invalid,
 }: TransactionCategoryPickerProps) {
+  const orderedCategories = newestActivityFirst(
+    categories.map((category) => {
+      const latestTransaction = categoryData(category).latestTransaction
+      return {
+        category,
+        latestTransaction: latestTransaction
+          ? { datetime: latestTransaction.datetime }
+          : latestTransaction,
+      }
+    }),
+  ).map(({ category }) => category)
+
   return (
     <ResponsiveSelectionPicker
-      items={categories}
+      items={orderedCategories}
       name={name}
       value={value}
       label="Category"
