@@ -1,0 +1,143 @@
+/**
+ * @generated SignedSource<<627211263c09c49c64a024b47cff2e49>>
+ * @lightSyntaxTransform
+ * @nogrep
+ */
+
+/* tslint:disable */
+/* eslint-disable */
+// @ts-nocheck
+
+import { ReaderFragment } from 'relay-runtime';
+export type AccountType = "investment" | "liability" | "liquidity" | "property" | "receivable" | "%future added value";
+import { FragmentRefs } from "relay-runtime";
+export type accountLedgerRowFragment$data = {
+  readonly balance: string;
+  readonly householdCurrency: {
+    readonly code: string;
+  };
+  readonly icon: string | null | undefined;
+  readonly id: string;
+  readonly latestTransaction: {
+    readonly datetime: any;
+  } | null | undefined;
+  readonly name: string;
+  readonly type: AccountType;
+  readonly user: {
+    readonly name: string;
+  };
+  readonly value: string;
+  readonly " $fragmentType": "accountLedgerRowFragment";
+};
+export type accountLedgerRowFragment$key = {
+  readonly " $data"?: accountLedgerRowFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"accountLedgerRowFragment">;
+};
+
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+};
+return {
+  "argumentDefinitions": [],
+  "kind": "Fragment",
+  "metadata": null,
+  "name": "accountLedgerRowFragment",
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
+    (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "type",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "icon",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "value",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "balance",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "Transaction",
+      "kind": "LinkedField",
+      "name": "latestTransaction",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "datetime",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "HouseholdCurrency",
+      "kind": "LinkedField",
+      "name": "householdCurrency",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "code",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "User",
+      "kind": "LinkedField",
+      "name": "user",
+      "plural": false,
+      "selections": [
+        (v0/*: any*/)
+      ],
+      "storageKey": null
+    }
+  ],
+  "type": "Account",
+  "abstractKey": null
+};
+})();
+
+(node as any).hash = "d3bc834a464e8c2559c4323d96267731";
+
+export default node;

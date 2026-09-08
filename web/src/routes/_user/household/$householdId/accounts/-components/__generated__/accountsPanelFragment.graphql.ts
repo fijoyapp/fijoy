@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<edf4f70f3e058028c0f03887d5dacd75>>
+ * @generated SignedSource<<24c5f84c80c3285fc31d0ca0b04a020d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,10 +22,13 @@ export type accountsPanelFragment$data = {
           readonly code: string;
         };
         readonly id: string;
+        readonly latestTransaction: {
+          readonly datetime: any;
+        } | null | undefined;
         readonly name: string;
         readonly type: AccountType;
         readonly value: string;
-        readonly " $fragmentSpreads": FragmentRefs<"accountCardFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"accountLedgerRowFragment">;
       } | null | undefined;
     } | null | undefined> | null | undefined;
   };
@@ -172,6 +175,24 @@ return {
                 {
                   "alias": null,
                   "args": null,
+                  "concreteType": "Transaction",
+                  "kind": "LinkedField",
+                  "name": "latestTransaction",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "datetime",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                },
+                {
+                  "alias": null,
+                  "args": null,
                   "concreteType": "HouseholdCurrency",
                   "kind": "LinkedField",
                   "name": "householdCurrency",
@@ -190,7 +211,7 @@ return {
                 {
                   "args": null,
                   "kind": "FragmentSpread",
-                  "name": "accountCardFragment"
+                  "name": "accountLedgerRowFragment"
                 },
                 {
                   "alias": null,
@@ -259,6 +280,6 @@ return {
 };
 })();
 
-(node as any).hash = "ed7e99ad4694c35984d8312cded10c49";
+(node as any).hash = "afb11ef57f391bb667d623d16700e6be";
 
 export default node;

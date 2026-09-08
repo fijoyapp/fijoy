@@ -283,7 +283,10 @@ export function NewTransfer({ fragmentRef }: NewTransferProps) {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
                 return (
-                  <Field data-invalid={isInvalid}>
+                  <Field
+                    data-invalid={isInvalid}
+                    data-transaction-initial-focus
+                  >
                     <FieldLabel htmlFor={field.name}>Category</FieldLabel>
                     <TransactionCategoryPicker
                       categories={transferCategories}
