@@ -52,6 +52,7 @@ import {
 import { TransactionDialogPreview } from './transaction-dialog-preview'
 import type { transactionDialogPreviewFragment$key } from './__generated__/transactionDialogPreviewFragment.graphql'
 import { useHouseholdViewScope } from '@/hooks/use-household-view-scope'
+import { MobileActionDockSpacer } from '@/components/app-action-dock'
 
 const transactionsListFragment = graphql`
   fragment transactionsListFragment on Household
@@ -282,6 +283,7 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
           </div>
         )}
         <div ref={ref}></div>
+        <MobileActionDockSpacer />
       </div>
     </ScrollArea>
   )
