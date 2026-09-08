@@ -601,6 +601,7 @@ export function NewInvestment({
                     <Input
                       type="number"
                       inputMode="decimal"
+                      step="any"
                       data-1p-ignore
                       id={field.name}
                       name={field.name}
