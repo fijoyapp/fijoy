@@ -23,6 +23,9 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogDescription: ({ children }: { children: ReactNode }) => (
     <p>{children}</p>
   ),
+  DialogFooter: ({ children }: { children: ReactNode }) => (
+    <footer>{children}</footer>
+  ),
 }))
 vi.mock('@/hooks/use-household', () => ({
   useHousehold: () => ({ household: { locale: 'en-US' } }),
@@ -64,13 +67,19 @@ it('renders normalized transaction data while editing controls load', () => {
   render(<TransactionDialogPreview fragmentRef={transaction} />)
 
   expect(screen.getByRole('heading', { name: 'Edit Transaction' })).toBeTruthy()
-  expect(screen.getByText(/Dinner/)).toBeTruthy()
   expect(screen.getByText('Restaurant')).toBeTruthy()
   expect(screen.getByText('Visa')).toBeTruthy()
   expect(screen.getByText(/\$-56\.09/)).toBeTruthy()
   expect(screen.getByRole('status').textContent).toContain(
     'Loading transaction editing controls',
   )
+  expect(
+    document.querySelectorAll('[data-slot="transaction-dialog-preview-field"]'),
+  ).toHaveLength(4)
+  expect(screen.getByText('Description')).toBeTruthy()
+  expect(screen.getByText('Date')).toBeTruthy()
+  expect(screen.getByText('Category')).toBeTruthy()
+  expect(screen.getByText('Options')).toBeTruthy()
 })
 
 it('masks cached financial values in privacy mode', () => {
