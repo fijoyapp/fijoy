@@ -28,21 +28,11 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
-import {
-  ACCOUNT_CATEGORY_OPTIONS,
-  ACCOUNT_CATEGORY_APPLICABLE_TYPES,
-} from '@/constant'
+import { ACCOUNT_CATEGORY_APPLICABLE_TYPES } from '@/constant'
 import { commitMutationResult } from '@/lib/relay'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoDomainURL } from '@/lib/logo'
+import { AccountCategoryPicker } from './account-category-picker'
 
 const formSchema = z.object({
   name: z
@@ -162,40 +152,18 @@ export function EditAccount({ fragmentRef }: EditAccountProps) {
                 children={(field) => {
                   const isInvalid =
                     field.state.meta.isTouched && !field.state.meta.isValid
-                  const selectedItem =
-                    ACCOUNT_CATEGORY_OPTIONS.find(
-                      (o) => o.value === field.state.value,
-                    ) ?? null
                   return (
                     <Field data-invalid={isInvalid}>
                       <FieldLabel htmlFor={field.name}>
                         Category (optional)
                       </FieldLabel>
-                      <Combobox
-                        items={ACCOUNT_CATEGORY_OPTIONS}
-                        value={selectedItem}
-                        onValueChange={(item) =>
-                          field.handleChange(item?.value ?? '')
-                        }
-                      >
-                        <ComboboxInput
-                          id={field.name}
-                          name={field.name}
-                          placeholder="None (Taxable)"
-                          onBlur={field.handleBlur}
-                          aria-invalid={isInvalid}
-                        />
-                        <ComboboxContent>
-                          <ComboboxEmpty>No items found.</ComboboxEmpty>
-                          <ComboboxList>
-                            {(item: { value: string; label: string }) => (
-                              <ComboboxItem key={item.value} value={item}>
-                                {item.label}
-                              </ComboboxItem>
-                            )}
-                          </ComboboxList>
-                        </ComboboxContent>
-                      </Combobox>
+                      <AccountCategoryPicker
+                        name={field.name}
+                        value={field.state.value}
+                        onValueChange={field.handleChange}
+                        onBlur={field.handleBlur}
+                        invalid={isInvalid}
+                      />
                       {isInvalid && (
                         <FieldError errors={field.state.meta.errors} />
                       )}

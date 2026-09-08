@@ -5,6 +5,7 @@ import {
   useRef,
   type ReactNode,
 } from 'react'
+
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 /** Balance all cards into viewport-width rows without remounting on selection. */
@@ -36,7 +37,6 @@ export function SelectionRows({
       if (!width) return
       if (width !== previousWidth)
         root.style.setProperty('--selection-width', `${width}px`)
-      // Read geometry once, then apply layout writes together.
       const sizes = elements.map((element, index) => {
         const bounds = element.getBoundingClientRect()
         return { index, width: bounds.width, height: bounds.height }

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChartNoAxesCombinedIcon, ChevronDownIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { SelectionRows } from './selection-rows'
+import { SelectionRows } from '@/components/selection-rows'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { getLogoCryptoURL, getLogoTickerURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'

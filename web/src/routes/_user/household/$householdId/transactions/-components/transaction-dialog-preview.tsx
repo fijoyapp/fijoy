@@ -101,7 +101,7 @@ export function TransactionDialogPreview({
           lot,
         })),
       ]
-    : null
+    : []
 
   return (
     <>
@@ -114,7 +114,7 @@ export function TransactionDialogPreview({
       </DialogHeader>
 
       <div className="border-border [a]:hover:bg-muted group/item focus-visible:border-ring focus-visible:ring-ring/50 flex w-full flex-wrap items-center rounded-md border text-xs/relaxed outline-none focus-visible:ring-[3px]">
-        {previewItems
+        {transaction
           ? previewItems.map((item, index) => (
               <Fragment key={item.id}>
                 {index !== 0 && <Separator />}
@@ -127,14 +127,14 @@ export function TransactionDialogPreview({
                   >
                     <ItemMedia variant="image" className="rounded-full">
                       <CategoryIcon
-                        type={transaction!.category.type}
-                        icon={transaction!.category.icon}
+                        type={transaction.category.type}
+                        icon={transaction.category.icon}
                       />
                     </ItemMedia>
                     <ItemContent className="gap-px">
                       <ItemTitle>
-                        <span>{transaction!.category.name}</span>
-                        {transaction!.excludeFromReports && (
+                        <span>{transaction.category.name}</span>
+                        {transaction.excludeFromReports && (
                           <Badge className="h-4 px-1.5">Excluded</Badge>
                         )}
                       </ItemTitle>
@@ -170,7 +170,7 @@ export function TransactionDialogPreview({
                       </Avatar>
                     </ItemMedia>
                     <ItemContent className="gap-px">
-                      <ItemTitle>{transaction!.category.name}</ItemTitle>
+                      <ItemTitle>{transaction.category.name}</ItemTitle>
                       <ItemDescription>
                         {isPrivacyModeEnabled
                           ? '•••••••'
@@ -236,7 +236,7 @@ export function TransactionDialogPreview({
           <FieldGroup>
             <PreviewField label="Description" />
             <PreviewField label="Date" />
-            <PreviewField label="Category" />
+            <PreviewField label="Category" controlClassName="h-9" />
             <FieldSet data-slot="transaction-dialog-preview-field">
               <FieldLegend variant="label">Options</FieldLegend>
               <FieldGroup data-slot="checkbox-group">
@@ -261,11 +261,19 @@ export function TransactionDialogPreview({
   )
 }
 
-function PreviewField({ label }: { label: string }) {
+function PreviewField({
+  label,
+  controlClassName = 'h-7',
+}: {
+  label: string
+  controlClassName?: string
+}) {
   return (
     <Field data-slot="transaction-dialog-preview-field">
       <FieldLabel>{label}</FieldLabel>
-      <Skeleton className="h-7 w-full motion-reduce:animate-none" />
+      <Skeleton
+        className={cn('w-full motion-reduce:animate-none', controlClassName)}
+      />
     </Field>
   )
 }

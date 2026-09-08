@@ -22,6 +22,7 @@ import { match } from 'ts-pattern'
 
 import {
   ACCOUNT_TYPE_ACCENT_CLASSES,
+  calculateAllocationPercentage,
   formatPercentageWithPrivacyMode,
 } from './account-ledger-utils'
 import { AccountLedgerRow } from './account-ledger-row'
@@ -302,6 +303,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
   }, [accountItems])
 
   const assetsTotal = Math.abs(displayOptions[1].value.value)
+  const liabilitiesTotal = Math.abs(displayOptions[2].value.value)
 
   const getGroupLabel = (key: string) => {
     if (groupByOption === 'category') {
@@ -463,9 +465,14 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
             const isLiabilityGroup = accounts.every(
               ({ node }) => node.type === 'liability',
             )
-            const groupShare = assetsTotal
-              ? (Math.abs(groupTotal.value) / assetsTotal) * 100
-              : 0
+            const allocationTotal = isLiabilityGroup
+              ? liabilitiesTotal
+              : assetsTotal
+            const allocationBasis = isLiabilityGroup ? 'liabilities' : 'assets'
+            const groupShare = calculateAllocationPercentage(
+              groupTotal.value,
+              allocationTotal,
+            )
             const groupTypes = new Set(accounts.map(({ node }) => node.type))
             const groupAccentClass =
               groupTypes.size === 1
@@ -476,7 +483,7 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
               groupShare,
               household.locale,
               isPrivacyModeEnabled,
-            )} of assets`
+            )} of ${allocationBasis}`
 
             return (
               <AccordionItem
@@ -510,17 +517,10 @@ export function AccountsPanel({ fragmentRef }: AccountsListPageProps) {
                         fragmentRef={account.node}
                         displayValue={account.displayValue}
                         displayCurrencyCode={displayCurrencyCode}
-                        share={
-                          (isLiabilityGroup ? assetsTotal : groupTotal.value)
-                            ? (Math.abs(account.displayValue.value) /
-                                Math.abs(
-                                  isLiabilityGroup
-                                    ? assetsTotal
-                                    : groupTotal.value,
-                                )) *
-                              100
-                            : 0
-                        }
+                        share={calculateAllocationPercentage(
+                          account.displayValue.value,
+                          groupTotal.value,
+                        )}
                       />
                     ))}
                   </div>
@@ -611,7 +611,7 @@ function AccountGroupTrigger({
 
   return (
     <AccordionPrimitive.Header className="sticky top-0 z-10 flex">
-      <AccordionPrimitive.Trigger className="group/account-group bg-muted hover:bg-input focus-visible:border-ring focus-visible:ring-ring/30 dark:bg-card relative grid min-h-11 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 border border-transparent py-1.5 pr-10 pl-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50">
+      <AccordionPrimitive.Trigger className="group/account-group bg-muted hover:bg-input/50 focus-visible:border-ring focus-visible:ring-ring/30 dark:bg-card dark:hover:bg-input relative grid min-h-11 flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 border border-transparent py-1.5 pr-10 pl-3 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50">
         <span className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden="true"

@@ -2,7 +2,7 @@
 import { act, cleanup, render, screen } from '@testing-library/react'
 import { useEffect } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
-import { SelectionRows } from './selection-rows'
+import { SelectionRows } from '@/components/selection-rows'
 
 vi.mock('@/components/ui/scroll-area', () => ({
   ScrollArea: ({ children }: { children: React.ReactNode }) => (

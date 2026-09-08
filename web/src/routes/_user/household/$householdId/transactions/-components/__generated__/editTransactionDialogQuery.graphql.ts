@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3699967a6ec127547790ebe9f74947ea>>
+ * @generated SignedSource<<47fd37c6cd8a52032dbc114862be2607>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -89,26 +89,21 @@ v7 = {
   "name": "type",
   "storageKey": null
 },
-v8 = [
-  (v3/*: any*/),
-  (v6/*: any*/),
-  (v7/*: any*/)
-],
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "amount",
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "symbol",
   "storageKey": null
 },
-v11 = {
+v10 = {
   "alias": null,
   "args": null,
   "concreteType": "HouseholdCurrency",
@@ -127,11 +122,11 @@ v11 = {
   ],
   "storageKey": null
 },
-v12 = [
+v11 = [
   (v6/*: any*/),
   (v3/*: any*/)
 ],
-v13 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -236,7 +231,11 @@ return {
                 "kind": "LinkedField",
                 "name": "category",
                 "plural": false,
-                "selections": (v8/*: any*/),
+                "selections": [
+                  (v3/*: any*/),
+                  (v6/*: any*/),
+                  (v7/*: any*/)
+                ],
                 "storageKey": null
               },
               {
@@ -248,7 +247,7 @@ return {
                 "plural": true,
                 "selections": [
                   (v3/*: any*/),
-                  (v9/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -265,8 +264,8 @@ return {
                     "plural": false,
                     "selections": [
                       (v6/*: any*/),
+                      (v9/*: any*/),
                       (v10/*: any*/),
-                      (v11/*: any*/),
                       (v3/*: any*/),
                       {
                         "alias": null,
@@ -299,7 +298,7 @@ return {
                         "kind": "LinkedField",
                         "name": "category",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v11/*: any*/),
                         "storageKey": null
                       },
                       (v4/*: any*/)
@@ -318,7 +317,7 @@ return {
                 "plural": true,
                 "selections": [
                   (v3/*: any*/),
-                  (v9/*: any*/),
+                  (v8/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -328,7 +327,7 @@ return {
                     "plural": false,
                     "selections": [
                       (v6/*: any*/),
-                      (v11/*: any*/),
+                      (v10/*: any*/),
                       (v3/*: any*/)
                     ],
                     "storageKey": null
@@ -353,7 +352,7 @@ return {
                         "selections": [
                           (v6/*: any*/),
                           (v7/*: any*/),
-                          (v13/*: any*/),
+                          (v12/*: any*/),
                           (v3/*: any*/)
                         ],
                         "storageKey": null
@@ -395,7 +394,12 @@ return {
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
-                "selections": (v8/*: any*/),
+                "selections": [
+                  (v3/*: any*/),
+                  (v6/*: any*/),
+                  (v7/*: any*/),
+                  (v12/*: any*/)
+                ],
                 "storageKey": null
               }
             ],
@@ -447,7 +451,7 @@ return {
                       (v3/*: any*/),
                       (v6/*: any*/),
                       (v7/*: any*/),
-                      (v13/*: any*/),
+                      (v12/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -455,7 +459,7 @@ return {
                         "name": "value",
                         "storageKey": null
                       },
-                      (v11/*: any*/),
+                      (v10/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -463,7 +467,7 @@ return {
                         "kind": "LinkedField",
                         "name": "user",
                         "plural": false,
-                        "selections": (v12/*: any*/),
+                        "selections": (v11/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -476,7 +480,7 @@ return {
                         "selections": [
                           (v3/*: any*/),
                           (v6/*: any*/),
-                          (v10/*: any*/)
+                          (v9/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -496,12 +500,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b40b1ae75fcee5549a23ba6f2c7f1304",
+    "cacheID": "613c9f0f59d36cea950496f8652d806f",
     "id": null,
     "metadata": {},
     "name": "editTransactionDialogQuery",
     "operationKind": "query",
-    "text": "query editTransactionDialogQuery(\n  $transactionId: ID!\n) {\n  node(id: $transactionId) {\n    __typename\n    ... on Transaction {\n      ...editTransactionDialogTransactionFragment\n    }\n    id\n  }\n  ...editTransactionDialogCategoriesFragment\n  household {\n    ...editTransactionDialogHouseholdFragment\n    id\n  }\n}\n\nfragment editTransactionDialogCategoriesFragment on Query {\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogHouseholdFragment on Household {\n  accounts(where: {archived: false}) {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n        value\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n        }\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogTransactionFragment on Transaction {\n  id\n  description\n  datetime\n  categoryID\n  excludeFromReports\n  category {\n    id\n    name\n    type\n  }\n  investmentLots {\n    ...investmentLotCardFragment\n    id\n    amount\n    price\n    investment {\n      id\n      account {\n        id\n      }\n    }\n  }\n  transactionEntries {\n    ...transactionEntryCardFragment\n    id\n    amount\n    account {\n      id\n    }\n  }\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n"
+    "text": "query editTransactionDialogQuery(\n  $transactionId: ID!\n) {\n  node(id: $transactionId) {\n    __typename\n    ... on Transaction {\n      ...editTransactionDialogTransactionFragment\n    }\n    id\n  }\n  ...editTransactionDialogCategoriesFragment\n  household {\n    ...editTransactionDialogHouseholdFragment\n    id\n  }\n}\n\nfragment editTransactionDialogCategoriesFragment on Query {\n  transactionCategories {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogHouseholdFragment on Household {\n  accounts(where: {archived: false}) {\n    edges {\n      node {\n        id\n        name\n        type\n        icon\n        value\n        householdCurrency {\n          code\n          id\n        }\n        user {\n          name\n          id\n        }\n        investments {\n          id\n          name\n          symbol\n        }\n      }\n    }\n  }\n}\n\nfragment editTransactionDialogTransactionFragment on Transaction {\n  id\n  description\n  datetime\n  categoryID\n  excludeFromReports\n  category {\n    id\n    name\n    type\n  }\n  investmentLots {\n    ...investmentLotCardFragment\n    id\n    amount\n    price\n    investment {\n      id\n      account {\n        id\n      }\n    }\n  }\n  transactionEntries {\n    ...transactionEntryCardFragment\n    id\n    amount\n    account {\n      id\n    }\n  }\n}\n\nfragment investmentLotCardFragment on InvestmentLot {\n  id\n  amount\n  price\n  investment {\n    name\n    symbol\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    category {\n      name\n      id\n    }\n    datetime\n  }\n}\n\nfragment transactionEntryCardFragment on TransactionEntry {\n  id\n  amount\n  account {\n    name\n    householdCurrency {\n      code\n      id\n    }\n    id\n  }\n  transaction {\n    id\n    excludeFromReports\n    category {\n      name\n      type\n      icon\n      id\n    }\n    datetime\n  }\n}\n"
   }
 };
 })();

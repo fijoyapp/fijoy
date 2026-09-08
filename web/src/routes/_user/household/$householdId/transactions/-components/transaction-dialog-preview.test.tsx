@@ -42,7 +42,6 @@ vi.mock('@/hooks/use-currency', () => ({
 
 const transaction = {
   datetime: '2026-09-07T12:00:00Z',
-  description: 'Dinner',
   excludeFromReports: false,
   category: { icon: null, name: 'Restaurant', type: 'expense' },
   transactionEntries: [

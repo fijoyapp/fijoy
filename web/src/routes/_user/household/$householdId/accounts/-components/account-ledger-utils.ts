@@ -21,3 +21,9 @@ export function formatPercentageWithPrivacyMode(
     maximumFractionDigits: value < 1 ? 2 : 1,
   }).format(value / 100)
 }
+
+export function calculateAllocationPercentage(value: number, total: number) {
+  if (!Number.isFinite(value) || !Number.isFinite(total) || total === 0)
+    return 0
+  return (Math.abs(value) / Math.abs(total)) * 100
+}

@@ -9,7 +9,7 @@ const mobileState = vi.hoisted(() => ({ value: true }))
 vi.mock('@/hooks/use-mobile', () => ({
   useIsMobile: () => mobileState.value,
 }))
-vi.mock('./selection-rows', () => ({
+vi.mock('@/components/selection-rows', () => ({
   SelectionRows: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   ),
