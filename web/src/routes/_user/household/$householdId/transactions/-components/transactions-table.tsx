@@ -26,6 +26,7 @@ import { useCurrency } from '@/hooks/use-currency'
 import { usePrivacyMode } from '@/hooks/use-privacy-mode'
 import { useHousehold } from '@/hooks/use-household'
 import { cn } from '@/lib/utils'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import type {
   transactionsTableFragment$key,
   transactionsTableFragment$data,
@@ -191,10 +192,10 @@ export function TransactionsTable({
       cell: (transaction) => {
         const { category } = transaction
         return (
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2 xl:gap-3">
             <CategoryIcon type={category.type} icon={category.icon} />
-            <div className="flex min-w-0 flex-col gap-0.5">
-              <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <div className="flex min-w-0 items-center gap-2">
                 <Link
                   to="."
                   resetScroll={false}
@@ -202,7 +203,7 @@ export function TransactionsTable({
                     ...search,
                     edit_transaction_id: transaction.id,
                   })}
-                  className="focus-visible:outline-ring block max-w-44 truncate text-sm font-medium focus-visible:outline-2"
+                  className="focus-visible:outline-ring block min-w-0 truncate text-sm font-medium focus-visible:outline-2"
                   title={category.name}
                 >
                   {category.name}
@@ -218,7 +219,7 @@ export function TransactionsTable({
               </div>
               {transaction.description && (
                 <span
-                  className="text-muted-foreground block max-w-44 truncate"
+                  className="text-muted-foreground block min-w-0 truncate"
                   title={transaction.description}
                 >
                   {transaction.description}
@@ -233,7 +234,7 @@ export function TransactionsTable({
       id: 'movement',
       header: 'Account / Movement',
       cell: (transaction) => (
-        <div className="flex flex-col gap-1">
+        <div className="flex min-w-0 flex-col gap-1 overflow-hidden">
           {transaction.transactionEntries?.map((entry) => (
             <AccountMovement key={entry.id} account={entry.account} />
           ))}
@@ -252,11 +253,11 @@ export function TransactionsTable({
       header: 'Amount',
       enableHiding: false,
       cell: (transaction) => (
-        <div className="flex flex-col gap-1 text-right whitespace-nowrap tabular-nums">
+        <div className="flex min-w-0 flex-col gap-1 overflow-hidden text-right whitespace-nowrap tabular-nums">
           {transaction.transactionEntries?.map((entry) => (
             <span
               key={entry.id}
-              className="flex h-7 items-center justify-end gap-1 font-medium"
+              className="flex h-7 min-w-0 items-center justify-end gap-1 overflow-hidden font-medium"
             >
               {formatCurrencyWithPrivacyMode({
                 value: entry.amount,
@@ -270,7 +271,7 @@ export function TransactionsTable({
           {transaction.investmentLots?.map((lot) => (
             <span
               key={lot.id}
-              className="flex h-7 items-center justify-end gap-1 font-medium"
+              className="flex h-7 min-w-0 items-center justify-end gap-1 overflow-hidden font-medium"
             >
               {isPrivacyModeEnabled
                 ? '•••••••'
@@ -294,13 +295,16 @@ export function TransactionsTable({
       id: 'owner',
       header: 'Member',
       cell: (transaction) => (
-        <div className="flex items-center gap-2" title={transaction.user.name}>
+        <div
+          className="flex min-w-0 items-center gap-1.5 xl:gap-2"
+          title={transaction.user.name}
+        >
           <Avatar size="sm">
             <AvatarFallback className="text-[10px]">
               {transaction.user.name.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <span className="text-muted-foreground block max-w-28 truncate">
+          <span className="text-muted-foreground block min-w-0 truncate">
             {transaction.user.name}
           </span>
         </div>
@@ -315,7 +319,7 @@ export function TransactionsTable({
     <section
       aria-label="Transactions"
       aria-busy={isSorting || isLoadingNext}
-      className="flex min-w-0 flex-col gap-2"
+      className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden"
     >
       <div className="flex items-center justify-between gap-2">
         <p
@@ -356,11 +360,12 @@ export function TransactionsTable({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div
-        ref={setScrollContainer}
-        className="border-border max-h-[calc(100dvh-19rem)] min-h-40 [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent] overflow-auto border-y"
+      <ScrollArea
+        viewportRef={setScrollContainer}
+        scrollbars="both"
+        className="border-border min-h-0 min-w-0 flex-1 border-y"
       >
-        <table className="w-full border-separate border-spacing-0 text-xs">
+        <table className="w-full table-fixed border-separate border-spacing-0 text-xs">
           <caption className="sr-only">
             Transactions. Open a transaction to view or edit its details.
             Investment amounts show quantity and price per unit.
@@ -379,11 +384,12 @@ export function TransactionsTable({
                       : undefined
                   }
                   className={cn(
-                    'border-border text-muted-foreground border-b px-4 py-1.5 text-left font-medium whitespace-nowrap',
-                    column.id === 'date' && 'w-[calc(13ch+2rem)]',
-                    column.id === 'description' && 'w-60',
-                    column.id === 'owner' && 'w-36',
-                    column.id === 'amount' && 'w-1 text-right',
+                    'border-border text-muted-foreground overflow-hidden border-b px-2 py-1.5 text-left font-medium whitespace-nowrap lg:px-3 xl:px-4',
+                    column.id === 'date' && 'w-[16%]',
+                    column.id === 'description' && 'w-[24%]',
+                    column.id === 'movement' && 'w-[27%]',
+                    column.id === 'amount' && 'w-[21%] text-right',
+                    column.id === 'owner' && 'w-[12%]',
                   )}
                 >
                   {column.header}
@@ -417,7 +423,7 @@ export function TransactionsTable({
                 {visibleColumns.map((column) => (
                   <td
                     key={column.id}
-                    className="border-border/60 border-b px-4 py-3 align-middle"
+                    className="border-border/60 overflow-hidden border-b px-2 py-3 align-middle lg:px-3 xl:px-4"
                   >
                     {column.cell(transaction)}
                   </td>
@@ -459,7 +465,7 @@ export function TransactionsTable({
             ) : null}
           </div>
         )}
-      </div>
+      </ScrollArea>
     </section>
   )
 }
@@ -473,7 +479,7 @@ function AccountMovement({
 }) {
   return (
     <div
-      className="flex h-8 items-center gap-2"
+      className="flex h-8 min-w-0 items-center gap-2 overflow-hidden"
       title={`${account.name}${symbol ? ` · ${symbol}` : ''}`}
     >
       <Avatar>
@@ -484,7 +490,7 @@ function AccountMovement({
           <WalletIcon className="size-4" aria-hidden="true" />
         </AvatarFallback>
       </Avatar>
-      <span className="block max-w-52 truncate">
+      <span className="block min-w-0 truncate">
         {account.name}
         {symbol && <span className="text-muted-foreground"> · {symbol}</span>}
       </span>

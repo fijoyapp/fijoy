@@ -44,6 +44,25 @@ export const getPrettyTime = (givenDate: Date): string => {
   return `${days} days ago`
 }
 
+export const getRelativeDate = (givenDate: Date): string => {
+  if (givenDate <= EARLIEST_DATE) return 'Never'
+
+  const elapsedDays = Math.max(
+    0,
+    Math.floor((Date.now() - givenDate.getTime()) / (24 * 60 * 60 * 1000)),
+  )
+
+  if (elapsedDays === 0) return 'Today'
+  if (elapsedDays === 1) return 'Yesterday'
+  if (elapsedDays < 30) return `${elapsedDays} days ago`
+
+  const months = Math.floor(elapsedDays / 30)
+  if (months < 12) return `${months} ${months === 1 ? 'month' : 'months'} ago`
+
+  const years = Math.floor(elapsedDays / 365)
+  return `${years} ${years === 1 ? 'year' : 'years'} ago`
+}
+
 export const getFormattedDate = (date: Date): string => {
   // Extract the year, month, and day
   const year = date.getFullYear()

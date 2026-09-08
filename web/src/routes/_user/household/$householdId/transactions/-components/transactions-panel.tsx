@@ -10,7 +10,6 @@ import { DateRangeFilter } from '../../categories/-components/date-range-filter'
 import { FinancialSummaryCards } from '@/components/financial-summary-cards'
 import { parseDateRangeFromURL } from '@/lib/date-range'
 import { useHousehold } from '@/hooks/use-household'
-import { Fragment } from 'react'
 import { Button } from '@/components/ui/button'
 import { useLogTransaction } from '@/hooks/use-log-transaction'
 import { useHouseholdViewScope } from '@/hooks/use-household-view-scope'
@@ -89,7 +88,7 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
   }
 
   return (
-    <Fragment>
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <div className="fixed right-4 bottom-4 lg:absolute">
         <Button
           nativeButton={true}
@@ -101,17 +100,17 @@ export function TransactionsPanel({ fragmentRef }: TransactionsPanelProps) {
         </Button>
       </div>
       <FinancialSummaryCards fragmentRef={data.financialReport} />
-      <div className="py-2"></div>
+      <div className="shrink-0 py-2"></div>
       <DateRangeFilter
         startDate={startDate}
         endDate={endDate}
         onDateRangeChange={onDateRangeChange}
       />
-      <div className="py-2"></div>
+      <div className="shrink-0 py-2"></div>
       <TransactionsList
         key={`${startDate}-${endDate}-${viewUserIds?.join(',') ?? 'all'}`}
         fragmentRef={data}
       />
-    </Fragment>
+    </div>
   )
 }

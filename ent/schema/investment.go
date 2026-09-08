@@ -216,6 +216,13 @@ func (InvestmentLot) Annotations() []schema.Annotation {
 	}
 }
 
+func (InvestmentLot) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("investment_id"),
+		index.Fields("transaction_id"),
+	}
+}
+
 func (InvestmentLot) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AnnotateFields(mixin.Time{},

@@ -9,13 +9,34 @@ import (
 	"context"
 
 	"beavermoney.app/ent"
+	"beavermoney.app/ent/investment"
+	"beavermoney.app/ent/investmentlot"
+	"beavermoney.app/ent/transaction"
 	"beavermoney.app/ent/transactioncategory"
+	"beavermoney.app/ent/transactionentry"
 	"beavermoney.app/gql/model"
 	"beavermoney.app/internal/contextkeys"
 	"github.com/shopspring/decimal"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
+
+// LatestTransaction is the resolver for the latestTransaction field.
+func (r *accountResolver) LatestTransaction(ctx context.Context, obj *ent.Account) (*ent.Transaction, error) {
+	txn, err := r.entClient.Transaction.Query().
+		Where(transaction.Or(
+			transaction.HasTransactionEntriesWith(transactionentry.AccountIDEQ(obj.ID)),
+			transaction.HasInvestmentLotsWith(
+				investmentlot.HasInvestmentWith(investment.AccountIDEQ(obj.ID)),
+			),
+		)).
+		Order(ent.Desc(transaction.FieldDatetime), ent.Desc(transaction.FieldID)).
+		First(ctx)
+	if ent.IsNotFound(err) {
+		return nil, nil
+	}
+	return txn, err
+}
 
 // FinancialReport is the resolver for the financialReport field.
 func (r *householdResolver) FinancialReport(ctx context.Context, obj *ent.Household, period model.TimePeriodInput, viewUserIDs []int) (*model.FinancialReport, error) {
@@ -71,6 +92,18 @@ func (r *householdResolver) FinancialReport(ctx context.Context, obj *ent.Househ
 	report.TransactionCount = transactionCount
 
 	return report, nil
+}
+
+// LatestTransaction is the resolver for the latestTransaction field.
+func (r *investmentResolver) LatestTransaction(ctx context.Context, obj *ent.Investment) (*ent.Transaction, error) {
+	txn, err := r.entClient.Transaction.Query().
+		Where(transaction.HasInvestmentLotsWith(investmentlot.InvestmentIDEQ(obj.ID))).
+		Order(ent.Desc(transaction.FieldDatetime), ent.Desc(transaction.FieldID)).
+		First(ctx)
+	if ent.IsNotFound(err) {
+		return nil, nil
+	}
+	return txn, err
 }
 
 // CostBasis is the resolver for the costBasis field.

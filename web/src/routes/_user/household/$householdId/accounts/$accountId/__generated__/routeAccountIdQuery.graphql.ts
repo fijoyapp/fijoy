@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<43125e09f6d0b603b3f5f6cafd0de6c1>>
+ * @generated SignedSource<<c106681c8223f2336e8ef993c3a31baa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -134,8 +134,20 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "updateTime",
+                "concreteType": "Transaction",
+                "kind": "LinkedField",
+                "name": "latestTransaction",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "datetime",
+                    "storageKey": null
+                  },
+                  (v2/*: any*/)
+                ],
                 "storageKey": null
               },
               {
@@ -201,12 +213,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "10bf842c7abf60fbf149eea6b4c51ed9",
+    "cacheID": "bd572b10d311cff30ebb32b44bbdc09d",
     "id": null,
     "metadata": {},
     "name": "routeAccountIdQuery",
     "operationKind": "query",
-    "text": "query routeAccountIdQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ... on Account {\n      ...accountCardFragment\n      ...routeAccountIdFragment\n    }\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment routeAccountIdFragment on Account {\n  id\n  type\n  archived\n}\n"
+    "text": "query routeAccountIdQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ... on Account {\n      ...accountCardFragment\n      ...routeAccountIdFragment\n    }\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment routeAccountIdFragment on Account {\n  id\n  type\n  archived\n}\n"
   }
 };
 })();

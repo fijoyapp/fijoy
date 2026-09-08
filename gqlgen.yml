@@ -38,3 +38,11 @@ models:
     fields:
       financialReport:
         resolver: true
+  Account:
+    fields:
+      latestTransaction:
+        resolver: true
+  Investment:
+    fields:
+      latestTransaction:
+        resolver: true

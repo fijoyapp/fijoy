@@ -83,3 +83,32 @@ it('keeps cards mounted and skips layout measurement when selection changes', ()
   expect(observers).toBe(observerCount)
   expect(measure).toHaveBeenCalledTimes(measurementCount)
 })
+
+it('uses as many rows as needed to display every card', () => {
+  vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(300)
+  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(
+    () => ({
+      width: 120,
+      height: 44,
+      x: 0,
+      y: 0,
+      top: 0,
+      left: 0,
+      right: 120,
+      bottom: 44,
+      toJSON: () => ({}),
+    }),
+  )
+
+  render(
+    <SelectionRows label="All cards">
+      {Array.from({ length: 10 }, (_, id) => (
+        <Card key={id} id={id} selected={false} />
+      ))}
+    </SelectionRows>,
+  )
+
+  expect(screen.getByRole('group', { name: 'All cards' }).style.height).toBe(
+    '252px',
+  )
+})

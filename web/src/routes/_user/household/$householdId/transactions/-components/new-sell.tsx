@@ -76,6 +76,9 @@ const newSellFragment = graphql`
           id
           name
           type
+          latestTransaction {
+            datetime
+          }
           icon
           value
           ...transactionAccountPickerBalanceFragment
@@ -90,6 +93,9 @@ const newSellFragment = graphql`
             name
             symbol
             type
+            latestTransaction {
+              datetime
+            }
           }
         }
       }

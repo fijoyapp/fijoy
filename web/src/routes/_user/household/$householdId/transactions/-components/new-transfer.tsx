@@ -77,6 +77,9 @@ const newTransferFragment = graphql`
           id
           name
           type
+          latestTransaction {
+            datetime
+          }
           icon
           value
           ...transactionAccountPickerBalanceFragment

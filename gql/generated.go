@@ -83,6 +83,7 @@ type ComplexityRoot struct {
 		ID                  func(childComplexity int) int
 		Icon                func(childComplexity int) int
 		Investments         func(childComplexity int) int
+		LatestTransaction   func(childComplexity int) int
 		Name                func(childComplexity int) int
 		TransactionEntries  func(childComplexity int) int
 		Type                func(childComplexity int) int
@@ -250,6 +251,7 @@ type ComplexityRoot struct {
 		HouseholdID             func(childComplexity int) int
 		ID                      func(childComplexity int) int
 		InvestmentLots          func(childComplexity int) int
+		LatestTransaction       func(childComplexity int) int
 		Name                    func(childComplexity int) int
 		Quote                   func(childComplexity int) int
 		Symbol                  func(childComplexity int) int
@@ -610,6 +612,8 @@ type AccountResolver interface {
 	Balance(ctx context.Context, obj *ent.Account) (string, error)
 
 	Value(ctx context.Context, obj *ent.Account) (string, error)
+
+	LatestTransaction(ctx context.Context, obj *ent.Account) (*ent.Transaction, error)
 }
 type HouseholdResolver interface {
 	FinancialReport(ctx context.Context, obj *ent.Household, period model.TimePeriodInput, viewUserIDs []int) (*model.FinancialReport, error)
@@ -622,6 +626,7 @@ type InvestmentResolver interface {
 	Quote(ctx context.Context, obj *ent.Investment) (string, error)
 	Value(ctx context.Context, obj *ent.Investment) (string, error)
 
+	LatestTransaction(ctx context.Context, obj *ent.Investment) (*ent.Transaction, error)
 	CostBasis(ctx context.Context, obj *ent.Investment) (string, error)
 	AverageCost(ctx context.Context, obj *ent.Investment) (string, error)
 	UnrealizedReturn(ctx context.Context, obj *ent.Investment) (string, error)
@@ -962,6 +967,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Account.Investments(childComplexity), true
+	case "Account.latestTransaction":
+		if e.ComplexityRoot.Account.LatestTransaction == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Account.LatestTransaction(childComplexity), true
 	case "Account.name":
 		if e.ComplexityRoot.Account.Name == nil {
 			break
@@ -1662,6 +1673,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Investment.InvestmentLots(childComplexity), true
+	case "Investment.latestTransaction":
+		if e.ComplexityRoot.Investment.LatestTransaction == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Investment.LatestTransaction(childComplexity), true
 	case "Investment.name":
 		if e.ComplexityRoot.Investment.Name == nil {
 			break
@@ -3610,6 +3627,8 @@ func (ec *executionContext) childFields_Account(ctx context.Context, field graph
 		return ec.fieldContext_Account_transactionEntries(ctx, field)
 	case "investments":
 		return ec.fieldContext_Account_investments(ctx, field)
+	case "latestTransaction":
+		return ec.fieldContext_Account_latestTransaction(ctx, field)
 	}
 	return nil, fmt.Errorf("no field named %q was found under type Account", field.Name)
 }
@@ -3930,6 +3949,8 @@ func (ec *executionContext) childFields_Investment(ctx context.Context, field gr
 		return ec.fieldContext_Investment_user(ctx, field)
 	case "investmentLots":
 		return ec.fieldContext_Investment_investmentLots(ctx, field)
+	case "latestTransaction":
+		return ec.fieldContext_Investment_latestTransaction(ctx, field)
 	case "costBasis":
 		return ec.fieldContext_Investment_costBasis(ctx, field)
 	case "averageCost":
@@ -6714,6 +6735,38 @@ func (ec *executionContext) fieldContext_Account_investments(_ context.Context, 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return ec.childFields_Investment(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Account_latestTransaction(ctx context.Context, field graphql.CollectedField, obj *ent.Account) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Account_latestTransaction(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return ec.Resolvers.Account().LatestTransaction(ctx, obj)
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {
+			return ec.marshalOTransaction2ᚖbeavermoneyᚗappᚋentᚐTransaction(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Account_latestTransaction(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Transaction(ctx, field)
 		},
 	}
 	return fc, nil
@@ -9620,6 +9673,38 @@ func (ec *executionContext) fieldContext_Investment_investmentLots(_ context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return ec.childFields_InvestmentLot(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Investment_latestTransaction(ctx context.Context, field graphql.CollectedField, obj *ent.Investment) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Investment_latestTransaction(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return ec.Resolvers.Investment().LatestTransaction(ctx, obj)
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *ent.Transaction) graphql.Marshaler {
+			return ec.marshalOTransaction2ᚖbeavermoneyᚗappᚋentᚐTransaction(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Investment_latestTransaction(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Investment",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Transaction(ctx, field)
 		},
 	}
 	return fc, nil
@@ -28638,6 +28723,44 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "latestTransaction":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Account_latestTransaction(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.IsDeferred() {
+				deferredFieldSet.AddField(field)
+				fieldIndex := len(deferredFieldSet.Values) - 1
+				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, deferredFieldSet)
+				})
+
+				for _, deferrable := range field.Deferrables {
+					view, ok := deferLabelToView[deferrable.Label]
+					if !ok {
+						view = deferredFieldSet.NewView()
+						deferLabelToView[deferrable.Label] = view
+					}
+					view.AddIndices(fieldIndex)
+				}
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -31006,6 +31129,44 @@ func (ec *executionContext) _Investment(ctx context.Context, sel ast.SelectionSe
 					}
 				}()
 				res = ec._Investment_investmentLots(ctx, field, obj)
+				if res == graphql.RequiredNull {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.IsDeferred() {
+				deferredFieldSet.AddField(field)
+				fieldIndex := len(deferredFieldSet.Values) - 1
+				deferredFieldSet.Concurrently(fieldIndex, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, deferredFieldSet)
+				})
+
+				for _, deferrable := range field.Deferrables {
+					view, ok := deferLabelToView[deferrable.Label]
+					if !ok {
+						view = deferredFieldSet.NewView()
+						deferLabelToView[deferrable.Label] = view
+					}
+					view.AddIndices(fieldIndex)
+				}
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "latestTransaction":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Investment_latestTransaction(ctx, field, obj)
 				if res == graphql.RequiredNull {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

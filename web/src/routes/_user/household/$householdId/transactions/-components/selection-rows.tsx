@@ -7,7 +7,7 @@ import {
 } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-/** Balance up to three rows without remounting cards or measuring selection updates. */
+/** Balance all cards into viewport-width rows without remounting on selection. */
 export function SelectionRows({
   children,
   label,
@@ -55,7 +55,6 @@ export function SelectionRows({
           usedWidth = card.width
         } else usedWidth = nextWidth
       }
-      rowCount = Math.min(3, rowCount)
       const rowWidths = Array<number>(rowCount).fill(0)
       const rowHeights = Array<number>(rowCount).fill(0)
       const placement = Array<number>(sizes.length).fill(0)
