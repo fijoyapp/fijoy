@@ -3,7 +3,6 @@ import { useForm, useStore } from '@tanstack/react-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 import { useMutation } from 'react-relay'
-import { capitalize } from 'lodash-es'
 import currency from 'currency.js'
 import invariant from 'tiny-invariant'
 import { match } from 'ts-pattern'
@@ -28,6 +27,8 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldLegend,
+  FieldSet,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
@@ -39,8 +40,6 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox'
 import {
-  ACCOUNT_TYPE_DESCRIPTION,
-  ACCOUNT_TYPE_LIST,
   ACCOUNT_CATEGORY_OPTIONS,
   ACCOUNT_CATEGORY_APPLICABLE_TYPES,
 } from '@/constant'
@@ -55,6 +54,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoDomainURL } from '@/lib/logo'
 import { SUPPORTED_CURRENCIES } from '@/lib/currencies'
 import { useDisplayCurrency } from '@/hooks/use-display-currency'
+import { AccountTypePicker } from './account-type-picker'
 
 const formSchema = z.object({
   name: z
@@ -302,44 +302,28 @@ export function NewAccount() {
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid
+                const labelId = `${field.name}-label`
+                const errorId = `${field.name}-error`
                 return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Type</FieldLabel>
-                    <Combobox
-                      items={ACCOUNT_TYPE_LIST}
+                  <FieldSet data-invalid={isInvalid}>
+                    <FieldLegend id={labelId} variant="label">
+                      Type
+                    </FieldLegend>
+                    <AccountTypePicker
                       value={field.state.value}
-                      onValueChange={(value) => field.handleChange(value || '')}
-                    >
-                      <ComboboxInput
-                        id={field.name}
-                        name={field.name}
-                        placeholder="Select a type"
-                        onBlur={field.handleBlur}
-                        aria-invalid={isInvalid}
-                        className="*:capitalize"
-                      />
-                      <ComboboxContent>
-                        <ComboboxEmpty>No items found.</ComboboxEmpty>
-                        <ComboboxList className="">
-                          {(item: string) => (
-                            <ComboboxItem
-                              key={item}
-                              value={item}
-                              className="flex flex-col items-start gap-0"
-                            >
-                              <span className="font-semibold">
-                                {capitalize(item)}
-                              </span>
-                              <span>{ACCOUNT_TYPE_DESCRIPTION[item]}</span>
-                            </ComboboxItem>
-                          )}
-                        </ComboboxList>
-                      </ComboboxContent>
-                    </Combobox>
+                      onValueChange={field.handleChange}
+                      onBlur={field.handleBlur}
+                      labelledBy={labelId}
+                      describedBy={isInvalid ? errorId : undefined}
+                      invalid={isInvalid}
+                    />
                     {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
+                      <FieldError
+                        id={errorId}
+                        errors={field.state.meta.errors}
+                      />
                     )}
-                  </Field>
+                  </FieldSet>
                 )
               }}
             />
