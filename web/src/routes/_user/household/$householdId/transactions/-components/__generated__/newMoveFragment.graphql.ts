@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a88b3dc421bbbb6217854255f308490c>>
+ * @generated SignedSource<<e850516fa51cc43bc46582eb689b1229>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,9 @@ export type newMoveFragment$data = {
         readonly id: string;
         readonly investments: ReadonlyArray<{
           readonly id: string;
+          readonly latestTransaction: {
+            readonly datetime: any;
+          } | null | undefined;
           readonly name: string;
           readonly symbol: string;
           readonly type: InvestmentType;
@@ -169,7 +172,25 @@ return {
                       "name": "symbol",
                       "storageKey": null
                     },
-                    (v2/*: any*/)
+                    (v2/*: any*/),
+                    {
+                      "alias": null,
+                      "args": null,
+                      "concreteType": "Transaction",
+                      "kind": "LinkedField",
+                      "name": "latestTransaction",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "datetime",
+                          "storageKey": null
+                        }
+                      ],
+                      "storageKey": null
+                    }
                   ],
                   "storageKey": null
                 }
@@ -224,6 +245,6 @@ return {
 };
 })();
 
-(node as any).hash = "df4cce2b4e39fae2ffd979a870630ce0";
+(node as any).hash = "bf48bb99fadedefa3d257f7bce820de9";
 
 export default node;

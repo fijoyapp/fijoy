@@ -74,6 +74,9 @@ const newMoveFragment = graphql`
             name
             symbol
             type
+            latestTransaction {
+              datetime
+            }
           }
         }
       }

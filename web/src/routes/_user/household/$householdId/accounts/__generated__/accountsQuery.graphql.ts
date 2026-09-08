@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3872b3878f7a7363f149e44ea20d6eb8>>
+ * @generated SignedSource<<0c10fb7cc4930de1a5e04177e33da356>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -191,8 +191,20 @@ return {
                       {
                         "alias": null,
                         "args": null,
-                        "kind": "ScalarField",
-                        "name": "updateTime",
+                        "concreteType": "Transaction",
+                        "kind": "LinkedField",
+                        "name": "latestTransaction",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "datetime",
+                            "storageKey": null
+                          },
+                          (v2/*: any*/)
+                        ],
                         "storageKey": null
                       },
                       {
@@ -293,12 +305,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cfe5f909e0e83277728d45878d884b20",
+    "cacheID": "c603bd87529e014917b3c07dd13f4bd7",
     "id": null,
     "metadata": {},
     "name": "accountsQuery",
     "operationKind": "query",
-    "text": "query accountsQuery(\n  $viewUserIds: [ID!]\n) {\n  household {\n    ...accountsPanelFragment_3rIbPZ\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment accountsPanelFragment_3rIbPZ on Household {\n  accounts(first: 50, where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        category\n        name\n        value\n        householdCurrency {\n          code\n          id\n        }\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
+    "text": "query accountsQuery(\n  $viewUserIds: [ID!]\n) {\n  household {\n    ...accountsPanelFragment_3rIbPZ\n    id\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n\nfragment accountsPanelFragment_3rIbPZ on Household {\n  accounts(first: 50, where: {archived: false, userIDIn: $viewUserIds}) {\n    edges {\n      node {\n        id\n        type\n        category\n        name\n        value\n        householdCurrency {\n          code\n          id\n        }\n        ...accountCardFragment\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n  id\n}\n"
   }
 };
 })();

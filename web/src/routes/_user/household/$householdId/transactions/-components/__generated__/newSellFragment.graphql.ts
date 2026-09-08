@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<45f8c935cfdeec56806e267b361a5ea4>>
+ * @generated SignedSource<<5932042e48cdf9b16530ca6ccf1d0f71>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,10 +24,16 @@ export type newSellFragment$data = {
         readonly id: string;
         readonly investments: ReadonlyArray<{
           readonly id: string;
+          readonly latestTransaction: {
+            readonly datetime: any;
+          } | null | undefined;
           readonly name: string;
           readonly symbol: string;
           readonly type: InvestmentType;
         }> | null | undefined;
+        readonly latestTransaction: {
+          readonly datetime: any;
+        } | null | undefined;
         readonly name: string;
         readonly type: AccountType;
         readonly user: {
@@ -74,6 +80,24 @@ v2 = {
   "args": null,
   "kind": "ScalarField",
   "name": "type",
+  "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "Transaction",
+  "kind": "LinkedField",
+  "name": "latestTransaction",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "datetime",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -132,6 +156,7 @@ return {
                 (v0/*: any*/),
                 (v1/*: any*/),
                 (v2/*: any*/),
+                (v3/*: any*/),
                 {
                   "alias": null,
                   "args": null,
@@ -198,7 +223,8 @@ return {
                       "name": "symbol",
                       "storageKey": null
                     },
-                    (v2/*: any*/)
+                    (v2/*: any*/),
+                    (v3/*: any*/)
                   ],
                   "storageKey": null
                 }
@@ -253,6 +279,6 @@ return {
 };
 })();
 
-(node as any).hash = "c66f2b9a582c0d128cf63c3ae84fe2f5";
+(node as any).hash = "49c84ff84922faa0e5a930b1338929f2";
 
 export default node;

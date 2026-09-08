@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0538915662c28b22175188ee584df453>>
+ * @generated SignedSource<<c4dca23d39c44de9d5c1b53f343a0663>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -151,8 +151,20 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "updateTime",
+                "concreteType": "Transaction",
+                "kind": "LinkedField",
+                "name": "latestTransaction",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "datetime",
+                    "storageKey": null
+                  },
+                  (v2/*: any*/)
+                ],
                 "storageKey": null
               },
               {
@@ -210,12 +222,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "566aab0acf68293efa73d4c807ede128",
+    "cacheID": "ef5ad1e22ddbef9b1d80d41a5c0abe33",
     "id": null,
     "metadata": {},
     "name": "newAccountMutation",
     "operationKind": "mutation",
-    "text": "mutation newAccountMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    node {\n      id\n      type\n      name\n      ...accountCardFragment\n    }\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n"
+    "text": "mutation newAccountMutation(\n  $input: CreateAccountInput!\n) {\n  createAccount(input: $input) {\n    node {\n      id\n      type\n      name\n      ...accountCardFragment\n    }\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n"
   }
 };
 })();

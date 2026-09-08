@@ -76,6 +76,9 @@ const newIncomeFragment = graphql`
           id
           name
           type
+          latestTransaction {
+            datetime
+          }
           icon
           value
           ...transactionAccountPickerBalanceFragment

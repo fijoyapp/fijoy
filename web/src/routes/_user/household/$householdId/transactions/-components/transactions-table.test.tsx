@@ -145,6 +145,16 @@ it('masks both cash amounts and investment quantities in privacy mode', () => {
   expect(table.textContent).toContain('•••••••')
 })
 
+it('constrains the table and its cells to the available width', () => {
+  render(<TransactionsTable {...defaults} />)
+
+  const table = screen.getByRole('table')
+  expect(table.className).toContain('table-fixed')
+  for (const cell of screen.getAllByRole('cell')) {
+    expect(cell.className).toContain('overflow-hidden')
+  }
+})
+
 it('loads near the scroll boundary and pauses while sorting or loading', () => {
   const view = render(<TransactionsTable {...defaults} />)
   fireEvent.click(screen.getByRole('button', { name: /Date, newest/ }))

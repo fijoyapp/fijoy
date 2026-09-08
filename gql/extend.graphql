@@ -5,7 +5,21 @@ extend type Household {
   ): FinancialReport!
 }
 
+extend type Account {
+  """
+  Most recent transaction involving this account, either through a cash entry
+  or an investment lot. Null when the account has never been used.
+  """
+  latestTransaction: Transaction
+}
+
 extend type Investment {
+  """
+  Most recent transaction involving this investment. Null when the investment
+  has no lots.
+  """
+  latestTransaction: Transaction
+
   """
   Cost basis of currently held shares using the moving-average-cost method.
   Recomputed on read by replaying lots in chronological order. Sells reduce

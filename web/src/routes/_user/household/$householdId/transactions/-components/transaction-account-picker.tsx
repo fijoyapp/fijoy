@@ -10,6 +10,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { useCurrency } from '@/hooks/use-currency'
 import { getLogoDomainURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'
+import { newestActivityFirst } from '@/lib/sort-by-update-time'
 
 const balanceFragment = graphql`
   fragment transactionAccountPickerBalanceFragment on Account {
@@ -21,6 +22,7 @@ type Account = transactionAccountPickerBalanceFragment$key & {
   id: string
   name: string
   type: string
+  latestTransaction?: { datetime: string } | null
   icon?: string | null
   householdCurrency: { code: string }
 }
@@ -57,7 +59,7 @@ export function TransactionAccountPicker({
   onBlur,
   invalid,
   children,
-  expanded = true,
+  expanded: controlledExpanded,
   onExpand,
   disabled = false,
   preferredTypes,
@@ -67,9 +69,12 @@ export function TransactionAccountPicker({
     type: string
     accountValue: string
   } | null>(null)
-  const pickerRef = useRef<HTMLFieldSetElement>(null)
+  const [editing, setEditing] = useState(false)
+  const isControlled = controlledExpanded !== undefined
+  const expanded = controlledExpanded ?? (!value || editing)
   const summaryRef = useRef<HTMLButtonElement>(null)
   const wasExpanded = useRef(expanded)
+
   useEffect(() => {
     if (isMobile && wasExpanded.current && !expanded) {
       summaryRef.current?.focus({ preventScroll: true })
@@ -78,31 +83,41 @@ export function TransactionAccountPicker({
   }, [expanded, isMobile])
   const selected = accounts.find((account) => account.id === value)
 
-  const groups = ACCOUNT_TYPES.map(([type, title]) => ({
+  const preferredTypeSet = new Set(preferredTypes)
+  const groups = ACCOUNT_TYPES.map(([type, title], typeIndex) => ({
     type,
     title,
-    accounts: accounts.filter((account) => account.type === type),
-  })).filter((group) => group.accounts.length > 0)
+    typeIndex,
+    accounts: newestActivityFirst(
+      accounts.filter((account) => account.type === type),
+    ),
+  }))
+    .filter((group) => group.accounts.length > 0)
+    .sort((a, b) => {
+      const aPreferred = preferredTypes
+        ? preferredTypeSet.has(a.type)
+          ? 0
+          : 1
+        : 0
+      const bPreferred = preferredTypes
+        ? preferredTypeSet.has(b.type)
+          ? 0
+          : 1
+        : 0
+      const aActivityTime = a.accounts[0]?.latestTransaction?.datetime ?? ''
+      const bActivityTime = b.accounts[0]?.latestTransaction?.datetime ?? ''
+      return (
+        aPreferred - bPreferred ||
+        bActivityTime.localeCompare(aActivityTime) ||
+        a.typeIndex - b.typeIndex
+      )
+    })
   const requestedType =
     typeFilter?.accountValue === value ? typeFilter.type : selected?.type
   const activeType =
     groups.find((group) => group.type === requestedType)?.type ??
     groups.find((group) => preferredTypes?.includes(group.type))?.type ??
     groups[0]?.type
-
-  useEffect(() => {
-    if (!isMobile || !expanded) return
-    const input =
-      pickerRef.current?.querySelector<HTMLInputElement>('input:checked')
-    const tile = input?.closest('label')
-    const strip = tile?.closest<HTMLElement>(
-      '[data-slot="scroll-area-viewport"]',
-    )
-    if (tile && strip) {
-      strip.scrollLeft +=
-        tile.getBoundingClientRect().left - strip.getBoundingClientRect().left
-    }
-  }, [isMobile, expanded, value, activeType])
 
   if (!isMobile) return children
 
@@ -115,7 +130,10 @@ export function TransactionAccountPicker({
         disabled={disabled}
         aria-expanded={false}
         aria-label={`${label}: ${selected?.name ?? 'Select an account'}`}
-        onClick={onExpand}
+        onClick={() => {
+          if (isControlled) onExpand?.()
+          else setEditing(true)
+        }}
         className="border-input bg-background focus-visible:outline-ring flex min-h-11 w-full items-center gap-2 border p-2 text-left focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {selected ? (
@@ -138,7 +156,7 @@ export function TransactionAccountPicker({
             <label
               key={account.id}
               className={cn(
-                'border-input bg-background has-focus-visible:outline-ring flex min-h-11 w-52 shrink-0 cursor-pointer items-center border p-2 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2',
+                'border-input bg-background has-focus-visible:outline-ring flex min-h-11 w-max max-w-full min-w-44 shrink-0 cursor-pointer items-center border p-2 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2',
                 value === account.id && 'border-primary',
               )}
             >
@@ -147,9 +165,14 @@ export function TransactionAccountPicker({
                 name={name}
                 value={account.id}
                 checked={value === account.id}
-                onChange={() => onValueChange(account.id)}
+                onChange={() => {
+                  onValueChange(account.id)
+                  if (!isControlled) setEditing(false)
+                }}
                 onClick={() => {
-                  if (value === account.id) onValueChange(account.id)
+                  if (value !== account.id) return
+                  if (isControlled) onValueChange(account.id)
+                  else setEditing(false)
                 }}
                 aria-invalid={invalid}
                 className="sr-only"
@@ -166,7 +189,6 @@ export function TransactionAccountPicker({
 
   return (
     <fieldset
-      ref={pickerRef}
       id={name}
       aria-invalid={invalid}
       className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0"
@@ -177,6 +199,8 @@ export function TransactionAccountPicker({
       <legend className="sr-only">{label}</legend>
       {accounts.length === 0 ? (
         <p className="text-muted-foreground text-xs">No accounts available.</p>
+      ) : groups.length === 1 ? (
+        renderGroups(groups)
       ) : (
         <Tabs.Root
           value={activeType}

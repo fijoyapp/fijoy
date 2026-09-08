@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a8385fd832f62773dfd45e3286f6e82e>>
+ * @generated SignedSource<<54defcc4723b147def1c05764b473e14>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,9 +18,11 @@ export type accountCardFragment$data = {
   };
   readonly icon: string | null | undefined;
   readonly id: string;
+  readonly latestTransaction: {
+    readonly datetime: any;
+  } | null | undefined;
   readonly name: string;
   readonly type: AccountType;
-  readonly updateTime: any;
   readonly user: {
     readonly name: string;
   };
@@ -71,8 +73,19 @@ return {
     {
       "alias": null,
       "args": null,
-      "kind": "ScalarField",
-      "name": "updateTime",
+      "concreteType": "Transaction",
+      "kind": "LinkedField",
+      "name": "latestTransaction",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "datetime",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
@@ -125,6 +138,6 @@ return {
 };
 })();
 
-(node as any).hash = "f993e9bda8479dead614775114c20761";
+(node as any).hash = "8627722bdc70dfb31117c287d169ab5e";
 
 export default node;

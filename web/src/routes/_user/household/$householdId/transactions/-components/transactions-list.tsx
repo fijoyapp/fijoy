@@ -16,6 +16,7 @@ import type { transactionsListFragment$key } from './__generated__/transactionsL
 import { Button } from '@/components/ui/button'
 import { ItemGroup } from '@/components/ui/item'
 import { NodeType, useRegisterConnection } from '@/lib/relay'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   format,
   isSameDay,
@@ -166,37 +167,42 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
   }
 
   return (
-    <Fragment>
-      {groups.map((group) => (
-        <Fragment key={group.date.toISOString()}>
-          <div className="text-muted-foreground border-border border-t px-1 pt-3 pb-1.5 text-xs/relaxed font-medium tracking-[0.02em] first:border-t-0 first:pt-0">
-            {formatDateHeader(group.date)}
-          </div>
-          <ItemGroup>
-            {group.transactions.map((transaction) => (
-              <TransactionCard key={transaction.id} fragmentRef={transaction} />
-            ))}
-          </ItemGroup>
-        </Fragment>
-      ))}
-      {loadError && (
-        <div
-          role="alert"
-          className="text-muted-foreground flex items-center justify-center gap-2 py-2 text-xs"
-        >
-          {loadError}
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={isLoadingNext}
-            onClick={loadMore}
+    <ScrollArea className="min-h-0 min-w-0 flex-1">
+      <div className="min-w-0 pr-2">
+        {groups.map((group) => (
+          <Fragment key={group.date.toISOString()}>
+            <div className="text-muted-foreground border-border border-t px-1 pt-3 pb-1.5 text-xs/relaxed font-medium tracking-[0.02em] first:border-t-0 first:pt-0">
+              {formatDateHeader(group.date)}
+            </div>
+            <ItemGroup>
+              {group.transactions.map((transaction) => (
+                <TransactionCard
+                  key={transaction.id}
+                  fragmentRef={transaction}
+                />
+              ))}
+            </ItemGroup>
+          </Fragment>
+        ))}
+        {loadError && (
+          <div
+            role="alert"
+            className="text-muted-foreground flex items-center justify-center gap-2 py-2 text-xs"
           >
-            Retry
-          </Button>
-        </div>
-      )}
-      <div ref={ref}></div>
-    </Fragment>
+            {loadError}
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isLoadingNext}
+              onClick={loadMore}
+            >
+              Retry
+            </Button>
+          </div>
+        )}
+        <div ref={ref}></div>
+      </div>
+    </ScrollArea>
   )
 }
 

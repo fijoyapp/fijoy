@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6d010d4a7f6cfd7e5a39cc179a9f9560>>
+ * @generated SignedSource<<5b015920078be72ee2f511a339fe7f08>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -169,8 +169,20 @@ return {
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "updateTime",
+                "concreteType": "Transaction",
+                "kind": "LinkedField",
+                "name": "latestTransaction",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "datetime",
+                    "storageKey": null
+                  },
+                  (v2/*: any*/)
+                ],
                 "storageKey": null
               },
               {
@@ -228,12 +240,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7e1becc52823b98f222b57a800e518cd",
+    "cacheID": "74d2bed726f1375aadea315876c302b4",
     "id": null,
     "metadata": {},
     "name": "editAccountMutation",
     "operationKind": "mutation",
-    "text": "mutation editAccountMutation(\n  $id: ID!\n  $input: UpdateAccountInput!\n) {\n  updateAccount(id: $id, input: $input) {\n    node {\n      id\n      name\n      icon\n      category\n      ...accountCardFragment\n    }\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  updateTime\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n"
+    "text": "mutation editAccountMutation(\n  $id: ID!\n  $input: UpdateAccountInput!\n) {\n  updateAccount(id: $id, input: $input) {\n    node {\n      id\n      name\n      icon\n      category\n      ...accountCardFragment\n    }\n  }\n}\n\nfragment accountCardFragment on Account {\n  id\n  name\n  type\n  icon\n  latestTransaction {\n    datetime\n    id\n  }\n  householdCurrency {\n    code\n    id\n  }\n  user {\n    name\n    id\n  }\n  value\n  balance\n}\n"
   }
 };
 })();

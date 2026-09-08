@@ -251,6 +251,13 @@ func (TransactionEntry) Annotations() []schema.Annotation {
 	}
 }
 
+func (TransactionEntry) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("account_id"),
+		index.Fields("transaction_id"),
+	}
+}
+
 func (TransactionEntry) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AnnotateFields(mixin.Time{},

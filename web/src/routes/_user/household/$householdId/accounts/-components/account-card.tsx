@@ -5,7 +5,7 @@ import type { accountCardFragment$key } from './__generated__/accountCardFragmen
 import { cn } from '@/lib/utils'
 
 import { useCurrency } from '@/hooks/use-currency'
-import { getPrettyTime } from '@/lib/time'
+import { getRelativeDate } from '@/lib/time'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getLogoDomainURL } from '@/lib/logo'
 import currency from 'currency.js'
@@ -18,7 +18,9 @@ const accountCardFragment = graphql`
     name
     type
     icon
-    updateTime
+    latestTransaction {
+      datetime
+    }
     householdCurrency {
       code
     }
@@ -95,7 +97,11 @@ export function AccountCard({
       <div className="text-muted-foreground flex items-center gap-1.5 text-[0.6875rem]">
         <span>{data.user.name}</span>
         <span className="text-muted-foreground/40">·</span>
-        <span>{getPrettyTime(new Date(data.updateTime))}</span>
+        <span>
+          {data.latestTransaction
+            ? getRelativeDate(new Date(data.latestTransaction.datetime))
+            : 'Never used'}
+        </span>
       </div>
       {showProgress && (
         <div className="mt-0.5 flex flex-col gap-1">

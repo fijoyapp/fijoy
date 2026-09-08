@@ -237,6 +237,18 @@ var (
 				OnDelete:   schema.Cascade,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "investmentlot_investment_id",
+				Unique:  false,
+				Columns: []*schema.Column{InvestmentLotsColumns[6]},
+			},
+			{
+				Name:    "investmentlot_transaction_id",
+				Unique:  false,
+				Columns: []*schema.Column{InvestmentLotsColumns[7]},
+			},
+		},
 	}
 	// RecurringSubscriptionsColumns holds the columns for the "recurring_subscriptions" table.
 	RecurringSubscriptionsColumns = []*schema.Column{
@@ -545,6 +557,18 @@ var (
 				Columns:    []*schema.Column{TransactionEntriesColumns[6]},
 				RefColumns: []*schema.Column{TransactionsColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "transactionentry_account_id",
+				Unique:  false,
+				Columns: []*schema.Column{TransactionEntriesColumns[4]},
+			},
+			{
+				Name:    "transactionentry_transaction_id",
+				Unique:  false,
+				Columns: []*schema.Column{TransactionEntriesColumns[6]},
 			},
 		},
 	}
