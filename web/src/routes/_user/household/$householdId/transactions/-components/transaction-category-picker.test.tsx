@@ -4,7 +4,11 @@ import { useState } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { TransactionCategoryPicker } from './transaction-category-picker'
 
-vi.mock('@/hooks/use-mobile', () => ({ useIsMobile: () => true }))
+const mobileState = vi.hoisted(() => ({ value: true }))
+
+vi.mock('@/hooks/use-mobile', () => ({
+  useIsMobile: () => mobileState.value,
+}))
 vi.mock('./selection-rows', () => ({
   SelectionRows: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -33,7 +37,10 @@ function Picker() {
   )
 }
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  mobileState.value = true
+})
 
 it('collapses to the selected category and expands when clicked', () => {
   render(<Picker />)
@@ -44,4 +51,20 @@ it('collapses to the selected category and expands when clicked', () => {
 
   fireEvent.click(summary)
   expect(screen.getByRole('radio', { name: 'Transport' })).not.toBeNull()
+})
+
+it('shows the full category display in desktop options and the selected trigger', () => {
+  mobileState.value = false
+  render(<Picker />)
+
+  fireEvent.click(
+    screen.getByRole('button', { name: 'Category: Select a category' }),
+  )
+  expect(document.querySelector('[data-slot="scroll-area"]')).not.toBeNull()
+  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Groceries' }))
+
+  expect(screen.queryByRole('menu')).toBeNull()
+  expect(
+    screen.getByRole('button', { name: 'Category: Groceries' }),
+  ).toBeTruthy()
 })

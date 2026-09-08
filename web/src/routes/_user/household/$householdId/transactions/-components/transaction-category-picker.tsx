@@ -1,16 +1,18 @@
 import { CategoryIcon } from '@/components/category-icon'
 import { SelectionRows } from './selection-rows'
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { ChevronDownIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 type TransactionCategoryPickerProps = {
   categories: ReadonlyArray<{
@@ -112,33 +114,62 @@ export function TransactionCategoryPicker({
   }
 
   return (
-    <Combobox
-      items={categories.map((category) => category.id)}
-      itemToStringLabel={(item) =>
-        categories.find((category) => category.id === item)?.name || ''
-      }
-      value={value}
-      onValueChange={(nextValue) => onValueChange(nextValue || '')}
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (!open) onBlur()
+      }}
     >
-      <ComboboxInput
-        data-1p-ignore
-        id={name}
-        name={name}
-        placeholder="Select a category"
-        onBlur={onBlur}
-        aria-invalid={invalid}
-      />
-      <ComboboxContent>
-        <ComboboxEmpty>No items found.</ComboboxEmpty>
-        <ComboboxList>
-          {(item: string) => (
-            <ComboboxItem key={item} value={item}>
-              {categories.find((category) => category.id === item)?.name || ''}
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            id={name}
+            name={name}
+            type="button"
+            variant="outline"
+            aria-invalid={invalid}
+            aria-label={`Category: ${selected?.name ?? 'Select a category'}`}
+            className="h-auto min-h-9 w-full justify-between px-2 py-1.5 text-left font-normal"
+          />
+        }
+      >
+        {selected ? (
+          <span className="flex min-w-0 flex-1 items-center gap-2">
+            <CategoryDetails category={selected} />
+          </span>
+        ) : (
+          <span className="text-muted-foreground min-w-0 flex-1 truncate text-left">
+            Select a category
+          </span>
+        )}
+        <ChevronDownIcon data-icon="inline-end" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="max-h-none overflow-hidden p-0">
+        <ScrollArea className="max-h-80 [&_[data-slot=scroll-area-viewport]]:max-h-80">
+          <div className="p-1">
+            <DropdownMenuGroup>
+              <DropdownMenuRadioGroup
+                value={value}
+                onValueChange={(nextValue) => {
+                  if (typeof nextValue === 'string') onValueChange(nextValue)
+                }}
+              >
+                {categories.map((category) => (
+                  <DropdownMenuRadioItem
+                    key={category.id}
+                    value={category.id}
+                    aria-label={category.name}
+                    closeOnClick
+                    className="min-h-9"
+                  >
+                    <CategoryDetails category={category} />
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuGroup>
+          </div>
+        </ScrollArea>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 

@@ -246,10 +246,11 @@ function RouteComponent() {
           <Outlet />
         </div>
 
-        <div className="fixed right-4 bottom-4 lg:absolute">
+        <div className="fixed right-4 bottom-4 z-20 lg:absolute">
           <Button
             nativeButton={true}
             size="icon-lg"
+            className="size-10 [&_svg:not([class*='size-'])]:size-5"
             onClick={() =>
               openLogTransaction(
                 accountData.type === 'investment' ? 'buy' : 'expense',

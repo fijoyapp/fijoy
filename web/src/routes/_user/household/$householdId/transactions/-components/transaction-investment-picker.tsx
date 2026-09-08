@@ -6,6 +6,16 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { getLogoCryptoURL, getLogoTickerURL } from '@/lib/logo'
 import { cn } from '@/lib/utils'
 import { newestActivityFirst } from '@/lib/sort-by-update-time'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 type Investment = {
   id: string
@@ -39,7 +49,6 @@ export function TransactionInvestmentPicker({
   invalid,
   disabled = false,
   disabledMessage = 'Select an account first',
-  children,
 }: Props) {
   const isMobile = useIsMobile()
   const [editing, setEditing] = useState(false)
@@ -58,7 +67,67 @@ export function TransactionInvestmentPicker({
     wasExpanded.current = expanded
   }, [expanded, isMobile])
 
-  if (!isMobile) return children
+  if (!isMobile) {
+    return (
+      <DropdownMenu
+        onOpenChange={(open) => {
+          if (!open) onBlur()
+        }}
+      >
+        <DropdownMenuTrigger
+          render={
+            <Button
+              id={name}
+              name={name}
+              type="button"
+              variant="outline"
+              disabled={disabled}
+              aria-invalid={invalid}
+              aria-label={`${label}: ${selected ? `${selected.name}, ${selected.symbol}` : disabled ? disabledMessage : 'Select an investment'}`}
+              className="h-auto min-h-10 w-full justify-between px-2 py-1.5 text-left font-normal"
+            />
+          }
+        >
+          {selected ? (
+            <span className="flex min-w-0 flex-1 items-center gap-2">
+              <InvestmentDetails investment={selected} />
+            </span>
+          ) : (
+            <span className="text-muted-foreground min-w-0 flex-1 truncate text-left">
+              {disabled ? disabledMessage : 'Select an investment'}
+            </span>
+          )}
+          <ChevronDownIcon data-icon="inline-end" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="max-h-none overflow-hidden p-0">
+          <ScrollArea className="max-h-80 [&_[data-slot=scroll-area-viewport]]:max-h-80">
+            <div className="p-1">
+              <DropdownMenuGroup>
+                <DropdownMenuRadioGroup
+                  value={value}
+                  onValueChange={(nextValue) => {
+                    if (typeof nextValue === 'string') onValueChange(nextValue)
+                  }}
+                >
+                  {orderedInvestments.map((investment) => (
+                    <DropdownMenuRadioItem
+                      key={investment.id}
+                      value={investment.id}
+                      aria-label={`${investment.name}, ${investment.symbol}`}
+                      closeOnClick
+                      className="min-h-10 py-1.5"
+                    >
+                      <InvestmentDetails investment={investment} />
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuGroup>
+            </div>
+          </ScrollArea>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
 
   if (!expanded && selected) {
     return (

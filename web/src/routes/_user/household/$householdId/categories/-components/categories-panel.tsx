@@ -160,7 +160,7 @@ export function CategoriesPanel({ fragmentRef }: CategoriesListPageProps) {
 
   return (
     <Fragment>
-      <div className="fixed right-4 bottom-4 lg:absolute">
+      <div className="fixed right-4 bottom-4 z-20 lg:absolute">
         <PlusButton
           to="/household/$householdId/categories/new"
           params={{ householdId }}
