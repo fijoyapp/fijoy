@@ -247,7 +247,7 @@ export function TransactionsList({ fragmentRef }: TransactionsListProps) {
       onPreloadTransaction={preloadTransaction}
     />
   ) : (
-    <ScrollArea className="min-h-0 min-w-0 flex-1 overflow-hidden [&_[data-slot=scroll-area-viewport]]:overflow-x-hidden">
+    <ScrollArea className="min-h-0 min-w-0 flex-1 overflow-hidden [&_[data-slot=scroll-area-viewport]]:overflow-x-hidden [&_[data-slot=scroll-area-viewport]]:overscroll-contain">
       <div className="min-w-0 pr-2">
         {groups.map((group) => (
           <Fragment key={group.date.toISOString()}>
